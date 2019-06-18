@@ -9,7 +9,9 @@
                 template="#{layoutMB.template}">
 
     <ui:define name="head-end">
-        <!--link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" /-->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
                 text-align: right !important;
@@ -69,90 +71,90 @@
     </ui:define>
 
     <ui:define name="body">
-            <h:form id="frm" prependId="false" class="form-inline">
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <div id="main-buttons" class="hidden-sm hidden-xs" >
-                            <p:focus for="ayuda"/>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:focus for="ayuda"/>
 
-                            <p:outputPanel id="ayuda" autoUpdate="true">
-                                <p:toolbar id="tb">
-                                    <f:facet name="left">
-                                        <h4>
-                                            <span class="label label-default"><i class="fa fa-info-circle" />
-                                                Escala de valores de satisfacción: Muy Bien = MB, Bien = B, Regular = R, Mal = M y Pésimo = P; o bien No Aplica NA=0.
-                                            </span>
-                                        </h4>
-                                    </f:facet>
-                                    <f:facet name="right">
-                                        <c:if test="#{encuestaSatisfaccionEgresadosTsu.dto.finalizado}">
-                                            <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado el cuestionario.</span></h4>                                 
-                                        </c:if>
-                                        <c:if test="#{!encuestaSatisfaccionEgresadosTsu.dto.finalizado}">
-                                            <h4><span class="label denegado"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
-                                        </c:if>
-                                    </f:facet>
-                                </p:toolbar>
-                                <p:sticky target="tb" />
-                            </p:outputPanel>
-                        </div>
-                        <div class="box box-solid">
-                            <div class="box-header">
-                                <div class="well well-md">
-                                    <p style="text-align: justify; font-size: larger;">
-                                        Con el propósito de conocer la opinión de los egresados de la Universidad acerca de la atención,servicios y preparación académica que recibieron a lo largo de su permanencia en la institución.
-                                    </p>
-                                    <p>
-                                        Usa la opción NO APLICA en caso no haber usado el servicio durante el ciclo escolar.
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="box-body">                            
-                                <c:set var="index" value="#{1}" />
-                                <c:forEach items="#{encuestaSatisfaccionEgresadosTsu.dto.apartados}" var="apartado">
-                                    <div class="row">
-                                        <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
-                                            <div class="panel-heading aceptado">
-                                                <h3 class="panel-title" style="text-align: justify;">
-                                                    #{apartado.contenido}
-                                                </h3>
-                                            </div>
-                                            <table class="table table-striped table-responsive">
-                                                <thead>
-                                                    <tr class="denegado">
-                                                        <th>#</th>
-                                                        <th>Pregunta</th>
-                                                        <th style="text-align: center; width: 280px;">Opción</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <c:forEach items="#{apartado.preguntas}" var="pregunta">
-                                                        <tr>
-                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
-                                                            <td style="text-align: justify;">#{pregunta.titulo} <label style="color: #E53935" >*</label></td>
-                                                            <td class="danger text-center" style="min-width: 120px;">
-                                                                <f:ajax execute="p#{index}">
-                                                                    <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                    <p:selectOneButton id="p#{index}" value="#{encuestaSatisfaccionEgresadosTsu.dto.respuestas[pos]}" valueChangeListener="#{encuestaSatisfaccionEgresadosTsu.guardarRespuesta}">
-                                                                        <f:selectItems value="#{encuestaSatisfaccionEgresadosTsu.dto.respuestasPosibles}" />
-                                                                    </p:selectOneButton>
-                                                                </f:ajax>
-                                                                <c:set var="index" value="#{index+1}" />
-                                                            </td>
-                                                        </tr>
-                                                    </c:forEach>                                                
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <p:separator style="max-width: 1000px;" />
-                                </c:forEach>                            
-                            </div>
-                        </div>
-
-
+                        <p:outputPanel id="ayuda" autoUpdate="true">
+                            <p:toolbar id="tb">
+                                <f:facet name="left">
+                                    <h4>
+                                        <span class="label label-default"><i class="fa fa-info-circle" />
+                                            Escala de valores de satisfacción: Muy Bien = MB, Bien = B, Regular = R, Mal = M y Pésimo = P; o bien No Aplica NA=0.
+                                        </span>
+                                    </h4>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <c:if test="#{encuestaSatisfaccionEgresadosTsu.dto.finalizado}">
+                                        <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado el cuestionario.</span></h4>                                 
+                                    </c:if>
+                                    <c:if test="#{!encuestaSatisfaccionEgresadosTsu.dto.finalizado}">
+                                        <h4><span class="label denegado"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
+                                    </c:if>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
                     </div>
+                    <div class="box box-solid">
+                        <div class="box-header">
+                            <div class="well well-md">
+                                <p style="text-align: justify; font-size: larger;">
+                                    Con el propósito de conocer la opinión de los egresados de la Universidad acerca de la atención,servicios y preparación académica que recibieron a lo largo de su permanencia en la institución.
+                                </p>
+                                <p>
+                                    Usa la opción NO APLICA en caso no haber usado el servicio durante el ciclo escolar.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box-body">                            
+                            <c:set var="index" value="#{1}" />
+                            <c:forEach items="#{encuestaSatisfaccionEgresadosTsu.dto.apartados}" var="apartado">
+                                <div class="row">
+                                    <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
+                                        <div class="panel-heading aceptado">
+                                            <h3 class="panel-title" style="text-align: justify;">
+                                                #{apartado.contenido}
+                                            </h3>
+                                        </div>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="denegado">
+                                                    <th>#</th>
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center; width: 280px;">Opción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo} <label style="color: #E53935" >*</label></td>
+                                                        <td class="danger text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="p#{index}">
+                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                <p:selectOneButton id="p#{index}" value="#{encuestaSatisfaccionEgresadosTsu.dto.respuestas[pos]}" valueChangeListener="#{encuestaSatisfaccionEgresadosTsu.guardarRespuesta}">
+                                                                    <f:selectItems value="#{encuestaSatisfaccionEgresadosTsu.dto.respuestasPosibles}" />
+                                                                </p:selectOneButton>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <p:separator style="max-width: 1000px;" />
+                            </c:forEach>                            
+                        </div>
+                    </div>
+
+
                 </div>
-            </h:form>
+            </div>
+        </h:form>
     </ui:define>
 </ui:composition>

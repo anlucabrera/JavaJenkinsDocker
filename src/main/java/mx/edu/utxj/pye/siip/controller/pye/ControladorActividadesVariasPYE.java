@@ -340,7 +340,7 @@ public class ControladorActividadesVariasPYE implements Serializable {
     }
     
     public void validaFechaInicio(ValueChangeEvent event) {
-        if ((Date) event.getNewValue() != null) {
+        if ((Date) event.getNewValue() != null && dto.getRegistro().getActividadVaria().getFechaFin() != null) {
             dto.getRegistro().getActividadVaria().setFechaInicio((Date) event.getNewValue());
             if (dto.getRegistro().getActividadVaria().getFechaInicio().before(dto.getRegistro().getActividadVaria().getFechaFin())) {
 //            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");          
@@ -358,7 +358,7 @@ public class ControladorActividadesVariasPYE implements Serializable {
     }
     
     public void validaFechaFin(ValueChangeEvent event) {
-        if ((Date) event.getNewValue() != null) {
+       if ((Date) event.getNewValue() != null && dto.getRegistro().getActividadVaria().getFechaInicio() != null) {
             dto.getRegistro().getActividadVaria().setFechaFin((Date) event.getNewValue());
             if (dto.getRegistro().getActividadVaria().getFechaFin().after(dto.getRegistro().getActividadVaria().getFechaInicio())) {
 //            System.out.println("mx.edu.utxj.pye.siip.controller.eb.Ejemplo.main() true");

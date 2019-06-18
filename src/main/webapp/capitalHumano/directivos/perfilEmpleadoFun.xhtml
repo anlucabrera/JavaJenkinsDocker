@@ -13,10 +13,10 @@
 
         <link href="../resources/demo/css/primitives.latest.css?219" media="screen" rel="stylesheet" type="text/css" />
         <!-- Inicio estilos par proceso electoral -->            
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>
-        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
         </c:if>
         <!-- Fin estilos par proceso electoral -->
@@ -52,7 +52,7 @@
                                     <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
 
                                     <div class="info-box-content">
-                                        <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
                                         <span class="info-box-number">#{controladorEmpleado.fechaLimiteRegistroFunciones}.</span>
                                     </div>
                                 </div>
@@ -459,7 +459,7 @@
                     <p:outputPanel>            
                         <p:autoUpdate/>
                         <h:panelGrid columns="1"  class="col-md-12">
-                            <object width="800" height="400" data="../../resources/documentos/registro_de_funciones.pdf" style="#{controladorEmpleado.procesoElectoralActivo eq false?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}"/>
+                            <object width="800" height="400" data="../../resources/documentos/registro_de_funciones.pdf" style="#{utilidadesAcceso.procesoElectoralActivo eq false?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}"/>
                         </h:panelGrid>
                     </p:outputPanel>
                 </p:dialog>

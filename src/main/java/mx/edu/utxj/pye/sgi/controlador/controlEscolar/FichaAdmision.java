@@ -577,6 +577,7 @@ public class FichaAdmision implements Serializable, Guardable{
     public void inicializarEncuesta(Aspirante aspirante_pi){
         resultado = ejb.getResultado(aspirante_pi.getIdAspirante());
         if(resultado != null){
+            aspirante = aspirante_pi;
             comprobar();
         }else{
             resultado = new EncuestaAspirante();

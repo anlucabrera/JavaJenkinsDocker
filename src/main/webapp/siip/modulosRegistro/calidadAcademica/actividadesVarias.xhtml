@@ -17,7 +17,7 @@
         <h:outputScript library="js" name="dialogs.js" />
         <h:outputScript library="js" name="calendario.js"/>
         <!-- Inicio estilos par proceso electoral -->
-            <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
                 <h:outputStylesheet library="css" name="procesoElectoral.css" />
             </c:if>
         <!-- Fin estilos par proceso electoral -->
@@ -103,6 +103,12 @@
                 <p:separator/>
 
                 <div class="box-body">
+                    <h:form id="abrirNuevoRegistroInfo">
+                        <div class="callout callout-info">
+                            <h4>¡Aviso!</h4>
+                            <p>Ahora ya puedes dar de alta nuevas Actividades Varías mediante un formulario de registro: <code><p:commandLink action="#{actividadesVarias.nuevoRegistro()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
+                        </div>
+                    </h:form>
                     <!-- Sección de visualización y eliminación -->
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
@@ -549,168 +555,179 @@
                                 
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Nombre de la actividad: " for="iptNombreActividad" rendered="#{actividadesVarias.dto.nuevoRegistro}"/>
-                                    <p:inputText id="iptNombreActividad"
-                                                 label="iptNombreActividad"
-                                                 maxlength="1000"
-                                                 required="true"
-                                                 class="form-control"
-                                                 rendered="#{actividadesVarias.dto.nuevoRegistro}"
-                                                 requiredMessage="Ingrese el nombre de la actividad"
-                                                 value="#{actividadesVarias.dto.registro.actividadVaria.nombre}"/>
-                                    <p:watermark for="iptNombreActividad" value="Reunion de padres de familia del 2°A. *" />
-                                    <p:message for="iptNombreActividad" />
-                                </div>
-
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Fecha de inicio: " for="iptFechaInicio" />
-                                    <br></br>
-                                    <p:spacer width="5" />
-                                    <p:calendar id="iptFechaInicio"
-                                                label="iptFechaInicio"
-                                                required="true"
-                                                requiredMessage="Ingrese Fecha de Inicio"
-                                                value="#{actividadesVarias.dto.registro.actividadVaria.fechaInicio}"
-                                                valueChangeListener="#{actividadesVarias.validaFechaInicio}"
-                                                pattern="yyyy-MM-dd" 
-                                                mask="true"
-                                                locale="es"
-                                                styleClass="campo2Partes"
-                                                >
-                                        <p:ajax event="dateSelect" process="iptFechaInicio" update="iptFechaTermino"/>
-                                        <p:ajax event="change" process="iptFechaInicio" update="iptFechaTermino"/>
-                                    </p:calendar>
-                                    <p:watermark for="iptFechaInicio" value="2019-03-19 *" />
-                                    <p:message for="iptFechaInicio" />
-                                </div>
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Fecha de termino: " for="iptFechaTermino" />
-                                    <br></br>
-                                    <p:spacer width="5" />
-                                    <p:calendar id="iptFechaTermino"
-                                                label="iptFechaTermino"
-                                                required="true"
-                                                requiredMessage="Ingrese Fecha de Termino"
-                                                value="#{actividadesVarias.dto.registro.actividadVaria.fechaFin}" 
-                                                valueChangeListener="#{actividadesVarias.validaFechaFin}"
-                                                pattern="yyyy-MM-dd" 
-                                                mask="true"
-                                                styleClass="campo2Partes"
-                                                locale="es"
-                                                >
-                                        <p:ajax event="dateSelect" process="iptFechaTermino" update="iptFechaInicio"/>
-                                        <p:ajax event="change" process="iptFechaTermino" update="iptFechaInicio"/>
-                                    </p:calendar>
-                                    <p:watermark for="iptFechaTermino" value="2019-03-20 *" />
-                                    <p:message for="iptFechaTermino" />
-                                </div>
-
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Lugar de realización " for="itaLugarRealizacion" />
-                                    <p:inputTextarea id="itaLugarRealizacion"
-                                                     rows="3" 
-                                                     counter="displayLR" 
-                                                     maxlength="1000" 
-                                                     counterTemplate="{0} caracteres en total." 
-                                                     autoResize="true"
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 20px;">
+                                    <div class="ui-material">
+                                        <p:inputText id="iptNombreActividad"
+                                                     label="iptNombreActividad"
+                                                     maxlength="1000"
                                                      required="true"
                                                      class="form-control"
-                                                     requiredMessage="Ingrese el lugar de realización"
-                                                     value="#{actividadesVarias.dto.registro.actividadVaria.lugar}"/>
-                                    <h:outputText id="displayLR" />
-                                    <p:watermark for="itaLugarRealizacion" value="Ejemplo de lugar de realización *" />
-                                    <p:message for="itaLugarRealizacion" />
+                                                     rendered="#{actividadesVarias.dto.nuevoRegistro}"
+                                                     requiredMessage="Ingrese el nombre de la actividad"
+                                                     value="#{actividadesVarias.dto.registro.actividadVaria.nombre}"/>
+                                        <p:watermark for="iptNombreActividad" value="Reunion de padres de familia del 2°A. *" />
+                                        <p:message for="iptNombreActividad" />
+                                        <p:outputLabel value="Nombre de la actividad: " for="iptNombreActividad" rendered="#{actividadesVarias.dto.nuevoRegistro}"/>
+                                    </div>
                                 </div>
 
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Objetivo " for="itaObjetivo" />
-                                    <p:inputTextarea id="itaObjetivo"
-                                                     rows="3" 
-                                                     counter="displayOBJ" 
-                                                     maxlength="1000" 
-                                                     counterTemplate="{0} caracteres en total." 
-                                                     autoResize="true"
-                                                     required="true"
-                                                     class="form-control"
-                                                     requiredMessage="Ingrese objetivo"
-                                                     value="#{actividadesVarias.dto.registro.actividadVaria.objetivo}"/>
-                                    <h:outputText id="displayOBJ" />
-                                    <p:watermark for="itaObjetivo" value="Ejemplo de objetivo *" />
-                                    <p:message for="itaObjetivo" />
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <div class="ui-material">
+                                        <p:calendar id="iptFechaInicio"
+                                                    label="iptFechaInicio"
+                                                    required="true"
+                                                    requiredMessage="Ingrese Fecha de Inicio"
+                                                    value="#{actividadesVarias.dto.registro.actividadVaria.fechaInicio}"
+                                                    valueChangeListener="#{actividadesVarias.validaFechaInicio}"
+                                                    pattern="yyyy-MM-dd" 
+                                                    styleClass="campo2Partes"
+                                                    locale="es"
+                                                    showOn="both"
+                                                    placeholder="2019-03-20 *"
+                                                    >
+                                            <p:ajax event="dateSelect" global="false" process="@this" update="@form:iptFechaTermino"/>
+                                            <p:ajax event="change" global="false" process="@this" update="@form:iptFechaTermino"/>
+                                        </p:calendar>
+                                        <p:watermark for="iptFechaInicio" value="2019-03-19 *" />
+                                        <p:message for="iptFechaInicio" />
+                                    </div>
+                                    <p>Fecha de inicio</p>
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <div class="ui-material">
+                                        <p:calendar id="iptFechaTermino"
+                                                    label="iptFechaTermino"
+                                                    required="true"
+                                                    requiredMessage="Ingrese Fecha de Termino"
+                                                    value="#{actividadesVarias.dto.registro.actividadVaria.fechaFin}" 
+                                                    valueChangeListener="#{actividadesVarias.validaFechaFin}"
+                                                    pattern="yyyy-MM-dd"
+                                                    styleClass="campo2Partes"
+                                                    locale="es"
+                                                    showOn="both"
+                                                    placeholder="2019-03-20 *"
+                                                    >
+                                            <p:ajax event="dateSelect" global="false" process="@this" update="@form:iptFechaInicio"/>
+                                            <p:ajax event="change" global="false" process="@this" update="@form:iptFechaInicio"/>
+                                        </p:calendar>
+                                        <p:message for="iptFechaTermino" />
+                                    </div>
+                                    <p>Fecha de termino</p>
                                 </div>
 
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Impacto ó Benfeficio: " for="itaImpactoBeneficio" />
-                                    <p:inputTextarea id="itaImpactoBeneficio"
-                                                     rows="3" 
-                                                     counter="displayIB" 
-                                                     maxlength="1000" 
-                                                     counterTemplate="{0} caracteres en total." 
-                                                     autoResize="true"
-                                                     required="true"
-                                                     class="form-control"
-                                                     requiredMessage="Ingrese impacto o beneficio"
-                                                     value="#{actividadesVarias.dto.registro.actividadVaria.impactoBeneficio}"/>
-                                    <h:outputText id="displayIB" />
-                                    <p:watermark for="itaImpactoBeneficio" value="Ejemplo de impacto ó beneficio *" />
-                                    <p:message for="itaImpactoBeneficio" />
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <div class="ui-material">
+                                        <p:inputTextarea id="itaLugarRealizacion"
+                                                         rows="3" 
+                                                         counter="displayLR" 
+                                                         maxlength="1000" 
+                                                         counterTemplate="{0} caracteres en total." 
+                                                         autoResize="true"
+                                                         required="true"
+                                                         class="form-control"
+                                                         requiredMessage="Ingrese el lugar de realización"
+                                                         value="#{actividadesVarias.dto.registro.actividadVaria.lugar}"/>
+                                        <h:outputText id="displayLR" />
+                                        <p:watermark for="itaLugarRealizacion" value="Ejemplo de lugar de realización *" />
+                                        <p:message for="itaLugarRealizacion" />
+                                        <p:outputLabel value="Lugar de realización " for="itaLugarRealizacion" />
+                                    </div>
                                 </div>
 
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Total Hombres: " for="iptTotalHombres" />
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:spinner id="iptTotalHombres"
-                                               label="iptTotalHombres"
-                                               required="true"
-                                               requiredMessage="Ingrese total Hombres"
-                                               value="#{actividadesVarias.dto.registro.actividadVaria.totalHombres}" 
-                                               min="0" max="1000" 
-                                               styleClass="campo2Partes"/>
-                                    <p:watermark for="iptTotalHombres" value="15 *" />
-                                    <p:message for="iptTotalHombres" />
-                                </div>
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Total Mujeres: " for="iptTotalMujeres" />
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:spinner id="iptTotalMujeres"
-                                               label="iptTotalMujeres"
-                                               required="true"
-                                               requiredMessage="Ingrese total Mujeres"
-                                               value="#{actividadesVarias.dto.registro.actividadVaria.totalMujeres}" 
-                                               min="0" max="1000"
-                                               styleClass="campo2Partes"/>
-                                    <p:watermark for="iptTotalMujeres" value="15 *" />
-                                    <p:message for="iptTotalMujeres" />
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <div class="ui-material">
+                                        <p:inputTextarea id="itaObjetivo"
+                                                         rows="3" 
+                                                         counter="displayOBJ" 
+                                                         maxlength="1000" 
+                                                         counterTemplate="{0} caracteres en total." 
+                                                         autoResize="true"
+                                                         required="true"
+                                                         class="form-control"
+                                                         requiredMessage="Ingrese objetivo"
+                                                         value="#{actividadesVarias.dto.registro.actividadVaria.objetivo}"/>
+                                        <h:outputText id="displayOBJ" />
+                                        <p:watermark for="itaObjetivo" value="Ejemplo de objetivo *" />
+                                        <p:message for="itaObjetivo" />
+                                        <p:outputLabel value="Objetivo " for="itaObjetivo" />
+                                    </div>
                                 </div>
 
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Personalidades: " for="itaPersonalidades" />
-                                    <p:inputTextarea id="itaPersonalidades"
-                                                     rows="3" 
-                                                     counter="displayP" 
-                                                     maxlength="1000" 
-                                                     counterTemplate="{0} caracteres en total." 
-                                                     autoResize="true"
-                                                     required="true"
-                                                     class="form-control"
-                                                     requiredMessage="Ingrese personalidades"
-                                                     value="#{actividadesVarias.dto.registro.actividadVaria.personalidades}"/>
-                                    <h:outputText id="displayP" />
-                                    <p:watermark for="itaPersonalidades" value="Ejemplo de personalidades *" />
-                                    <p:message for="itaPersonalidades" />
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <div class="ui-material">
+                                        <p:inputTextarea id="itaImpactoBeneficio"
+                                                         rows="3" 
+                                                         counter="displayIB" 
+                                                         maxlength="1000" 
+                                                         counterTemplate="{0} caracteres en total." 
+                                                         autoResize="true"
+                                                         required="true"
+                                                         class="form-control"
+                                                         requiredMessage="Ingrese impacto o beneficio"
+                                                         value="#{actividadesVarias.dto.registro.actividadVaria.impactoBeneficio}"/>
+                                        <h:outputText id="displayIB" />
+                                        <p:watermark for="itaImpactoBeneficio" value="Ejemplo de impacto ó beneficio *" />
+                                        <p:message for="itaImpactoBeneficio" />
+                                        <p:outputLabel value="Impacto ó Benfeficio: " for="itaImpactoBeneficio" />
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <div class="ui-material">
+                                        <p:spinner id="iptTotalHombres"
+                                                   label="iptTotalHombres"
+                                                   required="true"
+                                                   requiredMessage="Ingrese total Hombres"
+                                                   value="#{actividadesVarias.dto.registro.actividadVaria.totalHombres}" 
+                                                   min="0" max="1000" 
+                                                   styleClass="campo2Partes"/>
+                                        <p:watermark for="iptTotalHombres" value="15 *" />
+                                        <p:message for="iptTotalHombres" />
+                                        <p:outputLabel value="Total Hombres: " for="iptTotalHombres" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <div class="ui-material">
+                                        <p:spinner id="iptTotalMujeres"
+                                                   label="iptTotalMujeres"
+                                                   required="true"
+                                                   requiredMessage="Ingrese total Mujeres"
+                                                   value="#{actividadesVarias.dto.registro.actividadVaria.totalMujeres}" 
+                                                   min="0" max="1000"
+                                                   styleClass="campo2Partes"/>
+                                        <p:watermark for="iptTotalMujeres" value="15 *" />
+                                        <p:message for="iptTotalMujeres" />
+                                        <p:outputLabel value="Total Mujeres: " for="iptTotalMujeres" />
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <div class="ui-material">
+                                        <p:inputTextarea id="itaPersonalidades"
+                                                         rows="3" 
+                                                         counter="displayP" 
+                                                         maxlength="1000" 
+                                                         counterTemplate="{0} caracteres en total." 
+                                                         autoResize="true"
+                                                         required="true"
+                                                         class="form-control"
+                                                         requiredMessage="Ingrese personalidades"
+                                                         value="#{actividadesVarias.dto.registro.actividadVaria.personalidades}"/>
+                                        <h:outputText id="displayP" />
+                                        <p:watermark for="itaPersonalidades" value="Ejemplo de personalidades *" />
+                                        <p:message for="itaPersonalidades" />
+                                        <p:outputLabel value="Personalidades: " for="itaPersonalidades" />
+                                    </div>
                                 </div>
 
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
                                         <p:commandButton id="btnEditaActividad" 
-                                                         value="Actualizar cambios" 
+                                                         value="#{actividadesVarias.dto.nuevoRegistro?'Guardar':'Actualizar cambios'}"
                                                          icon="fa fa-save"
                                                          class="btn-primary"
-                                                         actionListener="#{actividadesVarias.editaActividadVaria(actividadesVarias.dto.registro.actividadVaria)}"/>
+                                                         actionListener="#{actividadesVarias.accionActividadVaria(actividadesVarias.dto.registro.actividadVaria)}"/>
                                     </center>
                                 </div>
 

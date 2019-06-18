@@ -24,9 +24,12 @@
             }
         </script>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
-        </c:if>        
+        </c:if> 
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />  
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -39,364 +42,397 @@
     </ui:define>
 
     <ui:define name="body">
-        <style>
-            .table-bordered{
-                border: 1px solid #000000;
-            }
-            body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
-                border: 1px solid #000000;
-            }
-            .table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td{
-                border: 1px solid #000000;
-            }
-        </style>
         <adm:breadcrumb title="Planeación cuatrimestral - Secretario/a Académico/a"/>
         <adm:sidebar collapsed="true"/>
-        <h:form id="frm" prependId="false" class="form-inline">
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <div id="main-buttons" class="hidden-sm hidden-xs" >
-                        <p:outputLabel for="planeacion" value="Director:" />
-                        <p:selectOneMenu id="planeacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" widgetVar="planeacion" valueChangeListener="#{planeacionCuatrimestral.buscarPlaneacionesLiberadasPorDirrectores}">
-                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                            <f:selectItems value="#{planeacionCuatrimestral.listPlaneacionesLiberadasSelecMenu}" var="planeaciones" itemValue="#{planeaciones.personal.clave}" itemLabel="#{planeaciones.personal.clave} -- #{planeaciones.personal.nombre}" />
-                            <p:ajax update="tblColaboradores planeacion" process="@this"/>
-                        </p:selectOneMenu>
-                        <p:message for="planeacion" />
+        <p:panel header="Registro de actividades" visible="#{!planeacionCuatrimestral.activa}" class="box box-primary" >
+            <div class="box-header with-border">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <p style="font-weight: bold; font-size: 18px;color: red">Nota:</p>
+                        <p style="font-size: 19px">No hay periodo activo para registro de planeación cuatrimestral, si cree que es un error favor de reportarlo con el administrador al correo sistemas@utxicotepec.edu.mx</p>
                     </div>
                 </div>
             </div>
-
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <div id="main-buttons" class="hidden-sm hidden-xs" >
-                        <p:toolbar id="tb">
-                            <f:facet name="left">
-                                <p:outputPanel >
-                                    <p:autoUpdate/>
-                                    <p:outputLabel value="Total de colaboradores: #{planeacionCuatrimestral.planeaciones.size()}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Correctos: #{planeacionCuatrimestral.secretarioAcademicoCorrectas}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Validados: #{planeacionCuatrimestral.secretarioAcademicoValidados}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Estudiantes en estadía: #{planeacionCuatrimestral.detalles.estudiantesEstadia}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Estudiantes en estadía asignados: #{planeacionCuatrimestral.totalEstudiantesAsigandos}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Proyectos de estadía: #{planeacionCuatrimestral.detalles.proyectosEstadia}" />
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Proyectos de estadía asignados: #{planeacionCuatrimestral.totalProyuectosAsigandos}"/>
-                                </p:outputPanel>
-                            </f:facet>
-                            <f:facet name="right">
-                                <p:outputPanel >
-                                    <p:autoUpdate/>
-                                    <p:commandButton value="Reglas de validación" id="btnRdV" actionListener="#{planeacionCuatrimestral.agregarDocente()}"  oncomplete="PF('dlgRdVPC').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" />
-                                    <p:commandButton value="Liberar planeación" id="btnLPC" actionListener="#{planeacionCuatrimestral.liberarPlaneacionesCuatrimestralesSecretarioAcademico()}" disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:!planeacionCuatrimestral.planeacionesFinalizadas}" process="@this" icon="fa fa-check" styleClass="btn-primary" update="tblColaboradores" />
-                                    <p:commandButton value="Denegar planeación" id="btnDPC" actionListener="#{planeacionCuatrimestral.denegarPlaneacionesCuatrimestralesSecretarioAcademico()}" disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:planeacionCuatrimestral.planeacionesFinalizadas}" process="@this" icon="fa fa-times" styleClass="btn-primary" update="tblColaboradores" />
-                                </p:outputPanel>
-
-                            </f:facet>
-                        </p:toolbar>
+        </p:panel>
+        <c:if test="#{planeacionCuatrimestral.activa}">
+            <h:form id="frm" prependId="false" class="form-inline">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <div id="main-buttons" class="hidden-sm hidden-xs" >
+                            <p:outputLabel for="planeacion" value="Director:" />
+                            <p:selectOneMenu id="planeacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" widgetVar="planeacion" valueChangeListener="#{planeacionCuatrimestral.buscarPlaneacionesLiberadasPorDirrectores}">
+                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                <f:selectItems value="#{planeacionCuatrimestral.listPlaneacionesLiberadasSelecMenu}" var="planeaciones" itemValue="#{planeaciones.personal.clave}" itemLabel="#{planeaciones.personal.clave} -- #{planeaciones.personal.nombre}" />
+                                <p:ajax update="tblColaboradores planeacion" process="@this"/>
+                            </p:selectOneMenu>
+                            <p:message for="planeacion" />
+                        </div>
                     </div>
-                    <p:separator/>
-                    <div class="box box-solid">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">
+                </div>
+
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <div id="main-buttons" class="hidden-sm hidden-xs" >
+                            <p:toolbar id="tb">
+                                <f:facet name="left">
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <p:autoUpdate/>
+                                        <p:outputLabel value="Total de colaboradores: #{planeacionCuatrimestral.planeaciones.size()}" />
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Correctos: #{planeacionCuatrimestral.secretarioAcademicoCorrectas}" />
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Validados: #{planeacionCuatrimestral.secretarioAcademicoValidados}" />
+                                        <c:if test="#{planeacionCuatrimestral.proximosAEstadia}">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Estudiantes en estadía: #{planeacionCuatrimestral.detalles.estudiantesEstadia}"/>
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Estudiantes en estadía asignados: #{planeacionCuatrimestral.totalEstudiantesAsigandos}"/>
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Proyectos de estadía: #{planeacionCuatrimestral.detalles.proyectosEstadia}"/>
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Proyectos de estadía asignados: #{planeacionCuatrimestral.totalProyuectosAsigandos}"/>
+                                        </c:if>
+                                    </p:outputPanel>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <p:commandButton value="Reglas de validación" id="btnRdV" actionListener="#{planeacionCuatrimestral.agregarDocente()}"  oncomplete="PF('dlgRdVPC').show()" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" />
+                                        <p:commandButton value="Liberar planeación" id="btnLPC" actionListener="#{planeacionCuatrimestral.liberarPlaneacionesCuatrimestralesSecretarioAcademico()}" disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:false}" process="@this" icon="fa fa-check" styleClass="btn-primary" update="tblColaboradores" />
+                                        <p:commandButton value="Denegar planeación" id="btnDPC" actionListener="#{planeacionCuatrimestral.denegarPlaneacionesCuatrimestralesSecretarioAcademico()}" disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:planeacionCuatrimestral.planeacionesFinalizadas}" process="@this" icon="fa fa-times" styleClass="btn-primary" update="tblColaboradores" />
+                                    </p:outputPanel>
+
+                                </f:facet>
+                            </p:toolbar>
+                        </div>
+                        <p:separator/>
+                        <div class="box box-solid">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">
+                                    <p:outputPanel>
+                                        <p:autoUpdate/>
+                                        <c:if test="#{!planeacionCuatrimestral.activa}">
+                                            Sin planeaciones activas
+                                        </c:if>
+                                        <c:if test="#{planeacionCuatrimestral.activa}">
+                                            Periodo: #{caster.periodoToString(planeacionCuatrimestral.periodo)} -- Director: #{planeacionCuatrimestral.director.nombre}
+                                        </c:if>
+                                    </p:outputPanel>
+                                </h3>
+
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 text-info text-center">
+                                    <p:outputPanel rendered="#{planeacionCuatrimestral.director eq null?false:true}">
+                                        <p:autoUpdate/>
+                                        <div id="j_idt286" class="ui-steps ui-widget ui-helper-clearfix">
+                                            <ul role="tablist">
+                                                <li class="ui-steps-item ui-state-default ui-corner-all" role="tab">
+                                                    <a tabindex="-1" class="ui-menuitem-link ui-corner-all #{planeacionCuatrimestral.planeacionesLiberadas.liberacionSistema ?'aceptado':'denegado'}" href="#">
+                                                        <span class="ui-steps-number"><i class="fa fa-laptop"></i></span>
+                                                        <span class="ui-steps-title">Sistema</span>
+                                                    </a>
+                                                </li>
+                                                <li class="ui-steps-item ui-state-default ui-corner-all" role="tab">
+                                                    <a tabindex="-1" class="ui-menuitem-link ui-corner-all #{planeacionCuatrimestral.planeacionesLiberadas.liberacionDirector ?'aceptado':'denegado'}" href="#">
+                                                        <span class="ui-steps-number"><i class="fa fa-user"></i></span>
+                                                        <span class="ui-steps-title">Director</span>
+                                                    </a>
+                                                </li>
+                                                <li class="ui-steps-item ui-state-default ui-corner-all" role="tab">
+                                                    <a tabindex="-1" class="ui-menuitem-link ui-corner-all #{planeacionCuatrimestral.planeacionesLiberadas.validacionSecretarioAcademico ?'aceptado':'denegado'}" href="#">
+                                                        <span class="ui-steps-number"><i class="fa fa-graduation-cap"></i></span>
+                                                        <span class="ui-steps-title">Secretario/a academico</span>
+                                                    </a>
+                                                </li>
+                                                <li class="ui-steps-item ui-state-default ui-corner-all" role="tab">
+                                                    <a tabindex="-1" class="ui-menuitem-link ui-corner-all #{planeacionCuatrimestral.planeacionesLiberadas.validacionJefePersonal ?'aceptado':'denegado'}" href="#">
+                                                        <span class="ui-steps-number"><i class="fa fa-users"></i></span>
+                                                        <span class="ui-steps-title">Jefe de Personal</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+
+
+                            <div class="box-body">
                                 <c:if test="#{!planeacionCuatrimestral.activa}">
-                                    Sin planeaciones activas
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info text-center">
+                                            <h5 style="margin-top: 0px; margin-bottom: 0px;">
+                                                Si considera que es un error notifique al administrador.
+                                            </h5>
+                                        </div>
+                                    </div>
                                 </c:if>
                                 <c:if test="#{planeacionCuatrimestral.activa}">
-                                    Periodo: #{caster.periodoToString(planeacionCuatrimestral.periodo)} -- Director: #{planeacionCuatrimestral.director.nombre}
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info text-center">
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{planeacionCuatrimestral.imprimirPlaneaciones()}" update=":tblColaboradores" />
+                                            <p:dataTable id="tblColaboradores" value="#{planeacionCuatrimestral.planeaciones}" var="planeacion" rowKey="#{planeacion.planeacion}" widgetVar="tblColaboradores"
+                                                         sortBy="#{planeacion.docente.categoriaOficial.nombre}"
+                                                         rows="10" paginator="true" rowsPerPageTemplate="5,10,15,20" 
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"                                                     >
+                                                <f:facet name="header">
+                                                    Lista de colaboradores                                               
+                                                </f:facet>
+                                                <f:facet name="{Exporters}">
+                                                    <p:commandLink ajax="false">
+                                                        <i class="fa fa-file-excel-o" /> Descargar
+                                                        <pe:exporter type="xlsx" target="tblColaboradores" fileName="planeacion" orientation="Landscape"  />
+                                                    </p:commandLink>
+                                                </f:facet>
+                                                <p:headerRow>
+                                                    <p:column colspan="#{planeacionCuatrimestral.proximosAEstadia ?'16':'13'}" styleClass="lac" style="text-align: left">
+                                                        <h:outputText value="#{planeacion.docente.categoriaOficial.nombre}"/>
+                                                    </p:column>
+                                                </p:headerRow> 
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column rowspan="2" headerText="Nombre" style="width: 10%; font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="2" headerText="Horas clase" style="width: 8%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="3" headerText="Estadías" style="width: 24%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle" rendered="#{planeacionCuatrimestral.proximosAEstadia}"/>                                                    
+                                                        <p:column rowspan="2" headerText="Proyecto de investigación" style="width: 8%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Asesorías clase" style="width: 6%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="2" headerText="Tutoría" style="width: 14%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Reunión de academia" style="width: 6%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Actividades varias" style="width: 8%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Total" style="width: 5%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Comentarios sistema" style="width: 15%;  font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Validar" style="width: 5%;  font-weight: bold; font-size: medium"  styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Opciones" style="width: 5%; "   styleClass="hederTablesTitle"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="TSU" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="ING" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Horas" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle" rendered="#{planeacionCuatrimestral.proximosAEstadia}"/>
+                                                        <p:column headerText="Estudiantes asignados" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle" rendered="#{planeacionCuatrimestral.proximosAEstadia}"/>
+                                                        <p:column headerText="Proyectos asignados" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle" rendered="#{planeacionCuatrimestral.proximosAEstadia}"/>                                                
+                                                        <p:column headerText="Individual" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Grupal" style=" font-weight: bold; font-size: medium" styleClass="hederTablesTitle"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:column>
+                                                    <h:outputText value="#{planeacion.docente.nombre}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{planeacion.horasClaseTsu}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{planeacion.horasClaseIng}" />
+                                                </p:column>
+                                                <p:column rendered="#{planeacionCuatrimestral.proximosAEstadia}">
+                                                    <h:outputText value="#{planeacion.estadias}" />
+                                                </p:column>
+                                                <p:column rendered="#{planeacionCuatrimestral.proximosAEstadia}">
+                                                    <h:outputText value="#{planeacion.estudiantesEstadia}" />
+                                                </p:column>
+                                                <p:column rendered="#{planeacionCuatrimestral.proximosAEstadia}">
+                                                    <h:outputText value="#{planeacion.proyectosEstadia}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{planeacion.proyectoInvestigacion}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{planeacion.asesoriaClase}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{planeacion.tutoriaIndividual}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{planeacion.tutoriaGrupal}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{planeacion.reunionAcademia}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{planeacion.actividadesVarias}" />
+                                                    <p:spacer width="15px"/>
+                                                    <p:commandButton title="Detalles" icon="fa fa-info-circle" class="btn-primary" disabled="#{planeacion.validacionSecretarioAdemico}" 
+                                                                     oncomplete="PF('dlg1').show()" process="@this" update="dlg1" actionListener="#{planeacionCuatrimestral.buscarActividadesVariasPlaneacionCuatrimestral(planeacion)}">
+                                                        <f:setPropertyActionListener target="#{planeacionCuatrimestral.editando}" value="#{planeacion}" />
+                                                    </p:commandButton>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{planeacion.total}" />
+                                                </p:column>
+                                                <p:column id="colValidacionSistema">
+                                                    <h:outputText value="#{planeacion.comentariosSistema}" style="color: #{planeacion.validacionSistema?'#000':'red'};"  />
+                                                </p:column>
+                                                <p:column>
+                                                    <p:selectBooleanCheckbox id="validar" value="#{planeacion.validacionSecretarioAdemico}" 
+                                                                             disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:false}"
+                                                                             valueChangeListener="#{planeacionCuatrimestral.validarSecretarioAcademico}"
+                                                                             title="Activa la casilla para indicar al Jefe de personal que has validado los valores." >
+                                                        <p:ajax update=":tblColaboradores" />
+                                                    </p:selectBooleanCheckbox>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:commandButton icon="fa fa-comment" styleClass="btn-primary" disabled="#{planeacion.validacionSecretarioAdemico}" title="#{planeacion.validacionSecretarioAdemico?'No se puede agregar comentarios porque ya se marcó como validada':(!empty planeacion.comentariosSecretarioAcademico)?'Presione para agregar comentarios.':planeacion.comentariosSecretarioAcademico}"
+                                                                     oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
+                                                        <f:setPropertyActionListener target="#{planeacionCuatrimestral.editando}" value="#{planeacion}" />
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                            </p:dataTable>
+                                        </div>
+                                    </div>
                                 </c:if>
-                            </h3>
-
-                            <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                </button>
                             </div>
-                        </div>
-                        <div class="box-body">
-                            <c:if test="#{!planeacionCuatrimestral.activa}">
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 text-info text-center">
-                                        <h5 style="margin-top: 0px; margin-bottom: 0px;">
-                                            Si considera que es un error notifique al administrador.
-                                        </h5>
-                                    </div>
-                                </div>
-                            </c:if>
-                            <c:if test="#{planeacionCuatrimestral.activa}">
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 text-info text-center">
-                                        <p:remoteCommand name="actualizarTabla" actionListener="#{planeacionCuatrimestral.imprimirPlaneaciones()}" update=":tblColaboradores" />
-                                        <p:dataTable id="tblColaboradores" value="#{planeacionCuatrimestral.planeaciones}" var="planeacion" rowKey="#{planeacion.planeacion}" widgetVar="tblColaboradores"
-                                                     rows="5" paginator="true" rowsPerPageTemplate="5,10,15,20" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
-                                                     tableStyleClass="table-condensed table-bordered table-hover table-responsive">
-                                            <f:facet name="header">
-                                                Lista de colaboradores
-                                                <hr/>
-                                                <p:outputLabel value="Validado por el Jefe de personal" style="font-weight: bold; background: #009688"/> 
-                                                <p:spacer width="50px"/>
-                                                <p:outputLabel value="Validado por el Secretario Académico" style="font-weight: bold; background: #FEF200"/>  
-                                                <p:spacer width="50px"/> 
-                                                <p:outputLabel value="Validado por el Director" style="font-weight: bold; background: #f0ad4e"/>   
-                                                <p:spacer width="50px"/>
-                                                <p:outputLabel value="Validado por el Sistema" style="font-weight: bold; background: #EF5350"/>   
-                                            </f:facet>
-                                            <f:facet name="{Exporters}">
-                                                <p:commandLink ajax="false">
-                                                    <i class="fa fa-file-excel-o" /> Descargar
-                                                    <pe:exporter type="xlsx" target="tblColaboradores" fileName="planeacion" orientation="Landscape"  />
-                                                </p:commandLink>
-                                            </f:facet>
-                                            <p:columnGroup type="header">
-                                                <p:row class="success">
-                                                    <p:column rowspan="2" headerText="Tipo" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Nombre" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column colspan="2" headerText="Horas clase" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column colspan="3" headerText="Estadías" style=" font-weight: bold; font-size: medium"/>     
-                                                    <p:column rowspan="2" headerText="Proyecto de investigación" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Asesorías clase" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column colspan="2" headerText="Tutoría" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Reunión de academia" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Actividades varias" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Total" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Comentarios sistema" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column rowspan="2" headerText="Validar" style="width: 60px; font-weight: bold; font-size: medium"  />
-                                                    <p:column rowspan="2" headerText="" style="width: 60px;"  />
-                                                    <p:column rowspan="2" headerText="" style="width: 30px;"  />
-                                                </p:row>
-                                                <p:row class="success">
-                                                    <p:column headerText="TSU" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="ING" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Horas" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Estudiantes asignados" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Proyectos asignados" style=" font-weight: bold; font-size: medium"/>  
-                                                    <p:column headerText="Individual" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column headerText="Grupal" style=" font-weight: bold; font-size: medium"/>
-                                                </p:row>
-                                            </p:columnGroup>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.docente.categoriaOficial.nombre}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.docente.nombre}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.horasClaseTsu}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.horasClaseIng}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.estadias}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.estudiantesEstadia}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.proyectosEstadia}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.proyectoInvestigacion}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.asesoriaClase}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.tutoriaIndividual}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.tutoriaGrupal}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.reunionAcademia}" />
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.actividadesVarias}" />
-                                                <p:commandButton value="Detalles" icon="fa fa-ellipsis-v" class="btn-primary" disabled="#{planeacion.validacionSecretarioAdemico}" 
-                                                                 oncomplete="PF('dlg1').show()" process="@this" update="dlg1" actionListener="#{planeacionCuatrimestral.buscarActividadesVariasPlaneacionCuatrimestral(planeacion)}">
-                                                    <f:setPropertyActionListener target="#{planeacionCuatrimestral.editando}" value="#{planeacion}" />
-                                                </p:commandButton>
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{planeacion.total}" />
-                                            </p:column>
-                                            <p:column id="colValidacionSistema">
-                                                <h:outputText value="#{planeacion.comentariosSistema}" style="color: #{planeacion.validacionSistema?'#000':'red'};"  />
-                                            </p:column>
-                                            <p:column>
-                                                <p:selectBooleanCheckbox id="validar" value="#{planeacion.validacionSecretarioAdemico}" disabled="#{planeacionCuatrimestral.planeacionesliberadasS eq true?true:!planeacion.validacionSistema}"
-                                                                         valueChangeListener="#{planeacionCuatrimestral.validarSecretarioAcademico}"
-                                                                         title="Activa la casilla para indicar al Jefe de personal que has validado los valores." >
-                                                    <p:ajax update=":tblColaboradores" />
-                                                </p:selectBooleanCheckbox>
-                                            </p:column>
-                                            <p:column>
-                                                <p:commandButton icon="fa fa-comment" styleClass="btn-primary" disabled="#{planeacion.validacionSecretarioAdemico}" title="#{planeacion.validacionSecretarioAdemico?'No se puede agregar comentarios porque ya se marcó como validada':(!empty planeacion.comentariosSecretarioAcademico)?'Presione para agregar comentarios.':planeacion.comentariosSecretarioAcademico}"
-                                                                 oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
-                                                    <f:setPropertyActionListener target="#{planeacionCuatrimestral.editando}" value="#{planeacion}" />
-                                                </p:commandButton>
-                                            </p:column>
-
-                                            <p:column style="#{planeacion.validacionSistema eq true ?
-                                                               planeacion.validacionDirector eq true ?
-                                                               planeacion.validacionSecretarioAdemico eq true ?
-                                                               planeacion.validacionJefePersonal eq true ?'background: #009688':'background: #FEF200':'background: #f0ad4e'
-                                                               :'background: #EF5350':''}">
-                                            </p:column>
-
-                                        </p:dataTable>
-                                    </div>
-                                </div>
-                            </c:if>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <p:dialog id="dlg1" header="Asignación de actividades varias" widgetVar="dlg1" minHeight="40" width="650">
-                <p:outputPanel id="actividadesVarias">
-                    <div class="col-sm-12 col-md-12 col-lg-12">
+                <p:dialog id="dlg1" header="Asignación de actividades varias" widgetVar="dlg1" minHeight="40" width="650">
+                    <p:outputPanel id="actividadesVarias">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
 
-                        <p:remoteCommand name="actualizarTabla2" actionListener="#{planeacionCuatrimestral.imprimirPlaneaciones()}" update=":tblactividadesVarias" />
+                            <p:remoteCommand name="actualizarTabla2" actionListener="#{planeacionCuatrimestral.imprimirPlaneaciones()}" update=":tblactividadesVarias" />
 
-                        <p:dataTable id="tblactividadesVarias" value="#{planeacionCuatrimestral.listaActividadesvariasplaneacionescuatrimestraleses}" var="actividadesVarias" rowKey="#{actividadesVarias.atividadesvariasplaneacionescuatrimestralesPK}"
-                                     editable="true" editMode="cell" widgetVar="tblactividadesVarias"
-                                     rows="5" paginator="true" rowsPerPageTemplate="5,10,15,20" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                            <p:dataTable id="tblactividadesVarias" value="#{planeacionCuatrimestral.listaActividadesvariasplaneacionescuatrimestraleses}" var="actividadesVarias" rowKey="#{actividadesVarias.atividadesvariasplaneacionescuatrimestralesPK}"
+                                         editable="true" editMode="cell" widgetVar="tblactividadesVarias"
+                                         rows="5" paginator="true" rowsPerPageTemplate="5,10,15,20" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
 
-                            <f:facet name="header">
-                                Horas de actividades varias: #{planeacionCuatrimestral.editando.actividadesVarias} - #{planeacionCuatrimestral.totalHorasAsignadas} Horas asignadas
-                            </f:facet>
+                                <f:facet name="header">
+                                    Horas de actividades varias: #{planeacionCuatrimestral.editando.actividadesVarias} - #{planeacionCuatrimestral.totalHorasAsignadas} Horas asignadas
+                                </f:facet>
 
-                            <p:column headerText="Actividad">
-                                <h:outputText value="#{actividadesVarias.actividadesvarias.nombreAcctividad}" style="width: 150px"/>
-                            </p:column>
+                                <p:column headerText="Actividad">
+                                    <h:outputText value="#{actividadesVarias.actividadesvarias.nombreAcctividad}" style="width: 150px"/>
+                                </p:column>
 
-                            <p:column headerText="Horas asignadas">
-                                <h:outputText value="#{actividadesVarias.horasAsignadas}" />
-                            </p:column>
+                                <p:column headerText="Horas asignadas">
+                                    <h:outputText value="#{actividadesVarias.horasAsignadas}" />
+                                </p:column>
 
-                        </p:dataTable>
-                    </div>
-                </p:outputPanel>
-            </p:dialog>
+                            </p:dataTable>
+                        </div>
+                    </p:outputPanel>
+                </p:dialog>
 
 
-            <p:dialog header="Reglas de validación" widgetVar="dlgRdVPC" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
-                <p:tabView>
-                    <p:tab title="Profesor de tiempo completo">
-                        <p:panelGrid columns="3">
-                            <h:outputText value="Criterio " />
-                            <h:outputText value="Máximo" />
-                            <h:outputText value="Mínimo" />
+                <p:dialog header="Reglas de validación" widgetVar="dlgRdVPC" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                    <p:tabView>
+                        <p:tab title="Profesor de tiempo completo">
+                            <p:panelGrid columns="3">
+                                <h:outputText value="Criterio " />
+                                <h:outputText value="Máximo" />
+                                <h:outputText value="Mínimo" />
 
-                            <h:outputText value="Actividades Varias" />
-                            <h:outputText value="5" />
-                            <h:outputText value="-" />
+                                <h:outputText value="Actividades Varias" />
+                                <h:outputText value="5" />
+                                <h:outputText value="-" />
 
-                            <h:outputText value="Asesoría Clase" />
-                            <h:outputText value="3" />
-                            <h:outputText value="-" />
+                                <h:outputText value="Asesoría Clase" />
+                                <h:outputText value="3" />
+                                <h:outputText value="-" />
 
-                            <h:outputText value="Horas Clase" />
-                            <h:outputText value="26" />
-                            <h:outputText value="24" />
+                                <h:outputText value="Horas Clase" />
+                                <h:outputText value="26" />
+                                <h:outputText value="24" />
 
-                            <h:outputText value="Proyecto Investigación" />
-                            <h:outputText value="14" />
-                            <h:outputText value="6" />
+                                <h:outputText value="Proyecto Investigación" />
+                                <h:outputText value="14" />
+                                <h:outputText value="6" />
 
-                            <h:outputText value="Reunión Academia" />
-                            <h:outputText value="1" />
-                            <h:outputText value="-" />
+                                <h:outputText value="Reunión Academia" />
+                                <h:outputText value="1" />
+                                <h:outputText value="-" />
 
-                            <h:outputText value="Tutoría Grupal" />
-                            <h:outputText value="1" />
-                            <h:outputText value="-" />
+                                <h:outputText value="Tutoría Grupal" />
+                                <h:outputText value="1" />
+                                <h:outputText value="-" />
 
-                            <h:outputText value="Tutoría Individual" />
-                            <h:outputText value="1" />
-                            <h:outputText value="-" />
-                        </p:panelGrid>
-                    </p:tab>
-                    <p:tab title="Profesor de asignatura">
-                        <p:panelGrid columns="3">
-                            <h:outputText value="Criterio " />
-                            <h:outputText value="Máximo" />
-                            <h:outputText value="Mínimo" />
+                                <h:outputText value="Tutoría Individual" />
+                                <h:outputText value="1" />
+                                <h:outputText value="-" />
+                            </p:panelGrid>
+                        </p:tab>
+                        <p:tab title="Profesor de asignatura">
+                            <p:panelGrid columns="3">
+                                <h:outputText value="Criterio " />
+                                <h:outputText value="Máximo" />
+                                <h:outputText value="Mínimo" />
 
-                            <h:outputText value="Actividades Varias" />
-                            <h:outputText value="3" />
-                            <h:outputText value="-" />
+                                <h:outputText value="Actividades Varias" />
+                                <h:outputText value="3" />
+                                <h:outputText value="-" />
 
-                            <h:outputText value="Asesoría Clase" />
-                            <h:outputText value="2" />
-                            <h:outputText value="-" />
+                                <h:outputText value="Asesoría Clase" />
+                                <h:outputText value="2" />
+                                <h:outputText value="-" />
 
-                            <h:outputText value="Horas Clase" />
-                            <h:outputText value="30" />
-                            <h:outputText value="6" />
+                                <h:outputText value="Horas Clase" />
+                                <h:outputText value="30" />
+                                <h:outputText value="6" />
 
-                            <h:outputText value="Reunión Academia" />
-                            <h:outputText value="1" />
-                            <h:outputText value="-" />
+                                <h:outputText value="Reunión Academia" />
+                                <h:outputText value="1" />
+                                <h:outputText value="-" />
 
-                            <h:outputText value="Tutoría Grupal" />
-                            <h:outputText value="1" />
-                            <h:outputText value="-" />
+                                <h:outputText value="Tutoría Grupal" />
+                                <h:outputText value="1" />
+                                <h:outputText value="-" />
 
-                            <h:outputText value="Tutoría Individual" />
-                            <h:outputText value="1" />
-                            <h:outputText value="-" />
-                        </p:panelGrid>
-                    </p:tab>
-                    <p:tab title="Técnico laboratorista">
-                        <p:panelGrid columns="3">
-                            <h:outputText value="Criterio " />
-                            <h:outputText value="Máximo" />
-                            <h:outputText value="Mínimo" />
+                                <h:outputText value="Tutoría Individual" />
+                                <h:outputText value="1" />
+                                <h:outputText value="-" />
+                            </p:panelGrid>
+                        </p:tab>
+                        <p:tab title="Técnico laboratorista">
+                            <p:panelGrid columns="3">
+                                <h:outputText value="Criterio " />
+                                <h:outputText value="Máximo" />
+                                <h:outputText value="Mínimo" />
 
-                            <h:outputText value="Actividades no frente a grupo" />
-                            <h:outputText value="5" />
-                            <h:outputText value="-" />
+                                <h:outputText value="Actividades no frente a grupo" />
+                                <h:outputText value="5" />
+                                <h:outputText value="-" />
 
-                            <h:outputText value="Horas Clase" />
-                            <h:outputText value="40" />
-                            <h:outputText value="39" />
+                                <h:outputText value="Horas Clase" />
+                                <h:outputText value="40" />
+                                <h:outputText value="39" />
 
-                            <h:outputText value="Reunión Academia" />
-                            <h:outputText value="1" />
-                            <h:outputText value="-" />
-                        </p:panelGrid>
-                    </p:tab>
-                </p:tabView>
-            </p:dialog>
+                                <h:outputText value="Reunión Academia" />
+                                <h:outputText value="1" />
+                                <h:outputText value="-" />
+                            </p:panelGrid>
+                        </p:tab>
+                    </p:tabView>
+                </p:dialog>
 
-        </h:form>
-        <h:form id="frmComentario">
-            <p:dialog header="Agregar comentario" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
-                <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
-                    <p:outputLabel value="Docente: #{planeacionCuatrimestral.editando.docente.nombre}" />
-                    <c:if test="#{planeacionCuatrimestral.editando.comentariosDirector eq ' '?false:true }">
-                        <p:outputLabel value="Comentario Director de Carrera: #{planeacionCuatrimestral.editando.comentariosDirector}" />
-                    </c:if>
-                    <c:if test="#{planeacionCuatrimestral.editando.comentariosJefePersonal eq ' '?false:true }">
-                        <p:outputLabel value="Comentario Jefe/a de Personal: #{planeacionCuatrimestral.editando.comentariosJefePersonal}" />
-                    </c:if>
-                    <p:inputTextarea id="txtComentario" value="#{planeacionCuatrimestral.editando.comentariosSecretarioAcademico}" 
-                                     rows="5" cols="95" counter="display" maxlength="500" counterTemplate="{0} caracteres restantes." 
-                                     styleClass="form-control" autoResize="true" />
-                    <p:message for="txtComentario" />
-                    <h:outputText id="display" />
-                    <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{planeacionCuatrimestral.guardarComentario()}"
-                                     icon="fa fa-chek" styleClass="btn-primary"  update=":frm:tblColaboradores"
-                                     onsuccess="PF('dlgComentario').hide()" />
-                </p:panelGrid>
-            </p:dialog>
-        </h:form>
+            </h:form>
+            <h:form id="frmComentario">
+                <p:dialog header="Agregar comentario" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                    <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
+                        <p:outputLabel value="Docente: #{planeacionCuatrimestral.editando.docente.nombre}" />
+                        <c:if test="#{planeacionCuatrimestral.editando.comentariosDirector eq ' '?false:true }">
+                            <p:outputLabel value="Comentario Director de Carrera: #{planeacionCuatrimestral.editando.comentariosDirector}" />
+                        </c:if>
+                        <c:if test="#{planeacionCuatrimestral.editando.comentariosJefePersonal eq ' '?false:true }">
+                            <p:outputLabel value="Comentario Jefe/a de Personal: #{planeacionCuatrimestral.editando.comentariosJefePersonal}" />
+                        </c:if>
+                        <p:inputTextarea id="txtComentario" value="#{planeacionCuatrimestral.editando.comentariosSecretarioAcademico}" 
+                                         rows="5" cols="95" counter="display" maxlength="500" counterTemplate="{0} caracteres restantes." 
+                                         styleClass="form-control" autoResize="true" />
+                        <p:message for="txtComentario" />
+                        <h:outputText id="display" />
+                        <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{planeacionCuatrimestral.guardarComentario()}"
+                                         icon="fa fa-chek" styleClass="btn-primary"  update=":frm:tblColaboradores"
+                                         onsuccess="PF('dlgComentario').hide()" />
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+        </c:if>
     </ui:define>
 </ui:composition>

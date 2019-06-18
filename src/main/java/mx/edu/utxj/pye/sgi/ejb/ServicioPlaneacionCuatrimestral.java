@@ -16,8 +16,12 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Actividadesvarias;
@@ -27,8 +31,11 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesCuatrimestrales;
 import mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesDetalles;
 import mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesLiberaciones;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.funcional.Validador;
 import mx.edu.utxj.pye.sgi.funcional.ValidadorPlaneacionCuatrimestralLAB;
 import mx.edu.utxj.pye.sgi.funcional.ValidadorPlaneacionCuatrimestralPA;
@@ -41,9 +48,17 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
 
     private static final long serialVersionUID = -8560915921611638551L;
 
+    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
+    private EntityManager em;
+    
+    @Getter @Setter List<Personal> personalColaboradorPlaneaciones=new ArrayList<>();
+    
+    
     @EJB    Facade f;
-    @EJB    Facade2 f2;
+    @EJB    Facade2 f2;  
+    @EJB    FacadeCE facadeCE;
     @EJB    EjbPropiedades ep;
+    
     @Resource    ManagedExecutorService exe;
 
     @Override
@@ -128,21 +143,57 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
     }
 
     @Override
-    public List<Personal> getPersonalDocenteColaborador(@NonNull List<Personal> docentes, Personal director) {
-        List<Personal> l = f.getEntityManager().createQuery("SELECT p FROM Personal p INNER JOIN p.planeacionesCuatrimestralesList1 pc WHERE pc.director.clave=:director", Personal.class)
-                .setParameter("director", director.getClave())
+    public List<Personal> getPersonalDocenteColaborador(@NonNull List<Personal> docentes, Personal director, Integer periodo) {
+        personalColaboradorPlaneaciones=new ArrayList<>();
+        personalColaboradorPlaneaciones.clear();
+        List<AreasUniversidad> pla = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:area", AreasUniversidad.class)
+                .setParameter("area", director.getAreaOperativa())
                 .getResultList();
-        
-        if (l.isEmpty()) {
-            l = docentes.stream().filter(p -> p.getAreaSuperior() == director.getAreaOperativa()).collect(Collectors.toList());
-//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPlaneacionCuatrimestral.getPersonalDocenteColaborador() desde colaboradores");
-//            l.stream().map(d -> d.getCategoriaOficial().getCategoria()).forEach(System.out::println);
-        } else {
-//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPlaneacionCuatrimestral.getPersonalDocenteColaborador() en BD");
-//            l.stream().map(d -> d.getCategoriaOficial().getCategoria()).forEach(System.out::println);
+
+        List<Short> planesDeEstudio = new ArrayList<>();
+        if (pla.isEmpty()) {
+            return new ArrayList<>();
+        }
+        pla.forEach((t) -> {
+            planesDeEstudio.add(t.getArea());
+        });
+        List<CargaAcademica> ca = facadeCE.getEntityManager().createQuery("SELECT ca FROM CargaAcademica ca "
+                + "INNER JOIN ca.materia ma "
+                + "INNER JOIN ma.idPlan pa "
+                + "INNER JOIN ca.grupo g "
+                + "WHERE g.periodo=:periodo AND pa.idPe IN :planes", CargaAcademica.class)
+                .setParameter("periodo", periodo)
+                .setParameter("planes", planesDeEstudio)
+                .getResultList();
+        List<Integer> docentesCargaAcademica = new ArrayList<>();
+        if (ca.isEmpty()) {
+            return new ArrayList<>();
+        }
+        ca.forEach((t) -> {
+            docentesCargaAcademica.add(t.getCargaAcademicaPK().getDocente());
+        });
+
+        personalColaboradorPlaneaciones = f.getEntityManager().createQuery("SELECT p FROM Personal p INNER JOIN p.planeacionesCuatrimestralesList1 pc WHERE pc.director.clave=:director AND pc.periodo=:periodo", Personal.class)
+                .setParameter("director", director.getClave())
+                .setParameter("periodo", periodo)                
+                .getResultList();
+        if (personalColaboradorPlaneaciones.isEmpty()) {
+            personalColaboradorPlaneaciones = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.clave IN :clave", Personal.class)
+                    .setParameter("clave", docentesCargaAcademica)
+                    .getResultList();
+        }
+        if(personalColaboradorPlaneaciones.size()!=docentesCargaAcademica.size()){
+            List<Personal> docentesRecienAsignados= f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.clave IN :clave", Personal.class)
+                    .setParameter("clave", docentesCargaAcademica)
+                    .getResultList();
+            docentesRecienAsignados.forEach((t) -> {
+                if (!personalColaboradorPlaneaciones.contains(t)) {
+                    personalColaboradorPlaneaciones.add(t);
+                }
+            });
         }
 
-        return l;
+        return personalColaboradorPlaneaciones;
     }
 
     @Override
@@ -476,10 +527,10 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
     }
 
     @Override
-    public List<PlaneacionesLiberaciones> buscarPlaneacionesLiberadasParaValidarSecretarioAcademico() {
-        TypedQuery<PlaneacionesLiberaciones> q = f.getEntityManager().createQuery("SELECT p FROM PlaneacionesLiberaciones p WHERE p.liberacionDirector = :liberacionDirector", PlaneacionesLiberaciones.class);
+    public List<PlaneacionesLiberaciones> buscarPlaneacionesLiberadasParaValidarSecretarioAcademico(Integer periodo) {
+        TypedQuery<PlaneacionesLiberaciones> q = f.getEntityManager().createQuery("SELECT p FROM PlaneacionesLiberaciones p WHERE p.liberacionDirector = :liberacionDirector AND p.planeacionesLiberacionesPK.periodo=:periodo", PlaneacionesLiberaciones.class);
         q.setParameter("liberacionDirector", true);
-
+        q.setParameter("periodo", periodo);
         if (q.getResultList() == null || q.getResultList().size() == 0) {
             return null;
         } else {
@@ -488,9 +539,10 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
     }
 
     @Override
-    public List<PlaneacionesLiberaciones> buscarPlaneacionesLiberadasParaValidarJefePersonal() {
-        TypedQuery<PlaneacionesLiberaciones> q = f.getEntityManager().createQuery("SELECT p FROM PlaneacionesLiberaciones p WHERE p.validacionSecretarioAcademico = :validacionSecretarioAcademico", PlaneacionesLiberaciones.class);
+    public List<PlaneacionesLiberaciones> buscarPlaneacionesLiberadasParaValidarJefePersonal(Integer periodo) {
+        TypedQuery<PlaneacionesLiberaciones> q = f.getEntityManager().createQuery("SELECT p FROM PlaneacionesLiberaciones p WHERE p.validacionSecretarioAcademico = :validacionSecretarioAcademico AND p.planeacionesLiberacionesPK.periodo=:periodo", PlaneacionesLiberaciones.class);
         q.setParameter("validacionSecretarioAcademico", true);
+        q.setParameter("periodo", periodo);
         System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPlaneacionCuatrimestral.buscarPlaneacionesLiberadasParaValidarJefePersonal()"+q.getResultList());
         if (q.getResultList() == null || q.getResultList().size() == 0) {
             return null;
@@ -617,8 +669,9 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
     }
 
     @Override
-    public List<VistaTotalAlumnosCarreraPye> mostraralumnosProximosAEstadia() {
-        TypedQuery<VistaTotalAlumnosCarreraPye> q = f2.getEntityManager().createQuery("SELECT v FROM VistaTotalAlumnosCarreraPye v", VistaTotalAlumnosCarreraPye.class);
+    public List<VistaTotalAlumnosCarreraPye> mostraralumnosProximosAEstadia(String numeroNomina) {
+        TypedQuery<VistaTotalAlumnosCarreraPye> q = f2.getEntityManager().createQuery("SELECT v FROM VistaTotalAlumnosCarreraPye v WHERE v.numeroNomina=:numeroNomina", VistaTotalAlumnosCarreraPye.class);
+        q.setParameter("numeroNomina", numeroNomina);
         if (q.getResultList() == null || q.getResultList().isEmpty()) {
             return null;
         } else {

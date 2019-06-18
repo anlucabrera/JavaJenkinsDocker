@@ -36,7 +36,6 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.VistaTotalAlumnosCarreraPye;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
-import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.RowEditEvent;
 
 /**
@@ -100,15 +99,15 @@ public class PlaneacionCuatrimestral implements Serializable{
             return;
         }
         nivel++;//1 evento existente
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(1) nivel: " + nivel);
-
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(1) nivel: " + nivel);
+        
         periodo = ejb.verificarPeriodo(evento);
         if (periodo == null) {
             return;
         }
         nivel++;//2 periodo existente
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(2) nivel: " + nivel);
-
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(2) nivel: " + nivel);
+        
         secretarioAcademico = ejb.getSecretarioAcademico();
         jefePersonal = ejb.getJefePersonal();
         director = ejb.getDirector(logonMB.getPersonal().getClave());
@@ -121,12 +120,12 @@ public class PlaneacionCuatrimestral implements Serializable{
             return;
         }
         nivel++;// 3 usuario válido
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(3) nivel: " + nivel);
-
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(3) nivel: " + nivel);
+       
         if (esJefePersonal) {;
             outcome = "docencia/planeacionDirPersonal";
             nivel++;// 4 jefePersonal existente
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(4) nivel: " + nivel);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(4) nivel: " + nivel);
             buscarPlaneacionesLiberadasSecretarioAcademico();
             planeaciones = ejb.buscarPlaneacionesCuatrimestrales();
             tipo = "Jefe";
@@ -137,7 +136,7 @@ public class PlaneacionCuatrimestral implements Serializable{
         if (esSecretarioAcademico) {;
             outcome = "docencia/planeacionSecAcademico";
             nivel++;// 5 secretarioAcademico existente
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(5) nivel: " + nivel);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(5) nivel: " + nivel);
             buscarPlaneacionesLiberadasDirectores();
             planeaciones = ejb.buscarPlaneacionesCuatrimestrales();
             tipo = "Secretario";
@@ -155,7 +154,7 @@ public class PlaneacionCuatrimestral implements Serializable{
             }
             nivel++; //6 hay docentes activos
             System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.init(6) nivel: " + nivel);
-            colaboradores = ejb.getPersonalDocenteColaborador(docentesActivos, director);
+            colaboradores = ejb.getPersonalDocenteColaborador(docentesActivos, director,periodo.getPeriodo());
 //            colaboradores.stream().map(d -> d.getCategoriaOficial().getCategoria()).forEach(System.out::println);
             planeaciones = ejb.inicializarPlaneaciones(colaboradores, periodo, director);
             ejb.ordenarPlaneaciones(planeaciones);
@@ -169,10 +168,10 @@ public class PlaneacionCuatrimestral implements Serializable{
         }
     }
 
-    public void onCellEdit(CellEditEvent event) {
+    public void onCellEdit(RowEditEvent event) {
 //        Object oldValue = event.getOldValue();
 //        Object newValue = event.getNewValue();
-        PlaneacionesCuatrimestrales modificada = planeaciones.get(event.getRowIndex());
+        PlaneacionesCuatrimestrales modificada = (PlaneacionesCuatrimestrales) event.getObject();
         Map.Entry<Boolean, String> res = ejb.validarPlaneacion(modificada);
         Map.Entry<Boolean, PlaneacionesCuatrimestrales> res2 = ejb.detectarReunionAcademia(modificada.getDocente(), director, periodo);
         if (res2.getKey()) {
@@ -182,6 +181,10 @@ public class PlaneacionCuatrimestral implements Serializable{
 
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, res.getKey() ? "Planeación correcta" : "Planeación incorrecta", res.getValue());
         FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
+    public void onRowCancel(RowEditEvent event) {
+        Messages.addGlobalWarn("!!Operación cancelada!!");
     }
 
     public String abrir() {
@@ -214,8 +217,8 @@ public class PlaneacionCuatrimestral implements Serializable{
         PlaneacionesCuatrimestrales pc = planeaciones.get(Integer.parseInt(id.split("tblColaboradores:")[1].split(":validar")[0]));
         pc.setValidacionDirector((Boolean) e.getNewValue());
         ejb.guardarPlaneacion(pc);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + pc.isValidacionDirector() + ") pc: " + pc);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + id + ") value: " + e.getNewValue());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + pc.getValidacionDirector()+ ") pc: " + pc);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + id + ") value: " + e.getNewValue());
     }
 
     public void validarSecretarioAcademico(ValueChangeEvent e) {
@@ -223,8 +226,8 @@ public class PlaneacionCuatrimestral implements Serializable{
         PlaneacionesCuatrimestrales pc = planeaciones.get(Integer.parseInt(id.split("tblColaboradores:")[1].split(":validar")[0]));
         pc.setValidacionSecretarioAdemico((Boolean) e.getNewValue());
         ejb.guardarPlaneacion(pc);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + pc.isValidacionDirector() + ") pc: " + pc);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + id + ") value: " + e.getNewValue());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + pc.getValidacionDirector() + ") pc: " + pc);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + id + ") value: " + e.getNewValue());
     }
 
     public void validarJefePersonal(ValueChangeEvent e) {
@@ -232,12 +235,12 @@ public class PlaneacionCuatrimestral implements Serializable{
         PlaneacionesCuatrimestrales pc = planeaciones.get(Integer.parseInt(id.split("tblColaboradores:")[1].split(":validar")[0]));
         pc.setValidacionJefePersonal((Boolean) e.getNewValue());
         ejb.guardarPlaneacion(pc);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + pc.isValidacionDirector() + ") pc: " + pc);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + id + ") value: " + e.getNewValue());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + pc.getValidacionDirector() + ") pc: " + pc);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.validarDirector(" + id + ") value: " + e.getNewValue());
     }
 
     public void guardarComentario() {
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.guardarComentario(" + editando.getDocente().getNombre() + "): " + editando.getComentariosDirector());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.guardarComentario(" + editando.getDocente().getNombre() + "): " + editando.getComentariosDirector());
         ejb.guardarPlaneacion(editando);
     }
 
@@ -262,10 +265,10 @@ public class PlaneacionCuatrimestral implements Serializable{
     }
 
     public void getDirectorPlaneacioFinalizado() {
-        if (planeaciones.stream().filter(pc -> pc.getValidacionSistema()).count() == planeaciones.stream().filter(pc -> pc.getValidacionDirector()).count()) {
+//        if (planeaciones.stream().filter(pc -> pc.getValidacionSistema()).count() == planeaciones.stream().filter(pc -> pc.getValidacionDirector()).count()) {
             if (detalles.getEstudiantesEstadia() == estudiantesAsigandos && detalles.getProyectosEstadia() == proyectosAsignados) {
                 planeacionesFinalizadas = true;
-            }
+            
         } else {
             planeacionesFinalizadas = false;
         }
@@ -275,12 +278,14 @@ public class PlaneacionCuatrimestral implements Serializable{
         planeacionesLiberadas = new PlaneacionesLiberaciones();
         listPlaneacionesLiberadas.clear();
         listPlaneacionesLiberadas = ejb.buscarPlaneacionLiberada(periodo.getPeriodo(), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.buscarPlaneacionesLiberadas(listPlaneacionesLiberadas)"+listPlaneacionesLiberadas);
         if (listPlaneacionesLiberadas == null) {
             planeacionesliberadasD = false;
         } else {
             planeacionesLiberadas = listPlaneacionesLiberadas.get(0);
             planeacionesliberadasD = planeacionesLiberadas.getLiberacionDirector();
         }
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.buscarPlaneacionesLiberadas(planeacionesliberadasD)"+planeacionesliberadasD);
     }
 
     public void liberarPlaneacionesCuatrimestralesDirector() throws IOException {
@@ -296,6 +301,11 @@ public class PlaneacionCuatrimestral implements Serializable{
             planeacionesLiberadas.setValidacionJefePersonal(false);
             planeacionesLiberadas.setRechazoJefePersonal(false);
             planeacionesLiberadas.setRechazoSecretarioAcademico(false);
+        }
+        if (planeaciones.stream().filter(pc -> pc.getValidacionSistema()).count() == planeaciones.stream().filter(pc -> pc.getValidacionDirector()).count()) {
+            planeacionesLiberadas.setLiberacionSistema(true);
+        }else{
+            planeacionesLiberadas.setLiberacionSistema(false);
         }
         planeacionesLiberadas.setPlaneacionesLiberacionesPK(planeacionesLiberadasPK);
         planeacionesLiberadas.setLiberacionDirectorFecha(new Date());
@@ -325,23 +335,12 @@ public class PlaneacionCuatrimestral implements Serializable{
         detallesPK = new PlaneacionesDetallesPK();
         detalles = new PlaneacionesDetalles();
         listaDetalles = ejb.buscraPlaneacionesDetalles(periodo.getPeriodo(), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
-        listaTotalAlumnosCarreraPyes = ejb.mostraralumnosProximosAEstadia();
+        listaTotalAlumnosCarreraPyes = ejb.mostraralumnosProximosAEstadia(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
 
         if (listaTotalAlumnosCarreraPyes != null) {
-            listaTotalAlumnosCarreraPyes.forEach((t) -> {
-                if (t.getNumeroNomina().equals(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())) {
-                    switch (t.getGrado()) {
-                        case 6:
-                            estudiantesEstadia = estudiantesEstadia + t.getTotalMatricula();
-                            break;
-                        case 11:
-                            estudiantesEstadia = estudiantesEstadia + t.getTotalMatricula();
-                            break;
-                    }
-                }
-            });
+            estudiantesEstadia = listaTotalAlumnosCarreraPyes.stream().filter(y -> y.getPeriodo().equals(periodo.getPeriodo()) && (y.getGrado().equals(Short.parseShort("6")) || y.getGrado().equals(Short.parseShort("11")))).mapToInt(VistaTotalAlumnosCarreraPye::getTotalMatricula).sum();
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.planeacionesCuatrimestralesDetalles(estudiantesEstadia) "+estudiantesEstadia);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.planeacionesCuatrimestralesDetalles(estudiantesEstadia) " + estudiantesEstadia);
         if (estudiantesEstadia != 0) {
             proximosAEstadia = true;
             if (listaDetalles == null) {
@@ -353,7 +352,14 @@ public class PlaneacionCuatrimestral implements Serializable{
                 ejb.agregarPlaneacionesDetalles(detalles);
             } else {
                 detalles = listaDetalles.get(0);
-            }
+                if (detalles.getEstudiantesEstadia() != estudiantesEstadia) {
+                    detalles.setEstudiantesEstadia(estudiantesEstadia);
+                    ejb.actualizarPlaneacionesDetalles(detalles);
+                }
+                listaDetalles = ejb.buscraPlaneacionesDetalles(periodo.getPeriodo(), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+                detalles = new PlaneacionesDetalles();
+                detalles = listaDetalles.get(0);
+            };
         }
     }
 
@@ -361,6 +367,7 @@ public class PlaneacionCuatrimestral implements Serializable{
         detallesPK = new PlaneacionesDetallesPK();
         detalles = new PlaneacionesDetalles();
         listaDetalles = ejb.buscraPlaneacionesDetalles(periodo.getPeriodo(), director.getClave());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.planeacionesCuatrimestralesDetallesSecretarioYJefe(listaDetalles)"+listaDetalles);
         if (listaDetalles == null) {
             detallesPK.setDirector(director.getClave());
             detallesPK.setPeriodo(periodo.getPeriodo());
@@ -371,6 +378,16 @@ public class PlaneacionCuatrimestral implements Serializable{
         } else {
             detalles = listaDetalles.get(0);
         }
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.planeacionesCuatrimestralesDetallesSecretarioYJefe(detalles)"+detalles);
+        List<VistaTotalAlumnosCarreraPye> alumnos = ejb.mostraralumnosProximosAEstadia(director.getClave().toString());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.planeacionesCuatrimestralesDetallesSecretarioYJefe(alumnos)"+alumnos);
+        if (alumnos != null) {
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.planeacionesCuatrimestralesDetallesSecretarioYJefe(alumnos)"+alumnos);
+            if(alumnos.stream().filter(y -> y.getPeriodo().equals(periodo.getPeriodo()) && (y.getGrado().equals(Short.parseShort("6")) || y.getGrado().equals(Short.parseShort("11")))).count() !=0 ){
+                proximosAEstadia=true;
+            }
+        }
+        
     }
 
     public void actualizaPlaneacionesDetalles() {
@@ -410,7 +427,7 @@ public class PlaneacionCuatrimestral implements Serializable{
     //////////////////////////////////////////////////////////////////////////// Secretario Academico
     public void buscarPlaneacionesLiberadasDirectores() {
         listPlaneacionesLiberadasSelecMenu.clear();
-        listPlaneacionesLiberadasSelecMenu = ejb.buscarPlaneacionesLiberadasParaValidarSecretarioAcademico();
+        listPlaneacionesLiberadasSelecMenu = ejb.buscarPlaneacionesLiberadasParaValidarSecretarioAcademico(periodo.getPeriodo());
     }
 
     public Long getSecretarioAcademicoCorrectas() {
@@ -501,7 +518,7 @@ public class PlaneacionCuatrimestral implements Serializable{
     //////////////////////////////////////////////////////////////////////////// Jefe de personal
     public void buscarPlaneacionesLiberadasSecretarioAcademico() {
         listPlaneacionesLiberadasSelecMenu.clear();
-        listPlaneacionesLiberadasSelecMenu = ejb.buscarPlaneacionesLiberadasParaValidarJefePersonal();
+        listPlaneacionesLiberadasSelecMenu = ejb.buscarPlaneacionesLiberadasParaValidarJefePersonal(periodo.getPeriodo());
     }
 
     public Long getJefePersonalCorrectas() {
@@ -595,11 +612,13 @@ public class PlaneacionCuatrimestral implements Serializable{
             director = new Personal();
 
             director = ejb.getDirector(Integer.parseInt(event.getNewValue().toString()));
-
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.buscarPlaneacionesLiberadasPorDirrectores(director)"+director);
             planeaciones = ejb.getPlaneacionesPorDirectorPeriodo(director, periodo);
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.buscarPlaneacionesLiberadasPorDirrectores(planeaciones)"+planeaciones.size());
         }
         listPlaneacionesLiberadas.clear();
         listPlaneacionesLiberadas = ejb.buscarPlaneacionLiberada(periodo.getPeriodo(), Integer.parseInt(event.getNewValue().toString()));
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.buscarPlaneacionesLiberadasPorDirrectores(listPlaneacionesLiberadas)"+listPlaneacionesLiberadas);
         if (listPlaneacionesLiberadas == null) {
             planeacionesliberadasS = false;
             planeacionesliberadasP = false;
@@ -613,8 +632,8 @@ public class PlaneacionCuatrimestral implements Serializable{
     }
 
     public void imprimirPlaneaciones() {
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.imprimirPlaneaciones()" + planeacionesLiberadaDPK);
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.imprimirPlaneaciones() nuevo: " + nuevo);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.imprimirPlaneaciones()" + planeacionesLiberadaDPK);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.docencia.PlaneacionCuatrimestral.imprimirPlaneaciones() nuevo: " + nuevo);
 //         planeaciones.forEach(pc ->{
 //            String cade = "PlaneacionesCuatrimestrales{" 
 //                    + "planeacion=" + pc.getPlaneacion() 

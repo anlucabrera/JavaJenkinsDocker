@@ -25,7 +25,7 @@
             }
         </script>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>   
         <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />     
@@ -52,9 +52,9 @@
                                 <p:autoUpdate/>
                                 <p:outputLabel value="Área:" />
 
-                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorEvaluacionActividadesPyE.areaSeleccionada}">
-                                    <f:selectItems value="#{controladorEvaluacionActividadesPyE.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
-                                    <p:ajax update=":frm:rpActividades" listener="#{controladorEvaluacionActividadesPyE.imprimirValores()}"/>
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{adminPoaEvaluacion.areaSeleccionada}">
+                                    <f:selectItems value="#{adminPoaEvaluacion.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                    <p:ajax update=":frm:rpActividades" listener="#{adminPoaEvaluacion.imprimirValores()}"/>
                                 </p:selectOneMenu> 
                                 <p:message for="eje" display="tooltip" />
                             </div>
@@ -70,7 +70,7 @@
                         <p:toolbar id="tb">
                             <f:facet name="left">
                                 <p:outputPanel>     
-                                    <p:outputLabel value="Área: #{controladorEvaluacionActividadesPyE.areasUniversidad.nombre}" />
+                                    <p:outputLabel value="Área: #{adminPoaEvaluacion.areasUniversidad.nombre}" />
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:autoUpdate/>
                                 </p:outputPanel>
@@ -78,18 +78,18 @@
                             <f:facet name="right">
                                 <p:outputPanel>            
                                     <p:autoUpdate/>
-                                    <p:commandButton value="Enero" id="mes0" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('0')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Febrero" id="mes1" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('1')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Marzo" id="mes2" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('2')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Abril" id="mes3" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('3')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Mayo" id="mes4" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('4')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Junio" id="mes5" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('5')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Julio" id="mes6" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('6')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Agosto" id="mes7" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('7')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Septiembre" id="mes8" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('8')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Octubre" id="mes9" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('9')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Nobiembre" id="mes10" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('10')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
-                                    <p:commandButton value="Diciembre" id="mes11" actionListener="#{controladorEvaluacionActividadesPyE.obtnerMEs('11')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Enero" id="mes0" actionListener="#{adminPoaEvaluacion.obtnerMEs('0')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Febrero" id="mes1" actionListener="#{adminPoaEvaluacion.obtnerMEs('1')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Marzo" id="mes2" actionListener="#{adminPoaEvaluacion.obtnerMEs('2')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Abril" id="mes3" actionListener="#{adminPoaEvaluacion.obtnerMEs('3')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Mayo" id="mes4" actionListener="#{adminPoaEvaluacion.obtnerMEs('4')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Junio" id="mes5" actionListener="#{adminPoaEvaluacion.obtnerMEs('5')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Julio" id="mes6" actionListener="#{adminPoaEvaluacion.obtnerMEs('6')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Agosto" id="mes7" actionListener="#{adminPoaEvaluacion.obtnerMEs('7')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Septiembre" id="mes8" actionListener="#{adminPoaEvaluacion.obtnerMEs('8')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Octubre" id="mes9" actionListener="#{adminPoaEvaluacion.obtnerMEs('9')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Nobiembre" id="mes10" actionListener="#{adminPoaEvaluacion.obtnerMEs('10')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
+                                    <p:commandButton value="Diciembre" id="mes11" actionListener="#{adminPoaEvaluacion.obtnerMEs('11')}" process="@this" icon="fa fa-info-circle" styleClass="btn-primary" update=":rpActividades" />
                                 </p:outputPanel>
                             </f:facet>
                         </p:toolbar>
@@ -99,10 +99,10 @@
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 text-info text-center">
-                                    <p:remoteCommand name="actualizarTabla" actionListener="#{controladorEvaluacionActividadesPyE.imprimirValores()}" update=":frm:rpActividades" />
-                                    <p:dataList id="rpActividades" value="#{controladorEvaluacionActividadesPyE.ejesEsLaAp}" var="eje" type="definition">
+                                    <p:remoteCommand name="actualizarTabla" actionListener="#{adminPoaEvaluacion.imprimirValores()}" update=":frm:rpActividades" />
+                                    <p:dataList id="rpActividades" value="#{adminPoaEvaluacion.ejesEsLaAp}" var="eje" type="definition">
                                         <p:dataTable id="dtbBajas" value="#{eje.listalistaEstrategiaLaAp}" rowExpandMode="single"
-                                                     expandedRow="#{estrategiasRegistro.estrategias.estrategia eq controladorEvaluacionActividadesPyE.ultimaEstrategiaExpandida.estrategia?true:false}"
+                                                     expandedRow="#{estrategiasRegistro.estrategias.estrategia eq adminPoaEvaluacion.ultimaEstrategiaExpandida.estrategia?true:false}"
                                                      var="estrategiasRegistro" sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="false">
 
                                             <f:facet name="header">
@@ -131,28 +131,28 @@
                                                                 <p:column rowspan="2" headerText="Actividad" />
                                                                 <p:column rowspan="2" headerText="Unidad de medida" style="width: 150px;"/>
                                                                 <p:column rowspan="2" headerText="Meta" style="width: 100px;"/>
-                                                                <p:column colspan="4" headerText="Calendarización de Metas: #{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?'Enero - Abril':(controladorEvaluacionActividadesPyE.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 300px;"/> 
-                                                                <p:column colspan="3" headerText="Avance general al mes de #{controladorEvaluacionActividadesPyE.mesNombre}" style="width: 250px;"/>
+                                                                <p:column colspan="4" headerText="Calendarización de Metas: #{adminPoaEvaluacion.cuatrimestre eq 1?'Enero - Abril':(adminPoaEvaluacion.cuatrimestre eq 2?'Mayo - Agosto':'Septiembre - Diciembre')}" style="width: 300px;"/> 
+                                                                <p:column colspan="3" headerText="Avance general al mes de #{adminPoaEvaluacion.mesNombre}" style="width: 250px;"/>
                                                                 <p:column colspan="3" headerText="Avance cuatrimestral" style="width: 250px;"/> 
                                                                 <p:column rowspan="2" headerText="Evaluar" style="width:80px; "/>
                                                                 <p:column rowspan="2" headerText="Evidencia" style="width:80px; "/>
-                                                                <p:column rowspan="2" headerText="Justificacion" style="width:80px;" rendered="#{controladorEvaluacionActividadesPyE.mes eq 3?true:
-                                                                                                                                                 controladorEvaluacionActividadesPyE.mes eq 7?true:
-                                                                                                                                                 controladorEvaluacionActividadesPyE.mes eq 11?true:false}"/>
+                                                                <p:column rowspan="2" headerText="Justificacion" style="width:80px;" rendered="#{adminPoaEvaluacion.mes eq 3?true:
+                                                                                                                                                 adminPoaEvaluacion.mes eq 7?true:
+                                                                                                                                                 adminPoaEvaluacion.mes eq 11?true:false}"/>
                                                             </p:row>
                                                             <p:row class="success">
-                                                                <p:column headerText="Ene"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?true:false}"/>
-                                                                <p:column headerText="Feb"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?true:false}"/>
-                                                                <p:column headerText="Mar"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?true:false}"/>
-                                                                <p:column headerText="Abr"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?true:false}"/>
-                                                                <p:column headerText="May"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 2?true:false}"/>                                                    
-                                                                <p:column headerText="Jun"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 2?true:false}"/>
-                                                                <p:column headerText="Jul"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 2?true:false}"/>
-                                                                <p:column headerText="Ago"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 2?true:false}"/>
-                                                                <p:column headerText="Sep"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 3?true:false}"/>
-                                                                <p:column headerText="Oct"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 3?true:false}"/>
-                                                                <p:column headerText="Nov"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 3?true:false}"/>
-                                                                <p:column headerText="Dic"  rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 3?true:false}"/>
+                                                                <p:column headerText="Ene"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 1?true:false}"/>
+                                                                <p:column headerText="Feb"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 1?true:false}"/>
+                                                                <p:column headerText="Mar"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 1?true:false}"/>
+                                                                <p:column headerText="Abr"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 1?true:false}"/>
+                                                                <p:column headerText="May"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 2?true:false}"/>                                                    
+                                                                <p:column headerText="Jun"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 2?true:false}"/>
+                                                                <p:column headerText="Jul"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 2?true:false}"/>
+                                                                <p:column headerText="Ago"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 2?true:false}"/>
+                                                                <p:column headerText="Sep"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 3?true:false}"/>
+                                                                <p:column headerText="Oct"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 3?true:false}"/>
+                                                                <p:column headerText="Nov"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 3?true:false}"/>
+                                                                <p:column headerText="Dic"  rendered="#{adminPoaEvaluacion.cuatrimestre eq 3?true:false}"/>
                                                                 <p:column headerText="Total" />
                                                                 <p:column headerText="%" />
                                                                 <p:column headerText="Semáforo"  />
@@ -162,13 +162,13 @@
                                                             </p:row>
                                                         </p:columnGroup>
 
-                                                        <p:ajax event="rowEdit" listener="#{controladorEvaluacionActividadesPyE.onRowEdit}" update="@this" oncomplete="actualizarTabla()"/>
-                                                        <p:ajax event="rowEditCancel" listener="#{controladorEvaluacionActividadesPyE.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+                                                        <p:ajax event="rowEdit" listener="#{adminPoaEvaluacion.onRowEdit}" update="@this" oncomplete="actualizarTabla()"/>
+                                                        <p:ajax event="rowEditCancel" listener="#{adminPoaEvaluacion.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
 
                                                         <p:headerRow>
-                                                            <p:column colspan="#{controladorEvaluacionActividadesPyE.mes eq 3?'18':
-                                                                                 controladorEvaluacionActividadesPyE.mes eq 7?'18':
-                                                                                 controladorEvaluacionActividadesPyE.mes eq 11?'18':'17'}" styleClass="lac">
+                                                            <p:column colspan="#{adminPoaEvaluacion.mes eq 3?'18':
+                                                                                 adminPoaEvaluacion.mes eq 7?'18':
+                                                                                 adminPoaEvaluacion.mes eq 11?'18':'17'}" styleClass="lac">
                                                                 <h:outputText value="#{eje.ejeA.eje}.#{estrategiasRegistro.estrategias.numero}.#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.numero}.#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.nombre}"/>
                                                             </p:column>
                                                         </p:headerRow>
@@ -190,124 +190,124 @@
                                                             <hr/>
                                                             <h:outputText value="Alcanzada" />
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 1?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPEnero}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NAEnero}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAEnero}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 0?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAEnero}" disabled="#{adminPoaEvaluacion.mes eq 0?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 1?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPFebrero}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NAFebrero}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAFebrero}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 1?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAFebrero}" disabled="#{adminPoaEvaluacion.mes eq 1?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 1?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPMarzo}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NAMarzo}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAMarzo}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 2?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAMarzo}" disabled="#{adminPoaEvaluacion.mes eq 2?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 1?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPAbril}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NAAbril}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAAbril}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 3?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAAbril}" disabled="#{adminPoaEvaluacion.mes eq 3?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 2?true:false}"> 
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 2?true:false}"> 
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPMayo}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NAMayo}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAMayo}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 4?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAMayo}" disabled="#{adminPoaEvaluacion.mes eq 4?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 2?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 2?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPJunio}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NAJunio}" />
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAJunio}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 5?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAJunio}" disabled="#{adminPoaEvaluacion.mes eq 5?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 2?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 2?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPJulio}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NAJulio}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAJulio}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 6?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAJulio}" disabled="#{adminPoaEvaluacion.mes eq 6?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 2?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 2?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPAgosto}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NAAgosto}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAAgosto}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 7?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAAgosto}" disabled="#{adminPoaEvaluacion.mes eq 7?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 3?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 3?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPSeptiembre}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NASeptiembre}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NASeptiembre}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 8?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NASeptiembre}" disabled="#{adminPoaEvaluacion.mes eq 8?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 3?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 3?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPOctubre}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NAOctubre}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAOctubre}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 9?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NAOctubre}" disabled="#{adminPoaEvaluacion.mes eq 9?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 3?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 3?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPNoviembre}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NANoviembre}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NANoviembre}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 10?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NANoviembre}" disabled="#{adminPoaEvaluacion.mes eq 10?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
-                                                        <p:column rendered="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 3?true:false}">
+                                                        <p:column rendered="#{adminPoaEvaluacion.cuatrimestre eq 3?true:false}">
                                                             <p:cellEditor>
                                                                 <f:facet name="output">
                                                                     <h:outputText value="#{poa.actividadesPoa.NPDiciembre}" />
                                                                     <hr/>
                                                                     <h:outputText value="#{poa.actividadesPoa.NADiciembre}"/>
                                                                 </f:facet>
-                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NADiciembre}" disabled="#{controladorEvaluacionActividadesPyE.mes eq 11?false:true}"/></f:facet>
+                                                                <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{poa.actividadesPoa.NADiciembre}" disabled="#{adminPoaEvaluacion.mes eq 11?false:true}"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
                                                         <p:column>
@@ -335,9 +335,9 @@
 
                                                         <p:column rendered="#{poa.actividadesPoa.bandera eq 'x' ?true:false}"/>
                                                         <p:column rendered="#{poa.actividadesPoa.bandera eq 'x' ?true:false}"/>
-                                                        <p:column rendered="#{poa.actividadesPoa.bandera eq 'x' ?(controladorEvaluacionActividadesPyE.mes eq 3?true:
-                                                                              controladorEvaluacionActividadesPyE.mes eq 7?true:
-                                                                              controladorEvaluacionActividadesPyE.mes eq 11?true:false):false}"/>
+                                                        <p:column rendered="#{poa.actividadesPoa.bandera eq 'x' ?(adminPoaEvaluacion.mes eq 3?true:
+                                                                              adminPoaEvaluacion.mes eq 7?true:
+                                                                              adminPoaEvaluacion.mes eq 11?true:false):false}"/>
 
                                                         <p:column rendered="#{poa.actividadesPoa.bandera eq 'y' ?true:false}">
                                                             <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center" >
@@ -355,19 +355,19 @@
                                                         </p:column>
 
                                                         <p:column rendered="#{poa.actividadesPoa.bandera eq 'y' ?true:false}">
-                                                            <p:commandButton icon="fa fa-folder-open" styleClass="btn-primary" actionListener="#{controladorEvaluacionActividadesPyE.consultarEvidencias(poa.actividadesPoa)}"
+                                                            <p:commandButton icon="fa fa-folder-open" styleClass="btn-primary" actionListener="#{adminPoaEvaluacion.consultarEvidencias(poa.actividadesPoa)}"
                                                                              oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario" >
-                                                                <f:setPropertyActionListener target="#{controladorEvaluacionActividadesPyE.actividadesPoaEditando}" value="#{poa.actividadesPoa}" />
+                                                                <f:setPropertyActionListener target="#{adminPoaEvaluacion.actividadesPoaEditando}" value="#{poa.actividadesPoa}" />
                                                             </p:commandButton>
                                                         </p:column>
-                                                        <p:column rendered="#{poa.actividadesPoa.bandera eq 'y' ?(controladorEvaluacionActividadesPyE.mes eq 3?true:
-                                                                              controladorEvaluacionActividadesPyE.mes eq 7?true:
-                                                                              controladorEvaluacionActividadesPyE.mes eq 11?true:false):false}">
-                                                            <p:commandButton icon="fa fa-comment" styleClass="btn-primary" actionListener="#{controladorEvaluacionActividadesPyE.consultarEvidencias(poa.actividadesPoa)}"
-                                                                             oncomplete="PF('dlgJusMes').show()" process="@this" update=":frmJuM:pnlAgregarJusMes" rendered="#{controladorEvaluacionActividadesPyE.mes eq 3?true:
-                                                                                                                                                                               controladorEvaluacionActividadesPyE.mes eq 7?true:
-                                                                                                                                                                               controladorEvaluacionActividadesPyE.mes eq 11?true:false}">
-                                                                <f:setPropertyActionListener target="#{controladorEvaluacionActividadesPyE.actividadesPoaEditando}" value="#{poa.actividadesPoa}" />
+                                                        <p:column rendered="#{poa.actividadesPoa.bandera eq 'y' ?(adminPoaEvaluacion.mes eq 3?true:
+                                                                              adminPoaEvaluacion.mes eq 7?true:
+                                                                              adminPoaEvaluacion.mes eq 11?true:false):false}">
+                                                            <p:commandButton icon="fa fa-comment" styleClass="btn-primary" actionListener="#{adminPoaEvaluacion.consultarEvidencias(poa.actividadesPoa)}"
+                                                                             oncomplete="PF('dlgJusMes').show()" process="@this" update=":frmJuM:pnlAgregarJusMes" rendered="#{adminPoaEvaluacion.mes eq 3?true:
+                                                                                                                                                                               adminPoaEvaluacion.mes eq 7?true:
+                                                                                                                                                                               adminPoaEvaluacion.mes eq 11?true:false}">
+                                                                <f:setPropertyActionListener target="#{adminPoaEvaluacion.actividadesPoaEditando}" value="#{poa.actividadesPoa}" />
                                                             </p:commandButton>
                                                         </p:column>
 
@@ -430,15 +430,15 @@
 
         <o:form id="frmComentario"  enctype="multipart/form-data"> 
             <p:dialog header="Agregar descripción" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true"
-                      visible="#{controladorEvaluacionActividadesPyE.archivoSC}">
+                      visible="#{adminPoaEvaluacion.archivoSC}">
                 <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
-                    <p:outputLabel value="Actividad: #{controladorEvaluacionActividadesPyE.actividadesPoaEditando.denominacion}" />
+                    <p:outputLabel value="Actividad: #{adminPoaEvaluacion.actividadesPoaEditando.denominacion}" />
 
                     <p:outputPanel>            
                         <p:autoUpdate/>
                         <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Seleccione archivo" />
 
-                        <o:inputFile id="file" value="#{controladorEvaluacionActividadesPyE.files}" accept="image/png||image/jpeg||image/pjpeg||application/pdf" 
+                        <o:inputFile id="file" value="#{adminPoaEvaluacion.files}" accept="image/png||image/jpeg||image/pjpeg||application/pdf" 
                                      acceptMessage="Solo se permiten archivos PDF e imagenes JPEG, PJPEG y PNG" maxsize="#{100*1024*1024}" 
                                      maxsizeMessage="El tamaño máximo permitido son 100MB." 
                                      multiple="true"/>
@@ -446,14 +446,14 @@
                         <h:message id="messageForFile" for="file" />
                         <br/>
                         <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" 
-                                         class="btn-primary btn-info" action="#{controladorEvaluacionActividadesPyE.subirEvidenciaPOA}" />
+                                         class="btn-primary btn-info" action="#{adminPoaEvaluacion.subirEvidenciaPOA}" />
                     </p:outputPanel>
                     <p:outputPanel>
-                        <p:dataTable value="#{controladorEvaluacionActividadesPyE.evidenciasesDetalles}" var="detalle" 
+                        <p:dataTable value="#{adminPoaEvaluacion.evidenciasesDetalles}" var="detalle" 
                                      sortBy="#{detalle.mes}" expandableRowGroups="true"
                                      scrollable="true" scrollHeight="300" scrollWidth="600">
                             <f:facet name="header">
-                                #{controladorEvaluacionActividadesPyE.evidenciasesDetalles.size()} Evidencias cargadas
+                                #{adminPoaEvaluacion.evidenciasesDetalles.size()} Evidencias cargadas
                             </f:facet>
                             <p:headerRow>
                                 <p:column colspan="6">
@@ -461,7 +461,7 @@
                                 </p:column>
                             </p:headerRow>
                             <p:column style="width: 30px">
-                                <p:commandButton actionListener="#{controladorEvaluacionActividadesPyE.eliminarEvidencia(detalle)}" process="@this" update="frm" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar recurso">
+                                <p:commandButton actionListener="#{adminPoaEvaluacion.eliminarEvidencia(detalle)}" process="@this" update="frm" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar recurso">
                                     <p:confirm header="Confirmación" message="¿Confirma la eliminación de la evidencia #{detalle.ruta} ?" icon="ui-icon-alert" />
                                 </p:commandButton>
                             </p:column>
@@ -469,16 +469,16 @@
                                 <h:outputText value="#{detalle.mime}" />
                             </p:column>
                             <p:column headerText="Ruta" style="width: 500px">
-                                <h:outputText value="#{controladorEvaluacionActividadesPyE.convertirRutaMP(detalle.ruta)}" />
+                                <h:outputText value="#{adminPoaEvaluacion.convertirRutaMP(detalle.ruta)}" />
                             </p:column>
                             <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
-                                <p:link href="http://siip.utxj.edu.mx/archivos/#{controladorEvaluacionActividadesPyE.convertirRutaVistaEvidencia(detalle.ruta)}" target="_blank">
+                                <p:link href="http://siip.utxj.edu.mx/archivos/#{adminPoaEvaluacion.convertirRutaVistaEvidencia(detalle.ruta)}" target="_blank">
                                     <i class="fa fa-search"></i>
                                     <span>Ver</span>
                                 </p:link>
                             </p:column>
                             <p:column headerText="Descargar" style="width:85px;text-align: center">
-                                <p:link href="http://siip.utxj.edu.mx/archivos/#{controladorEvaluacionActividadesPyE.convertirRutaVistaEvidencia(detalle.ruta)}" target="_blank">
+                                <p:link href="http://siip.utxj.edu.mx/archivos/#{adminPoaEvaluacion.convertirRutaVistaEvidencia(detalle.ruta)}" target="_blank">
                                     <i class="fa fa-download"></i>
                                     <span>Descargar</span>
                                 </p:link>
@@ -497,16 +497,16 @@
         <h:form id="frmJuM">
             <p:dialog header="Agregar descripción" widgetVar="dlgJusMes" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
                 <p:panelGrid id="pnlAgregarJusMes" style="text-align:justify;" columns="1">
-                    <p:outputLabel value="Actividad: #{controladorEvaluacionActividadesPyE.actividadesPoaEditando.denominacion}" />
+                    <p:outputLabel value="Actividad: #{adminPoaEvaluacion.actividadesPoaEditando.denominacion}" />
                     <p:inputTextarea id="txtComentario" 
-                                     value="#{controladorEvaluacionActividadesPyE.cuatrimestre eq 1?controladorEvaluacionActividadesPyE.actividadesPoaEditando.justAbril:
-                                              controladorEvaluacionActividadesPyE.cuatrimestre eq 2?controladorEvaluacionActividadesPyE.actividadesPoaEditando.justAgosto:
-                                              controladorEvaluacionActividadesPyE.actividadesPoaEditando.justDiciembre}" 
+                                     value="#{adminPoaEvaluacion.cuatrimestre eq 1?adminPoaEvaluacion.actividadesPoaEditando.justAbril:
+                                              adminPoaEvaluacion.cuatrimestre eq 2?adminPoaEvaluacion.actividadesPoaEditando.justAgosto:
+                                              adminPoaEvaluacion.actividadesPoaEditando.justDiciembre}" 
                                      rows="5" cols="95" counter="display" maxlength="500" counterTemplate="{0} caracteres restantes." 
                                      styleClass="form-control" autoResize="true"/>
                     <p:message for="txtComentario" />
                     <h:outputText id="display" />
-                    <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{controladorEvaluacionActividadesPyE.actualizarNuavActividad()}"
+                    <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{adminPoaEvaluacion.actualizarNuavActividad()}"
                                      icon="fa fa-chek" styleClass="btn-primary"  update=":frm:rpActividades"
                                      onsuccess="PF('dlgJusMes').hide()" />
                 </p:panelGrid>

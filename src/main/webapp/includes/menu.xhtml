@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
@@ -13,7 +13,7 @@
                 </p:link>
             </li>
         </c:if>
-        <c:if test="#{logonMB.usuarioTipo == 'ASPIRANTE'}">
+        <c:if test="#{logonMB.usuarioTipo eq 'ASPIRANTE'}">
             <li>
                 <p:link href="/controlEscolar/fichaAdmision.xhtml">
                     <i class="fa fa-graduation-cap"></i>
@@ -46,6 +46,18 @@
                 <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
                 <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
             </li>
+            <!--            <c:if test="# {controladorEstReg.cargada}">
+                        <li class="header" style="color: #040404;background: #ffffff">Titulación</li>
+                        <li class="treeview ">
+                            <a href="#">
+                                <i class="fa fa-list-alt"></i> <span>Expediente Titulación</span>
+                                <span class="pull-right-container">
+                                    <i class=""></i>
+                                </span>
+                            </a>
+                            <li><p:link href="/expedienteTitulacion/estudiante/registroExpediente.xhtml"><i class="fa fa-pencil-square-o"></i><span>Registro e Integración</span></p:link></li>
+                        </li>
+                        </c:if>-->
         </c:if>
 <!--        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
             <c:forEach items="#{logonMB.listaModulos}" var="catModulo" >
@@ -160,6 +172,39 @@
                     <li><p:link href="/capitalHumano/perfilEmpleadoEvaluaciones.xhtml"><i class="fa fa-exclamation"></i><span>Resultados de evaluaciones</span></p:link></li>
                 </ul>
             </li>
+            <!-- condicional para que se carge el menu de planeaciones cuatrimestrales -->
+            <c:if test="#{((controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29) and controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2) or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Planeacion Cuatrimestral</li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>Planeacion</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <c:if test="#{((controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29) and controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2)}">
+                            <li><p:link href="/docencia/planeacionDirector.xhtml"><i class="fa fa-id-card-o"></i>
+                                    <span>Director</span>
+                                </p:link>
+                            </li>    
+                        </c:if>
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
+
+                            <li><p:link href="/docencia/planeacionSecAcademico.xhtml"><i class="fa fa-graduation-cap"></i>
+                                    <span>Sec. Academica</span>
+                                </p:link>
+                            </li>
+                        </c:if>
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49}">
+                            <li><p:link href="/docencia/planeacionDirPersonal.xhtml"><i class="fa fa-list-ol"></i>
+                                    <span>Dir. Personal</span>
+                                </p:link>
+                            </li>
+                        </c:if>
+                    </ul>
+                </li>
+            </c:if>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Curriculum vitae</li>
             <li class="treeview">
                 <a href="#">
@@ -348,10 +393,20 @@
                 </a>
                 <ul class="treeview-menu" style="display: none;">
                     <li>
-                        <p:link href="/sgi/procesos.xhtml">
-                            <span>Proceso estadía técnica</span>
+                        <p:link href="/sgi/procesoE.xhtml">
+                            <span>Estadía técnica</span>
                         </p:link>
-                    </li>   
+                    </li>     
+                    <li>
+                        <p:link href="/sgi/procesoT.xhtml">
+                            <span>Tutorias y Asesorias</span>
+                        </p:link>
+                    </li>  
+                    <li>
+                        <p:link href="/sgi/procesoV.xhtml">
+                            <span>Visitas</span>
+                        </p:link>
+                    </li>  
                 </ul>
             </li>
 
@@ -406,10 +461,10 @@
                             </ul>
                         </li>   
                     </c:if>
-                    <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.clave eq 43 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 394 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                    <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) || (controladorEmpleado.nuevoOBJListaPersonal.clave eq 43 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 394 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-file-o"></i> <span>Formatos estadía</span>
+                                <i class="fa fa-file-o"></i> <span>Estadía</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -435,7 +490,7 @@
                                         <span>4. Carta de aceptación</span>
                                     </p:link>
                                 </li>   
-                                <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29) || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
+                                <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29) || (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
                                     <li>
                                         <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/formatosEstadia/5. Seguimiento de la Estadía Técnica.xls">
                                             <span>5. Seguimiento de la estadía</span>
@@ -512,6 +567,47 @@
                             </ul>
                         </li>
                     </c:if>
+                    <c:if test="#{
+                          (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) 
+                              || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) 
+                              || (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 5 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9)
+                              || (controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-file-text-o"></i> <span>Visitas</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/visitas/2. programa de visitas.xls">
+                                        <span>2. Programa de visitas</span>
+                                    </p:link>
+                                </li>      
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/visitas/3.  Confirmación, Itinerario e informe de Visitas.xlsx">
+                                        <span>3. Confirmación, Itinerario e <br/>einforme de Visitas</span>
+                                    </p:link>
+                                </li>       
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/visitas/4. Listado de estudiantes con SS vigente.xlsx">
+                                        <span>4. Listado de estudiantes con <br/>eSS vigente</span>
+                                    </p:link>
+                                </li>       
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/visitas/5. Carta Responsiva.docx">
+                                        <span>5. Carta Responsiva</span>
+                                    </p:link>
+                                </li>   
+                                <li>
+                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/SGI/visitas/6. Encuesta Proceso de Visitas.docx">
+                                        <span>6. Encuesta Proceso de Visitas</span>
+                                    </p:link>
+                                </li>      
+                            </ul>
+                        </li>
+                    </c:if>
                 </ul>
             </li>   
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 148 ||controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 300}">
@@ -585,6 +681,34 @@
                     </p:link>
                 </li>
             </c:if>
+            <!--            <c:if test="# {controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 60}">
+                            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Titulación</li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-users"></i><span>Expedientes</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                     <li>
+                                         <p:link href="/expedienteTitulacion/titulacion/seguimientoExpMatricula.xhtml"><i class="fa fa-user-o"></i>
+                                             <span>Seguimiento por Matricula</span>
+                                         </p:link>
+                                     </li>      
+                                     <li>
+                                         <p:link href="/expedienteTitulacion/titulacion/seguimientoExpGeneracion.xhtml"><i class="fa fa-group"></i>
+                                             <span>Seguimiento por Generación</span>
+                                         </p:link>
+                                     </li> 
+                                     <li>
+                                         <p:link href="/expedienteTitulacion/titulacion/fechasDocumentos.xhtml"><i class="fa fa-folder-open"></i>
+                                             <span>Catálogo Fechas Documentos</span>
+                                         </p:link>
+                                     </li> 
+                                </ul>
+                            </li>
+                        </c:if>-->
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Personal</li>
                 <li class="treeview">
@@ -655,7 +779,7 @@
                     </ul>
                 </li>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Fortalecimiento</li>
                 <li>
                     <p:link href="/capitalHumano/fda/perfilPersonalDocente.xhtml">
@@ -699,11 +823,11 @@
             <c:if test="#{utilidadesAdministracionEvaluaciones.tutor}">
                 <li>
                     <p:link href="/directorioCorreosAlumnosporTutor.xhtml">
-                         <i class="fa fa-envelope" />
+                        <i class="fa fa-envelope" />
                         <span>Directorio Estudiantes Tutorados</span>
                     </p:link>
                 </li>
-                
+
             </c:if>
             <li>
                 <p:link href="/siiFaces.xhtml">

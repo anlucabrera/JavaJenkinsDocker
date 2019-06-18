@@ -24,7 +24,7 @@
             }
         </script>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>        
         <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
@@ -55,7 +55,7 @@
                                             <div class="info-box">
                                                 <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
                                                 <div class="info-box-content">
-                                                    <span class="info-box-number" style="#{controladorEmpleado.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
                                                     <span class="info-box-number">En caso de que al guardar la justificación la información de la tabla se oculte solo presione la tecla F5 y de esta manera la información se volverá a mostrar.</span>
                                                 </div>
                                             </div>

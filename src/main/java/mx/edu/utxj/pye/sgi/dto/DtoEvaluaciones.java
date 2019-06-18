@@ -29,18 +29,16 @@ public class DtoEvaluaciones implements Serializable{
     /////////////////////////General wrappers\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     @Getter @Setter public Boolean cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, esSecretario, planeacion, ESActiva, ESTsuActiva,
             ESIngActiva, ESEActiva, EEActiva;
-    @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor, tipoEncuesta, siglas, abreviatura;
-    @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina, cveMaestro;
+    @Getter @Setter public Short grado;
+    @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor;
+    @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina;
     @Getter @Setter public Long total,total2;
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     ////////////////////////General entity's\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     @Getter @Setter public Evaluaciones evaluacion;
     @Getter @Setter public Alumnos alumno;
-    @Getter @Setter public PeriodosEscolares periodoEsc;
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     ///////////////////////Maps and lists generals\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    @Getter @Setter public Map<String,Long> collect = new HashMap<>();
-    @Getter @Setter public Map<String,Long> collect2 = new HashMap<>();
     @Getter @Setter public Map<String, String> respuestas;
     @Getter @Setter public List<SelectItem> respuestasPosibles;
     @Getter @Setter public List<Apartado> apartados;
@@ -49,17 +47,11 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public EncuestaServiciosResultados resultado;
     @Getter @Setter public ResultadosEncuestaSatisfaccionTsu resultadoREST;
     @Getter @Setter public EncuestaSatisfaccionEgresadosIng resultadoESEI;
-    @Getter @Setter public ListadoGraficaEncuestaServicios objListAlumnEnSer, objListGrafConcen;
-    @Getter @Setter public ListaDatosAvanceEncuestaServicio objAvanceEncSer;
-    @Getter @Setter public List<ListadoEvaluacionEgresados> listaEvaCompleta, listaEvaIncompleta, listaEvaNA, listaFiltrado,
-            listEvaCompletaDir, listEvaIncompletaDir, listEvaNADir, listaFiltradoDir;
+    @Getter @Setter public List<ListadoEvaluacionEgresados> listaEvaCompleta, listaEvaIncompleta, listaEvaNA, listaFiltrado;
     @Getter @Setter public List<AlumnosEncuestas> alumnosEncuesta = new ArrayList<>();
-    @Getter @Setter public List<ListadoGraficaEncuestaServicios> listGrafEncServ;
-    @Getter @Setter public List<ListadoGraficaEncuestaServicios> listDatosGraf;
-    @Getter @Setter public List<ListadoGraficaEncuestaServicios> listaIncompleta;
-    @Getter @Setter public List<ListaDatosAvanceEncuestaServicio> avanceEncServ;
-    @Getter @Setter public List<ListadoGraficaEncuestaServicios> listAlumnosEncSe;
+    @Getter @Setter public List<ListaDatosAvanceEncuestaServicio> dtoLDAES, dtoLDAES1, dtoLDAES2, dtoLDAES3;
     @Getter @Setter public List<ViewEstudianteAsesorAcademico> alumnosEncuestas;
+    @Getter @Setter public List<ListaDatosAvanceEncuestaServicio.AvanceEncuestaServiciosPorGrupo> dtoAESPG, dtoAESPG1, dtoAESPGFilter;
 
 
 

@@ -47,7 +47,7 @@
         <property name="serverName" value="150.140.1.11"/>
         <property name="databaseName" value="saiiut"/>
         <property name="User" value="saiiut"/>
-        <property name="Password" value="syscdsw15"/>
+        <property name="Password" value="desarrolloSF_planeacion19"/>
         <property name="URL" value="jdbc:sqlserver://150.140.1.11;databaseName=saiiut"/>
         <property name="driverClass" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
     </jdbc-connection-pool>

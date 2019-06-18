@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Planeacion
  */
 @Entity
 @Table(name = "vista_total_alumnos_carrera_pye", catalog = "saiiut", schema = "saiiut")
@@ -31,12 +31,13 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "VistaTotalAlumnosCarreraPye.findByAbreviatura", query = "SELECT v FROM VistaTotalAlumnosCarreraPye v WHERE v.abreviatura = :abreviatura")
     , @NamedQuery(name = "VistaTotalAlumnosCarreraPye.findByTotalMatricula", query = "SELECT v FROM VistaTotalAlumnosCarreraPye v WHERE v.totalMatricula = :totalMatricula")
     , @NamedQuery(name = "VistaTotalAlumnosCarreraPye.findByGrado", query = "SELECT v FROM VistaTotalAlumnosCarreraPye v WHERE v.grado = :grado")
-    , @NamedQuery(name = "VistaTotalAlumnosCarreraPye.findByNumeroNomina", query = "SELECT v FROM VistaTotalAlumnosCarreraPye v WHERE v.numeroNomina = :numeroNomina")})
+    , @NamedQuery(name = "VistaTotalAlumnosCarreraPye.findByNumeroNomina", query = "SELECT v FROM VistaTotalAlumnosCarreraPye v WHERE v.numeroNomina = :numeroNomina")
+    , @NamedQuery(name = "VistaTotalAlumnosCarreraPye.findByPeriodo", query = "SELECT v FROM VistaTotalAlumnosCarreraPye v WHERE v.periodo = :periodo")})
 public class VistaTotalAlumnosCarreraPye implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
     @Size(max = 105)
+    @Id
     @Column(name = "id")
     private String id;
     @Basic(optional = false)
@@ -55,6 +56,8 @@ public class VistaTotalAlumnosCarreraPye implements Serializable {
     @Size(max = 20)
     @Column(name = "numeroNomina")
     private String numeroNomina;
+    @Column(name = "periodo")
+    private Integer periodo;
 
     public VistaTotalAlumnosCarreraPye() {
     }
@@ -105,6 +108,14 @@ public class VistaTotalAlumnosCarreraPye implements Serializable {
 
     public void setNumeroNomina(String numeroNomina) {
         this.numeroNomina = numeroNomina;
+    }
+
+    public Integer getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(Integer periodo) {
+        this.periodo = periodo;
     }
     
 }

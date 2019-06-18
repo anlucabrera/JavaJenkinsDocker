@@ -196,4 +196,21 @@ public class UtilidadesCH implements Serializable {
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalInfo("¡Operación cancelada!");
     }
+    
+    public String agregarDocExpTit(Part file, String generacion, String nivel, String carrera, String nombreEstMat, String tipoDoc, String matricula) {
+        String ruta = "";
+        if (file == null) {
+            return null;
+        }
+        
+        ruta = carga.subirDocExpTit(file, tipoDoc, new File(generacion.concat(File.separator).concat(nivel).concat(File.separator).concat(carrera).concat(File.separator).concat(nombreEstMat).concat(File.separator)), matricula);
+        
+        if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+            Messages.addGlobalInfo("El documento se ha guardado correctamente.");
+            return ruta;
+        } else {
+            Messages.addGlobalInfo("El documento no se ha podido guardar.");
+            return "";
+        }
+    }
 }
