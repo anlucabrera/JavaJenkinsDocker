@@ -56,8 +56,7 @@ public class PlanEstudio implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "anio")
-    @Temporal(TemporalType.DATE)
-    private Date anio;
+    private Short anio;
     @Basic(optional = false)
     @NotNull
     @Column(name = "estatus")
@@ -78,7 +77,7 @@ public class PlanEstudio implements Serializable {
         this.idPlanEstudio = idPlanEstudio;
     }
 
-    public PlanEstudio(Integer idPlanEstudio, String descripcion, Date anio, boolean estatus, short idPe) {
+    public PlanEstudio(Integer idPlanEstudio, String descripcion, Short anio, boolean estatus, short idPe) {
         this.idPlanEstudio = idPlanEstudio;
         this.descripcion = descripcion;
         this.anio = anio;
@@ -102,11 +101,11 @@ public class PlanEstudio implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Date getAnio() {
+    public Short getAnio() {
         return anio;
     }
 
-    public void setAnio(Date anio) {
+    public void setAnio(Short anio) {
         this.anio = anio;
     }
 

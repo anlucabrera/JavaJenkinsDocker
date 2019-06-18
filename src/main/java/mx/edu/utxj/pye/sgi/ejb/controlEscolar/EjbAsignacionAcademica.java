@@ -422,10 +422,10 @@ public class EjbAsignacionAcademica {
                     .findFirst()
                     .orElse(null);
             if(cargaAcademica != null){
-                DtoMateria dto = new DtoMateria(materia, pack(cargaAcademica).getValor());
+                DtoMateria dto = new DtoMateria(materia, pack(cargaAcademica).getValor(), cargaAcademica.getHorasSemana());
                 return ResultadoEJB.crearCorrecto(dto, "Materia empaquetada");
             }else{
-                DtoMateria dto = new DtoMateria(materia, null);
+                DtoMateria dto = new DtoMateria(materia, null, 0);
                 return ResultadoEJB.crearCorrecto(dto, "Se empaquetó la materia pero no ha sido asignada.");
             }
         }catch (Exception e){
@@ -486,7 +486,7 @@ public class EjbAsignacionAcademica {
                 return ResultadoEJB.crearCorrecto(Collections.EMPTY_LIST, "Sin mensajes");
             }
         }catch (Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudieron identificar mensajes de asignación (EjbAsignacionAcademica.identificarMensajes).", e, null);
         }
     }
@@ -497,6 +497,12 @@ public class EjbAsignacionAcademica {
      * @return
      */
     public ResultadoEJB<Integer> actualizarHorasPorSemana(DtoMateria dtoMateria){
-        return null;
+        try{
+            if(dtoMateria.getDtoCargaAcademica() == null) return ResultadoEJB.crearErroneo(2, "No se puede actualizar el valor de horas por semana, ya que la materia aún no ha sido asignada.", Integer.class);
+            f.edit(dtoMateria.getDtoCargaAcademica().getCargaAcademica());
+            return  ResultadoEJB.crearCorrecto(dtoMateria.getDtoCargaAcademica().getCargaAcademica().getHorasSemana(), "Se actualizó correctamente el valor de horas por semana.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el valor de horas por semana en la asignación (EjbAsignacionAcademica.actualizarHorasPorSemana).", e, null);
+        }
     }
 }

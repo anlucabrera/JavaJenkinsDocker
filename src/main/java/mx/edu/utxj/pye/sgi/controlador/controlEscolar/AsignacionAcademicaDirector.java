@@ -232,16 +232,48 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
         repetirUltimoMensaje();
     }
 
+    /**
+     * Permite decidir si se msotrará el botón de asignacion para una materia asignada o no
+     * @param dtoMateria DTO referencia de la materia a tratar
+     * @return Regresa TRUE si debe mostrarse, FALSE de lo contrario
+     */
     public Boolean mostrarBotonAsignacion(DtoMateria dtoMateria){
         if(dtoMateria == null) return false;
         return rol.getDocente() != null //el docente no debe ser nulo
                 && dtoMateria.getDtoCargaAcademica() == null; //la materia no debe haber sido asignada aun
     }
 
+    /**
+     * Permite decidir si se mostrará el botón de reasignación para una materia asignada o no
+     * @param dtoMateria DTO referenci de la materia a reasignar
+     * @return Regresa TRUE si debe mostrarse, FALSE de lo contrario
+     */
     public Boolean mostrarBotonReasignacion(DtoMateria dtoMateria){
         if(dtoMateria == null) return false;
         return rol.getDocente() != null // el docente no debe ser nulo
                 && dtoMateria.getDtoCargaAcademica() != null  //la asignación debe existir
                 && !dtoMateria.getDtoCargaAcademica().getDocente().getPersonal().equals(rol.getDocente().getPersonal()); //se debió haber seleccionado un docente diferente a quien ya se le asignó la materia
+    }
+
+    public Boolean mostrarBotonHoras(DtoMateria dtoMateria){
+        return dtoMateria.getDtoCargaAcademica() != null;
+    }
+
+    /**
+     * Permite actualizar el valor de horas por semana
+     */
+    public void actualizarHorasPorSemana(){
+        /*if(e.getNewValue() instanceof Integer){
+            Integer horas = (Integer) e.getNewValue();
+        }else {
+            System.out.println("e.getNewValue().getClass() = " + e.getNewValue().getClass());
+        }*/
+        ResultadoEJB<Integer> res = ejb.actualizarHorasPorSemana(rol.getMateria());
+//        System.out.println("res = " + res);
+        mostrarMensajeResultadoEJB(res);
+    }
+
+    public void seleccionarMateria(DtoMateria dtoMateria){
+        rol.setMateria(dtoMateria);
     }
 }
