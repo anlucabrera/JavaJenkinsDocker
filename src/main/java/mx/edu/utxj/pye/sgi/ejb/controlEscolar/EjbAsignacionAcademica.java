@@ -32,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Stateless(name = "EjbAsignacionAcademica")
-public class EjbAsignacionAcademica {
+public class EjbAsignacionAcademica {//coomit
     @EJB EjbPersonalBean ejbPersonalBean;
     @EJB EjbPropiedades ep;
     @EJB Facade f;
