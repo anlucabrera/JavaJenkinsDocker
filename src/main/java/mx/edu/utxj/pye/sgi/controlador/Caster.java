@@ -73,8 +73,11 @@ public class Caster {
                 .append(" ")
                 .append(periodo.getMesInicio().getMes().equals("Septiembre") ? sdf.format(periodo.getCiclo().getInicio()) : sdf.format(periodo.getCiclo().getFin()))
                 .toString();
+    }
 
-
+    public String clavePeriodoToString(Integer periodo){
+        PeriodosEscolares periodoEscolar = f.getEntityManager().find(PeriodosEscolares.class, periodo);
+        return periodoToString(periodoEscolar);
     }
 
     public String cicloEscolarToString(CiclosEscolares cicloEscolar){

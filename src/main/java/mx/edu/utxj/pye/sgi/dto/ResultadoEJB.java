@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
  * la excepción que se lanzó (será nula si el resultado es correcto),
  * una clave númerica para representar el resultado (será cero si el resultado es correcto y mayor que cero si hay error),
  */
+@ToString
 public class ResultadoEJB<T> implements Serializable {
     @Getter @Setter @NonNull private T valor;
     @Getter @Setter @NonNull private String mensaje;
@@ -108,7 +109,7 @@ public class ResultadoEJB<T> implements Serializable {
                 if (mensaje == null) {
                     mensaje = "";
                 }
-                System.out.println("resultado = [" + resultado + "], mensaje = [" + mensaje + "], ex = [" + ex + "], tipo = [" + tipo + "]");
+//                System.out.println("resultado = [" + resultado + "], mensaje = [" + mensaje + "], ex = [" + ex + "], tipo = [" + tipo + "]");
                 mensaje = mensaje.concat(" ").concat(getExceptionMessage(ex));
             }
             T t = null;                    ;

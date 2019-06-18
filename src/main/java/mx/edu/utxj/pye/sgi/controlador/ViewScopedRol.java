@@ -1,6 +1,9 @@
 package mx.edu.utxj.pye.sgi.controlador;
 
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
@@ -8,10 +11,13 @@ import org.omnifaces.util.Messages;
 import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Dependent
 public class ViewScopedRol implements Serializable {
-    protected  FacesMessage ultimoMensaje;
+    @Getter @Setter protected  FacesMessage ultimoMensaje;
+    @Getter @Setter protected List<DtoAlerta> alertas = new ArrayList<>();
     public void mostrarMensajeNoAcceso(){
         FacesMessage.Severity severity = FacesMessage.SEVERITY_ERROR;
         String mensaje = "No tiene acceso a esta página.";
