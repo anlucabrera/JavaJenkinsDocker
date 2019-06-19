@@ -11,6 +11,7 @@ import java.io.Serializable;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.inject.Named;
+import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbPlantillasCAExcel;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbReportesCAExcel;
 import org.omnifaces.cdi.ViewScoped;
@@ -77,8 +78,8 @@ public class ControladorPlantillasCA implements Serializable{
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteCuerposAcademicos() throws IOException, Throwable{
-        File f = new File(ejbReportesCAExcel.getReporteCompletoCuerposAcademicos());
+    public void descargarReporteCuerposAcademicos(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteCompletoCuerposAcademicos(ejercicio));
         Faces.sendFile(f, true);
     }
     

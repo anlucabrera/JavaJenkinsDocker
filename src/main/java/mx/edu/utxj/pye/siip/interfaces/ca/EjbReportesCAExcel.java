@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.siip.interfaces.ca;
 
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 
 /**
  *
@@ -20,7 +21,7 @@ public interface EjbReportesCAExcel {
     
     public String getReporteServiciosEnfermeria() throws Throwable;
     
-    public String getReporteCompletoCuerposAcademicos()  throws Throwable;
+    public String getReporteCompletoCuerposAcademicos(Short ejercicio)  throws Throwable;
     
     public String getReporteCompletoProductosAcademicos() throws Throwable;
     

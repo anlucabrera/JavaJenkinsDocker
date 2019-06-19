@@ -93,7 +93,7 @@
                                         <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="cuerposAcademicos?faces-redirect=true" title="Consultar registros"><i class="fa fa-list"></i></p:commandLink>
                                         <p:spacer width="3" />
                                     </c:if>    
-                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteCuerposAcademicos()}" target="_blank" title="Descargar Reporte de Excel Cuerpos Academicos"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteCuerposAcademicos(controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta)}" target="_blank" title="Descargar Reporte de Excel Cuerpos Académicos"><i class="fa fa-file-excel-o" /></p:commandLink>
                                     <p:spacer width="3" />
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarPlantillaCuerposAcademicos()}" target="_blank" title="Descargar Plantilla de Cuerpos Académicos"><i class="fa fa-download" /></p:commandLink>
                                     <p:spacer width="3" />
@@ -107,6 +107,15 @@
                 <p:separator/>
 
                 <div class="box-body">
+
+                    <h:form id="abrirNuevoRegistroInfo">
+                        <div class="callout callout-info">
+                            <h4>¡Aviso!</h4>
+                            <p>Ahora ya puedes dar de alta nuevos Cuerpos Académicos mediante un formulario de registro: <code><p:commandLink ajax="true" actionListener="#{controladorCuerposAcademicos.nuevoRegistroCuerpoAcademico()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
+                            <p>Ahora ya puedes dar de alta nuevos Integrantes de Cuerpos Académicos mediante un formulario de registro: <code><p:commandLink ajax="true" actionListener="#{controladorCuerposAcademicos.nuevoRegistroCuerpoAcademicoIntegrante()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
+                            <p>Ahora ya puedes dar de alta nuevas Líneas de Investigación de Cuerpos Académicos mediante un formulario de registro: <code><p:commandLink ajax="true" actionListener="#{controladorCuerposAcademicos.nuevoRegistroCuerpoAcademicoLineaInvestigacion()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
+                        </div>
+                    </h:form>
 
                     <!-- Sección de visualización y eliminación -->
                     <div class="row">
@@ -1122,8 +1131,8 @@
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
-                              draggable="true" 
-                              header="Edición de Cuerpo Académico" 
+                              draggable="true"
+                              header="#{controladorCuerposAcademicos.dtoCuerposAcademicos.nuevoRegistro?'Nuevo Cuerpo Académico':'Edición de Cuerpo Académico'}" 
                               onHide="actualizar();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
@@ -1136,160 +1145,220 @@
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
 
-                                <!--Fecha de inicio-->
+                                <c:if test="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mensaje ne ''}">
+                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                        <div class="callout callout-info">
+                                            <p style="font-weight: bold;">Mensaje de verificación:</p>
+                                            <p><code style="color:#4185A0;">#{controladorCuerposAcademicos.dtoCuerposAcademicos.mensaje}</code></p>
+                                        </div>
+                                        <p:outputLabel id="mensaje" value=""/>
+                                        <br></br>
+                                    </div>  
+                                </c:if>
+
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Fecha de inicio: " for="iptFechaInicio" />
-                                    <br></br>
-                                    <p:spacer width="5" />
-                                    <p:calendar id="iptFechaInicio"
-                                                label="iptFechaInicio"
-                                                required="true"
-                                                requiredMessage="Ingrese Fecha de Inicio"
-                                                value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.fechaInicio}"
-                                                valueChangeListener="#{controladorCuerposAcademicos.validaFechaInicio}"
-                                                pattern="yyyy-MM-dd" 
-                                                mask="true"
-                                                locale="es"
-                                                styleClass="campo2Partes"
-                                                >
-                                        <p:ajax event="dateSelect" process="iptFechaInicio" update="iptFechaTermino"/>
-                                        <p:ajax event="change" process="iptFechaInicio" update="iptFechaTermino"/>
-                                    </p:calendar>
-                                    <p:watermark for="iptFechaInicio" value="2019-03-19 *" />
-                                    <p:message for="iptFechaInicio" />
-                                </div>
-                                <!--Fecha de termino-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
-                                    <p:outputLabel value="Fecha de termino: " for="iptFechaTermino" />
-                                    <br></br>
-                                    <p:spacer width="5" />
-                                    <p:calendar id="iptFechaTermino"
-                                                label="iptFechaTermino"
-                                                required="true"
-                                                requiredMessage="Ingrese Fecha de Termino"
-                                                value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.fechaTermino}"
-                                                valueChangeListener="#{controladorCuerposAcademicos.validaFechaTermino}"
-                                                pattern="yyyy-MM-dd" 
-                                                mask="true"
-                                                styleClass="campo2Partes"
-                                                locale="es"
-                                                >
-                                        <p:ajax event="dateSelect" process="iptFechaTermino" update="iptFechaInicio"/>
-                                        <p:ajax event="change" process="iptFechaTermino" update="iptFechaInicio"/>
-                                    </p:calendar>
-                                    <p:watermark for="iptFechaTermino" value="2019-03-20 *" />
-                                    <p:message for="iptFechaTermino" />
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somTipoCuerpoAcademico"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el tipo de cuerpo académico"
+                                                         value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.tipoCuerpoAcademico}"
+                                                         class="form-control"
+                                                         style="padding-top: 0px; width: 14em;"
+                                                         rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.nuevoRegistro}"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - "
+                                                          itemValue="#{null}"/>
+                                            <f:selectItem itemValue="UTXJ-CAI-"
+                                                          itemLabel="Interno"
+                                                          itemDescription="Interno"/>
+                                            <f:selectItem itemValue="UTXJ-CA-"
+                                                          itemLabel="Reconocido"
+                                                          itemDescription="Reconocido" />
+                                            <p:message for="somTipoCuerpoAcademico" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <p>Tipo de cuerpo académico</p>
                                 </div>
 
+                                <!--Consecutivo cuerpo académico-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px">
+                                    <div class="ui-material">
+                                        <p:spinner id="consecutivoCuerpoAcademico"
+                                                   label="consecutivoCuerpoAcademico"
+                                                   required="true"
+                                                   requiredMessage="Ingrese el número consecutivo del cuerpo académico"
+                                                   value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.consecutivoCuerpoAcademico}"
+                                                   min="1" max="1000"
+                                                   styleClass="campo2Partes"
+                                                   rendered="#{controladorCuerposAcademicos.dtoCuerposAcademicos.nuevoRegistro}"
+                                                   />
+                                        <p:message for="consecutivoCuerpoAcademico" />
+                                    </div>
+                                    <p>Consecutivo Cuerpo Académico</p>
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"></div>
+
+                                <!--Fecha de inicio-->
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="ui-material">
+                                        <p:calendar id="iptFechaInicio"
+                                                    label="iptFechaInicio"
+                                                    required="true"
+                                                    requiredMessage="Ingrese Fecha de Inicio"
+                                                    value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.fechaInicio}"
+                                                    valueChangeListener="#{controladorCuerposAcademicos.validaFechaInicio}"
+                                                    pattern="yyyy-MM-dd"
+                                                    styleClass="campo2Partes"
+                                                    locale="es"
+                                                    showOn="both"
+                                                    placeholder="2019-03-20 *"
+                                                    >
+                                            <p:ajax event="dateSelect" global="false" process="@this" update="@form:iptFechaTermino"/>
+                                            <p:ajax event="change" global="false" process="@this" update="@form:iptFechaTermino"/>
+                                        </p:calendar>
+                                        <p:message for="iptFechaInicio" />
+                                    </div>
+                                    <p>Fecha de inicio</p>
+                                </div>
+                                <!--Fecha de termino-->
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="ui-material">
+                                        <p:calendar id="iptFechaTermino"
+                                                    label="iptFechaTermino"
+                                                    required="true"
+                                                    requiredMessage="Ingrese Fecha de Termino"
+                                                    value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.fechaTermino}"
+                                                    valueChangeListener="#{controladorCuerposAcademicos.validaFechaTermino}"
+                                                    pattern="yyyy-MM-dd"
+                                                    styleClass="campo2Partes"
+                                                    locale="es"
+                                                    showOn="both"
+                                                    placeholder="2019-03-20 *"
+                                                    >
+                                            <p:ajax event="dateSelect" process="@this" update="@form:iptFechaInicio"/>
+                                            <p:ajax event="change" process="@this" update="@form:iptFechaInicio"/>
+                                        </p:calendar>
+                                        <p:message for="iptFechaTermino" />
+                                    </div>
+                                    <p>Fecha de Termino</p>
+                                </div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 20px"></div>
+
                                 <!--Nombre del cuerpo académico-->
-                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Nombre del cuerpo académico: " for="iptNombreCuerpoAcademico"/>
-                                    <p:inputText id="iptNombreCuerpoAcademico"
-                                                 label="iptNombreCuerpoAcademico"
-                                                 maxlength="250"
-                                                 required="true"
-                                                 class="form-control"
-                                                 requiredMessage="Ingrese el nombre del servicio tecnológico"
-                                                 value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.nombre}"/>
-                                    <p:watermark for="iptNombreCuerpoAcademico" value="Innovación tecnológica y/o sistemas bioelectrónicos *" />
-                                    <p:message for="iptNombreCuerpoAcademico" />
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 20px;">
+                                    <div class="ui-material">
+                                        <p:inputText id="iptNombreCuerpoAcademico"
+                                                     label="iptNombreCuerpoAcademico"
+                                                     maxlength="250"
+                                                     required="true"
+                                                     class="form-control"
+                                                     requiredMessage="Ingrese el nombre del servicio tecnológico"
+                                                     value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.nombre}"/>
+                                        <p:watermark for="iptNombreCuerpoAcademico" value="Innovación tecnológica y/o sistemas bioelectrónicos *" />
+                                        <p:message for="iptNombreCuerpoAcademico" />
+                                        <p:outputLabel value="Nombre del cuerpo académico: " for="iptNombreCuerpoAcademico"/>
+                                    </div>
                                 </div>
 
                                 <!--Nivel de prodep-->
-                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Nivel Prodep: " for="somNivelProdep"/>
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somNivelProdep"
-                                                     required="true"
-                                                     requiredMessage="Seleccione nivel prodep"
-                                                     value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.nivelProdep}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     style="padding-top: 0px; width: 14em;"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - " 
-                                                      itemValue="#{null}"/>
-                                        <f:selectItem itemValue="En formación"
-                                                      itemLabel="En formación"
-                                                      itemDescription="En formación"/>
-                                        <f:selectItem itemValue="En cosolidación"
-                                                      itemLabel="En cosolidación"
-                                                      itemDescription="En cosolidación"/>
-                                        <f:selectItem itemValue="Consolidado"
-                                                      itemLabel="Consolidado"
-                                                      itemDescription="Consolidado"/>
-                                        <f:selectItem itemValue="Sin reconocimiento"
-                                                      itemLabel="Sin reconocimiento"
-                                                      itemDescription="Sin reconocimiento"/>
-                                        <p:message for="somNivelProdep" />
-                                    </p:selectOneMenu>
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 20px;">
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somNivelProdep"
+                                                         required="true"
+                                                         requiredMessage="Seleccione nivel prodep"
+                                                         value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.nivelProdep}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         style="padding-top: 0px; width: 14em;"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - " 
+                                                          itemValue="#{null}"/>
+                                            <f:selectItem itemValue="En formación"
+                                                          itemLabel="En formación"
+                                                          itemDescription="En formación"/>
+                                            <f:selectItem itemValue="En cosolidación"
+                                                          itemLabel="En cosolidación"
+                                                          itemDescription="En cosolidación"/>
+                                            <f:selectItem itemValue="Consolidado"
+                                                          itemLabel="Consolidado"
+                                                          itemDescription="Consolidado"/>
+                                            <f:selectItem itemValue="Sin reconocimiento"
+                                                          itemLabel="Sin reconocimiento"
+                                                          itemDescription="Sin reconocimiento"/>
+                                            <p:message for="somNivelProdep" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Nivel Prodep: " for="somNivelProdep"/>
+                                    </div>
                                 </div>
 
-                                <!--Area de estudio-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
-                                    <p:outputLabel value="Área de estudio: " for="somAreasEstudio" />
-                                    <p:spacer width="5" />
-                                    <p:selectOneMenu id="somAreasEstudio"
-                                                     required="true"
-                                                     requiredMessage="Seleccione el área de estudio"
-                                                     value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.areaEstudio}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     converter="entidadConverter2"
-                                                     style="padding-top: 0px"
-                                                     styleClass="campo2Partes"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - "
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.listaAreasEstudio}"
-                                                       var="areaestudio"
-                                                       itemValue="#{areaestudio}"
-                                                       itemLabel="#{areaestudio.nombre}"
-                                                       itemDescription="#{areaestudio.nombre}"/>
-                                        <p:message for="somAreasEstudio" />
-                                    </p:selectOneMenu>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 20px"></div>
+                                <!--Área de estudio-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 20px">
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somAreasEstudio"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el área de estudio"
+                                                         value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.areaEstudio}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         converter="entidadConverter2"
+                                                         style="padding-top: 0px"
+                                                         styleClass="campo2Partes"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - "
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.listaAreasEstudio}"
+                                                           var="areaestudio"
+                                                           itemValue="#{areaestudio}"
+                                                           itemLabel="#{areaestudio.nombre}"
+                                                           itemDescription="#{areaestudio.nombre}"/>
+                                            <p:message for="somAreasEstudio" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Área de estudio: " for="somAreasEstudio" />
+                                    </div>
                                 </div>
 
                                 <!--Disciplina-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
-                                    <p:outputLabel value="Disciplina: " for="somDisciplinas" />
-                                    <p:spacer width="5" />
-                                    <p:selectOneMenu id="somDisciplinas"
-                                                     required="true"
-                                                     requiredMessage="Seleccione la disciplina"
-                                                     value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.disciplina}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     converter="entidadConverter2"
-                                                     style="padding-top: 0px"
-                                                     styleClass="campo2Partes"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - "
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.listaDisciplinas}"
-                                                       var="disciplina"
-                                                       itemValue="#{disciplina}"
-                                                       itemLabel="#{disciplina.nombre}"
-                                                       itemDescription="#{disciplina.nombre}"/>
-                                        <p:message for="somDisciplinas" />
-                                    </p:selectOneMenu>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 20px">
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somDisciplinas"
+                                                         required="true"
+                                                         requiredMessage="Seleccione la disciplina"
+                                                         value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.disciplina}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         converter="entidadConverter2"
+                                                         style="padding-top: 0px"
+                                                         styleClass="campo2Partes"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - "
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.listaDisciplinas}"
+                                                           var="disciplina"
+                                                           itemValue="#{disciplina}"
+                                                           itemLabel="#{disciplina.nombre}"
+                                                           itemDescription="#{disciplina.nombre}"/>
+                                            <p:message for="somDisciplinas" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Disciplina: " for="somDisciplinas" />
+                                    </div>
                                 </div>
 
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
                                         <p:commandButton id="btnEditaCuerpoAcademico"
-                                                         value="Actualizar Cambios"
+                                                         value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.nuevoRegistro?'Guardar':'Actualizar Cambios'}"
                                                          icon="fa fa-save"
                                                          class="btn-primary"
-                                                         actionListener="#{controladorCuerposAcademicos.editaCuerpoAcademico}"
+                                                         actionListener="#{controladorCuerposAcademicos.accionCuerpoAcademico(controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro)}"
                                                          update="@form:frmEdicionCuerpoAcademico" 
                                                          process="@form:frmEdicionCuerpoAcademico"
                                                          />
@@ -1310,7 +1379,7 @@
                               hideEffect="fade" 
                               modal="true" 
                               draggable="true" 
-                              header="Edición de Integrante de Cuerpo Académico" 
+                              header="#{controladorCuerposAcademicos.dtoCuerposAcademicos.nuevoRegistro?'Asignación de Integrantes':'Edición de Integrante de Cuerpo Académico'}" 
                               onHide="actualizar();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
@@ -1323,77 +1392,82 @@
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
 
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
-                                    <p:outputLabel id="mensaje" value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mensaje}"/>
-                                    <br></br>
-                                </div>
+                                <c:if test="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mensaje ne ''}">
+                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                        <div class="callout callout-info">
+                                            <p style="font-weight: bold;">Mensaje de verificación:</p>
+                                            <p><code style="color:#4185A0;">#{controladorCuerposAcademicos.dtoCuerposAcademicos.mensaje}</code></p>
+                                        </div>
+                                        <p:outputLabel id="mensaje" value=""/>
+                                        <br></br>
+                                    </div>  
+                                </c:if>
 
                                 <!--Cuerpos Académicos-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
-                                    <p:outputLabel value="Cuerpo Académico: " for="somCuerposAcademicosIntegrantes" />
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somCuerposAcademicosIntegrantes"
-                                                     required="true"
-                                                     requiredMessage="Seleccione el cuerpo académico"
-                                                     value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerpAcadIntegrantes.cuerpoAcademicoIntegrantes.cuerpoAcademico}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     converter="entidadConverter2"
-                                                     style="padding-top: 0px"
-                                                     styleClass="campo2Partes"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - "
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.listaCuerposAcademicosIntLa}"
-                                                       var="ca"
-                                                       itemValue="#{ca}"
-                                                       itemLabel="#{ca.cuerpoAcademico} - #{ca.nombre}"
-                                                       itemDescription="#{ca.cuerpoAcademico}"/>
-                                        <p:message for="somCuerposAcademicosIntegrantes" />
-                                    </p:selectOneMenu>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somCuerposAcademicosIntegrantes"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el cuerpo académico"
+                                                         value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerpAcadIntegrantes.cuerpoAcademicoIntegrantes.cuerpoAcademico}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         converter="entidadConverter2"
+                                                         style="padding-top: 0px"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - "
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.listaCuerposAcademicosIntLa}"
+                                                           var="ca"
+                                                           itemValue="#{ca}"
+                                                           itemLabel="#{ca.cuerpoAcademico} - #{ca.nombre}"
+                                                           itemDescription="#{ca.cuerpoAcademico}"/>
+                                            <p:message for="somCuerposAcademicosIntegrantes" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Cuerpo Académico: " for="somCuerposAcademicosIntegrantes" />
+                                    </div>
                                 </div>
-
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;"></div>
                                 <!--Personal-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Integrante (Busqueda por Clave, Nombre, Área): " for="acPersonal" />
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:autoComplete id="acPersonal"
-                                                    value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.persona}"
-                                                    completeMethod="#{controladorCuerposAcademicos.completeListaPersonal}"
-                                                    styleClass="campo2Partes"
-                                                    queryDelay="1000"
-                                                    var="persona"
-                                                    itemLabel="#{persona.nombre}"
-                                                    itemValue="#{persona}"
-                                                    converter="listaPersonalConverter"
-                                                    forceSelection="true"
-                                                    minQueryLength="3"
-                                                    scrollHeight="300"
-                                                    placeholder="Escriba el nombre y seleccione."
-                                                    valueChangeListener="#{controladorCuerposAcademicos.seleccionaListaPersonal}"
-                                                    required="true"
-                                                    requiredMessage="Seleccione una opción"
-                                                    >
-                                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
-                                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
-                                        <p:column><h:outputText value="#{persona.areaOperativaNombre}" /></p:column> 
-                                        <p:ajax event="itemSelect" process="@this" update="@this"/>
-                                        <p:message for="acPersonal" />
-                                    </p:autoComplete>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <div class="ui-material">
+                                        <p:autoComplete id="acPersonal"
+                                                        value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.persona}"
+                                                        completeMethod="#{controladorCuerposAcademicos.completeListaPersonal}"
+                                                        queryDelay="1000"
+                                                        var="persona"
+                                                        itemLabel="#{persona.nombre}"
+                                                        itemValue="#{persona}"
+                                                        converter="listaPersonalConverter"
+                                                        forceSelection="true"
+                                                        minQueryLength="3"
+                                                        scrollHeight="300"
+                                                        placeholder="Escriba el nombre y seleccione."
+                                                        valueChangeListener="#{controladorCuerposAcademicos.seleccionaListaPersonal}"
+                                                        required="true"
+                                                        requiredMessage="Seleccione una opción"
+                                                        dropdown="true"
+                                                        >
+                                            <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                                            <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                                            <p:column><h:outputText value="#{persona.areaOperativaNombre}" /></p:column> 
+                                            <p:ajax event="itemSelect" process="@this" update="@this"/>
+                                            <p:message for="acPersonal" />
+                                        </p:autoComplete>
+                                        <p:outputLabel value="Integrante (Busqueda por Clave, Nombre, Área): " for="acPersonal" />
+                                    </div>
                                 </div>
 
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
                                         <p:commandButton id="btnEditaCuerpoAcademicoIntegrante"
-                                                         value="Actualizar Cambios"
+                                                         value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.nuevoRegistro?'Guardar':'Actualizar Cambios'}"
                                                          icon="fa fa-save"
                                                          class="btn-primary"
-                                                         actionListener="#{controladorCuerposAcademicos.editaCuerpoAcademicoIntegrante}"
+                                                         actionListener="#{controladorCuerposAcademicos.accionCuerpoAcademicoIntegrante(controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerpAcadIntegrantes.cuerpoAcademicoIntegrantes)}"
                                                          update="@form:frmEdicionCuerpoAcademicoIntegrante" 
                                                          process="@form:frmEdicionCuerpoAcademicoIntegrante"
                                                          />
@@ -1414,7 +1488,7 @@
                               hideEffect="fade" 
                               modal="true" 
                               draggable="true" 
-                              header="Edición de Línea de Investigación de Cuerpo Académico" 
+                              header="#{controladorCuerposAcademicos.dtoCuerposAcademicos.nuevoRegistro?'Asignación de Lineas de Investigación':'Edición de Línea de Investigación de Cuerpo Académico'}" 
                               onHide="actualizar();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
@@ -1427,61 +1501,69 @@
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
 
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
-                                    <p:outputLabel id="mensaje" value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mensaje}"/>
-                                    <br></br>
-                                </div>
+                                <c:if test="#{controladorCuerposAcademicos.dtoCuerposAcademicos.mensaje ne ''}">
+                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                        <div class="callout callout-info">
+                                            <p style="font-weight: bold;">Mensaje de verificación:</p>
+                                            <p><code style="color:#4185A0;">#{controladorCuerposAcademicos.dtoCuerposAcademicos.mensaje}</code></p>
+                                        </div>
+                                        <p:outputLabel id="mensaje" value=""/>
+                                        <br></br>
+                                    </div>  
+                                </c:if>
 
                                 <!--Cuerpos Académicos-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
-                                    <p:outputLabel value="Cuerpo Académico: " for="somCuerposAcademicosLI" />
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somCuerposAcademicosLI"
-                                                     required="true"
-                                                     requiredMessage="Seleccione el cuerpo académico"
-                                                     value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.cuerpoAcademico}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     converter="entidadConverter2"
-                                                     style="padding-top: 0px"
-                                                     styleClass="campo2Partes"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - "
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.listaCuerposAcademicosIntLa}"
-                                                       var="ca"
-                                                       itemValue="#{ca}"
-                                                       itemLabel="#{ca.cuerpoAcademico} - #{ca.nombre}"
-                                                       itemDescription="#{ca.cuerpoAcademico}"/>
-                                        <p:message for="somCuerposAcademicosLI" />
-                                    </p:selectOneMenu>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somCuerposAcademicosLI"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el cuerpo académico"
+                                                         value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.cuerpoAcademico}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         converter="entidadConverter2"
+                                                         style="padding-top: 0px"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - "
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.listaCuerposAcademicosIntLa}"
+                                                           var="ca"
+                                                           itemValue="#{ca}"
+                                                           itemLabel="#{ca.cuerpoAcademico} - #{ca.nombre}"
+                                                           itemDescription="#{ca.cuerpoAcademico}"/>
+                                            <p:message for="somCuerposAcademicosLI" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Cuerpo Académico: " for="somCuerposAcademicosLI" />
+                                    </div>
                                 </div>
 
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;"></div>
                                 <!--Linea de investigación-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Linea de investigación: " for="iptNombreLineaInvestigacion"/>
-                                    <p:inputText id="iptNombreLineaInvestigacion"
-                                                 label="iptNombreLineaInvestigacion"
-                                                 maxlength="250"
-                                                 required="true"
-                                                 class="form-control"
-                                                 requiredMessage="Ingrese el nombre de la línea de investigación"
-                                                 value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.nombre}"/>
-                                    <p:watermark for="iptNombreLineaInvestigacion" value="Tecnología de Alimentos. *" />
-                                    <p:message for="iptNombreLineaInvestigacion" />
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 20px;">
+                                    <div class="ui-material">
+                                        <p:inputText id="iptNombreLineaInvestigacion"
+                                                     label="iptNombreLineaInvestigacion"
+                                                     maxlength="250"
+                                                     required="true"
+                                                     class="form-control"
+                                                     requiredMessage="Ingrese el nombre de la línea de investigación"
+                                                     value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.nombre}"/>
+                                        <p:watermark for="iptNombreLineaInvestigacion" value="Tecnología de Alimentos. *" />
+                                        <p:message for="iptNombreLineaInvestigacion" />
+                                        <p:outputLabel value="Linea de investigación: " for="iptNombreLineaInvestigacion"/>
+                                    </div>
                                 </div>
 
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
                                         <p:commandButton id="btnEditaCuerpoAcademicoLI"
-                                                         value="Actualizar Cambios"
+                                                         value="#{controladorCuerposAcademicos.dtoCuerposAcademicos.nuevoRegistro?'Guardar':'Actualizar Cambios'}"
                                                          icon="fa fa-save"
                                                          class="btn-primary"
-                                                         actionListener="#{controladorCuerposAcademicos.editaCuerpoAcademicoLI}"
+                                                         actionListener="#{controladorCuerposAcademicos.accionCuerpoAcademicoLineaInvestigacion(controladorCuerposAcademicos.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas)}"
                                                          update="@form:frmEdicionCuerpoAcademicoLI" 
                                                          process="@form:frmEdicionCuerpoAcademicoLI"
                                                          />
