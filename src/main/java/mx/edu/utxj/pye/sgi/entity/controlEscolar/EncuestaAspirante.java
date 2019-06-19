@@ -28,25 +28,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "encuesta_aspirante", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "EncuestaAspirante.findAll", query = "SELECT e FROM EncuestaAspirante e")
-    , @NamedQuery(name = "EncuestaAspirante.findByCveAspirante", query = "SELECT e FROM EncuestaAspirante e WHERE e.cveAspirante = :cveAspirante")
-    , @NamedQuery(name = "EncuestaAspirante.findByR1Lenguaindigena", query = "SELECT e FROM EncuestaAspirante e WHERE e.r1Lenguaindigena = :r1Lenguaindigena")
-    , @NamedQuery(name = "EncuestaAspirante.findByR3comunidadIndigena", query = "SELECT e FROM EncuestaAspirante e WHERE e.r3comunidadIndigena = :r3comunidadIndigena")
-    , @NamedQuery(name = "EncuestaAspirante.findByR4programaBienestar", query = "SELECT e FROM EncuestaAspirante e WHERE e.r4programaBienestar = :r4programaBienestar")
-    , @NamedQuery(name = "EncuestaAspirante.findByR5ingresoMensual", query = "SELECT e FROM EncuestaAspirante e WHERE e.r5ingresoMensual = :r5ingresoMensual")
-    , @NamedQuery(name = "EncuestaAspirante.findByR6dependesEconomicamnete", query = "SELECT e FROM EncuestaAspirante e WHERE e.r6dependesEconomicamnete = :r6dependesEconomicamnete")
-    , @NamedQuery(name = "EncuestaAspirante.findByR7ingresoFamiliar", query = "SELECT e FROM EncuestaAspirante e WHERE e.r7ingresoFamiliar = :r7ingresoFamiliar")
-    , @NamedQuery(name = "EncuestaAspirante.findByR8primerEstudiar", query = "SELECT e FROM EncuestaAspirante e WHERE e.r8primerEstudiar = :r8primerEstudiar")
-    , @NamedQuery(name = "EncuestaAspirante.findByR9nivelMaximoEstudios", query = "SELECT e FROM EncuestaAspirante e WHERE e.r9nivelMaximoEstudios = :r9nivelMaximoEstudios")
-    , @NamedQuery(name = "EncuestaAspirante.findByR10numeroDependientes", query = "SELECT e FROM EncuestaAspirante e WHERE e.r10numeroDependientes = :r10numeroDependientes")
-    , @NamedQuery(name = "EncuestaAspirante.findByR11situacionEconomica", query = "SELECT e FROM EncuestaAspirante e WHERE e.r11situacionEconomica = :r11situacionEconomica")
-    , @NamedQuery(name = "EncuestaAspirante.findByR12hijoPemex", query = "SELECT e FROM EncuestaAspirante e WHERE e.r12hijoPemex = :r12hijoPemex")
-    , @NamedQuery(name = "EncuestaAspirante.findByR13utxjPrimeraOpcion", query = "SELECT e FROM EncuestaAspirante e WHERE e.r13utxjPrimeraOpcion = :r13utxjPrimeraOpcion")
-    , @NamedQuery(name = "EncuestaAspirante.findByR14examenAdmisionOU", query = "SELECT e FROM EncuestaAspirante e WHERE e.r14examenAdmisionOU = :r14examenAdmisionOU")
-    , @NamedQuery(name = "EncuestaAspirante.findByR16segundaCarrera", query = "SELECT e FROM EncuestaAspirante e WHERE e.r16segundaCarrera = :r16segundaCarrera")
-    , @NamedQuery(name = "EncuestaAspirante.findByR17Alergia", query = "SELECT e FROM EncuestaAspirante e WHERE e.r17Alergia = :r17Alergia")
-    , @NamedQuery(name = "EncuestaAspirante.findByR18padecesEnfermedad", query = "SELECT e FROM EncuestaAspirante e WHERE e.r18padecesEnfermedad = :r18padecesEnfermedad")
-    , @NamedQuery(name = "EncuestaAspirante.findByR19tratamientoMedico", query = "SELECT e FROM EncuestaAspirante e WHERE e.r19tratamientoMedico = :r19tratamientoMedico")})
+    @NamedQuery(name = "EncuestaAspirante.findAll", query = "SELECT e FROM EncuestaAspirante e"),
+    @NamedQuery(name = "EncuestaAspirante.findByCveAspirante", query = "SELECT e FROM EncuestaAspirante e WHERE e.cveAspirante = :cveAspirante"),
+    @NamedQuery(name = "EncuestaAspirante.findByR1Lenguaindigena", query = "SELECT e FROM EncuestaAspirante e WHERE e.r1Lenguaindigena = :r1Lenguaindigena"),
+    @NamedQuery(name = "EncuestaAspirante.findByR3comunidadIndigena", query = "SELECT e FROM EncuestaAspirante e WHERE e.r3comunidadIndigena = :r3comunidadIndigena"),
+    @NamedQuery(name = "EncuestaAspirante.findByR4programaBienestar", query = "SELECT e FROM EncuestaAspirante e WHERE e.r4programaBienestar = :r4programaBienestar"),
+    @NamedQuery(name = "EncuestaAspirante.findByR5ingresoMensual", query = "SELECT e FROM EncuestaAspirante e WHERE e.r5ingresoMensual = :r5ingresoMensual"),
+    @NamedQuery(name = "EncuestaAspirante.findByR6dependesEconomicamnete", query = "SELECT e FROM EncuestaAspirante e WHERE e.r6dependesEconomicamnete = :r6dependesEconomicamnete"),
+    @NamedQuery(name = "EncuestaAspirante.findByR7ingresoFamiliar", query = "SELECT e FROM EncuestaAspirante e WHERE e.r7ingresoFamiliar = :r7ingresoFamiliar"),
+    @NamedQuery(name = "EncuestaAspirante.findByR8primerEstudiar", query = "SELECT e FROM EncuestaAspirante e WHERE e.r8primerEstudiar = :r8primerEstudiar"),
+    @NamedQuery(name = "EncuestaAspirante.findByR9nivelMaximoEstudios", query = "SELECT e FROM EncuestaAspirante e WHERE e.r9nivelMaximoEstudios = :r9nivelMaximoEstudios"),
+    @NamedQuery(name = "EncuestaAspirante.findByR10numeroDependientes", query = "SELECT e FROM EncuestaAspirante e WHERE e.r10numeroDependientes = :r10numeroDependientes"),
+    @NamedQuery(name = "EncuestaAspirante.findByR11situacionEconomica", query = "SELECT e FROM EncuestaAspirante e WHERE e.r11situacionEconomica = :r11situacionEconomica"),
+    @NamedQuery(name = "EncuestaAspirante.findByR12hijoPemex", query = "SELECT e FROM EncuestaAspirante e WHERE e.r12hijoPemex = :r12hijoPemex"),
+    @NamedQuery(name = "EncuestaAspirante.findByR13utxjPrimeraOpcion", query = "SELECT e FROM EncuestaAspirante e WHERE e.r13utxjPrimeraOpcion = :r13utxjPrimeraOpcion"),
+    @NamedQuery(name = "EncuestaAspirante.findByR14examenAdmisionOU", query = "SELECT e FROM EncuestaAspirante e WHERE e.r14examenAdmisionOU = :r14examenAdmisionOU"),
+    @NamedQuery(name = "EncuestaAspirante.findByR16segundaCarrera", query = "SELECT e FROM EncuestaAspirante e WHERE e.r16segundaCarrera = :r16segundaCarrera"),
+    @NamedQuery(name = "EncuestaAspirante.findByR17Alergia", query = "SELECT e FROM EncuestaAspirante e WHERE e.r17Alergia = :r17Alergia"),
+    @NamedQuery(name = "EncuestaAspirante.findByR18padecesEnfermedad", query = "SELECT e FROM EncuestaAspirante e WHERE e.r18padecesEnfermedad = :r18padecesEnfermedad"),
+    @NamedQuery(name = "EncuestaAspirante.findByR19tratamientoMedico", query = "SELECT e FROM EncuestaAspirante e WHERE e.r19tratamientoMedico = :r19tratamientoMedico")})
 public class EncuestaAspirante implements Serializable {
 
     private static final long serialVersionUID = 1L;

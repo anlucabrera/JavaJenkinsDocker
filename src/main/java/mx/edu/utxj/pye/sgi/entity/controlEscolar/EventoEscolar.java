@@ -34,13 +34,13 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "evento_escolar", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "EventoEscolar.findAll", query = "SELECT e FROM EventoEscolar e")
-    , @NamedQuery(name = "EventoEscolar.findByPeriodo", query = "SELECT e FROM EventoEscolar e WHERE e.periodo = :periodo")
-    , @NamedQuery(name = "EventoEscolar.findByEvento", query = "SELECT e FROM EventoEscolar e WHERE e.evento = :evento")
-    , @NamedQuery(name = "EventoEscolar.findByInicio", query = "SELECT e FROM EventoEscolar e WHERE e.inicio = :inicio")
-    , @NamedQuery(name = "EventoEscolar.findByFin", query = "SELECT e FROM EventoEscolar e WHERE e.fin = :fin")
-    , @NamedQuery(name = "EventoEscolar.findByTipo", query = "SELECT e FROM EventoEscolar e WHERE e.tipo = :tipo")
-    , @NamedQuery(name = "EventoEscolar.findByCreador", query = "SELECT e FROM EventoEscolar e WHERE e.creador = :creador")})
+    @NamedQuery(name = "EventoEscolar.findAll", query = "SELECT e FROM EventoEscolar e"),
+    @NamedQuery(name = "EventoEscolar.findByPeriodo", query = "SELECT e FROM EventoEscolar e WHERE e.periodo = :periodo"),
+    @NamedQuery(name = "EventoEscolar.findByEvento", query = "SELECT e FROM EventoEscolar e WHERE e.evento = :evento"),
+    @NamedQuery(name = "EventoEscolar.findByInicio", query = "SELECT e FROM EventoEscolar e WHERE e.inicio = :inicio"),
+    @NamedQuery(name = "EventoEscolar.findByFin", query = "SELECT e FROM EventoEscolar e WHERE e.fin = :fin"),
+    @NamedQuery(name = "EventoEscolar.findByTipo", query = "SELECT e FROM EventoEscolar e WHERE e.tipo = :tipo"),
+    @NamedQuery(name = "EventoEscolar.findByCreador", query = "SELECT e FROM EventoEscolar e WHERE e.creador = :creador")})
 public class EventoEscolar implements Serializable {
 
     private static final long serialVersionUID = 1L;

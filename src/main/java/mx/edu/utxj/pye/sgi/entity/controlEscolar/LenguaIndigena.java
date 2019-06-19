@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "lengua_indigena", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "LenguaIndigena.findAll", query = "SELECT l FROM LenguaIndigena l")
-    , @NamedQuery(name = "LenguaIndigena.findByIdLenguaIndigena", query = "SELECT l FROM LenguaIndigena l WHERE l.idLenguaIndigena = :idLenguaIndigena")
-    , @NamedQuery(name = "LenguaIndigena.findByNombre", query = "SELECT l FROM LenguaIndigena l WHERE l.nombre = :nombre")})
+    @NamedQuery(name = "LenguaIndigena.findAll", query = "SELECT l FROM LenguaIndigena l"),
+    @NamedQuery(name = "LenguaIndigena.findByIdLenguaIndigena", query = "SELECT l FROM LenguaIndigena l WHERE l.idLenguaIndigena = :idLenguaIndigena"),
+    @NamedQuery(name = "LenguaIndigena.findByNombre", query = "SELECT l FROM LenguaIndigena l WHERE l.nombre = :nombre")})
 public class LenguaIndigena implements Serializable {
 
     private static final long serialVersionUID = 1L;
