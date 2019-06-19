@@ -10,13 +10,7 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
-        <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
-        </c:if>  
-        <c:if test="#{!controladorEmpleado.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
-        </c:if> 
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -709,7 +703,7 @@
                                                                                 <p:outputLabel for="ocupacionMadre" style="font-size: large" value="Ocupación*" />
                                                                                 <p:selectOneMenu id="ocupacionMadre" value="#{FichaAdmision.datosFamiliares.ocupacionMadre}" converter="entidadCEConverter" style="width:  375px" required="true" requiredMessage="Debe de indicar la ocupación de tu madre">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{fichaAdm.listaOcupacion}" var="ocm" itemValue="#{ocm}" itemLabel="#{ocm.descripcion}"/>
+                                                                                    <f:selectItems value="#{FichaAdmision.listaOcupacion}" var="ocm" itemValue="#{ocm}" itemLabel="#{ocm.descripcion}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="ocupacionPadre"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -819,7 +813,7 @@
                                                                                 <p:selectOneMenu id="da1" value="#{FichaAdmision.areaAcademicaPO}" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{FichaAdmision.listaAreasSO}"/>
-                                                                                    <p:ajax listener="#{FichaAdmision.selectPEPrincipal()}" update="pe1,turno1"/>
+                                                                                    <p:ajax listener="#{FichaAdmision.selectPEPrincipal()}" update="pe1,sistema1"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="da1"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -832,12 +826,12 @@
                                                                                 <p:message for="pe1"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="turno1" style="font-size: large" value="Sistema*"/>
-                                                                                <p:selectOneMenu id="turno1" required="true" value="#{FichaAdmision.datosAcademicos.sistemaPrimeraOpcion}" converter="entidadCEConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                                                                                <p:outputLabel for="sistema1" style="font-size: large" value="Sistema*"/>
+                                                                                <p:selectOneMenu id="sistema1" required="true" value="#{FichaAdmision.datosAcademicos.sistemaPrimeraOpcion}" converter="entidadCEConverter" requiredMessage="Debe de indicar el turno del programa educativo">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{FichaAdmision.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaPO.idSistema == 2 and FichaAdmision.areaAcademicaPO == 25)}"/>
                                                                                 </p:selectOneMenu>
-                                                                                <p:message for="turno1"><p:autoUpdate/></p:message>
+                                                                                <p:message for="sistema1"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -855,8 +849,8 @@
                                                                                 <p:selectOneMenu id="da2" value="#{FichaAdmision.areaAcademicaSO}" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de segunda opción">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{FichaAdmision.listaAreasSO}"/>
-                                                                                    <p:ajax listener="#{FichaAdmision.selectPEOpcional()}" update="pe2,turno2"/>
-                                                                                </p:selectOneMenu>
+                                                                                    <p:ajax listener="#{FichaAdmision.selectPEOpcional()}" update="pe2,sistema2"/>
+                                                                                </p:selectOneMenu>  
                                                                                 <p:message for="da2"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
@@ -868,12 +862,12 @@
                                                                                 <p:message for="pe2"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="turno2" style="font-size: large" value="Sistema*"/>
-                                                                                <p:selectOneMenu id="turno2" required="true" value="#{fichaAdm.datosAcademicos.sistemaSegundaOpcion}" converter="entidadCEConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                                                                                <p:outputLabel for="sistema2" style="font-size: large" value="Sistema*"/>
+                                                                                <p:selectOneMenu id="sistema2" required="true" value="#{FichaAdmision.datosAcademicos.sistemaSegundaOpcion}" converter="entidadCEConverter" requiredMessage="Debe de indicar el turno del programa educativo">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{FichaAdmision.listaSistema}" var="sistemaSO" itemValue="#{sistemaSO}" itemLabel="#{sistemaSO.nombre}" itemDisabled="#{(sistemaSO.idSistema == 2 and FichaAdmision.areaAcademicaSO == 25)}"/>
                                                                                 </p:selectOneMenu>
-                                                                                <p:message for="turno2"><p:autoUpdate/></p:message>
+                                                                                <p:message for="sistema2"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -1133,7 +1127,7 @@
                                                                             <td style="text-align: justify;">#{pregunta.titulo}</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
-                                                                                    <p:selectOneMenu value="#{FichaAdmision.resultado.r15medioImpacto}" valueChangeListener="#{FichaAdmision.guardar}" converter="entidadCEConverter">
+                                                                                    <p:selectOneMenu value="#{FichaAdmision.resultado.r15medioImpacto}"  id="md" valueChangeListener="#{FichaAdmision.guardar}" converter="entidadCEConverter">
                                                                                         <f:selectItem itemValue="#{null}"/>
                                                                                         <f:selectItems value="#{FichaAdmision.listaMedioDifusion}" var="mdifusion" itemLabel="#{mdifusion.descripcion}" itemValue="#{mdifusion}"/>
                                                                                     </p:selectOneMenu>

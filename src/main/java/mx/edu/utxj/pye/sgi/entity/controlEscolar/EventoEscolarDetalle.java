@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "evento_escolar_detalle", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "EventoEscolarDetalle.findAll", query = "SELECT e FROM EventoEscolarDetalle e")
-    , @NamedQuery(name = "EventoEscolarDetalle.findByEventoDetalle", query = "SELECT e FROM EventoEscolarDetalle e WHERE e.eventoDetalle = :eventoDetalle")
-    , @NamedQuery(name = "EventoEscolarDetalle.findByArea", query = "SELECT e FROM EventoEscolarDetalle e WHERE e.area = :area")
-    , @NamedQuery(name = "EventoEscolarDetalle.findByPersona", query = "SELECT e FROM EventoEscolarDetalle e WHERE e.persona = :persona")
-    , @NamedQuery(name = "EventoEscolarDetalle.findByInicio", query = "SELECT e FROM EventoEscolarDetalle e WHERE e.inicio = :inicio")
-    , @NamedQuery(name = "EventoEscolarDetalle.findByFin", query = "SELECT e FROM EventoEscolarDetalle e WHERE e.fin = :fin")})
+    @NamedQuery(name = "EventoEscolarDetalle.findAll", query = "SELECT e FROM EventoEscolarDetalle e"),
+    @NamedQuery(name = "EventoEscolarDetalle.findByEventoDetalle", query = "SELECT e FROM EventoEscolarDetalle e WHERE e.eventoDetalle = :eventoDetalle"),
+    @NamedQuery(name = "EventoEscolarDetalle.findByArea", query = "SELECT e FROM EventoEscolarDetalle e WHERE e.area = :area"),
+    @NamedQuery(name = "EventoEscolarDetalle.findByPersona", query = "SELECT e FROM EventoEscolarDetalle e WHERE e.persona = :persona"),
+    @NamedQuery(name = "EventoEscolarDetalle.findByInicio", query = "SELECT e FROM EventoEscolarDetalle e WHERE e.inicio = :inicio"),
+    @NamedQuery(name = "EventoEscolarDetalle.findByFin", query = "SELECT e FROM EventoEscolarDetalle e WHERE e.fin = :fin")})
 public class EventoEscolarDetalle implements Serializable {
 
     private static final long serialVersionUID = 1L;

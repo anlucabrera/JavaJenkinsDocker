@@ -25,24 +25,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "calificaciones", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Calificaciones.findAll", query = "SELECT c FROM Calificaciones c")
-    , @NamedQuery(name = "Calificaciones.findByEstudiante", query = "SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante = :estudiante")
-    , @NamedQuery(name = "Calificaciones.findByGrupo", query = "SELECT c FROM Calificaciones c WHERE c.calificacionesPK.grupo = :grupo")
-    , @NamedQuery(name = "Calificaciones.findByMateria", query = "SELECT c FROM Calificaciones c WHERE c.calificacionesPK.materia = :materia")
-    , @NamedQuery(name = "Calificaciones.findByCf", query = "SELECT c FROM Calificaciones c WHERE c.cf = :cf")
-    , @NamedQuery(name = "Calificaciones.findByCU1", query = "SELECT c FROM Calificaciones c WHERE c.cU1 = :cU1")
-    , @NamedQuery(name = "Calificaciones.findByCU2", query = "SELECT c FROM Calificaciones c WHERE c.cU2 = :cU2")
-    , @NamedQuery(name = "Calificaciones.findByCU3", query = "SELECT c FROM Calificaciones c WHERE c.cU3 = :cU3")
-    , @NamedQuery(name = "Calificaciones.findByCU4", query = "SELECT c FROM Calificaciones c WHERE c.cU4 = :cU4")
-    , @NamedQuery(name = "Calificaciones.findByCU5", query = "SELECT c FROM Calificaciones c WHERE c.cU5 = :cU5")
-    , @NamedQuery(name = "Calificaciones.findByCU6", query = "SELECT c FROM Calificaciones c WHERE c.cU6 = :cU6")
-    , @NamedQuery(name = "Calificaciones.findByCU7", query = "SELECT c FROM Calificaciones c WHERE c.cU7 = :cU7")
-    , @NamedQuery(name = "Calificaciones.findByCU8", query = "SELECT c FROM Calificaciones c WHERE c.cU8 = :cU8")
-    , @NamedQuery(name = "Calificaciones.findByCU9", query = "SELECT c FROM Calificaciones c WHERE c.cU9 = :cU9")
-    , @NamedQuery(name = "Calificaciones.findByCU10", query = "SELECT c FROM Calificaciones c WHERE c.cU10 = :cU10")
-    , @NamedQuery(name = "Calificaciones.findByCU11", query = "SELECT c FROM Calificaciones c WHERE c.cU11 = :cU11")
-    , @NamedQuery(name = "Calificaciones.findByCU12", query = "SELECT c FROM Calificaciones c WHERE c.cU12 = :cU12")
-    , @NamedQuery(name = "Calificaciones.findByCR", query = "SELECT c FROM Calificaciones c WHERE c.cR = :cR")})
+    @NamedQuery(name = "Calificaciones.findAll", query = "SELECT c FROM Calificaciones c"),
+    @NamedQuery(name = "Calificaciones.findByEstudiante", query = "SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante = :estudiante"),
+    @NamedQuery(name = "Calificaciones.findByGrupo", query = "SELECT c FROM Calificaciones c WHERE c.calificacionesPK.grupo = :grupo"),
+    @NamedQuery(name = "Calificaciones.findByMateria", query = "SELECT c FROM Calificaciones c WHERE c.calificacionesPK.materia = :materia"),
+    @NamedQuery(name = "Calificaciones.findByCf", query = "SELECT c FROM Calificaciones c WHERE c.cf = :cf"),
+    @NamedQuery(name = "Calificaciones.findByCU1", query = "SELECT c FROM Calificaciones c WHERE c.cU1 = :cU1"),
+    @NamedQuery(name = "Calificaciones.findByCU2", query = "SELECT c FROM Calificaciones c WHERE c.cU2 = :cU2"),
+    @NamedQuery(name = "Calificaciones.findByCU3", query = "SELECT c FROM Calificaciones c WHERE c.cU3 = :cU3"),
+    @NamedQuery(name = "Calificaciones.findByCU4", query = "SELECT c FROM Calificaciones c WHERE c.cU4 = :cU4"),
+    @NamedQuery(name = "Calificaciones.findByCU5", query = "SELECT c FROM Calificaciones c WHERE c.cU5 = :cU5"),
+    @NamedQuery(name = "Calificaciones.findByCU6", query = "SELECT c FROM Calificaciones c WHERE c.cU6 = :cU6"),
+    @NamedQuery(name = "Calificaciones.findByCU7", query = "SELECT c FROM Calificaciones c WHERE c.cU7 = :cU7"),
+    @NamedQuery(name = "Calificaciones.findByCU8", query = "SELECT c FROM Calificaciones c WHERE c.cU8 = :cU8"),
+    @NamedQuery(name = "Calificaciones.findByCU9", query = "SELECT c FROM Calificaciones c WHERE c.cU9 = :cU9"),
+    @NamedQuery(name = "Calificaciones.findByCU10", query = "SELECT c FROM Calificaciones c WHERE c.cU10 = :cU10"),
+    @NamedQuery(name = "Calificaciones.findByCU11", query = "SELECT c FROM Calificaciones c WHERE c.cU11 = :cU11"),
+    @NamedQuery(name = "Calificaciones.findByCU12", query = "SELECT c FROM Calificaciones c WHERE c.cU12 = :cU12"),
+    @NamedQuery(name = "Calificaciones.findByCR", query = "SELECT c FROM Calificaciones c WHERE c.cR = :cR")})
 public class Calificaciones implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -78,8 +78,8 @@ public class Calificaciones implements Serializable {
     @Column(name = "c_r")
     private Double cR;
     @JoinColumns({
-        @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false)
-        , @JoinColumn(name = "grupo", referencedColumnName = "grupo", insertable = false, updatable = false)})
+        @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false),
+        @JoinColumn(name = "grupo", referencedColumnName = "grupo", insertable = false, updatable = false)})
     @ManyToOne(optional = false)
     private Estudiante estudiante1;
     @JoinColumn(name = "materia", referencedColumnName = "id_materia", insertable = false, updatable = false)

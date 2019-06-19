@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -19,8 +18,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,12 +31,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "plan_estudio", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "PlanEstudio.findAll", query = "SELECT p FROM PlanEstudio p")
-    , @NamedQuery(name = "PlanEstudio.findByIdPlanEstudio", query = "SELECT p FROM PlanEstudio p WHERE p.idPlanEstudio = :idPlanEstudio")
-    , @NamedQuery(name = "PlanEstudio.findByDescripcion", query = "SELECT p FROM PlanEstudio p WHERE p.descripcion = :descripcion")
-    , @NamedQuery(name = "PlanEstudio.findByAnio", query = "SELECT p FROM PlanEstudio p WHERE p.anio = :anio")
-    , @NamedQuery(name = "PlanEstudio.findByEstatus", query = "SELECT p FROM PlanEstudio p WHERE p.estatus = :estatus")
-    , @NamedQuery(name = "PlanEstudio.findByIdPe", query = "SELECT p FROM PlanEstudio p WHERE p.idPe = :idPe")})
+    @NamedQuery(name = "PlanEstudio.findAll", query = "SELECT p FROM PlanEstudio p"),
+    @NamedQuery(name = "PlanEstudio.findByIdPlanEstudio", query = "SELECT p FROM PlanEstudio p WHERE p.idPlanEstudio = :idPlanEstudio"),
+    @NamedQuery(name = "PlanEstudio.findByDescripcion", query = "SELECT p FROM PlanEstudio p WHERE p.descripcion = :descripcion"),
+    @NamedQuery(name = "PlanEstudio.findByAnio", query = "SELECT p FROM PlanEstudio p WHERE p.anio = :anio"),
+    @NamedQuery(name = "PlanEstudio.findByEstatus", query = "SELECT p FROM PlanEstudio p WHERE p.estatus = :estatus"),
+    @NamedQuery(name = "PlanEstudio.findByIdPe", query = "SELECT p FROM PlanEstudio p WHERE p.idPe = :idPe")})
 public class PlanEstudio implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,8 +53,7 @@ public class PlanEstudio implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "anio")
-    @Temporal(TemporalType.DATE)
-    private Date anio;
+    private short anio;
     @Basic(optional = false)
     @NotNull
     @Column(name = "estatus")
@@ -78,7 +74,7 @@ public class PlanEstudio implements Serializable {
         this.idPlanEstudio = idPlanEstudio;
     }
 
-    public PlanEstudio(Integer idPlanEstudio, String descripcion, Date anio, boolean estatus, short idPe) {
+    public PlanEstudio(Integer idPlanEstudio, String descripcion, short anio, boolean estatus, short idPe) {
         this.idPlanEstudio = idPlanEstudio;
         this.descripcion = descripcion;
         this.anio = anio;
@@ -102,11 +98,11 @@ public class PlanEstudio implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Date getAnio() {
+    public short getAnio() {
         return anio;
     }
 
-    public void setAnio(Date anio) {
+    public void setAnio(short anio) {
         this.anio = anio;
     }
 

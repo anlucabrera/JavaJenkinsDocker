@@ -34,11 +34,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "tutoria", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Tutoria.findAll", query = "SELECT t FROM Tutoria t")
-    , @NamedQuery(name = "Tutoria.findByIdTutoria", query = "SELECT t FROM Tutoria t WHERE t.idTutoria = :idTutoria")
-    , @NamedQuery(name = "Tutoria.findByAsunto", query = "SELECT t FROM Tutoria t WHERE t.asunto = :asunto")
-    , @NamedQuery(name = "Tutoria.findByFecha", query = "SELECT t FROM Tutoria t WHERE t.fecha = :fecha")
-    , @NamedQuery(name = "Tutoria.findByTipo", query = "SELECT t FROM Tutoria t WHERE t.tipo = :tipo")})
+    @NamedQuery(name = "Tutoria.findAll", query = "SELECT t FROM Tutoria t"),
+    @NamedQuery(name = "Tutoria.findByIdTutoria", query = "SELECT t FROM Tutoria t WHERE t.idTutoria = :idTutoria"),
+    @NamedQuery(name = "Tutoria.findByAsunto", query = "SELECT t FROM Tutoria t WHERE t.asunto = :asunto"),
+    @NamedQuery(name = "Tutoria.findByFecha", query = "SELECT t FROM Tutoria t WHERE t.fecha = :fecha"),
+    @NamedQuery(name = "Tutoria.findByTipo", query = "SELECT t FROM Tutoria t WHERE t.tipo = :tipo")})
 public class Tutoria implements Serializable {
 
     private static final long serialVersionUID = 1L;

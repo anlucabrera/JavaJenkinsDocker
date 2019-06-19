@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "documento_estudiante", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "DocumentoEstudiante.findAll", query = "SELECT d FROM DocumentoEstudiante d")
-    , @NamedQuery(name = "DocumentoEstudiante.findByIdDocumentoEstudiante", query = "SELECT d FROM DocumentoEstudiante d WHERE d.idDocumentoEstudiante = :idDocumentoEstudiante")
-    , @NamedQuery(name = "DocumentoEstudiante.findByEvidenciaActaNacimiento", query = "SELECT d FROM DocumentoEstudiante d WHERE d.evidenciaActaNacimiento = :evidenciaActaNacimiento")
-    , @NamedQuery(name = "DocumentoEstudiante.findByEvidenciaCertificado", query = "SELECT d FROM DocumentoEstudiante d WHERE d.evidenciaCertificado = :evidenciaCertificado")
-    , @NamedQuery(name = "DocumentoEstudiante.findByEvidenciaCertificadoTsu", query = "SELECT d FROM DocumentoEstudiante d WHERE d.evidenciaCertificadoTsu = :evidenciaCertificadoTsu")
-    , @NamedQuery(name = "DocumentoEstudiante.findByAvidenciaActaExcencion", query = "SELECT d FROM DocumentoEstudiante d WHERE d.avidenciaActaExcencion = :avidenciaActaExcencion")
-    , @NamedQuery(name = "DocumentoEstudiante.findByEvidenciaLiberacionEstadia", query = "SELECT d FROM DocumentoEstudiante d WHERE d.evidenciaLiberacionEstadia = :evidenciaLiberacionEstadia")})
+    @NamedQuery(name = "DocumentoEstudiante.findAll", query = "SELECT d FROM DocumentoEstudiante d"),
+    @NamedQuery(name = "DocumentoEstudiante.findByIdDocumentoEstudiante", query = "SELECT d FROM DocumentoEstudiante d WHERE d.idDocumentoEstudiante = :idDocumentoEstudiante"),
+    @NamedQuery(name = "DocumentoEstudiante.findByEvidenciaActaNacimiento", query = "SELECT d FROM DocumentoEstudiante d WHERE d.evidenciaActaNacimiento = :evidenciaActaNacimiento"),
+    @NamedQuery(name = "DocumentoEstudiante.findByEvidenciaCertificado", query = "SELECT d FROM DocumentoEstudiante d WHERE d.evidenciaCertificado = :evidenciaCertificado"),
+    @NamedQuery(name = "DocumentoEstudiante.findByEvidenciaCertificadoTsu", query = "SELECT d FROM DocumentoEstudiante d WHERE d.evidenciaCertificadoTsu = :evidenciaCertificadoTsu"),
+    @NamedQuery(name = "DocumentoEstudiante.findByAvidenciaActaExcencion", query = "SELECT d FROM DocumentoEstudiante d WHERE d.avidenciaActaExcencion = :avidenciaActaExcencion"),
+    @NamedQuery(name = "DocumentoEstudiante.findByEvidenciaLiberacionEstadia", query = "SELECT d FROM DocumentoEstudiante d WHERE d.evidenciaLiberacionEstadia = :evidenciaLiberacionEstadia")})
 public class DocumentoEstudiante implements Serializable {
 
     private static final long serialVersionUID = 1L;

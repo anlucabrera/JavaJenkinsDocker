@@ -28,10 +28,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "datos_familiares", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "DatosFamiliares.findAll", query = "SELECT d FROM DatosFamiliares d")
-    , @NamedQuery(name = "DatosFamiliares.findByAspirante", query = "SELECT d FROM DatosFamiliares d WHERE d.aspirante = :aspirante")
-    , @NamedQuery(name = "DatosFamiliares.findByNombrePadre", query = "SELECT d FROM DatosFamiliares d WHERE d.nombrePadre = :nombrePadre")
-    , @NamedQuery(name = "DatosFamiliares.findByNombreMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.nombreMadre = :nombreMadre")})
+    @NamedQuery(name = "DatosFamiliares.findAll", query = "SELECT d FROM DatosFamiliares d"),
+    @NamedQuery(name = "DatosFamiliares.findByAspirante", query = "SELECT d FROM DatosFamiliares d WHERE d.aspirante = :aspirante"),
+    @NamedQuery(name = "DatosFamiliares.findByNombrePadre", query = "SELECT d FROM DatosFamiliares d WHERE d.nombrePadre = :nombrePadre"),
+    @NamedQuery(name = "DatosFamiliares.findByNombreMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.nombreMadre = :nombreMadre")})
 public class DatosFamiliares implements Serializable {
 
     private static final long serialVersionUID = 1L;

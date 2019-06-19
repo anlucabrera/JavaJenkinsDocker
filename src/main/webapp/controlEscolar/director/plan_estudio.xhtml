@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de Planes de Estudio
+    </ui:define>
+
+    <ui:define name="description">
+        
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Administración de Planes de Estudio"/>
+        <div class="contenedor">
+            <c:if test="#{administracionPlanEstudioDirector.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <div class="box box-solid">
+                            <p:accordionPanel style="margin-top: 20px;">
+                                <p:tab title="Plan Estudio" titleStyleClass="box-solid">
+                                    <h:form>
+                                        <p:growl><p:autoUpdate/></p:growl>
+                                        <div id="main-buttons" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb">
+                                                <f:facet name="left">
+
+                                                <p:spacer width="5" />
+
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                    <p:commandButton title="Guardar Plan" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardar()}"/>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+                                        <div class="ui-g ui-fluid" style="margin-top: 20px;">
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="programa" value="#{administracionPlanEstudioDirector.rol.planEstudio1.programa}" converter="entityConverter">
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.programas}" var="programae" itemValue="#{programae}" itemLabel="#{programae.nombre}" />
+                                                        <p:ajax update="@this" process="@this"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="programa" value="Programa Educativo"/>
+                                                    <p:message for="programa"/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputTextarea id="descripcion" placeholder="Descripción del Plan de Estudio" value="#{administracionPlanEstudioDirector.rol.planEstudio1.planEstudio.descripcion}" />
+                                                    <p:outputLabel for="descripcion" value="Descripción"/>
+                                                    <p:message for="descripcion"/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputText id="version" placeholder="Versión" required="true" value="#{administracionPlanEstudioDirector.rol.planEstudio1.planEstudio.anio}"/>
+                                                    <p:outputLabel for="version" value="Versión del plan"/>
+                                                    <p:message for="version"/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="estatus" value="#{administracionPlanEstudioDirector.rol.planEstudio1.planEstudio.estatus}">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItem itemValue="1" itemLabel="Activo"/>
+                                                        <f:selectItem itemValue="0" itemLabel="Inactivo"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="estatus" value="Estatus del plan"/>
+                                                    <p:message for="estatus"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </p:tab>
+                                <p:tab id="asignatura" title="Asignaturas" titleStyleClass="box-solid">
+                                    <h:form>
+                                        <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb-asignatura">
+                                                <f:facet name="left">
+
+                                                <p:spacer width="5" />
+
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                    <p:commandButton title="Guardar Materias" icon="fa fa-save" styleClass="btn-success" update="@form"/>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+                                        <div class="ui-g ui-fluid" style="margin-top: 20px;">
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputText id="nombreMateria" placeholder="Nombre de la Asignatura"/>
+                                                    <p:outputLabel for="nombreMateria" value="Nombre"/>
+                                                    <p:message for="nombreMateria"/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="cuatrimestre">
+
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="cuatrimestre" value="Cuatrimestre"/>
+                                                    <p:message for="cuatrimestre"/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="areaConocimiento">
+
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="areaConocimiento" value="Área de Conocimiento"/>
+                                                    <p:message for="areaConocimiento"/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="competencia">
+
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="competencia" value="Competencia"/>
+                                                    <p:message for="competencia"/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-12" style="text-align: center;">
+                                                <p:commandButton id="submitButton" styleClass="btn-primary" value="Agregar Asignatura" update="@form"
+                                                                 ignoreAutoUpdate="true" style="width: 20%;"/>
+                                             </div>
+                                        </div>
+                                    </h:form>
+                                </p:tab>
+                                <p:tab id="unidad_materia" title="Unidad Materia" titleStyleClass="box-solid">
+                                    <h:form>
+                                        <div id="main-buttons-unidad" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb-unidad">
+                                                <f:facet name="left">
+
+                                                <p:spacer width="5" />
+
+                                                </f:facet>
+                                                <f:facet name="right">
+
+                                                </f:facet>
+                                            </p:toolbar>
+                                            <div class="ui-g ui-fluid" style="margin-top: 20px;">
+
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </p:tab>
+                            </p:accordionPanel>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+            <c:if test="#{!AsignacionTutorAcademico.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText
+                                value="El acceso solo está autorizado a directores de área académica."/>
+                    </h:panelGrid>
+                    <f:facet name="footer">
+
+                    </f:facet>
+                </p:panel>
+            </c:if>
+
+        </div>
+    </ui:define>
+</ui:composition>
