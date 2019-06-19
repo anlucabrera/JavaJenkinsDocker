@@ -50,12 +50,12 @@
             allDayText : 'Todo el día'
             };
         </h:outputScript>
-        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+        <!--p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
                 Esta página está disponible solo para pantallas superiores a 1024px.
             </h1>
-        </p:panel>
-        <p:panel id="informacion" class="hidden-xs hidden-sm">
+        </p:panel-->
+        <p:panel id="informacion" >
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 49}">
                 <section class="content">
                     <div class="row">
@@ -133,7 +133,7 @@
                                                 <p:column headerText="Tiempo" style="width: 5%;text-align: center;">
                                                     <h:outputLabel value="0#{incidencias.tiempo.hours}:#{incidencias.tiempo.minutes}" />
                                                 </p:column>  
-                                                <p:column style="width:5%;" class="noprint">
+                                                <p:column style="width:5%;" class="noprint" >
                                                     <p:rowEditor />
                                                 </p:column>
                                             </p:dataTable>  
@@ -143,25 +143,25 @@
                                     <p:tab title="Opciones Incidencias">
                                         <h:form id="frmModulos"> 
                                             <p:outputPanel id="incidenciasReporte">
-                                                <p:dataTable id="tblReportes"  value="#{administracionControl.modulosregistros}"  var="modulos"
+                                                <p:dataTable id="tblReportes"  value="#{administracionControl.modulosregistros}"  var="modulos" scrollable="true"
                                                              editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
                                                     <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditModulos}" update="tblReportes" process="@this"/>
                                                     <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblReportes" />
 
-                                                    <p:column headerText="Nombre" style="width: 20%;text-align: justify;"
+                                                    <p:column headerText="Nombre" style="text-align: justify;"
                                                               sortBy="#{modulos.nombre}"
                                                               filterBy="#{modulos.nombre}"
                                                               filterMatchMode="contains">
                                                         <h:outputText value="#{modulos.nombre}" />
                                                     </p:column>  
-                                                    <p:column headerText="Actividad" style="width: 20%;text-align: justify;"
+                                                    <p:column headerText="Actividad" style="text-align: justify;"
                                                               sortBy="#{modulos.actividadUsuario}"
                                                               filterBy="#{modulos.actividadUsuario}"
                                                               filterMatchMode="contains">
                                                         <h:outputText value="#{modulos.actividadUsuario}" />
                                                     </p:column>  
-                                                    <p:column headerText="Fecha Inicio" style="width: 10%">
+                                                    <p:column headerText="Fecha Inicio">
                                                         <p:cellEditor>
                                                             <f:facet name="output"> <h:outputLabel value="#{modulos.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
                                                             <f:facet name="input">
@@ -169,7 +169,7 @@
                                                             </f:facet>
                                                         </p:cellEditor>
                                                     </p:column>      
-                                                    <p:column headerText="Fecha Fin" style="width: 10%">
+                                                    <p:column headerText="Fecha Fin">
                                                         <p:cellEditor>
                                                             <f:facet name="output"> <h:outputLabel value="#{modulos.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
                                                             <f:facet name="input">
@@ -177,7 +177,7 @@
                                                             </f:facet>
                                                         </p:cellEditor>
                                                     </p:column>      
-                                                    <p:column style="width:32px;" class="noprint">
+                                                    <p:column class="noprint">
                                                         <p:rowEditor />
                                                     </p:column>
                                                 </p:dataTable>  

@@ -86,7 +86,7 @@
             </h1>
         </p:panel>
         <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                 <div class="row">
                     <h:form id="frmFunciones">
                         <p:outputLabel value="Subordinados(as)" for="clave" class="col-sm-2 control-label"/>
@@ -1621,7 +1621,7 @@
                 </h:form>
 
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 13}">
+            <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564)}">
                 <h1>
                     Esta página está disponible solo para personal adscrito al área de personal
                 </h1>

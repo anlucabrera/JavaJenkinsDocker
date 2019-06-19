@@ -452,7 +452,7 @@ public class ServicioPlantillasVINExcel implements EjbPlantillasVINExcel {
             XSSFSheet catalogos = libroEgresados.getSheetAt(4);
             
             List<Generaciones> generaciones = ejbCatalogos.getGeneracionesAct().stream().sorted(Comparator.comparing(Generaciones::getGeneracion).reversed()).collect(Collectors.toList());
-            List<AreasUniversidad> programasEducativos = ejbCatalogos.getProgramasEducativos();
+            List<AreasUniversidad> programasEducativos = ejbCatalogos.getProgramasEducativosGeneral();
             List<ActividadEgresadoTipos> actividadEgresadoTipos = ejbEgresados.getActividadEgresadoTipos();
             List<NivelOcupacionTipos> nivelOcupacionTipos = ejbEgresados.getNivelOcupacionTipos();
             List<SectoresTipo> sectoresTipos = ejbOrganismosVinculados.getSectoresTipo();
