@@ -144,7 +144,7 @@
                             <f:facet name="right">
                                 <h:form id="frmReporte">
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteCuerposAcademicos()}" target="_blank" title="Descargar Reporte de Excel Cuerpos Académicos"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteCuerposAcademicos(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta)}" target="_blank" title="Descargar Reporte de Excel Cuerpos Académicos"><i class="fa fa-file-excel-o" /></p:commandLink>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                 </h:form>
@@ -160,7 +160,9 @@
                     <h:form id="abrirNuevoRegistroInfo">
                         <div class="callout callout-info">
                             <h4>¡Aviso!</h4>
-                            <p>Ahora ya puedes dar de alta nuevos Cuerpos Académicos mediante un formulario de registro: <code><p:commandLink ajax="false" action="#{controladorCuerposAcademicosPYE.nuevoRegistro()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
+                            <p>Ahora ya puedes dar de alta nuevos Cuerpos Académicos mediante un formulario de registro: <code><p:commandLink ajax="true" actionListener="#{controladorCuerposAcademicosPYE.nuevoRegistroCuerpoAcademico()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
+                            <p>Ahora ya puedes dar de alta nuevos Integrantes de Cuerpos Académicos mediante un formulario de registro: <code><p:commandLink ajax="true" actionListener="#{controladorCuerposAcademicosPYE.nuevoRegistroCuerpoAcademicoIntegrante()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
+                            <p>Ahora ya puedes dar de alta nuevas Líneas de Investigación de Cuerpos Académicos mediante un formulario de registro: <code><p:commandLink ajax="true" actionListener="#{controladorCuerposAcademicosPYE.nuevoRegistroCuerpoAcademicoLineaInvestigacion()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
                         </div>
                     </h:form>
 
@@ -1036,7 +1038,7 @@
                               hideEffect="fade" 
                               modal="true" 
                               draggable="true" 
-                              header="Edición de Cuerpo Académico" 
+                              header="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.nuevoRegistro?'Nuevo Cuerpo Académico':'Edición de Cuerpo Académico'}" 
                               onHide="actualizar();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
@@ -1049,8 +1051,61 @@
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
 
-                                <!--Fecha de inicio-->
+                                <c:if test="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mensaje ne ''}">
+                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                        <div class="callout callout-info">
+                                            <p style="font-weight: bold;">Mensaje de verificación:</p>
+                                            <p><code style="color:#4185A0;">#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mensaje}</code></p>
+                                        </div>
+                                        <p:outputLabel id="mensaje" value=""/>
+                                        <br></br>
+                                    </div>  
+                                </c:if>
+                                
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somTipoCuerpoAcademico"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el tipo de cuerpo académico"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.tipoCuerpoAcademico}"
+                                                         class="form-control"
+                                                         style="padding-top: 0px; width: 14em;"
+                                                         rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.nuevoRegistro}"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - "
+                                                          itemValue="#{null}"/>
+                                            <f:selectItem itemValue="UTXJ-CAI-"
+                                                          itemLabel="Interno"
+                                                          itemDescription="Interno"/>
+                                            <f:selectItem itemValue="UTXJ-CA-"
+                                                          itemLabel="Reconocido"
+                                                          itemDescription="Reconocido" />
+                                            <p:message for="somTipoCuerpoAcademico" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <p>Tipo de cuerpo académico</p>
+                                </div>
+
+                                <!--Consecutivo cuerpo académico-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px">
+                                    <div class="ui-material">
+                                        <p:spinner id="consecutivoCuerpoAcademico"
+                                                   label="consecutivoCuerpoAcademico"
+                                                   required="true"
+                                                   requiredMessage="Ingrese el número consecutivo del cuerpo académico"
+                                                   value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.consecutivoCuerpoAcademico}"
+                                                   min="1" max="1000"
+                                                   styleClass="campo2Partes"
+                                                   rendered="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.nuevoRegistro}"
+                                                   />
+                                        <p:message for="consecutivoCuerpoAcademico" />
+                                    </div>
+                                    <p>Consecutivo Cuerpo Académico</p>
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"></div>
+                                <!--Fecha de inicio-->
+                                <div class="col-sm-6 col-md-6">
                                     <div class="ui-material">
                                         <p:calendar id="iptFechaInicio"
                                                     label="iptFechaInicio"
@@ -1058,22 +1113,21 @@
                                                     requiredMessage="Ingrese Fecha de Inicio"
                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.fechaInicio}"
                                                     valueChangeListener="#{controladorCuerposAcademicosPYE.validaFechaInicio}"
-                                                    pattern="yyyy-MM-dd" 
-                                                    mask="true"
-                                                    locale="es"
+                                                    pattern="yyyy-MM-dd"
                                                     styleClass="campo2Partes"
+                                                    locale="es"
                                                     showOn="both"
+                                                    placeholder="2019-03-20 *"
                                                     >
-                                            <p:ajax event="dateSelect" process="iptFechaInicio" update="iptFechaTermino"/>
-                                            <p:ajax event="change" process="iptFechaInicio" update="iptFechaTermino"/>
+                                            <p:ajax event="dateSelect" global="false" process="@this" update="@form:iptFechaTermino"/>
+                                            <p:ajax event="change" global="false" process="@this" update="@form:iptFechaTermino"/>
                                         </p:calendar>
-                                        <p:watermark for="iptFechaInicio" value="2019-03-19 *" />
                                         <p:message for="iptFechaInicio" />
-                                        <p:outputLabel value="Fecha de inicio: " for="iptFechaInicio" />
                                     </div>
+                                    <p>Fecha de inicio</p>
                                 </div>
                                 <!--Fecha de termino-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                <div class="col-sm-6 col-md-6">
                                     <div class="ui-material">
                                         <p:calendar id="iptFechaTermino"
                                                     label="iptFechaTermino"
@@ -1081,23 +1135,22 @@
                                                     requiredMessage="Ingrese Fecha de Termino"
                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.fechaTermino}"
                                                     valueChangeListener="#{controladorCuerposAcademicosPYE.validaFechaTermino}"
-                                                    pattern="yyyy-MM-dd" 
-                                                    mask="true"
+                                                    pattern="yyyy-MM-dd"
                                                     styleClass="campo2Partes"
                                                     locale="es"
                                                     showOn="both"
+                                                    placeholder="2019-03-20 *"
                                                     >
-                                            <p:ajax event="dateSelect" process="iptFechaTermino" update="iptFechaInicio"/>
-                                            <p:ajax event="change" process="iptFechaTermino" update="iptFechaInicio"/>
+                                            <p:ajax event="dateSelect" process="@this" update="@form:iptFechaInicio"/>
+                                            <p:ajax event="change" process="@this" update="@form:iptFechaInicio"/>
                                         </p:calendar>
-                                        <p:watermark for="iptFechaTermino" value="2019-03-20 *" />
                                         <p:message for="iptFechaTermino" />
-                                        <p:outputLabel value="Fecha de termino: " for="iptFechaTermino" />
                                     </div>
+                                    <p>Fecha de Termino</p>
                                 </div>
-
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 20px"></div>
                                 <!--Nombre del cuerpo académico-->
-                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 20px;">
                                     <div class="ui-material">
                                         <p:inputText id="iptNombreCuerpoAcademico"
                                                      label="iptNombreCuerpoAcademico"
@@ -1107,13 +1160,13 @@
                                                      requiredMessage="Ingrese el nombre del servicio tecnológico"
                                                      value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro.nombre}"/>
                                         <p:watermark for="iptNombreCuerpoAcademico" value="Innovación tecnológica y/o sistemas bioelectrónicos *" />
-                                        <p:outputLabel value="Nombre del cuerpo académico: " for="iptNombreCuerpoAcademico"/>
                                         <p:message for="iptNombreCuerpoAcademico" />
+                                        <p:outputLabel value="Nombre del cuerpo académico: " for="iptNombreCuerpoAcademico"/>
                                     </div>
                                 </div>
-
+                                
                                 <!--Nivel de prodep-->
-                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 20px;">
                                     <div class="ui-material">
                                         <p:selectOneMenu id="somNivelProdep"
                                                          required="true"
@@ -1145,8 +1198,9 @@
                                     </div>
                                 </div>
 
-                                <!--Area de estudio-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 20px"></div>
+                                <!--Área de estudio-->
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 20px">
                                     <div class="ui-material">
                                         <p:selectOneMenu id="somAreasEstudio"
                                                          required="true"
@@ -1174,7 +1228,7 @@
                                 </div>
 
                                 <!--Disciplina-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 20px">
                                     <div class="ui-material">
                                         <p:selectOneMenu id="somDisciplinas"
                                                          required="true"
@@ -1205,10 +1259,10 @@
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
                                         <p:commandButton id="btnEditaCuerpoAcademico"
-                                                         value="Actualizar Cambios"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.nuevoRegistro?'Guardar':'Actualizar Cambios'}"
                                                          icon="fa fa-save"
                                                          class="btn-primary"
-                                                         actionListener="#{controladorCuerposAcademicosPYE.editaCuerpoAcademico}"
+                                                         actionListener="#{controladorCuerposAcademicosPYE.accionCuerpoAcademico(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerposAcademicosR.cuerposAcademicosRegistro)}"
                                                          update="@form:frmEdicionCuerpoAcademico" 
                                                          process="@form:frmEdicionCuerpoAcademico"
                                                          />
@@ -1229,7 +1283,7 @@
                               hideEffect="fade" 
                               modal="true" 
                               draggable="true" 
-                              header="Edición de Integrante de Cuerpo Académico" 
+                              header="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.nuevoRegistro?'Asignación de Integrantes':'Edición de Integrante de Cuerpo Académico'}" 
                               onHide="actualizar();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
@@ -1242,13 +1296,19 @@
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
 
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
-                                    <p:outputLabel id="mensaje" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mensaje}"/>
-                                    <br></br>
-                                </div>
+                                <c:if test="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mensaje ne ''}">
+                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                        <div class="callout callout-info">
+                                            <p style="font-weight: bold;">Mensaje de verificación:</p>
+                                            <p><code style="color:#4185A0;">#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mensaje}</code></p>
+                                        </div>
+                                        <p:outputLabel id="mensaje" value=""/>
+                                        <br></br>
+                                    </div>  
+                                </c:if>
 
                                 <!--Cuerpos Académicos-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
                                     <div class="ui-material">
                                         <p:selectOneMenu id="somCuerposAcademicosIntegrantes"
                                                          required="true"
@@ -1260,7 +1320,6 @@
                                                          class="form-control"
                                                          converter="entidadConverter2"
                                                          style="padding-top: 0px"
-                                                         styleClass="campo2Partes"
                                                          >
                                             <f:selectItem itemLabel=" - Seleccione - "
                                                           itemValue="#{null}"/>
@@ -1274,14 +1333,13 @@
                                         <p:outputLabel value="Cuerpo Académico: " for="somCuerposAcademicosIntegrantes" />
                                     </div>
                                 </div>
-
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;"></div>
                                 <!--Personal-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <div class="ui-material">
                                         <p:autoComplete id="acPersonal"
                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.persona}"
                                                         completeMethod="#{controladorCuerposAcademicosPYE.completeListaPersonal}"
-                                                        styleClass="campo2Partes"
                                                         queryDelay="1000"
                                                         var="persona"
                                                         itemLabel="#{persona.nombre}"
@@ -1310,10 +1368,10 @@
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
                                         <p:commandButton id="btnEditaCuerpoAcademicoIntegrante"
-                                                         value="Actualizar Cambios"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.nuevoRegistro?'Guardar':'Actualizar Cambios'}"
                                                          icon="fa fa-save"
                                                          class="btn-primary"
-                                                         actionListener="#{controladorCuerposAcademicosPYE.editaCuerpoAcademicoIntegrante}"
+                                                         actionListener="#{controladorCuerposAcademicosPYE.accionCuerpoAcademicoIntegrante(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadIntegrantes.cuerpoAcademicoIntegrantes)}"
                                                          update="@form:frmEdicionCuerpoAcademicoIntegrante" 
                                                          process="@form:frmEdicionCuerpoAcademicoIntegrante"
                                                          />
@@ -1334,7 +1392,7 @@
                               hideEffect="fade" 
                               modal="true" 
                               draggable="true" 
-                              header="Edición de Línea de Investigación de Cuerpo Académico" 
+                              header="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.nuevoRegistro?'Asignación de Lineas de Investigación':'Edición de Línea de Investigación de Cuerpo Académico'}" 
                               onHide="actualizar();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
@@ -1347,61 +1405,69 @@
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
 
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
-                                    <p:outputLabel id="mensaje" value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mensaje}"/>
-                                    <br></br>
-                                </div>
+                                <c:if test="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mensaje ne ''}">
+                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                        <div class="callout callout-info">
+                                            <p style="font-weight: bold;">Mensaje de verificación:</p>
+                                            <p><code style="color:#4185A0;">#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mensaje}</code></p>
+                                        </div>
+                                        <p:outputLabel id="mensaje" value=""/>
+                                        <br></br>
+                                    </div>  
+                                </c:if>
 
                                 <!--Cuerpos Académicos-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px">
-                                    <p:outputLabel value="Cuerpo Académico: " for="somCuerposAcademicosLI" />
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somCuerposAcademicosLI"
-                                                     required="true"
-                                                     requiredMessage="Seleccione el cuerpo académico"
-                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.cuerpoAcademico}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     converter="entidadConverter2"
-                                                     style="padding-top: 0px"
-                                                     styleClass="campo2Partes"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - "
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaCuerposAcademicosIntLa}"
-                                                       var="ca"
-                                                       itemValue="#{ca}"
-                                                       itemLabel="#{ca.cuerpoAcademico} - #{ca.nombre}"
-                                                       itemDescription="#{ca.cuerpoAcademico}"/>
-                                        <p:message for="somCuerposAcademicosLI" />
-                                    </p:selectOneMenu>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="somCuerposAcademicosLI"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el cuerpo académico"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.cuerpoAcademico}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         converter="entidadConverter2"
+                                                         style="padding-top: 0px"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - "
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.listaCuerposAcademicosIntLa}"
+                                                           var="ca"
+                                                           itemValue="#{ca}"
+                                                           itemLabel="#{ca.cuerpoAcademico} - #{ca.nombre}"
+                                                           itemDescription="#{ca.cuerpoAcademico}"/>
+                                            <p:message for="somCuerposAcademicosLI" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Cuerpo Académico: " for="somCuerposAcademicosLI" />
+                                    </div>
                                 </div>
-
+                                
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;"></div>
                                 <!--Linea de investigación-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Linea de investigación: " for="iptNombreLineaInvestigacion"/>
-                                    <p:inputText id="iptNombreLineaInvestigacion"
-                                                 label="iptNombreLineaInvestigacion"
-                                                 maxlength="250"
-                                                 required="true"
-                                                 class="form-control"
-                                                 requiredMessage="Ingrese el nombre de la línea de investigación"
-                                                 value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.nombre}"/>
-                                    <p:watermark for="iptNombreLineaInvestigacion" value="Tecnología de Alimentos. *" />
-                                    <p:message for="iptNombreLineaInvestigacion" />
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 20px;">
+                                    <div class="ui-material">
+                                        <p:inputText id="iptNombreLineaInvestigacion"
+                                                     label="iptNombreLineaInvestigacion"
+                                                     maxlength="250"
+                                                     required="true"
+                                                     class="form-control"
+                                                     requiredMessage="Ingrese el nombre de la línea de investigación"
+                                                     value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas.nombre}"/>
+                                        <p:watermark for="iptNombreLineaInvestigacion" value="Tecnología de Alimentos. *" />
+                                        <p:message for="iptNombreLineaInvestigacion" />
+                                        <p:outputLabel value="Linea de investigación: " for="iptNombreLineaInvestigacion"/>
+                                    </div>
                                 </div>
 
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
                                         <p:commandButton id="btnEditaCuerpoAcademicoLI"
-                                                         value="Actualizar Cambios"
+                                                         value="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.nuevoRegistro?'Guardar':'Actualizar Cambios'}"
                                                          icon="fa fa-save"
                                                          class="btn-primary"
-                                                         actionListener="#{controladorCuerposAcademicosPYE.editaCuerpoAcademicoLI}"
+                                                         actionListener="#{controladorCuerposAcademicosPYE.accionCuerpoAcademicoLineaInvestigacion(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.registroCuerpAcadLineas.cuerpoAcademicoLineas)}"
                                                          update="@form:frmEdicionCuerpoAcademicoLI" 
                                                          process="@form:frmEdicionCuerpoAcademicoLI"
                                                          />

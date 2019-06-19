@@ -32,13 +32,15 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  */
 public final class DtoCuerposAcademicos {
     /************************** Edición ****************************************/
-    @Getter @Setter List<CuerpacadAreasEstudio> listaAreasEstudio;
-    @Getter @Setter List<CuerpacadDisciplinas> listaDisciplinas;
-    @Getter @Setter List<ListaPersonal> listaPersonal;
-    @Getter @Setter List<CuerposAcademicosRegistro> listaCuerposAcademicosIntLa;
-    @Getter @Setter ListaPersonal persona;
-    @Getter @Setter String mensaje;
+    @Getter @Setter private List<CuerpacadAreasEstudio> listaAreasEstudio;
+    @Getter @Setter private List<CuerpacadDisciplinas> listaDisciplinas;
+    @Getter @Setter private List<ListaPersonal> listaPersonal;
+    @Getter @Setter private List<CuerposAcademicosRegistro> listaCuerposAcademicosIntLa;
+    @Getter @Setter private ListaPersonal persona;
+    @Getter @Setter private String mensaje;
     @Getter @Setter private Boolean nuevoRegistro;
+    @Getter @Setter private String tipoCuerpoAcademico;
+    @Getter @Setter private Integer consecutivoCuerpoAcademico;
     
     /************************** Lista áreas ****************************************/
     @Getter private List<Categorias> listaCategoriasPOA;

@@ -552,10 +552,6 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
 
     @Override
     public Integer getRegistroCuerpoAcademicoEspecifico(String cuerpoAcademico) {
-//        TypedQuery<CuerposAcademicosRegistro> query = em.createNamedQuery("CuerposAcademicosRegistro.findByCuerpoAcademico", CuerposAcademicosRegistro.class);
-//        query.setParameter("cuerpoAcademico", cuerpoAcademico);
-//        Integer registro = query.getSingleResult().getRegistro();
-//        return registro;
         TypedQuery<CuerposAcademicosRegistro> query = facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerposAcademicosRegistro c WHERE c.cuerpoAcademico = :cuerpoAcademico", CuerposAcademicosRegistro.class);
         query.setParameter("cuerpoAcademico", cuerpoAcademico);
         Integer registro = 0;
@@ -565,7 +561,6 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
             registro = null;
             ex.toString();
         }
-
         return registro;
     }
 
@@ -669,19 +664,6 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
         }
     }
     
-     @Override
-    public List<CuerposAcademicosRegistro> getFiltroCuerposAcademicosEdicion(Short ejercicio, Short area) throws Throwable {
-         try {
-            return facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerposAcademicosRegistro c JOIN c.registros r JOIN r.eventoRegistro e JOIN e.ejercicioFiscal f WHERE f.anio = :anio AND r.area = :area", CuerposAcademicosRegistro.class)
-                    .setParameter("anio", ejercicio)
-                    .setParameter("area", area)
-                    .getResultList();
-         } catch (NoResultException e) {
-             return Collections.EMPTY_LIST;
-         }
-    }
-    
-
     @Override
     public List<DTOCuerpAcadIntegrantes> getFiltroCuerpAcadIntegrantesEjercicioMesArea(Short ejercicio, Short area) throws Throwable {
         List<DTOCuerpAcadIntegrantes> listaDtoCai = new ArrayList<>();
@@ -1032,10 +1014,10 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     }
 
     @Override
-    public List<CuerposAcademicosRegistro> getReporteGeneralCuerposAcademicosPorEjercicio() {
+    public List<CuerposAcademicosRegistro> getReporteGeneralCuerposAcademicosPorEjercicio(Short ejercicio) {
         try {
             return facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerposAcademicosRegistro c INNER JOIN c.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY c.fechaInicio",CuerposAcademicosRegistro.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -1043,10 +1025,10 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     }
 
     @Override
-    public List<CuerpacadIntegrantes> getReporteGeneralCuerposAcademicosIntegrantesPorEjercicio() {
+    public List<CuerpacadIntegrantes> getReporteGeneralCuerposAcademicosIntegrantesPorEjercicio(Short ejercicio) {
         try {
             return facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadIntegrantes c INNER JOIN c.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY c.cuerpoAcademico.cuerpoAcademico",CuerpacadIntegrantes.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -1054,14 +1036,44 @@ public class ServicioCuerposAcademicos implements EjbCuerposAcademicos {
     }
 
     @Override
-    public List<CuerpacadLineas> getReporteGeneralCuerposAcademicosLineasInvestigacionPorEjercicio() {
+    public List<CuerpacadLineas> getReporteGeneralCuerposAcademicosLineasInvestigacionPorEjercicio(Short ejercicio) {
         try {
             return facadeCapitalHumano.getEntityManager().createQuery("SELECT c FROM CuerpacadLineas c INNER JOIN c.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY c.cuerpoAcademico.cuerpoAcademico",CuerpacadLineas.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
         }
+    }
+
+    @Override
+    public void guardaCuerpoAcademico(CuerposAcademicosRegistro cuerpoAcademico, RegistrosTipo registroTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+        facadeCapitalHumano.setEntityClass(CuerposAcademicosRegistro.class);
+        Registros registro = ejbModulos.getRegistro(registroTipo, ejesRegistro, area, eventosRegistros);
+        cuerpoAcademico.setRegistro(registro.getRegistro());
+        facadeCapitalHumano.create(cuerpoAcademico);
+        facadeCapitalHumano.flush();
+        Messages.addGlobalInfo("<b>Se ha dado de alta el siguiente Cuerpo Académico: " + cuerpoAcademico.getCuerpoAcademico() + " correctamente.");
+    }
+
+    @Override
+    public void guardaCuerpoAcademicoIntegrante(CuerpacadIntegrantes cuerpoAcademicoIntegrante, RegistrosTipo registroTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+        facadeCapitalHumano.setEntityClass(CuerpacadIntegrantes.class);
+        Registros registro = ejbModulos.getRegistro(registroTipo, ejesRegistro, area, eventosRegistros);
+        cuerpoAcademicoIntegrante.setRegistro(registro.getRegistro());
+        facadeCapitalHumano.create(cuerpoAcademicoIntegrante);
+        facadeCapitalHumano.flush();
+        Messages.addGlobalInfo("<b>Se ha dado de alta el siguiente Integrante en el Cuerpo Académico: " + cuerpoAcademicoIntegrante.getCuerpoAcademico().getCuerpoAcademico() + " correctamente.");
+    }
+
+    @Override
+    public void guardaCuerpoAcademicoLineaInvestigacion(CuerpacadLineas cuerpoAcademicoLinea, RegistrosTipo registroTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+        facadeCapitalHumano.setEntityClass(CuerpacadLineas.class);
+        Registros registro = ejbModulos.getRegistro(registroTipo, ejesRegistro, area, eventosRegistros);
+        cuerpoAcademicoLinea.setRegistro(registro.getRegistro());
+        facadeCapitalHumano.create(cuerpoAcademicoLinea);
+        facadeCapitalHumano.flush();
+        Messages.addGlobalInfo("<b>Se ha dado de alta la siguiente Linea de Investigación en el Cuerpo Académico: " + cuerpoAcademicoLinea.getCuerpoAcademico().getCuerpoAcademico() + " correctamente.");
     }
     
 }

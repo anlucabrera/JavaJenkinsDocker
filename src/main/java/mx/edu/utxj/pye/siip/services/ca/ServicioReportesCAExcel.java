@@ -31,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasMensualPeriodosEscolares
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadIntegrantes;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadLineas;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicos;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicosPersonal;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosEnfermeriaCicloPeriodos;
@@ -531,7 +532,7 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
     }
 
     @Override
-    public String getReporteCompletoCuerposAcademicos() throws Throwable {
+    public String getReporteCompletoCuerposAcademicos(Short ejercicio) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[1]).concat(REPORTE_CUERPOS_ACADEMICOS_PLANTILLA );
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_CUERPOS_ACADEMICOS_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_CUERPOS_ACADEMICOS_ACTUALIZADO);
@@ -548,9 +549,9 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
             XSSFCell celda;
             
 //            Vaciado de información proveniente de la consulta
-            List<CuerposAcademicosRegistro> cuerposAcademicos = ejbCuerposAcademicos.getReporteGeneralCuerposAcademicosPorEjercicio();
-            List<CuerpacadIntegrantes> cuerposAcademicosIntegrantes = ejbCuerposAcademicos.getReporteGeneralCuerposAcademicosIntegrantesPorEjercicio();
-            List<CuerpacadLineas> cuerposAcademicosLineasInvestigacion = ejbCuerposAcademicos.getReporteGeneralCuerposAcademicosLineasInvestigacionPorEjercicio();
+            List<CuerposAcademicosRegistro> cuerposAcademicos = ejbCuerposAcademicos.getReporteGeneralCuerposAcademicosPorEjercicio(ejercicio);
+            List<CuerpacadIntegrantes> cuerposAcademicosIntegrantes = ejbCuerposAcademicos.getReporteGeneralCuerposAcademicosIntegrantesPorEjercicio(ejercicio);
+            List<CuerpacadLineas> cuerposAcademicosLineasInvestigacion = ejbCuerposAcademicos.getReporteGeneralCuerposAcademicosLineasInvestigacionPorEjercicio(ejercicio);
 
 //            Cuerpos Académicos
             for(Integer listaCA = 0; listaCA < cuerposAcademicos.size(); listaCA++){
