@@ -31,12 +31,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "plan_estudio", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "PlanEstudio.findAll", query = "SELECT p FROM PlanEstudio p"),
-    @NamedQuery(name = "PlanEstudio.findByIdPlanEstudio", query = "SELECT p FROM PlanEstudio p WHERE p.idPlanEstudio = :idPlanEstudio"),
-    @NamedQuery(name = "PlanEstudio.findByDescripcion", query = "SELECT p FROM PlanEstudio p WHERE p.descripcion = :descripcion"),
-    @NamedQuery(name = "PlanEstudio.findByAnio", query = "SELECT p FROM PlanEstudio p WHERE p.anio = :anio"),
-    @NamedQuery(name = "PlanEstudio.findByEstatus", query = "SELECT p FROM PlanEstudio p WHERE p.estatus = :estatus"),
-    @NamedQuery(name = "PlanEstudio.findByIdPe", query = "SELECT p FROM PlanEstudio p WHERE p.idPe = :idPe")})
+    @NamedQuery(name = "PlanEstudio.findAll", query = "SELECT p FROM PlanEstudio p")
+    , @NamedQuery(name = "PlanEstudio.findByIdPlanEstudio", query = "SELECT p FROM PlanEstudio p WHERE p.idPlanEstudio = :idPlanEstudio")
+    , @NamedQuery(name = "PlanEstudio.findByDescripcion", query = "SELECT p FROM PlanEstudio p WHERE p.descripcion = :descripcion")
+    , @NamedQuery(name = "PlanEstudio.findByAnio", query = "SELECT p FROM PlanEstudio p WHERE p.anio = :anio")
+    , @NamedQuery(name = "PlanEstudio.findByEstatus", query = "SELECT p FROM PlanEstudio p WHERE p.estatus = :estatus")
+    , @NamedQuery(name = "PlanEstudio.findByIdPe", query = "SELECT p FROM PlanEstudio p WHERE p.idPe = :idPe")})
 public class PlanEstudio implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -53,7 +53,7 @@ public class PlanEstudio implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "anio")
-    private Short anio;
+    private short anio;
     @Basic(optional = false)
     @NotNull
     @Column(name = "estatus")
@@ -74,7 +74,7 @@ public class PlanEstudio implements Serializable {
         this.idPlanEstudio = idPlanEstudio;
     }
 
-    public PlanEstudio(Integer idPlanEstudio, String descripcion, Short anio, boolean estatus, short idPe) {
+    public PlanEstudio(Integer idPlanEstudio, String descripcion, short anio, boolean estatus, short idPe) {
         this.idPlanEstudio = idPlanEstudio;
         this.descripcion = descripcion;
         this.anio = anio;
@@ -98,11 +98,11 @@ public class PlanEstudio implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Short getAnio() {
+    public short getAnio() {
         return anio;
     }
 
-    public void setAnio(Short anio) {
+    public void setAnio(short anio) {
         this.anio = anio;
     }
 

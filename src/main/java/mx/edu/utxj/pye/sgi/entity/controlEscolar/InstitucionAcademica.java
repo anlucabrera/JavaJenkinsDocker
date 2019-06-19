@@ -27,16 +27,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "institucion_academica", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "InstitucionAcademica.findAll", query = "SELECT i FROM InstitucionAcademica i"),
-    @NamedQuery(name = "InstitucionAcademica.findByIdInstitucionAcademica", query = "SELECT i FROM InstitucionAcademica i WHERE i.idInstitucionAcademica = :idInstitucionAcademica"),
-    @NamedQuery(name = "InstitucionAcademica.findByNombre", query = "SELECT i FROM InstitucionAcademica i WHERE i.nombre = :nombre"),
-    @NamedQuery(name = "InstitucionAcademica.findByClaveCentro", query = "SELECT i FROM InstitucionAcademica i WHERE i.claveCentro = :claveCentro"),
-    @NamedQuery(name = "InstitucionAcademica.findByCalle", query = "SELECT i FROM InstitucionAcademica i WHERE i.calle = :calle"),
-    @NamedQuery(name = "InstitucionAcademica.findByPromedio", query = "SELECT i FROM InstitucionAcademica i WHERE i.promedio = :promedio"),
-    @NamedQuery(name = "InstitucionAcademica.findByCveEstado", query = "SELECT i FROM InstitucionAcademica i WHERE i.cveEstado = :cveEstado"),
-    @NamedQuery(name = "InstitucionAcademica.findByCveMunicipio", query = "SELECT i FROM InstitucionAcademica i WHERE i.cveMunicipio = :cveMunicipio"),
-    @NamedQuery(name = "InstitucionAcademica.findByCveLocalidad", query = "SELECT i FROM InstitucionAcademica i WHERE i.cveLocalidad = :cveLocalidad"),
-    @NamedQuery(name = "InstitucionAcademica.findByIdPais", query = "SELECT i FROM InstitucionAcademica i WHERE i.idPais = :idPais")})
+    @NamedQuery(name = "InstitucionAcademica.findAll", query = "SELECT i FROM InstitucionAcademica i")
+    , @NamedQuery(name = "InstitucionAcademica.findByIdInstitucionAcademica", query = "SELECT i FROM InstitucionAcademica i WHERE i.idInstitucionAcademica = :idInstitucionAcademica")
+    , @NamedQuery(name = "InstitucionAcademica.findByNombre", query = "SELECT i FROM InstitucionAcademica i WHERE i.nombre = :nombre")
+    , @NamedQuery(name = "InstitucionAcademica.findByClaveCentro", query = "SELECT i FROM InstitucionAcademica i WHERE i.claveCentro = :claveCentro")
+    , @NamedQuery(name = "InstitucionAcademica.findByCalle", query = "SELECT i FROM InstitucionAcademica i WHERE i.calle = :calle")
+    , @NamedQuery(name = "InstitucionAcademica.findByPromedio", query = "SELECT i FROM InstitucionAcademica i WHERE i.promedio = :promedio")
+    , @NamedQuery(name = "InstitucionAcademica.findByCveEstado", query = "SELECT i FROM InstitucionAcademica i WHERE i.cveEstado = :cveEstado")
+    , @NamedQuery(name = "InstitucionAcademica.findByCveMunicipio", query = "SELECT i FROM InstitucionAcademica i WHERE i.cveMunicipio = :cveMunicipio")
+    , @NamedQuery(name = "InstitucionAcademica.findByCveLocalidad", query = "SELECT i FROM InstitucionAcademica i WHERE i.cveLocalidad = :cveLocalidad")
+    , @NamedQuery(name = "InstitucionAcademica.findByIdPais", query = "SELECT i FROM InstitucionAcademica i WHERE i.idPais = :idPais")})
 public class InstitucionAcademica implements Serializable {
 
     private static final long serialVersionUID = 1L;

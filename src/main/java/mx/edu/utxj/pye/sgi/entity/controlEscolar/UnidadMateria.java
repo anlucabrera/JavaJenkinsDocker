@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,12 +17,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -33,14 +31,14 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "unidad_materia", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UnidadMateria.findAll", query = "SELECT u FROM UnidadMateria u"),
-    @NamedQuery(name = "UnidadMateria.findByIdUnidadMateria", query = "SELECT u FROM UnidadMateria u WHERE u.idUnidadMateria = :idUnidadMateria"),
-    @NamedQuery(name = "UnidadMateria.findByNombre", query = "SELECT u FROM UnidadMateria u WHERE u.nombre = :nombre"),
-    @NamedQuery(name = "UnidadMateria.findByObjetivo", query = "SELECT u FROM UnidadMateria u WHERE u.objetivo = :objetivo"),
-    @NamedQuery(name = "UnidadMateria.findByNoUnidad", query = "SELECT u FROM UnidadMateria u WHERE u.noUnidad = :noUnidad"),
-    @NamedQuery(name = "UnidadMateria.findByHorasTeoricas", query = "SELECT u FROM UnidadMateria u WHERE u.horasTeoricas = :horasTeoricas"),
-    @NamedQuery(name = "UnidadMateria.findByHorasPracticas", query = "SELECT u FROM UnidadMateria u WHERE u.horasPracticas = :horasPracticas"),
-    @NamedQuery(name = "UnidadMateria.findByIntegradora", query = "SELECT u FROM UnidadMateria u WHERE u.integradora = :integradora")})
+    @NamedQuery(name = "UnidadMateria.findAll", query = "SELECT u FROM UnidadMateria u")
+    , @NamedQuery(name = "UnidadMateria.findByIdUnidadMateria", query = "SELECT u FROM UnidadMateria u WHERE u.idUnidadMateria = :idUnidadMateria")
+    , @NamedQuery(name = "UnidadMateria.findByNombre", query = "SELECT u FROM UnidadMateria u WHERE u.nombre = :nombre")
+    , @NamedQuery(name = "UnidadMateria.findByObjetivo", query = "SELECT u FROM UnidadMateria u WHERE u.objetivo = :objetivo")
+    , @NamedQuery(name = "UnidadMateria.findByNoUnidad", query = "SELECT u FROM UnidadMateria u WHERE u.noUnidad = :noUnidad")
+    , @NamedQuery(name = "UnidadMateria.findByHorasTeoricas", query = "SELECT u FROM UnidadMateria u WHERE u.horasTeoricas = :horasTeoricas")
+    , @NamedQuery(name = "UnidadMateria.findByHorasPracticas", query = "SELECT u FROM UnidadMateria u WHERE u.horasPracticas = :horasPracticas")
+    , @NamedQuery(name = "UnidadMateria.findByIntegradora", query = "SELECT u FROM UnidadMateria u WHERE u.integradora = :integradora")})
 public class UnidadMateria implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -78,8 +76,8 @@ public class UnidadMateria implements Serializable {
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
     @ManyToOne(optional = false)
     private Materia idMateria;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUnidadMateria")
-    private List<ConfiguracionMateria> configuracionMateriaList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "unidadMateria")
+    private UnidadMateriaConfiguracion unidadMateriaConfiguracion;
 
     public UnidadMateria() {
     }
@@ -162,13 +160,12 @@ public class UnidadMateria implements Serializable {
         this.idMateria = idMateria;
     }
 
-    @XmlTransient
-    public List<ConfiguracionMateria> getConfiguracionMateriaList() {
-        return configuracionMateriaList;
+    public UnidadMateriaConfiguracion getUnidadMateriaConfiguracion() {
+        return unidadMateriaConfiguracion;
     }
 
-    public void setConfiguracionMateriaList(List<ConfiguracionMateria> configuracionMateriaList) {
-        this.configuracionMateriaList = configuracionMateriaList;
+    public void setUnidadMateriaConfiguracion(UnidadMateriaConfiguracion unidadMateriaConfiguracion) {
+        this.unidadMateriaConfiguracion = unidadMateriaConfiguracion;
     }
 
     @Override

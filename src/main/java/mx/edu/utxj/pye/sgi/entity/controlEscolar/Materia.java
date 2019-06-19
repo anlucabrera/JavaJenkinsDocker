@@ -33,12 +33,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "materia", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Materia.findAll", query = "SELECT m FROM Materia m"),
-    @NamedQuery(name = "Materia.findByIdMateria", query = "SELECT m FROM Materia m WHERE m.idMateria = :idMateria"),
-    @NamedQuery(name = "Materia.findByClaveMateria", query = "SELECT m FROM Materia m WHERE m.claveMateria = :claveMateria"),
-    @NamedQuery(name = "Materia.findByNombre", query = "SELECT m FROM Materia m WHERE m.nombre = :nombre"),
-    @NamedQuery(name = "Materia.findByGrado", query = "SELECT m FROM Materia m WHERE m.grado = :grado"),
-    @NamedQuery(name = "Materia.findByEstatus", query = "SELECT m FROM Materia m WHERE m.estatus = :estatus")})
+    @NamedQuery(name = "Materia.findAll", query = "SELECT m FROM Materia m")
+    , @NamedQuery(name = "Materia.findByIdMateria", query = "SELECT m FROM Materia m WHERE m.idMateria = :idMateria")
+    , @NamedQuery(name = "Materia.findByClaveMateria", query = "SELECT m FROM Materia m WHERE m.claveMateria = :claveMateria")
+    , @NamedQuery(name = "Materia.findByNombre", query = "SELECT m FROM Materia m WHERE m.nombre = :nombre")
+    , @NamedQuery(name = "Materia.findByGrado", query = "SELECT m FROM Materia m WHERE m.grado = :grado")
+    , @NamedQuery(name = "Materia.findByEstatus", query = "SELECT m FROM Materia m WHERE m.estatus = :estatus")})
 public class Materia implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -67,7 +67,7 @@ public class Materia implements Serializable {
     private boolean estatus;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMateria")
     private List<UnidadMateria> unidadMateriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cveMateria")
     private List<CargaAcademica> cargaAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
     private List<Asesoria> asesoriaList;

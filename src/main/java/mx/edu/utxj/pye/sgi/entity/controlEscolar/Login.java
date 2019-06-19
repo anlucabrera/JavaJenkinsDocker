@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "login", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Login.findAll", query = "SELECT l FROM Login l"),
-    @NamedQuery(name = "Login.findByPersona", query = "SELECT l FROM Login l WHERE l.persona = :persona"),
-    @NamedQuery(name = "Login.findByUsuario", query = "SELECT l FROM Login l WHERE l.usuario = :usuario"),
-    @NamedQuery(name = "Login.findByPassword", query = "SELECT l FROM Login l WHERE l.password = :password"),
-    @NamedQuery(name = "Login.findByModificado", query = "SELECT l FROM Login l WHERE l.modificado = :modificado"),
-    @NamedQuery(name = "Login.findByActivo", query = "SELECT l FROM Login l WHERE l.activo = :activo")})
+    @NamedQuery(name = "Login.findAll", query = "SELECT l FROM Login l")
+    , @NamedQuery(name = "Login.findByPersona", query = "SELECT l FROM Login l WHERE l.persona = :persona")
+    , @NamedQuery(name = "Login.findByUsuario", query = "SELECT l FROM Login l WHERE l.usuario = :usuario")
+    , @NamedQuery(name = "Login.findByPassword", query = "SELECT l FROM Login l WHERE l.password = :password")
+    , @NamedQuery(name = "Login.findByModificado", query = "SELECT l FROM Login l WHERE l.modificado = :modificado")
+    , @NamedQuery(name = "Login.findByActivo", query = "SELECT l FROM Login l WHERE l.activo = :activo")})
 public class Login implements Serializable {
 
     private static final long serialVersionUID = 1L;

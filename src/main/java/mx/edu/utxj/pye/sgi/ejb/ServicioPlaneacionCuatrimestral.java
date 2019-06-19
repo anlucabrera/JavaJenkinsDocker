@@ -158,9 +158,9 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
             planesDeEstudio.add(t.getArea());
         });
         List<CargaAcademica> ca = facadeCE.getEntityManager().createQuery("SELECT ca FROM CargaAcademica ca "
-                + "INNER JOIN ca.materia ma "
+                + "INNER JOIN ca.cveMateria ma "
                 + "INNER JOIN ma.idPlan pa "
-                + "INNER JOIN ca.grupo g "
+                + "INNER JOIN ca.cveGrupo g "
                 + "WHERE g.periodo=:periodo AND pa.idPe IN :planes", CargaAcademica.class)
                 .setParameter("periodo", periodo)
                 .setParameter("planes", planesDeEstudio)
@@ -170,7 +170,7 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
             return new ArrayList<>();
         }
         ca.forEach((t) -> {
-            docentesCargaAcademica.add(t.getCargaAcademicaPK().getDocente());
+            docentesCargaAcademica.add(t.getDocente());
         });
 
         personalColaboradorPlaneaciones = f.getEntityManager().createQuery("SELECT p FROM Personal p INNER JOIN p.planeacionesCuatrimestralesList1 pc WHERE pc.director.clave=:director AND pc.periodo=:periodo", Personal.class)

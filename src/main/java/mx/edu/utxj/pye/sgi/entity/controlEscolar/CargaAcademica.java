@@ -6,15 +6,23 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -24,45 +32,62 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "carga_academica", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CargaAcademica.findAll", query = "SELECT c FROM CargaAcademica c"),
-    @NamedQuery(name = "CargaAcademica.findByCveGrupo", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.cveGrupo = :cveGrupo"),
-    @NamedQuery(name = "CargaAcademica.findByCveMateria", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.cveMateria = :cveMateria"),
-    @NamedQuery(name = "CargaAcademica.findByDocente", query = "SELECT c FROM CargaAcademica c WHERE c.cargaAcademicaPK.docente = :docente"),
-    @NamedQuery(name = "CargaAcademica.findByHorasSemana", query = "SELECT c FROM CargaAcademica c WHERE c.horasSemana = :horasSemana")})
+    @NamedQuery(name = "CargaAcademica.findAll", query = "SELECT c FROM CargaAcademica c")
+    , @NamedQuery(name = "CargaAcademica.findByCarga", query = "SELECT c FROM CargaAcademica c WHERE c.carga = :carga")
+    , @NamedQuery(name = "CargaAcademica.findByDocente", query = "SELECT c FROM CargaAcademica c WHERE c.docente = :docente")
+    , @NamedQuery(name = "CargaAcademica.findByHorasSemana", query = "SELECT c FROM CargaAcademica c WHERE c.horasSemana = :horasSemana")})
 public class CargaAcademica implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected CargaAcademicaPK cargaAcademicaPK;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "carga")
+    private Integer carga;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "docente")
+    private int docente;
     @Column(name = "horas_semana")
     private Integer horasSemana;
+    @JoinColumn(name = "cve_grupo", referencedColumnName = "id_grupo")
+    @ManyToOne(optional = false)
+    private Grupo cveGrupo;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
     @ManyToOne(optional = false)
     private EventoEscolar evento;
-    @JoinColumn(name = "cve_grupo", referencedColumnName = "id_grupo", insertable = false, updatable = false)
+    @JoinColumn(name = "cve_materia", referencedColumnName = "id_materia")
     @ManyToOne(optional = false)
-    private Grupo grupo;
-    @JoinColumn(name = "cve_materia", referencedColumnName = "id_materia", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private Materia materia;
+    private Materia cveMateria;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
+    private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
 
     public CargaAcademica() {
     }
 
-    public CargaAcademica(CargaAcademicaPK cargaAcademicaPK) {
-        this.cargaAcademicaPK = cargaAcademicaPK;
+    public CargaAcademica(Integer carga) {
+        this.carga = carga;
     }
 
-    public CargaAcademica(int cveGrupo, int cveMateria, int docente) {
-        this.cargaAcademicaPK = new CargaAcademicaPK(cveGrupo, cveMateria, docente);
+    public CargaAcademica(Integer carga, int docente) {
+        this.carga = carga;
+        this.docente = docente;
     }
 
-    public CargaAcademicaPK getCargaAcademicaPK() {
-        return cargaAcademicaPK;
+    public Integer getCarga() {
+        return carga;
     }
 
-    public void setCargaAcademicaPK(CargaAcademicaPK cargaAcademicaPK) {
-        this.cargaAcademicaPK = cargaAcademicaPK;
+    public void setCarga(Integer carga) {
+        this.carga = carga;
+    }
+
+    public int getDocente() {
+        return docente;
+    }
+
+    public void setDocente(int docente) {
+        this.docente = docente;
     }
 
     public Integer getHorasSemana() {
@@ -73,6 +98,14 @@ public class CargaAcademica implements Serializable {
         this.horasSemana = horasSemana;
     }
 
+    public Grupo getCveGrupo() {
+        return cveGrupo;
+    }
+
+    public void setCveGrupo(Grupo cveGrupo) {
+        this.cveGrupo = cveGrupo;
+    }
+
     public EventoEscolar getEvento() {
         return evento;
     }
@@ -81,26 +114,27 @@ public class CargaAcademica implements Serializable {
         this.evento = evento;
     }
 
-    public Grupo getGrupo() {
-        return grupo;
+    public Materia getCveMateria() {
+        return cveMateria;
     }
 
-    public void setGrupo(Grupo grupo) {
-        this.grupo = grupo;
+    public void setCveMateria(Materia cveMateria) {
+        this.cveMateria = cveMateria;
     }
 
-    public Materia getMateria() {
-        return materia;
+    @XmlTransient
+    public List<UnidadMateriaConfiguracion> getUnidadMateriaConfiguracionList() {
+        return unidadMateriaConfiguracionList;
     }
 
-    public void setMateria(Materia materia) {
-        this.materia = materia;
+    public void setUnidadMateriaConfiguracionList(List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList) {
+        this.unidadMateriaConfiguracionList = unidadMateriaConfiguracionList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (cargaAcademicaPK != null ? cargaAcademicaPK.hashCode() : 0);
+        hash += (carga != null ? carga.hashCode() : 0);
         return hash;
     }
 
@@ -111,7 +145,7 @@ public class CargaAcademica implements Serializable {
             return false;
         }
         CargaAcademica other = (CargaAcademica) object;
-        if ((this.cargaAcademicaPK == null && other.cargaAcademicaPK != null) || (this.cargaAcademicaPK != null && !this.cargaAcademicaPK.equals(other.cargaAcademicaPK))) {
+        if ((this.carga == null && other.carga != null) || (this.carga != null && !this.carga.equals(other.carga))) {
             return false;
         }
         return true;
@@ -119,7 +153,7 @@ public class CargaAcademica implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica[ cargaAcademicaPK=" + cargaAcademicaPK + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica[ carga=" + carga + " ]";
     }
     
 }

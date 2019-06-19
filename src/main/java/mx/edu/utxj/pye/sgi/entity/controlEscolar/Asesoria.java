@@ -34,12 +34,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "asesoria", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Asesoria.findAll", query = "SELECT a FROM Asesoria a"),
-    @NamedQuery(name = "Asesoria.findByIdAsesoria", query = "SELECT a FROM Asesoria a WHERE a.idAsesoria = :idAsesoria"),
-    @NamedQuery(name = "Asesoria.findByPeriodo", query = "SELECT a FROM Asesoria a WHERE a.periodo = :periodo"),
-    @NamedQuery(name = "Asesoria.findByAsunto", query = "SELECT a FROM Asesoria a WHERE a.asunto = :asunto"),
-    @NamedQuery(name = "Asesoria.findByFecha", query = "SELECT a FROM Asesoria a WHERE a.fecha = :fecha"),
-    @NamedQuery(name = "Asesoria.findByTipo", query = "SELECT a FROM Asesoria a WHERE a.tipo = :tipo")})
+    @NamedQuery(name = "Asesoria.findAll", query = "SELECT a FROM Asesoria a")
+    , @NamedQuery(name = "Asesoria.findByIdAsesoria", query = "SELECT a FROM Asesoria a WHERE a.idAsesoria = :idAsesoria")
+    , @NamedQuery(name = "Asesoria.findByPeriodo", query = "SELECT a FROM Asesoria a WHERE a.periodo = :periodo")
+    , @NamedQuery(name = "Asesoria.findByAsunto", query = "SELECT a FROM Asesoria a WHERE a.asunto = :asunto")
+    , @NamedQuery(name = "Asesoria.findByFecha", query = "SELECT a FROM Asesoria a WHERE a.fecha = :fecha")
+    , @NamedQuery(name = "Asesoria.findByTipo", query = "SELECT a FROM Asesoria a WHERE a.tipo = :tipo")})
 public class Asesoria implements Serializable {
 
     private static final long serialVersionUID = 1L;

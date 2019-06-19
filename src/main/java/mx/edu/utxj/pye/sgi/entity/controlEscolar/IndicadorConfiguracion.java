@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "indicador_configuracion", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "IndicadorConfiguracion.findAll", query = "SELECT i FROM IndicadorConfiguracion i"),
-    @NamedQuery(name = "IndicadorConfiguracion.findByIdConfiguracion", query = "SELECT i FROM IndicadorConfiguracion i WHERE i.idConfiguracion = :idConfiguracion"),
-    @NamedQuery(name = "IndicadorConfiguracion.findByPorcentaje", query = "SELECT i FROM IndicadorConfiguracion i WHERE i.porcentaje = :porcentaje")})
+    @NamedQuery(name = "IndicadorConfiguracion.findAll", query = "SELECT i FROM IndicadorConfiguracion i")
+    , @NamedQuery(name = "IndicadorConfiguracion.findByIdConfiguracion", query = "SELECT i FROM IndicadorConfiguracion i WHERE i.idConfiguracion = :idConfiguracion")
+    , @NamedQuery(name = "IndicadorConfiguracion.findByPorcentaje", query = "SELECT i FROM IndicadorConfiguracion i WHERE i.porcentaje = :porcentaje")})
 public class IndicadorConfiguracion implements Serializable {
 
     private static final long serialVersionUID = 1L;

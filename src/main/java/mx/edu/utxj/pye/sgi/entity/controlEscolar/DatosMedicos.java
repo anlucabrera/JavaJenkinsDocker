@@ -28,16 +28,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "datos_medicos", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "DatosMedicos.findAll", query = "SELECT d FROM DatosMedicos d"),
-    @NamedQuery(name = "DatosMedicos.findByCvePersona", query = "SELECT d FROM DatosMedicos d WHERE d.cvePersona = :cvePersona"),
-    @NamedQuery(name = "DatosMedicos.findByPeso", query = "SELECT d FROM DatosMedicos d WHERE d.peso = :peso"),
-    @NamedQuery(name = "DatosMedicos.findByEstatura", query = "SELECT d FROM DatosMedicos d WHERE d.estatura = :estatura"),
-    @NamedQuery(name = "DatosMedicos.findByFDiabetes", query = "SELECT d FROM DatosMedicos d WHERE d.fDiabetes = :fDiabetes"),
-    @NamedQuery(name = "DatosMedicos.findByFHipertenso", query = "SELECT d FROM DatosMedicos d WHERE d.fHipertenso = :fHipertenso"),
-    @NamedQuery(name = "DatosMedicos.findByFCardiaco", query = "SELECT d FROM DatosMedicos d WHERE d.fCardiaco = :fCardiaco"),
-    @NamedQuery(name = "DatosMedicos.findByFCancer", query = "SELECT d FROM DatosMedicos d WHERE d.fCancer = :fCancer"),
-    @NamedQuery(name = "DatosMedicos.findByNssVigente", query = "SELECT d FROM DatosMedicos d WHERE d.nssVigente = :nssVigente"),
-    @NamedQuery(name = "DatosMedicos.findByNss", query = "SELECT d FROM DatosMedicos d WHERE d.nss = :nss")})
+    @NamedQuery(name = "DatosMedicos.findAll", query = "SELECT d FROM DatosMedicos d")
+    , @NamedQuery(name = "DatosMedicos.findByCvePersona", query = "SELECT d FROM DatosMedicos d WHERE d.cvePersona = :cvePersona")
+    , @NamedQuery(name = "DatosMedicos.findByPeso", query = "SELECT d FROM DatosMedicos d WHERE d.peso = :peso")
+    , @NamedQuery(name = "DatosMedicos.findByEstatura", query = "SELECT d FROM DatosMedicos d WHERE d.estatura = :estatura")
+    , @NamedQuery(name = "DatosMedicos.findByFDiabetes", query = "SELECT d FROM DatosMedicos d WHERE d.fDiabetes = :fDiabetes")
+    , @NamedQuery(name = "DatosMedicos.findByFHipertenso", query = "SELECT d FROM DatosMedicos d WHERE d.fHipertenso = :fHipertenso")
+    , @NamedQuery(name = "DatosMedicos.findByFCardiaco", query = "SELECT d FROM DatosMedicos d WHERE d.fCardiaco = :fCardiaco")
+    , @NamedQuery(name = "DatosMedicos.findByFCancer", query = "SELECT d FROM DatosMedicos d WHERE d.fCancer = :fCancer")
+    , @NamedQuery(name = "DatosMedicos.findByNssVigente", query = "SELECT d FROM DatosMedicos d WHERE d.nssVigente = :nssVigente")
+    , @NamedQuery(name = "DatosMedicos.findByNss", query = "SELECT d FROM DatosMedicos d WHERE d.nss = :nss")})
 public class DatosMedicos implements Serializable {
 
     private static final long serialVersionUID = 1L;
