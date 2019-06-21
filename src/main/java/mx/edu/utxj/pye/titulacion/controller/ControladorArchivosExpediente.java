@@ -71,17 +71,12 @@ public class ControladorArchivosExpediente implements Serializable{
     
     @PostConstruct
     public void init() {
-        try {
-
+       
             matricula = controladorEstudianteRegistro.getMatricula();
             estudiante = controladorEstudianteRegistro.getEstudiante();
             
             cargarDocumentosPorExpediente();
-           
-        } catch (Exception e) {
-           
-        }
-        
+       
     }
     
     public void subirDocumentoCURP() {
@@ -297,8 +292,7 @@ public class ControladorArchivosExpediente implements Serializable{
             nuevoOBJdocExp.setDocumento(doc);
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
-
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileFotoIL, generacion , nivel, exp.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileFotoIL, generacion , nivel, exp.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), matricula));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
