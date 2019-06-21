@@ -46,7 +46,7 @@
                 <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
                 <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
             </li>
-            <!--            <c:if test="# {controladorEstReg.cargada}">
+                        <c:if test="#{controladorEstReg.cargada}">
                         <li class="header" style="color: #040404;background: #ffffff">Titulación</li>
                         <li class="treeview ">
                             <a href="#">
@@ -57,7 +57,7 @@
                             </a>
                             <li><p:link href="/expedienteTitulacion/estudiante/registroExpediente.xhtml"><i class="fa fa-pencil-square-o"></i><span>Registro e Integración</span></p:link></li>
                         </li>
-                        </c:if>-->
+                        </c:if>
         </c:if>
 <!--        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
             <c:forEach items="#{logonMB.listaModulos}" var="catModulo" >
@@ -672,7 +672,7 @@
                     </li>
                 </c:if>
             </c:if>
-            <!--            <c:if test="# {controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 60}">
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 60}">
                  <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Titulación</li>
                  <li class="treeview">
                      <a href="#">
@@ -699,7 +699,7 @@
                           </li> 
                      </ul>
                  </li>
-             </c:if>-->
+             </c:if>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                 <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
                     <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Personal</li>
