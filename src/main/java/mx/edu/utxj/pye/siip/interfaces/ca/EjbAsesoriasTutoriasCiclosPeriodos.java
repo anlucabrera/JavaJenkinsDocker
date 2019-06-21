@@ -117,4 +117,14 @@ public interface EjbAsesoriasTutoriasCiclosPeriodos {
     public AsesoriasTutoriasMensualPeriodosEscolares editaAsesoriaTutoriaMensualPeriodoEscolar(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoriaMensual);
     
     public Boolean buscaAsesoriaTutoriaExistente(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria);
+    
+    /**
+     * Método que permite el registro nuevo de una Asesoría y Tutoría
+     * @param asesoriaTutoria               Entidad que contiene todos los datos de la nueva Asesoría ó Tutoría
+     * @param registroTipo                  Parámetro para la tabla de registros, contiene cual es el tipo de registro que se esta dando de alta
+     * @param ejesRegistro                  Parámetro para la tabla de registros, contiene cual es el eje del registro que se esta dando de alta
+     * @param area                          Parámetro para la tabla de registros, contiene cual es el área del registro que se esta dando de alta
+     * @param eventosRegistros              Parámetro para la tabla de registros, contiene cual es el evento de registro que se esta dando de alta
+     */
+    public void guardaAsesoriaTutoria(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria, RegistrosTipo registroTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
 }

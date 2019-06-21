@@ -373,7 +373,19 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         AreasUniversidad area = facadeEscolar.getEntityManager().find(AreasUniversidad.class, claveArea);
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(3) area: " + area);
 
-        //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
+        List<DTOAsesoriasTutoriasCicloPeriodos> l = new ArrayList<>();
+        List<AsesoriasTutoriasMensualPeriodosEscolares> entities = new ArrayList<>();
+       
+        if(claveArea == 23){
+            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasMensualPeriodosEscolares atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.area = :area AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasMensualPeriodosEscolares.class)
+                .setParameter("area", claveArea)
+                .setParameter("evento", evento.getEventoRegistro())
+                .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("tipo", registrosTipo.getRegistroTipo())
+                .getResultList();
+        }else{
+        
+            //comprobar si el area operativa es un programa educativo referenciar a su area superior para obtener la referencia al area academica
         Short programaCategoria = (short)ep.leerPropiedadEntera("modulosRegistroProgramaEducativoCategoria").orElse(9);
         if (Objects.equals(area.getCategoria().getCategoria(), programaCategoria)) {
             areas.add(claveArea);
@@ -388,8 +400,6 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
 //            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(3a) areas: " + areas);
         }
         
-        List<DTOAsesoriasTutoriasCicloPeriodos> l = new ArrayList<>();
-        List<AsesoriasTutoriasMensualPeriodosEscolares> entities = new ArrayList<>();
         if(actividad == 2 || claveAreaEmpleado == 6 || claveAreaEmpleado == 9){ 
             entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasMensualPeriodosEscolares atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasMensualPeriodosEscolares.class)
                 .setParameter("areas", areas)
@@ -406,6 +416,13 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
                 .setParameter("claveTutor", claveTutor)
                 .getResultList();
         }
+        
+        
+        }
+        
+        
+        
+        
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             facadeEscolar.getEntityManager().refresh(e);
@@ -692,5 +709,15 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         } catch (Exception e) {
             return Collections.EMPTY_LIST;
         }
+    }
+
+    @Override
+    public void guardaAsesoriaTutoria(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria, RegistrosTipo registroTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+        facadeEscolar.setEntityClass(AsesoriasTutoriasMensualPeriodosEscolares.class);
+        Registros registro = ejbModulos.getRegistro(registroTipo, ejesRegistro, area, eventosRegistros);
+        asesoriaTutoria.setRegistro(registro.getRegistro());
+        facadeEscolar.create(asesoriaTutoria);
+        facadeEscolar.flush();
+        Messages.addGlobalInfo("<b>Se ha dado de alta el registro de Asesoría ó Tutoría correctamente.");
     }
 }

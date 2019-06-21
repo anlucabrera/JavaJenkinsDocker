@@ -313,7 +313,7 @@ public interface EjbCuerposAcademicos {
     
     /**
      * Método que permite el registro nuevo de un Cuerpo Académico
-     * @param cuerpoAcademico           Entidad que contiene todos los datos del nuevo Cuerpo AcadémicoEntidad que contiene todos los datos del nuevo Cuerpo Académico
+     * @param cuerpoAcademico           Entidad que contiene todos los datos del nuevo Cuerpo Académico
      * @param registroTipo              Parámetro para la tabla de registros, contiene cual es el tipo de registro que se esta dando de alta
      * @param ejesRegistro              Parámetro para la tabla de registros, contiene cual es el eje del registro que se esta dando de alta
      * @param area                      Parámetro para la tabla de registros, contiene cual es el área del registro que se esta dando de alta
@@ -323,7 +323,7 @@ public interface EjbCuerposAcademicos {
     
     /**
      * Método que permite el registro nuevo de un Integrante en Cuerpo Académico
-     * @param cuerpoAcademicoIntegrante     Entidad que contiene todos los datos del nuevo Cuerpo AcadémicoEntidad que contiene todos los datos del nuevo Cuerpo Académico
+     * @param cuerpoAcademicoIntegrante     Entidad que contiene todos los datos del nuevo Cuerpo Académico
      * @param registroTipo                  Parámetro para la tabla de registros, contiene cual es el tipo de registro que se esta dando de alta
      * @param ejesRegistro                  Parámetro para la tabla de registros, contiene cual es el eje del registro que se esta dando de alta
      * @param area                          Parámetro para la tabla de registros, contiene cual es el área del registro que se esta dando de alta
@@ -333,7 +333,7 @@ public interface EjbCuerposAcademicos {
     
     /**
      * Método que permite el registro nuevo de Línea de Investigación en Cuerpo Académico
-     * @param cuerpoAcademicoLinea          Entidad que contiene todos los datos del nuevo Cuerpo AcadémicoEntidad que contiene todos los datos del nuevo Cuerpo Académico
+     * @param cuerpoAcademicoLinea          Entidad que contiene todos los datos del nuevo Cuerpo Académico
      * @param registroTipo                  Parámetro para la tabla de registros, contiene cual es el tipo de registro que se esta dando de alta
      * @param ejesRegistro                  Parámetro para la tabla de registros, contiene cual es el eje del registro que se esta dando de alta
      * @param area                          Parámetro para la tabla de registros, contiene cual es el área del registro que se esta dando de alta

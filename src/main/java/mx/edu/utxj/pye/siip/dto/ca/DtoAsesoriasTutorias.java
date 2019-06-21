@@ -30,6 +30,7 @@ public final class DtoAsesoriasTutorias {
     @Getter @Setter private List<String>            cuatrimestresING;
     @Getter @Setter private List<String>            grupos;
     @Getter @Setter private String                  mensaje;
+    @Getter @Setter private Boolean                 nuevoRegistro;
     
     /************************** Lista áreas ****************************************/
     @Getter @Setter private List<AreasUniversidad> listaAreasPOA; 
