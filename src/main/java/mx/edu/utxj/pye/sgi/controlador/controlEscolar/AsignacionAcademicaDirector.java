@@ -16,7 +16,6 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
@@ -148,7 +147,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
      */
     public void asignarMateria(DtoMateria materia){
         rol.setMateria(materia);
-        ResultadoEJB<CargaAcademica> resAsignacion = ejb.asignarMateriaDocente(rol.getMateria().getMateria(), rol.getDocente(), rol.getGrupo(), rol.getPeriodo(), rol.getEventoActivo(), Operacion.PERSISTIR);
+        ResultadoEJB<CargaAcademica> resAsignacion = ejb.asignarMateriaDocente(rol.getMateria().getMateria(), rol.getDocente(), rol.getGrupo(), rol.getPeriodo(), rol.getPrograma(), rol.getEventoActivo(), Operacion.PERSISTIR);
         mostrarMensajeResultadoEJB(resAsignacion);
     }
 
@@ -159,7 +158,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
     public void eliminarAsignacion(DtoMateria materia){
         if(materia.getDtoCargaAcademica() == null) mostrarMensaje("No se puede eliminar una asignación que no existe.");
         rol.setMateria(materia);
-        ResultadoEJB<CargaAcademica> resAsignacion = ejb.asignarMateriaDocente(rol.getMateria().getMateria(), materia.getDtoCargaAcademica().getDocente(), rol.getGrupo(), rol.getPeriodo(), rol.getEventoActivo(), Operacion.ELIMINAR);
+        ResultadoEJB<CargaAcademica> resAsignacion = ejb.asignarMateriaDocente(rol.getMateria().getMateria(), materia.getDtoCargaAcademica().getDocente(), rol.getGrupo(), rol.getPeriodo(), rol.getPrograma(), rol.getEventoActivo(), Operacion.ELIMINAR);
         mostrarMensajeResultadoEJB(resAsignacion);
     }
 
@@ -168,7 +167,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
      * @param carga DTO de la carga académica a eliminar
      */
     public void eliminarAsignacionPorDocente(DtoCargaAcademica carga){
-        ResultadoEJB<DtoMateria> res = ejb.packMateria(carga.getGrupo().getIdGrupo(), carga.getMateria());
+        ResultadoEJB<DtoMateria> res = ejb.packMateria(carga.getGrupo(), carga.getMateria(), carga.getPrograma());
         if(!res.getCorrecto()){
             mostrarMensajeResultadoEJB(res);
             return;
@@ -204,7 +203,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
      * Permite actualizar las materias del del programa y grado seleccionado
      */
     public void actualizarMaterias(){
-        rol.setMateriasSinAsignar(Collections.EMPTY_LIST);
+        rol.setMateriasPorGrupo(Collections.EMPTY_LIST);
         setAlertas(Collections.EMPTY_LIST);
         if(rol.getPeriodo() == null) return;
         if(rol.getPrograma() == null) return;
@@ -212,7 +211,10 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
 
         ResultadoEJB<List<DtoMateria>> res = ejb.getMaterias(rol.getPrograma(), rol.getGrupo(), rol.getPeriodo(), rol.getPeriodoActivo());
         if(res.getCorrecto()){
-            rol.setMateriasSinAsignar(res.getValor());
+            rol.setMateriasPorGrupo(res.getValor());
+            /*rol.getMateriasPorGrupo().forEach(dtoMateria -> {
+                System.out.println("dtoMateria.getDtoCargaAcademica() = " + dtoMateria.getDtoCargaAcademica());
+            });*/
         }else mostrarMensajeResultadoEJB(res);
 
         if(rol.getDocente() != null){

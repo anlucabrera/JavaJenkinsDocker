@@ -59,7 +59,7 @@ public class Tutoria implements Serializable {
     private Date fecha;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
+    @Size(min = 1, max = 10)
     @Column(name = "tipo")
     private String tipo;
     @JoinColumn(name = "grupo", referencedColumnName = "id_grupo")

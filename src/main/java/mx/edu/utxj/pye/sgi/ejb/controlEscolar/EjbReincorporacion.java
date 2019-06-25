@@ -17,7 +17,6 @@ import javax.ejb.Stateless;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.persistence.TypedQuery;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.CalificacionesSaiiutDto;
@@ -245,7 +244,7 @@ public class EjbReincorporacion {
      * @return Resultado del proceso
      */
     public ResultadoEJB<Estudiante> asignarGrupo(Grupo grupo, Estudiante estudiante){
-        try{
+        /*try{
             if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no debe ser nulo.", Estudiante.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(3, "El estudiante no debe ser nulo.", Estudiante.class);
 
@@ -254,12 +253,13 @@ public class EjbReincorporacion {
             q1.setParameter("periodo", grupo.getPeriodo());
             q1.setParameter("estudiante", estudiante.getIdEstudiante());
             q1.executeUpdate();
-            
+
             Estudiante asignaGrupo = f.getEntityManager().find(Estudiante.class, estudiante.getIdEstudiante());
-            return ResultadoEJB.crearCorrecto(asignaGrupo, "Grupo asignado"); 
+            return ResultadoEJB.crearCorrecto(asignaGrupo, "Grupo asignado");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar el grupo al estudiante. (EjbReinscripcionAutonoma.asignarGrupo)", e, null);
-        }
+        }*/
+        return null;
     }
 
     /**
@@ -269,7 +269,7 @@ public class EjbReincorporacion {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Materia>> getMateriasPorAsignar(AreasUniversidad programa, Grupo grupo){
-        try{
+        /*try{
             //TODO: buscar lista de materias por asignar que pertenecen al grupo seleccionado
             List<Materia> materiasPorAsignar = f.getEntityManager().createQuery("select m from Materia m inner join m.idPlan p where p.idPe=:programaEducativo and m.grado =:grado and m.estatus =:estatus", Materia.class)
                     .setParameter("programaEducativo", programa.getArea())
@@ -279,7 +279,8 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearCorrecto(materiasPorAsignar, "Lista de materias para asignar al estudiante");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias por asignar. (EjbReinscripcionAutonoma.getMateriasPorAsignar)", e, null);
-        }
+        }*/
+        return null;
     }
    
     /**
@@ -288,8 +289,8 @@ public class EjbReincorporacion {
      * @param materias Lista de materias que se asignarán
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificaciones> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
-        try{
+    public ResultadoEJB<Calificacion> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
+        /*try{
             if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
             if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);
             
@@ -317,7 +318,9 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", Calificaciones.class);
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar las materias. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", e, null);
-        }
+        }*/
+
+        return null;
     }
     
      /**
@@ -387,7 +390,7 @@ public class EjbReincorporacion {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<CalificacionesSaiiutDto>> verificarCalificacionesSAIIUT(String matricula){
-        try{
+        /*try{
             List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto = new ArrayList<>();
             List<CalificacionesAlumno> listaCalificacionesAlumno = new ArrayList<>();
             
@@ -427,7 +430,9 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearCorrecto(listaCalificacionesSaiiutDto, "Existen registros de calificaciones de cuatrimestres anteriores.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No existen calificaciones de cuatrimestres anteriores registradas. (EjbReincorporacion.verificarCalificacionesSAIIUT)", e, null);
-        }
+        }*/
+
+        return null;
     }
     
      /**
@@ -436,8 +441,8 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignarán las calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificaciones> asignarCalificacionesSAIIUT(List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto, Estudiante estudiante){
-        try{
+    public ResultadoEJB<Calificacion> asignarCalificacionesSAIIUT(List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto, Estudiante estudiante){
+        /*try{
             if(listaCalificacionesSaiiutDto.isEmpty()) return ResultadoEJB.crearErroneo(3, "La calificación no puede ser nulo.", Calificaciones.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(4, "El estudiante no puede ser nulo.", Calificaciones.class);
            
@@ -470,7 +475,8 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearCorrecto(calificacionesAsignar, "La calificación ya fue asignada. (EjbReincorporacion.asignarCalificacionesSAIIUT)");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar la calificación. (EjbReincorporacion.asignarCalificacionesSAIIUT)", e, null);
-        }
+        }*/
+        return null;
     }
     
     /** PARA REINCORPORACIONES DE OTRA UT **/
@@ -482,7 +488,7 @@ public class EjbReincorporacion {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Materia>> getMateriasPorAsignar(PlanEstudio planEstudio, Estudiante estudiante){
-        try{
+        /*try{
             //TODO: buscar lista de materias activas previas al grado actual para asignar que pertenecen al plan de estudios seleccionado del estudiante
             List<Materia> materiasPorAsignar = f.getEntityManager().createQuery("SELECT m FROM Materia m WHERE m.idPlan.idPlanEstudio =:planEstudio AND m.grado < :grado AND m.estatus =:estatus", Materia.class)
                     .setParameter("planEstudio", planEstudio.getIdPlanEstudio())
@@ -492,7 +498,8 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearCorrecto(materiasPorAsignar, "Lista de materias sin asignar por grupo y programa");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias sin asignar por grupo y programa. (EjbAsignacionAcademica.getMateriasPorAsignar)", e, null);
-        }
+        }*/
+        return null;
     }
     
      /**
@@ -502,8 +509,8 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignarán las calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificaciones> asignarCalificacionesDirectas(Materia materia, Double calificacion, Estudiante estudiante){
-        try{
+    public ResultadoEJB<Calificacion> asignarCalificacionesDirectas(Materia materia, Double calificacion, Estudiante estudiante){
+        /*try{
             if(materia == null) return ResultadoEJB.crearErroneo(3, "La materia no puede ser nula.", Calificaciones.class);
             if(calificacion == null) return ResultadoEJB.crearErroneo(4, "La calificación no puede ser nula.", Calificaciones.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(5, "El estudiante no puede ser nulo.", Calificaciones.class);
@@ -530,7 +537,8 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarCalificacionesDirectas)", Calificaciones.class);
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar la calificación. (EjbReincorporacion.asignarCalificacionesDirectas)", e, null);
-        }
+        }*/
+        return null;
     }
     
      /** PARA REINCORPORACIONES EN LAS CUALES EXISTE HISTORIAL ACADEMICO PREVIO **/
@@ -540,8 +548,8 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante del que se buscarán calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Calificaciones>> getCalificacionesPrevias(Estudiante estudiante){
-        try{
+    public ResultadoEJB<List<Calificacion>> getCalificacionesPrevias(Estudiante estudiante){
+        /*try{
             //Identificar claves del alumno para posteriormente buscar las calificaciones
             List<Estudiante> clavesAlumno = f.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.matricula !=:claveActual", Estudiante.class)
                     .setParameter("matricula", estudiante.getMatricula())
@@ -556,6 +564,8 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearCorrecto(calificaciones, "Lista de materias sin asignar por grupo y programa");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias sin asignar por grupo y programa. (EjbAsignacionAcademica.getMateriasPorAsignar)", e, null);
-        }
+        }*/
+
+        return null;
     }
 }

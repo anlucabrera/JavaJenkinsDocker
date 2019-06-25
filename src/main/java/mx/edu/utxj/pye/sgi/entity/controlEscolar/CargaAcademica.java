@@ -50,15 +50,17 @@ public class CargaAcademica implements Serializable {
     private int docente;
     @Column(name = "horas_semana")
     private Integer horasSemana;
+    @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
+    @ManyToOne(optional = false)
+    private PlanEstudioMateria idPlanMateria;
     @JoinColumn(name = "cve_grupo", referencedColumnName = "id_grupo")
     @ManyToOne(optional = false)
     private Grupo cveGrupo;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
     @ManyToOne(optional = false)
     private EventoEscolar evento;
-    @JoinColumn(name = "cve_materia", referencedColumnName = "id_materia")
-    @ManyToOne(optional = false)
-    private Materia cveMateria;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
+    private List<Asesoria> asesoriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
     private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
 
@@ -98,6 +100,14 @@ public class CargaAcademica implements Serializable {
         this.horasSemana = horasSemana;
     }
 
+    public PlanEstudioMateria getIdPlanMateria() {
+        return idPlanMateria;
+    }
+
+    public void setIdPlanMateria(PlanEstudioMateria idPlanMateria) {
+        this.idPlanMateria = idPlanMateria;
+    }
+
     public Grupo getCveGrupo() {
         return cveGrupo;
     }
@@ -114,12 +124,13 @@ public class CargaAcademica implements Serializable {
         this.evento = evento;
     }
 
-    public Materia getCveMateria() {
-        return cveMateria;
+    @XmlTransient
+    public List<Asesoria> getAsesoriaList() {
+        return asesoriaList;
     }
 
-    public void setCveMateria(Materia cveMateria) {
-        this.cveMateria = cveMateria;
+    public void setAsesoriaList(List<Asesoria> asesoriaList) {
+        this.asesoriaList = asesoriaList;
     }
 
     @XmlTransient

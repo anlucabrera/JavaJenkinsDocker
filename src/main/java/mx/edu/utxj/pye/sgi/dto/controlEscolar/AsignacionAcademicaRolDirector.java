@@ -8,7 +8,6 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
@@ -114,7 +113,7 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
     /**
      * Lista de materias sin asignar
      */
-    @Getter @NonNull private List<DtoMateria> materiasSinAsignar;
+    @Getter @NonNull private List<DtoMateria> materiasPorGrupo;
 
     /**
      * Lista de cargas académicas realizadas al docente seleccionado
@@ -222,8 +221,8 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
         }
     }
 
-    public void setMateriasSinAsignar(List<DtoMateria> materiasSinAsignar) {
-        this.materiasSinAsignar = materiasSinAsignar;
+    public void setMateriasPorGrupo(List<DtoMateria> materiasPorGrupo) {
+        this.materiasPorGrupo = materiasPorGrupo;
     }
 
     public void setCargas(List<DtoCargaAcademica> cargas) {

@@ -62,10 +62,10 @@ public class PlanEstudio implements Serializable {
     @NotNull
     @Column(name = "id_pe")
     private short idPe;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlan")
+    private List<PlanEstudioMateria> planEstudioMateriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudios")
     private List<Competencia> competenciaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlan")
-    private List<Materia> materiaList;
 
     public PlanEstudio() {
     }
@@ -123,21 +123,21 @@ public class PlanEstudio implements Serializable {
     }
 
     @XmlTransient
+    public List<PlanEstudioMateria> getPlanEstudioMateriaList() {
+        return planEstudioMateriaList;
+    }
+
+    public void setPlanEstudioMateriaList(List<PlanEstudioMateria> planEstudioMateriaList) {
+        this.planEstudioMateriaList = planEstudioMateriaList;
+    }
+
+    @XmlTransient
     public List<Competencia> getCompetenciaList() {
         return competenciaList;
     }
 
     public void setCompetenciaList(List<Competencia> competenciaList) {
         this.competenciaList = competenciaList;
-    }
-
-    @XmlTransient
-    public List<Materia> getMateriaList() {
-        return materiaList;
-    }
-
-    public void setMateriaList(List<Materia> materiaList) {
-        this.materiaList = materiaList;
     }
 
     @Override

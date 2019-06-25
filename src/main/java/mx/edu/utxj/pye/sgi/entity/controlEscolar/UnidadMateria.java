@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,11 +18,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -76,8 +78,8 @@ public class UnidadMateria implements Serializable {
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
     @ManyToOne(optional = false)
     private Materia idMateria;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "unidadMateria")
-    private UnidadMateriaConfiguracion unidadMateriaConfiguracion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUnidadMateria")
+    private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
 
     public UnidadMateria() {
     }
@@ -160,12 +162,13 @@ public class UnidadMateria implements Serializable {
         this.idMateria = idMateria;
     }
 
-    public UnidadMateriaConfiguracion getUnidadMateriaConfiguracion() {
-        return unidadMateriaConfiguracion;
+    @XmlTransient
+    public List<UnidadMateriaConfiguracion> getUnidadMateriaConfiguracionList() {
+        return unidadMateriaConfiguracionList;
     }
 
-    public void setUnidadMateriaConfiguracion(UnidadMateriaConfiguracion unidadMateriaConfiguracion) {
-        this.unidadMateriaConfiguracion = unidadMateriaConfiguracion;
+    public void setUnidadMateriaConfiguracionList(List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList) {
+        this.unidadMateriaConfiguracionList = unidadMateriaConfiguracionList;
     }
 
     @Override
