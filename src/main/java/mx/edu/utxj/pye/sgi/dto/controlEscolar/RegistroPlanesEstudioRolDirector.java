@@ -97,7 +97,8 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     public void setPlanEstudio(PlanEstudio planEstudio) {
         this.planEstudio = planEstudio;
         if(planEstudio != null){
-            this.materias = planEstudio.getMateriaList();
+            //TODO: verificar lsita de materias
+            //this.materias = planEstudio.getMateriaList();
         }else{
             this.materias = Collections.EMPTY_LIST;
         }

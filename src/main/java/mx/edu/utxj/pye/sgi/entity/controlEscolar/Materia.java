@@ -33,12 +33,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "materia", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Materia.findAll", query = "SELECT m FROM Materia m"),
-    @NamedQuery(name = "Materia.findByIdMateria", query = "SELECT m FROM Materia m WHERE m.idMateria = :idMateria"),
-    @NamedQuery(name = "Materia.findByClaveMateria", query = "SELECT m FROM Materia m WHERE m.claveMateria = :claveMateria"),
-    @NamedQuery(name = "Materia.findByNombre", query = "SELECT m FROM Materia m WHERE m.nombre = :nombre"),
-    @NamedQuery(name = "Materia.findByGrado", query = "SELECT m FROM Materia m WHERE m.grado = :grado"),
-    @NamedQuery(name = "Materia.findByEstatus", query = "SELECT m FROM Materia m WHERE m.estatus = :estatus")})
+    @NamedQuery(name = "Materia.findAll", query = "SELECT m FROM Materia m")
+    , @NamedQuery(name = "Materia.findByIdMateria", query = "SELECT m FROM Materia m WHERE m.idMateria = :idMateria")
+    , @NamedQuery(name = "Materia.findByNombre", query = "SELECT m FROM Materia m WHERE m.nombre = :nombre")
+    , @NamedQuery(name = "Materia.findByEstatus", query = "SELECT m FROM Materia m WHERE m.estatus = :estatus")})
 public class Materia implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,39 +47,20 @@ public class Materia implements Serializable {
     private Integer idMateria;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 90)
-    @Column(name = "clave_materia")
-    private String claveMateria;
-    @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 150)
     @Column(name = "nombre")
     private String nombre;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "grado")
-    private int grado;
     @Basic(optional = false)
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMateria")
     private List<UnidadMateria> unidadMateriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
-    private List<CargaAcademica> cargaAcademicaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia")
-    private List<Asesoria> asesoriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materia1")
-    private List<Calificaciones> calificacionesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMateria")
+    private List<PlanEstudioMateria> planEstudioMateriaList;
     @JoinColumn(name = "id_area_conocimiento", referencedColumnName = "id_area_conocimiento")
     @ManyToOne(optional = false)
     private AreaConocimiento idAreaConocimiento;
-    @JoinColumn(name = "id_competencia", referencedColumnName = "id_competencia")
-    @ManyToOne(optional = false)
-    private Competencia idCompetencia;
-    @JoinColumn(name = "id_plan", referencedColumnName = "id_plan_estudio")
-    @ManyToOne(optional = false)
-    private PlanEstudio idPlan;
 
     public Materia() {
     }
@@ -90,11 +69,9 @@ public class Materia implements Serializable {
         this.idMateria = idMateria;
     }
 
-    public Materia(Integer idMateria, String claveMateria, String nombre, int grado, boolean estatus) {
+    public Materia(Integer idMateria, String nombre, boolean estatus) {
         this.idMateria = idMateria;
-        this.claveMateria = claveMateria;
         this.nombre = nombre;
-        this.grado = grado;
         this.estatus = estatus;
     }
 
@@ -106,28 +83,12 @@ public class Materia implements Serializable {
         this.idMateria = idMateria;
     }
 
-    public String getClaveMateria() {
-        return claveMateria;
-    }
-
-    public void setClaveMateria(String claveMateria) {
-        this.claveMateria = claveMateria;
-    }
-
     public String getNombre() {
         return nombre;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public int getGrado() {
-        return grado;
-    }
-
-    public void setGrado(int grado) {
-        this.grado = grado;
     }
 
     public boolean getEstatus() {
@@ -148,30 +109,12 @@ public class Materia implements Serializable {
     }
 
     @XmlTransient
-    public List<CargaAcademica> getCargaAcademicaList() {
-        return cargaAcademicaList;
+    public List<PlanEstudioMateria> getPlanEstudioMateriaList() {
+        return planEstudioMateriaList;
     }
 
-    public void setCargaAcademicaList(List<CargaAcademica> cargaAcademicaList) {
-        this.cargaAcademicaList = cargaAcademicaList;
-    }
-
-    @XmlTransient
-    public List<Asesoria> getAsesoriaList() {
-        return asesoriaList;
-    }
-
-    public void setAsesoriaList(List<Asesoria> asesoriaList) {
-        this.asesoriaList = asesoriaList;
-    }
-
-    @XmlTransient
-    public List<Calificaciones> getCalificacionesList() {
-        return calificacionesList;
-    }
-
-    public void setCalificacionesList(List<Calificaciones> calificacionesList) {
-        this.calificacionesList = calificacionesList;
+    public void setPlanEstudioMateriaList(List<PlanEstudioMateria> planEstudioMateriaList) {
+        this.planEstudioMateriaList = planEstudioMateriaList;
     }
 
     public AreaConocimiento getIdAreaConocimiento() {
@@ -180,22 +123,6 @@ public class Materia implements Serializable {
 
     public void setIdAreaConocimiento(AreaConocimiento idAreaConocimiento) {
         this.idAreaConocimiento = idAreaConocimiento;
-    }
-
-    public Competencia getIdCompetencia() {
-        return idCompetencia;
-    }
-
-    public void setIdCompetencia(Competencia idCompetencia) {
-        this.idCompetencia = idCompetencia;
-    }
-
-    public PlanEstudio getIdPlan() {
-        return idPlan;
-    }
-
-    public void setIdPlan(PlanEstudio idPlan) {
-        this.idPlan = idPlan;
     }
 
     @Override

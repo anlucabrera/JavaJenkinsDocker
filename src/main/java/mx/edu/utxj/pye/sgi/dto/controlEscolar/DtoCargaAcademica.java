@@ -3,10 +3,7 @@ package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 import lombok.*;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
@@ -20,4 +17,6 @@ public class DtoCargaAcademica implements Serializable {
     @Getter @Setter @NonNull Grupo grupo;
     @Getter @Setter @NonNull Materia materia;
     @Getter @Setter @NonNull AreasUniversidad programa;
+    @Getter @Setter @NonNull PlanEstudio planEstudio;
+    @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
 }

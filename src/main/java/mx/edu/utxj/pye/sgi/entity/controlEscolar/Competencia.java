@@ -8,17 +8,17 @@ package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -33,10 +33,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "competencia", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Competencia.findAll", query = "SELECT c FROM Competencia c"),
-    @NamedQuery(name = "Competencia.findByIdCompetencia", query = "SELECT c FROM Competencia c WHERE c.idCompetencia = :idCompetencia"),
-    @NamedQuery(name = "Competencia.findByNombre", query = "SELECT c FROM Competencia c WHERE c.nombre = :nombre"),
-    @NamedQuery(name = "Competencia.findByTipo", query = "SELECT c FROM Competencia c WHERE c.tipo = :tipo")})
+    @NamedQuery(name = "Competencia.findAll", query = "SELECT c FROM Competencia c")
+    , @NamedQuery(name = "Competencia.findByIdCompetencia", query = "SELECT c FROM Competencia c WHERE c.idCompetencia = :idCompetencia")
+    , @NamedQuery(name = "Competencia.findByNombre", query = "SELECT c FROM Competencia c WHERE c.nombre = :nombre")
+    , @NamedQuery(name = "Competencia.findByTipo", query = "SELECT c FROM Competencia c WHERE c.tipo = :tipo")})
 public class Competencia implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -55,11 +55,14 @@ public class Competencia implements Serializable {
     @Size(min = 1, max = 12)
     @Column(name = "tipo")
     private String tipo;
+    @JoinTable(name = "plan_materia_competencias", joinColumns = {
+        @JoinColumn(name = "id_competencia", referencedColumnName = "id_competencia")}, inverseJoinColumns = {
+        @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")})
+    @ManyToMany
+    private List<PlanEstudioMateria> planEstudioMateriaList;
     @JoinColumn(name = "plan_estudios", referencedColumnName = "id_plan_estudio")
     @ManyToOne(optional = false)
     private PlanEstudio planEstudios;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCompetencia")
-    private List<Materia> materiaList;
 
     public Competencia() {
     }
@@ -98,21 +101,21 @@ public class Competencia implements Serializable {
         this.tipo = tipo;
     }
 
+    @XmlTransient
+    public List<PlanEstudioMateria> getPlanEstudioMateriaList() {
+        return planEstudioMateriaList;
+    }
+
+    public void setPlanEstudioMateriaList(List<PlanEstudioMateria> planEstudioMateriaList) {
+        this.planEstudioMateriaList = planEstudioMateriaList;
+    }
+
     public PlanEstudio getPlanEstudios() {
         return planEstudios;
     }
 
     public void setPlanEstudios(PlanEstudio planEstudios) {
         this.planEstudios = planEstudios;
-    }
-
-    @XmlTransient
-    public List<Materia> getMateriaList() {
-        return materiaList;
-    }
-
-    public void setMateriaList(List<Materia> materiaList) {
-        this.materiaList = materiaList;
     }
 
     @Override

@@ -78,7 +78,7 @@ public class EjbReinscripcionAutonoma {
      * @return Resultado del proceso
      */
     public ResultadoEJB<Estudiante> asignarGrupo(Grupo grupo, Estudiante estudiante){
-        try{
+        /*try{
             if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no debe ser nulo.", Estudiante.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(3, "El estudiante no debe ser nulo.", Estudiante.class);
 
@@ -92,7 +92,8 @@ public class EjbReinscripcionAutonoma {
             return ResultadoEJB.crearCorrecto(asignaGrupo, "Grupo asignado"); 
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar el grupo al estudiante. (EjbReinscripcionAutonoma.asignarGrupo)", e, null);
-        }
+        }*/
+        return null;
     }
 
     /**
@@ -102,7 +103,7 @@ public class EjbReinscripcionAutonoma {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Materia>> getMateriasPorAsignar(AreasUniversidad programa, Grupo grupo){
-        try{
+        /*try{
             //TODO: buscar lista de materias por asignar que pertenecen al grupo seleccionado
             List<Materia> materiasPorAsignar = f.getEntityManager().createQuery("select m from Materia m inner join m.idPlan p where p.idPe=:programaEducativo and m.grado =:grado and m.estatus =:estatus", Materia.class)
                     .setParameter("programaEducativo", programa.getArea())
@@ -112,7 +113,8 @@ public class EjbReinscripcionAutonoma {
             return ResultadoEJB.crearCorrecto(materiasPorAsignar, "Lista de materias para asignar al estudiante");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias por asignar. (EjbReinscripcionAutonoma.getMateriasPorAsignar)", e, null);
-        }
+        }*/
+        return null;
     }
    
     /**
@@ -121,8 +123,8 @@ public class EjbReinscripcionAutonoma {
      * @param materias Lista de materias que se asignarán
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificaciones> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
-        try{
+    public ResultadoEJB<Calificacion> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
+        /*try{
             if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
             if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);
             
@@ -150,6 +152,7 @@ public class EjbReinscripcionAutonoma {
             return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", Calificaciones.class);
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar las materias. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", e, null);
-        }
+        }*/
+        return null;
     }
 }

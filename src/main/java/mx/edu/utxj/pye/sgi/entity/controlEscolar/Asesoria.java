@@ -34,12 +34,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "asesoria", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Asesoria.findAll", query = "SELECT a FROM Asesoria a"),
-    @NamedQuery(name = "Asesoria.findByIdAsesoria", query = "SELECT a FROM Asesoria a WHERE a.idAsesoria = :idAsesoria"),
-    @NamedQuery(name = "Asesoria.findByPeriodo", query = "SELECT a FROM Asesoria a WHERE a.periodo = :periodo"),
-    @NamedQuery(name = "Asesoria.findByAsunto", query = "SELECT a FROM Asesoria a WHERE a.asunto = :asunto"),
-    @NamedQuery(name = "Asesoria.findByFecha", query = "SELECT a FROM Asesoria a WHERE a.fecha = :fecha"),
-    @NamedQuery(name = "Asesoria.findByTipo", query = "SELECT a FROM Asesoria a WHERE a.tipo = :tipo")})
+    @NamedQuery(name = "Asesoria.findAll", query = "SELECT a FROM Asesoria a")
+    , @NamedQuery(name = "Asesoria.findByIdAsesoria", query = "SELECT a FROM Asesoria a WHERE a.idAsesoria = :idAsesoria")
+    , @NamedQuery(name = "Asesoria.findByAsunto", query = "SELECT a FROM Asesoria a WHERE a.asunto = :asunto")
+    , @NamedQuery(name = "Asesoria.findByFecha", query = "SELECT a FROM Asesoria a WHERE a.fecha = :fecha")
+    , @NamedQuery(name = "Asesoria.findByTipo", query = "SELECT a FROM Asesoria a WHERE a.tipo = :tipo")})
 public class Asesoria implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,10 +47,6 @@ public class Asesoria implements Serializable {
     @NotNull
     @Column(name = "id_asesoria")
     private Integer idAsesoria;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "periodo")
-    private int periodo;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 450)
@@ -64,16 +59,17 @@ public class Asesoria implements Serializable {
     private Date fecha;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 11)
     @Column(name = "tipo")
-    private boolean tipo;
+    private String tipo;
     @JoinTable(name = "participantes_asesoria", joinColumns = {
         @JoinColumn(name = "asesoria", referencedColumnName = "id_asesoria")}, inverseJoinColumns = {
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")})
     @ManyToMany
     private List<Estudiante> estudianteList;
-    @JoinColumn(name = "materia", referencedColumnName = "id_materia")
+    @JoinColumn(name = "carga", referencedColumnName = "carga")
     @ManyToOne(optional = false)
-    private Materia materia;
+    private CargaAcademica carga;
 
     public Asesoria() {
     }
@@ -82,9 +78,8 @@ public class Asesoria implements Serializable {
         this.idAsesoria = idAsesoria;
     }
 
-    public Asesoria(Integer idAsesoria, int periodo, String asunto, Date fecha, boolean tipo) {
+    public Asesoria(Integer idAsesoria, String asunto, Date fecha, String tipo) {
         this.idAsesoria = idAsesoria;
-        this.periodo = periodo;
         this.asunto = asunto;
         this.fecha = fecha;
         this.tipo = tipo;
@@ -96,14 +91,6 @@ public class Asesoria implements Serializable {
 
     public void setIdAsesoria(Integer idAsesoria) {
         this.idAsesoria = idAsesoria;
-    }
-
-    public int getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(int periodo) {
-        this.periodo = periodo;
     }
 
     public String getAsunto() {
@@ -122,11 +109,11 @@ public class Asesoria implements Serializable {
         this.fecha = fecha;
     }
 
-    public boolean getTipo() {
+    public String getTipo() {
         return tipo;
     }
 
-    public void setTipo(boolean tipo) {
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
@@ -139,12 +126,12 @@ public class Asesoria implements Serializable {
         this.estudianteList = estudianteList;
     }
 
-    public Materia getMateria() {
-        return materia;
+    public CargaAcademica getCarga() {
+        return carga;
     }
 
-    public void setMateria(Materia materia) {
-        this.materia = materia;
+    public void setCarga(CargaAcademica carga) {
+        this.carga = carga;
     }
 
     @Override

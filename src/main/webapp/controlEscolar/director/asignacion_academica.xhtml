@@ -112,7 +112,6 @@
                                                     <p:column>#{docente.personal.clave}</p:column>
                                                     <p:column>#{docente.personal.nombre}</p:column>
                                                     <p:ajax event="itemSelect" update="@this" process="@this" oncomplete="actualizarmaterias();" />
-                                                    <p:autoUpdate />
                                                 </p:autoComplete>
                                                 <p:outputLabel value="Docente" for="docente"/>
                                                 <p:message for="docente" />
@@ -125,11 +124,11 @@
                                                 <p:tab title="Materias del grupo">
                                                     <p:dataTable var="materia" rendered="true"
                                                                  emptyMessage="Sin registros."
-                                                                 value="#{asignacionAcademicaDirector.rol.materiasSinAsignar}"
+                                                                 value="#{asignacionAcademicaDirector.rol.materiasPorGrupo}"
                                                                  id="tbl" rowIndexVar="rowIndex"
                                                                  tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                  tableStyle="vertical-align: middle;">
-                                                        <p:column headerText="Clave"><h:outputText value="#{materia.materia.claveMateria}"/></p:column>
+                                                        <p:column headerText="Clave" style="width: 70px;"><h:outputText value="#{materia.materia.idMateria}"/></p:column>
                                                         <p:column headerText="Materia"><h:outputText value="#{materia.materia.nombre}"/></p:column>
                                                         <p:column headerText="Estado"><h:outputText value="#{empty materia.dtoCargaAcademica?'Por asignar':'Asignada'}"/></p:column>
                                                         <p:column headerText="Docente"><h:outputText value="#{empty materia.dtoCargaAcademica?'Pendiente':materia.dtoCargaAcademica.docente.personal.nombre}" /></p:column>
@@ -187,8 +186,8 @@
                                                                  tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                  tableStyle="vertical-align: middle;">
                                                         <p:column headerText="Programa"><h:outputText value="#{carga.programa.nombre}"/></p:column>
-                                                        <p:column headerText="Grupo"><h:outputText value="#{carga.cargaAcademica.grupo.grado}#{carga.cargaAcademica.grupo.literal}"/></p:column>
-                                                        <p:column headerText="Clave"><h:outputText value="#{carga.materia.claveMateria}"/></p:column>
+                                                        <p:column headerText="Grupo"><h:outputText value="#{carga.cargaAcademica.cveGrupo.grado}#{carga.cargaAcademica.cveGrupo.literal}"/></p:column>
+                                                        <p:column headerText="Clave"><h:outputText value="#{carga.materia.idMateria}"/></p:column>
                                                         <p:column headerText="Materia"><h:outputText value="#{carga.materia.nombre}"/></p:column>
                                                         <p:column headerText="Opciones">
                                                             <div class="btn-group">
@@ -270,7 +269,7 @@
                                     </div>
                                     <div class="box-footer clearfix no-border">
                                         <p:button styleClass="btn btn-primary pull-right" onclick="PF('modalHoras').hide();" value="Cancelar" icon="fa fa-times" />
-                                        <p:commandButton styleClass="btn btn-primary pull-right" actionListener="#{asignacionAcademicaDirector.actualizarHorasPorSemana}" process="@form" value="Aceptar" icon="fa fa-clock-o" oncomplete="actualizarmaterias();" />
+                                        <p:commandButton styleClass="btn btn-primary pull-right" actionListener="#{asignacionAcademicaDirector.actualizarHorasPorSemana}" process="@form" update="@(form)" value="Aceptar" icon="fa fa-clock-o" oncomplete="actualizarmaterias();PF('modalHoras').hide();" />
                                     </div>
                                 </h:form>
                             </c:if>

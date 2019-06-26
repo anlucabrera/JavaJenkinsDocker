@@ -37,14 +37,14 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "estudiante", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Estudiante.findAll", query = "SELECT e FROM Estudiante e"),
-    @NamedQuery(name = "Estudiante.findByIdEstudiante", query = "SELECT e FROM Estudiante e WHERE e.idEstudiante = :idEstudiante"),
-    @NamedQuery(name = "Estudiante.findByMatricula", query = "SELECT e FROM Estudiante e WHERE e.matricula = :matricula"),
-    @NamedQuery(name = "Estudiante.findByPeriodo", query = "SELECT e FROM Estudiante e WHERE e.periodo = :periodo"),
-    @NamedQuery(name = "Estudiante.findByCarrera", query = "SELECT e FROM Estudiante e WHERE e.carrera = :carrera"),
-    @NamedQuery(name = "Estudiante.findByOpcionIncripcion", query = "SELECT e FROM Estudiante e WHERE e.opcionIncripcion = :opcionIncripcion"),
-    @NamedQuery(name = "Estudiante.findByFechaAlta", query = "SELECT e FROM Estudiante e WHERE e.fechaAlta = :fechaAlta"),
-    @NamedQuery(name = "Estudiante.findByTrabajadorInscribe", query = "SELECT e FROM Estudiante e WHERE e.trabajadorInscribe = :trabajadorInscribe")})
+    @NamedQuery(name = "Estudiante.findAll", query = "SELECT e FROM Estudiante e")
+    , @NamedQuery(name = "Estudiante.findByIdEstudiante", query = "SELECT e FROM Estudiante e WHERE e.idEstudiante = :idEstudiante")
+    , @NamedQuery(name = "Estudiante.findByMatricula", query = "SELECT e FROM Estudiante e WHERE e.matricula = :matricula")
+    , @NamedQuery(name = "Estudiante.findByPeriodo", query = "SELECT e FROM Estudiante e WHERE e.periodo = :periodo")
+    , @NamedQuery(name = "Estudiante.findByCarrera", query = "SELECT e FROM Estudiante e WHERE e.carrera = :carrera")
+    , @NamedQuery(name = "Estudiante.findByOpcionIncripcion", query = "SELECT e FROM Estudiante e WHERE e.opcionIncripcion = :opcionIncripcion")
+    , @NamedQuery(name = "Estudiante.findByFechaAlta", query = "SELECT e FROM Estudiante e WHERE e.fechaAlta = :fechaAlta")
+    , @NamedQuery(name = "Estudiante.findByTrabajadorInscribe", query = "SELECT e FROM Estudiante e WHERE e.trabajadorInscribe = :trabajadorInscribe")})
 public class Estudiante implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -78,6 +78,8 @@ public class Estudiante implements Serializable {
     private int trabajadorInscribe;
     @ManyToMany(mappedBy = "estudianteList")
     private List<Asesoria> asesoriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
+    private List<Calificacion> calificacionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<Baja> bajaList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
@@ -93,8 +95,6 @@ public class Estudiante implements Serializable {
     private Grupo grupo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<DocumentoEstudiante> documentoEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante1")
-    private List<Calificaciones> calificacionesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<ParticipantesTutoria> participantesTutoriaList;
 
@@ -180,6 +180,15 @@ public class Estudiante implements Serializable {
     }
 
     @XmlTransient
+    public List<Calificacion> getCalificacionList() {
+        return calificacionList;
+    }
+
+    public void setCalificacionList(List<Calificacion> calificacionList) {
+        this.calificacionList = calificacionList;
+    }
+
+    @XmlTransient
     public List<Baja> getBajaList() {
         return bajaList;
     }
@@ -227,15 +236,6 @@ public class Estudiante implements Serializable {
 
     public void setDocumentoEstudianteList(List<DocumentoEstudiante> documentoEstudianteList) {
         this.documentoEstudianteList = documentoEstudianteList;
-    }
-
-    @XmlTransient
-    public List<Calificaciones> getCalificacionesList() {
-        return calificacionesList;
-    }
-
-    public void setCalificacionesList(List<Calificaciones> calificacionesList) {
-        this.calificacionesList = calificacionesList;
     }
 
     @XmlTransient

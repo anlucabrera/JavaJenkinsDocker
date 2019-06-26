@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "documento_aspirante", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "DocumentoAspirante.findAll", query = "SELECT d FROM DocumentoAspirante d"),
-    @NamedQuery(name = "DocumentoAspirante.findByAspirante", query = "SELECT d FROM DocumentoAspirante d WHERE d.aspirante = :aspirante"),
-    @NamedQuery(name = "DocumentoAspirante.findByEvidenciaActaNacimiento", query = "SELECT d FROM DocumentoAspirante d WHERE d.evidenciaActaNacimiento = :evidenciaActaNacimiento"),
-    @NamedQuery(name = "DocumentoAspirante.findByEvidenciaHistorialAcademico", query = "SELECT d FROM DocumentoAspirante d WHERE d.evidenciaHistorialAcademico = :evidenciaHistorialAcademico"),
-    @NamedQuery(name = "DocumentoAspirante.findByEvidenciaCurp", query = "SELECT d FROM DocumentoAspirante d WHERE d.evidenciaCurp = :evidenciaCurp")})
+    @NamedQuery(name = "DocumentoAspirante.findAll", query = "SELECT d FROM DocumentoAspirante d")
+    , @NamedQuery(name = "DocumentoAspirante.findByAspirante", query = "SELECT d FROM DocumentoAspirante d WHERE d.aspirante = :aspirante")
+    , @NamedQuery(name = "DocumentoAspirante.findByEvidenciaActaNacimiento", query = "SELECT d FROM DocumentoAspirante d WHERE d.evidenciaActaNacimiento = :evidenciaActaNacimiento")
+    , @NamedQuery(name = "DocumentoAspirante.findByEvidenciaHistorialAcademico", query = "SELECT d FROM DocumentoAspirante d WHERE d.evidenciaHistorialAcademico = :evidenciaHistorialAcademico")
+    , @NamedQuery(name = "DocumentoAspirante.findByEvidenciaCurp", query = "SELECT d FROM DocumentoAspirante d WHERE d.evidenciaCurp = :evidenciaCurp")})
 public class DocumentoAspirante implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -33,14 +33,14 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "unidad_materia", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UnidadMateria.findAll", query = "SELECT u FROM UnidadMateria u"),
-    @NamedQuery(name = "UnidadMateria.findByIdUnidadMateria", query = "SELECT u FROM UnidadMateria u WHERE u.idUnidadMateria = :idUnidadMateria"),
-    @NamedQuery(name = "UnidadMateria.findByNombre", query = "SELECT u FROM UnidadMateria u WHERE u.nombre = :nombre"),
-    @NamedQuery(name = "UnidadMateria.findByObjetivo", query = "SELECT u FROM UnidadMateria u WHERE u.objetivo = :objetivo"),
-    @NamedQuery(name = "UnidadMateria.findByNoUnidad", query = "SELECT u FROM UnidadMateria u WHERE u.noUnidad = :noUnidad"),
-    @NamedQuery(name = "UnidadMateria.findByHorasTeoricas", query = "SELECT u FROM UnidadMateria u WHERE u.horasTeoricas = :horasTeoricas"),
-    @NamedQuery(name = "UnidadMateria.findByHorasPracticas", query = "SELECT u FROM UnidadMateria u WHERE u.horasPracticas = :horasPracticas"),
-    @NamedQuery(name = "UnidadMateria.findByIntegradora", query = "SELECT u FROM UnidadMateria u WHERE u.integradora = :integradora")})
+    @NamedQuery(name = "UnidadMateria.findAll", query = "SELECT u FROM UnidadMateria u")
+    , @NamedQuery(name = "UnidadMateria.findByIdUnidadMateria", query = "SELECT u FROM UnidadMateria u WHERE u.idUnidadMateria = :idUnidadMateria")
+    , @NamedQuery(name = "UnidadMateria.findByNombre", query = "SELECT u FROM UnidadMateria u WHERE u.nombre = :nombre")
+    , @NamedQuery(name = "UnidadMateria.findByObjetivo", query = "SELECT u FROM UnidadMateria u WHERE u.objetivo = :objetivo")
+    , @NamedQuery(name = "UnidadMateria.findByNoUnidad", query = "SELECT u FROM UnidadMateria u WHERE u.noUnidad = :noUnidad")
+    , @NamedQuery(name = "UnidadMateria.findByHorasTeoricas", query = "SELECT u FROM UnidadMateria u WHERE u.horasTeoricas = :horasTeoricas")
+    , @NamedQuery(name = "UnidadMateria.findByHorasPracticas", query = "SELECT u FROM UnidadMateria u WHERE u.horasPracticas = :horasPracticas")
+    , @NamedQuery(name = "UnidadMateria.findByIntegradora", query = "SELECT u FROM UnidadMateria u WHERE u.integradora = :integradora")})
 public class UnidadMateria implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -79,7 +79,7 @@ public class UnidadMateria implements Serializable {
     @ManyToOne(optional = false)
     private Materia idMateria;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUnidadMateria")
-    private List<ConfiguracionMateria> configuracionMateriaList;
+    private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
 
     public UnidadMateria() {
     }
@@ -163,12 +163,12 @@ public class UnidadMateria implements Serializable {
     }
 
     @XmlTransient
-    public List<ConfiguracionMateria> getConfiguracionMateriaList() {
-        return configuracionMateriaList;
+    public List<UnidadMateriaConfiguracion> getUnidadMateriaConfiguracionList() {
+        return unidadMateriaConfiguracionList;
     }
 
-    public void setConfiguracionMateriaList(List<ConfiguracionMateria> configuracionMateriaList) {
-        this.configuracionMateriaList = configuracionMateriaList;
+    public void setUnidadMateriaConfiguracionList(List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList) {
+        this.unidadMateriaConfiguracionList = unidadMateriaConfiguracionList;
     }
 
     @Override

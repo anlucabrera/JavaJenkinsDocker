@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 import com.github.adminfaces.starter.infra.model.Filter;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
@@ -84,8 +85,23 @@ public class EjbCapturaCalificaciones {
             }
         }catch (Exception e){
             return  ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares en los que el docente ha tenido captura de calificaciones (EjbCapturaCalificaciones.getPeriodosConCaptura).", e, null);
-
         }
     }
 
+    /**
+     * Permite obtener la lista de cargas académicas que un docente tiene en el periodo escolar seleccionado por el usuario
+     * @param docente Docente logueado en sistema
+     * @param periodo Periodo seleccionado en pantalla
+     * @return Regresa lista de cargas cadémicas o código de error de lo contrario
+     */
+    public ResultadoEJB<List<DtoCargaAcademica>> getCargasAcadémicasPorPeriodo(PersonalActivo docente, PeriodosEscolares periodo){
+        try {
+            //TODO: obtener la lista de cargas académicas del docente
+            List<DtoCargaAcademica> cargas = Collections.EMPTY_LIST;
+            if(cargas.isEmpty()) return  ResultadoEJB.crearErroneo(2, cargas, "Usted no tiene carga académica en el periodo seleccionado");
+            else return ResultadoEJB.crearCorrecto(cargas, "Cargas académicas por docente y periodo");
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista cargas cadémicas por docente y periodo (EjbCapturaCalificaciones.getCargasAcadémicasPorPeriodo).", e, null);
+        }
+    }
 }
