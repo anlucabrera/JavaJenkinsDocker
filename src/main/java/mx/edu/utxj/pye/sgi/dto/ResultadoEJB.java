@@ -90,7 +90,18 @@ public class ResultadoEJB<T> implements Serializable {
     public static <T> ResultadoEJB<T> crearErroneo(Integer resultado, String mensaje, Class<T> tipo){
         return crearErroneo(resultado,mensaje,null,tipo);
     }
-
+    
+     /**
+     *Crea una instancia de resultado erróneo sin excepción.
+     * @param resultado Valor del resultado, debe ser mayor que 0.
+     * @param mensaje Mensaje del error.
+     * @param <T> Tipo del resultado
+     * @return Instancia de resultado erróneo sin excepción.
+     */
+    public static <T> ResultadoEJB<T> crearErroneo(Integer resultado, String mensaje){
+        return crearErroneo(resultado,mensaje);
+    }
+    
     /**
      * Crea una instancia de resultado erróneo con excepción.
      * @param resultado Valor del resultado, debe ser mayor que 0.
