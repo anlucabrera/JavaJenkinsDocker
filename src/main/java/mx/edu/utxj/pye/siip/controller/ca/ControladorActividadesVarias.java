@@ -395,6 +395,9 @@ public class ControladorActividadesVarias implements Serializable {
         ejbActividadesVarias.guardaActividadVaria(actividadVaria, dto.getRegistroTipoAV(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
         dto.setMensaje("El registro ha sido guardado con exito en la base de datos");
         buscaActividadesVarias();
+        DTOActividadVaria dtoAvre = new DTOActividadVaria();
+        dtoAvre.setActividadVaria(new ActividadesVariasRegistro());
+        dto.setRegistro(dtoAvre);
         actualizaInterfazEdicionActividadVaria();
         Ajax.update("mensaje");
     }

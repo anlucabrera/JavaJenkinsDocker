@@ -41,8 +41,9 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>();
     @Getter    @Setter    private List<ListaBitacoraIncidencias> bitacoraIncidenciases = new ArrayList<>();
     
-    @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
-    @Getter    @Setter    private String areaNombre = "",mes="";
+    @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();    
+    @Getter    @Setter    private PieReportes pr = new PieReportes();
+    @Getter    @Setter    private String areaNombre = "",mes="", responsable;
     @Getter    @Setter    private Short area = 0;
 
     @Getter    @Setter    private LocalDate fechaActual = LocalDate.now(), fechaI = LocalDate.now(), fechaF = LocalDate.now();
@@ -71,9 +72,10 @@ public class ControladorIncidenciasGeneral implements Serializable {
         }
         anioNumero = fechaActual.getYear();
         area = 0;
-        areaNombre = "Todas las áreas";
+        areaNombre = "Todas las áreas";        
         mostrarIncidencias(String.valueOf(fechaActual.getMonthValue()));
         mostrarareas();
+        crearPieDeReporte();
     }
 
     public void mostrarareas() {
@@ -81,6 +83,23 @@ public class ControladorIncidenciasGeneral implements Serializable {
             listaAreasUniversidads = new ArrayList<>();
             listaAreasUniversidads.clear();
             listaAreasUniversidads = areasLogeo.mostrarAreasUniversidadActivas();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void crearPieDeReporte() {
+        try {
+            pr = new PieReportes();
+            if (controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 530 || controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 564) {
+                pr = new PieReportes("Administrador", controladorEmpleado.getNuevoOBJListaPersonal().getNombre(), controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre());
+            } else {
+                pr = new PieReportes(controladorEmpleado.getNuevoOBJListaPersonal().getCategoriaOperativaNombre(), controladorEmpleado.getNuevoOBJListaPersonal().getNombre(), controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre());
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.crearPieDeReporte(pr)"+pr.getPuesto());
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.crearPieDeReporte(pr)"+pr.getNombre());
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.crearPieDeReporte(pr)"+pr.getArea());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
@@ -212,15 +231,28 @@ public class ControladorIncidenciasGeneral implements Serializable {
     }
 
     public void numeroAreaAsiganado(ValueChangeEvent event) {
-        area = 0;
-        areaNombre = "";
-        area = Short.parseShort(event.getNewValue().toString());
-        if (area == 0) {
-            areaNombre = "Todas las áreas";
-        } else {
-            areaNombre = buscarArea(area);
+        try {
+            area = 0;
+            pr = new PieReportes();
+            areaNombre = "";
+            area = Short.parseShort(event.getNewValue().toString());
+            if (area == 0) {
+                areaNombre = "Todas las áreas";
+                crearPieDeReporte();
+            } else {
+                AreasUniversidad areaU = new AreasUniversidad();
+                areaU = areasLogeo.mostrarAreasUniversidad(area);
+                areaNombre = areaU.getNombre();
+                pr = new PieReportes(buscarPerosnal(areaU.getResponsable()).getCategoriaOperativaNombre(), buscarPerosnal(areaU.getResponsable()).getNombre(), areaNombre);
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.numeroAreaAsiganado(pr)"+pr.getPuesto());
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.numeroAreaAsiganado(pr)"+pr.getNombre());
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.numeroAreaAsiganado(pr)"+pr.getArea());
+            mostrarIncidencias(mes);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
         }
-        mostrarIncidencias(mes);
     }
 
     public void eliminarIncidencia(Incidencias incidencias) {
@@ -319,6 +351,22 @@ public class ControladorIncidenciasGeneral implements Serializable {
             this.lp = lp;
             this.i = i;
             this.b = b;
+        }
+    }
+    
+     public static class PieReportes {
+
+        @Getter        @Setter        private String puesto;
+        @Getter        @Setter        private String nombre;
+        @Getter        @Setter        private String area;
+
+        public PieReportes(String puesto, String nombre, String area) {
+            this.puesto = puesto;
+            this.nombre = nombre;
+            this.area = area;
+        }
+
+        public PieReportes() {
         }
     }
 }

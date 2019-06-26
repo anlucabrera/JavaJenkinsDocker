@@ -132,6 +132,20 @@ public class ServicioCatalogos implements EjbCatalogos{
     }
     
     @Override
+    public List<AreasUniversidad> getAreasAcademicasAsesoriasTutorias() {
+        List<AreasUniversidad> areasAcademicas = new ArrayList<>();
+        TypedQuery<AreasUniversidad> query = facadeServGen.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a JOIN a.categoria c WHERE c.categoria = :categoria OR a.area = :idiomas ORDER BY a.nombre", AreasUniversidad.class);
+        query.setParameter("categoria", 8);
+        query.setParameter("idiomas", 23);
+        try {
+            areasAcademicas = query.getResultList();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            areasAcademicas = null;
+        }
+        return areasAcademicas;
+    }
+    
+    @Override
     public List<AreasUniversidad> getAreasAcademicasDistribucionAulas() {
         try {
             return facadeServGen.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a JOIN a.categoria c WHERE c.categoria = :categoria OR a.area = :area ORDER BY a.nombre", AreasUniversidad.class)

@@ -86,6 +86,14 @@
                 <p:separator/>
 
                 <div class="box-body">
+                    
+                    <h:form id="abrirNuevoRegistroInfo">
+                        <div class="callout callout-info">
+                            <h4>¡Aviso!</h4>
+                            <p>Ahora ya puedes dar de alta Asesorías y Tutorías mediante un formulario de registro: <code><p:commandLink ajax="true" actionListener="#{asesoriasTutoriasCicloEscolar.nuevoRegistroAsesoriaTutoria()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
+                        </div>
+                    </h:form>
+                    
                     <!-- Sección de visualización y eliminación -->
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
@@ -478,10 +486,16 @@
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
 
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
-                                    <p:outputLabel id="mensaje" value="#{asesoriasTutoriasCicloEscolar.dto.mensaje}"/>
-                                    <br></br>
-                                </div>
+                                <c:if test="#{asesoriasTutoriasCicloEscolar.dto.mensaje ne ''}">
+                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                        <div class="callout callout-info">
+                                            <p style="font-weight: bold;">Mensaje de verificación:</p>
+                                            <p><code style="color:#4185A0;">#{asesoriasTutoriasCicloEscolar.dto.mensaje}</code></p>
+                                        </div>
+                                        <p:outputLabel id="mensaje" value=""/>
+                                        <br></br>
+                                    </div>  
+                                </c:if>
 
                                 <!--Periodo escolar-->
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
@@ -497,7 +511,6 @@
                                                      filterMatchMode="contains"
                                                      class="form-control"
                                                      style="padding-top: 0px;"
-                                                     disabled="true"
                                                      >
                                         <f:selectItem itemValue="#{asesoriasTutoriasCicloEscolar.dto.periodoEscolarAsesoriaTutoria.periodo}" 
                                                       itemLabel="#{asesoriasTutoriasCicloEscolar.dto.periodoEscolarAsesoriaTutoria.mesInicio.mes}-#{asesoriasTutoriasCicloEscolar.dto.periodoEscolarAsesoriaTutoria.mesFin.mes}"
@@ -521,7 +534,6 @@
                                                      filterMatchMode="contains"
                                                      class="form-control"
                                                      style="padding-top: 0px;"
-                                                     disabled="true"
                                                      >
                                         <f:selectItem itemValue="#{asesoriasTutoriasCicloEscolar.dto.registro.asesoriasTutoriasCicloPeriodos.mes}" 
                                                       itemLabel="#{asesoriasTutoriasCicloEscolar.dto.registro.asesoriasTutoriasCicloPeriodos.mes}"
@@ -547,7 +559,6 @@
                                                      class="form-control"
                                                      style="padding-top: 0px; width: 47em;"
                                                      converter="entidadConverter2"
-                                                     disabled="true"
                                                      >
                                         <f:selectItems value="#{asesoriasTutoriasCicloEscolar.dto.programasEducativos}" 
                                                        var="proEdu"
@@ -573,7 +584,6 @@
                                                      filterMatchMode="contains"
                                                      class="form-control"
                                                      style="padding-top: 0px; width: 22.5em;"
-                                                     disabled="true"
                                                      >
                                         <f:selectItem itemLabel=" - Seleccione - " 
                                                       itemValue="#{null}"/>
@@ -600,7 +610,6 @@
                                                      filterMatchMode="contains"
                                                      class="form-control"
                                                      style="padding-top: 0px; width: 22.5em;"
-                                                     disabled="true"
                                                      >
                                         <f:selectItem itemLabel=" - Seleccione - " 
                                                       itemValue="#{null}"/>
@@ -623,7 +632,6 @@
                                                        value="#{asesoriasTutoriasCicloEscolar.dto.registro.asesoriasTutoriasCicloPeriodos.tipoActividad}"
                                                        required="true"
                                                        requiredMessage="Seleccione el tipo de actividad"
-                                                       disabled="true"
                                                        >
                                         <f:selectItem itemLabel="Asesoría" itemValue="Asesoría" />
                                         <f:selectItem itemLabel="Tutoría" itemValue="Tutoría" />
@@ -640,7 +648,6 @@
                                                        value="#{asesoriasTutoriasCicloEscolar.dto.registro.asesoriasTutoriasCicloPeriodos.tipo}"
                                                        required="true"
                                                        requiredMessage="Seleccione el tipo de actividad"
-                                                       disabled="true"
                                                        >
                                         <f:selectItem itemLabel="Individual" itemValue="Individual" />
                                         <f:selectItem itemLabel="Grupal" itemValue="Grupal" />
@@ -702,7 +709,7 @@
                                                          value="Actualizar Cambios"
                                                          icon="fa fa-save"
                                                          class="btn-primary"
-                                                         actionListener="#{asesoriasTutoriasCicloEscolar.editaAsesoriaTutoriaMensual}"
+                                                         actionListener="#{asesoriasTutoriasCicloEscolar.accionAsesoriaTutoria(asesoriasTutoriasCicloEscolar.dto.registro.asesoriasTutoriasCicloPeriodos)}"
                                                          update="@form:frmEdicionAsesoriaTutoria" 
                                                          process="@form:frmEdicionAsesoriaTutoria"
                                                          />

@@ -161,7 +161,7 @@
                     <h:form id="abrirNuevoRegistroInfo">
                         <div class="callout callout-info">
                             <h4>¡Aviso!</h4>
-                            <p>Ahora ya puedes dar de alta nuevas Actividades Varías mediante un formulario de registro: <code><p:commandLink action="#{controladorActividadesVariasPYE.nuevoRegistro()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
+                            <p>Ahora ya puedes dar de alta nuevas Actividades Varías mediante un formulario de registro: <code><p:commandLink ajax="true" actionListener="#{controladorActividadesVariasPYE.nuevoRegistro()}" style="color:#4185A0;text-decoration:none;" title="Nuevo registro">Nuevo Registro</p:commandLink></code></p>
                         </div>
                     </h:form>
 
@@ -527,7 +527,7 @@
                               hideEffect="fade" 
                               modal="true" 
                               draggable="true" 
-                              header="Edición de actividad" 
+                              header="#{controladorActividadesVariasPYE.dto.nuevoRegistro?'Nueva Actividad':'Edición de actividad'}"
                               onHide="actualizar();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
@@ -580,7 +580,6 @@
                                             <p:ajax event="dateSelect" global="false" process="@this" update="@form:iptFechaTermino"/>
                                             <p:ajax event="change" global="false" process="@this" update="@form:iptFechaTermino"/>
                                         </p:calendar>
-                                        <p:watermark for="iptFechaInicio" value="2019-03-19 *" />
                                         <p:message for="iptFechaInicio" />
                                     </div>
                                     <p>Fecha de inicio</p>
@@ -602,7 +601,6 @@
                                             <p:ajax event="dateSelect" global="false" process="@this" update="@form:iptFechaInicio"/>
                                             <p:ajax event="change" global="false" process="@this" update="@form:iptFechaInicio"/>
                                         </p:calendar>
-                                        <p:watermark for="iptFechaTermino" value="2019-03-20 *" />
                                         <p:message for="iptFechaTermino" />
                                     </div>
                                     <p>Fecha de termino</p>
@@ -673,8 +671,9 @@
                                                    requiredMessage="Ingrese total Hombres"
                                                    value="#{controladorActividadesVariasPYE.dto.registro.actividadVaria.totalHombres}" 
                                                    min="0" max="1000" 
-                                                   styleClass="campo2Partes"/>
-                                        <p:watermark for="iptTotalHombres" value="15 *" />
+                                                   styleClass="campo2Partes"
+                                                   placeholder="15 *"
+                                        />
                                         <p:message for="iptTotalHombres" />
                                         <p:outputLabel value="Total Hombres: " for="iptTotalHombres" />
                                     </div>
@@ -687,8 +686,9 @@
                                                    requiredMessage="Ingrese total Mujeres"
                                                    value="#{controladorActividadesVariasPYE.dto.registro.actividadVaria.totalMujeres}" 
                                                    min="0" max="1000"
-                                                   styleClass="campo2Partes"/>
-                                        <p:watermark for="iptTotalMujeres" value="15 *" />
+                                                   styleClass="campo2Partes"
+                                                   placeholder="15 *"
+                                        />
                                         <p:message for="iptTotalMujeres" />
                                         <p:outputLabel value="Total Mujeres: " for="iptTotalMujeres" />
                                     </div>

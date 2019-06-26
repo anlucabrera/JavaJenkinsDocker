@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
@@ -51,14 +53,17 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
 
     private static final long serialVersionUID = -7714155978335195969L;
     
-    @Getter @Setter DtoAsesoriasTutorias dto;
+    @Getter @Setter DtoAsesoriasTutorias        dto;
     
-    @EJB EjbAsesoriasTutoriasCiclosPeriodos ejb;
-    @EJB EjbFiscalizacion ejbFiscalizacion;
-    @EJB EjbModulos ejbModulos;
-    @Inject ControladorEmpleado controladorEmpleado;
-    @Inject ControladorModulosRegistro controladorModulosRegistro;
-    @EJB EjbCatalogos ejbCatalogos;
+    @EJB EjbAsesoriasTutoriasCiclosPeriodos     ejb;
+    @EJB EjbFiscalizacion                       ejbFiscalizacion;
+    @EJB EjbModulos                             ejbModulos;
+    @EJB EjbCatalogos                           ejbCatalogos;
+    
+    @Inject Caster                              caster;
+    
+    @Inject ControladorEmpleado                 controladorEmpleado;
+    @Inject ControladorModulosRegistro          controladorModulosRegistro;
     
     @PostConstruct
     public void init(){
@@ -70,8 +75,6 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
         dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
-            dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
-            Faces.setSessionAttribute("programasEducativos", dto.getProgramasEducativos());
         } catch (EventoRegistroNoExistenteException ex) {
             Logger.getLogger(ControladorAsesoriasTutoriasCicloEscolar.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -89,6 +92,18 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     public void initFiltros(){
         dto.setPeriodos(ejb.getPeriodosConregistro(dto.getRegistroTipo(),dto.getEventoActual()));
         dto.setEventosPorPeriodo(ejbModulos.getEventosPorPeriodo(dto.getPeriodo()));
+        
+        if (dto.getAreaPOA().getArea().equals(23)) {
+            dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+        } else {
+            dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos()
+                    .stream()
+                    .filter((area) -> (short) dto.getAreaPOA().getArea() == area.getAreaSuperior())
+                    .collect(Collectors.toList())
+            );
+        }
+
+        Faces.setSessionAttribute("programasEducativos", dto.getProgramasEducativos());
         try {
             Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> entrada = ejb.comprobarEventoActual(dto.getPeriodos(), dto.getEventosPorPeriodo(), dto.getEventoActual(), dto.getRegistroTipo());
 //            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.initFiltros() entrada: " + entrada);
@@ -330,12 +345,12 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
         actualizaInterfazEdicionAsesoriaTutoriaMensual();
     }
     
-    public void editaAsesoriaTutoriaMensual(){
+    public void editaAsesoriaTutoriaMensual(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria){
         if(ejb.buscaAsesoriaTutoriaExistente(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos())){
             dto.setMensaje("No se ha podido actualizar debido a que el sistema ha detectado un registro con las mismas caracteristicas, favor de intentar nuevamente");
             Ajax.update("mensaje");
         }else{
-            dto.getRegistro().setAsesoriasTutoriasCicloPeriodos(ejb.editaAsesoriaTutoriaMensualPeriodoEscolar(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos()));
+            dto.getRegistro().setAsesoriasTutoriasCicloPeriodos(ejb.editaAsesoriaTutoriaMensualPeriodoEscolar(asesoriaTutoria));
             dto.setMensaje("El registro se ha actualizado correctamente");
             Ajax.update("mensaje");
             actualizaInterfazEdicionAsesoriaTutoriaMensual();
@@ -345,5 +360,82 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     public void actualizarProgramaEducativo(ValueChangeEvent event){
         dto.setProgramaEducativoAsesTut(((AreasUniversidad)event.getNewValue()));
         dto.getRegistro().getAsesoriasTutoriasCicloPeriodos().setProgramaEducativo(dto.getProgramaEducativoAsesTut().getArea());
+    }
+    
+    /************************************************** Alta de Asesorías o Tutorías Mediante Formulario **************************************************/
+    
+    public void nuevoRegistroAsesoriaTutoria(){
+        if(dto.getAreaPOA()!= null){
+            dto.setNuevoRegistro(Boolean.TRUE);
+            DTOAsesoriasTutoriasCicloPeriodos dtoAT = new DTOAsesoriasTutoriasCicloPeriodos();
+            dtoAT.setAsesoriasTutoriasCicloPeriodos(new AsesoriasTutoriasMensualPeriodosEscolares());
+            dtoAT.setPeriodoEscolar(caster.periodoToString(ejbModulos.getPeriodoEscolarActivo()));
+            dtoAT.getAsesoriasTutoriasCicloPeriodos().setMes(controladorModulosRegistro.getEventosRegistros().getMes());
+
+            dto.setPeriodoEscolarAsesoriaTutoria(ejbModulos.getPeriodoEscolarActivo());
+            
+            dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            if (dto.getAreaPOA().getArea() == ((short)23)) {
+                dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            } else {
+                dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos()
+                        .stream()
+                        .filter((area) -> (short) dto.getAreaPOA().getArea() == area.getAreaSuperior())
+                        .collect(Collectors.toList())
+                );
+            }
+            Faces.setSessionAttribute("programasEducativos", dto.getProgramasEducativos());
+            Ajax.update("somProgramasEducativos");
+
+            
+            dto.setRegistro(dtoAT);
+            dto.setMensaje("");
+            actualizaInterfazEdicionAsesoriaTutoriaMensual();
+        }else{
+            Messages.addGlobalWarn("Debes seleccionar un área para poder dar de alta un asesoría o tutoría");
+        }
+    }
+    
+    public void guardarAsesoriaTutoria(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria){
+        asesoriaTutoria.setTutor(controladorEmpleado.getNuevoOBJListaPersonal().getClave());
+        asesoriaTutoria.setPeriodoEscolar(ejbModulos.getPeriodoEscolarActivo().getPeriodo());
+        if(ejb.getRegistroAsesoriaTutoriaCicloPeriodo(asesoriaTutoria) != null){
+            dto.setMensaje("Los datos que ha ingresado corresponde a una asesoría o tutoría ya existente, favor de verificar su información");
+        }else{
+            ejb.guardaAsesoriaTutoria(asesoriaTutoria, dto.getRegistroTipo(), dto.getEje(), dto.getAreaPOA().getArea(), controladorModulosRegistro.getEventosRegistros());
+            dto.setMensaje("El registro ha sido guardado con exito en la base de datos");
+            cargarListaPorEvento();
+            DTOAsesoriasTutoriasCicloPeriodos dtoAT = new DTOAsesoriasTutoriasCicloPeriodos();
+            dtoAT.setAsesoriasTutoriasCicloPeriodos(new AsesoriasTutoriasMensualPeriodosEscolares());
+            
+            
+            dtoAT.setPeriodoEscolar(caster.periodoToString(ejbModulos.getPeriodoEscolarActivo()));
+            dtoAT.getAsesoriasTutoriasCicloPeriodos().setMes(controladorModulosRegistro.getEventosRegistros().getMes());
+            dto.setPeriodoEscolarAsesoriaTutoria(ejbModulos.getPeriodoEscolarActivo());
+            dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            if (dto.getAreaPOA().getArea() == ((short)23)) {
+                dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            } else {
+                dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos()
+                        .stream()
+                        .filter((area) -> (short) dto.getAreaPOA().getArea() == area.getAreaSuperior())
+                        .collect(Collectors.toList())
+                );
+            }
+            Faces.setSessionAttribute("programasEducativos", dto.getProgramasEducativos());
+            Ajax.update("somProgramasEducativos");
+
+            dto.setRegistro(dtoAT);
+            cargarListaPorEvento();
+        }
+        Ajax.update("mensaje");
+    }
+    
+    public void accionAsesoriaTutoria(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria){
+        if(dto.getNuevoRegistro()){
+            guardarAsesoriaTutoria(asesoriaTutoria);
+        }else{
+            editaAsesoriaTutoriaMensual(asesoriaTutoria);
+        }
     }
 }

@@ -52,7 +52,17 @@ public interface EjbCatalogos {
     
     public List<OrganismosEvaluadores> getOrganismosEvaluadoresAct();
     
+    /**
+     * Método que devuelve todas las áreas académicas vigentes
+     * @return 
+     */
     public List<AreasUniversidad> getAreasAcademicas();
+    
+    /**
+     * Método que permite la búsqueda de todas las áreas académicas incluyendo el área de idiomas
+     * @return 
+     */
+    public List<AreasUniversidad> getAreasAcademicasAsesoriasTutorias();
     
     /**
      * Obtiene los niveles de los programas educativos

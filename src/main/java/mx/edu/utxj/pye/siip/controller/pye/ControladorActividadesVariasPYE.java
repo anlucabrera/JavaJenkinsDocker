@@ -388,14 +388,17 @@ public class ControladorActividadesVariasPYE implements Serializable {
         }
     }
     
-    public void guardarActividadVaria(ActividadesVariasRegistro actividadVaria){
+    public void guardarActividadVaria(ActividadesVariasRegistro actividadVaria) {
         ejbActividadesVarias.guardaActividadVaria(actividadVaria, dto.getRegistroTipoAV(), dto.getEjesRegistro(), dto.getAreaUniversidadPOA().getArea(), controladorModulosRegistro.getEventosRegistros());
         dto.setMensaje("El registro ha sido guardado con exito en la base de datos");
         buscaActividadesVarias();
+        DTOActividadVaria dtoAvre = new DTOActividadVaria();
+        dtoAvre.setActividadVaria(new ActividadesVariasRegistro());
+        dto.setRegistro(dtoAvre);
         actualizaInterfazEdicionActividadVaria();
         Ajax.update("mensaje");
     }
-    
+
     public void accionActividadVaria(ActividadesVariasRegistro actividadVaria){
         if(dto.getNuevoRegistro()){
             guardarActividadVaria(actividadVaria);
