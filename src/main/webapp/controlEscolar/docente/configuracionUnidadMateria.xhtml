@@ -30,8 +30,8 @@
 
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
-        <h:outputScript library="js" name="calendario.js" />
         <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
     </ui:define>
 
     <ui:define name="body">
@@ -64,15 +64,15 @@
                             </div>
                             <div class="box box-solid">
                                 <div class="box-body">
-                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
                                     <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
-                                    <p:remoteCommand id="cmdActualizarConf" name="actualizarConf" actionListener="#{configuracionUnidadMateriaDocente.actualizarCargaAcademica}" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs)" />
+                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="#{configuracionUnidadMateriaDocente.actualizarCargaAcademica}" update="@(form)" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="periodo" value="#{configuracionUnidadMateriaDocente.rol.periodo}" converter="entityConverter" styleClass="form-control" >
                                                     <f:selectItems value="#{configuracionUnidadMateriaDocente.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, carga" update="@form" oncomplete="actualizarConf();" />
+                                                    <p:ajax process="@this, carga" update="@form" oncomplete="actualizarconf();" />
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>
@@ -81,9 +81,10 @@
                                         </div>
                                         <div class="#{casilla2}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="carga" value="#{configuracionUnidadMateriaDocente.rol.carga}" converter="entityConverter">
-                                                    <f:selectItems value="#{configuracionUnidadMateriaDocente.rol.cargas}" var="carga" itemValue="#{carga}" itemLabel="#{carga.materia.nombre} #{carga.cargaAcademica.idPlanMateria.claveMateria} (#{carga.grupo.grado}°#{carga.grupo.literal} #{carga.programa.siglas})" />
-                                                    <p:ajax update="@this" process="@this" oncomplete="actualizarConf();" />
+                                                <p:selectOneMenu id="carga" value="#{configuracionUnidadMateriaDocente.rol.carga}" converter="entityConverter" valueChangeListener="#{configuracionUnidadMateriaDocente.cambiarCarga}">
+                                                    <f:selectItems value="#{configuracionUnidadMateriaDocente.rol.cargas}" var="carga"
+                                                                   itemValue="#{carga}" itemLabel="#{carga.materia.nombre}"/>
+                                                    <p:ajax update="@this" process="@this" oncomplete="actualizarconf();" />
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Carga" for="carga"/>
@@ -93,52 +94,56 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 text-info text-center">
-                                            <c:if test="#{!configuracionUnidadMateriaDocente.rol.existe}">
-                                                <p style="font-size: 20px;">Configuración Sugerida</p>            
-                                                    <p:dataTable var="confUniMatSug" rendered="true"
-                                                                 emptyMessage="Sin registros."
-                                                                 value="#{configuracionUnidadMateriaDocente.rol.confUniMateriasSug}"
-                                                                 id="tbSug" 
-                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                                 tableStyle="vertical-align: middle;">
-                                                        <p:column headerText="No."><h:outputText value="#{confUniMatSug.unidadMateria.noUnidad}"  style="width: 80px;"/></p:column>
-                                                        <p:column headerText="Unidad"><h:outputText value="#{confUniMatSug.unidadMateria.nombre}"  style="text-align: left; width: 150px;"/></p:column>
-                                                        <p:column headerText="Horas Teóricas"><h:outputText value="#{confUniMatSug.unidadMateria.horasTeoricas}" style="width: 100px;"/></p:column>
-                                                        <p:column headerText="Horas Prácticas"><h:outputText value="#{confUniMatSug.unidadMateria.horasPracticas}" style="width: 100px;"/></p:column>
-                                                        <p:column headerText="Fecha Inicio"><p:calendar value="#{confUniMatSug.unidadMateriaConfiguracion.fechaInicio}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;" required="true" requiredMessage="Debe ingresar Fecha de Inicio de la Unidad" id="fechaIni"/><p:message for="fechaIni" display="tooltip" /></p:column>
-                                                        <p:column headerText="Fecha Fin"><p:calendar value="#{confUniMatSug.unidadMateriaConfiguracion.fechaFin}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;" required="true" requiredMessage="Debe ingresar Fecha de Fin de la Unidad" id="fechaFin"/><p:message for="fechaFin" display="tooltip"/></p:column>
-                                                    </p:dataTable>
-                                                    <p></p>
-                                                    <center>
-                                                        <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{configuracionUnidadMateriaDocente.guardarConfigUnidadMat()}" icon="fa fa-pencil-square-o" class="btn-primary" onsuccess="actualizarConf();"/>
-                                                    </center>
-                                                </c:if>
-                                                <c:if test="#{configuracionUnidadMateriaDocente.rol.existe}">
-                                                    <p style="font-size: 20px;">Configuración Guardada</p>
-                                                    <p:dataTable var="confUniMatGuard" rendered="true"
-                                                                 emptyMessage="Sin registros."
-                                                                 value="#{configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"
-                                                                 id="tbReg" 
-                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                                 tableStyle="vertical-align: middle;">
-                                                        <p:column headerText="No."><h:outputText value="#{confUniMatGuard.unidadMateria.noUnidad}"  style="width: 80px;"/></p:column>
-                                                        <p:column headerText="Unidad"><h:outputText value="#{confUniMatGuard.unidadMateria.nombre}"  style="text-align: justify; width: 150px;"/></p:column>
-                                                        <p:column headerText="Horas Teóricas"><h:outputText value="#{confUniMatGuard.unidadMateria.horasTeoricas}" style="width: 100px;"/></p:column>
-                                                        <p:column headerText="Horas Prácticas"><h:outputText value="#{confUniMatGuard.unidadMateria.horasPracticas}" style="width: 100px;"/></p:column>
-                                                        <p:column headerText="Fecha Inicio"><p:calendar value="#{confUniMatGuard.unidadMateriaConfiguracion.fechaInicio}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;"/></p:column>
-                                                        <p:column headerText="Fecha Fin"><p:calendar value="#{confUniMatGuard.unidadMateriaConfiguracion.fechaFin}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;"/></p:column>
-                                                    </p:dataTable>
-                                                    <p></p>
-                                                    <center>
-                                                        <p:commandButton class="btn-primary" icon="fa fa-trash" actionListener="#{configuracionUnidadMateriaDocente.eliminarConfigUnidadMat()}" value="Eliminar" onsuccess="actualizarConf();">
-                                                            <p:confirm header="Eliminar configuración" message="¿Está seguro de eliminar la configuración de la materia?" icon="ui-icon-alert" />
-                                                        </p:commandButton>
-                                                    </center>
-                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" style="align-content: center;" closable="false" closeOnEscape="true">
-                                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
-                                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
-                                                        </p:confirmDialog>
-                                                </c:if>
+                                            <h:outputText value="Configuración Sugerida" style="text-align: center; font-size: 20px;"/>
+                                            <p:dataTable var="confSugerida" rendered="true"
+                                                         emptyMessage="Sin registros."
+                                                         value="#{configuracionUnidadMateriaDocente.rol.confUniMateriasSug}"
+                                                         id="tbl" rowIndexVar="rowIndex"
+                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                         tableStyle="vertical-align: middle;">
+                                                <p:column headerText="Unidad" style="width: 70px;"><h:outputText value="#{confSugerida.unidadMateria.noUnidad}"/></p:column>
+                                                <p:column headerText="Nombre"><h:outputText value="#{confSugerida.unidadMateria.nombre}"/></p:column>
+                                                <p:column headerText="Horas Teóricas"><h:outputText value="#{confSugerida.unidadMateria.horasTeoricas}"/></p:column>
+                                                <p:column headerText="Horas Práctica"><h:outputText value="#{confSugerida.unidadMateria.horasPracticas}" /></p:column>
+                                                <p:column headerText="Fecha Inicio"><p:calendar value="#{confSugerida.unidadMateriaConfiguracion.fechaInicio}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;"/></p:column>
+                                                <p:column headerText="Fecha Fin"><p:calendar value="#{confSugerida.unidadMateriaConfiguracion.fechaFin}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;"/></p:column>
+                                            </p:dataTable>
+                                            <p></p>
+                                            <center>
+                                                <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{configuracionUnidadMateriaDocente.guardarConfigUnidadMat()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                            </center>
+                                            <c:if test="#{!empty configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}">
+                                            <h:outputText value="Configuración Guardada" style="text-align: center; font-size: 20px;"/>
+                                            <p:dataTable var="confGuardada" rendered="true"
+                                                         emptyMessage="Sin registros."
+                                                         value="#{configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"
+                                                         id="tb2" rowIndexVar="rowIndex"
+                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                         tableStyle="vertical-align: middle;">
+                                                <p:column headerText="Unidad" style="width: 70px;"><h:outputText value="#{confGuardada.unidadMateria.noUnidad}"/></p:column>
+                                                <p:column headerText="Nombre"><h:outputText value="#{confGuardada.unidadMateria.nombre}"/></p:column>
+                                                <p:column headerText="Horas Teóricas"><h:outputText value="#{confGuardada.unidadMateria.horasTeoricas}"/></p:column>
+                                                <p:column headerText="Horas Práctica"><h:outputText value="#{confGuardada.unidadMateria.horasPracticas}" /></p:column>
+                                                <p:column headerText="Fecha Inicio"><p:calendar value="#{confGuardada.unidadMateriaConfiguracion.fechaInicio}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;"/></p:column>
+                                                <p:column headerText="Fecha Fin"><p:calendar value="#{confGuardada.unidadMateriaConfiguracion.fechaFin}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;"/></p:column>
+                                            </p:dataTable>
+                                            <p></p>
+                                            <center>
+                                                <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{configuracionUnidadMateriaDocente.eliminarConfigUnidadMat()}" icon="fa fa-trash" class="btn-primary">
+                                                    <p:confirm header="Eliminar configuración" message="¿Está seguro de eliminar la configuración de la materia?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                            </center>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                             styleClass="panel panel-primary" width="500"
+                                                             closable="false" closeOnEscape="true">
+                                                <p:commandButton value="Si" type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                                 icon="ui-icon-check"/>
+                                                <p:commandButton value="No" type="button"
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary"
+                                                                 icon="ui-icon-close"/>
+                                            </p:confirmDialog>
+                                            </c:if>
                                         </div>
                                     </div>
                                 </div>
@@ -175,7 +180,7 @@
             <c:if test="#{!configuracionUnidadMateriaDocente.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a personal docente."/>
+                        <h:outputText value="El acceso solo está autorizado a directores de área académica."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

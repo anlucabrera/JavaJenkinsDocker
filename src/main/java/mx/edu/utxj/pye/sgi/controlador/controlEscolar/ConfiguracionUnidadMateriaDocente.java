@@ -24,6 +24,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import org.omnifaces.util.Ajax;
@@ -116,12 +117,16 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
     
     public void existeConfiguracion(){
         if(rol.getCarga()== null) return;
-        System.err.println("existeConfiguracion - carga " + rol.getCarga().getCargaAcademica().getCarga());
         ResultadoEJB<List<UnidadMateriaConfiguracion>> res = ejb.buscarConfiguracionUnidadMateria(rol.getCarga());
         if(res.getValor().isEmpty() || res.getValor().equals("")){
             rol.setExiste(false);
             mostrarConfiguracionSugerida();
-        }else  rol.setExiste(true); mostrarConfiguracionSugerida(); mostrarConfiguracionGuardada();
+            mostrarConfiguracionGuardada();
+            }else {
+            rol.setExiste(true); 
+            mostrarConfiguracionSugerida();
+            mostrarConfiguracionGuardada();  
+        }  
     }
     
     public void mostrarConfiguracionSugerida(){
@@ -137,9 +142,6 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
      */
     public void guardarConfigUnidadMat(){
         ResultadoEJB<List<DtoConfiguracionUnidadMateria>> resGuardar = ejb.guardarConfUnidadMateria(rol.getConfUniMateriasSug(), rol.getCarga().getCargaAcademica());
-//        if(resGuardar.getCorrecto()){
-//           existeConfiguracion();
-//        }else 
         rol.setExiste(true);
         mostrarMensajeResultadoEJB(resGuardar);
     }
@@ -153,9 +155,15 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
     }
     
     public void eliminarConfigUnidadMat(){
-        if(rol.getConfUniMateriasGuard().isEmpty()) mostrarMensaje("No se puede eliminar una asignación que no existe.");
+        if(rol.getCarga().getCargaAcademica() == null) mostrarMensaje("No se puede eliminar una asignación que no existe.");
         ResultadoEJB<Integer> resEliminar = ejb.eliminarConfUnidadMateria(rol.getCarga().getCargaAcademica());
          rol.setExiste(false);
         mostrarMensajeResultadoEJB(resEliminar);
+    }
+    
+   
+    public void cambiarCarga(ValueChangeEvent event){
+        rol.setCarga((DtoCargaAcademica)event.getNewValue());
+        existeConfiguracion();
     }
 }
