@@ -5,23 +5,13 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import java.io.Serializable;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -53,7 +43,7 @@ public class TipoEstudiante implements Serializable {
     @Column(name = "activo")
     private boolean activo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoEstudiante")
-    private List<Estudiante> estudianteList;
+    private List<Inscripcion> inscripcionList;
 
     public TipoEstudiante() {
     }
@@ -93,12 +83,12 @@ public class TipoEstudiante implements Serializable {
     }
 
     @XmlTransient
-    public List<Estudiante> getEstudianteList() {
-        return estudianteList;
+    public List<Inscripcion> getInscripcionList() {
+        return inscripcionList;
     }
 
-    public void setEstudianteList(List<Estudiante> estudianteList) {
-        this.estudianteList = estudianteList;
+    public void setInscripcionList(List<Inscripcion> inscripcionList) {
+        this.inscripcionList = inscripcionList;
     }
 
     @Override

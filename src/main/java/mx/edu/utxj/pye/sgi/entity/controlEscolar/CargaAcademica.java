@@ -5,24 +5,12 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import java.io.Serializable;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -50,6 +38,8 @@ public class CargaAcademica implements Serializable {
     private int docente;
     @Column(name = "horas_semana")
     private Integer horasSemana;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
+    private List<TareaIntegradora> tareaIntegradoraList;
     @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
     @ManyToOne(optional = false)
     private PlanEstudioMateria idPlanMateria;
@@ -98,6 +88,15 @@ public class CargaAcademica implements Serializable {
 
     public void setHorasSemana(Integer horasSemana) {
         this.horasSemana = horasSemana;
+    }
+
+    @XmlTransient
+    public List<TareaIntegradora> getTareaIntegradoraList() {
+        return tareaIntegradoraList;
+    }
+
+    public void setTareaIntegradoraList(List<TareaIntegradora> tareaIntegradoraList) {
+        this.tareaIntegradoraList = tareaIntegradoraList;
     }
 
     public PlanEstudioMateria getIdPlanMateria() {

@@ -5,26 +5,14 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -66,7 +54,7 @@ public class Asesoria implements Serializable {
         @JoinColumn(name = "asesoria", referencedColumnName = "id_asesoria")}, inverseJoinColumns = {
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")})
     @ManyToMany
-    private List<Estudiante> estudianteList;
+    private List<Inscripcion> inscripcionList;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
     @ManyToOne(optional = false)
     private CargaAcademica carga;
@@ -118,12 +106,12 @@ public class Asesoria implements Serializable {
     }
 
     @XmlTransient
-    public List<Estudiante> getEstudianteList() {
-        return estudianteList;
+    public List<Inscripcion> getInscripcionList() {
+        return inscripcionList;
     }
 
-    public void setEstudianteList(List<Estudiante> estudianteList) {
-        this.estudianteList = estudianteList;
+    public void setInscripcionList(List<Inscripcion> inscripcionList) {
+        this.inscripcionList = inscripcionList;
     }
 
     public CargaAcademica getCarga() {

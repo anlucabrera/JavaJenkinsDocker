@@ -5,24 +5,12 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import java.io.Serializable;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -39,7 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Grupo.findByCapMaxima", query = "SELECT g FROM Grupo g WHERE g.capMaxima = :capMaxima")
     , @NamedQuery(name = "Grupo.findByIdPe", query = "SELECT g FROM Grupo g WHERE g.idPe = :idPe")
     , @NamedQuery(name = "Grupo.findByPeriodo", query = "SELECT g FROM Grupo g WHERE g.periodo = :periodo")
-    , @NamedQuery(name = "Grupo.findByTutor", query = "SELECT g FROM Grupo g WHERE g.tutor = :tutor")})
+    , @NamedQuery(name = "Grupo.findByTutor", query = "SELECT g FROM Grupo g WHERE g.tutor = :tutor")
+    , @NamedQuery(name = "Grupo.findByGeneracion", query = "SELECT g FROM Grupo g WHERE g.generacion = :generacion")})
 public class Grupo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -70,6 +59,10 @@ public class Grupo implements Serializable {
     private int periodo;
     @Column(name = "tutor")
     private Integer tutor;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "generacion")
+    private short generacion;
     @JoinColumn(name = "id_sistema", referencedColumnName = "id_sistema")
     @ManyToOne(optional = false)
     private Sistema idSistema;
@@ -79,7 +72,7 @@ public class Grupo implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cveGrupo")
     private List<CargaAcademica> cargaAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
-    private List<Estudiante> estudianteList;
+    private List<Inscripcion> inscripcionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
     private List<Tutoria> tutoriaList;
 
@@ -90,13 +83,14 @@ public class Grupo implements Serializable {
         this.idGrupo = idGrupo;
     }
 
-    public Grupo(Integer idGrupo, Character literal, int grado, int capMaxima, short idPe, int periodo) {
+    public Grupo(Integer idGrupo, Character literal, int grado, int capMaxima, short idPe, int periodo, short generacion) {
         this.idGrupo = idGrupo;
         this.literal = literal;
         this.grado = grado;
         this.capMaxima = capMaxima;
         this.idPe = idPe;
         this.periodo = periodo;
+        this.generacion = generacion;
     }
 
     public Integer getIdGrupo() {
@@ -155,6 +149,14 @@ public class Grupo implements Serializable {
         this.tutor = tutor;
     }
 
+    public short getGeneracion() {
+        return generacion;
+    }
+
+    public void setGeneracion(short generacion) {
+        this.generacion = generacion;
+    }
+
     public Sistema getIdSistema() {
         return idSistema;
     }
@@ -181,12 +183,12 @@ public class Grupo implements Serializable {
     }
 
     @XmlTransient
-    public List<Estudiante> getEstudianteList() {
-        return estudianteList;
+    public List<Inscripcion> getInscripcionList() {
+        return inscripcionList;
     }
 
-    public void setEstudianteList(List<Estudiante> estudianteList) {
-        this.estudianteList = estudianteList;
+    public void setInscripcionList(List<Inscripcion> inscripcionList) {
+        this.inscripcionList = inscripcionList;
     }
 
     @XmlTransient

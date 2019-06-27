@@ -5,21 +5,17 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
-import java.util.ArrayList;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
+import mx.edu.utxj.pye.sgi.util.Encrypted;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.util.Encrypted;
 
 /**
  *
@@ -113,15 +109,15 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
     }
 
     @Override
-    public List<Estudiante> getEstudianteXMatricula(String matricula) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula LIKE CONCAT('%',:stringMatricula ,'%')", Estudiante.class)
+    public List<Inscripcion> getEstudianteXMatricula(String matricula) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Inscripcion e WHERE e.matricula LIKE CONCAT('%',:stringMatricula ,'%')", Inscripcion.class)
                 .setParameter("stringMatricula", matricula)
                 .getResultList();
     }
 
     @Override
-    public List<Estudiante> getEstudianteXAP(String apellidoPaterno) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idPersona.apellidoPaterno LIKE CONCAT('%',:ap ,'%')", Estudiante.class)
+    public List<Inscripcion> getEstudianteXAP(String apellidoPaterno) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Inscripcion e WHERE e.aspirante.idPersona.apellidoPaterno LIKE CONCAT('%',:ap ,'%')", Inscripcion.class)
                 .setParameter("ap", apellidoPaterno)
                 .getResultList();
     }

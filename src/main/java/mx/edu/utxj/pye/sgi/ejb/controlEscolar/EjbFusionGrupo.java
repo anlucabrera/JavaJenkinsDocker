@@ -6,18 +6,19 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Inscripcion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -74,9 +75,9 @@ public class EjbFusionGrupo {
      * @param grupoDestino Grupo al cual se asignaran los estudiantes
      * @return Resultado del proceso
      */
-    public ResultadoEJB< List<Estudiante> > reasignacionGrupo(List<Estudiante> estudiantesCambio, Grupo grupoDestino){
+    public ResultadoEJB< List<Inscripcion> > reasignacionGrupo(List<Inscripcion> estudiantesCambio, Grupo grupoDestino){
         try {
-            List<Estudiante> grupoEstudiantes = Collections.EMPTY_LIST;
+            List<Inscripcion> grupoEstudiantes = Collections.EMPTY_LIST;
             //TODO: Actualización del grupo de los estudiantes seleccionados
             return ResultadoEJB.crearCorrecto(grupoEstudiantes, "Los estudiantes fueron cambiados satisfactoriamente de grupo");
         } catch (Exception e) {

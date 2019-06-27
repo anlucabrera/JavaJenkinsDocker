@@ -2,17 +2,6 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import com.itextpdf.text.DocumentException;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.model.SelectItem;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
@@ -25,6 +14,18 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
 import org.omnifaces.util.Messages;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.faces.model.SelectItem;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @Named(value = "procesoInscripcion")
 @ViewScoped
 public class ProcesoInscripcion implements Serializable{
@@ -32,13 +33,13 @@ public class ProcesoInscripcion implements Serializable{
     @Getter @Setter private ProcesosInscripcion procesosInscripcion;
     @Getter @Setter private Aspirante aspirante, aspiranteValido,selectAspirante;
     @Getter @Setter private Persona persona, personaValido;
-    @Getter @Setter private Estudiante estudiante;
+    @Getter @Setter private Inscripcion estudiante;
     @Getter @Setter private Documentosentregadosestudiante documentosentregadosestudiante;
     @Getter @Setter private List<Aspirante> listaAspirantesTSU;
     @Getter @Setter private List<Aspirante> listaAspirantesTSUXPE;
     @Getter @Setter private List<AreasUniversidad> listaPe;
     @Getter @Setter private List<AreasUniversidad> listaAreasUniversidad = new ArrayList<>();
-    @Getter @Setter private List<Estudiante> listaEstudiantes = new ArrayList<>();
+    @Getter @Setter private List<Inscripcion> listaEstudiantes = new ArrayList<>();
     @Getter @Setter private List<SelectItem> listaPEInsc;
     @Getter @Setter private List<Grupo> listaGrupos;
     @Getter @Setter private Integer folioFicha,folioFichaInscripcion;
@@ -145,7 +146,7 @@ public class ProcesoInscripcion implements Serializable{
                 documentosentregadosestudiante = estudiante.getDocumentosentregadosestudiante();
                 carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short)estudiante.getCarrera()).getNombre();
             }else{
-                estudiante = new Estudiante();
+                estudiante = new Inscripcion();
             }
             
             personaValido = aspiranteValido.getIdPersona();
@@ -175,7 +176,7 @@ public class ProcesoInscripcion implements Serializable{
                 }else{
                     //Realiza inscripción del estudiante
                     if(estudiante.getIdEstudiante() == null){
-                        estudiante = new Estudiante();
+                        estudiante = new Inscripcion();
                     }
                     estudiante.setAspirante(aspiranteValido);
                     estudiante.setPeriodo(procesosInscripcion.getIdPeriodo());
@@ -190,7 +191,7 @@ public class ProcesoInscripcion implements Serializable{
                     Messages.addFlashGlobalWarn("No existen espacios para realizar la inscripción para la carrera de segunda opción !!");
                 }else{
                     if(estudiante.getIdEstudiante() == null){
-                        estudiante = new Estudiante();
+                        estudiante = new Inscripcion();
                     }
                     estudiante.setAspirante(aspiranteValido);
                     estudiante.setPeriodo(procesosInscripcion.getIdPeriodo());
@@ -218,7 +219,7 @@ public class ProcesoInscripcion implements Serializable{
         nombreCarreraPO = null;
         nombreCarreraSO = null;
         carreraInscrito = null;
-        estudiante = new Estudiante();
+        estudiante = new Inscripcion();
         folioFichaInscripcion = null;
         opcionIncripcion = null;
     }
@@ -240,7 +241,7 @@ public class ProcesoInscripcion implements Serializable{
         listaAspirantesTSU = ejbProcesoInscripcion.listaAspirantesTSU(procesosInscripcion.getIdProcesosInscripcion());
     }
     
-    public void getEstudiante(Estudiante e){
+    public void getEstudiante(Inscripcion e){
         areaIncripcion = ejbFichaAdmision.buscaPEByClave((short)e.getCarrera()).getAreaSuperior();
         estudiante = e;
         selectPE();
@@ -263,8 +264,8 @@ public class ProcesoInscripcion implements Serializable{
     public static Integer gruposElegibles(List<Grupo> grupos){
         List<Grupo> listaGrupos = new ArrayList<>();
         grupos.forEach((Grupo g) ->{
-            System.out.println("tamaño de la lista"+g.getEstudianteList().size()+", capacidadMaxima"+g.getCapMaxima());
-            if(g.getEstudianteList().size() != g.getCapMaxima()){
+            System.out.println("tamaño de la lista"+g.getInscripcionList().size()+", capacidadMaxima"+g.getCapMaxima());
+            if(g.getInscripcionList().size() != g.getCapMaxima()){
                 listaGrupos.add(g);
             }
         });

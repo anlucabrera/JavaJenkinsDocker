@@ -5,20 +5,10 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
  *
@@ -45,7 +35,7 @@ public class Calificacion implements Serializable {
     private double valor;
     @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
-    private Estudiante idEstudiante;
+    private Inscripcion idEstudiante;
     @JoinColumn(name = "configuracion_detalle", referencedColumnName = "configuracion_detalle")
     @ManyToOne(optional = false)
     private UnidadMateriaConfiguracionDetalle configuracionDetalle;
@@ -78,11 +68,11 @@ public class Calificacion implements Serializable {
         this.valor = valor;
     }
 
-    public Estudiante getIdEstudiante() {
+    public Inscripcion getIdEstudiante() {
         return idEstudiante;
     }
 
-    public void setIdEstudiante(Estudiante idEstudiante) {
+    public void setIdEstudiante(Inscripcion idEstudiante) {
         this.idEstudiante = idEstudiante;
     }
 

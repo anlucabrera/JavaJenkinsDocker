@@ -5,23 +5,11 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -62,7 +50,7 @@ public class Baja implements Serializable {
     private CausaBaja causaBaja;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
-    private Estudiante estudiante;
+    private Inscripcion estudiante;
     @JoinColumn(name = "tipo_baja", referencedColumnName = "id_tipo_baja")
     @ManyToOne(optional = false)
     private TipoBaja tipoBaja;
@@ -121,11 +109,11 @@ public class Baja implements Serializable {
         this.causaBaja = causaBaja;
     }
 
-    public Estudiante getEstudiante() {
+    public Inscripcion getEstudiante() {
         return estudiante;
     }
 
-    public void setEstudiante(Estudiante estudiante) {
+    public void setEstudiante(Inscripcion estudiante) {
         this.estudiante = estudiante;
     }
 

@@ -6,18 +6,19 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Inscripcion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -60,7 +61,7 @@ public class FusionGruposRolDirector extends AbstractRol{
     /**
      * Representa el listado de estudiantes que pertenecen al grupo selececcionado
      */
-    @Getter @NonNull private List<Estudiante> listaEstudiantes;
+    @Getter @NonNull private List<Inscripcion> listaEstudiantes;
     /**
      * Representa el mapeo de programas educativos con sus respectivos grupos
      */
@@ -68,7 +69,7 @@ public class FusionGruposRolDirector extends AbstractRol{
     /**
      * Representa el mapeo de grupos de un programa educativo con su listado de estudiantes inscritos
      */
-    @Getter @NonNull private Map<Grupo, List<Estudiante>> grupoEstudianteMap;
+    @Getter @NonNull private Map<Grupo, List<Inscripcion>> grupoEstudianteMap;
     
     public FusionGruposRolDirector(Filter<PersonalActivo> filtro, PersonalActivo director, AreasUniversidad programa) {
         super(filtro);
@@ -111,7 +112,7 @@ public class FusionGruposRolDirector extends AbstractRol{
         this.grupos = grupos;
     }
 
-    public void setListaEstudiantes(List<Estudiante> listaEstudiantes) {
+    public void setListaEstudiantes(List<Inscripcion> listaEstudiantes) {
         this.listaEstudiantes = listaEstudiantes;
     }
 
@@ -128,7 +129,7 @@ public class FusionGruposRolDirector extends AbstractRol{
         }
     }
 
-    public void setGrupoEstudianteMap(Map<Grupo, List<Estudiante>> grupoEstudianteMap) {
+    public void setGrupoEstudianteMap(Map<Grupo, List<Inscripcion>> grupoEstudianteMap) {
         this.grupoEstudianteMap = grupoEstudianteMap;
     }
     

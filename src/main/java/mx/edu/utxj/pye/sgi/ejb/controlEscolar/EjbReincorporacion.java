@@ -1,36 +1,33 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.CalificacionesSaiiutDto;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.QrNssDto;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
+import mx.edu.utxj.pye.sgi.enums.Operacion;
+import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
+import nl.lcs.qrscan.core.QrPdf;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.http.Part;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.servlet.http.Part;
-import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.CalificacionesSaiiutDto;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.QrNssDto;
+
 import static mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioFichaAdmision.ucFirst;
-import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
-import mx.edu.utxj.pye.sgi.enums.Operacion;
-import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
-import mx.edu.utxj.pye.sgi.saiiut.entity.CalificacionesAlumno;
-import mx.edu.utxj.pye.sgi.saiiut.entity.PlanesEstudio;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Materias1;
-import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
-import nl.lcs.qrscan.core.QrPdf;
 
 @Stateless(name = "EjbReincorporacion")
 public class EjbReincorporacion {
@@ -243,7 +240,7 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignará el grupo correspondiente
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Estudiante> asignarGrupo(Grupo grupo, Estudiante estudiante){
+    public ResultadoEJB<Inscripcion> asignarGrupo(Grupo grupo, Inscripcion estudiante){
         /*try{
             if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no debe ser nulo.", Estudiante.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(3, "El estudiante no debe ser nulo.", Estudiante.class);
@@ -289,7 +286,7 @@ public class EjbReincorporacion {
      * @param materias Lista de materias que se asignarán
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificacion> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
+    public ResultadoEJB<Calificacion> asignarMateriasEstudiante(Inscripcion estudiante, List<Materia> materias){
         /*try{
             if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
             if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);
@@ -441,7 +438,7 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignarán las calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificacion> asignarCalificacionesSAIIUT(List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto, Estudiante estudiante){
+    public ResultadoEJB<Calificacion> asignarCalificacionesSAIIUT(List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto, Inscripcion estudiante){
         /*try{
             if(listaCalificacionesSaiiutDto.isEmpty()) return ResultadoEJB.crearErroneo(3, "La calificación no puede ser nulo.", Calificaciones.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(4, "El estudiante no puede ser nulo.", Calificaciones.class);
@@ -487,7 +484,7 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignarán las materias
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Materia>> getMateriasPorAsignar(PlanEstudio planEstudio, Estudiante estudiante){
+    public ResultadoEJB<List<Materia>> getMateriasPorAsignar(PlanEstudio planEstudio, Inscripcion estudiante){
         /*try{
             //TODO: buscar lista de materias activas previas al grado actual para asignar que pertenecen al plan de estudios seleccionado del estudiante
             List<Materia> materiasPorAsignar = f.getEntityManager().createQuery("SELECT m FROM Materia m WHERE m.idPlan.idPlanEstudio =:planEstudio AND m.grado < :grado AND m.estatus =:estatus", Materia.class)
@@ -509,7 +506,7 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignarán las calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificacion> asignarCalificacionesDirectas(Materia materia, Double calificacion, Estudiante estudiante){
+    public ResultadoEJB<Calificacion> asignarCalificacionesDirectas(Materia materia, Double calificacion, Inscripcion estudiante){
         /*try{
             if(materia == null) return ResultadoEJB.crearErroneo(3, "La materia no puede ser nula.", Calificaciones.class);
             if(calificacion == null) return ResultadoEJB.crearErroneo(4, "La calificación no puede ser nula.", Calificaciones.class);
@@ -548,7 +545,7 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante del que se buscarán calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Calificacion>> getCalificacionesPrevias(Estudiante estudiante){
+    public ResultadoEJB<List<Calificacion>> getCalificacionesPrevias(Inscripcion estudiante){
         /*try{
             //Identificar claves del alumno para posteriormente buscar las calificaciones
             List<Estudiante> clavesAlumno = f.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.matricula !=:claveActual", Estudiante.class)

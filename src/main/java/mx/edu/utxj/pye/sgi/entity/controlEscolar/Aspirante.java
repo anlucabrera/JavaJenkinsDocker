@@ -5,29 +5,14 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -72,7 +57,7 @@ public class Aspirante implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DatosFamiliares datosFamiliares;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
-    private List<Estudiante> estudianteList;
+    private List<Inscripcion> inscripcionList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private Domicilio domicilio;
     @JoinColumn(name = "id_persona", referencedColumnName = "idpersona")
@@ -170,12 +155,12 @@ public class Aspirante implements Serializable {
     }
 
     @XmlTransient
-    public List<Estudiante> getEstudianteList() {
-        return estudianteList;
+    public List<Inscripcion> getInscripcionList() {
+        return inscripcionList;
     }
 
-    public void setEstudianteList(List<Estudiante> estudianteList) {
-        this.estudianteList = estudianteList;
+    public void setInscripcionList(List<Inscripcion> inscripcionList) {
+        this.inscripcionList = inscripcionList;
     }
 
     public Domicilio getDomicilio() {

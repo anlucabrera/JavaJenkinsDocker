@@ -5,7 +5,10 @@
  */
 package mx.edu.utxj.pye.sgi.converter.controlEscolar;
 
-import java.util.List;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
+import org.omnifaces.util.Faces;
+
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -13,20 +16,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Turno;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
-import org.omnifaces.util.Faces;
+import java.util.List;
 
 /**
  *
@@ -99,10 +89,10 @@ public class EntityCEConverter implements Converter{
                     return facadeCE.getEntityManager().find(PlanEstudio.class,clavePlan);
                 case "matricula":
                     Integer estudiante = Integer.valueOf(value);
-                    return facadeCE.getEntityManager().find(Estudiante.class,estudiante);
+                    return facadeCE.getEntityManager().find(Inscripcion.class,estudiante);
                 case "nombreBusqueda":
                     Integer estudianteName = Integer.valueOf(value);
-                    return facadeCE.getEntityManager().find(Estudiante.class,estudianteName);
+                    return facadeCE.getEntityManager().find(Inscripcion.class,estudianteName);
                 default:
                     throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", component.getClientId() + " no es un componente válido."));
             }
@@ -141,8 +131,8 @@ public class EntityCEConverter implements Converter{
                 return ((Turno) value).getIdTurno().toString();
             else if(value instanceof PlanEstudio)
                 return ((PlanEstudio) value).getIdPlanEstudio().toString();
-            else if(value instanceof Estudiante)
-                return ((Estudiante) value).getIdEstudiante().toString();
+            else if(value instanceof Inscripcion)
+                return ((Inscripcion) value).getIdEstudiante().toString();
             else
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", value.getClass().getName() + " no es una clase válida."));
         }catch(Exception e){

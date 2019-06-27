@@ -5,20 +5,11 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
  *
@@ -44,7 +35,7 @@ public class ParticipantesTutoria implements Serializable {
     private String comentarios;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
-    private Estudiante estudiante;
+    private Inscripcion estudiante;
     @JoinColumn(name = "tutoria", referencedColumnName = "id_tutoria", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Tutoria tutoria1;
@@ -72,11 +63,11 @@ public class ParticipantesTutoria implements Serializable {
         this.comentarios = comentarios;
     }
 
-    public Estudiante getEstudiante() {
+    public Inscripcion getEstudiante() {
         return estudiante;
     }
 
-    public void setEstudiante(Estudiante estudiante) {
+    public void setEstudiante(Inscripcion estudiante) {
         this.estudiante = estudiante;
     }
 

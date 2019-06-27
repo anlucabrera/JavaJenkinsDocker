@@ -7,15 +7,17 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
-import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Stateless(name = "EjbCapturaCalificaciones")
 public class EjbCapturaCalificaciones {
@@ -102,6 +104,22 @@ public class EjbCapturaCalificaciones {
             else return ResultadoEJB.crearCorrecto(cargas, "Cargas académicas por docente y periodo");
         }catch (Exception e){
             return  ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista cargas cadémicas por docente y periodo (EjbCapturaCalificaciones.getCargasAcadémicasPorPeriodo).", e, null);
+        }
+    }
+
+    /**
+     * Permite obtener un mapa de unidad y sus configuraciones correspondientes a la materia, grupo, periodo y docente de la carga académica especificada
+     * @param dtoCargaAcademica  Carga de la que se desea conocer sus configuraciones
+     * @return
+     */
+    public ResultadoEJB<Map<UnidadMateria, UnidadMateriaConfiguracion>> getConfiguraciones(DtoCargaAcademica dtoCargaAcademica){
+        try {
+            //TODO: obtener mapa de configuraciones
+            Map<UnidadMateria, UnidadMateriaConfiguracion> configuraciones = Collections.EMPTY_MAP;
+            if(configuraciones.isEmpty()) return  ResultadoEJB.crearErroneo(2, configuraciones, "No se encontraron configuraciones en la carga académica seleccionada.");
+            else return ResultadoEJB.crearCorrecto(configuraciones, "Cargas académicas por docente y periodo");
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo obtener el mapa de unidades y configuraciones (EjbCapturaCalificaciones.getConfiguraciones).", e, null);
         }
     }
 }

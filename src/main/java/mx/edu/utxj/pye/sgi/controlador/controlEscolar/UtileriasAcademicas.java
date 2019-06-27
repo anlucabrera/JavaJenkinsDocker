@@ -2,34 +2,31 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbProcesoInscripcion;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbUtilToolAcademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Inscripcion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Turno;
+import org.omnifaces.util.Faces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.faces.model.SelectItem;
-import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbProcesoInscripcion;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Turno;
-import org.omnifaces.util.Faces;
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.event.CellEditEvent;
 
 @Named(value = "utilToolAcademicas")
 @ViewScoped
@@ -43,8 +40,8 @@ public class UtileriasAcademicas implements Serializable {
     @Getter @Setter private List<Turno> listaTurno = new ArrayList<>();
     @Getter @Setter private List<PlanEstudio> planesEstudio = new ArrayList<>();
     @Getter @Setter private List<SelectItem> listaPeriodos = new ArrayList<>();
-    @Getter @Setter private Estudiante estudiante;
-    @Getter @Setter private List<Estudiante> listaEstudiantes;
+    @Getter @Setter private Inscripcion estudiante;
+    @Getter @Setter private List<Inscripcion> listaEstudiantes;
     @Getter @Setter private String nombreCarrera,nombreIems;
     @Getter @Setter private Integer edad;
 
@@ -87,11 +84,11 @@ public class UtileriasAcademicas implements Serializable {
         listaGrupos = ejbUtilToolAcademicas.listaByPeriodo(periodo);
     }
     
-    public List<Estudiante> completeEstudiante(String query){
+    public List<Inscripcion> completeEstudiante(String query){
         return ejbUtilToolAcademicas.getEstudianteXMatricula(query);
     }
     
-    public List<Estudiante> completeEstudianteXApellidoPaterno(String query){
+    public List<Inscripcion> completeEstudianteXApellidoPaterno(String query){
         return ejbUtilToolAcademicas.getEstudianteXAP(query);
     }
     
