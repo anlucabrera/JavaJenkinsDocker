@@ -288,6 +288,9 @@
                                                                                     <h:outputText value="#{formaAL.estatus eq 'Denegado'?'*':''}" style="font-size: large; color: red"/>
                                                                                     <h:outputText value="#{formaAL.nivelEscolaridad.nombre}" />
                                                                                 </p:column>
+                                                                                <p:column style="width: 25%" headerText="Carrera" >
+                                                                                    <h:outputText value="#{formaAL.nombreCarrera}" />
+                                                                                </p:column>
                                                                                 <p:column style="width: 15%" headerText="Fecha" >
                                                                                     <h:outputLabel value="#{formaAL.fechaObtencion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
                                                                                 </p:column>

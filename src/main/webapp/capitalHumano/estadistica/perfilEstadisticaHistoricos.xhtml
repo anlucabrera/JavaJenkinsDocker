@@ -30,7 +30,7 @@
             </h1>
         </p:panel>
         <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 148}">
                 <section class="content">
                     <div class="row">
                         <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
@@ -72,7 +72,7 @@
                     </div>
                 </section>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa != 9}">
+            <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 148)}">
                 <h1>
                     Esta página está disponible solo para personal adscrito al área de personal
                 </h1>

@@ -62,7 +62,7 @@
                                 <p:outputPanel id="estra">
                                     <p:autoUpdate/>
                                     <p:outputLabel value="Estrategia:" /> 
-                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{areaPoaEvaluacion.estrategias.numero}" valueChangeListener="#{areaPoaEvaluacion.asignarParametrosRegistro}">
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="estrategia" value="#{areaPoaEvaluacion.estrategias.estrategia}" valueChangeListener="#{areaPoaEvaluacion.asignarParametrosRegistro}">
                                         <f:selectItems value="#{areaPoaEvaluacion.estrategiases}" var="estrategia" itemValue="#{estrategia.estrategia}" itemLabel="#{estrategia.numero} -- #{estrategia.nombre}" />
                                         <p:ajax update=":frm" listener="#{areaPoaEvaluacion.imprimirValores()}"/>
                                     </p:selectOneMenu>
