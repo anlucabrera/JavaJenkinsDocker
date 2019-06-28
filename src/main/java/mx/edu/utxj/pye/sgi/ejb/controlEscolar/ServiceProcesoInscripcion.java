@@ -86,7 +86,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public Estudiante guardaEstudiante(Estudiante estudiante, Documentosentregadosestudiante documentosentregadosestudiante, Boolean opcionIns) {
+    public Inscripcion guardaEstudiante(Inscripcion estudiante, Documentosentregadosestudiante documentosentregadosestudiante, Boolean opcionIns) {
         List<Grupo> grupos = new ArrayList<>();
         List<Grupo> gruposElegibles = new ArrayList<>();
         Grupo gps = new Grupo();
@@ -115,7 +115,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 }
                 grupos = listaGruposXPeriodoByCarrera((short)estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
                 grupos.forEach(g ->{
-                    if(g.getEstudianteList().size() != g.getCapMaxima()){
+                    if(g.getInscripcionList().size() != g.getCapMaxima()){
                         gruposElegibles.add(g);
                     }
                 });
@@ -166,7 +166,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 grupos = listaGruposXPeriodoByCarrera((short)estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
                
                 grupos.forEach(g ->{
-                    if(g.getEstudianteList().size() != g.getCapMaxima()){
+                    if(g.getInscripcionList().size() != g.getCapMaxima()){
                         gruposElegibles.add(g);
                     }
                 });
@@ -206,15 +206,15 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public Estudiante findByIdAspirante(Integer idAspirante) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante = :idAspirante", Estudiante.class)
+    public Inscripcion findByIdAspirante(Integer idAspirante) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante = :idAspirante", Inscripcion.class)
                 .setParameter("idAspirante", idAspirante)
                 .getResultList().stream().findFirst().orElse(null);
                
     }
 
     @Override
-    public void generaComprobanteInscripcion(Estudiante estudiante) {
+    public void generaComprobanteInscripcion(Inscripcion estudiante) {
         try {
             String ruta = "C://archivos//plantillas//comprobanteInscripcion_nuevo.pdf";
             FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -300,7 +300,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public void generaCartaCompromiso(Estudiante estudiante) {
+    public void generaCartaCompromiso(Inscripcion estudiante) {
         try {
             String ruta = "C://archivos//plantillas//cartaCompromiso.pdf";
             FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -360,8 +360,8 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public List<Estudiante> listaEstudiantesXPeriodo(Integer perido) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.periodo = :idPeriodo", Estudiante.class)
+    public List<Inscripcion> listaEstudiantesXPeriodo(Integer perido) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.periodo = :idPeriodo", Inscripcion.class)
                 .setParameter("idPeriodo", perido)
                 .getResultList();
     }
@@ -385,8 +385,8 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public void actualizaEstudiante(Estudiante estudiante) {
-        facadeCE.setEntityClass(Estudiante.class);
+    public void actualizaEstudiante(Inscripcion estudiante) {
+        facadeCE.setEntityClass(Inscripcion.class);
         facadeCE.edit(estudiante);
         facadeCE.flush();
     }

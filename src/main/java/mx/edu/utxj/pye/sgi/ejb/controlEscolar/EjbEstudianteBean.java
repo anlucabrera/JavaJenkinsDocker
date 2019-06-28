@@ -2,7 +2,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.EstudianteDto;
 
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Inscripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Stateless
 public class EjbEstudianteBean  implements Serializable {
     @EJB Facade f;
-    public EstudianteDto pack(Estudiante estudiante){
+    public EstudianteDto pack(Inscripcion estudiante){
         if(estudiante == null) return null;
         if(estudiante.getTipoEstudiante().equals('2') && estudiante.getTipoEstudiante().equals('3') && estudiante.getGrupo().getGrado() == 6 && estudiante.getGrupo().getGrado() == 11) return null;
         EstudianteDto activo = new EstudianteDto(estudiante);
@@ -27,7 +27,7 @@ public class EjbEstudianteBean  implements Serializable {
 
     public EstudianteDto pack(Integer id){
         if(id != null && id >0){
-            Estudiante estudiante = f.getEntityManager().find(Estudiante.class, id);
+            Inscripcion estudiante = f.getEntityManager().find(Inscripcion.class, id);
             return pack(estudiante);
         }
 

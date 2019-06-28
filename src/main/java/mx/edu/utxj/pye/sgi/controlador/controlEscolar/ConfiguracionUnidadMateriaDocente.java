@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import org.omnifaces.util.Ajax;
 
@@ -90,6 +91,8 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.getInstrucciones().add("Seleccionar la materia de la cual se configura las unidades.");
 
             existeConfiguracion();
+            rol.setAddTareaInt(false);
+            
         }catch (Exception e){mostrarExcepcion(e); }
     }
 
@@ -132,8 +135,10 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
     public void mostrarConfiguracionSugerida(){
         if(rol.getCarga() == null) return;
         ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionUnidadMateriaSugerida(rol.getCarga());
+        TareaIntegradora tareaInt = new TareaIntegradora();
         if(res.getCorrecto()){
             rol.setConfUniMateriasSug(res.getValor());
+            rol.setTareaIntegradora(tareaInt);
         }else mostrarMensajeResultadoEJB(res);
     }
     
@@ -141,23 +146,45 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
      * Permite invocar el guardado de la configuración de la unidad materia, para que se lleve acabo, se debió haber seleccionado una carga académica, e ingresado fecha de inicio y fin de cada unidad.
      */
     public void guardarConfigUnidadMat(){
-        ResultadoEJB<List<DtoConfiguracionUnidadMateria>> resGuardar = ejb.guardarConfUnidadMateria(rol.getConfUniMateriasSug(), rol.getCarga().getCargaAcademica());
-        rol.setExiste(true);
-        mostrarMensajeResultadoEJB(resGuardar);
+        ResultadoEJB<List<DtoConfiguracionUnidadMateria>> resGuardarConf = ejb.guardarConfUnidadMateria(rol.getConfUniMateriasSug(), rol.getCarga().getCargaAcademica());
+        if(resGuardarConf.getCorrecto()){
+            rol.setExiste(true);
+            if(rol.getAddTareaInt()){
+                ResultadoEJB<TareaIntegradora> resGuardarTI = ejb.guardarTareaIntegradora(rol.getTareaIntegradora(), rol.getCarga().getCargaAcademica());
+                mostrarMensajeResultadoEJB(resGuardarTI);
+                rol.setAddTareaInt(false);
+            }
+        }else  mostrarMensajeResultadoEJB(resGuardarConf);
     }
     
+   
     public void mostrarConfiguracionGuardada(){
         if(rol.getCarga() == null) return;
         ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionUnidadMateria(rol.getCarga());
         if(res.getCorrecto()){
             rol.setConfUniMateriasGuard(res.getValor());
+            mostrarTareaIntegradora();
         }else mostrarMensajeResultadoEJB(res);
     }
     
+     public void mostrarTareaIntegradora(){
+//        if(rol.getCarga() == null) return;
+        ResultadoEJB<TareaIntegradora> resTI = ejb.getTareaIntegradora(rol.getCarga());
+        if(resTI.getCorrecto()){
+            rol.setTareaIntGuardada(resTI.getValor());
+            Ajax.update("tb4");
+        }
+        else{
+              ResultadoEJB<TareaIntegradora> resSinTI = ejb.getTareaIntegradora(rol.getCarga());
+              rol.setTareaIntGuardada(resSinTI.getValor());
+        } 
+//            mostrarMensajeResultadoEJB(resTI);
+    }
+    
     public void eliminarConfigUnidadMat(){
-        if(rol.getCarga().getCargaAcademica() == null) mostrarMensaje("No se puede eliminar una asignación que no existe.");
+        System.err.println("eliminarConfigUnidadMat");
         ResultadoEJB<Integer> resEliminar = ejb.eliminarConfUnidadMateria(rol.getCarga().getCargaAcademica());
-         rol.setExiste(false);
+        rol.setExiste(false);
         mostrarMensajeResultadoEJB(resEliminar);
     }
     
@@ -165,5 +192,15 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
     public void cambiarCarga(ValueChangeEvent event){
         rol.setCarga((DtoCargaAcademica)event.getNewValue());
         existeConfiguracion();
+    }
+    
+    public void cambiarAddTareaInt(ValueChangeEvent event){
+        if(rol.getAddTareaInt()){
+            rol.setAddTareaInt(false);
+            Ajax.update("tb2");
+        }else{
+            rol.setAddTareaInt(true);
+             Ajax.update("tb2");
+        }
     }
 }

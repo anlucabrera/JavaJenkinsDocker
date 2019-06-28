@@ -77,7 +77,7 @@ public class Documentosentregadosestudiante implements Serializable {
     private Boolean pagoColegiatura;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false)
     @OneToOne(optional = false)
-    private Estudiante estudiante1;
+    private Inscripcion inscripcion;
 
     public Documentosentregadosestudiante() {
     }
@@ -198,12 +198,12 @@ public class Documentosentregadosestudiante implements Serializable {
         this.pagoColegiatura = pagoColegiatura;
     }
 
-    public Estudiante getEstudiante1() {
-        return estudiante1;
+    public Inscripcion getInscripcion() {
+        return inscripcion;
     }
 
-    public void setEstudiante1(Estudiante estudiante1) {
-        this.estudiante1 = estudiante1;
+    public void setInscripcion(Inscripcion inscripcion) {
+        this.inscripcion = inscripcion;
     }
 
     @Override

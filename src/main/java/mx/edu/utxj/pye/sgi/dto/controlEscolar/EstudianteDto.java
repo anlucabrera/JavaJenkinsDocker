@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Inscripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -25,7 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
  */
 @RequiredArgsConstructor @AllArgsConstructor @EqualsAndHashCode(of = "estudiante")
 public class EstudianteDto implements Serializable{
-    @Getter @Setter @NonNull private Estudiante estudiante;
+    @Getter @Setter @NonNull private Inscripcion estudiante;
     @Getter @Setter private Persona persona;
     @Getter @Setter private Generos genero;
     @Getter @Setter private PeriodosEscolares periodoEscolar;

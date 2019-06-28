@@ -65,7 +65,7 @@
                             <div class="box box-solid">
                                 <div class="box-body">
                                     <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
-                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
                                     <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="#{configuracionUnidadMateriaDocente.actualizarCargaAcademica}" update="@(form)" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
@@ -83,7 +83,7 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="carga" value="#{configuracionUnidadMateriaDocente.rol.carga}" converter="entityConverter" valueChangeListener="#{configuracionUnidadMateriaDocente.cambiarCarga}">
                                                     <f:selectItems value="#{configuracionUnidadMateriaDocente.rol.cargas}" var="carga"
-                                                                   itemValue="#{carga}" itemLabel="#{carga.materia.nombre}"/>
+                                                                   itemValue="#{carga}" itemLabel="#{carga.materia.nombre} (#{carga.planEstudioMateria.claveMateria}) #{carga.grupo.grado}° #{carga.grupo.literal} de #{carga.programa.nombre}"/>
                                                     <p:ajax update="@this" process="@this" oncomplete="actualizarconf();" />
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
@@ -93,46 +93,86 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-lg-12 col-md-12 text-info text-center">
-                                            <h:outputText value="Configuración Sugerida" style="text-align: center; font-size: 20px;"/>
-                                            <p:dataTable var="confSugerida" rendered="true"
+                                        <center>
+                                            <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">    
+                                            <h:outputText value="Configurar Materia" style="text-align: center; font-size: 20px;"/>
+                                            <br />
+                                            <br />
+                                            <p:dataTable var="confSugerida" 
                                                          emptyMessage="Sin registros."
                                                          value="#{configuracionUnidadMateriaDocente.rol.confUniMateriasSug}"
                                                          id="tbl" rowIndexVar="rowIndex"
                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                          tableStyle="vertical-align: middle;">
-                                                <p:column headerText="Unidad" style="width: 70px;"><h:outputText value="#{confSugerida.unidadMateria.noUnidad}"/></p:column>
+                                                <p:column headerText="Unidad"><h:outputText value="#{confSugerida.unidadMateria.noUnidad}"/></p:column>
                                                 <p:column headerText="Nombre"><h:outputText value="#{confSugerida.unidadMateria.nombre}"/></p:column>
                                                 <p:column headerText="Horas Teóricas"><h:outputText value="#{confSugerida.unidadMateria.horasTeoricas}"/></p:column>
                                                 <p:column headerText="Horas Práctica"><h:outputText value="#{confSugerida.unidadMateria.horasPracticas}" /></p:column>
-                                                <p:column headerText="Fecha Inicio"><p:calendar value="#{confSugerida.unidadMateriaConfiguracion.fechaInicio}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;"/></p:column>
-                                                <p:column headerText="Fecha Fin"><p:calendar value="#{confSugerida.unidadMateriaConfiguracion.fechaFin}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;"/></p:column>
+                                                <p:column headerText="Fecha Inicio"><p:calendar value="#{confSugerida.unidadMateriaConfiguracion.fechaInicio}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha inicio para la unidad"/></p:column>
+                                                <p:column headerText="Fecha Fin"><p:calendar value="#{confSugerida.unidadMateriaConfiguracion.fechaFin}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha fin para la unidad"/></p:column>
                                             </p:dataTable>
-                                            <p></p>
-                                            <center>
-                                                <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{configuracionUnidadMateriaDocente.guardarConfigUnidadMat()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
-                                            </center>
-                                            <c:if test="#{!empty configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}">
-                                            <h:outputText value="Configuración Guardada" style="text-align: center; font-size: 20px;"/>
-                                            <p:dataTable var="confGuardada" rendered="true"
+                                            <br />
+                                            <br />
+                                            <p:outputLabel for="addTareaInt" style="font-size: large" value="Agregar Tarea Integradora" />
+                                            <p:inputSwitch id="addTareaInt" class="form-control" value="#{configuracionUnidadMateriaDocente.rol.addTareaInt}" valueChangeListener="#{configuracionUnidadMateriaDocente.cambiarAddTareaInt}"> 
+                                            <p:ajax update="@this" process="@this" oncomplete="actualizarconf();" />
+                                            <p:autoUpdate />
+                                            </p:inputSwitch>
+                                            <p:message for="addTareaInt" display="tooltip" />
+                                            <br/>
+                                            <br />
+                                             <p:dataTable var="tareaIntN" rendered="#{configuracionUnidadMateriaDocente.rol.addTareaInt}"
                                                          emptyMessage="Sin registros."
-                                                         value="#{configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"
+                                                         value="#{configuracionUnidadMateriaDocente.rol.tareaIntegradora}"
                                                          id="tb2" rowIndexVar="rowIndex"
                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                          tableStyle="vertical-align: middle;">
-                                                <p:column headerText="Unidad" style="width: 70px;"><h:outputText value="#{confGuardada.unidadMateria.noUnidad}"/></p:column>
+                                                 <p:column headerText="Tarea Integradora" style="width: 500px; text-align: justify;"><h:inputText value="#{tareaIntN.descripcion}" size="255" required="true" requiredMessage="Debe ingresar nombre de la tarea integradora"/></p:column>
+                                                 <p:column headerText="Fecha Entrega" style="width: 120px;"><p:calendar value="#{tareaIntN.fechaEntrega}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha de entrega de tarea integradora"/></p:column>
+                                            </p:dataTable>
+                                                <p></p>
+                                            <center>
+                                                <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{configuracionUnidadMateriaDocente.guardarConfigUnidadMat()}" icon="fa fa-pencil-square-o" class="btn-primary" disabled="#{!empty configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"/>
+                                            </center>
+                                            <br />
+                                            <br />
+                                            <c:if test="#{!empty configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}">
+                                            <h:outputText value="Configuración Guardada" style="text-align: center; font-size: 20px;"/>
+                                            <br />
+<!--                                            <center>
+                                                <p:commandButton id="btnEliminar" value="Eliminar" actionListener="# {configuracionUnidadMateriaDocente.eliminarConfigUnidadMat()}" icon="fa fa-trash" class="btn-primary">
+                                                    <p:confirm header="Eliminar configuración" message="¿Está seguro de eliminar la configuración de la materia?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                            </center>-->
+                                            <br />
+                                            <p:dataTable var="confGuardada" 
+                                                         emptyMessage="Sin registros."
+                                                         value="#{configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"
+                                                         id="tb3" rowIndexVar="rowIndex"
+                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                         tableStyle="vertical-align: middle;">
+                                                <p:column headerText="Unidad"><h:outputText value="#{confGuardada.unidadMateria.noUnidad}"/></p:column>
                                                 <p:column headerText="Nombre"><h:outputText value="#{confGuardada.unidadMateria.nombre}"/></p:column>
                                                 <p:column headerText="Horas Teóricas"><h:outputText value="#{confGuardada.unidadMateria.horasTeoricas}"/></p:column>
                                                 <p:column headerText="Horas Práctica"><h:outputText value="#{confGuardada.unidadMateria.horasPracticas}" /></p:column>
-                                                <p:column headerText="Fecha Inicio"><p:calendar value="#{confGuardada.unidadMateriaConfiguracion.fechaInicio}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;"/></p:column>
-                                                <p:column headerText="Fecha Fin"><p:calendar value="#{confGuardada.unidadMateriaConfiguracion.fechaFin}" pattern="dd-MM-yyyy" mask="true" style="width: 100px;"/></p:column>
+                                                <p:column headerText="Fecha Inicio"><h:outputText value="#{confGuardada.unidadMateriaConfiguracion.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                                <p:column headerText="Fecha Fin"><h:outputText value="#{confGuardada.unidadMateriaConfiguracion.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                             </p:dataTable>
-                                            <p></p>
-                                            <center>
-                                                <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{configuracionUnidadMateriaDocente.eliminarConfigUnidadMat()}" icon="fa fa-trash" class="btn-primary">
-                                                    <p:confirm header="Eliminar configuración" message="¿Está seguro de eliminar la configuración de la materia?" icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                            </center>
+                                            <br />
+                                            <br />
+                                             <p:dataTable var="tareaIntG" 
+                                                         emptyMessage="Sin registros."
+                                                         rendered="#{!empty configuracionUnidadMateriaDocente.rol.tareaIntGuardada}"
+                                                         value="#{configuracionUnidadMateriaDocente.rol.tareaIntGuardada}"
+                                                         id="tb4" rowIndexVar="rowIndex"
+                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                         tableStyle="vertical-align: middle;">
+                                                 <p:column headerText="Tarea Integradora" style="width: 500px;"><h:outputText value="#{tareaIntG.descripcion}"/></p:column>
+                                                <p:column headerText="Fecha Entrega" style="width: 120px;"><h:outputText value="#{tareaIntG.fechaEntrega}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                            </p:dataTable>
+                                                <p></p>
+                                            </c:if>
+                                        </div>
                                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
                                                              styleClass="panel panel-primary" width="500"
                                                              closable="false" closeOnEscape="true">
@@ -143,8 +183,7 @@
                                                                  styleClass="ui-confirmdialog-no btn btn-primary"
                                                                  icon="ui-icon-close"/>
                                             </p:confirmDialog>
-                                            </c:if>
-                                        </div>
+                                        </center>
                                     </div>
                                 </div>
                             </div>

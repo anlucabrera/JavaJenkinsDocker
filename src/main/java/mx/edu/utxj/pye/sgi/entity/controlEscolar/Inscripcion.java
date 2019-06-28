@@ -34,18 +34,18 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author UTXJ
  */
 @Entity
-@Table(name = "estudiante", catalog = "control_escolar", schema = "")
+@Table(name = "inscripcion", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Estudiante.findAll", query = "SELECT e FROM Estudiante e")
-    , @NamedQuery(name = "Estudiante.findByIdEstudiante", query = "SELECT e FROM Estudiante e WHERE e.idEstudiante = :idEstudiante")
-    , @NamedQuery(name = "Estudiante.findByMatricula", query = "SELECT e FROM Estudiante e WHERE e.matricula = :matricula")
-    , @NamedQuery(name = "Estudiante.findByPeriodo", query = "SELECT e FROM Estudiante e WHERE e.periodo = :periodo")
-    , @NamedQuery(name = "Estudiante.findByCarrera", query = "SELECT e FROM Estudiante e WHERE e.carrera = :carrera")
-    , @NamedQuery(name = "Estudiante.findByOpcionIncripcion", query = "SELECT e FROM Estudiante e WHERE e.opcionIncripcion = :opcionIncripcion")
-    , @NamedQuery(name = "Estudiante.findByFechaAlta", query = "SELECT e FROM Estudiante e WHERE e.fechaAlta = :fechaAlta")
-    , @NamedQuery(name = "Estudiante.findByTrabajadorInscribe", query = "SELECT e FROM Estudiante e WHERE e.trabajadorInscribe = :trabajadorInscribe")})
-public class Estudiante implements Serializable {
+    @NamedQuery(name = "Inscripcion.findAll", query = "SELECT i FROM Inscripcion i")
+    , @NamedQuery(name = "Inscripcion.findByIdEstudiante", query = "SELECT i FROM Inscripcion i WHERE i.idEstudiante = :idEstudiante")
+    , @NamedQuery(name = "Inscripcion.findByMatricula", query = "SELECT i FROM Inscripcion i WHERE i.matricula = :matricula")
+    , @NamedQuery(name = "Inscripcion.findByPeriodo", query = "SELECT i FROM Inscripcion i WHERE i.periodo = :periodo")
+    , @NamedQuery(name = "Inscripcion.findByCarrera", query = "SELECT i FROM Inscripcion i WHERE i.carrera = :carrera")
+    , @NamedQuery(name = "Inscripcion.findByOpcionIncripcion", query = "SELECT i FROM Inscripcion i WHERE i.opcionIncripcion = :opcionIncripcion")
+    , @NamedQuery(name = "Inscripcion.findByFechaAlta", query = "SELECT i FROM Inscripcion i WHERE i.fechaAlta = :fechaAlta")
+    , @NamedQuery(name = "Inscripcion.findByTrabajadorInscribe", query = "SELECT i FROM Inscripcion i WHERE i.trabajadorInscribe = :trabajadorInscribe")})
+public class Inscripcion implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -76,14 +76,12 @@ public class Estudiante implements Serializable {
     @NotNull
     @Column(name = "trabajador_inscribe")
     private int trabajadorInscribe;
-    @ManyToMany(mappedBy = "estudianteList")
+    @ManyToMany(mappedBy = "inscripcionList")
     private List<Asesoria> asesoriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
     private List<Calificacion> calificacionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<Baja> bajaList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
-    private Documentosentregadosestudiante documentosentregadosestudiante;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
     @ManyToOne(optional = false)
     private Aspirante aspirante;
@@ -93,19 +91,21 @@ public class Estudiante implements Serializable {
     @JoinColumn(name = "grupo", referencedColumnName = "id_grupo")
     @ManyToOne(optional = false)
     private Grupo grupo;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "inscripcion")
+    private Documentosentregadosestudiante documentosentregadosestudiante;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<DocumentoEstudiante> documentoEstudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<ParticipantesTutoria> participantesTutoriaList;
 
-    public Estudiante() {
+    public Inscripcion() {
     }
 
-    public Estudiante(Integer idEstudiante) {
+    public Inscripcion(Integer idEstudiante) {
         this.idEstudiante = idEstudiante;
     }
 
-    public Estudiante(Integer idEstudiante, int matricula, int periodo, short carrera, boolean opcionIncripcion, int trabajadorInscribe) {
+    public Inscripcion(Integer idEstudiante, int matricula, int periodo, short carrera, boolean opcionIncripcion, int trabajadorInscribe) {
         this.idEstudiante = idEstudiante;
         this.matricula = matricula;
         this.periodo = periodo;
@@ -197,14 +197,6 @@ public class Estudiante implements Serializable {
         this.bajaList = bajaList;
     }
 
-    public Documentosentregadosestudiante getDocumentosentregadosestudiante() {
-        return documentosentregadosestudiante;
-    }
-
-    public void setDocumentosentregadosestudiante(Documentosentregadosestudiante documentosentregadosestudiante) {
-        this.documentosentregadosestudiante = documentosentregadosestudiante;
-    }
-
     public Aspirante getAspirante() {
         return aspirante;
     }
@@ -227,6 +219,14 @@ public class Estudiante implements Serializable {
 
     public void setGrupo(Grupo grupo) {
         this.grupo = grupo;
+    }
+
+    public Documentosentregadosestudiante getDocumentosentregadosestudiante() {
+        return documentosentregadosestudiante;
+    }
+
+    public void setDocumentosentregadosestudiante(Documentosentregadosestudiante documentosentregadosestudiante) {
+        this.documentosentregadosestudiante = documentosentregadosestudiante;
     }
 
     @XmlTransient
@@ -257,10 +257,10 @@ public class Estudiante implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Estudiante)) {
+        if (!(object instanceof Inscripcion)) {
             return false;
         }
-        Estudiante other = (Estudiante) object;
+        Inscripcion other = (Inscripcion) object;
         if ((this.idEstudiante == null && other.idEstudiante != null) || (this.idEstudiante != null && !this.idEstudiante.equals(other.idEstudiante))) {
             return false;
         }
@@ -269,7 +269,7 @@ public class Estudiante implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante[ idEstudiante=" + idEstudiante + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Inscripcion[ idEstudiante=" + idEstudiante + " ]";
     }
     
 }

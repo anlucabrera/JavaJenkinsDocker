@@ -45,7 +45,7 @@ public class Calificacion implements Serializable {
     private double valor;
     @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
-    private Estudiante idEstudiante;
+    private Inscripcion idEstudiante;
     @JoinColumn(name = "configuracion_detalle", referencedColumnName = "configuracion_detalle")
     @ManyToOne(optional = false)
     private UnidadMateriaConfiguracionDetalle configuracionDetalle;
@@ -78,11 +78,11 @@ public class Calificacion implements Serializable {
         this.valor = valor;
     }
 
-    public Estudiante getIdEstudiante() {
+    public Inscripcion getIdEstudiante() {
         return idEstudiante;
     }
 
-    public void setIdEstudiante(Estudiante idEstudiante) {
+    public void setIdEstudiante(Inscripcion idEstudiante) {
         this.idEstudiante = idEstudiante;
     }
 

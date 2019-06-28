@@ -79,7 +79,7 @@ public class Grupo implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cveGrupo")
     private List<CargaAcademica> cargaAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
-    private List<Estudiante> estudianteList;
+    private List<Inscripcion> inscripcionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
     private List<Tutoria> tutoriaList;
 
@@ -181,12 +181,12 @@ public class Grupo implements Serializable {
     }
 
     @XmlTransient
-    public List<Estudiante> getEstudianteList() {
-        return estudianteList;
+    public List<Inscripcion> getInscripcionList() {
+        return inscripcionList;
     }
 
-    public void setEstudianteList(List<Estudiante> estudianteList) {
-        this.estudianteList = estudianteList;
+    public void setInscripcionList(List<Inscripcion> inscripcionList) {
+        this.inscripcionList = inscripcionList;
     }
 
     @XmlTransient

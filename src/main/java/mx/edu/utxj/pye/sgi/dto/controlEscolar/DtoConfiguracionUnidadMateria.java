@@ -16,12 +16,12 @@ import java.io.Serializable;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
+
 
 @RequiredArgsConstructor @ToString
 public class DtoConfiguracionUnidadMateria implements Serializable{
     @Getter @Setter @NonNull UnidadMateria unidadMateria;
     @Getter @Setter @NonNull UnidadMateriaConfiguracion unidadMateriaConfiguracion;
-
 }

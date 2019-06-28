@@ -213,6 +213,29 @@ public class EjbConfiguracionUnidadMateria {
     }
     
     /**
+     * Permite guardar la configuración de la unidad materia
+     * @param tareaIntegradora Unidad configuracion materia que se va a guardar
+     * @param cargaAcademica Carga académica de la que se guardará configuración
+     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     */
+    public ResultadoEJB<TareaIntegradora> guardarTareaIntegradora(TareaIntegradora tareaIntegradora, CargaAcademica cargaAcademica){
+        try{            
+            if(tareaIntegradora == null) return ResultadoEJB.crearErroneo(2, "La tarea integradora no debe ser nula.");
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(3, "La carga académica no debe ser nula.");
+          
+            TareaIntegradora ti = new TareaIntegradora();
+            ti.setDescripcion(tareaIntegradora.getDescripcion());
+            ti.setFechaEntrega(tareaIntegradora.getFechaEntrega());
+            ti.setCarga(cargaAcademica);
+            f.create(ti);
+               
+            return ResultadoEJB.crearCorrecto(ti, "La tarea integradora se guardo correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la tarea integradora de la materia. (EjbUnidadMateriaConfiguracion.guardarTareaIntegradora)", e, null);
+        }
+    }
+    
+    /**
      * Permite eliminar la configuración de la unidad materia
      * @param cargaAcademica Carga académica de la que se guardará configuración
      * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
@@ -266,6 +289,22 @@ public class EjbConfiguracionUnidadMateria {
             return ResultadoEJB.crearCorrecto(dto, "Configuración de la unidad materia empaquetada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la configuración de la unidad materia (EjbUnidadMateriaConfiguracion.pack).", e, DtoConfiguracionUnidadMateria.class);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de configuración de unidad por materia, de la materia seleccionada previamente
+     * @param dtoCargaAcademica Materia de la que se obtendrá configuración
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<TareaIntegradora> getTareaIntegradora(DtoCargaAcademica dtoCargaAcademica){
+        try{
+            TareaIntegradora tareaIntegradora = f.getEntityManager().createQuery("SELECT ti FROM TareaIntegradora ti WHERE ti.carga.carga =:carga", TareaIntegradora.class)
+                    .setParameter("carga", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .getSingleResult();
+            return ResultadoEJB.crearCorrecto(tareaIntegradora, "Tarea Integradora de la materia seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la tarea integradora de la materia seleccionada. (EjbUnidadMateriaConfiguracion.getTareaIntegradora)", e, null);
         }
     }
         

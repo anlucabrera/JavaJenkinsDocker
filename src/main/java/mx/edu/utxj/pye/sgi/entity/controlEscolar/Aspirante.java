@@ -72,7 +72,7 @@ public class Aspirante implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DatosFamiliares datosFamiliares;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
-    private List<Estudiante> estudianteList;
+    private List<Inscripcion> inscripcionList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private Domicilio domicilio;
     @JoinColumn(name = "id_persona", referencedColumnName = "idpersona")
@@ -170,12 +170,12 @@ public class Aspirante implements Serializable {
     }
 
     @XmlTransient
-    public List<Estudiante> getEstudianteList() {
-        return estudianteList;
+    public List<Inscripcion> getInscripcionList() {
+        return inscripcionList;
     }
 
-    public void setEstudianteList(List<Estudiante> estudianteList) {
-        this.estudianteList = estudianteList;
+    public void setInscripcionList(List<Inscripcion> inscripcionList) {
+        this.inscripcionList = inscripcionList;
     }
 
     public Domicilio getDomicilio() {

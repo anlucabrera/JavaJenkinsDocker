@@ -62,7 +62,7 @@ public class Baja implements Serializable {
     private CausaBaja causaBaja;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
-    private Estudiante estudiante;
+    private Inscripcion estudiante;
     @JoinColumn(name = "tipo_baja", referencedColumnName = "id_tipo_baja")
     @ManyToOne(optional = false)
     private TipoBaja tipoBaja;
@@ -121,11 +121,11 @@ public class Baja implements Serializable {
         this.causaBaja = causaBaja;
     }
 
-    public Estudiante getEstudiante() {
+    public Inscripcion getEstudiante() {
         return estudiante;
     }
 
-    public void setEstudiante(Estudiante estudiante) {
+    public void setEstudiante(Inscripcion estudiante) {
         this.estudiante = estudiante;
     }
 

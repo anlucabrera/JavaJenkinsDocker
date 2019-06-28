@@ -11,6 +11,7 @@ import mx.edu.utxj.pye.sgi.enums.Operacion;
 
 import java.util.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 
 public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
 
@@ -78,6 +79,21 @@ public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
      * Parametro que guarda valor si existe o no configuración registrada
      */
     @Getter @NonNull private  Boolean existe;
+    
+    /**
+     * Parametro que guarda valor si agregará o no tarea integradora
+     */
+    @Getter @NonNull private  Boolean addTareaInt;
+    
+     /**
+     * Representa la tarea integradora que se guardará
+     */
+    @Getter @NonNull private TareaIntegradora tareaIntegradora;
+    
+     /**
+     * Representa la tarea integradora guardada
+     */
+    @Getter @NonNull private TareaIntegradora tareaIntGuardada;
     
     public ConfiguracionUnidadMateriaRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
@@ -153,5 +169,19 @@ public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
          this.setExiste(false);
         }
     }
+
+    public void setAddTareaInt(Boolean addTareaInt) {
+        this.addTareaInt = addTareaInt;
+    }
+
+    public void setTareaIntegradora(TareaIntegradora tareaIntegradora) {
+        this.tareaIntegradora = tareaIntegradora;
+    }
+
+    public void setTareaIntGuardada(TareaIntegradora tareaIntGuardada) {
+        this.tareaIntGuardada = tareaIntGuardada;
+    }
+    
+    
 
 }

@@ -44,7 +44,7 @@ public class ParticipantesTutoria implements Serializable {
     private String comentarios;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
-    private Estudiante estudiante;
+    private Inscripcion estudiante;
     @JoinColumn(name = "tutoria", referencedColumnName = "id_tutoria", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Tutoria tutoria1;
@@ -72,11 +72,11 @@ public class ParticipantesTutoria implements Serializable {
         this.comentarios = comentarios;
     }
 
-    public Estudiante getEstudiante() {
+    public Inscripcion getEstudiante() {
         return estudiante;
     }
 
-    public void setEstudiante(Estudiante estudiante) {
+    public void setEstudiante(Inscripcion estudiante) {
         this.estudiante = estudiante;
     }
 
