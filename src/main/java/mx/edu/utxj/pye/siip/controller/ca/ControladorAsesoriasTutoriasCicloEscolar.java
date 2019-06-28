@@ -336,17 +336,32 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     }
     
     public void abrirEdicionAsesoriasTutoriasMensual(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoriaMensual) {
+        dto.setNuevoRegistro(Boolean.FALSE);
         DTOAsesoriasTutoriasCicloPeriodos dtoAsTutMen = new DTOAsesoriasTutoriasCicloPeriodos();
         dtoAsTutMen.setAsesoriasTutoriasCicloPeriodos(asesoriaTutoriaMensual);
         dto.setRegistro(dtoAsTutMen);
         dto.setPeriodoEscolarAsesoriaTutoria(ejbModulos.buscaPeriodoEscolarEspecifico(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos().getPeriodoEscolar()));
+        
+        dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            if (dto.getAreaPOA().getArea() == ((short)23)) {
+                dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            } else {
+                dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos()
+                        .stream()
+                        .filter((area) -> (short) dto.getAreaPOA().getArea() == area.getAreaSuperior())
+                        .collect(Collectors.toList())
+                );
+            }
+            Faces.setSessionAttribute("programasEducativos", dto.getProgramasEducativos());
+            Ajax.update("somProgramasEducativos");
+        
         dto.setProgramaEducativoAsesTut(ejbModulos.buscaProgramaEducativoEspecifico(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos().getProgramaEducativo()));
         dto.setMensaje("");
         actualizaInterfazEdicionAsesoriaTutoriaMensual();
     }
     
     public void editaAsesoriaTutoriaMensual(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria){
-        if(ejb.buscaAsesoriaTutoriaExistente(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos())){
+        if(ejb.buscaAsesoriaTutoriaExistente(asesoriaTutoria)){
             dto.setMensaje("No se ha podido actualizar debido a que el sistema ha detectado un registro con las mismas caracteristicas, favor de intentar nuevamente");
             Ajax.update("mensaje");
         }else{

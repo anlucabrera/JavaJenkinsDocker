@@ -302,6 +302,19 @@ public class ControladorAsesoriasTutoriasCicloEscolarPYE implements Serializable
     }
     
     public void abrirEdicionAsesoriasTutoriasMensual(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoriaMensual) {
+        dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            if (dto.getAreaUniversidadPOA().getArea() == ((short)23)) {
+                dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            } else {
+                dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos()
+                        .stream()
+                        .filter((area) -> (short) dto.getAreaUniversidadPOA().getArea() == area.getAreaSuperior())
+                        .collect(Collectors.toList())
+                );
+            }
+            Faces.setSessionAttribute("programasEducativos", dto.getProgramasEducativos());
+            Ajax.update("somProgramasEducativos");
+        
         dto.setNuevoRegistro(Boolean.FALSE);
         DTOAsesoriasTutoriasCicloPeriodos dtoAsTutMen = new DTOAsesoriasTutoriasCicloPeriodos();
         dtoAsTutMen.setAsesoriasTutoriasCicloPeriodos(asesoriaTutoriaMensual);
@@ -313,7 +326,7 @@ public class ControladorAsesoriasTutoriasCicloEscolarPYE implements Serializable
     }
     
     public void editaAsesoriaTutoriaMensual(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria){
-        if(ejb.buscaAsesoriaTutoriaExistente(dto.getRegistro().getAsesoriasTutoriasCicloPeriodos())){
+        if(ejb.buscaAsesoriaTutoriaExistente(asesoriaTutoria)){
             dto.setMensaje("No se ha podido actualizar debido a que el sistema ha detectado un registro con las mismas caracteristicas, favor de intentar nuevamente");
             Ajax.update("mensaje");
         }else{
@@ -379,6 +392,7 @@ public class ControladorAsesoriasTutoriasCicloEscolarPYE implements Serializable
             dtoAT.setPeriodoEscolar(caster.periodoToString(ejbModulos.getPeriodoEscolarActivo()));
             dtoAT.getAsesoriasTutoriasCicloPeriodos().setMes(controladorModulosRegistro.getEventosRegistros().getMes());
             dto.setPeriodoEscolarAsesoriaTutoria(ejbModulos.getPeriodoEscolarActivo());
+            
             dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
             if (dto.getAreaUniversidadPOA().getArea() == ((short)23)) {
                 dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
