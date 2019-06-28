@@ -13,6 +13,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.AreasConflicto;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadAreasEstudio;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadDisciplinas;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro;
@@ -27,6 +28,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.LocalidadPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.OtrosTiposSesionesPsicopedagogia;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicos;
 import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
@@ -200,6 +202,14 @@ public class EntityConverter implements Converter{
                     List<ProductosAcademicos> productosAcademicos = Faces.getSessionAttribute("productosAcademicos");
                     ProductosAcademicos productoAcademico = new ProductosAcademicos(Integer.valueOf(value));
                     return productosAcademicos.get(productosAcademicos.indexOf(productoAcademico));
+                case "somAreasConflicto":
+                    List<AreasConflicto> areasConflicto = Faces.getSessionAttribute("areasConflicto");
+                    AreasConflicto areaConflicto = new AreasConflicto(Short.valueOf(value));
+                    return areasConflicto.get(areasConflicto.indexOf(areaConflicto));
+                case "somOtrosTiposSesiones":
+                    List<OtrosTiposSesionesPsicopedagogia> otrosTiposSesion = Faces.getSessionAttribute("otroTipoSesion");
+                    OtrosTiposSesionesPsicopedagogia otroTipoSesion = new OtrosTiposSesionesPsicopedagogia(Short.valueOf(value));
+                    return otrosTiposSesion.get(otrosTiposSesion.indexOf(otroTipoSesion));
                 default:
                     throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", component.getClientId() + " no es un componente válido."));
             }
@@ -259,6 +269,10 @@ public class EntityConverter implements Converter{
                 return ((CuerposAcademicosRegistro)value).getRegistro().toString();
             else if(value instanceof ProductosAcademicos)
                 return ((ProductosAcademicos)value).getRegistro().toString();
+            else if(value instanceof AreasConflicto)
+                return ((AreasConflicto)value).getAreaConflicto().toString();
+            else if(value instanceof OtrosTiposSesionesPsicopedagogia)
+                return ((OtrosTiposSesionesPsicopedagogia)value).getOtroTipoSesionPsicopedagogia().toString();
             else if(value instanceof Municipio){
                 String json = (new Gson()).toJson(((Municipio)value).getMunicipioPK());
                 return json;

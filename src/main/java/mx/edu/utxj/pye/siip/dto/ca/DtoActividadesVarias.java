@@ -28,7 +28,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  */
 public final class DtoActividadesVarias {
     
-    @Getter @Setter String mensaje;
+    @Getter @Setter private String mensaje;
     
     @Getter @Setter private List<AreasUniversidad> listaAreasConRegistroMensualGeneral;
     
@@ -45,7 +45,7 @@ public final class DtoActividadesVarias {
     @Getter private DTOActividadVaria registro;
     
     @Getter private List<EvidenciasDetalle> listaEvidencias;
-    @Getter Boolean tieneEvidencia, forzarAperturaDialogo;
+    @Getter private Boolean tieneEvidencia, forzarAperturaDialogo;
     @Getter private List<Part> archivos;
     
     /************************** Alineación POA  *************************************/
@@ -68,11 +68,11 @@ public final class DtoActividadesVarias {
     
     @Getter @Setter private List<Short> registros;
     
-    @Getter @Setter RegistrosTipo registroTipoAV;
-    @Getter @Setter EjesRegistro ejesRegistro;
+    @Getter @Setter private RegistrosTipo registroTipoAV;
+    @Getter @Setter private EjesRegistro ejesRegistro;
     
-    @Getter @Setter AreasUniversidad area;
-    @Getter @Setter String rutaArchivo;
+    @Getter @Setter private AreasUniversidad area;
+    @Getter @Setter private String rutaArchivo;
     
     @Getter @Setter private List<ActividadesVariasRegistro> lstActividadesVarias;
     @Getter @Setter private List<DTOActividadVaria> lstDtoActividadesVarias;
