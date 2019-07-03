@@ -39,6 +39,11 @@ public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
      * Carga académica seleccionada
      */
     @Getter @NonNull private DtoCargaAcademica carga;
+    
+     /**
+     * Carga académica seleccionada para eliminar
+     */
+    @Getter @NonNull private DtoCargaAcademica cargaEliminar;
   
     /**
      * Unidades materia seleccionada y que se va a configurar
@@ -95,6 +100,11 @@ public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
      */
     @Getter @NonNull private TareaIntegradora tareaIntGuardada;
     
+    /**
+     * Parametro que guarda valor si agregará o no tarea integradora
+     */
+    @Getter @NonNull private  Boolean autorizoEliminar;
+    
     public ConfiguracionUnidadMateriaRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
         this.docente = docente;
@@ -117,6 +127,10 @@ public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
         this.carga = carga;
     }
 
+    public void setCargaEliminar(DtoCargaAcademica cargaEliminar) {
+        this.cargaEliminar = cargaEliminar;
+    }
+    
     public void setUnidadMateria(UnidadMateria unidadMateria) {
         this.unidadMateria = unidadMateria;
     }
@@ -180,6 +194,10 @@ public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
 
     public void setTareaIntGuardada(TareaIntegradora tareaIntGuardada) {
         this.tareaIntGuardada = tareaIntGuardada;
+    }
+
+    public void setAutorizoEliminar(Boolean autorizoEliminar) {
+        this.autorizoEliminar = autorizoEliminar;
     }
     
     

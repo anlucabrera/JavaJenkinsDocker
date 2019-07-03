@@ -25,7 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
+import javax.swing.JOptionPane;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDiasPeriodoEscolares;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import org.omnifaces.util.Ajax;
@@ -91,7 +93,8 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.getInstrucciones().add("Seleccionar la materia de la cual se configura las unidades.");
 
             existeConfiguracion();
-            rol.setAddTareaInt(false);
+            rol.setAddTareaInt(true);
+            rol.setAutorizoEliminar(false);
             
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -134,8 +137,11 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
     
     public void mostrarConfiguracionSugerida(){
         if(rol.getCarga() == null) return;
-        ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionUnidadMateriaSugerida(rol.getCarga());
+        ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionSugerida(rol.getCarga());
         TareaIntegradora tareaInt = new TareaIntegradora();
+//        DtoDiasPeriodoEscolares dtoFechas = ejb.getCalculoDiasPeriodoEscolar(rol.getPeriodoActivo());
+//        tareaInt.setDescripcion("Ingresar nombre");
+//        tareaInt.setFechaEntrega(dtoFechas.getFechaFin());
         if(res.getCorrecto()){
             rol.setConfUniMateriasSug(res.getValor());
             rol.setTareaIntegradora(tareaInt);
@@ -181,9 +187,9 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
 //            mostrarMensajeResultadoEJB(resTI);
     }
     
-    public void eliminarConfigUnidadMat(){
-        System.err.println("eliminarConfigUnidadMat");
-        ResultadoEJB<Integer> resEliminar = ejb.eliminarConfUnidadMateria(rol.getCarga().getCargaAcademica());
+    public void eliminarConfigUnidadMat(DtoCargaAcademica cargaAcademica){
+        System.err.println("eliminarConfigUnidadMat" + rol.getCargaEliminar());
+        ResultadoEJB<Integer> resEliminar = ejb.eliminarConfUnidadMateria(rol.getCargaEliminar().getCargaAcademica());
         rol.setExiste(false);
         mostrarMensajeResultadoEJB(resEliminar);
     }
@@ -202,5 +208,25 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.setAddTareaInt(true);
              Ajax.update("tb2");
         }
+    }
+    
+    public void cambiarEliminar(ValueChangeEvent event){
+        rol.setCargaEliminar(rol.getCarga());
+        if(rol.getAutorizoEliminar()){
+            rol.setAutorizoEliminar(false);
+        }else{
+            rol.setAutorizoEliminar(true);
+//            eliminarConfigUnidadMat(rol.getCargaEliminar());
+        }
+    }
+    
+     /**
+     * Permite invocar la eliminaciòn de una asignaciòn
+     * @param tareaIntegradora
+     */
+    public void eliminarTareaInt(){
+          System.err.println("eliminarTareaInt - tarea ");
+//        ResultadoEJB<TareaIntegradora> resElimTI = ejb.eliminarTareaIntegradora(tareaIntegradora);
+//        mostrarMensajeResultadoEJB(resElimTI);
     }
 }

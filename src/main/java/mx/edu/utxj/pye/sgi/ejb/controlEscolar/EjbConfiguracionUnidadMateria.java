@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.text.SimpleDateFormat;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
@@ -8,17 +9,19 @@ import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.persistence.Query;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDiasPeriodoEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 
@@ -143,20 +146,16 @@ public class EjbConfiguracionUnidadMateria {
      * @param dtoCargaAcademica Materia de la que se sugerirá configuración
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> getConfiguracionUnidadMateriaSugerida(DtoCargaAcademica dtoCargaAcademica){
-        try{
+    public List<DtoConfiguracionUnidadMateria> getConfiguracionUnidadMateriaSugerida(DtoCargaAcademica dtoCargaAcademica){
             List<DtoConfiguracionUnidadMateria> unidadMat = f.getEntityManager().createQuery("SELECT um FROM UnidadMateria um WHERE um.idMateria.idMateria =:idMateria", UnidadMateria.class)
                     .setParameter("idMateria", dtoCargaAcademica.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria())
                     .getResultStream()
                     .map(ca -> pack(ca).getValor())
                     .filter(dto -> dto != null)
                     .collect(Collectors.toList());
-            return ResultadoEJB.crearCorrecto(unidadMat, "Lista de configuración sugeruda de la unidad materia seleccionada.");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración sugerida de la materia del docente. (EjbUnidadMateriaConfiguracion.getConfiguracionUnidadMateriaSugerida)", e, null);
-        }
+            return unidadMat;
     }
-    
+   
     /**
      * Empaqueta una configuración sugeridad de la unidad materia en su DTO Wrapper
      * @param unidadMateria Unidades de la materia a empaquetar
@@ -168,7 +167,7 @@ public class EjbConfiguracionUnidadMateria {
 
             UnidadMateria unidadMateriaBD = f.getEntityManager().find(UnidadMateria.class, unidadMateria.getIdUnidadMateria());
             if(unidadMateriaBD == null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar una configuración sugerida de una unidad de materia no registrada previamente en base de datos.", DtoConfiguracionUnidadMateria.class);
-            
+         
             UnidadMateriaConfiguracion unidadMateriaConfiguracion = new UnidadMateriaConfiguracion();
             
             DtoConfiguracionUnidadMateria dto = new DtoConfiguracionUnidadMateria(unidadMateriaBD, unidadMateriaConfiguracion);
@@ -176,6 +175,159 @@ public class EjbConfiguracionUnidadMateria {
             return ResultadoEJB.crearCorrecto(dto, "Configuración sugerida de la unidad materia empaquetada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la configuración sugerida de la unidad materia (EjbUnidadMateriaConfiguracion.pack).", e, DtoConfiguracionUnidadMateria.class);
+        }
+    }
+    
+      
+    /**
+     * Permite obtener la cantidad de días que hay entre la fecha de inicio y fecha de fin del periodo escolar activo para realizar la configuración
+     * @param periodoActivo Clave del periodo que se calculará
+     * @return Resultado del proceso
+     */
+    public DtoDiasPeriodoEscolares getCalculoDiasPeriodoEscolar(Integer periodoActivo) {
+        
+            PeriodoEscolarFechas fechasPeriodos = f.getEntityManager().createQuery("SELECT pef FROM PeriodoEscolarFechas pef WHERE pef.periodosEscolares.periodo =:periodo", PeriodoEscolarFechas.class)
+                    .setParameter("periodo", periodoActivo)
+                    .getSingleResult();
+        
+//            int dias = (int) ((fechasPeriodos.getFin().getTime() - fechasPeriodos.getInicio().getTime()) / 86400000);
+            long fechaInicial = fechasPeriodos.getInicio().getTime();
+            long fechaFinal = fechasPeriodos.getFin().getTime();
+            long diferenciaDias = fechaFinal - fechaInicial;
+            int dias = (int) TimeUnit.DAYS.convert(diferenciaDias, TimeUnit.MILLISECONDS);
+            
+            DtoDiasPeriodoEscolares dtoDiasPeriodoEscolares = new DtoDiasPeriodoEscolares(fechasPeriodos.getInicio(), fechasPeriodos.getFin(), dias);
+            
+            return dtoDiasPeriodoEscolares;
+            
+    }
+   
+     /**
+     * Permite obtener configuración sugerida, calculando fecha de inicio y de fin de cada unidad de la carga académica seleccionada
+     * @param dtoCargaAcademica Materia de la que se sugerirá configuración
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> getConfiguracionSugerida(DtoCargaAcademica dtoCargaAcademica){
+        try{
+            DtoDiasPeriodoEscolares dtoDiasPeriodoEscolares = getCalculoDiasPeriodoEscolar(dtoCargaAcademica.getCargaAcademica().getEvento().getPeriodo());
+            
+            Integer diasUnidad = dtoDiasPeriodoEscolares.getDias()/dtoCargaAcademica.getMateria().getUnidadMateriaList().size();
+         
+            Date fechaMin = dtoDiasPeriodoEscolares.getFechaInicio();
+            
+            List<DtoConfiguracionUnidadMateria> dtoConfSug = new ArrayList<>();
+            List<DtoConfiguracionUnidadMateria> unidadMat = getConfiguracionUnidadMateriaSugerida(dtoCargaAcademica);
+            
+            unidadMat.forEach(umc -> {
+                UnidadMateria unidadMateriaBD = f.getEntityManager().find(UnidadMateria.class, umc.getUnidadMateria().getIdUnidadMateria());
+                
+                UnidadMateriaConfiguracion unidadMateriaConfiguracion = new UnidadMateriaConfiguracion();
+              
+                switch (umc.getUnidadMateria().getNoUnidad()) {
+                    case 1:
+                        Calendar calendarFin1 = Calendar.getInstance();
+                        calendarFin1.setTime(fechaMin);
+                        calendarFin1.add(Calendar.DAY_OF_YEAR, diasUnidad);
+                        unidadMateriaConfiguracion.setFechaInicio(fechaMin);
+                        unidadMateriaConfiguracion.setFechaFin(calendarFin1.getTime());
+                        break;
+                    case 2:
+                        Calendar calendarIni2 = Calendar.getInstance();
+                        calendarIni2.setTime(fechaMin);
+                        calendarIni2.add(Calendar.DAY_OF_YEAR, diasUnidad);
+                        
+                        Calendar calendarFin2 = Calendar.getInstance();
+                        calendarFin2.setTime(fechaMin);
+                        calendarFin2.add(Calendar.DAY_OF_YEAR, diasUnidad * 2);
+                        
+                        unidadMateriaConfiguracion.setFechaInicio(calendarIni2.getTime());
+                        unidadMateriaConfiguracion.setFechaFin(calendarFin2.getTime());
+                        break;
+                    case 3:
+                        Calendar calendarIni3 = Calendar.getInstance();
+                        calendarIni3.setTime(fechaMin);
+                        calendarIni3.add(Calendar.DAY_OF_YEAR, diasUnidad * 2);
+                        
+                        Calendar calendarFin3 = Calendar.getInstance();
+                        calendarFin3.setTime(fechaMin);
+                        calendarFin3.add(Calendar.DAY_OF_YEAR, diasUnidad * 3);
+                        
+                        unidadMateriaConfiguracion.setFechaInicio(calendarIni3.getTime());
+                        unidadMateriaConfiguracion.setFechaFin(calendarFin3.getTime());
+                        break;
+                    case 4:
+                        Calendar calendarIni4 = Calendar.getInstance();
+                        calendarIni4.setTime(fechaMin);
+                        calendarIni4.add(Calendar.DAY_OF_YEAR, diasUnidad * 3);
+                        
+                        Calendar calendarFin4 = Calendar.getInstance();
+                        calendarFin4.setTime(fechaMin);
+                        calendarFin4.add(Calendar.DAY_OF_YEAR, diasUnidad * 4);
+                        
+                        unidadMateriaConfiguracion.setFechaInicio(calendarIni4.getTime());
+                        unidadMateriaConfiguracion.setFechaFin(calendarFin4.getTime());
+                        break;
+                    case 5:
+                        Calendar calendarIni5 = Calendar.getInstance();
+                        calendarIni5.setTime(fechaMin);
+                        calendarIni5.add(Calendar.DAY_OF_YEAR, diasUnidad * 4);
+                        
+                        Calendar calendarFin5 = Calendar.getInstance();
+                        calendarFin5.setTime(fechaMin);
+                        calendarFin5.add(Calendar.DAY_OF_YEAR, diasUnidad * 5);
+                        
+                        unidadMateriaConfiguracion.setFechaInicio(calendarIni5.getTime());
+                        unidadMateriaConfiguracion.setFechaFin(calendarFin5.getTime());
+                        break;
+                    case 6:
+                        Calendar calendarIni6 = Calendar.getInstance();
+                        calendarIni6.setTime(fechaMin);
+                        calendarIni6.add(Calendar.DAY_OF_YEAR, diasUnidad * 5);
+                        
+                        Calendar calendarFin6 = Calendar.getInstance();
+                        calendarFin6.setTime(fechaMin);
+                        calendarFin6.add(Calendar.DAY_OF_YEAR, diasUnidad * 6);
+                        
+                        unidadMateriaConfiguracion.setFechaInicio(calendarIni6.getTime());
+                        unidadMateriaConfiguracion.setFechaFin(calendarFin6.getTime());
+                        break;
+                    case 7:
+                        Calendar calendarIni7 = Calendar.getInstance();
+                        calendarIni7.setTime(fechaMin);
+                        calendarIni7.add(Calendar.DAY_OF_YEAR, diasUnidad * 6);
+                        
+                        Calendar calendarFin7 = Calendar.getInstance();
+                        calendarFin7.setTime(fechaMin);
+                        calendarFin7.add(Calendar.DAY_OF_YEAR, diasUnidad * 7);
+                        
+                        unidadMateriaConfiguracion.setFechaInicio(calendarIni7.getTime());
+                        unidadMateriaConfiguracion.setFechaFin(calendarFin7.getTime());
+                        break;
+                    default:
+                       
+                        break;
+                }
+//                if(umc.getUnidadMateria().getNoUnidad()==1)
+//                {
+//                unidadMateriaConfiguracion.setFechaInicio(fechaMin);
+//                unidadMateriaConfiguracion.setFechaFin(calendar.getTime());
+//                }
+//                else{
+//                  
+//                Calendar acumulador = Calendar.getInstance();
+//                acumulador.setTime(calendar.getTime());
+//                acumulador.add(Calendar.DAY_OF_YEAR, diasUnidad);
+//                
+//                unidadMateriaConfiguracion.setFechaInicio(calendar.getTime());
+//                unidadMateriaConfiguracion.setFechaFin(acumulador.getTime());
+//                }
+                DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria = new DtoConfiguracionUnidadMateria(unidadMateriaBD, unidadMateriaConfiguracion);
+                dtoConfSug.add(dtoConfiguracionUnidadMateria);
+            });
+            
+            return ResultadoEJB.crearCorrecto(dtoConfSug, "Lista de configuración sugerida de la unidad materia seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración sugerida de la materia del docente. (EjbUnidadMateriaConfiguracion.getConfiguracionUnidadMateriaSugerida)", e, null);
         }
     }
     
@@ -307,51 +459,21 @@ public class EjbConfiguracionUnidadMateria {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la tarea integradora de la materia seleccionada. (EjbUnidadMateriaConfiguracion.getTareaIntegradora)", e, null);
         }
     }
-        
-//     /**
-//     * Permite la asignación de configuración de la unidad materia
-//     * @param unidadMateriaConfiguracionDto Configuración que se guardará o eliminará de la unidad materia
-//     * @param operacion Operación a realizar, se permite persistir y eliminar
-//     * @return Resultado del proceso generando la instancia de configuración de la unidad materia obtenida
-//     */
-//    public ResultadoEJB<UnidadMateriaConfiguracion> asignarConfiguracionUnidadMateria(DtoConfiguracionUnidadMateria unidadMateriaConfiguracionDto, Operacion operacion){
-//        try{
-//            if(unidadMateriaConfiguracionDto == null) return ResultadoEJB.crearErroneo(3, "La materia no debe ser nula.", UnidadMateriaConfiguracion.class);
-//
-//            UnidadMateriaConfiguracion unidadMateriaConfiguracion = f.getEntityManager().createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
-//                    .setParameter("cargaAcademica", unidadMateriaConfiguracionDto.getDtoCargaAcademica().getCargaAcademica().getCarga())
-//                    .getResultStream()
-//                    .findFirst()
-//                    .orElse(null);
-//            
-//            switch (operacion){
-//                case PERSISTIR:
-//                    //crear la carga académica y persistirla
-//                    if(unidadMateriaConfiguracion == null){//comprobar si la asignación existe para impedir  duplicar
-//                        unidadMateriaConfiguracion = new UnidadMateriaConfiguracion();
-//                        unidadMateriaConfiguracion.setCarga(unidadMateriaConfiguracionDto.getDtoCargaAcademica().getCargaAcademica());
-//                        unidadMateriaConfiguracion.setFechaInicio(unidadMateriaConfiguracionDto.getUnidadMateriaConfiguracion().getFechaInicio());
-//                        unidadMateriaConfiguracion.setFechaFin(unidadMateriaConfiguracionDto.getUnidadMateriaConfiguracion().getFechaFin());
-//                        unidadMateriaConfiguracion.setDirector(unidadMateriaConfiguracionDto.getUnidadMateriaConfiguracion().getDirector());
-//                       
-//                    }else {//si ya existe se informa
-//                        PersonalActivo docente1 = ejbPersonalBean.pack(unidadMateriaConfiguracion.getCarga().getDocente());
-//                        return ResultadoEJB.crearErroneo(4, String.format("La unidad %s de la materia %s ya fue configurada",unidadMateriaConfiguracion.getIdUnidadMateria().getNoUnidad(), unidadMateriaConfiguracion.getCarga().getIdPlanMateria().getIdMateria().getNombre()), UnidadMateriaConfiguracion.class);
-//                    }
-//                case ELIMINAR:
-//                    //eliminar la carga académica
-//                    if(unidadMateriaConfiguracion != null){
-//                        f.remove(unidadMateriaConfiguracion);
-//                        return ResultadoEJB.crearCorrecto(null, "La configuración fue eliminada correctamente");
-//                    }else{
-//                        return ResultadoEJB.crearErroneo(5, "La configuración ya había sido eliminada.", UnidadMateriaConfiguracion.class);
-//                    }
-//                    default:
-//                        return ResultadoEJB.crearErroneo(2, "Operación no autorizada.", UnidadMateriaConfiguracion.class);
-//            }
-//
-//        }catch (Throwable e){
-//            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de la materia. (EjbUnidadMateriaConfiguracion.asignarConfiguracionMateria)", e, null);
-//        }
-//    }
+    
+    /**
+     * Permite eliminar la configuración de la unidad materia
+     * @param tareaIntegradora Carga académica de la que se guardará configuración
+     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     */
+    public ResultadoEJB<TareaIntegradora> eliminarTareaIntegradora(TareaIntegradora tareaIntegradora){
+        try{ 
+            if(tareaIntegradora == null) return ResultadoEJB.crearErroneo(2, "La tarea integradora no debe ser nula.");
+            
+            f.remove(tareaIntegradora);
+            
+            return ResultadoEJB.crearCorrecto(null, "La tarea integradora se elimino correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar  la tarea integradora. (EjbUnidadMateriaConfiguracion.eliminarTareaIntegradora)", e, null);
+        }
+    }
 }
