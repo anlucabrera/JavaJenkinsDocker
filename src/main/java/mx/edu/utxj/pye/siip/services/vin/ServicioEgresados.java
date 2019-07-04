@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -771,28 +772,26 @@ public class ServicioEgresados implements EjbEgresados {
 //        Actividades Egresados
         List<String> listaCondicional = new ArrayList<>();
         listaActividadEgresadoGeneracion.forEach((actividadEG) -> {
-            if (ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio() == (facadeVinculacion.getEntityManager().find(Generaciones.class, actividadEG.getActividadEgresadoGeneracion().getGeneracion())).getFin()) {
-                facadeVinculacion.setEntityClass(ActividadEgresadoGeneracion.class);
-                ActividadEgresadoGeneracion actividadEGEncontrado = getActividadEgresadoGeneracion(actividadEG.getActividadEgresadoGeneracion());
-                Boolean registroAlmacenado = false;
-                if (actividadEGEncontrado != null) {
-                    listaCondicional.add(actividadEG.getActividadEgresadoGeneracion().getFecha() + " " + actividadEG.getGeneracion() + " " + actividadEG.getProgramaEducativo().getNombre());
-                    registroAlmacenado = true;
-                }
-                if (registroAlmacenado) {
-                    if (ejbModulos.getEventoRegistro().equals(actividadEGEncontrado.getRegistros().getEventoRegistro())) {
-                        actividadEG.getActividadEgresadoGeneracion().setRegistro(actividadEGEncontrado.getRegistro());
-                        facadeVinculacion.edit(actividadEG.getActividadEgresadoGeneracion());
-                    } else {
-                        listaCondicional.remove(actividadEG.getActividadEgresadoGeneracion().getFecha() + " " + actividadEG.getGeneracion() + " " + actividadEG.getProgramaEducativo().getNombre());
-                    }
-                } else {
-                    Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-                    actividadEG.getActividadEgresadoGeneracion().setRegistro(registro.getRegistro());
-                    facadeVinculacion.create(actividadEG.getActividadEgresadoGeneracion());
-                }
-                facadeVinculacion.flush();
+            facadeVinculacion.setEntityClass(ActividadEgresadoGeneracion.class);
+            ActividadEgresadoGeneracion actividadEGEncontrado = getActividadEgresadoGeneracion(actividadEG.getActividadEgresadoGeneracion());
+            Boolean registroAlmacenado = false;
+            if (actividadEGEncontrado != null) {
+                listaCondicional.add(actividadEG.getActividadEgresadoGeneracion().getFecha() + " " + actividadEG.getGeneracion() + " " + actividadEG.getProgramaEducativo().getNombre());
+                registroAlmacenado = true;
             }
+            if (registroAlmacenado) {
+                if (ejbModulos.getEventoRegistro().equals(actividadEGEncontrado.getRegistros().getEventoRegistro())) {
+                    actividadEG.getActividadEgresadoGeneracion().setRegistro(actividadEGEncontrado.getRegistro());
+                    facadeVinculacion.edit(actividadEG.getActividadEgresadoGeneracion());
+                } else {
+                    listaCondicional.remove(actividadEG.getActividadEgresadoGeneracion().getFecha() + " " + actividadEG.getGeneracion() + " " + actividadEG.getProgramaEducativo().getNombre());
+                }
+            } else {
+                Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
+                actividadEG.getActividadEgresadoGeneracion().setRegistro(registro.getRegistro());
+                facadeVinculacion.create(actividadEG.getActividadEgresadoGeneracion());
+            }
+            facadeVinculacion.flush();
         });
         Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
@@ -802,28 +801,28 @@ public class ServicioEgresados implements EjbEgresados {
 //        Actividades Económicas Egresados
         List<String> listaCondicional = new ArrayList<>();
         listaActividadEconomicaEgresadoG.forEach((actividadEconomicaEG) -> {
-            if (ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio() == (facadeVinculacion.getEntityManager().find(Generaciones.class, actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().getGeneracion())).getFin()) {
-                facadeVinculacion.setEntityClass(ActividadEconomicaEgresadoGeneracion.class);
-                ActividadEconomicaEgresadoGeneracion actividadEEGEncontrado = getActividadEconomicaEgresadoGeneracion(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion());
-                Boolean registroAlmacenado = false;
-                if (actividadEEGEncontrado != null) {
-                    listaCondicional.add(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().getFecha() + " " + actividadEconomicaEG.getProgramaEducativo().getNombre());
-                    registroAlmacenado = true;
-                }
-                if (registroAlmacenado) {
-                    if (ejbModulos.getEventoRegistro().equals(actividadEEGEncontrado.getRegistros().getEventoRegistro())) {
-                        actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().setRegistro(actividadEEGEncontrado.getRegistro());
-                        facadeVinculacion.edit(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion());
-                    } else {
-                        listaCondicional.remove(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().getFecha() + " " + actividadEconomicaEG.getProgramaEducativo().getNombre());
-                    }
-                } else {
-                    Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-                    actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().setRegistro(registro.getRegistro());
-                    facadeVinculacion.create(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion());
-                }
-                facadeVinculacion.flush();
+
+            facadeVinculacion.setEntityClass(ActividadEconomicaEgresadoGeneracion.class);
+            ActividadEconomicaEgresadoGeneracion actividadEEGEncontrado = getActividadEconomicaEgresadoGeneracion(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion());
+            Boolean registroAlmacenado = false;
+            if (actividadEEGEncontrado != null) {
+                listaCondicional.add(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().getFecha() + " " + actividadEconomicaEG.getProgramaEducativo().getNombre());
+                registroAlmacenado = true;
             }
+            if (registroAlmacenado) {
+                if (ejbModulos.getEventoRegistro().equals(actividadEEGEncontrado.getRegistros().getEventoRegistro())) {
+                    actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().setRegistro(actividadEEGEncontrado.getRegistro());
+                    facadeVinculacion.edit(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion());
+                } else {
+                    listaCondicional.remove(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().getFecha() + " " + actividadEconomicaEG.getProgramaEducativo().getNombre());
+                }
+            } else {
+                Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
+                actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().setRegistro(registro.getRegistro());
+                facadeVinculacion.create(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion());                
+            }
+            facadeVinculacion.flush();
+
         });
         Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
@@ -833,7 +832,7 @@ public class ServicioEgresados implements EjbEgresados {
 //        Nivel Ocupación
         List<String> listaCondicional = new ArrayList<>();
         listaNivelOcupacionEgresadosG.forEach((nivelOcupacionEG) -> {
-            if (ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio() == (facadeVinculacion.getEntityManager().find(Generaciones.class, nivelOcupacionEG.getNivelOcupacionEgresadosGeneracion().getGeneracion())).getFin()) {
+            
                 facadeVinculacion.setEntityClass(NivelOcupacionEgresadosGeneracion.class);
                 NivelOcupacionEgresadosGeneracion nivelOEGEncontrado = getNivelOcupacionEgresadosGeneracion(nivelOcupacionEG.getNivelOcupacionEgresadosGeneracion());
                 Boolean registroAlmacenado = false;
@@ -852,10 +851,12 @@ public class ServicioEgresados implements EjbEgresados {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     nivelOcupacionEG.getNivelOcupacionEgresadosGeneracion().setRegistro(registro.getRegistro());
                     facadeVinculacion.create(nivelOcupacionEG.getNivelOcupacionEgresadosGeneracion());
+                    
+                    
                 }
                 facadeVinculacion.flush();
-            }
-
+            
+            
         });
         Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
@@ -865,7 +866,7 @@ public class ServicioEgresados implements EjbEgresados {
 //        Nivel Ingresos
         List<String> listaCondicional = new ArrayList<>();
         listaNivelIngresoEgresadosG.forEach((nivelIngresoEG) -> {
-            if (ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio() == (facadeVinculacion.getEntityManager().find(Generaciones.class, nivelIngresoEG.getNivelIngresosEgresadosGeneracion().getGeneracion())).getFin()) {
+            
                 facadeVinculacion.setEntityClass(NivelIngresosEgresadosGeneracion.class);
                 NivelIngresosEgresadosGeneracion nivelIEGEncontrado = getNivelIngresosEgresadosGeneracion(nivelIngresoEG.getNivelIngresosEgresadosGeneracion());
                 Boolean registroAlmacenado = false;
@@ -886,7 +887,7 @@ public class ServicioEgresados implements EjbEgresados {
                     facadeVinculacion.create(nivelIngresoEG.getNivelIngresosEgresadosGeneracion());
                 }
                 facadeVinculacion.flush();
-            }
+            
         });
         Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
     }
@@ -909,11 +910,12 @@ public class ServicioEgresados implements EjbEgresados {
 
     @Override
     public ActividadEconomicaEgresadoGeneracion getActividadEconomicaEgresadoGeneracion(ActividadEconomicaEgresadoGeneracion actividadEconomicaEgresadoGeneracion) {
-        TypedQuery<ActividadEconomicaEgresadoGeneracion> query = facadeVinculacion.getEntityManager().createQuery("SELECT a FROM ActividadEconomicaEgresadoGeneracion a JOIN a.sector s WHERE a.fecha = :fecha AND a.generacion = :generacion AND a.programaEducativo = :programaEducativo AND s.sector = :sector", ActividadEconomicaEgresadoGeneracion.class);
+        TypedQuery<ActividadEconomicaEgresadoGeneracion> query = facadeVinculacion.getEntityManager().createQuery("SELECT a FROM ActividadEconomicaEgresadoGeneracion a JOIN a.sector s JOIN a.giro g WHERE a.fecha = :fecha AND a.generacion = :generacion AND a.programaEducativo = :programaEducativo AND s.sector = :sector AND g.giro = :giro", ActividadEconomicaEgresadoGeneracion.class);
         query.setParameter("fecha", actividadEconomicaEgresadoGeneracion.getFecha());
         query.setParameter("generacion", actividadEconomicaEgresadoGeneracion.getGeneracion());
         query.setParameter("programaEducativo", actividadEconomicaEgresadoGeneracion.getProgramaEducativo());
         query.setParameter("sector", actividadEconomicaEgresadoGeneracion.getSector().getSector());
+        query.setParameter("giro", actividadEconomicaEgresadoGeneracion.getGiro().getGiro());
         try {
             actividadEconomicaEgresadoGeneracion = query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
