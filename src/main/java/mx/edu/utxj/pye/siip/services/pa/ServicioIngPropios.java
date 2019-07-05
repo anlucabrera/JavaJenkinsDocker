@@ -231,10 +231,11 @@ public class ServicioIngPropios implements EjbIngPropios{
 
     @Override
     public IngresosPropiosCaptados getRegistroIngresosPropiosCaptados(IngresosPropiosCaptados ingresosPropiosCaptados) {
-        TypedQuery<IngresosPropiosCaptados> query = f.getEntityManager().createQuery("SELECT i FROM IngresosPropiosCaptados i WHERE i.periodoEscolar = :periodoEscolar AND i.conceptoIngresosCaptados = :conceptoIngresosCaptados AND i.fechaIngreso = :fechaIngreso", IngresosPropiosCaptados.class);
+        TypedQuery<IngresosPropiosCaptados> query = f.getEntityManager().createQuery("SELECT i FROM IngresosPropiosCaptados i WHERE i.periodoEscolar = :periodoEscolar AND i.conceptoIngresosCaptados = :conceptoIngresosCaptados AND i.fechaIngreso = :fechaIngreso AND i.descripcion = :descripcion", IngresosPropiosCaptados.class);
         query.setParameter("periodoEscolar", ingresosPropiosCaptados.getPeriodoEscolar());
         query.setParameter("conceptoIngresosCaptados", ingresosPropiosCaptados.getConceptoIngresosCaptados());
         query.setParameter("fechaIngreso", ingresosPropiosCaptados.getFechaIngreso());
+        query.setParameter("descripcion", ingresosPropiosCaptados.getDescripcion());
         try {
             ingresosPropiosCaptados = query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
