@@ -44,7 +44,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaEvaluacionDocentesResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -347,10 +347,10 @@ try {
     public void obtenerresultadosTutores() {
         listaTutoresPromedios = new ArrayList<>();
         Evaluaciones evaluacionObtenida = eJBAdministracionEncuestas.getEvaluaciones(periodoSeleccionado, tipoEvaluacion);
-        Comparador<EvaluacionesTutoresResultados> comparador = new ComparadorEvaluacionTutor();
-        Calculable<EvaluacionesTutoresResultados> obtener = new PromediarTutor();
+        Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
+        Calculable<EvaluacionTutoresResultados> obtener = new PromediarTutor();
         ListaSubordinadosAdmin.forEach(subordinado -> {
-            List<EvaluacionesTutoresResultados> l = eJBAdministracionEncuestas.getEvaluacionesTutoresResultados(evaluacionObtenida, subordinado.getClave());
+            List<EvaluacionTutoresResultados> l = eJBAdministracionEncuestas.getEvaluacionesTutoresResultados(evaluacionObtenida, subordinado.getClave());
             if (l != null) {
                 promedioGeneral = 0d;
                 l.stream().filter(evaluacion -> comparador.isCompleto(evaluacion)).collect(Collectors.toList()).forEach(x -> {

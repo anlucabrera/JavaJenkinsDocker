@@ -1,15 +1,15 @@
 package mx.edu.utxj.pye.sgi.funcional;
 
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
 
 /**
  *
  * @author UTXJ
  */
-public class ComparadorEvaluacionTutor implements Comparador<EvaluacionesTutoresResultados>{
+public class ComparadorEvaluacionTutor implements Comparador<EvaluacionTutoresResultados>{
 
     @Override
-    public boolean isCompleto(EvaluacionesTutoresResultados resultado) {
+    public boolean isCompleto(EvaluacionTutoresResultados resultado) {
         if(resultado.getR1() == null 
                 || resultado.getR2() == null
                 || resultado.getR3() == null
@@ -18,7 +18,7 @@ public class ComparadorEvaluacionTutor implements Comparador<EvaluacionesTutores
                 || resultado.getR6() == null
                 || resultado.getR7() == null
                 || resultado.getR8() == null
-                || resultado.getR9() == null){
+                || resultado.getR9() == null || resultado.getR9().trim().isEmpty()){
             return false;
         }
         

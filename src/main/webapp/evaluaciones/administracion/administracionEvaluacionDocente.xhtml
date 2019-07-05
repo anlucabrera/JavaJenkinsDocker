@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:ice="http://www.icefaces.org/icefaces/core"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+    <ui:define name="head-end">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a7d0  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento de avance
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <div id="main-buttons"  >
+            <p:toolbar id="tb">
+                <f:facet name="left">
+                    <p:outputLabel value="Administracion de evaluación: Docente por materia" />
+                </f:facet>
+                <f:facet name="right"></f:facet>
+            </p:toolbar>
+            <p:sticky target="tb" />
+        </div>
+        <p:tabView id="tabView">
+            <c:if test="#{administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.esSecretario}">
+                <p:tab id="completos" title="Estudiantes con evaluación completa">
+                    <h:form id="fr1">
+                        <p:outputPanel>
+                            <p:dataTable id="tblEvDocenteTer" value="#{administracionEvaluacionDocente.listCompletos}"
+                                         paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         var="evaluacionCompleta" filteredValue="#{administracionEvaluacionDocente.listfilter}">
+
+                                <f:facet name="{Exporters}">
+                                    <p:commandLink  ajax="false">
+                                        <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                        <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvDocenteTer"
+                                                        fileName="Reporte_evaluacion_completa"/>
+                                    </p:commandLink>
+
+                                </f:facet>
+                                <p:column headerText="Matricula" filterBy="#{evaluacionCompleta.matricula}" sortBy="#{evaluacionCompleta.matricula}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionCompleta.matricula}" />
+                                </p:column>
+                                <p:column headerText="Nombre" filterBy="#{evaluacionCompleta.nombreCEstudiante} " sortBy="#{evaluacionCompleta.nombreCEstudiante} " filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionCompleta.nombreCEstudiante}" />
+                                </p:column>
+                                <p:column headerText="Grado" filterBy="#{evaluacionCompleta.grado}" sortBy="#{evaluacionCompleta.grado}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionCompleta.grado}" />
+                                </p:column>
+                                <p:column headerText="Carrera" filterBy="#{evaluacionCompleta.nombrePE}" sortBy="#{evaluacionCompleta.nombrePE}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionCompleta.nombrePE}" />
+                                </p:column>
+                                <p:column headerText="Grupo" filterBy="#{evaluacionCompleta.grupo}" sortBy="#{evaluacionCompleta.grupo}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionCompleta.grupo}" />
+                                </p:column>
+                                <c:if test="#{administracionEncuesta.dto.director or administracionEncuesta.dto.esSecretario}">
+                                    <p:column headerText="Tutor" filterBy="#{evaluacionCompleta.nombreTutor}" sortBy="#{evaluacionCompleta.nombreTutor}" filterMatchMode="contains">
+                                        <h:outputText value="#{evaluacionCompleta.nombreTutor}" />
+                                    </p:column>
+                                </c:if>
+                                <f:facet name="footer">
+                                    <c:if test="#{administracionEncuesta.dto.esSecretario}">
+                                        <p:commandButton actionListener="#{administracionEvaluacionDocente.seguimientoSE()}" value="Actualizar información" icon="fa fa-refresh"
+                                                         class="btn btn-primary" update="tabView:fr1:tblEvDocenteTer tabView:fr2:tblEvDocenteNoTer tabView:fr3:tblEvDocenteNoAcceso tabView:fr4:avanceEvaDocSA tabView:fr45:avanceEvaDocente" process="@form"/>
+                                    </c:if>
+                                    <c:if test="#{administracionEncuesta.dto.director}">
+                                        <p:commandButton actionListener="#{administracionEvaluacionDocente.seguimientoDirector}" value="Actualizar información" icon="fa fa-refresh"
+                                                         class="btn btn-primary" update="tabView:fr1:tblEvDocenteTer tabView:fr2:tblEvDocenteNoTer tabView:fr3:tblEvDocenteNoAcceso tabView:fr45:avanceEvaDocente" process="@form"/>
+                                    </c:if>
+                                    <c:if test="#{administracionEncuesta.dto.tutor}">
+                                        <p:commandButton actionListener="#{administracionEvaluacionDocente.seguimientoTutor()}" value="Actualizar información" icon="fa fa-refresh"
+                                                         class="btn btn-primary" update="tabView:fr1:tblEvDocenteTer tabView:fr2:tblEvDocenteNoTer tabView:fr3:tblEvDocenteNoAcceso tabView:fr45:avanceEvaDocente"   process="@form"/>
+                                    </c:if>
+                                </f:facet>
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </h:form>
+                </p:tab>
+
+                <p:tab id="noCompletos" title="Estudiantes con evaluación no terminada">
+                    <h:form id="fr2">
+                        <p:outputPanel>
+                            <p:dataTable id="tblEvDocenteNoTer" value="#{administracionEvaluacionDocente.listIncompletos}"
+                                         paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         var="evaluacionDocNoTer" filteredValue="#{administracionEvaluacionDocente.listfilter}">
+
+                                <f:facet name="{Exporters}">
+                                    <p:commandLink  ajax="false">
+                                        <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                        <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvDocenteNoTer"
+                                                        fileName="Reporte_evaluacion_imcompletas"/>
+                                    </p:commandLink>
+
+                                </f:facet>
+
+                                <p:column headerText="Matricula" filterBy="#{evaluacionDocNoTer.matricula}" sortBy="#{evaluacionDocNoTer.matricula}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionDocNoTer.matricula}" />
+                                </p:column>
+                                <p:column headerText="Nombre" filterBy="#{evaluacionDocNoTer.nombreCEstudiante}" sortBy="#{evaluacionDocNoTer.nombreCEstudiante}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionDocNoTer.nombreCEstudiante}" />
+                                </p:column>
+                                <p:column headerText="Grado" filterBy="#{evaluacionDocNoTer.grado}" sortBy="#{evaluacionDocNoTer.grado}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionDocNoTer.grado}" />
+                                </p:column>
+                                <p:column headerText="Carrera" filterBy="#{evaluacionDocNoTer.nombrePE}" sortBy="#{evaluacionDocNoTer.nombrePE}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionDocNoTer.nombrePE}" />
+                                </p:column>
+                                <p:column headerText="Grupo" filterBy="#{evaluacionDocNoTer.grupo}" sortBy="#{evaluacionDocNoTer.grupo}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionDocNoTer.grupo}" />
+                                </p:column>
+                                <c:if test="#{administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.director}">
+                                    <p:column headerText="Tutor" filterBy="#{evaluacionDocNoTer.nombreTutor}" sortBy="#{evaluacionDocNoTer.nombreTutor}" filterMatchMode="contains">
+                                        <h:outputText value="#{evaluacionDocNoTer.nombreTutor}" />
+                                    </p:column>
+                                </c:if>
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </h:form>
+                </p:tab>
+
+                <p:tab id="noAcceso" title="Estudiantes que no accesaron al sistema">
+                    <h:form id="fr3">
+                        <p:outputPanel>
+                            <p:dataTable id="tblEvDocenteNoAcceso" value="#{administracionEvaluacionDocente.listNoAcceso}"
+                                         paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         var="evaluacionDocNoAcceso" filteredValue="#{administracionEvaluacionDocente.listfilter}">
+
+                                <f:facet name="{Exporters}">
+                                    <p:commandLink  ajax="false">
+                                        <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                        <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvDocenteNoAcceso"
+                                                        fileName="Reporte_evaluacion_noacceso"/>
+                                    </p:commandLink>
+
+                                </f:facet>
+
+                                <p:column headerText="Matricula" filterBy="#{evaluacionDocNoAcceso.matricula}" sortBy="#{evaluacionDocNoAcceso.matricula}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionDocNoAcceso.matricula}" />
+                                </p:column>
+                                <p:column headerText="Nombre" filterBy="#{evaluacionDocNoAcceso.nombreCEstudiante}" sortBy="#{evaluacionDocNoAcceso.nombreCEstudiante}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionDocNoAcceso.nombreCEstudiante}" />
+                                </p:column>
+                                <p:column headerText="Grado" filterBy="#{evaluacionDocNoAcceso.grado}" sortBy="#{evaluacionDocNoAcceso.grado}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionDocNoAcceso.grado}" />
+                                </p:column>
+                                <p:column headerText="Carrera" filterBy="#{evaluacionDocNoAcceso.nombrePE}" sortBy="#{evaluacionDocNoAcceso.nombrePE}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionDocNoAcceso.nombrePE}" />
+                                </p:column>
+                                <p:column headerText="Grupo" filterBy="#{evaluacionDocNoAcceso.grupo}" sortBy="#{evaluacionDocNoAcceso.grupo}" filterMatchMode="contains">
+                                    <h:outputText value="#{evaluacionDocNoAcceso.grupo}" />
+                                </p:column>
+                                <c:if test="#{administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.director}">
+                                    <p:column headerText="Tutor" filterBy="#{evaluacionDocNoAcceso.nombreTutor}" sortBy="#{evaluacionDocNoAcceso.nombreTutor}" filterMatchMode="contains">
+                                        <h:outputText value="#{evaluacionDocNoAcceso.nombreTutor}" />
+                                    </p:column>
+                                </c:if>
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </h:form>
+
+
+                </p:tab>
+
+
+
+            </c:if>
+
+            <c:if test="#{administracionEncuesta.dto.tutor or administracionEncuesta.dto.director or administracionEncuesta.dto.esSecretario}">
+                <p:tab title="Porcentaje de avance">
+                    <h:form id="fr45">
+                        <p:outputPanel>
+                            <p:dataTable id="avanceEvaDocente" lazy="false" value="#{administracionEvaluacionDocente.listAvance}" var="datosAvanEvDoc" paginatorPosition="top" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" rows="10"
+                                         rowsPerPageTemplate="10,20,30,40,50" emptyMessage="No se encontraron registros" >
+                                <p:column headerText="Total estudiantes">
+                                    <h:outputText value="#{datosAvanEvDoc.totalEstudiantes}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes con evaluación completa">
+                                    <h:outputText value="#{datosAvanEvDoc.totalCompletos}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes con evaluación incompleta">
+                                    <h:outputText value="#{datosAvanEvDoc.totalIncompletos}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes que no accedieron al sistema">
+                                    <h:outputText value="#{datosAvanEvDoc.totalNoIngreso}"/>
+                                </p:column>
+                                <p:column headerText="Porcentaje de avance: Meta 100%" exportable="false">
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                             aria-valuenow="#{datosAvanEvDoc.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                             style="background-color: #00a65a; width:#{datosAvanEvDoc.porcentaje}%">
+                                                        <span class="progress-completed">
+                                                        <h:outputText value="#{datosAvanEvDoc.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                            <f:convertNumber type="number" pattern="0.00"/>
+                                                        </h:outputText>
+                                                    </span>
+                                        </div>
+
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
+
+                    </h:form>
+                </p:tab>
+            </c:if>
+
+            <c:if test="#{administracionEncuesta.dto.esSecretario}">
+                <p:tab title="Porcentaje de avance por Programa Educativo">
+                    <h:form id="fr4">
+                        <p:outputPanel>
+                            <p:dataTable id="avanceEvaDocSA" lazy="false" value="#{administracionEvaluacionDocente.listAvancePE}" var="datosAvance"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                         rowsPerPageTemplate="10,20,30,40,50" paginator="true" rows="10"
+                                         emptyMessage="No se encontraron registros"  filteredValue="#{administracionEvaluacionDocente.listAvanceFilter}">
+                                <f:facet name="footer">
+                                    <p:commandButton id="actualizar" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary"
+                                                     actionListener="#{administracionEvaluacionDocente.seguimientoSE()}" update="@form" process="@form"/>
+                                </f:facet>
+                                <p:column headerText="Programa Educativo" filterBy="#{datosAvance.pe}" sortBy="#{datosAvance.pe}" filterMatchMode="contains">
+                                    <h:outputText value="#{datosAvance.pe}" />
+                                </p:column>
+                                <p:column headerText="Total matrícula">
+                                    <h:outputText value="#{datosAvance.totalEstudiantes}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes con evaluación completa">
+                                    <h:outputText value="#{datosAvance.totalCompletos}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes con evaluación incompleta">
+                                    <h:outputText value="#{datosAvance.totalIncompletos}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes que no han ingresado al sistema">
+                                    <h:outputText value="#{datosAvance.totalNoIngreso}"/>
+                                </p:column>
+                                <p:column headerText="Porcentaje de avance: Meta 100%" exportable="false">
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                             aria-valuenow="#{datosAvance.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                             style="background-color: #00a65a; width:#{datosAvance.porcentaje}%">
+                                                        <span class="progress-completed">
+                                                        <h:outputText value="#{datosAvance.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                            <f:convertNumber type="number" pattern="0.00"/>
+                                                        </h:outputText>
+                                                    </span>
+                                        </div>
+
+                                    </div>
+                                </p:column>
+
+
+                            </p:dataTable>
+                        </p:outputPanel>
+
+                    </h:form>
+                </p:tab>
+            </c:if>
+
+            <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
+                <p:tab title="Información no disponible">
+                    <p:outputPanel>
+                        <div class="row">
+                            <center><span><i style="align-content: center" class="fa fa-exclamation-triangle fa-5x"></i></span></center>
+                        </div>
+                        <div class="row">
+                            <center><h2>Información no disponible</h2></center>
+                        </div>
+                    </p:outputPanel>
+                </p:tab>
+            </c:if>
+        </p:tabView>
+    </ui:define>
+</ui:composition>

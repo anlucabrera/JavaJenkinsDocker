@@ -23,14 +23,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author HOME
+ * @author Planeacion
  */
 @Entity
 @Table(name = "personal", catalog = "capital_humano", schema = "")
@@ -61,85 +59,60 @@ public class Personal implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "clave")
     private Integer clave;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 250)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "fecha_ingreso")
     @Temporal(TemporalType.DATE)
     private Date fechaIngreso;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "status")
     private Character status;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "area_operativa")
     private short areaOperativa;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "area_superior")
     private short areaSuperior;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "area_oficial")
     private short areaOficial;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 150)
     @Column(name = "perfil_profesional")
     private String perfilProfesional;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "experiencia_docente")
     private short experienciaDocente;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "experiencia_laboral")
     private short experienciaLaboral;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "fecha_nacimiento")
     @Temporal(TemporalType.DATE)
     private Date fechaNacimiento;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
     @Column(name = "estado")
     private String estado;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
     @Column(name = "municipio")
     private String municipio;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 150)
     @Column(name = "localidad")
     private String localidad;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
     @Column(name = "pais")
     private String pais;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "sni")
     private boolean sni;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "perfil_prodep")
     private boolean perfilProdep;
-    @Size(max = 200)
     @Column(name = "correo_electronico")
     private String correoElectronico;
-    @Size(max = 200)
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
     @ManyToMany(mappedBy = "personalList")
@@ -152,9 +125,14 @@ public class Personal implements Serializable {
     private List<ExperienciasLaborales> experienciasLaboralesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
     private List<FormacionAcademica> formacionAcademicaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<EvaluacionTutoresResultados> evaluacionTutoresResultadosList;
     @JoinColumn(name = "categoria_360", referencedColumnName = "categoria")
     @ManyToOne
     private PersonalCategorias categoria360;
+    @JoinColumn(name = "categoria_especifica", referencedColumnName = "categoriaEspecifica")
+    @ManyToOne
+    private Categoriasespecificasfunciones categoriaEspecifica;
     @JoinColumn(name = "actividad", referencedColumnName = "actividad")
     @ManyToOne(optional = false)
     private Actividades actividad;
@@ -170,9 +148,6 @@ public class Personal implements Serializable {
     @JoinColumn(name = "grado", referencedColumnName = "grado")
     @ManyToOne(optional = false)
     private Grados grado;
-    @JoinColumn(name = "categoria_especifica", referencedColumnName = "categoriaEspecifica")
-    @ManyToOne
-    private Categoriasespecificasfunciones categoriaEspecifica;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
     private List<Articulosp> articulospList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
@@ -239,8 +214,6 @@ public class Personal implements Serializable {
     private List<PlaneacionesDetalles> planeacionesDetallesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
     private List<Capacitacionespersonal> capacitacionespersonalList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
-    private List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
     private List<Evaluaciones360Resultados> evaluaciones360ResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal1")
@@ -474,12 +447,29 @@ public class Personal implements Serializable {
         this.formacionAcademicaList = formacionAcademicaList;
     }
 
+    @XmlTransient
+    public List<EvaluacionTutoresResultados> getEvaluacionTutoresResultadosList() {
+        return evaluacionTutoresResultadosList;
+    }
+
+    public void setEvaluacionTutoresResultadosList(List<EvaluacionTutoresResultados> evaluacionTutoresResultadosList) {
+        this.evaluacionTutoresResultadosList = evaluacionTutoresResultadosList;
+    }
+
     public PersonalCategorias getCategoria360() {
         return categoria360;
     }
 
     public void setCategoria360(PersonalCategorias categoria360) {
         this.categoria360 = categoria360;
+    }
+
+    public Categoriasespecificasfunciones getCategoriaEspecifica() {
+        return categoriaEspecifica;
+    }
+
+    public void setCategoriaEspecifica(Categoriasespecificasfunciones categoriaEspecifica) {
+        this.categoriaEspecifica = categoriaEspecifica;
     }
 
     public Actividades getActividad() {
@@ -520,14 +510,6 @@ public class Personal implements Serializable {
 
     public void setGrado(Grados grado) {
         this.grado = grado;
-    }
-
-    public Categoriasespecificasfunciones getCategoriaEspecifica() {
-        return categoriaEspecifica;
-    }
-
-    public void setCategoriaEspecifica(Categoriasespecificasfunciones categoriaEspecifica) {
-        this.categoriaEspecifica = categoriaEspecifica;
     }
 
     @XmlTransient
@@ -824,15 +806,6 @@ public class Personal implements Serializable {
 
     public void setCapacitacionespersonalList(List<Capacitacionespersonal> capacitacionespersonalList) {
         this.capacitacionespersonalList = capacitacionespersonalList;
-    }
-
-    @XmlTransient
-    public List<EvaluacionesTutoresResultados> getEvaluacionesTutoresResultadosList() {
-        return evaluacionesTutoresResultadosList;
-    }
-
-    public void setEvaluacionesTutoresResultadosList(List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList) {
-        this.evaluacionesTutoresResultadosList = evaluacionesTutoresResultadosList;
     }
 
     @XmlTransient

@@ -9,6 +9,7 @@ import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import edu.mx.utxj.pye.seut.util.preguntas.Abierta;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -19,6 +20,7 @@ import javax.persistence.TypedQuery;
 
 import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.TipoCuestionario;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
@@ -109,9 +111,63 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
     }
 
     @Override
+    public ResultadoEJB<Evaluaciones> getEvDocenteActiva() {
+        try{
+            Evaluaciones evaluacion = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc",Evaluaciones.class)
+                    .setParameter("tipo","Docente materia")
+                    .setParameter("fecha",new Date())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+                    ;
+            if(evaluacion==null){return ResultadoEJB.crearErroneo(2,evaluacion,"No encontro la evaluacion");}
+            else{return ResultadoEJB.crearCorrecto(evaluacion,"Se encontro la evaluación");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la evaluacion activa(EJBEvaluacionDocenteMteria, getEvDocenteActiva)", e, null);
+        }
+    }
+
+    @Override
+    public ResultadoEJB<Evaluaciones> getUltimaEvDocenteActiva() {
+        try{
+            //TODO:Obtiene la ultima evalaucion de docente materia activa
+            Evaluaciones evaluacion = f.getEntityManager().createQuery("select e from Evaluaciones e where e.tipo=:tipo order by e.evaluacion desc ",Evaluaciones.class)
+                    .setParameter("tipo", "Docente materia")
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+                    ;
+            if(evaluacion==null){return ResultadoEJB.crearErroneo(2,evaluacion,"No se encontro ninguna evaluacion");}
+            else{return ResultadoEJB.crearCorrecto(evaluacion,"Evaluacion encontrada"); }
+        }
+        catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la última evaluacion activa(EJBEvaluacionDocenteMteria, getUltimaEvDocenteActiva)", e, null);
+        }
+
+    }
+
+    @Override
     public PeriodosEscolares getPeriodo(Evaluaciones evaluacion) {
         f.setEntityClass(PeriodosEscolares.class);
         return (PeriodosEscolares) f.find(evaluacion.getPeriodo());
+    }
+
+    @Override
+    public ResultadoEJB<PeriodosEscolares> getPeriodoEvaluacion(Evaluaciones evaluacion) {
+        try{
+            //TODO:Busca el periodo segun el periodo de la evaluacion
+            PeriodosEscolares periodoEv = f.getEntityManager().createQuery("select p from PeriodosEscolares p where p.periodo=:periodo",PeriodosEscolares.class)
+                    .setParameter("periodo",evaluacion.getPeriodo())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+                    ;
+            if(periodoEv==null){return ResultadoEJB.crearErroneo(2,periodoEv,"No se encontro el periodo");}
+            else {return ResultadoEJB.crearCorrecto(periodoEv,"Se encontrol el periodo de la evaluación");}
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el periodo de la evalaucion(EJBEvaluacionDocenteMteria, getUltimaEvDocenteActiva)", e, null);
+        }
     }
 
     @Override
@@ -125,6 +181,20 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
             return new ArrayList<>();
         } else {
             return l;
+        }
+    }
+
+    @Override
+    public ResultadoEJB<List<VistaEvaluacionDocenteMateriaPye>> getDocenteMateriabyMatricula(String matricula) {
+        try {
+            //TODO: La consulta en la vista por matricula
+            List<VistaEvaluacionDocenteMateriaPye> materiasEstudiante = f2.getEntityManager().createQuery("select v from VistaEvaluacionDocenteMateriaPye v where v.matricula=:matricula",VistaEvaluacionDocenteMateriaPye.class)
+                    .setParameter("matricula",matricula)
+                    .getResultList();
+            if(materiasEstudiante.isEmpty() || materiasEstudiante ==null){return ResultadoEJB.crearErroneo(2,materiasEstudiante,"Lista de materias vacía");}
+            else{return ResultadoEJB.crearCorrecto(materiasEstudiante,"Se encontraron las materis del estudiante");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias por estudiante (EJBEvaluacionDocenteMteria, getDocenteMateriabuMatricula)", e, null);
         }
     }
 
@@ -484,6 +554,23 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
             return null;
         } else {
             return salida;
+        }
+    }
+
+    @Override
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> getListResultadosDocenteMateriabyMatricula(Evaluaciones evaluacion, int matricula) {
+        try{
+            //TODO: Obtiene la los resultados completos por evaluacion y por la matricula
+            List<EvaluacionDocentesMateriaResultados> listaResultados= f.getEntityManager().createQuery("select e from EvaluacionDocentesMateriaResultados e where e.evaluacionDocentesMateriaResultadosPK.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultadosPK.evaluador=:matricula and e.completo=true",EvaluacionDocentesMateriaResultados.class)
+                    .setParameter("evaluacion",evaluacion.getEvaluacion())
+                    .setParameter("matricula",matricula)
+                    .getResultList()
+                    ;
+            if(listaResultados.isEmpty() || listaResultados==null){return ResultadoEJB.crearErroneo(2,listaResultados,"No se encontraron resultados");}
+            else{ return ResultadoEJB.crearCorrecto(listaResultados,"Lista de resultados encontrada");}
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de resultados por estudiante (EJBEvaluacionDocenteMteria, getListaReusltadosDocenteMateriabyMatricula)", e, null);
         }
     }
 }

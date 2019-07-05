@@ -31,7 +31,7 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionDocenteMateriaPye;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
 import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacionTutor2;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
@@ -158,14 +158,14 @@ public class AdministrativoEvaluacion implements Serializable {
             listaEstudiantes.stream().forEach(e -> {
            //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() el alumno e es : " + e);
 //            List<VistaEvaluacionDocenteMateriaPye> listaDatosEvaluacion = eJBEvaluacionDocenteMateria.getDocenteMAteria(e.getMatricula());
-                EvaluacionesTutoresResultados resultado;
+                EvaluacionTutoresResultados resultado;
                 Evaluaciones eva;
                 eva = ejbTutor.evaluacionActiva();
 //            Integer matricula = e.getMatricula();
                 resultado = ejbTutor.getSoloResultados(eva, Integer.parseInt(e.getMatricula()));
            //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() los resultados de "+e.getMatricula()+" y son " + resultado);
                 if (resultado != null) {
-                    Comparador<EvaluacionesTutoresResultados> comparador = new ComparadorEvaluacionTutor();
+                    Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
                     boolean finalizado = comparador.isCompleto(resultado);
            //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadoTutor() finalizo? : " +finalizado);
                     if (!finalizado) {
@@ -209,14 +209,14 @@ public class AdministrativoEvaluacion implements Serializable {
         listadoEstudiantesPeriodoActual = eJBAdministracionEncuestas.getEstudiantesGeneral();
         if (!listadoEstudiantesPeriodoActual.isEmpty() || listadoEstudiantesPeriodoActual == null) {
             listadoEstudiantesPeriodoActual.forEach(e -> {
-                EvaluacionesTutoresResultados resultado;
+                EvaluacionTutoresResultados resultado;
                 Evaluaciones eva;
                 eva = ejbTutor.evaluacionActiva();
                 VistaEvaluacionesTutores  estuduianteTutorado;
                 estuduianteTutorado = ejbTutor.getEstudianteTutor(eJBAdministracionEncuestas.getPeriodoActual().getPeriodo(), e.getMatricula());
                 resultado = ejbTutor.getSoloResultados(eva, Integer.parseInt(e.getMatricula()));
                 if (resultado != null) {
-                    Comparador<EvaluacionesTutoresResultados> comparador = new ComparadorEvaluacionTutor();
+                    Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
                     boolean finalizado = comparador.isCompleto(resultado);
                     if (!finalizado) {
                         listadoEstudiantesNC.add(eJBAdministracionEncuestas.findAllByMatricula(e.getMatricula()).get(0));
@@ -239,11 +239,11 @@ public class AdministrativoEvaluacion implements Serializable {
            //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadosTutoresPs() matricula que entra " + e.getAlumnoPK().getMatricula());
            //System.out.println("mx.edu.utxj.pye.sgi.controlador.AdministrativoEvaluacion.resultadosTutoresPs() la evaluacion es : " + ejbTutor.evaluacionActiva().getEvaluacion());
             Integer matricula = e.getAlumnoPK().getMatricula();
-            EvaluacionesTutoresResultados resultado = ejbTutor.getSoloResultados(ejbTutor.evaluacionActiva(), matricula);
+            EvaluacionTutoresResultados resultado = ejbTutor.getSoloResultados(ejbTutor.evaluacionActiva(), matricula);
             Integer clave =  e.getPe();
             AreasUniversidad carrera = eJBAdministracionEncuestas.getProgramaPorClave(Short.parseShort(clave.toString()));
             if (resultado != null) {
-                    Comparador<EvaluacionesTutoresResultados> comparador = new ComparadorEvaluacionTutor();
+                    Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
                     boolean finalizado = comparador.isCompleto(resultado);
                     if (!finalizado) {
                         listadoEstudiantesNCSES.add( new ListaEstudiantesDtoTutor(matricula, e.getNombre()+" "+e.getApellidoPaterno()+" "+e.getApellidoMaterno(), e.getCuatrimestre(), e.getGrupo(), carrera.getSiglas()));

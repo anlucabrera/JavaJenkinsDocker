@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
+import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 
@@ -27,7 +28,7 @@ import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
  *
  * @author Planeación
  */
-@Stateless
+@Stateful
 public class EjbAdministracionEncuesta {
 
     @EJB Facade f;
@@ -59,6 +60,12 @@ public class EjbAdministracionEncuesta {
         q.setParameter("areaSuperior", areaSup);
         q.setParameter("actividad", actividad);
         q.setParameter("categoria", catOp);
+        q.setParameter("clave", clave);
+        return q.getResultList();
+    }
+    public List<Personal> esPsicopedagogia(Short areaOp, Integer clave){
+        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaOperativa= :areaOp AND p.clave = :clave", Personal.class);
+        q.setParameter("areaOp", areaOp);
         q.setParameter("clave", clave);
         return q.getResultList();
     }
