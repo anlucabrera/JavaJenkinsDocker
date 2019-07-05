@@ -22,21 +22,28 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
  */
 public final class DtoSesionPsicopedagogia {
     
+    /************************************* Agregación de un nuevo registro ************************************************/
+    @Getter @Setter private String mensaje;
+    @Getter @Setter private Boolean nuevoRegistro;
+    @Getter @Setter private Boolean habilitaProgramaEducativo;
+    
+    /************************** Evidencias *************************************/
+    @Getter private Boolean tieneEvidencia, forzarAperturaDialogo;
+    
+    /************************** Alineación POA  *************************************/
+    
+    /******************** Consulta de información *********************/
+    
     @Getter @Setter private List<Short> registros;
     @Getter @Setter private RegistrosTipo registroTipo;
     @Getter @Setter private EjesRegistro ejesRegistro;
     
     @Getter @Setter private AreasUniversidad area;
+    @Getter @Setter private AreasUniversidad programaEducativo;
     
     @Getter @Setter private List<AreasConflicto> lstAreasConflicto;
     @Getter @Setter private List<OtrosTiposSesionesPsicopedagogia> lstOtrosTiposSesionesPsicopedagogia;
     @Getter @Setter private List<AreasUniversidad> lstProgramasEducativos;
-    
-    @Getter @Setter private List<AreasUniversidad> lstProgramasEducativosVacia;
-    
-    @Getter @Setter private AreasConflicto areaConflictoSeleccionado;
-    @Getter @Setter private OtrosTiposSesionesPsicopedagogia otroTipoSesionPsicopedagogiaSeleccionado;
-    @Getter @Setter private AreasUniversidad programaEducativoSeleccionado;
     
     @Getter @Setter private DTOSesionesPsicopedagogia dtoSesionPsicopedagogia;
     @Getter @Setter private List<DTOSesionesPsicopedagogia> lstSesionesPsicopedagogia;
@@ -46,5 +53,12 @@ public final class DtoSesionPsicopedagogia {
         setRegistroTipo(new RegistrosTipo((short)52));
         setEjesRegistro(new EjesRegistro(3));
         setRegistros(new ArrayList<>(Arrays.asList(registroTipo.getRegistroTipo())));
+        forzarAperturaDialogo = false;
+        nuevoRegistro = false;
     }
+    
+    public void setForzarAperturaDialogo(Boolean forzarAperturaDialogo){
+        this.forzarAperturaDialogo = forzarAperturaDialogo;
+    }
+    
 }

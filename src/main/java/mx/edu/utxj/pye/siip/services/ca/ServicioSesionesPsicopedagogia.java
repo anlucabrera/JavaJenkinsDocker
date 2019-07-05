@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.services.ca;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -13,6 +14,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.pye2.AreasConflicto;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -64,37 +66,58 @@ public class ServicioSesionesPsicopedagogia implements EjbSesionesPsicopedagogia
     }
 
     @Override
-    public SesionIndividualMensualPsicopedogia buscaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia) {
-        SesionIndividualMensualPsicopedogia simpEncontrado = new SesionIndividualMensualPsicopedogia();
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia) {
+        List<SesionIndividualMensualPsicopedogia> listaSesionIndividual = new ArrayList<>();
         try {
-//            Busca si contiene otro tipo sesión
-            if(simPsicopedagogia.getProgramaEducativo() != null){
-                simpEncontrado = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion = :otroTipoSesion AND s.programaEducativo = :programaEducativo AND s.mes = :mes",SesionIndividualMensualPsicopedogia.class)
-                        .setParameter("areaConflicto", simPsicopedagogia.getAreaConflicto().getAreaConflicto())
-                        .setParameter("otroTipoSesion", simPsicopedagogia.getOtroTipoSesion().getOtroTipoSesionPsicopedagogia())
-                        .setParameter("programaEducativo", simPsicopedagogia.getProgramaEducativo())
-                        .setParameter("mes", simPsicopedagogia.getMes())
-                        .getSingleResult();
-                return simpEncontrado;
-            }else{
-                simpEncontrado = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion = :otroTipoSesion AND s.mes = :mes",SesionIndividualMensualPsicopedogia.class)
-                        .setParameter("areaConflicto", simPsicopedagogia.getAreaConflicto().getAreaConflicto())
-                        .setParameter("otroTipoSesion", simPsicopedagogia.getOtroTipoSesion().getOtroTipoSesionPsicopedagogia())
-                        .setParameter("mes", simPsicopedagogia.getMes())
-                        .getSingleResult();
-                return simpEncontrado;
-            }
+            listaSesionIndividual = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion.otroTipoSesionPsicopedagogia = :otroTipoSesion AND s.programaEducativo = :programaEducativo AND s.mes = :mes", SesionIndividualMensualPsicopedogia.class)
+                    .setParameter("areaConflicto", simPsicopedagogia.getAreaConflicto().getAreaConflicto())
+                    .setParameter("otroTipoSesion", simPsicopedagogia.getOtroTipoSesion().getOtroTipoSesionPsicopedagogia())
+                    .setParameter("programaEducativo", simPsicopedagogia.getProgramaEducativo())
+                    .setParameter("mes", simPsicopedagogia.getMes())
+                    .getResultList();
+            listaSesionIndividual.stream().forEach((t) -> {
+                System.err.println(t.getRegistro());
+            });
+            return listaSesionIndividual;
+        } catch (NoResultException e) {
+//            LOG.log(Level.SEVERE, "No se ha encontrado ninguna coincidencia: SesionIndividualMensualPsicopedogia.", e);
+            return Collections.EMPTY_LIST;
         } catch (NonUniqueResultException e) {
-            LOG.log(Level.SEVERE, "Se ha encontrado más de un resultado durante la consulta del registro SesionIndividualMensualPsicopedogia.", e);
-            return simpEncontrado = null;
-        } catch (Exception e){
-            LOG.log(Level.SEVERE, "Ha ocurrido una excepción durante la busqueda del registro SesionIndividualMensualPsicopedogia.", e);
-            return simpEncontrado = null;
+//            LOG.log(Level.SEVERE, "Se ha encontrado más de un resultado durante la consulta del registro SesionIndividualMensualPsicopedogia.", e);
+            return Collections.EMPTY_LIST;
+        } catch (Exception e) {
+//            LOG.log(Level.SEVERE, "Ha ocurrido una excepción durante la busqueda del registro SesionIndividualMensualPsicopedogia.", e);
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
+    @Override
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPE(SesionIndividualMensualPsicopedogia simPsicopedagogia) {
+        List<SesionIndividualMensualPsicopedogia> listaSesionIndividual = new ArrayList<>();
+        try {
+            listaSesionIndividual = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion.otroTipoSesionPsicopedagogia = :otroTipoSesion AND s.mes = :mes AND s.programaEducativo IS NULL", SesionIndividualMensualPsicopedogia.class)
+                    .setParameter("areaConflicto", simPsicopedagogia.getAreaConflicto().getAreaConflicto())
+                    .setParameter("otroTipoSesion", simPsicopedagogia.getOtroTipoSesion().getOtroTipoSesionPsicopedagogia())
+                    .setParameter("mes", simPsicopedagogia.getMes())    
+                    .getResultList();
+            listaSesionIndividual.stream().forEach((t) -> {
+                System.err.println(t.getRegistro());
+            });
+            return listaSesionIndividual;
+        } catch (NoResultException e) {
+//            LOG.log(Level.SEVERE, "No se ha encontrado ninguna coincidencia: SesionIndividualMensualPsicopedogia.", e);
+            return Collections.EMPTY_LIST;
+        } catch (NonUniqueResultException e) {
+//            LOG.log(Level.SEVERE, "Se ha encontrado más de un resultado durante la consulta del registro SesionIndividualMensualPsicopedogia.", e);
+            return Collections.EMPTY_LIST;
+        } catch (Exception e) {
+//            LOG.log(Level.SEVERE, "Ha ocurrido una excepción durante la busqueda del registro SesionIndividualMensualPsicopedogia.", e);
+            return Collections.EMPTY_LIST;
         }
     }
 
     @Override
-    public Boolean guardaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
+    public String guardaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
         Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
         facade.setEntityClass(SesionIndividualMensualPsicopedogia.class);
         if(simPsicopedagogia.getProgramaEducativo() == null){
@@ -106,23 +129,21 @@ public class ServicioSesionesPsicopedagogia implements EjbSesionesPsicopedagogia
         facade.create(simPsicopedagogia);
         facade.flush();
         if(simPsicopedagogia.getRegistro() == null){
-            Messages.addGlobalInfo("<b>El registro se almacenó en la base de datos </b>");
-            return false;
+            return "El registro se almacenó en la base de datos";
         }else{
-            Messages.addGlobalError("<b>Ha ocurrido un error durante la operación </b>");
-            return true;
+            return "Ha ocurrido un error durante la operación";
         }
     }
 
     @Override
-    public Boolean editaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia) {
+    public String editaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia) {
         try {
             facade.setEntityClass(SesionIndividualMensualPsicopedogia.class);
             facade.edit(simPsicopedagogia);
             facade.flush();
-            return true;
+            return "Los datos se han actualizado correctamente";
         } catch (Exception e) {
-            return false;
+            return "Ha ocurrido un error durante la operación, verifique su información";
         }
     }
     
