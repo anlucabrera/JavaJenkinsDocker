@@ -2,6 +2,7 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.ArrayList;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
@@ -103,7 +104,6 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
         String valor = "configuración unidad materia";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
-//        map.entrySet().forEach(System.out::println);
         return mostrar(request, map.containsValue(valor));
     }
     
@@ -139,13 +139,18 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
         if(rol.getCarga() == null) return;
         ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionSugerida(rol.getCarga());
         TareaIntegradora tareaInt = new TareaIntegradora();
-//        DtoDiasPeriodoEscolares dtoFechas = ejb.getCalculoDiasPeriodoEscolar(rol.getPeriodoActivo());
-//        tareaInt.setDescripcion("Ingresar nombre");
-//        tareaInt.setFechaEntrega(dtoFechas.getFechaFin());
         if(res.getCorrecto()){
             rol.setConfUniMateriasSug(res.getValor());
             rol.setTareaIntegradora(tareaInt);
-        }else mostrarMensajeResultadoEJB(res);
+        }else mostrarMensajeResultadoEJB(res);     
+    }
+    
+     public void mostrarTareaIntPrueba(){
+        TareaIntegradora tareaInt = new TareaIntegradora();
+        DtoDiasPeriodoEscolares dtoFechas = ejb.getCalculoDiasPeriodoEscolar(rol.getPeriodoActivo());
+        tareaInt.setDescripcion("Ingresar nombre");
+        tareaInt.setFechaEntrega(dtoFechas.getFechaFin());
+         rol.setTareaIntegradora(tareaInt);
     }
     
     /**
@@ -174,7 +179,6 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
     }
     
      public void mostrarTareaIntegradora(){
-//        if(rol.getCarga() == null) return;
         ResultadoEJB<TareaIntegradora> resTI = ejb.getTareaIntegradora(rol.getCarga());
         if(resTI.getCorrecto()){
             rol.setTareaIntGuardada(resTI.getValor());
@@ -184,20 +188,21 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
               ResultadoEJB<TareaIntegradora> resSinTI = ejb.getTareaIntegradora(rol.getCarga());
               rol.setTareaIntGuardada(resSinTI.getValor());
         } 
-//            mostrarMensajeResultadoEJB(resTI);
     }
     
     public void eliminarConfigUnidadMat(DtoCargaAcademica cargaAcademica){
-        System.err.println("eliminarConfigUnidadMat" + rol.getCargaEliminar());
-        ResultadoEJB<Integer> resEliminar = ejb.eliminarConfUnidadMateria(rol.getCargaEliminar().getCargaAcademica());
+        ResultadoEJB<Integer> resEliminarCUM = ejb.eliminarConfUnidadMateria(rol.getCargaEliminar().getCargaAcademica());
+        ResultadoEJB<Integer> resEliminarTI = ejb.eliminarTareaIntegradora(rol.getCargaEliminar().getCargaAcademica());
         rol.setExiste(false);
-        mostrarMensajeResultadoEJB(resEliminar);
+        mostrarMensajeResultadoEJB(resEliminarCUM);
+        mostrarMensajeResultadoEJB(resEliminarTI);
     }
     
    
     public void cambiarCarga(ValueChangeEvent event){
         rol.setCarga((DtoCargaAcademica)event.getNewValue());
         existeConfiguracion();
+        rol.setAddTareaInt(true);
     }
     
     public void cambiarAddTareaInt(ValueChangeEvent event){
@@ -216,7 +221,8 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.setAutorizoEliminar(false);
         }else{
             rol.setAutorizoEliminar(true);
-//            eliminarConfigUnidadMat(rol.getCargaEliminar());
+            mostrarTareaIntPrueba();
+            rol.setAddTareaInt(false);
         }
     }
     

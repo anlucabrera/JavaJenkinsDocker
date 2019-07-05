@@ -94,16 +94,16 @@
                                     </div>
                                     <div class="row">
                                         <center>
-                                            <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">   
-                                            <p:outputLabel for="addTareaInt" style="font-size: large" value="Agregar Tarea Integradora" />
-                                            <p:inputSwitch id="addTareaInt" class="form-control" value="#{configuracionUnidadMateriaDocente.rol.addTareaInt}" valueChangeListener="#{configuracionUnidadMateriaDocente.cambiarAddTareaInt}"> 
+                                            <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">  
+                                            <h:outputText value="Configurar Materia" style="text-align: center; font-size: 20px;"/>
+                                            <br />
+                                            <br />
+                                            <p:outputLabel for="addTareaInt" style="font-size: large" value="#{configuracionUnidadMateriaDocente.rol.addTareaInt?'Aplicará tarea integradora':'No aplicará tarea integradora'}" />
+                                            <p:inputSwitch id="addTareaInt" class="form-control" value="#{configuracionUnidadMateriaDocente.rol.addTareaInt}" valueChangeListener="#{configuracionUnidadMateriaDocente.cambiarAddTareaInt}" disabled="#{!empty configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"> 
                                             <p:ajax update="@this" process="@this" oncomplete="actualizarconf();" />
                                             <p:autoUpdate />
                                             </p:inputSwitch>
                                             <p:message for="addTareaInt" display="tooltip" />
-                                            <br />
-                                            <br />
-                                            <h:outputText value="Configurar Materia" style="text-align: center; font-size: 20px;"/>
                                             <br />
                                             <br />
                                             <p:dataTable var="confSugerida" 
@@ -121,14 +121,14 @@
                                             </p:dataTable>
                                             <br />
                                             <br />
-                                             <p:dataTable var="tareaIntN" rendered="#{configuracionUnidadMateriaDocente.rol.addTareaInt}"
+                                            <p:dataTable var="tareaIntN" rendered="#{configuracionUnidadMateriaDocente.rol.addTareaInt}"
                                                          emptyMessage="Sin registros."
                                                          value="#{configuracionUnidadMateriaDocente.rol.tareaIntegradora}"
                                                          id="tb2" rowIndexVar="rowIndex"
                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                          tableStyle="vertical-align: middle;">
-                                                 <p:column headerText="Tarea Integradora" style="width: 500px; text-align: justify;"><h:inputText value="#{tareaIntN.descripcion}" size="255" required="true" requiredMessage="Debe ingresar nombre de la tarea integradora"/></p:column>
-                                                 <p:column headerText="Fecha Entrega" style="width: 120px;"><p:calendar value="#{tareaIntN.fechaEntrega}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha de entrega de tarea integradora"/></p:column>
+                                                 <p:column headerText="Tarea Integradora" style="width: 300px;"><h:inputText value="#{tareaIntN.descripcion}" size="115" /></p:column>
+                                                 <p:column headerText="Fecha Entrega" style="width: 120px;"><p:calendar value="#{tareaIntN.fechaEntrega}" pattern="dd-MM-yyyy" mask="true"/></p:column>
                                             </p:dataTable>
                                                 <p></p>
                                             <center>
@@ -140,7 +140,7 @@
                                             <h:outputText value="Configuración Guardada" style="text-align: center; font-size: 20px;"/>
                                             <br />
                                             <br />
-                                            <p:outputLabel for="autorizarEliminar" style="font-size: large" value="Deseo eliminar configuración de la unidad materia, así como los criterios de evaluación" />
+                                            <p:outputLabel for="autorizarEliminar" style="font-size: large" value="#{configuracionUnidadMateriaDocente.rol.autorizoEliminar?'Deseo eliminar la configuración de las uniades de la materia, así como los criterios de evaluación':'No deseo eliminar la configuración de la materia'}" />
                                             <p:inputSwitch id="autorizarEliminar" class="form-control" value="#{configuracionUnidadMateriaDocente.rol.autorizoEliminar}" valueChangeListener="#{configuracionUnidadMateriaDocente.cambiarEliminar}"> 
                                                 <p:ajax update="@this" process="@this" oncomplete="actualizarconf();" />
                                                 <p:autoUpdate />

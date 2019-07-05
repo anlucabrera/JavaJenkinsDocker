@@ -189,7 +189,6 @@ public class EjbConfiguracionUnidadMateria {
             PeriodoEscolarFechas fechasPeriodos = f.getEntityManager().createQuery("SELECT pef FROM PeriodoEscolarFechas pef WHERE pef.periodosEscolares.periodo =:periodo", PeriodoEscolarFechas.class)
                     .setParameter("periodo", periodoActivo)
                     .getSingleResult();
-        
 //            int dias = (int) ((fechasPeriodos.getFin().getTime() - fechasPeriodos.getInicio().getTime()) / 86400000);
             long fechaInicial = fechasPeriodos.getInicio().getTime();
             long fechaFinal = fechasPeriodos.getFin().getTime();
@@ -197,7 +196,7 @@ public class EjbConfiguracionUnidadMateria {
             int dias = (int) TimeUnit.DAYS.convert(diferenciaDias, TimeUnit.MILLISECONDS);
             
             DtoDiasPeriodoEscolares dtoDiasPeriodoEscolares = new DtoDiasPeriodoEscolares(fechasPeriodos.getInicio(), fechasPeriodos.getFin(), dias);
-            
+           
             return dtoDiasPeriodoEscolares;
             
     }
@@ -210,11 +209,11 @@ public class EjbConfiguracionUnidadMateria {
     public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> getConfiguracionSugerida(DtoCargaAcademica dtoCargaAcademica){
         try{
             DtoDiasPeriodoEscolares dtoDiasPeriodoEscolares = getCalculoDiasPeriodoEscolar(dtoCargaAcademica.getCargaAcademica().getEvento().getPeriodo());
-            
+           
             Integer diasUnidad = dtoDiasPeriodoEscolares.getDias()/dtoCargaAcademica.getMateria().getUnidadMateriaList().size();
-         
+           
             Date fechaMin = dtoDiasPeriodoEscolares.getFechaInicio();
-            
+           
             List<DtoConfiguracionUnidadMateria> dtoConfSug = new ArrayList<>();
             List<DtoConfiguracionUnidadMateria> unidadMat = getConfiguracionUnidadMateriaSugerida(dtoCargaAcademica);
             
@@ -322,7 +321,9 @@ public class EjbConfiguracionUnidadMateria {
 //                unidadMateriaConfiguracion.setFechaFin(acumulador.getTime());
 //                }
                 DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria = new DtoConfiguracionUnidadMateria(unidadMateriaBD, unidadMateriaConfiguracion);
+                System.err.println("getConfiguracionSugerida - dtoConfiguracionUnidadMateria Unidad " + dtoConfiguracionUnidadMateria.getUnidadMateria().getNoUnidad() +" Fechas " + dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getFechaInicio() + " " + dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getFechaFin());
                 dtoConfSug.add(dtoConfiguracionUnidadMateria);
+               
             });
             
             return ResultadoEJB.crearCorrecto(dtoConfSug, "Lista de configuración sugerida de la unidad materia seleccionada.");
@@ -462,16 +463,18 @@ public class EjbConfiguracionUnidadMateria {
     
     /**
      * Permite eliminar la configuración de la unidad materia
-     * @param tareaIntegradora Carga académica de la que se guardará configuración
+     * @param cargaAcademica Carga académica de la que se guardará configuración
      * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
      */
-    public ResultadoEJB<TareaIntegradora> eliminarTareaIntegradora(TareaIntegradora tareaIntegradora){
+    public ResultadoEJB<Integer> eliminarTareaIntegradora(CargaAcademica cargaAcademica){
         try{ 
-            if(tareaIntegradora == null) return ResultadoEJB.crearErroneo(2, "La tarea integradora no debe ser nula.");
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.");
             
-            f.remove(tareaIntegradora);
+            Integer delete = f.getEntityManager().createQuery("DELETE FROM TareaIntegradora t WHERE t.carga.carga =:carga", TareaIntegradora.class)
+                .setParameter("carga", cargaAcademica.getCarga())
+                .executeUpdate();
             
-            return ResultadoEJB.crearCorrecto(null, "La tarea integradora se elimino correctamente.");
+            return ResultadoEJB.crearCorrecto(delete, "La tarea integradora se elimino correctamente.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar  la tarea integradora. (EjbUnidadMateriaConfiguracion.eliminarTareaIntegradora)", e, null);
         }
