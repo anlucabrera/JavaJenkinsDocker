@@ -174,8 +174,7 @@
                     <!--Jefe de personal-->
                     <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="/evaluaciones/administracion/admin360.xhtml" ><i class="fa fa-clipboard"></i><span>Genera Evaluaciones</span></p:link></li></c:if>
                     <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Resultados generales</span></p:link></li></c:if>
-                    <!--Equipo de psicopedagogia-->
-                    <c:if test="#{logonMB.personal.areaOperativa eq 18}"><li><p:link href="/evaluaciones/administracion/administracionPsicopedagogia.xhtml" ><i class="fa fa-clipboard"></i><span>Resultados generales</span></p:link></li></c:if>
+
                     <!--Seguimiento a egresados-->
                     <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
                     <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
