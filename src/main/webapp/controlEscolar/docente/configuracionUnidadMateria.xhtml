@@ -66,7 +66,7 @@
                                 <div class="box-body">
                                     <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
                                     <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
-                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="#{configuracionUnidadMateriaDocente.actualizarCargaAcademica}" update="@(form)" />
+                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="#{configuracionUnidadMateriaDocente.actualizarCargaAcademica}" update="@form" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
@@ -132,7 +132,7 @@
                                             </p:dataTable>
                                                 <p></p>
                                             <center>
-                                                <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{configuracionUnidadMateriaDocente.guardarConfigUnidadMat()}" icon="fa fa-pencil-square-o" class="btn-primary" disabled="#{!empty configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"/>
+                                                <p:commandButton id="btnGuardar" oncomplete="actualizarconf();" value="Guardar" actionListener="#{configuracionUnidadMateriaDocente.guardarConfigUnidadMat()}" icon="fa fa-pencil-square-o" class="btn-primary" disabled="#{!empty configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"/>
                                             </center>
                                             <br />
                                             <br />
@@ -177,7 +177,7 @@
                                             <br />
                                             <br />
                                             <center>
-                                                <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{configuracionUnidadMateriaDocente.eliminarConfigUnidadMat(confGuardada)}" icon="fa fa-trash" class="btn-primary" disabled="#{!configuracionUnidadMateriaDocente.rol.autorizoEliminar}">
+                                                <p:commandButton id="btnEliminar" oncomplete="actualizarconf();" value="Eliminar" actionListener="#{configuracionUnidadMateriaDocente.eliminarConfigUnidadMat(confGuardada)}" icon="fa fa-trash" class="btn-primary" disabled="#{!configuracionUnidadMateriaDocente.rol.autorizoEliminar}">
                                                     <p:confirm header="Eliminar configuración" message="¿Está seguro de eliminar la configuración de la materia?" icon="ui-icon-alert" />
                                                 </p:commandButton>
                                             </center>
