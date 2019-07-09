@@ -115,12 +115,12 @@ public class RegistrosMovilidad implements Serializable {
     private String institucionOrganizacion;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 1000)
     @Column(name = "proyecto")
     private String proyecto;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 250)
+    @Size(min = 1, max = 2000)
     @Column(name = "descripcion")
     private String descripcion;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation

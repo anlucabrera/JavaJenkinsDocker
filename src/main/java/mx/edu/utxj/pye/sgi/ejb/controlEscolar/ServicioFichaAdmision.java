@@ -510,7 +510,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         if(uso.equals("Alumno")){
             // El correo gmail de envío
             String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "Serv.Escolares";
+            String claveCorreo = "DServiciosEscolares19";
             String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
                             "\n\n Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria\n\n"
                             + "* Formato de Ficha de Admisión.\n"

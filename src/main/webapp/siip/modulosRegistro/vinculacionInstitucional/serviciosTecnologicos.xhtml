@@ -1069,32 +1069,34 @@
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
 
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Servicio Tecnológico: " for="somServicioTecnologico" />
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somServicioTecnologico"
-                                                     required="true"
-                                                     requiredMessage="Seleccione el servicio tecnológico"
-                                                     value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.servicioTecnologico}"
-                                                     valueChangeListener="#{controladorServiciosTecnologicosAnioMes.actualizarServicioTecnologicoAsignado}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     converter="entidadConverter2"
-                                                     style="padding-top: 0px">
-                                        <f:selectItem itemLabel=" - Seleccione - " 
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.lstServiciosTecnologicosAnioMes}" 
-                                                       var="servtec" 
-                                                       itemValue="#{servtec}" 
-                                                       itemLabel="#{servtec.nombre}"
-                                                       itemDescription="#{servtec.servicio}"/>
-                                        <p:ajax process="somServicioTecnologico" />
-                                        <p:message for="somServicioTecnologico" />
-                                    </p:selectOneMenu>
-                                </div>
+                                <c:if test="#{controladorArchivoServiciosTecnologicosAnioMes.etapa eq etapa.MOSTRAR}">
+                                    <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                        <p:outputLabel value="Servicio Tecnológico: " for="somServicioTecnologico" />
+                                        <p:spacer width="5" />
+                                        <br></br>
+                                        <p:selectOneMenu id="somServicioTecnologico"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el servicio tecnológico"
+                                                         value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.servicioTecnologico}"
+                                                         valueChangeListener="#{controladorServiciosTecnologicosAnioMes.actualizarServicioTecnologicoAsignado}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         converter="entidadConverter2"
+                                                         style="padding-top: 0px">
+                                            <f:selectItem itemLabel=" - Seleccione - " 
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.lstServiciosTecnologicosAnioMes}" 
+                                                           var="servtec" 
+                                                           itemValue="#{servtec}" 
+                                                           itemLabel="#{servtec.nombre}"
+                                                           itemDescription="#{servtec.servicio}"/>
+                                            <p:ajax process="somServicioTecnologico" />
+                                            <p:message for="somServicioTecnologico" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                </c:if>
 
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Nombre: " for="iptNombreParticipante"/>
