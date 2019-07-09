@@ -180,8 +180,8 @@
                                             <center>
                                                 <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{configuracionUnidadMateriaDocente.eliminarConfigUnidadMat(confGuardada)}" icon="fa fa-trash" class="btn-primary" disabled="#{!configuracionUnidadMateriaDocente.rol.autorizoEliminar}">
                                                     <p:confirm header="Eliminar configuración" message="¿Está seguro de eliminar la configuración de la materia?" icon="ui-icon-alert" />
-                                                    <p:autoUpdate />
                                                 </p:commandButton>
+                                                <p:autoUpdate />
                                             </center>
                                             </c:if>
                                         </div>
@@ -216,7 +216,7 @@
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para una asignación académica</h3></div>
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para configurar unidad materia</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
                                 <c:forEach items="#{configuracionUnidadMateriaDocente.rol.instrucciones}" var="instruccion">

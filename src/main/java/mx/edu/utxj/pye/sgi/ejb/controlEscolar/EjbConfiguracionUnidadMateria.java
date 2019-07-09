@@ -2,6 +2,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
@@ -20,9 +21,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConfiguracionUnidadMateriaRolDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDiasPeriodoEscolares;
+import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.enums.AlertaTipo;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 
 @Stateless(name = "EjbConfiguracionUnidadMateria")
@@ -474,6 +478,55 @@ public class EjbConfiguracionUnidadMateria {
             return ResultadoEJB.crearCorrecto(delete, "La tarea integradora se elimino correctamente.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar  la tarea integradora. (EjbUnidadMateriaConfiguracion.eliminarTareaIntegradora)", e, null);
+        }
+    }
+    
+     /**
+     * Permite detectar una lista de mensajes de posibles errores en la asignación docente, como es el caso de superar las horas máximas frente a grupo de acuerdo a si es PTC o PA el docente o si se han asignado
+     * mas de una materia al mismo docente en un grupo detemrinado
+     * @param rol DTO de la capa de sincronización con los datos seleccionados por el usuario
+     * @return Lista de mensajes encontrados.
+     */
+    public ResultadoEJB<List<DtoAlerta>> identificarMensajes(ConfiguracionUnidadMateriaRolDocente rol){
+        try{
+            
+            if(rol.getPeriodo().getPeriodo().equals(rol.getEventoActivo().getPeriodo()) && rol.getExiste()){
+                
+                DtoDiasPeriodoEscolares dtoDiasPeriodosEscolares = getCalculoDiasPeriodoEscolar(rol.getPeriodoActivo());
+                final List<DtoAlerta> mensajes = new ArrayList<>();
+
+                ResultadoEJB<List<DtoConfiguracionUnidadMateria>> resUnidadesConf = getConfiguracionUnidadMateria(rol.getCarga());
+                ResultadoEJB<TareaIntegradora> resTareaIntegradora = getTareaIntegradora(rol.getCarga());
+                TareaIntegradora tareaInt = resTareaIntegradora.getCorrecto()?resTareaIntegradora.getValor():null;
+                
+                System.out.println("resUnidadesConf = " + resUnidadesConf);
+                if(resUnidadesConf.getCorrecto()){
+                    List<UnidadMateriaConfiguracion> unidadMatConf = resUnidadesConf.getValor().stream()
+                            .filter(dtoConfUnidad -> dtoConfUnidad.getUnidadMateriaConfiguracion()!= null)
+                            .map(DtoConfiguracionUnidadMateria::getUnidadMateriaConfiguracion)
+                            .distinct()
+                            .collect(Collectors.toList());
+
+                    unidadMatConf.forEach(conf -> {
+                        if(conf.getFechaInicio().before(dtoDiasPeriodosEscolares.getFechaInicio()))
+                        {
+                            mensajes.add(new DtoAlerta(String.format("La fecha de inicio de la unidad %s es %s,y el periodo escolar activo inicia %s.", conf.getIdUnidadMateria().getNoUnidad(), conf.getFechaInicio(), dtoDiasPeriodosEscolares.getFechaInicio()), AlertaTipo.SUGERENCIA));
+                        }
+                        else if(conf.getFechaFin().before(dtoDiasPeriodosEscolares.getFechaFin())){
+                            mensajes.add(new DtoAlerta(String.format("La fecha de fin de la unidad %s es %s,y el periodo escolar activo termina %s.", conf.getIdUnidadMateria().getNoUnidad(), conf.getFechaFin(), dtoDiasPeriodosEscolares.getFechaFin()), AlertaTipo.SUGERENCIA));
+                        }
+                        else if(tareaInt.getFechaEntrega().before(dtoDiasPeriodosEscolares.getFechaInicio()) || tareaInt.getFechaEntrega().after(dtoDiasPeriodosEscolares.getFechaInicio())){
+                            mensajes.add(new DtoAlerta(String.format("La fecha de entrega de la tarea integradora es %s y los periodos en los que se debe encontrar son %s y %s.", tareaInt.getFechaEntrega(), dtoDiasPeriodosEscolares.getFechaInicio(), dtoDiasPeriodosEscolares.getFechaFin()), AlertaTipo.SUGERENCIA));
+                        }
+                    });
+                }
+                return ResultadoEJB.crearCorrecto(mensajes, "Lista de mensajes");
+            }else{
+                return ResultadoEJB.crearCorrecto(Collections.EMPTY_LIST, "Sin mensajes");
+            }
+        }catch (Exception e){
+//            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudieron identificar mensajes de configuración (EjbUnidadMateriaConfiguracion.identificarMensajes).", e, null);
         }
     }
 }

@@ -2,7 +2,7 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.util.ArrayList;
+import java.util.Collections;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
@@ -10,6 +10,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConfiguracionUnidadMateriaRolDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
+import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
@@ -26,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
-import javax.swing.JOptionPane;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDiasPeriodoEscolares;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
@@ -91,7 +91,14 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.setCargas(resCarga.getValor());
             
             rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar configuraciones anteriores.");
-            rol.getInstrucciones().add("Seleccionar la materia de la cual se configura las unidades.");
+            rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo que va a configurar.");
+            rol.getInstrucciones().add("Seleccionar si o no aplicará Tarea Integradora en la configuración.");
+            rol.getInstrucciones().add("Actualizar fecha de inicio y fin por cada unidad de la materia si no desea utilizar las fechas sugeridas por el sistema.");
+            rol.getInstrucciones().add("En caso de que aplicará Tarea Integradora deberá ingresar nombre y fecha de entrega.");
+            rol.getInstrucciones().add("Una vez que capture toda la información solicitada puede GUARDAR la configuración.");
+            rol.getInstrucciones().add("Usted podrá visualizar la Configuración Guardada en sistema.");
+            rol.getInstrucciones().add("Si desea ELIMINAR la configuración deberá seleccionar que desea realizar esta accción para que se active el botón de eliminar ubicado en la parte inferior.");
+            rol.getInstrucciones().add("Al eliminar la configuración de la materia se eliminarán también los criterios de evaluación que se encuentren registrados.");
 
             existeConfiguracion();
             rol.setAddTareaInt(true);
@@ -111,6 +118,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
      * Permite actualizar la carga académica del docente correspondiente al periodo seleccionado
      */
     public void actualizarCargaAcademica(){
+        setAlertas(Collections.EMPTY_LIST);
         if(rol.getPeriodo() == null) return;
         if(rol.getDocente()== null) return;
 
@@ -119,6 +127,16 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.setCargas(res.getValor());
             existeConfiguracion();
         }else mostrarMensajeResultadoEJB(res);
+        
+        ResultadoEJB<List<DtoAlerta>> resMensajes = ejb.identificarMensajes(rol);
+        System.out.println("resMensajes = " + resMensajes);
+        if(resMensajes.getCorrecto()){
+            setAlertas(resMensajes.getValor());
+        }else {
+            mostrarMensajeResultadoEJB(resMensajes);
+        }
+
+        repetirUltimoMensaje();
     }
     
     public void existeConfiguracion(){
