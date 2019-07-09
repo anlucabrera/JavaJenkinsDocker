@@ -100,7 +100,7 @@
                                             <br />
                                             <p:outputLabel for="addTareaInt" style="font-size: large" value="#{configuracionUnidadMateriaDocente.rol.addTareaInt?'Aplicará tarea integradora':'No aplicará tarea integradora'}" />
                                             <p:inputSwitch id="addTareaInt" class="form-control" value="#{configuracionUnidadMateriaDocente.rol.addTareaInt}" valueChangeListener="#{configuracionUnidadMateriaDocente.cambiarAddTareaInt}" disabled="#{!empty configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"> 
-                                            <p:ajax update="@this" process="@this" oncomplete="actualizarconf();" />
+                                            <p:ajax update="tb2" process="@this" />
                                             <p:autoUpdate />
                                             </p:inputSwitch>
                                             <p:message for="addTareaInt" display="tooltip" />
@@ -132,7 +132,8 @@
                                             </p:dataTable>
                                                 <p></p>
                                             <center>
-                                                <p:commandButton id="btnGuardar" oncomplete="actualizarconf();" value="Guardar" actionListener="#{configuracionUnidadMateriaDocente.guardarConfigUnidadMat()}" icon="fa fa-pencil-square-o" class="btn-primary" disabled="#{!empty configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"/>
+                                                <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{configuracionUnidadMateriaDocente.guardarConfigUnidadMat()}" icon="fa fa-pencil-square-o" class="btn-primary" disabled="#{!empty configuracionUnidadMateriaDocente.rol.confUniMateriasGuard}"/>
+                                                <p:autoUpdate />
                                             </center>
                                             <br />
                                             <br />
@@ -142,7 +143,7 @@
                                             <br />
                                             <p:outputLabel for="autorizarEliminar" style="font-size: large" value="#{configuracionUnidadMateriaDocente.rol.autorizoEliminar?'Deseo eliminar la configuración de las uniades de la materia, así como los criterios de evaluación':'No deseo eliminar la configuración de la materia'}" />
                                             <p:inputSwitch id="autorizarEliminar" class="form-control" value="#{configuracionUnidadMateriaDocente.rol.autorizoEliminar}" valueChangeListener="#{configuracionUnidadMateriaDocente.cambiarEliminar}"> 
-                                                <p:ajax update="@this" process="@this" oncomplete="actualizarconf();" />
+                                                <p:ajax update="btnEliminar" process="@this" />
                                                 <p:autoUpdate />
                                             </p:inputSwitch>
                                             <p:message for="autorizarEliminar" display="tooltip" />
@@ -177,8 +178,9 @@
                                             <br />
                                             <br />
                                             <center>
-                                                <p:commandButton id="btnEliminar" oncomplete="actualizarconf();" value="Eliminar" actionListener="#{configuracionUnidadMateriaDocente.eliminarConfigUnidadMat(confGuardada)}" icon="fa fa-trash" class="btn-primary" disabled="#{!configuracionUnidadMateriaDocente.rol.autorizoEliminar}">
+                                                <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{configuracionUnidadMateriaDocente.eliminarConfigUnidadMat(confGuardada)}" icon="fa fa-trash" class="btn-primary" disabled="#{!configuracionUnidadMateriaDocente.rol.autorizoEliminar}">
                                                     <p:confirm header="Eliminar configuración" message="¿Está seguro de eliminar la configuración de la materia?" icon="ui-icon-alert" />
+                                                    <p:autoUpdate />
                                                 </p:commandButton>
                                             </center>
                                             </c:if>
@@ -229,7 +231,7 @@
             <c:if test="#{!configuracionUnidadMateriaDocente.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a directores de área académica."/>
+                        <h:outputText value="El acceso solo está autorizado a personal docente."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

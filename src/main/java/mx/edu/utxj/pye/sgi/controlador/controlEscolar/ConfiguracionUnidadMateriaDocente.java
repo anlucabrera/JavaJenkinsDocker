@@ -165,6 +165,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
                 mostrarMensajeResultadoEJB(resGuardarTI);
                 rol.setAddTareaInt(false);
             }
+            mostrarConfiguracionGuardada();
         }else  mostrarMensajeResultadoEJB(resGuardarConf);
     }
     
@@ -203,6 +204,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
         rol.setCarga((DtoCargaAcademica)event.getNewValue());
         existeConfiguracion();
         rol.setAddTareaInt(true);
+        rol.setAutorizoEliminar(false);
     }
     
     public void cambiarAddTareaInt(ValueChangeEvent event){

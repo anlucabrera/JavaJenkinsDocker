@@ -302,26 +302,23 @@ public class EjbConfiguracionUnidadMateria {
                         unidadMateriaConfiguracion.setFechaInicio(calendarIni7.getTime());
                         unidadMateriaConfiguracion.setFechaFin(calendarFin7.getTime());
                         break;
+                    case 8:
+                        Calendar calendarIni8 = Calendar.getInstance();
+                        calendarIni8.setTime(fechaMin);
+                        calendarIni8.add(Calendar.DAY_OF_YEAR, diasUnidad * 7);
+                        
+                        Calendar calendarFin8 = Calendar.getInstance();
+                        calendarFin8.setTime(fechaMin);
+                        calendarFin8.add(Calendar.DAY_OF_YEAR, diasUnidad * 8);
+                        
+                        unidadMateriaConfiguracion.setFechaInicio(calendarIni8.getTime());
+                        unidadMateriaConfiguracion.setFechaFin(calendarFin8.getTime());
+                        break;
                     default:
                        
                         break;
                 }
-//                if(umc.getUnidadMateria().getNoUnidad()==1)
-//                {
-//                unidadMateriaConfiguracion.setFechaInicio(fechaMin);
-//                unidadMateriaConfiguracion.setFechaFin(calendar.getTime());
-//                }
-//                else{
-//                  
-//                Calendar acumulador = Calendar.getInstance();
-//                acumulador.setTime(calendar.getTime());
-//                acumulador.add(Calendar.DAY_OF_YEAR, diasUnidad);
-//                
-//                unidadMateriaConfiguracion.setFechaInicio(calendar.getTime());
-//                unidadMateriaConfiguracion.setFechaFin(acumulador.getTime());
-//                }
                 DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria = new DtoConfiguracionUnidadMateria(unidadMateriaBD, unidadMateriaConfiguracion);
-                System.err.println("getConfiguracionSugerida - dtoConfiguracionUnidadMateria Unidad " + dtoConfiguracionUnidadMateria.getUnidadMateria().getNoUnidad() +" Fechas " + dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getFechaInicio() + " " + dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getFechaFin());
                 dtoConfSug.add(dtoConfiguracionUnidadMateria);
                
             });
