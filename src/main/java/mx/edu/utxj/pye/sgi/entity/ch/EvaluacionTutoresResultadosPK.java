@@ -9,32 +9,28 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author UTXJ
+ * @author Planeacion
  */
 @Embeddable
-public class EvaluacionesTutoresResultadosPK implements Serializable {
+public class EvaluacionTutoresResultadosPK implements Serializable {
 
     @Basic(optional = false)
-    @NotNull
     @Column(name = "evaluacion")
     private int evaluacion;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "evaluador")
     private int evaluador;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "evaluado")
     private int evaluado;
 
-    public EvaluacionesTutoresResultadosPK() {
+    public EvaluacionTutoresResultadosPK() {
     }
 
-    public EvaluacionesTutoresResultadosPK(int evaluacion, int evaluador, int evaluado) {
+    public EvaluacionTutoresResultadosPK(int evaluacion, int evaluador, int evaluado) {
         this.evaluacion = evaluacion;
         this.evaluador = evaluador;
         this.evaluado = evaluado;
@@ -76,10 +72,10 @@ public class EvaluacionesTutoresResultadosPK implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof EvaluacionesTutoresResultadosPK)) {
+        if (!(object instanceof EvaluacionTutoresResultadosPK)) {
             return false;
         }
-        EvaluacionesTutoresResultadosPK other = (EvaluacionesTutoresResultadosPK) object;
+        EvaluacionTutoresResultadosPK other = (EvaluacionTutoresResultadosPK) object;
         if (this.evaluacion != other.evaluacion) {
             return false;
         }
@@ -94,7 +90,7 @@ public class EvaluacionesTutoresResultadosPK implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultadosPK[ evaluacion=" + evaluacion + ", evaluador=" + evaluador + ", evaluado=" + evaluado + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultadosPK[ evaluacion=" + evaluacion + ", evaluador=" + evaluador + ", evaluado=" + evaluado + " ]";
     }
     
 }

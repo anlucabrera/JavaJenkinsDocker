@@ -5,16 +5,16 @@
  */
 package mx.edu.utxj.pye.sgi.funcional;
 
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
 
 /**
  *
  * @author UTXJ
  */
-public class PromediarTutor implements Calculable<EvaluacionesTutoresResultados> {
+public class PromediarTutor implements Calculable<EvaluacionTutoresResultados> {
 
     @Override
-    public Double promediar(EvaluacionesTutoresResultados t) {
+    public Double promediar(EvaluacionTutoresResultados t) {
         if (t.getR5() == 4) {
             Integer suma = t.getR1()
                     + t.getR2()

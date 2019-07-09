@@ -12,18 +12,10 @@ import javax.ejb.Stateful;
 import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
+
+import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaEvaluacionDocentesResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -244,11 +236,11 @@ public class ServicioAdministracionEncuestas implements EjbAdministracionEncuest
     }
 
     @Override
-    public List<EvaluacionesTutoresResultados> getEvaluacionesTutoresResultados(Evaluaciones evaluacion, Integer evaluado) {
-        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT e from EvaluacionesTutoresResultados e where e.evaluaciones.evaluacion = :evaluacion and e.personal.clave = :evaluado", EvaluacionesTutoresResultados.class);
+    public List<EvaluacionTutoresResultados> getEvaluacionesTutoresResultados(Evaluaciones evaluacion, Integer evaluado) {
+        TypedQuery<EvaluacionTutoresResultados> q = f.getEntityManager().createQuery("SELECT e from EvaluacionTutoresResultados e where e.evaluaciones.evaluacion = :evaluacion and e.personal.clave = :evaluado", EvaluacionTutoresResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluado", evaluado);
-        List<EvaluacionesTutoresResultados> l = q.getResultList();
+        List<EvaluacionTutoresResultados> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;
         } else {

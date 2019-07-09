@@ -3,6 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package mx.edu.utxj.pye.sgi.controlador;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
@@ -63,7 +68,7 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
     @Getter private List<Apartado> preguntas;
     @Getter private List<VistaEvaluacionDocenteMateriaPye> listaDatosEvaluacion, ListaDatosEvaluados;
     @Getter private List<EvaluacionDocentesMateriaResultados> listaDocentesEvaluando, listaDocentesEvaluados;
-//    @Getter List<EvaluacionDocentesMaterias>  listaDocentesEvaluando1, listaDocentesEvaluados1;
+    //    @Getter List<EvaluacionDocentesMaterias>  listaDocentesEvaluando1, listaDocentesEvaluados1;
     @Getter private List<SelectItem> respuestasPosibles;
 
     @Getter private List<VistaEvaluacionDocenteMateriaPye> listaDocenteMateriaPyes;

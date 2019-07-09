@@ -12,8 +12,8 @@ import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.TipoCuestionario;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultadosPK;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultadosPK;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionesTutores;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
@@ -71,10 +71,10 @@ public class ServicioEvaluacionTutor implements EjbEvaluacionTutor {
     }
 
     @Override
-    public List<EvaluacionesTutoresResultados> getListaTutores(VistaEvaluacionesTutores estudianteEvaluador) {
+    public List<EvaluacionTutoresResultados> getListaTutores(VistaEvaluacionesTutores estudianteEvaluador) {
         Evaluaciones evaluacion = evaluacionActiva();
         
-        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionesTutoresResultados r WHERE r.evaluacionesTutoresResultadosPK.evaluacion=:evaluacion AND r.evaluacionesTutoresResultadosPK.evaluador=:evaluador AND r.evaluacionesTutoresResultadosPK.evaluado=:evaluado", EvaluacionesTutoresResultados.class);
+        TypedQuery<EvaluacionTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionTutoresResultados r WHERE r.evaluacionesTutoresResultadosPK.evaluacion=:evaluacion AND r.evaluacionesTutoresResultadosPK.evaluador=:evaluador AND r.evaluacionesTutoresResultadosPK.evaluado=:evaluado", EvaluacionTutoresResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluador", Integer.parseInt(estudianteEvaluador.getPk().getMatricula()));
         q.setParameter("evaluado", Integer.parseInt(estudianteEvaluador.getPk().getNumeroNomina()));
@@ -96,24 +96,24 @@ public class ServicioEvaluacionTutor implements EjbEvaluacionTutor {
     }
 
     @Override
-    public void cargarResultadosAlmacenados(Evaluaciones evaluacion, VistaEvaluacionesTutores evaluador, List<EvaluacionesTutoresResultados> evaluados) {
+    public void cargarResultadosAlmacenados(Evaluaciones evaluacion, VistaEvaluacionesTutores evaluador, List<EvaluacionTutoresResultados> evaluados) {
         //verificar si existe la fila de resultados
-        f.setEntityClass(EvaluacionesTutoresResultados.class);
-        EvaluacionesTutoresResultadosPK evaluacionesTutoresResultadosPK = new EvaluacionesTutoresResultadosPK(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), Integer.parseInt(evaluador.getPk().getNumeroNomina()));
-        EvaluacionesTutoresResultados resultado = (EvaluacionesTutoresResultados) f.find(evaluacionesTutoresResultadosPK);
+        f.setEntityClass(EvaluacionTutoresResultados.class);
+        EvaluacionTutoresResultadosPK evaluacionesTutoresResultadosPK = new EvaluacionTutoresResultadosPK(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), Integer.parseInt(evaluador.getPk().getNumeroNomina()));
+        EvaluacionTutoresResultados resultado = (EvaluacionTutoresResultados) f.find(evaluacionesTutoresResultadosPK);
         
         //si no exite crearla y cargarla a la evaluacion con una lista de resultados limpia 
         if(resultado == null){
-            resultado = new EvaluacionesTutoresResultados(evaluacionesTutoresResultadosPK);
+            resultado = new EvaluacionTutoresResultados(evaluacionesTutoresResultadosPK);
             f.create(resultado);
             f.getEntityManager().detach(evaluacion);
-            evaluacion.setEvaluacionesTutoresResultadosList(new ArrayList<>());
-            evaluacion.getEvaluacionesTutoresResultadosList().add(resultado);
+            evaluacion.setEvaluacionTutoresResultadosList(new ArrayList<>());
+            evaluacion.getEvaluacionTutoresResultadosList().add(resultado);
         }
     }
 
     @Override
-    public String obtenerRespuestaPorPregunta(EvaluacionesTutoresResultados resultado, Float pregunta) {
+    public String obtenerRespuestaPorPregunta(EvaluacionTutoresResultados resultado, Float pregunta) {
         String res = null;
         switch (pregunta.toString()) {
             case "1.0":
@@ -149,15 +149,15 @@ public class ServicioEvaluacionTutor implements EjbEvaluacionTutor {
     }
 
     @Override
-    public List<EvaluacionesTutoresResultados> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones evaluacion, VistaEvaluacionesTutores evaluador) {
-        TypedQuery<EvaluacionesTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionesTutoresResultados r WHERE r.evaluacionesTutoresResultadosPK.evaluacion=:evaluacion AND r.evaluacionesTutoresResultadosPK.evaluador=:evaluador", EvaluacionesTutoresResultados.class);
+    public List<EvaluacionTutoresResultados> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones evaluacion, VistaEvaluacionesTutores evaluador) {
+        TypedQuery<EvaluacionTutoresResultados> q = f.getEntityManager().createQuery("SELECT r FROM EvaluacionTutoresResultados r WHERE r.evaluacionesTutoresResultadosPK.evaluacion=:evaluacion AND r.evaluacionesTutoresResultadosPK.evaluador=:evaluador", EvaluacionTutoresResultados.class);
         q.setParameter("evaluacion", evaluacion.getEvaluacion());
         q.setParameter("evaluador", Integer.parseInt(evaluador.getPk().getMatricula()));
         return q.getResultList();
     }
 
     @Override
-    public void actualizarRespuestaPorPregunta(EvaluacionesTutoresResultados resultado, Float pregunta, String respuesta) {
+    public void actualizarRespuestaPorPregunta(EvaluacionTutoresResultados resultado, Float pregunta, String respuesta) {
         switch (pregunta.toString()) {
             case "1.0":
                 resultado.setR1(Short.parseShort(respuesta));

@@ -27,8 +27,8 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.ViewEstudianteAsesorAcademico;
 public class DtoEvaluaciones implements Serializable{
     
     /////////////////////////General wrappers\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    @Getter @Setter public Boolean cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, esSecretario, planeacion, ESActiva, ESTsuActiva,
-            ESIngActiva, ESEActiva, EEActiva;
+    @Getter @Setter public Boolean cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva,
+            ESIngActiva, ESEActiva, EEActiva,ETutorActiva,EDocenteActiva;
     @Getter @Setter public Short grado;
     @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor;
     @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina;
