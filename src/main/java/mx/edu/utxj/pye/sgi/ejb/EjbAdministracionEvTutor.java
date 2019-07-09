@@ -36,6 +36,12 @@ public interface EjbAdministracionEvTutor {
      * @return Resultado del proceso
      */
 
+    /**
+     * Obtiene el listado de los periodos en los que se ha apliacado la evaluacion a Tutor
+     * @return Resultado del proceso(Lista de periodos)
+     */
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosEvaluacionTutor();
+
 
     public ResultadoEJB<PeriodosEscolares> getPeriodoEvaluacion(Evaluaciones evaluacion);
     /**

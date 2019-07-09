@@ -26,11 +26,11 @@ public interface EJBAdimEstudianteBase {
     /*Busca al estudiante por matricula en la base de pye2
     /@return obtejo de tipo Matricula Periodos Escolares
     */
-    public MatriculaPeriodosEscolares getEstudianteSauiiut (Integer matricula, Integer periodo);
+    public MatriculaPeriodosEscolares getEstudianteSauiiut (String matricula, Integer periodo);
     // Busca al estudiante por matricula en la base de Control escolar
-    public Estudiante getEstudianteControlEscolar (Integer matricula);
+    public Estudiante getEstudianteControlEscolar (String matricula);
     // Devuelve la clave del estudiante segun sea un estudiante registrado en SAUIIT o en Control Escolar
-    public EstudiantesClaves getClaveEstudiante (Integer matricula, Integer periodo); 
+    public EstudiantesClaves getClaveEstudiante (String matricula, Integer periodo);
    
     /**
     * Buca a un estudiante por su clave  en la tabla de Matricula Periodos Escolares (Que son los que se encuentran registrados en sauitt por periodo)
