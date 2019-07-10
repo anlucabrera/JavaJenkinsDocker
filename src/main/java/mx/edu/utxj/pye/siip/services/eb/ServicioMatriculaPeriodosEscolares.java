@@ -471,8 +471,7 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                         caster.periodoToString(f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodo())),
                         f.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo())
                     ));
-                }
-                
+                } 
         });
         return l;
     }

@@ -7,12 +7,14 @@ package mx.edu.utxj.pye.siip.interfaces.ca;
 
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.AreasConflicto;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.OtrosTiposSesionesPsicopedagogia;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.SesionIndividualMensualPsicopedogia;
+import mx.edu.utxj.pye.siip.dto.ca.DTOSesionesPsicopedagogia;
 
 /**
  *
@@ -48,6 +50,20 @@ public interface EjbSesionesPsicopedagogia {
     public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPE(SesionIndividualMensualPsicopedogia simPsicopedagogia);
     
     /**
+     * Método que busca en base de datos el registro de SesionInvidualMensualPsicopedagogia (Uso para método de edición)
+     * @param simPsicopedagogia Utilizado como referencia para la búsqueda en base de datos
+     * @return  List SesionInvidualMensualPsicopedagogia el cual contiene los valores completos de los registros encontrados.
+     */
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaParaEdicion(SesionIndividualMensualPsicopedogia simPsicopedagogia);
+    
+    /**
+     * Método que busca en base de datos el registro de SesionIndividualMensualPsicopedagogia que no están relacionados con programas educativos
+     * @param simPsicopedagogia Utilizado como referencia para la búsqueda en base de datos
+     * @return  List SesionInvidualMensualPsicopedagogia el cual contiene los valores completos de los registros encontrados.
+     */
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPEParaEdicion(SesionIndividualMensualPsicopedogia simPsicopedagogia);
+    
+    /**
      * Método que almacena en base de datos el registro de una SesionIndividualMensualPsicopedogia
      * @param simPsicopedagogia Utilizado para almacenar el registro de tipo SesionIndividualMensualPsicopedogia
      * @param registrosTipo
@@ -64,5 +80,14 @@ public interface EjbSesionesPsicopedagogia {
      * @return Valor String, El cual contiene información del resultado de la operación solicitada
      */
     public String editaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia);
+    
+    /**
+     * Método que permite la consulta de registros de tipo: SesionIndividualMensualPsicopedogia, la cual será ocupada para la debida consulta, edición o eliminación 
+     * @param area      Área superior de cada usuario logueado
+     * @param ejercicio Ejercicio actual que deberá venir de la tabla eventos_registro
+     * @param mes       Mes actual que deberá venir de la tabla eventos_registro
+     * @return          Regresa una lista de registros de SesionIndividualMensualPsicopedogia que serán ocupados para consulta o eliminación
+     */
+    public List<DTOSesionesPsicopedagogia> getFiltroSesionesIndividualesPorAreaEjercicioMesArea(AreasUniversidad area, Short ejercicio, String mes);
     
 }

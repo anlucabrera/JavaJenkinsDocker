@@ -392,7 +392,7 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
 //            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getListaRegistrosPorEventoArea(3b) areas: " + areas);
         }else{//si no es area academica solo filtrar los datos del area operativa del trabajador
             //Obtener las claves de todas las areas que dependan de área academicoa
-            areas = facadeEscolar.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1'", AreasUniversidad.class)
+            areas = facadeEscolar.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior", AreasUniversidad.class)
                     .setParameter("areaSuperior", area.getArea())
                     .getResultStream()
                     .map(au -> au.getArea())
@@ -401,19 +401,21 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
         }
         
         if(actividad == 2 || claveAreaEmpleado == 6 || claveAreaEmpleado == 9){ 
-            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasMensualPeriodosEscolares atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasMensualPeriodosEscolares.class)
+            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasMensualPeriodosEscolares atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo AND r.area = :areaRegistro ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasMensualPeriodosEscolares.class)
                 .setParameter("areas", areas)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("tipo", registrosTipo.getRegistroTipo())
+                    .setParameter("areaRegistro", claveArea)
                 .getResultList();
         }else{
-            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasMensualPeriodosEscolares atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo AND atc.tutor = :claveTutor ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasMensualPeriodosEscolares.class)
+            entities = facadeEscolar.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasMensualPeriodosEscolares atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE er.eventoRegistro=:evento AND atc.programaEducativo in :areas AND atc.periodoEscolar=:periodo AND t.registroTipo=:tipo AND atc.tutor = :claveTutor AND r.area = :areaRegistro ORDER BY atc.programaEducativo, atc.cuatrimestre, atc.grupo, atc.tipoActividad, atc.tipo", AsesoriasTutoriasMensualPeriodosEscolares.class)
                 .setParameter("areas", areas)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("tipo", registrosTipo.getRegistroTipo())
                 .setParameter("claveTutor", claveTutor)
+                    .setParameter("areaRegistro", claveArea)
                 .getResultList();
         }
         

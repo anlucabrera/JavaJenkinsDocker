@@ -60,6 +60,36 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
         Faces.setSessionAttribute("areasConflicto", dto.getLstAreasConflicto());
         Faces.setSessionAttribute("otroTipoSesion", dto.getLstOtrosTiposSesionesPsicopedagogia());
         Faces.setSessionAttribute("programasEducativos", dto.getLstProgramasEducativos());
+        filtros();
+    }
+    
+    public void filtros(){
+        dto.setAniosConsulta(ejbModulos.getEjercicioRegistros(dto.getRegistros(), dto.getArea()));
+        if(!dto.getAniosConsulta().isEmpty()){
+            dto.setAnioConsulta((short)dto.getAniosConsulta().get(dto.getAniosConsulta().size()-1));
+        }
+        dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(),dto.getRegistros(),dto.getArea()));
+        if(!dto.getMesesConsulta().isEmpty()){
+            dto.setMesConsulta(dto.getMesesConsulta().stream()
+                .filter(t -> ejbModulos.getEventoRegistro().getMes().equals(t))
+                .findAny()
+                .orElse(dto.getMesesConsulta().get(dto.getMesesConsulta().size()-1)));
+        }
+        buscaSesionesIndividuales();
+    }
+    
+    public void actualizarMeses(ValueChangeEvent e){
+        dto.setAnioConsulta((short)e.getNewValue());
+        dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(), dto.getRegistros(), dto.getArea()));
+        buscaSesionesIndividuales();
+    }
+    
+    public void buscaSesionesIndividuales(){
+        dto.setLstSesionesPsicopedagogia(ejbSesionesPsicopedagogia.getFiltroSesionesIndividualesPorAreaEjercicioMesArea(dto.getArea(), dto.getAnioConsulta(), dto.getMesConsulta()));
+        dto.getLstSesionesPsicopedagogia().stream().forEach((sp) -> {
+            sp.getSesionIndividualMensualPsicopedogia().setRegistros(ejbModulos.buscaRegistroPorClave(sp.getSesionIndividualMensualPsicopedogia().getRegistro()));
+        });
+        Ajax.update("formMuestraDatosActivos");
     }
     
     public void forzarAperturaSesionPsicopedagogia(){
@@ -89,11 +119,15 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
         }
     }
     
-    public void abrirEdicionSesionPsicopedagogia(SesionIndividualMensualPsicopedogia sesionPsicopedagogia) {
+    public void abrirEdicionSesionPsicopedagogia(DTOSesionesPsicopedagogia sesionPsicopedagogia) {
         dto.setNuevoRegistro(Boolean.FALSE);
-        DTOSesionesPsicopedagogia dtoSP = new DTOSesionesPsicopedagogia();
-        dtoSP.setSesionIndividualMensualPsicopedogia(sesionPsicopedagogia);
-        dto.setDtoSesionPsicopedagogia(dtoSP);
+        dto.setDtoSesionPsicopedagogia(sesionPsicopedagogia);
+        accionProgramaEducativo(dto.getDtoSesionPsicopedagogia().getSesionIndividualMensualPsicopedogia().getOtroTipoSesion());
+        if(dto.getHabilitaProgramaEducativo()){
+            dto.setProgramaEducativo(dto.getDtoSesionPsicopedagogia().getProgramaEducativo());
+        }else{
+            dto.setProgramaEducativo(null);
+        }
         dto.setMensaje("");
         actualizaInterfazSesionPsicopedagogia();
     }   
@@ -102,11 +136,9 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
         sesionPsicopedagogia.setMes(controladorModulosRegistro.getEventosRegistros().getMes());
         sesionPsicopedagogia.setProgramaEducativo(dto.getProgramaEducativo().getArea());
         if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia).isEmpty()) {
-            System.err.println("No entra");
             dto.setMensaje("Los datos que ha ingresado corresponden con un registro previamente registrado");
             actualizaInterfazSesionPsicopedagogia();
         } else {
-            System.err.println("Si entra");
             ejbSesionesPsicopedagogia.guardaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia, dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
             dto.setMensaje("El registro ha sido guardado con exito en la base de datos");
             DTOSesionesPsicopedagogia dtoSP = new DTOSesionesPsicopedagogia();
@@ -114,6 +146,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
             dto.setDtoSesionPsicopedagogia(dtoSP);
             actualizaInterfazSesionPsicopedagogia();
         }
+        buscaSesionesIndividuales();
         Ajax.update("mensaje");
     }
     
@@ -131,19 +164,45 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
             dto.setDtoSesionPsicopedagogia(dtoSP);
             actualizaInterfazSesionPsicopedagogia();
         }
+        buscaSesionesIndividuales();
         Ajax.update("mensaje");
     }
 
     public void editaSesionPsicopedagogia(SesionIndividualMensualPsicopedogia sesionPsicopedagogia){
         DTOSesionesPsicopedagogia dtoSP = new DTOSesionesPsicopedagogia();
-        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia).isEmpty()) {
+        sesionPsicopedagogia.setProgramaEducativo(dto.getProgramaEducativo().getArea());
+        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaParaEdicion(sesionPsicopedagogia).isEmpty()) {
             dto.setMensaje("Los datos que ha ingresado corresponden con un registro previo");
+            actualizaInterfazSesionPsicopedagogia();
+        }else{
+            System.err.println("Registro: " + sesionPsicopedagogia.getRegistro());
+            System.err.println("Área de Conflicto: " + sesionPsicopedagogia.getAreaConflicto());
+            System.err.println("Otro Tipo de Sesión: " + sesionPsicopedagogia.getOtroTipoSesion().getDescripcion());
+            System.err.println("Programa Educativo: " + sesionPsicopedagogia.getProgramaEducativo());
+            System.err.println("Hombres: " + sesionPsicopedagogia.getHombres());
+            System.err.println("Mujeres: " + sesionPsicopedagogia.getMujeres());
+            System.err.println("Mes: " + sesionPsicopedagogia.getMes());
+            dto.setMensaje(ejbSesionesPsicopedagogia.editaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia));
+            dtoSP.setSesionIndividualMensualPsicopedogia(sesionPsicopedagogia);
+            dto.setDtoSesionPsicopedagogia(dtoSP);
+            actualizaInterfazSesionPsicopedagogia();
+        }
+        buscaSesionesIndividuales();
+        Ajax.update("mensaje");
+    }
+    
+    public void editaSesionPsicopedagogiaSPE(SesionIndividualMensualPsicopedogia sesionPsicopedagogia){
+        DTOSesionesPsicopedagogia dtoSP = new DTOSesionesPsicopedagogia();
+        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaSPEParaEdicion(sesionPsicopedagogia).isEmpty()) {
+            dto.setMensaje("Los datos que ha ingresado corresponden con un registro previo");
+            actualizaInterfazSesionPsicopedagogia();
         }else{
             dto.setMensaje(ejbSesionesPsicopedagogia.editaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia));
             dtoSP.setSesionIndividualMensualPsicopedogia(sesionPsicopedagogia);
             dto.setDtoSesionPsicopedagogia(dtoSP);
             actualizaInterfazSesionPsicopedagogia();
         }
+        buscaSesionesIndividuales();
         Ajax.update("mensaje");
     }
     
@@ -155,12 +214,21 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
                 guardarSesionPsipedagogiaSPE(sesionIndividualPsicopedagogia);
             }
         }else{
-            editaSesionPsicopedagogia(sesionIndividualPsicopedagogia);
+            if(dto.getHabilitaProgramaEducativo()){
+                editaSesionPsicopedagogia(sesionIndividualPsicopedagogia);
+            }else{
+                editaSesionPsicopedagogiaSPE(sesionIndividualPsicopedagogia);
+            }
+            
         }
     }
     
     public void habilitaProgramaEducativo(ValueChangeEvent e){
-        if(((OtrosTiposSesionesPsicopedagogia)e.getNewValue()).getOtroTipoSesionPsicopedagogia() == 1 || ((OtrosTiposSesionesPsicopedagogia)e.getNewValue()).getOtroTipoSesionPsicopedagogia() == 3 ){
+        accionProgramaEducativo((OtrosTiposSesionesPsicopedagogia)e.getNewValue());
+    }
+    
+    public void accionProgramaEducativo(OtrosTiposSesionesPsicopedagogia otroTipoSesionPsicopedagogia){
+        if((otroTipoSesionPsicopedagogia.getOtroTipoSesionPsicopedagogia() == 1) || (otroTipoSesionPsicopedagogia.getOtroTipoSesionPsicopedagogia() == 3)){
             dto.setHabilitaProgramaEducativo(Boolean.FALSE);
         }else{
             dto.setHabilitaProgramaEducativo(Boolean.TRUE);

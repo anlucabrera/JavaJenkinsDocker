@@ -30,6 +30,7 @@ public final class DtoActividadesVarias {
     
     @Getter @Setter private String mensaje;
     
+//    Uso en controlador de Administrador
     @Getter @Setter private List<AreasUniversidad> listaAreasConRegistroMensualGeneral;
     
     @Getter @Setter private Boolean nuevoRegistro;
