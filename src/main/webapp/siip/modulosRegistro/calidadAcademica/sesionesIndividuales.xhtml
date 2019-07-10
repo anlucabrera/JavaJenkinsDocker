@@ -47,6 +47,32 @@
                         <p:toolbar id="tb"> 
                             <f:facet name="left">
                                 <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                                    <p:outputLabel value="Ejercicio: " for="anioConsulta" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="anioConsulta"
+                                                     value="#{controladorSesionesPsicopedagogia.dto.anioConsulta}"
+                                                     valueChangeListener="#{controladorSesionesPsicopedagogia.actualizarMeses}"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.aniosConsulta}" 
+                                                       var="anio" 
+                                                       itemValue="#{anio}" 
+                                                       itemLabel="#{anio}" />
+                                        <p:ajax process="@this" listener="#{controladorSesionesPsicopedagogia.buscaSesionesIndividuales()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:outputLabel value="Mes: " for="mesConsulta" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="mesConsulta"
+                                                     value="#{controladorSesionesPsicopedagogia.dto.mesConsulta}"
+                                                     class="form-control"
+                                                     style="padding-top:  0px">
+                                        <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.mesesConsulta}" 
+                                                       var="mes" 
+                                                       itemValue="#{mes}" 
+                                                       itemLabel="#{mes}" />
+                                        <p:ajax process="@this" listener="#{controladorSesionesPsicopedagogia.buscaSesionesIndividuales()}" update="@(form)" />
+                                    </p:selectOneMenu>
                                 </h:form>
                                 <!--Filtros pendientes-->
                             </f:facet>
@@ -68,6 +94,88 @@
 
                 <div class="box-body">
                     <!-- Sección de visualización y eliminación -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formMuestraDatosActivos">
+                                <p:remoteCommand update="@form:formMuestraDatosActivos"  name="actualizar"/>
+                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parámetros seleccionados: Ejercicio: #{controladorSesionesPsicopedagogia.dto.anioConsulta} y Mes: #{controladorSesionesPsicopedagogia.dto.mesConsulta}" 
+                                             paginator="true"
+                                             rows="10"
+                                             rowsPerPageTemplate="10,20,30,40,50"
+                                             resizeMode="expand"
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                             id="dtbActividadesPrevias"
+                                             var="sp" value="#{controladorSesionesPsicopedagogia.dto.lstSesionesPsicopedagogia}"
+                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column headerText="Opciones" width="120"/>
+                                            <p:column headerText="Área de conflicto" width="100"/>
+                                            <p:column headerText="Tipo de sesión" width="100"/>
+                                            <p:column headerText="Programa Educativo" width="400"/>
+                                            <p:column headerText="Hombres" width="100"/>
+                                            <p:column headerText="Mujeres" width="100"/>
+                                            <p:column headerText="Mes" width="100"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="text-align: center;">
+                                        <div class="btn-group">
+                                            <p:commandButton actionListener="#{controladorSesionesPsicopedagogia.abrirEdicionSesionPsicopedagogia(sp)}"
+                                                             class="btn btn-sm btn-info"
+                                                             icon="fa fa-pencil-square-o"
+                                                            
+                                                             title="Editar Sesión de Psicopedagogía."/>
+                                        </div>
+                                    </p:column>                                                 
+                                    <p:column>
+                                        <h:outputText value="#{sp.sesionIndividualMensualPsicopedogia.areaConflicto.descripcion}">
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{sp.sesionIndividualMensualPsicopedogia.otroTipoSesion.descripcion}">
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{sp.programaEducativo.nombre}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{sp.sesionIndividualMensualPsicopedogia.hombres}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{sp.sesionIndividualMensualPsicopedogia.mujeres}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{sp.sesionIndividualMensualPsicopedogia.mes}"/>
+                                    </p:column>
+
+                                    <f:facet name="footer">
+                                        En el mes de: #{controladorSesionesPsicopedagogia.dto.mesConsulta} hay un total de: #{fn:length(controladorSesionesPsicopedagogia.dto.lstSesionesPsicopedagogia)} registros de Sesiones Individuales de Psicopedagogía.
+                                    </f:facet>
+                                </p:dataTable>
+
+                                <p:confirmDialog global="true" 
+                                                 showEffect="fade" 
+                                                 hideEffect="fade" 
+                                                 styleClass="panel panel-primary" 
+                                                 width="500" 
+                                                 closeOnEscape="true">
+                                    <p:commandButton value="Si" 
+                                                     type="button" 
+                                                     styleClass="ui-confirmdialog-yes btn btn-primary" 
+                                                     icon="ui-icon-check" />
+                                    <p:commandButton value="No" 
+                                                     type="button" 
+                                                     styleClass="ui-confirmdialog-no btn btn-primary" 
+                                                     icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </h:form>
+                        </div>
+                    </div>
 
                     <p:dialog id="modalRegistroSesionPsicopedagogia"
                               widgetVar="modalRegistroSesionPsicopedagogia"
@@ -80,27 +188,26 @@
                               modal="true" 
                               draggable="true" 
                               header="#{controladorSesionesPsicopedagogia.dto.nuevoRegistro?'Nueva sesión individual de psicopedagogia':'Edición de sesión individual de psicopedagogia'}"
+                              onHide="actualizar();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
                               resizable="false" 
                               maximizable="false">
                         <h:form id="frmRegistroSesionPsicopedagogia">
                             <div class="row">
-
                                 <c:if test="#{controladorSesionesPsicopedagogia.dto.mensaje ne ''}">
-                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 5px">
                                         <div class="callout callout-info">
                                             <p style="font-weight: bold;">Mensaje de verificación:</p>
                                             <p><code style="color:#4185A0;">#{controladorSesionesPsicopedagogia.dto.mensaje}</code></p>
                                         </div>
                                         <p:outputLabel id="mensaje" value=""/>
-                                        <br></br>
                                     </div>  
                                 </c:if>
 
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
 
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 20px">
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px">
                                     <div class="ui-material">
                                         <p:selectOneMenu id="somOtrosTiposSesiones"
                                                          required="true"
@@ -128,7 +235,7 @@
                                         <p:outputLabel value="Tipo de sesión: " for="somOtrosTiposSesiones" />
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-sm-6 col-md-6" style="margin-bottom: 20px">
                                     <div class="ui-material">
                                         <p:selectOneMenu id="somAreasConflicto"
@@ -155,7 +262,7 @@
                                         <p:outputLabel value="Área de conflicto: " for="somAreasConflicto" />
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 20px"></div>
 
                                 <c:if test="#{controladorSesionesPsicopedagogia.dto.habilitaProgramaEducativo}">

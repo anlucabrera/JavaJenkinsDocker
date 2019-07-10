@@ -28,11 +28,16 @@ public final class DtoSesionPsicopedagogia {
     @Getter @Setter private Boolean habilitaProgramaEducativo;
     
     /************************** Evidencias *************************************/
-    @Getter private Boolean tieneEvidencia, forzarAperturaDialogo;
+    @Getter @Setter private Boolean tieneEvidencia, forzarAperturaDialogo;
     
     /************************** Alineación POA  *************************************/
     
     /******************** Consulta de información *********************/
+    @Getter @Setter private List<String> mesesConsulta = new ArrayList<>();
+    @Getter @Setter private List<Short> aniosConsulta = new ArrayList<>();
+    
+    @Getter @Setter private String mesConsulta = null;
+    @Getter @Setter private Short anioConsulta = null;
     
     @Getter @Setter private List<Short> registros;
     @Getter @Setter private RegistrosTipo registroTipo;

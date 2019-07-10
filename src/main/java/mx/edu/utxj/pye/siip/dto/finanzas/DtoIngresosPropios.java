@@ -54,7 +54,7 @@ public class DtoIngresosPropios {
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
 
     public DtoIngresosPropios() {
-        setRegistroTipo(new RegistrosTipo((short)16));
+        setRegistroTipo(new RegistrosTipo((short)14));
         setEje(new EjesRegistro(3));
         
         tieneEvidencia = false;

@@ -28,12 +28,12 @@ import mx.edu.utxj.pye.sgi.entity.pye2.SesionIndividualMensualPsicopedogia;
 public class DTOSesionesPsicopedagogia implements Serializable{
     private static final long serialVersionUID = 1788800084249713519L;
     @Getter @Setter @NonNull private SesionIndividualMensualPsicopedogia sesionIndividualMensualPsicopedogia;
-    @Getter @Setter private AreasUniversidad areasUniversidad;
+    @Getter @Setter private AreasUniversidad programaEducativo;
     @Getter @Setter private ActividadesPoa actividadAlineada;
 
-    public DTOSesionesPsicopedagogia(SesionIndividualMensualPsicopedogia sesionIndividualMensualPsicopedogia, AreasUniversidad areasUniversidad) {
+    public DTOSesionesPsicopedagogia(SesionIndividualMensualPsicopedogia sesionIndividualMensualPsicopedogia, AreasUniversidad programaEducativo) {
         this.sesionIndividualMensualPsicopedogia = sesionIndividualMensualPsicopedogia;
-        this.areasUniversidad = areasUniversidad;
+        this.programaEducativo = programaEducativo;
     }
     
 }
