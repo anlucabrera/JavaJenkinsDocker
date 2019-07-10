@@ -202,7 +202,6 @@
                                             <p:selectOneButton id="p#{id}" value="#{evaluacionTutor2.resultados.r5}" valueChangeListener="#{evaluacionTutor2.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
                                                 <p:ajax process="@this" update="@form" />
                                                 <f:selectItems value="#{evaluacionTutor2.respuestasPosibles}" />
-                                                <f:selectItem itemValue="4" itemLabel="No aplica" itemDescription="No aplica" />
                                             </p:selectOneButton>
                                             <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
                                         </f:ajax>

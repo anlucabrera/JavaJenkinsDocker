@@ -69,6 +69,23 @@ public class ServicioAdministracionEvTutor  implements EjbAdministracionEvTutor 
     }
 
     @Override
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosEvaluacionTutor() {
+        try {
+            List<PeriodosEscolares> periodosEscolaresEvaluacion= new ArrayList<>();
+            List<Evaluaciones> evaluaciones = f.getEntityManager().createQuery("select e from Evaluaciones e where e.tipo=:tipo",Evaluaciones.class)
+                    .setParameter("tipo","Tutor")
+                    .getResultList()
+                    ;
+            if(evaluaciones.isEmpty()|| evaluaciones ==null){return ResultadoEJB.crearErroneo(2,periodosEscolaresEvaluacion,"No se encontraron periodos");}
+
+        }catch (Exception e){
+
+        }
+
+        return null;
+    }
+
+    @Override
     public ResultadoEJB<PeriodosEscolares> getPeriodoEvaluacion(Evaluaciones evaluacion) {
         try {
             //TODO : Busca el periodo de la la evaluacion

@@ -45,7 +45,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
     @Inject EjbAdministracionTutores ejbAdmin;
 
     @Override
-    public MatriculaPeriodosEscolares getEstudianteSauiiut(Integer matricula, Integer periodo) {
+    public MatriculaPeriodosEscolares getEstudianteSauiiut(String matricula, Integer periodo) {
         //Obtiene el periodo actual
         System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEdtudianteBase.getEstudianteSauiiut()--> ENTRO A BUSCAR EN MATRICULA PERIODOS" + matricula);
         
@@ -65,7 +65,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
     }
 
     @Override
-    public Estudiante getEstudianteControlEscolar(Integer matricula) {
+    public Estudiante getEstudianteControlEscolar( String matricula) {
         List<Estudiante> le = new ArrayList<>();
         Estudiante e = new Estudiante();
         TypedQuery<Estudiante> ece= fce.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula", Estudiante.class);
@@ -89,7 +89,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
      * @return Regresa la referencia del estudiante evaluador segun su periodo, si no lo encuentra en el repositorio correspondiente regresa null.
      */
     @Override
-    public EstudiantesClaves getClaveEstudiante(Integer matricula, Integer periodoEvaluacion) {
+    public EstudiantesClaves getClaveEstudiante(String matricula, Integer periodoEvaluacion) {
         System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEdtudianteBase.getClaveEstudiante()");
         Estudiante estudianteControlEscolar = new Estudiante();
         MatriculaPeriodosEscolares estudianteSauiit = new MatriculaPeriodosEscolares();

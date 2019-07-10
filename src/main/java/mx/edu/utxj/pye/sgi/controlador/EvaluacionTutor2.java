@@ -72,7 +72,7 @@ public class EvaluacionTutor2 extends ViewScopedRol{
         if(evaluacion != null){
             //buscar estudiantes en bases de SAUIIT Y Control Escolar
             System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2.init()-->Entro al initi evaluacion no nula -- Periodo de la evaluacion" + evaluacion.getPeriodo());
-            estudianteClave = ejbEstudianteBase.getClaveEstudiante(Integer.parseInt(logonMB.getCurrentUser()), evaluacion.getPeriodo());
+            estudianteClave = ejbEstudianteBase.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
             System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2.init()--> Ejecuto bien al estudianyte" + estudianteClave);
             if(estudianteClave !=null){
 
