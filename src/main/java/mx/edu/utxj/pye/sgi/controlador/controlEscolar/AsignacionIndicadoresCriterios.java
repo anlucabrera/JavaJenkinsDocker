@@ -39,7 +39,7 @@ import org.omnifaces.util.Messages;
  */
 @Named
 @ViewScoped
-public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements Desarrollable {
+public class AsignacionIndicadoresCriterios extends ViewScopedRol implements Desarrollable {
     @Getter @Setter ConfiguracionUnidadMateriaRolDocente rol;
 
     @EJB EjbConfiguracionUnidadMateria ejb;

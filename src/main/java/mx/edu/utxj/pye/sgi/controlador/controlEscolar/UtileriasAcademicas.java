@@ -24,7 +24,7 @@ import javax.faces.model.SelectItem;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbProcesoInscripcion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Inscripcion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Turno;
 import org.omnifaces.util.Faces;
@@ -43,8 +43,8 @@ public class UtileriasAcademicas implements Serializable {
     @Getter @Setter private List<Turno> listaTurno = new ArrayList<>();
     @Getter @Setter private List<PlanEstudio> planesEstudio = new ArrayList<>();
     @Getter @Setter private List<SelectItem> listaPeriodos = new ArrayList<>();
-    @Getter @Setter private Inscripcion estudiante;
-    @Getter @Setter private List<Inscripcion> listaEstudiantes;
+    @Getter @Setter private Estudiante estudiante;
+    @Getter @Setter private List<Estudiante> listaEstudiantes;
     @Getter @Setter private String nombreCarrera,nombreIems;
     @Getter @Setter private Integer edad;
 
@@ -87,11 +87,11 @@ public class UtileriasAcademicas implements Serializable {
         listaGrupos = ejbUtilToolAcademicas.listaByPeriodo(periodo);
     }
     
-    public List<Inscripcion> completeEstudiante(String query){
+    public List<Estudiante> completeEstudiante(String query){
         return ejbUtilToolAcademicas.getEstudianteXMatricula(query);
     }
     
-    public List<Inscripcion> completeEstudianteXApellidoPaterno(String query){
+    public List<Estudiante> completeEstudianteXApellidoPaterno(String query){
         return ejbUtilToolAcademicas.getEstudianteXAP(query);
     }
     

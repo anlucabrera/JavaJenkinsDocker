@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Inscripcion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -113,15 +113,15 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
     }
 
     @Override
-    public List<Inscripcion> getEstudianteXMatricula(String matricula) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula LIKE CONCAT('%',:stringMatricula ,'%')", Inscripcion.class)
+    public List<Estudiante> getEstudianteXMatricula(String matricula) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula LIKE CONCAT('%',:stringMatricula ,'%')", Estudiante.class)
                 .setParameter("stringMatricula", matricula)
                 .getResultList();
     }
 
     @Override
-    public List<Inscripcion> getEstudianteXAP(String apellidoPaterno) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idPersona.apellidoPaterno LIKE CONCAT('%',:ap ,'%')", Inscripcion.class)
+    public List<Estudiante> getEstudianteXAP(String apellidoPaterno) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idPersona.apellidoPaterno LIKE CONCAT('%',:ap ,'%')", Estudiante.class)
                 .setParameter("ap", apellidoPaterno)
                 .getResultList();
     }

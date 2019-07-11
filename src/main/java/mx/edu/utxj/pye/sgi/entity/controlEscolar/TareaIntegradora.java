@@ -14,9 +14,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "TareaIntegradora.findAll", query = "SELECT t FROM TareaIntegradora t")
     , @NamedQuery(name = "TareaIntegradora.findByIdTareaIntegradora", query = "SELECT t FROM TareaIntegradora t WHERE t.idTareaIntegradora = :idTareaIntegradora")
     , @NamedQuery(name = "TareaIntegradora.findByDescripcion", query = "SELECT t FROM TareaIntegradora t WHERE t.descripcion = :descripcion")
-    , @NamedQuery(name = "TareaIntegradora.findByFechaEntrega", query = "SELECT t FROM TareaIntegradora t WHERE t.fechaEntrega = :fechaEntrega")})
+    , @NamedQuery(name = "TareaIntegradora.findByFechaEntrega", query = "SELECT t FROM TareaIntegradora t WHERE t.fechaEntrega = :fechaEntrega")
+    , @NamedQuery(name = "TareaIntegradora.findByPorcentaje", query = "SELECT t FROM TareaIntegradora t WHERE t.porcentaje = :porcentaje")})
 public class TareaIntegradora implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,8 +55,12 @@ public class TareaIntegradora implements Serializable {
     @Column(name = "fecha_entrega")
     @Temporal(TemporalType.DATE)
     private Date fechaEntrega;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "porcentaje")
+    private double porcentaje;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
-    @ManyToOne(optional = false)
+    @OneToOne(optional = false)
     private CargaAcademica carga;
 
     public TareaIntegradora() {
@@ -65,10 +70,11 @@ public class TareaIntegradora implements Serializable {
         this.idTareaIntegradora = idTareaIntegradora;
     }
 
-    public TareaIntegradora(Integer idTareaIntegradora, String descripcion, Date fechaEntrega) {
+    public TareaIntegradora(Integer idTareaIntegradora, String descripcion, Date fechaEntrega, double porcentaje) {
         this.idTareaIntegradora = idTareaIntegradora;
         this.descripcion = descripcion;
         this.fechaEntrega = fechaEntrega;
+        this.porcentaje = porcentaje;
     }
 
     public Integer getIdTareaIntegradora() {
@@ -93,6 +99,14 @@ public class TareaIntegradora implements Serializable {
 
     public void setFechaEntrega(Date fechaEntrega) {
         this.fechaEntrega = fechaEntrega;
+    }
+
+    public double getPorcentaje() {
+        return porcentaje;
+    }
+
+    public void setPorcentaje(double porcentaje) {
+        this.porcentaje = porcentaje;
     }
 
     public CargaAcademica getCarga() {

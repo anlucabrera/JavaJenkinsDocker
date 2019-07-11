@@ -62,6 +62,8 @@ public class PlanEstudio implements Serializable {
     @NotNull
     @Column(name = "id_pe")
     private short idPe;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plan")
+    private List<Grupo> grupoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlan")
     private List<PlanEstudioMateria> planEstudioMateriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudios")
@@ -120,6 +122,15 @@ public class PlanEstudio implements Serializable {
 
     public void setIdPe(short idPe) {
         this.idPe = idPe;
+    }
+
+    @XmlTransient
+    public List<Grupo> getGrupoList() {
+        return grupoList;
+    }
+
+    public void setGrupoList(List<Grupo> grupoList) {
+        this.grupoList = grupoList;
     }
 
     @XmlTransient

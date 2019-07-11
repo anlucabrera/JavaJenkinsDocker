@@ -353,6 +353,7 @@ public class EjbConfiguracionUnidadMateria {
                     umc.setFechaFin(cum.getUnidadMateriaConfiguracion().getFechaFin());
                     umc.setCarga(cargaAcademica);
                     umc.setIdUnidadMateria(cum.getUnidadMateria());
+                    umc.setPorcentaje(cum.getUnidadMateriaConfiguracion().getPorcentaje());
                     f.create(umc);
                     DtoConfiguracionUnidadMateria dto = new DtoConfiguracionUnidadMateria(cum.getUnidadMateria(), umc);
                     l.add(dto);
@@ -381,6 +382,7 @@ public class EjbConfiguracionUnidadMateria {
             ti.setDescripcion(tareaIntegradora.getDescripcion());
             ti.setFechaEntrega(tareaIntegradora.getFechaEntrega());
             ti.setCarga(cargaAcademica);
+            ti.setPorcentaje(tareaIntegradora.getPorcentaje());
             f.create(ti);
                
             return ResultadoEJB.crearCorrecto(ti, "La tarea integradora se guardo correctamente.");

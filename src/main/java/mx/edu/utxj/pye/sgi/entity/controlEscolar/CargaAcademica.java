@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -50,8 +51,8 @@ public class CargaAcademica implements Serializable {
     private int docente;
     @Column(name = "horas_semana")
     private Integer horasSemana;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
-    private List<TareaIntegradora> tareaIntegradoraList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "carga")
+    private TareaIntegradora tareaIntegradora;
     @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
     @ManyToOne(optional = false)
     private PlanEstudioMateria idPlanMateria;
@@ -102,13 +103,12 @@ public class CargaAcademica implements Serializable {
         this.horasSemana = horasSemana;
     }
 
-    @XmlTransient
-    public List<TareaIntegradora> getTareaIntegradoraList() {
-        return tareaIntegradoraList;
+    public TareaIntegradora getTareaIntegradora() {
+        return tareaIntegradora;
     }
 
-    public void setTareaIntegradoraList(List<TareaIntegradora> tareaIntegradoraList) {
-        this.tareaIntegradoraList = tareaIntegradoraList;
+    public void setTareaIntegradora(TareaIntegradora tareaIntegradora) {
+        this.tareaIntegradora = tareaIntegradora;
     }
 
     public PlanEstudioMateria getIdPlanMateria() {

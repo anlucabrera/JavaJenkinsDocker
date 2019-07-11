@@ -66,7 +66,7 @@ public class Asesoria implements Serializable {
         @JoinColumn(name = "asesoria", referencedColumnName = "id_asesoria")}, inverseJoinColumns = {
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")})
     @ManyToMany
-    private List<Inscripcion> inscripcionList;
+    private List<Estudiante> estudianteList;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
     @ManyToOne(optional = false)
     private CargaAcademica carga;
@@ -118,12 +118,12 @@ public class Asesoria implements Serializable {
     }
 
     @XmlTransient
-    public List<Inscripcion> getInscripcionList() {
-        return inscripcionList;
+    public List<Estudiante> getEstudianteList() {
+        return estudianteList;
     }
 
-    public void setInscripcionList(List<Inscripcion> inscripcionList) {
-        this.inscripcionList = inscripcionList;
+    public void setEstudianteList(List<Estudiante> estudianteList) {
+        this.estudianteList = estudianteList;
     }
 
     public CargaAcademica getCarga() {
