@@ -25,24 +25,24 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Entity
 @Table(name = "tutor_familiar", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "TutorFamiliar.findAll", query = "SELECT t FROM TutorFamiliar t"),
-    @NamedQuery(name = "TutorFamiliar.findByIdTutorFamiliar", query = "SELECT t FROM TutorFamiliar t WHERE t.idTutorFamiliar = :idTutorFamiliar"),
-    @NamedQuery(name = "TutorFamiliar.findByNombre", query = "SELECT t FROM TutorFamiliar t WHERE t.nombre = :nombre"),
-    @NamedQuery(name = "TutorFamiliar.findByApellidoPaterno", query = "SELECT t FROM TutorFamiliar t WHERE t.apellidoPaterno = :apellidoPaterno"),
-    @NamedQuery(name = "TutorFamiliar.findByApellidoMaterno", query = "SELECT t FROM TutorFamiliar t WHERE t.apellidoMaterno = :apellidoMaterno"),
-    @NamedQuery(name = "TutorFamiliar.findByCalle", query = "SELECT t FROM TutorFamiliar t WHERE t.calle = :calle"),
-    @NamedQuery(name = "TutorFamiliar.findByNumero", query = "SELECT t FROM TutorFamiliar t WHERE t.numero = :numero"),
-    @NamedQuery(name = "TutorFamiliar.findByEstado", query = "SELECT t FROM TutorFamiliar t WHERE t.estado = :estado"),
-    @NamedQuery(name = "TutorFamiliar.findByMunicipio", query = "SELECT t FROM TutorFamiliar t WHERE t.municipio = :municipio"),
-    @NamedQuery(name = "TutorFamiliar.findByAsentamiento", query = "SELECT t FROM TutorFamiliar t WHERE t.asentamiento = :asentamiento"),
-    @NamedQuery(name = "TutorFamiliar.findByNoTelefono", query = "SELECT t FROM TutorFamiliar t WHERE t.noTelefono = :noTelefono"),
-    @NamedQuery(name = "TutorFamiliar.findByParentesco", query = "SELECT t FROM TutorFamiliar t WHERE t.parentesco = :parentesco")})
+    @NamedQuery(name = "TutorFamiliar.findAll", query = "SELECT t FROM TutorFamiliar t")
+    , @NamedQuery(name = "TutorFamiliar.findByIdTutorFamiliar", query = "SELECT t FROM TutorFamiliar t WHERE t.idTutorFamiliar = :idTutorFamiliar")
+    , @NamedQuery(name = "TutorFamiliar.findByNombre", query = "SELECT t FROM TutorFamiliar t WHERE t.nombre = :nombre")
+    , @NamedQuery(name = "TutorFamiliar.findByApellidoPaterno", query = "SELECT t FROM TutorFamiliar t WHERE t.apellidoPaterno = :apellidoPaterno")
+    , @NamedQuery(name = "TutorFamiliar.findByApellidoMaterno", query = "SELECT t FROM TutorFamiliar t WHERE t.apellidoMaterno = :apellidoMaterno")
+    , @NamedQuery(name = "TutorFamiliar.findByCalle", query = "SELECT t FROM TutorFamiliar t WHERE t.calle = :calle")
+    , @NamedQuery(name = "TutorFamiliar.findByNumero", query = "SELECT t FROM TutorFamiliar t WHERE t.numero = :numero")
+    , @NamedQuery(name = "TutorFamiliar.findByEstado", query = "SELECT t FROM TutorFamiliar t WHERE t.estado = :estado")
+    , @NamedQuery(name = "TutorFamiliar.findByMunicipio", query = "SELECT t FROM TutorFamiliar t WHERE t.municipio = :municipio")
+    , @NamedQuery(name = "TutorFamiliar.findByAsentamiento", query = "SELECT t FROM TutorFamiliar t WHERE t.asentamiento = :asentamiento")
+    , @NamedQuery(name = "TutorFamiliar.findByNoTelefono", query = "SELECT t FROM TutorFamiliar t WHERE t.noTelefono = :noTelefono")
+    , @NamedQuery(name = "TutorFamiliar.findByParentesco", query = "SELECT t FROM TutorFamiliar t WHERE t.parentesco = :parentesco")})
 public class TutorFamiliar implements Serializable {
 
     private static final long serialVersionUID = 1L;

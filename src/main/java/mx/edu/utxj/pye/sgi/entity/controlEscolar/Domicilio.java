@@ -21,26 +21,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Entity
 @Table(name = "domicilio", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Domicilio.findAll", query = "SELECT d FROM Domicilio d"),
-    @NamedQuery(name = "Domicilio.findByAspirante", query = "SELECT d FROM Domicilio d WHERE d.aspirante = :aspirante"),
-    @NamedQuery(name = "Domicilio.findByCalle", query = "SELECT d FROM Domicilio d WHERE d.calle = :calle"),
-    @NamedQuery(name = "Domicilio.findByNumero", query = "SELECT d FROM Domicilio d WHERE d.numero = :numero"),
-    @NamedQuery(name = "Domicilio.findByIdEstado", query = "SELECT d FROM Domicilio d WHERE d.idEstado = :idEstado"),
-    @NamedQuery(name = "Domicilio.findByIdMunicipio", query = "SELECT d FROM Domicilio d WHERE d.idMunicipio = :idMunicipio"),
-    @NamedQuery(name = "Domicilio.findByIdAsentamiento", query = "SELECT d FROM Domicilio d WHERE d.idAsentamiento = :idAsentamiento"),
-    @NamedQuery(name = "Domicilio.findByTiempoResidencia", query = "SELECT d FROM Domicilio d WHERE d.tiempoResidencia = :tiempoResidencia"),
-    @NamedQuery(name = "Domicilio.findByCalleProcedencia", query = "SELECT d FROM Domicilio d WHERE d.calleProcedencia = :calleProcedencia"),
-    @NamedQuery(name = "Domicilio.findByNumeroProcedencia", query = "SELECT d FROM Domicilio d WHERE d.numeroProcedencia = :numeroProcedencia"),
-    @NamedQuery(name = "Domicilio.findByEstadoProcedencia", query = "SELECT d FROM Domicilio d WHERE d.estadoProcedencia = :estadoProcedencia"),
-    @NamedQuery(name = "Domicilio.findByMunicipioProcedencia", query = "SELECT d FROM Domicilio d WHERE d.municipioProcedencia = :municipioProcedencia"),
-    @NamedQuery(name = "Domicilio.findByAsentamientoProcedencia", query = "SELECT d FROM Domicilio d WHERE d.asentamientoProcedencia = :asentamientoProcedencia"),
-    @NamedQuery(name = "Domicilio.findByVivesCon", query = "SELECT d FROM Domicilio d WHERE d.vivesCon = :vivesCon")})
+    @NamedQuery(name = "Domicilio.findAll", query = "SELECT d FROM Domicilio d")
+    , @NamedQuery(name = "Domicilio.findByAspirante", query = "SELECT d FROM Domicilio d WHERE d.aspirante = :aspirante")
+    , @NamedQuery(name = "Domicilio.findByCalle", query = "SELECT d FROM Domicilio d WHERE d.calle = :calle")
+    , @NamedQuery(name = "Domicilio.findByNumero", query = "SELECT d FROM Domicilio d WHERE d.numero = :numero")
+    , @NamedQuery(name = "Domicilio.findByIdEstado", query = "SELECT d FROM Domicilio d WHERE d.idEstado = :idEstado")
+    , @NamedQuery(name = "Domicilio.findByIdMunicipio", query = "SELECT d FROM Domicilio d WHERE d.idMunicipio = :idMunicipio")
+    , @NamedQuery(name = "Domicilio.findByIdAsentamiento", query = "SELECT d FROM Domicilio d WHERE d.idAsentamiento = :idAsentamiento")
+    , @NamedQuery(name = "Domicilio.findByTiempoResidencia", query = "SELECT d FROM Domicilio d WHERE d.tiempoResidencia = :tiempoResidencia")
+    , @NamedQuery(name = "Domicilio.findByCalleProcedencia", query = "SELECT d FROM Domicilio d WHERE d.calleProcedencia = :calleProcedencia")
+    , @NamedQuery(name = "Domicilio.findByNumeroProcedencia", query = "SELECT d FROM Domicilio d WHERE d.numeroProcedencia = :numeroProcedencia")
+    , @NamedQuery(name = "Domicilio.findByEstadoProcedencia", query = "SELECT d FROM Domicilio d WHERE d.estadoProcedencia = :estadoProcedencia")
+    , @NamedQuery(name = "Domicilio.findByMunicipioProcedencia", query = "SELECT d FROM Domicilio d WHERE d.municipioProcedencia = :municipioProcedencia")
+    , @NamedQuery(name = "Domicilio.findByAsentamientoProcedencia", query = "SELECT d FROM Domicilio d WHERE d.asentamientoProcedencia = :asentamientoProcedencia")
+    , @NamedQuery(name = "Domicilio.findByVivesCon", query = "SELECT d FROM Domicilio d WHERE d.vivesCon = :vivesCon")})
 public class Domicilio implements Serializable {
 
     private static final long serialVersionUID = 1L;

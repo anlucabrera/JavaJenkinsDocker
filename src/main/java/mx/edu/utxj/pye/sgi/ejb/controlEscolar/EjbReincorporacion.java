@@ -288,37 +288,37 @@ public class EjbReincorporacion {
      * @param materias Lista de materias que se asignarán
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificaciones> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
-        try{
-            if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
-            if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);
-            
-            //Obtener la clave de la materia
-            materias.forEach(mat -> {claveMateria = mat.getIdMateria();});
-            Materia materia = f.getEntityManager().find(Materia.class, claveMateria);
-            
-            CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), claveMateria);
-            Calificaciones calificaciones = f.getEntityManager().createQuery("select c from Calificaciones c where c.estudiante1.idEstudiante =:estudiante and c.estudiante1.grupo =:grupo and c.materia1.idMateria =:materia", Calificaciones.class)
-                    .setParameter("estudiante", estudiante.getIdEstudiante())
-                    .setParameter("grupo", estudiante.getGrupo().getIdGrupo())
-                    .setParameter("materia", claveMateria)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-
-            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
-                calificaciones = new Calificaciones();
-                calificaciones.setCalificacionesPK(pk);
-                calificaciones.setEstudiante1(estudiante);
-                calificaciones.setMateria1(materia);
-                f.create(calificaciones);
-                return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fue registrada correctamente.");
-            }
-            return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", Calificaciones.class);
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo asignar las materias. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", e, null);
-        }
-    }
+//    public ResultadoEJB<Calificaciones> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
+//        try{
+//            if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
+//            if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);
+//            
+//            //Obtener la clave de la materia
+//            materias.forEach(mat -> {claveMateria = mat.getIdMateria();});
+//            Materia materia = f.getEntityManager().find(Materia.class, claveMateria);
+//            
+//            CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), claveMateria);
+//            Calificaciones calificaciones = f.getEntityManager().createQuery("select c from Calificaciones c where c.estudiante1.idEstudiante =:estudiante and c.estudiante1.grupo =:grupo and c.materia1.idMateria =:materia", Calificaciones.class)
+//                    .setParameter("estudiante", estudiante.getIdEstudiante())
+//                    .setParameter("grupo", estudiante.getGrupo().getIdGrupo())
+//                    .setParameter("materia", claveMateria)
+//                    .getResultStream()
+//                    .findFirst()
+//                    .orElse(null);
+//
+//            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
+//                calificaciones = new Calificaciones();
+//                calificaciones.setCalificacionesPK(pk);
+////                calificaciones.setEstudiante1(estudiante);
+////                calificaciones.setMateria1(materia);
+//                f.create(calificaciones);
+//                return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fue registrada correctamente.");
+//            }
+//            return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", Calificaciones.class);
+//        }catch (Throwable e){
+//            return ResultadoEJB.crearErroneo(1, "No se pudo asignar las materias. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", e, null);
+//        }
+//    }
     
      /**
      * Permite la lectura del folio de IMSS mediante el código QR
@@ -436,42 +436,42 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignarán las calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificaciones> asignarCalificacionesSAIIUT(List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto, Estudiante estudiante){
-        try{
-            if(listaCalificacionesSaiiutDto.isEmpty()) return ResultadoEJB.crearErroneo(3, "La calificación no puede ser nulo.", Calificaciones.class);
-            if(estudiante == null) return ResultadoEJB.crearErroneo(4, "El estudiante no puede ser nulo.", Calificaciones.class);
-           
-            Calificaciones calificacionesAsignar = new Calificaciones();
-            
-            listaCalificacionesSaiiutDto.forEach((calificacionesAlumno) -> {
-            
-            Calificaciones calificaciones = f.getEntityManager().createQuery("select c from Calificaciones c INNER JOIN c.estudiante1 e INNER JOIN c.materia1 m WHERE e.matricula =:matricula AND m.claveMateria =:materia", Calificaciones.class)
-                    .setParameter("matricula", calificacionesAlumno.getAlumno().getMatricula())
-                    .setParameter("materia", calificacionesAlumno.getCalificacionesAlumno().getCalificacionesAlumnoPK().getCveMateria())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-
-            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
-                
-                Materia mat = f.getEntityManager().createQuery("SELECT m FROM Materia m WHERE m.claveMateria =:claveMateria", Materia.class)
-                .setParameter("claveMateria", calificacionesAlumno.getMateria1().getCveMateria())
-                .getSingleResult();
-                                 
-                CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), mat.getIdMateria());
-
-                calificacionesAsignar.setCalificacionesPK(pk);
-                calificacionesAsignar.setEstudiante1(estudiante);
-                calificacionesAsignar.setMateria1(mat);
-                calificacionesAsignar.setCf(calificacionesAlumno.getCalificacionesAlumno().getCf().doubleValue());
-                f.create(calificacionesAsignar);
-                }
-            });
-            return ResultadoEJB.crearCorrecto(calificacionesAsignar, "La calificación ya fue asignada. (EjbReincorporacion.asignarCalificacionesSAIIUT)");
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo asignar la calificación. (EjbReincorporacion.asignarCalificacionesSAIIUT)", e, null);
-        }
-    }
+//    public ResultadoEJB<Calificaciones> asignarCalificacionesSAIIUT(List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto, Estudiante estudiante){
+//        try{
+//            if(listaCalificacionesSaiiutDto.isEmpty()) return ResultadoEJB.crearErroneo(3, "La calificación no puede ser nulo.", Calificaciones.class);
+//            if(estudiante == null) return ResultadoEJB.crearErroneo(4, "El estudiante no puede ser nulo.", Calificaciones.class);
+//           
+//            Calificaciones calificacionesAsignar = new Calificaciones();
+//            
+//            listaCalificacionesSaiiutDto.forEach((calificacionesAlumno) -> {
+//            
+//            Calificaciones calificaciones = f.getEntityManager().createQuery("select c from Calificaciones c INNER JOIN c.estudiante1 e INNER JOIN c.materia1 m WHERE e.matricula =:matricula AND m.claveMateria =:materia", Calificaciones.class)
+//                    .setParameter("matricula", calificacionesAlumno.getAlumno().getMatricula())
+//                    .setParameter("materia", calificacionesAlumno.getCalificacionesAlumno().getCalificacionesAlumnoPK().getCveMateria())
+//                    .getResultStream()
+//                    .findFirst()
+//                    .orElse(null);
+//
+//            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
+//                
+//                Materia mat = f.getEntityManager().createQuery("SELECT m FROM Materia m WHERE m.claveMateria =:claveMateria", Materia.class)
+//                .setParameter("claveMateria", calificacionesAlumno.getMateria1().getCveMateria())
+//                .getSingleResult();
+//                                 
+//                CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), mat.getIdMateria());
+//
+//                calificacionesAsignar.setCalificacionesPK(pk);
+////                calificacionesAsignar.setEstudiante1(estudiante);
+////                calificacionesAsignar.setMateria1(mat);
+//                calificacionesAsignar.setCf(calificacionesAlumno.getCalificacionesAlumno().getCf().doubleValue());
+//                f.create(calificacionesAsignar);
+//                }
+//            });
+//            return ResultadoEJB.crearCorrecto(calificacionesAsignar, "La calificación ya fue asignada. (EjbReincorporacion.asignarCalificacionesSAIIUT)");
+//        }catch (Throwable e){
+//            return ResultadoEJB.crearErroneo(1, "No se pudo asignar la calificación. (EjbReincorporacion.asignarCalificacionesSAIIUT)", e, null);
+//        }
+//    }
     
     /** PARA REINCORPORACIONES DE OTRA UT **/
     
@@ -502,36 +502,36 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignarán las calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificaciones> asignarCalificacionesDirectas(Materia materia, Double calificacion, Estudiante estudiante){
-        try{
-            if(materia == null) return ResultadoEJB.crearErroneo(3, "La materia no puede ser nula.", Calificaciones.class);
-            if(calificacion == null) return ResultadoEJB.crearErroneo(4, "La calificación no puede ser nula.", Calificaciones.class);
-            if(estudiante == null) return ResultadoEJB.crearErroneo(5, "El estudiante no puede ser nulo.", Calificaciones.class);
-           
-            Calificaciones calificaciones = f.getEntityManager().createQuery("SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante =:estudiante AND c.calificacionesPK.materia =:materia AND c.cf !=:null", Calificaciones.class)
-                    .setParameter("estudiante",  estudiante.getIdEstudiante())
-                    .setParameter("materia", materia.getIdMateria())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-
-            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
-                
-                calificaciones = new Calificaciones();
-                CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), materia.getIdMateria());
-               
-                calificaciones.setCalificacionesPK(pk);
-                calificaciones.setEstudiante1(estudiante);
-                calificaciones.setMateria1(materia);
-                calificaciones.setCf(calificacion);
-                f.create(calificaciones);
-                return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fue registrada correctamente.");
-            }
-            return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarCalificacionesDirectas)", Calificaciones.class);
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo asignar la calificación. (EjbReincorporacion.asignarCalificacionesDirectas)", e, null);
-        }
-    }
+//    public ResultadoEJB<Calificaciones> asignarCalificacionesDirectas(Materia materia, Double calificacion, Estudiante estudiante){
+//        try{
+//            if(materia == null) return ResultadoEJB.crearErroneo(3, "La materia no puede ser nula.", Calificaciones.class);
+//            if(calificacion == null) return ResultadoEJB.crearErroneo(4, "La calificación no puede ser nula.", Calificaciones.class);
+//            if(estudiante == null) return ResultadoEJB.crearErroneo(5, "El estudiante no puede ser nulo.", Calificaciones.class);
+//           
+//            Calificaciones calificaciones = f.getEntityManager().createQuery("SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante =:estudiante AND c.calificacionesPK.materia =:materia AND c.cf !=:null", Calificaciones.class)
+//                    .setParameter("estudiante",  estudiante.getIdEstudiante())
+//                    .setParameter("materia", materia.getIdMateria())
+//                    .getResultStream()
+//                    .findFirst()
+//                    .orElse(null);
+//
+//            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
+//                
+//                calificaciones = new Calificaciones();
+//                CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), materia.getIdMateria());
+//               
+//                calificaciones.setCalificacionesPK(pk);
+////                calificaciones.setEstudiante1(estudiante);
+////                calificaciones.setMateria1(materia);
+//                calificaciones.setCf(calificacion);
+//                f.create(calificaciones);
+//                return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fue registrada correctamente.");
+//            }
+//            return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarCalificacionesDirectas)", Calificaciones.class);
+//        }catch (Throwable e){
+//            return ResultadoEJB.crearErroneo(1, "No se pudo asignar la calificación. (EjbReincorporacion.asignarCalificacionesDirectas)", e, null);
+//        }
+//    }
     
      /** PARA REINCORPORACIONES EN LAS CUALES EXISTE HISTORIAL ACADEMICO PREVIO **/
      
@@ -540,22 +540,22 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante del que se buscarán calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Calificaciones>> getCalificacionesPrevias(Estudiante estudiante){
-        try{
-            //Identificar claves del alumno para posteriormente buscar las calificaciones
-            List<Estudiante> clavesAlumno = f.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.matricula !=:claveActual", Estudiante.class)
-                    .setParameter("matricula", estudiante.getMatricula())
-                    .setParameter("claveActual", estudiante.getIdEstudiante())
-                    .getResultList();
-            
-            //TODO: buscar calificaciones previas al grado actual para asignar que pertenecen al estudiante
-            List<Calificaciones> calificaciones = f.getEntityManager().createQuery("SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante IN :clavesAlumno ORDER BY c.materia1.claveMateria ASC", Calificaciones.class)
-                    .setParameter("clavesAlumno", clavesAlumno)
-                    .getResultList();
-             
-            return ResultadoEJB.crearCorrecto(calificaciones, "Lista de materias sin asignar por grupo y programa");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias sin asignar por grupo y programa. (EjbAsignacionAcademica.getMateriasPorAsignar)", e, null);
-        }
-    }
+//    public ResultadoEJB<List<Calificaciones>> getCalificacionesPrevias(Estudiante estudiante){
+//        try{
+//            //Identificar claves del alumno para posteriormente buscar las calificaciones
+//            List<Estudiante> clavesAlumno = f.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.matricula !=:claveActual", Estudiante.class)
+//                    .setParameter("matricula", estudiante.getMatricula())
+//                    .setParameter("claveActual", estudiante.getIdEstudiante())
+//                    .getResultList();
+//            
+//            //TODO: buscar calificaciones previas al grado actual para asignar que pertenecen al estudiante
+//            List<Calificaciones> calificaciones = f.getEntityManager().createQuery("SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante IN :clavesAlumno ORDER BY c.materia1.claveMateria ASC", Calificaciones.class)
+//                    .setParameter("clavesAlumno", clavesAlumno)
+//                    .getResultList();
+//             
+//            return ResultadoEJB.crearCorrecto(calificaciones, "Lista de materias sin asignar por grupo y programa");
+//        }catch (Exception e){
+//            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias sin asignar por grupo y programa. (EjbAsignacionAcademica.getMateriasPorAsignar)", e, null);
+//        }
+//    }
 }

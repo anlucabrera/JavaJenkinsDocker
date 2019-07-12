@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
@@ -31,18 +32,18 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Entity
 @Table(name = "aspirante", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Aspirante.findAll", query = "SELECT a FROM Aspirante a"),
-    @NamedQuery(name = "Aspirante.findByIdAspirante", query = "SELECT a FROM Aspirante a WHERE a.idAspirante = :idAspirante"),
-    @NamedQuery(name = "Aspirante.findByFolioAspirante", query = "SELECT a FROM Aspirante a WHERE a.folioAspirante = :folioAspirante"),
-    @NamedQuery(name = "Aspirante.findByEstatus", query = "SELECT a FROM Aspirante a WHERE a.estatus = :estatus"),
-    @NamedQuery(name = "Aspirante.findByFolioCeneval", query = "SELECT a FROM Aspirante a WHERE a.folioCeneval = :folioCeneval"),
-    @NamedQuery(name = "Aspirante.findByFechaRegistro", query = "SELECT a FROM Aspirante a WHERE a.fechaRegistro = :fechaRegistro")})
+    @NamedQuery(name = "Aspirante.findAll", query = "SELECT a FROM Aspirante a")
+    , @NamedQuery(name = "Aspirante.findByIdAspirante", query = "SELECT a FROM Aspirante a WHERE a.idAspirante = :idAspirante")
+    , @NamedQuery(name = "Aspirante.findByFolioAspirante", query = "SELECT a FROM Aspirante a WHERE a.folioAspirante = :folioAspirante")
+    , @NamedQuery(name = "Aspirante.findByEstatus", query = "SELECT a FROM Aspirante a WHERE a.estatus = :estatus")
+    , @NamedQuery(name = "Aspirante.findByFolioCeneval", query = "SELECT a FROM Aspirante a WHERE a.folioCeneval = :folioCeneval")
+    , @NamedQuery(name = "Aspirante.findByFechaRegistro", query = "SELECT a FROM Aspirante a WHERE a.fechaRegistro = :fechaRegistro")})
 public class Aspirante implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -234,5 +235,5 @@ public class Aspirante implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante[ idAspirante=" + idAspirante + " ]";
     }
-    
+
 }

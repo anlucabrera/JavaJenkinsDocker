@@ -121,35 +121,35 @@ public class EjbReinscripcionAutonoma {
      * @param materias Lista de materias que se asignarán
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificaciones> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
-        try{
-            if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
-            if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);
-            
-            //Obtener la clave de la materia
-            materias.forEach(mat -> {claveMateria = mat.getIdMateria();});
-            Materia materia = f.getEntityManager().find(Materia.class, claveMateria);
-            
-            CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), claveMateria);
-            Calificaciones calificaciones = f.getEntityManager().createQuery("select c from Calificaciones c where c.estudiante1.idEstudiante =:estudiante and c.estudiante1.grupo =:grupo and c.materia1.idMateria =:materia", Calificaciones.class)
-                    .setParameter("estudiante", estudiante.getIdEstudiante())
-                    .setParameter("grupo", estudiante.getGrupo().getIdGrupo())
-                    .setParameter("materia", claveMateria)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-
-            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
-                calificaciones = new Calificaciones();
-                calificaciones.setCalificacionesPK(pk);
-                calificaciones.setEstudiante1(estudiante);
-                calificaciones.setMateria1(materia);
-                f.create(calificaciones);
-                return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fué registrada correctamente.");
-            }
-            return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", Calificaciones.class);
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo asignar las materias. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", e, null);
-        }
-    }
+//    public ResultadoEJB<Calificaciones> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
+//        try{
+//            if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
+//            if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);
+//            
+//            //Obtener la clave de la materia
+//            materias.forEach(mat -> {claveMateria = mat.getIdMateria();});
+//            Materia materia = f.getEntityManager().find(Materia.class, claveMateria);
+//            
+//            CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), claveMateria);
+//            Calificaciones calificaciones = f.getEntityManager().createQuery("select c from Calificaciones c where c.estudiante1.idEstudiante =:estudiante and c.estudiante1.grupo =:grupo and c.materia1.idMateria =:materia", Calificaciones.class)
+//                    .setParameter("estudiante", estudiante.getIdEstudiante())
+//                    .setParameter("grupo", estudiante.getGrupo().getIdGrupo())
+//                    .setParameter("materia", claveMateria)
+//                    .getResultStream()
+//                    .findFirst()
+//                    .orElse(null);
+//
+//            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
+//                calificaciones = new Calificaciones();
+//                calificaciones.setCalificacionesPK(pk);
+////                calificaciones.setEstudiante1(estudiante);
+////                calificaciones.setMateria1(materia);
+//                f.create(calificaciones);
+//                return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fué registrada correctamente.");
+//            }
+//            return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", Calificaciones.class);
+//        }catch (Throwable e){
+//            return ResultadoEJB.crearErroneo(1, "No se pudo asignar las materias. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", e, null);
+//        }
+//    }
 }

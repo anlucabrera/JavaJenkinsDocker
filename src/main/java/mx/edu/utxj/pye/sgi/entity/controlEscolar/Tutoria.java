@@ -28,17 +28,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Entity
 @Table(name = "tutoria", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Tutoria.findAll", query = "SELECT t FROM Tutoria t"),
-    @NamedQuery(name = "Tutoria.findByIdTutoria", query = "SELECT t FROM Tutoria t WHERE t.idTutoria = :idTutoria"),
-    @NamedQuery(name = "Tutoria.findByAsunto", query = "SELECT t FROM Tutoria t WHERE t.asunto = :asunto"),
-    @NamedQuery(name = "Tutoria.findByFecha", query = "SELECT t FROM Tutoria t WHERE t.fecha = :fecha"),
-    @NamedQuery(name = "Tutoria.findByTipo", query = "SELECT t FROM Tutoria t WHERE t.tipo = :tipo")})
+    @NamedQuery(name = "Tutoria.findAll", query = "SELECT t FROM Tutoria t")
+    , @NamedQuery(name = "Tutoria.findByIdTutoria", query = "SELECT t FROM Tutoria t WHERE t.idTutoria = :idTutoria")
+    , @NamedQuery(name = "Tutoria.findByAsunto", query = "SELECT t FROM Tutoria t WHERE t.asunto = :asunto")
+    , @NamedQuery(name = "Tutoria.findByFecha", query = "SELECT t FROM Tutoria t WHERE t.fecha = :fecha")
+    , @NamedQuery(name = "Tutoria.findByTipo", query = "SELECT t FROM Tutoria t WHERE t.tipo = :tipo")})
 public class Tutoria implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,7 +59,7 @@ public class Tutoria implements Serializable {
     private Date fecha;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
+    @Size(min = 1, max = 10)
     @Column(name = "tipo")
     private String tipo;
     @JoinColumn(name = "grupo", referencedColumnName = "id_grupo")

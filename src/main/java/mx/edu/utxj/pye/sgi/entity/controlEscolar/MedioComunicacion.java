@@ -21,17 +21,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Entity
 @Table(name = "medio_comunicacion", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "MedioComunicacion.findAll", query = "SELECT m FROM MedioComunicacion m"),
-    @NamedQuery(name = "MedioComunicacion.findByPersona", query = "SELECT m FROM MedioComunicacion m WHERE m.persona = :persona"),
-    @NamedQuery(name = "MedioComunicacion.findByTelefonoFijo", query = "SELECT m FROM MedioComunicacion m WHERE m.telefonoFijo = :telefonoFijo"),
-    @NamedQuery(name = "MedioComunicacion.findByTelefonoMovil", query = "SELECT m FROM MedioComunicacion m WHERE m.telefonoMovil = :telefonoMovil"),
-    @NamedQuery(name = "MedioComunicacion.findByEmail", query = "SELECT m FROM MedioComunicacion m WHERE m.email = :email")})
+    @NamedQuery(name = "MedioComunicacion.findAll", query = "SELECT m FROM MedioComunicacion m")
+    , @NamedQuery(name = "MedioComunicacion.findByPersona", query = "SELECT m FROM MedioComunicacion m WHERE m.persona = :persona")
+    , @NamedQuery(name = "MedioComunicacion.findByTelefonoFijo", query = "SELECT m FROM MedioComunicacion m WHERE m.telefonoFijo = :telefonoFijo")
+    , @NamedQuery(name = "MedioComunicacion.findByTelefonoMovil", query = "SELECT m FROM MedioComunicacion m WHERE m.telefonoMovil = :telefonoMovil")
+    , @NamedQuery(name = "MedioComunicacion.findByEmail", query = "SELECT m FROM MedioComunicacion m WHERE m.email = :email")})
 public class MedioComunicacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,7 +46,7 @@ public class MedioComunicacion implements Serializable {
     @Size(max = 25)
     @Column(name = "telefono_movil")
     private String telefonoMovil;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Correo electrónico no válido")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 250)
     @Column(name = "email")
     private String email;

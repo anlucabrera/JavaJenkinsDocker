@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import java.io.Serializable;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;

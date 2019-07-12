@@ -25,17 +25,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Entity
 @Table(name = "baja", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Baja.findAll", query = "SELECT b FROM Baja b"),
-    @NamedQuery(name = "Baja.findByIdBajas", query = "SELECT b FROM Baja b WHERE b.idBajas = :idBajas"),
-    @NamedQuery(name = "Baja.findByPeriodoEscolar", query = "SELECT b FROM Baja b WHERE b.periodoEscolar = :periodoEscolar"),
-    @NamedQuery(name = "Baja.findByEmpleado", query = "SELECT b FROM Baja b WHERE b.empleado = :empleado"),
-    @NamedQuery(name = "Baja.findByFechaBaja", query = "SELECT b FROM Baja b WHERE b.fechaBaja = :fechaBaja")})
+    @NamedQuery(name = "Baja.findAll", query = "SELECT b FROM Baja b")
+    , @NamedQuery(name = "Baja.findByIdBajas", query = "SELECT b FROM Baja b WHERE b.idBajas = :idBajas")
+    , @NamedQuery(name = "Baja.findByPeriodoEscolar", query = "SELECT b FROM Baja b WHERE b.periodoEscolar = :periodoEscolar")
+    , @NamedQuery(name = "Baja.findByEmpleado", query = "SELECT b FROM Baja b WHERE b.empleado = :empleado")
+    , @NamedQuery(name = "Baja.findByFechaBaja", query = "SELECT b FROM Baja b WHERE b.fechaBaja = :fechaBaja")})
 public class Baja implements Serializable {
 
     private static final long serialVersionUID = 1L;

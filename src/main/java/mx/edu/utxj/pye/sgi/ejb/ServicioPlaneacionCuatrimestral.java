@@ -170,7 +170,7 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
             return new ArrayList<>();
         }
         ca.forEach((t) -> {
-            docentesCargaAcademica.add(t.getCargaAcademicaPK().getDocente());
+            docentesCargaAcademica.add(t.getDocente());
         });
 
         personalColaboradorPlaneaciones = f.getEntityManager().createQuery("SELECT p FROM Personal p INNER JOIN p.planeacionesCuatrimestralesList1 pc WHERE pc.director.clave=:director AND pc.periodo=:periodo", Personal.class)
