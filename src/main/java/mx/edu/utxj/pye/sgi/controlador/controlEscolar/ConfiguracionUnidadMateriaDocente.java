@@ -31,6 +31,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDiasPeriodoEscolares;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionCriterio;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
@@ -184,7 +185,10 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
                 mostrarMensajeResultadoEJB(resGuardarTI);
                 rol.setAddTareaInt(false);
             }
-            mostrarConfiguracionGuardada();
+            System.err.println("guardarConfigUnidadMat " + resGuardarConf.getValor().toString() + " carga " + rol.getCarga());
+            ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> resUniMatCrit = ejb.guardarConfiguracionUnidadMateriaCriterios(resGuardarConf.getValor(), rol.getCarga());
+            mostrarMensajeResultadoEJB(resUniMatCrit);
+//            mostrarConfiguracionGuardada();
         }else  mostrarMensajeResultadoEJB(resGuardarConf);
     }
     

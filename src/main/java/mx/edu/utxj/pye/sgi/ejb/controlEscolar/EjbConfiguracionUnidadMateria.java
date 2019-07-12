@@ -1,8 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
@@ -21,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConfiguracionUnidadMateriaRolDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDiasPeriodoEscolares;
@@ -35,6 +35,12 @@ public class EjbConfiguracionUnidadMateria {
     @EJB EjbPropiedades ep;
     @EJB Facade f;
     @EJB EjbEventoEscolar ejbEventoEscolar;
+    private EntityManager em;
+    
+    @PostConstruct
+    public void init(){
+        em = f.getEntityManager();
+    }
     /**
      * Permite validar si el usuario autenticado es personal docente
      * @param clave Número de nómina del usuario autenticado
@@ -71,7 +77,7 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosDescendentes(){
         try{
-            final List<PeriodosEscolares> periodos = f.getEntityManager().createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
+            final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
                     .getResultList();
             
             return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
@@ -89,14 +95,25 @@ public class EjbConfiguracionUnidadMateria {
     public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicaPorDocente(PersonalActivo docente, PeriodosEscolares periodo){
         try{
             //buscar carga académica del personal docente logeado del periodo seleccionado
-            List<DtoCargaAcademica> cargas = f.getEntityManager().createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
+//            List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
+//                    .setParameter("docente", docente.getPersonal().getClave())
+//                    .setParameter("periodo", periodo.getPeriodo())
+//                    .getResultStream()
+//                    .map(ca -> pack(ca).getValor())
+//                    .filter(dto -> dto != null)
+//                    .collect(Collectors.toList());
+              List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream()
-                    .map(ca -> pack(ca).getValor())
-                    .filter(dto -> dto != null)
+                    .distinct()
+                    .map(cargaAcademica -> pack(cargaAcademica))
+                    .filter(res -> res.getCorrecto())
+                    .map(ResultadoEJB::getValor)
+                    .sorted(DtoCargaAcademica::compareTo)
                     .collect(Collectors.toList());
-            return ResultadoEJB.crearCorrecto(cargas, "Lista de cargas académicas por docente.");
+              if(cargas.isEmpty()) return ResultadoEJB.crearErroneo(2, cargas, "Usted no tiene carga académica en el periodo seleccionado.");
+              else return ResultadoEJB.crearCorrecto(cargas, "Carga académica por docente y periodo.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por docente. (EjbUnidadMateriaConfiguracion.getCargaAcademicaPorDocente)", e, null);
         }
@@ -112,16 +129,16 @@ public class EjbConfiguracionUnidadMateria {
             if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar una carga académica nula.", DtoCargaAcademica.class);
             if(cargaAcademica.getCarga() == null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar una carga académica con clave nula.", DtoCargaAcademica.class);
 
-            CargaAcademica cargaAcademicaBD = f.getEntityManager().find(CargaAcademica.class, cargaAcademica.getCarga());
+            CargaAcademica cargaAcademicaBD = em.find(CargaAcademica.class, cargaAcademica.getCarga());
             if(cargaAcademicaBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar una carga académica no registrada previamente en base de datos.", DtoCargaAcademica.class);
             
-            Grupo grupo = f.getEntityManager().find(Grupo.class, cargaAcademicaBD.getCveGrupo().getIdGrupo());
-            PeriodosEscolares periodo = f.getEntityManager().find(PeriodosEscolares.class, cargaAcademicaBD.getEvento().getPeriodo());
-            PlanEstudioMateria planEstudioMateria = f.getEntityManager().find(PlanEstudioMateria.class, cargaAcademicaBD.getIdPlanMateria().getIdPlanMateria());
-            PlanEstudio planEstudio = f.getEntityManager().find(PlanEstudio.class, planEstudioMateria.getIdPlan().getIdPlanEstudio());
-            Materia materia = f.getEntityManager().find(Materia.class, planEstudioMateria.getIdMateria().getIdMateria());
+            Grupo grupo = em.find(Grupo.class, cargaAcademicaBD.getCveGrupo().getIdGrupo());
+            PeriodosEscolares periodo = em.find(PeriodosEscolares.class, cargaAcademicaBD.getEvento().getPeriodo());
+            PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, cargaAcademicaBD.getIdPlanMateria().getIdPlanMateria());
+            PlanEstudio planEstudio = em.find(PlanEstudio.class, planEstudioMateria.getIdPlan().getIdPlanEstudio());
+            Materia materia = em.find(Materia.class, planEstudioMateria.getIdMateria().getIdMateria());
             PersonalActivo docente = ejbPersonalBean.pack(cargaAcademicaBD.getDocente());
-            AreasUniversidad programa = f.getEntityManager().find(AreasUniversidad.class, planEstudioMateria.getIdPlan().getIdPe());
+            AreasUniversidad programa = em.find(AreasUniversidad.class, planEstudioMateria.getIdPlan().getIdPe());
             DtoCargaAcademica dto = new DtoCargaAcademica(cargaAcademicaBD, periodo, docente, grupo, materia, programa, planEstudio, planEstudioMateria);
             return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
         }catch (Exception e){
@@ -136,7 +153,7 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<List<UnidadMateriaConfiguracion>> buscarConfiguracionUnidadMateria(DtoCargaAcademica dtoCargaAcademica){
         try{
-            List<UnidadMateriaConfiguracion> listaUnidMatConf = f.getEntityManager().createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
+            List<UnidadMateriaConfiguracion> listaUnidMatConf = em.createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getResultList();
             return ResultadoEJB.crearCorrecto(listaUnidMatConf, "Lista de configuración de la unidad materia seleccionada.");
@@ -151,7 +168,7 @@ public class EjbConfiguracionUnidadMateria {
      * @return Resultado del proceso
      */
     public List<DtoConfiguracionUnidadMateria> getConfiguracionUnidadMateriaSugerida(DtoCargaAcademica dtoCargaAcademica){
-            List<DtoConfiguracionUnidadMateria> unidadMat = f.getEntityManager().createQuery("SELECT um FROM UnidadMateria um WHERE um.idMateria.idMateria =:idMateria", UnidadMateria.class)
+            List<DtoConfiguracionUnidadMateria> unidadMat = em.createQuery("SELECT um FROM UnidadMateria um WHERE um.idMateria.idMateria =:idMateria", UnidadMateria.class)
                     .setParameter("idMateria", dtoCargaAcademica.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria())
                     .getResultStream()
                     .map(ca -> pack(ca).getValor())
@@ -169,7 +186,7 @@ public class EjbConfiguracionUnidadMateria {
         try{
             if(unidadMateria == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar una configuración sugerida de la unidad nula.", DtoConfiguracionUnidadMateria.class);
 
-            UnidadMateria unidadMateriaBD = f.getEntityManager().find(UnidadMateria.class, unidadMateria.getIdUnidadMateria());
+            UnidadMateria unidadMateriaBD = em.find(UnidadMateria.class, unidadMateria.getIdUnidadMateria());
             if(unidadMateriaBD == null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar una configuración sugerida de una unidad de materia no registrada previamente en base de datos.", DtoConfiguracionUnidadMateria.class);
          
             UnidadMateriaConfiguracion unidadMateriaConfiguracion = new UnidadMateriaConfiguracion();
@@ -190,7 +207,7 @@ public class EjbConfiguracionUnidadMateria {
      */
     public DtoDiasPeriodoEscolares getCalculoDiasPeriodoEscolar(Integer periodoActivo) {
         
-            PeriodoEscolarFechas fechasPeriodos = f.getEntityManager().createQuery("SELECT pef FROM PeriodoEscolarFechas pef WHERE pef.periodosEscolares.periodo =:periodo", PeriodoEscolarFechas.class)
+            PeriodoEscolarFechas fechasPeriodos = em.createQuery("SELECT pef FROM PeriodoEscolarFechas pef WHERE pef.periodosEscolares.periodo =:periodo", PeriodoEscolarFechas.class)
                     .setParameter("periodo", periodoActivo)
                     .getSingleResult();
 //            int dias = (int) ((fechasPeriodos.getFin().getTime() - fechasPeriodos.getInicio().getTime()) / 86400000);
@@ -222,7 +239,7 @@ public class EjbConfiguracionUnidadMateria {
             List<DtoConfiguracionUnidadMateria> unidadMat = getConfiguracionUnidadMateriaSugerida(dtoCargaAcademica);
             
             unidadMat.forEach(umc -> {
-                UnidadMateria unidadMateriaBD = f.getEntityManager().find(UnidadMateria.class, umc.getUnidadMateria().getIdUnidadMateria());
+                UnidadMateria unidadMateriaBD = em.find(UnidadMateria.class, umc.getUnidadMateria().getIdUnidadMateria());
                 
                 UnidadMateriaConfiguracion unidadMateriaConfiguracion = new UnidadMateriaConfiguracion();
               
@@ -391,6 +408,41 @@ public class EjbConfiguracionUnidadMateria {
         }
     }
     
+     /**
+     * Permite guardar la configuración de la unidad por criterios
+     * @param configuracionUnidadMaterias Lista de Configuración Unidad Materia que se guardó previamente, para obtener la clave de la configuración
+     * @param cargaAcademica Carga académica de la que se guardó configuración
+     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     */
+    public ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> guardarConfiguracionUnidadMateriaCriterios(List<DtoConfiguracionUnidadMateria> configuracionUnidadMaterias, DtoCargaAcademica cargaAcademica){
+        try{  
+            if(configuracionUnidadMaterias == null) return ResultadoEJB.crearErroneo(2, "La lista de configuración unidad materia no puede ser nula.");
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(3, "La carga académica no debe ser nula.");
+          
+            List<Criterio> listaCriterios = em.createQuery("SELECT c FROM Criterio c WHERE c.nivel =:nivel", Criterio.class)
+                    .setParameter("nivel", cargaAcademica.getPrograma().getNivelEducativo().getNivel())
+                    .getResultList();
+            
+            List<UnidadMateriaConfiguracionCriterio> lista = new ArrayList<>();
+           
+            configuracionUnidadMaterias.forEach(cum -> {
+                try {
+                    listaCriterios.forEach(c -> {
+                        UnidadMateriaConfiguracionCriterioPK umcdPK = new UnidadMateriaConfiguracionCriterioPK(cum.getUnidadMateriaConfiguracion().getConfiguracion(), c.getCriterio()); 
+                        UnidadMateriaConfiguracionCriterio umcd = new UnidadMateriaConfiguracionCriterio(umcdPK, c.getPorcentajeRecomendado());
+                        f.create(umcd);
+                        lista.add(umcd);
+                    });
+                } catch (Throwable ex) {
+                    Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            return ResultadoEJB.crearCorrecto(lista, "La configuración de la unidad materia por criterio se guardo correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia por criterio. (EjbUnidadMateriaConfiguracion.guardarConfiguracionUnidadMateriaCriterios)", e, null);
+        }
+    }
+    
     /**
      * Permite eliminar la configuración de la unidad materia
      * @param cargaAcademica Carga académica de la que se guardará configuración
@@ -400,7 +452,7 @@ public class EjbConfiguracionUnidadMateria {
         try{ 
             if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.");
             
-            Integer delete = f.getEntityManager().createQuery("DELETE FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:carga", UnidadMateriaConfiguracion.class)
+            Integer delete = em.createQuery("DELETE FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:carga", UnidadMateriaConfiguracion.class)
                 .setParameter("carga", cargaAcademica.getCarga())
                 .executeUpdate();
             
@@ -417,7 +469,7 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> getConfiguracionUnidadMateria(DtoCargaAcademica dtoCargaAcademica){
         try{
-            List<DtoConfiguracionUnidadMateria> unidadMatConfDto = f.getEntityManager().createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
+            List<DtoConfiguracionUnidadMateria> unidadMatConfDto = em.createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getResultStream()
                     .map(ca -> pack(ca).getValor())
@@ -438,7 +490,7 @@ public class EjbConfiguracionUnidadMateria {
         try{
             if(unidadMateriaConfiguracion == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar una configuración de la unidad nula.", DtoConfiguracionUnidadMateria.class);
 
-            UnidadMateria unidadMateria = f.getEntityManager().find(UnidadMateria.class, unidadMateriaConfiguracion.getIdUnidadMateria().getIdUnidadMateria());
+            UnidadMateria unidadMateria = em.find(UnidadMateria.class, unidadMateriaConfiguracion.getIdUnidadMateria().getIdUnidadMateria());
             
             DtoConfiguracionUnidadMateria dto = new DtoConfiguracionUnidadMateria(unidadMateria, unidadMateriaConfiguracion);
          
@@ -455,7 +507,7 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<TareaIntegradora> getTareaIntegradora(DtoCargaAcademica dtoCargaAcademica){
         try{
-            TareaIntegradora tareaIntegradora = f.getEntityManager().createQuery("SELECT ti FROM TareaIntegradora ti WHERE ti.carga.carga =:carga", TareaIntegradora.class)
+            TareaIntegradora tareaIntegradora = em.createQuery("SELECT ti FROM TareaIntegradora ti WHERE ti.carga.carga =:carga", TareaIntegradora.class)
                     .setParameter("carga", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getSingleResult();
             return ResultadoEJB.crearCorrecto(tareaIntegradora, "Tarea Integradora de la materia seleccionada.");
@@ -473,7 +525,7 @@ public class EjbConfiguracionUnidadMateria {
         try{ 
             if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.");
             
-            Integer delete = f.getEntityManager().createQuery("DELETE FROM TareaIntegradora t WHERE t.carga.carga =:carga", TareaIntegradora.class)
+            Integer delete = em.createQuery("DELETE FROM TareaIntegradora t WHERE t.carga.carga =:carga", TareaIntegradora.class)
                 .setParameter("carga", cargaAcademica.getCarga())
                 .executeUpdate();
             
