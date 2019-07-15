@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
-import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
@@ -20,7 +19,7 @@ public class ViewScopedRol implements Serializable {
     @Getter @Setter protected List<DtoAlerta> alertas = new ArrayList<>();
     public void mostrarMensajeNoAcceso(){
         FacesMessage.Severity severity = FacesMessage.SEVERITY_ERROR;
-        String mensaje = "No tiene acceso a esta página.";
+        String mensaje = "No tiene acceso a esta página. ".concat(this.getClass().toString());
         ultimoMensaje = construirMensaje(severity, mensaje);
         Messages.addGlobal(FacesMessage.SEVERITY_ERROR, mensaje);
     }

@@ -61,7 +61,7 @@ public class DocumentoEstudiante implements Serializable {
     private String evidenciaLiberacionEstadia;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
-    private Inscripcion estudiante;
+    private Estudiante estudiante;
 
     public DocumentoEstudiante() {
     }
@@ -127,11 +127,11 @@ public class DocumentoEstudiante implements Serializable {
         this.evidenciaLiberacionEstadia = evidenciaLiberacionEstadia;
     }
 
-    public Inscripcion getEstudiante() {
+    public Estudiante getEstudiante() {
         return estudiante;
     }
 
-    public void setEstudiante(Inscripcion estudiante) {
+    public void setEstudiante(Estudiante estudiante) {
         this.estudiante = estudiante;
     }
 

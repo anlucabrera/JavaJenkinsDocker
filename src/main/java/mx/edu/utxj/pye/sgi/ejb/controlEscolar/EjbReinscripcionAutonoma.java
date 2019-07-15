@@ -75,7 +75,7 @@ public class EjbReinscripcionAutonoma {
      * @param estudiante Estudiante al que se le asignará el grupo correspondiente
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Inscripcion> asignarGrupo(Grupo grupo, Inscripcion estudiante){
+    public ResultadoEJB<Estudiante> asignarGrupo(Grupo grupo, Estudiante estudiante){
         /*try{
             if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no debe ser nulo.", Estudiante.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(3, "El estudiante no debe ser nulo.", Estudiante.class);
@@ -121,7 +121,7 @@ public class EjbReinscripcionAutonoma {
      * @param materias Lista de materias que se asignarán
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificacion> asignarMateriasEstudiante(Inscripcion estudiante, List<Materia> materias){
+    public ResultadoEJB<Calificacion> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
         /*try{
             if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
             if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);

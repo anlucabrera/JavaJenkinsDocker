@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Wrapper que representa a una materia y posiblemente a su carga academica si se cumple la relacion de materia-grupo-docente
  */
-@AllArgsConstructor @ToString
+@AllArgsConstructor @ToString @EqualsAndHashCode
 public class DtoMateria implements Serializable {
     @Getter @Setter @NonNull private Materia materia;
     @Getter @Setter private DtoCargaAcademica dtoCargaAcademica;

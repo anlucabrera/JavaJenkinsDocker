@@ -43,7 +43,7 @@ public class TipoEstudiante implements Serializable {
     @Column(name = "activo")
     private boolean activo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoEstudiante")
-    private List<Inscripcion> inscripcionList;
+    private List<Estudiante> estudianteList;
 
     public TipoEstudiante() {
     }
@@ -83,12 +83,12 @@ public class TipoEstudiante implements Serializable {
     }
 
     @XmlTransient
-    public List<Inscripcion> getInscripcionList() {
-        return inscripcionList;
+    public List<Estudiante> getEstudianteList() {
+        return estudianteList;
     }
 
-    public void setInscripcionList(List<Inscripcion> inscripcionList) {
-        this.inscripcionList = inscripcionList;
+    public void setEstudianteList(List<Estudiante> estudianteList) {
+        this.estudianteList = estudianteList;
     }
 
     @Override

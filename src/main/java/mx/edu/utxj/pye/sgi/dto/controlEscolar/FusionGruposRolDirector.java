@@ -10,8 +10,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Inscripcion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
@@ -61,7 +61,7 @@ public class FusionGruposRolDirector extends AbstractRol{
     /**
      * Representa el listado de estudiantes que pertenecen al grupo selececcionado
      */
-    @Getter @NonNull private List<Inscripcion> listaEstudiantes;
+    @Getter @NonNull private List<Estudiante> listaEstudiantes;
     /**
      * Representa el mapeo de programas educativos con sus respectivos grupos
      */
@@ -69,7 +69,7 @@ public class FusionGruposRolDirector extends AbstractRol{
     /**
      * Representa el mapeo de grupos de un programa educativo con su listado de estudiantes inscritos
      */
-    @Getter @NonNull private Map<Grupo, List<Inscripcion>> grupoEstudianteMap;
+    @Getter @NonNull private Map<Grupo, List<Estudiante>> grupoEstudianteMap;
     
     public FusionGruposRolDirector(Filter<PersonalActivo> filtro, PersonalActivo director, AreasUniversidad programa) {
         super(filtro);
@@ -112,7 +112,7 @@ public class FusionGruposRolDirector extends AbstractRol{
         this.grupos = grupos;
     }
 
-    public void setListaEstudiantes(List<Inscripcion> listaEstudiantes) {
+    public void setListaEstudiantes(List<Estudiante> listaEstudiantes) {
         this.listaEstudiantes = listaEstudiantes;
     }
 
@@ -129,7 +129,7 @@ public class FusionGruposRolDirector extends AbstractRol{
         }
     }
 
-    public void setGrupoEstudianteMap(Map<Grupo, List<Inscripcion>> grupoEstudianteMap) {
+    public void setGrupoEstudianteMap(Map<Grupo, List<Estudiante>> grupoEstudianteMap) {
         this.grupoEstudianteMap = grupoEstudianteMap;
     }
     

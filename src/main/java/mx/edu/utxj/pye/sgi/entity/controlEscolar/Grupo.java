@@ -63,6 +63,9 @@ public class Grupo implements Serializable {
     @NotNull
     @Column(name = "generacion")
     private short generacion;
+    @JoinColumn(name = "plan", referencedColumnName = "id_plan_estudio")
+    @ManyToOne(optional = false)
+    private PlanEstudio plan;
     @JoinColumn(name = "id_sistema", referencedColumnName = "id_sistema")
     @ManyToOne(optional = false)
     private Sistema idSistema;
@@ -72,7 +75,7 @@ public class Grupo implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cveGrupo")
     private List<CargaAcademica> cargaAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
-    private List<Inscripcion> inscripcionList;
+    private List<Estudiante> estudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
     private List<Tutoria> tutoriaList;
 
@@ -157,6 +160,14 @@ public class Grupo implements Serializable {
         this.generacion = generacion;
     }
 
+    public PlanEstudio getPlan() {
+        return plan;
+    }
+
+    public void setPlan(PlanEstudio plan) {
+        this.plan = plan;
+    }
+
     public Sistema getIdSistema() {
         return idSistema;
     }
@@ -183,12 +194,12 @@ public class Grupo implements Serializable {
     }
 
     @XmlTransient
-    public List<Inscripcion> getInscripcionList() {
-        return inscripcionList;
+    public List<Estudiante> getEstudianteList() {
+        return estudianteList;
     }
 
-    public void setInscripcionList(List<Inscripcion> inscripcionList) {
-        this.inscripcionList = inscripcionList;
+    public void setEstudianteList(List<Estudiante> estudianteList) {
+        this.estudianteList = estudianteList;
     }
 
     @XmlTransient
