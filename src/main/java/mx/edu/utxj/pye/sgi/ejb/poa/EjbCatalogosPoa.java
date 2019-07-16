@@ -4,6 +4,7 @@ import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
@@ -60,5 +61,8 @@ public interface EjbCatalogosPoa {
 
 //  ------------------------------------------Registros -----------------------------------------------
     public List<Registros> mostrarRegistrosActividad(ActividadesPoa actividadesPoa);
+    
+//  ------------------------------------------EjerciciosFiscales -----------------------------------------------
+    public EjerciciosFiscales mostrarEjercicioFiscaleses(Short idE);
 
 }

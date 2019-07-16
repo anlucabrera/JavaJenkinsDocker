@@ -194,7 +194,7 @@ public class NotificacionesTopBar implements Serializable {
             if (!Objects.equals(incrementoTotalPasado, incrementoTotal)) {
                 String mensaje = "";
                 FacesContext context = FacesContext.getCurrentInstance();
-                mensaje = "Tine " + (incrementoTotal - incrementoTotalPasado) + "notificaciones por atender, ";
+                mensaje = "Tiene " + (incrementoTotal - incrementoTotalPasado) + "notificaciones por atender, ";
                 if (mensajesTotalPasado != listaNotificaciones.size()) {
                     mensaje = mensaje + "y " + (listaNotificaciones.size() - mensajesTotalPasado) + " nuevos mensajes sin leer";
                 }

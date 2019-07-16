@@ -17,8 +17,10 @@ import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import org.omnifaces.util.Faces;
 
 @Named
@@ -27,9 +29,10 @@ public class UtilidadesPOA implements Serializable {
 
     @Getter    @Setter    private Short ef = 0;
     @Getter    @Setter    private Integer mes=0;
-    @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
-    
+    @Getter    @Setter    private Procesopoa procesopoa = new Procesopoa();
+
     @EJB    EjbCarga ejbUtilidadesCH;
+    @EJB    EjbCatalogosPoa ecp;
     @EJB    private EjbUtilidadesCH euch;
     @Inject ControladorEmpleado ce;
     @Inject UtilidadesCorreosElectronicos correosElectronicos;
@@ -257,6 +260,10 @@ public class UtilidadesPOA implements Serializable {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public EjerciciosFiscales obtenerAnioRegistro(Short idC) {
+        return ecp.mostrarEjercicioFiscaleses(idC);
     }
 
     public void recargarPag() {

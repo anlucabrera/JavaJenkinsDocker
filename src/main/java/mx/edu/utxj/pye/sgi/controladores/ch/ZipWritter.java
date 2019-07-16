@@ -43,11 +43,11 @@ public class ZipWritter {
      */
     public ZipWritter(String salida, String root) {
         this.salida = salida.trim();
-        this.root = root.trim();
-        if (this.root.equals("")) {
-            this.root = "zip";
+                        this.root = root.trim();
+                        if (this.root.equals("")) {
+                        this.root = "zip";
         }
-    }
+            }
 
     public void addArchivo(String ruta) {
 //        String url = "http://sgot.com.mx:8080/sgot-images/".concat(ruta);
@@ -60,22 +60,19 @@ public class ZipWritter {
             parameters = new ZipParameters();
             parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
             parameters.setRootFolderInZip(root.concat("/"));
-//            ("jvv.aldesa.sgot.util.ZipWritter.generarZip() salida: " + salida);
             CargaArchivosCH.eliminarArchivo(salida);
             zipFile = new ZipFile(salida);
 
             int i = 0;
             for (File f : contenidos) {
-//                ("jvv.aldesa.sgot.util.ZipWritter.generarZip() f: " + f.toString());
                 if (f.exists()) {
                     if (f.isFile()) {
                         zipFile.addFile(f, parameters);
                     } else if (f.isDirectory()) {
 //                        zipFile.addFolder(f, parameters);
-                        final String nombre = contenidos.get(i).toString();
+                        final String nombre = nombres.get(i);
                         try (Stream<Path> paths = Files.walk(Paths.get(f.toString()))) {
                             paths.filter(Files::isRegularFile).forEach((Path path) -> {
-//                                ("jvv.aldesa.sgot.util.ZipWritter.generarZip() path: " + path);
                                 parameters.setRootFolderInZip(root.concat("/").concat(nombre).concat("/"));
                                 try {
                                     zipFile.addFile(path.toFile(), parameters);
@@ -86,9 +83,9 @@ public class ZipWritter {
                         } catch (IOException ex) {
                             Logger.getLogger(ZipWritter.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                        i++;
                     }
-                }                
-                i++;
+                }
             }
         } catch (ZipException ex) {
             Logger.getLogger(ZipWritter.class.getName()).log(Level.SEVERE, null, ex);
@@ -106,13 +103,28 @@ public class ZipWritter {
     }
 
     public static File generar(List<String> sustituciones, Integer clave) {
-        ZipWritter zw = new ZipWritter("C:\\archivos\\evidenciasCapitalHumano\\zips\\"+clave+".zip", clave.toString());
+        ZipWritter zw = new ZipWritter("C:\\archivos\\evidenciasCapitalHumano\\zips\\" + clave + ".zip", clave.toString());
         sustituciones.forEach((t) -> {
             File f = new File(t);
-            zw.addArchivo(t);            
+            zw.addArchivo(t);
         });
         zw.generarZip();
 
+        return zw.getZipFile().getFile();
+    }
+
+    public static File generarZipPoa(List<String> sustituciones, String nombre, Integer clave) {
+        ZipWritter zw = new ZipWritter("C:\\archivos\\evidenciasCapitalHumano\\zips\\" + nombre + ".zip", clave.toString());
+        sustituciones.forEach((t) -> {
+            File f = new File(t);
+            zw.addArchivo(t);
+        });
+        zw.generarZip();
+//        try {
+//            zw.getZipFile().createZipFile(zw.getZipFile().getFile(), zw.parameters);
+//        } catch (ZipException ex) {
+//            Logger.getLogger(ZipWritter.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         return zw.getZipFile().getFile();
     }
 }

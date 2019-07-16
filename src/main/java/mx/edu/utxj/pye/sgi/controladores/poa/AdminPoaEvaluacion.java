@@ -1,6 +1,8 @@
 package mx.edu.utxj.pye.sgi.controladores.poa;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +22,7 @@ import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.controladores.ch.ZipWritter;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbEvidenciasPoa;
@@ -33,6 +36,8 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
+import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.omnifaces.util.Servlets;
 import org.primefaces.event.RowEditEvent;
@@ -74,7 +79,7 @@ public class AdminPoaEvaluacion implements Serializable {
     
     @Getter    @Setter    private Double totalPCuatrimestre=0D,totalACuatrimestre=0D,totalPCorte=0D,totalACorte=0D;
     @Getter    @Setter    private Double porcentajeCuatrimestre=0D,porcentejeAlCorte=0D;
-    @Getter    @Setter    private String semaforoC="",semaforoG="";
+    @Getter    @Setter    private String semaforoC="",semaforoG="",nombreArchivo="";  
     
     @Getter    @Setter    private Boolean archivoSC=false;
     @Getter    @Setter    private Part file;
@@ -94,20 +99,18 @@ public class AdminPoaEvaluacion implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
-        actividadesPoasAreas.clear();
+                actividadesPoasAreas.clear();
                 
         ejes=new EjesRegistro(0);
         
-        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();;
+        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();
         mes = controladorEmpleado.getProcesopoa().getEvaluacion().getFechaInicio().getMonth();
         mesNombre = controladorEmpleado.getProcesopoa().getEvaluacion().getMesEvaluacion();
         
         claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         
         consultarListas();
-        System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
-    }
+            }
 
     // ---------------------------------------------------------------- Listas -------------------------------------------------------------
     public void consultarListas() {
@@ -154,8 +157,7 @@ public class AdminPoaEvaluacion implements Serializable {
     }
     
     public void obtnerMEs(String actual) {
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.obtnerMEs()"+actual);
-        mes = 0;
+                mes = 0;
         mes = Integer.parseInt(actual);
         switch (mes) {
             case 0:  mesNombre = "Enero";      break;            case 1:  mesNombre = "Febrero";    break;
@@ -166,9 +168,7 @@ public class AdminPoaEvaluacion implements Serializable {
             case 10: mesNombre = "Noviembre";  break;            case 11: mesNombre = "Diciembre";  break;
         }
         consultarListasValidacionFinal();
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.obtnerMEs()"+mes);
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.obtnerMEs()"+mesNombre);
-    }
+                    }
 
     public void consultarListasValidacionFinal() {
         listaListaEjeEstrategia.clear();
@@ -381,8 +381,7 @@ public class AdminPoaEvaluacion implements Serializable {
         ultimaEstrategiaExpandida = modificada.getCuadroMandoInt().getEstrategia();
         ejbRegistroActividades.actualizaActividadesPoa(modificada);
 
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit()" + ultimaEstrategiaExpandida.getEstrategia());
-
+        
         if (modificada.getNumeroS() != 0) {
             actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),claveArea);
             if (!actividads.isEmpty()) {
@@ -437,12 +436,10 @@ public class AdminPoaEvaluacion implements Serializable {
     
     public String convertirRutaMP(String ruta) {
         File file = new File(ruta);
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.convertirRutaMP()"+ruta);
-        if (ruta.contains("EVALUACION_POA")) {
+                if (ruta.contains("EVALUACION_POA")) {
             return "EVALUACION_POA".concat(file.toURI().toString().split("EVALUACION_POA")[1]);
         } else {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.convertirRutaMP()" + file.toURI());
-            return "".concat(file.toURI().toString().split("2019")[1]);
+                        return "".concat(file.toURI().toString().split(String.valueOf(pOAUtilidades.obtenerAnioRegistro(ejercicioFiscal).getAnio()))[1]);
         }
     }
 
@@ -480,16 +477,13 @@ public class AdminPoaEvaluacion implements Serializable {
 
     public void subirEvidenciaPOA() {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(1)");
-            ultimaEstrategiaExpandida = new Estrategias();
+                        ultimaEstrategiaExpandida = new Estrategias();
             ultimaEstrategiaExpandida = actividadesPoaEditando.getCuadroMandoInt().getEstrategia();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPyE.subirEvidenciaPOA()"+ultimaEstrategiaExpandida);
-            archivoSC = true;
+                        archivoSC = true;
             evidencias = new Evidencias();
 
             if (files != null) {
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(2)" + files.size());
-                if (files.size() == 1) {
+                                if (files.size() == 1) {
                     evidencias.setCategoria("Única");
                 } else {
                     evidencias.setCategoria("Múltiple");
@@ -498,12 +492,10 @@ public class AdminPoaEvaluacion implements Serializable {
                 ejbEvidenciasPoa.agregarEvidenciases(evidencias, actividadesPoaEditando);
                 for (Part file : files) {
 
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(3)");
-                    ruta = carga.subir(file, new File("2019".concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
+                                        ruta = carga.subir(file, new File(String.valueOf(pOAUtilidades.obtenerAnioRegistro(ejercicioFiscal).getAnio()).concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
 
                     if (!"Error: No se pudo leer el archivo".equals(ruta)) {
-                        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(4.2)");
-                        String name = Servlets.getSubmittedFileName(file);
+                                                String name = Servlets.getSubmittedFileName(file);
                         String type = file.getContentType();
                         long size = file.getSize();
                         evidenciasDetalle = new EvidenciasDetalle();
@@ -513,10 +505,8 @@ public class AdminPoaEvaluacion implements Serializable {
                         evidenciasDetalle.setTamanioBytes(size);
                         evidenciasDetalle.setMes(mesNombre);
                         ejbEvidenciasPoa.agregarEvidenciasesEvidenciasDetalle(evidenciasDetalle);
-                        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(4.2a)");
-                    } else {
-                        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(4.1)");
-                    }
+                                            } else {
+                                            }
                 }
                 consultarEvidencias(actividadesPoaEditando);
                 consultarListasValidacionFinal();
@@ -533,8 +523,7 @@ public class AdminPoaEvaluacion implements Serializable {
 
     public void eliminarEvidencia(EvidenciasDetalle evidenciasDetalle) {
         archivoSC = true;
-        System.out.println("eliminacion" + System.currentTimeMillis());
-        ultimaEstrategiaExpandida = new Estrategias();
+                ultimaEstrategiaExpandida = new Estrategias();
         ultimaEstrategiaExpandida = actividadesPoaEditando.getCuadroMandoInt().getEstrategia();
         Evidencias evidencias = new Evidencias();
         evidencias = evidenciasDetalle.getEvidencia();
@@ -551,13 +540,41 @@ public class AdminPoaEvaluacion implements Serializable {
 
         consultarEvidencias(actividadesPoaEditando);
         consultarListasValidacionFinal();
-        System.out.println("eliminiacion" + System.currentTimeMillis());
+            }
+
+    public void descargarEvidenciasPOA(ActividadesPoa ap) {
+        try {
+            consultarEvidencias(ap);
+            if (ap.getActividadPoa() == null) {
+                return;
+            }
+            nombreArchivo = "";
+            List<String> rutasEvidenciasBD = new ArrayList<>();
+            rutasEvidenciasBD.clear();
+            evidenciasesDetalles.forEach((t) -> {
+                if (t.getMes().equals(mesNombre)) {
+                    rutasEvidenciasBD.add(t.getRuta());
+                }
+            });
+            nombreArchivo = ap.getNumeroP() + "" + ap.getNumeroS()
+                    + mesNombre
+                    + "_CM_ej_" + ap.getCuadroMandoInt().getEje().getEje() + "_Est_" + ap.getCuadroMandoInt().getEstrategia().getNumero() + "_Lin_" + ap.getCuadroMandoInt().getLineaAccion().getNumero()
+                    + "_idA_" + ap.getActividadPoa();
+
+            if (!rutasEvidenciasBD.isEmpty()) {
+                File zip = ZipWritter.generarZipPoa(rutasEvidenciasBD, nombreArchivo, Integer.parseInt(String.valueOf(ap.getArea())));
+                Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/" + nombreArchivo + ".zip" + "');");
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(AdminPoaEvaluacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void imprimirValores() {
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.imprimirValores()");       
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.imprimirValores()");
     }
-    
+
     public static class listaEjesEsLaAp {
 
         @Getter        @Setter        private EjesRegistro ejeA;
