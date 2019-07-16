@@ -126,7 +126,9 @@
                             </div>
                         </h:form>
                         <h:form id="frmListaGrupos">
-                            <p:dataTable var="grupo" value="#{utilToolAcademicas.listaGrupos}" sortBy="#{grupo.idPe}" expandableRowGroups="true" styleClass="box-primary 'no-border':''" editable="true" editMode="cell" emptyMessage="No hay grupos resgistrados para este periodo">
+                            <p:dataTable var="grupo" value="#{utilToolAcademicas.listaGrupos}" sortBy="#{grupo.idPe}" expandableRowGroups="true" styleClass="box-primary 'no-border':''"
+                                         editable="true"
+                                         editMode="cell" emptyMessage="No hay grupos resgistrados para este periodo">
                                 <p:headerRow>
                                     <p:column colspan="6" style="background-color: #00b5ad;">
                                         <h:outputText value="#{procesoInscripcion.nombrePE(grupo.idPe)}" />

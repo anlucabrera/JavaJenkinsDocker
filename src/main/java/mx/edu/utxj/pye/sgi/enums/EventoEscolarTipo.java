@@ -11,6 +11,7 @@ public enum EventoEscolarTipo {
     CAPTURA_CALIFICACIONES_EXTEMPORANEA("Captura_de_calificaciones_extemporánea"),
     REINSCRIPCION_AUTONOMA("Reinscripción_autónoma"),
     REINCORPORACIONES("Reincorporaciones"),
+    GENEREACION_GRUPOS("Generacion_de_grupos"),
     CONFIGURACION_DE_MATERIA("Configuración_de_materia");
     @Getter @NonNull private final String label;
 }

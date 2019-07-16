@@ -583,7 +583,7 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
                 .createQuery("select a from Alumnos as a "
                         + "inner join Grupos as g on a.grupos.gruposPK.cveGrupo = g.gruposPK.cveGrupo "
                         + "where g.gruposPK.cvePeriodo = :periodo and (a.cveStatus = :estatus1 or a.cveStatus = :estatus2) and a.matricula = :matricula and a.gradoActual = :grado", Alumnos.class)
-                .setParameter("periodo", 50)
+                .setParameter("periodo", 44)
                 .setParameter("estatus1", 1)
                 .setParameter("estatus2", 6)
                 .setParameter("matricula", matricula)

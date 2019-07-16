@@ -5,10 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.converter.controlEscolar;
 
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
-import org.omnifaces.util.Faces;
-
+import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -16,7 +13,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import java.util.List;
+
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
+import org.omnifaces.util.Faces;
 
 /**
  *

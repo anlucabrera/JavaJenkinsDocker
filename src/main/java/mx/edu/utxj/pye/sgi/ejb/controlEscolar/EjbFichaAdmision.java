@@ -49,7 +49,7 @@ public interface EjbFichaAdmision {
     public Persona leerCurp(Part file) throws IOException;
 
     /**
-     *  Método que realiza la busqueda del preceso de inscripcion activo
+     *  Método que realiza la busqueda del preceso de estudiante activo
      * @return devuelve el proceso de inscripción activo
      */
     public ProcesosInscripcion getProcesoIncripcionTSU();

@@ -144,7 +144,7 @@ public class ProcesoInscripcion implements Serializable{
             if(estudiante != null){
                 opcionIncripcion = estudiante.getOpcionIncripcion();
                 documentosentregadosestudiante = estudiante.getDocumentosentregadosestudiante();
-                carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short)estudiante.getCarrera()).getNombre();
+                carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
             }else{
                 estudiante = new Estudiante();
             }
@@ -183,7 +183,7 @@ public class ProcesoInscripcion implements Serializable{
                     estudiante.setFechaAlta(new Date());
                     estudiante.setTrabajadorInscribe(login.getPersonal().getClave());
                     estudiante =ejbProcesoInscripcion.guardaEstudiante(estudiante,documentosentregadosestudiante,opcionIncripcion);
-                    carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short)estudiante.getCarrera()).getNombre();
+                    carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
                 }
             }else if(opcionIncripcion == false){
                 noGruposPO = gruposElegibles(ejbProcesoInscripcion.listaGruposXPeriodoByCarrera((short)aspiranteValido.getIdProcesoInscripcion().getIdPeriodo(),aspiranteValido.getDatosAcademicos().getSegundaOpcion(), aspiranteValido.getDatosAcademicos().getSistemaSegundaOpcion().getIdSistema(), 1));
@@ -198,7 +198,7 @@ public class ProcesoInscripcion implements Serializable{
                     estudiante.setFechaAlta(new Date());
                     estudiante.setTrabajadorInscribe(login.getPersonal().getClave());
                     estudiante =ejbProcesoInscripcion.guardaEstudiante(estudiante,documentosentregadosestudiante,opcionIncripcion);
-                    carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short)estudiante.getCarrera()).getNombre();
+                    carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
                 }
             }
         }else{
@@ -208,7 +208,7 @@ public class ProcesoInscripcion implements Serializable{
             estudiante.setFechaAlta(new Date());
             estudiante.setTrabajadorInscribe(login.getPersonal().getClave());
             estudiante =ejbProcesoInscripcion.guardaEstudiante(estudiante,documentosentregadosestudiante,opcionIncripcion);
-            carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short)estudiante.getCarrera()).getNombre();
+            carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
         }
         
         listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
@@ -253,7 +253,7 @@ public class ProcesoInscripcion implements Serializable{
     }
     
     public void selectGrupo(){
-        listaGrupos = ejbToolAcademicas.listaByPeriodoCarrera((short)estudiante.getCarrera(), procesosInscripcion.getIdPeriodo());
+        listaGrupos = ejbToolAcademicas.listaByPeriodoCarrera((short) estudiante.getCarrera(), procesosInscripcion.getIdPeriodo());
     }
     
     public void cambiaCarrera(){
