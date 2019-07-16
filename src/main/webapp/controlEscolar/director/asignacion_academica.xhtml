@@ -105,9 +105,11 @@
                                         </div>
                                         <div class="#{casilla}">
                                             <div class="ui-material">
-                                                <p:autoComplete id="docente" value="#{asignacionAcademicaDirector.rol.docente}" completeMethod="#{asignacionAcademicaDirector.completeDocentes}" queryDelay="800"
+                                                <p:autoComplete id="docente" value="#{asignacionAcademicaDirector.rol.docente}"
+                                                                completeMethod="#{asignacionAcademicaDirector.completeDocentes}" queryDelay="800"
                                                                 valueChangeListener="#{asignacionAcademicaDirector.cambiarDocente}"
-                                                                var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" converter="entityConverter" forceSelection="true" size="35"
+                                                                var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}"
+                                                                converter="entityConverter" forceSelection="true" size="35"
                                                                 readonly="#{asignacionAcademicaDirector.rol.soloLectura}">
                                                     <p:column>#{docente.personal.clave}</p:column>
                                                     <p:column>#{docente.personal.nombre}</p:column>
@@ -123,7 +125,7 @@
                                         <div class="col-lg-12 col-md-12 text-info text-center">
                                             <p:tabView id="tab">
                                                 <p:tab title="Materias del grupo">
-                                                    <p:dataTable var="materia" rendered="true"
+                                                    <p:dataTable var="materia" rendered="true" paginatorPosition=""
                                                                  emptyMessage="Sin registros."
                                                                  value="#{asignacionAcademicaDirector.rol.materiasSinAsignar}"
                                                                  id="tbl" rowIndexVar="rowIndex"

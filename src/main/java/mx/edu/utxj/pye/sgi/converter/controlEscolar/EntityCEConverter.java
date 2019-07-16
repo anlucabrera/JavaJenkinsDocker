@@ -13,18 +13,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
+
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Turno;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import org.omnifaces.util.Faces;
 

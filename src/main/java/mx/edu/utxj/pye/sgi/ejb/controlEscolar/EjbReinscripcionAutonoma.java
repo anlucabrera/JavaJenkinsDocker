@@ -5,7 +5,6 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.EstudianteDto;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -121,7 +120,7 @@ public class EjbReinscripcionAutonoma {
      * @param materias Lista de materias que se asignarán
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificaciones> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
+    /*public ResultadoEJB<Calificaciones> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
         try{
             if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
             if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);
@@ -151,5 +150,5 @@ public class EjbReinscripcionAutonoma {
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar las materias. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", e, null);
         }
-    }
+    }*/
 }

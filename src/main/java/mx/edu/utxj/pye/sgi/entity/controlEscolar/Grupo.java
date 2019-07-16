@@ -42,12 +42,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Grupo.findByTutor", query = "SELECT g FROM Grupo g WHERE g.tutor = :tutor")})
 public class Grupo implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_grupo")
-    private Integer idGrupo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "literal")
@@ -68,6 +62,20 @@ public class Grupo implements Serializable {
     @NotNull
     @Column(name = "periodo")
     private int periodo;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "generacion")
+    private short generacion;
+    @JoinColumn(name = "plan", referencedColumnName = "id_plan_estudio")
+    @ManyToOne(optional = false)
+    private PlanEstudio plan;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_grupo")
+    private Integer idGrupo;
     @Column(name = "tutor")
     private Integer tutor;
     @JoinColumn(name = "id_sistema", referencedColumnName = "id_sistema")
@@ -107,21 +115,6 @@ public class Grupo implements Serializable {
         this.idGrupo = idGrupo;
     }
 
-    public Character getLiteral() {
-        return literal;
-    }
-
-    public void setLiteral(Character literal) {
-        this.literal = literal;
-    }
-
-    public int getGrado() {
-        return grado;
-    }
-
-    public void setGrado(int grado) {
-        this.grado = grado;
-    }
 
     public int getCapMaxima() {
         return capMaxima;
@@ -139,13 +132,6 @@ public class Grupo implements Serializable {
         this.idPe = idPe;
     }
 
-    public int getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(int periodo) {
-        this.periodo = periodo;
-    }
 
     public Integer getTutor() {
         return tutor;
@@ -221,6 +207,46 @@ public class Grupo implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo[ idGrupo=" + idGrupo + " ]";
+    }
+
+    public Character getLiteral() {
+        return literal;
+    }
+
+    public void setLiteral(Character literal) {
+        this.literal = literal;
+    }
+
+    public int getGrado() {
+        return grado;
+    }
+
+    public void setGrado(int grado) {
+        this.grado = grado;
+    }
+
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
+    }
+
+    public short getGeneracion() {
+        return generacion;
+    }
+
+    public void setGeneracion(short generacion) {
+        this.generacion = generacion;
+    }
+
+    public PlanEstudio getPlan() {
+        return plan;
+    }
+
+    public void setPlan(PlanEstudio plan) {
+        this.plan = plan;
     }
     
 }

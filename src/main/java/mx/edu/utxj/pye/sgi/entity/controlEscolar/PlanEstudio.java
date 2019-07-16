@@ -39,12 +39,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "PlanEstudio.findByIdPe", query = "SELECT p FROM PlanEstudio p WHERE p.idPe = :idPe")})
 public class PlanEstudio implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_plan_estudio")
-    private Integer idPlanEstudio;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
@@ -53,7 +47,7 @@ public class PlanEstudio implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "anio")
-    private Short anio;
+    private short anio;
     @Basic(optional = false)
     @NotNull
     @Column(name = "estatus")
@@ -62,6 +56,15 @@ public class PlanEstudio implements Serializable {
     @NotNull
     @Column(name = "id_pe")
     private short idPe;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plan")
+    private List<Grupo> grupoList;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_plan_estudio")
+    private Integer idPlanEstudio;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudios")
     private List<Competencia> competenciaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlan")
@@ -90,29 +93,6 @@ public class PlanEstudio implements Serializable {
         this.idPlanEstudio = idPlanEstudio;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public Short getAnio() {
-        return anio;
-    }
-
-    public void setAnio(Short anio) {
-        this.anio = anio;
-    }
-
-    public boolean getEstatus() {
-        return estatus;
-    }
-
-    public void setEstatus(boolean estatus) {
-        this.estatus = estatus;
-    }
 
     public short getIdPe() {
         return idPe;
@@ -163,6 +143,39 @@ public class PlanEstudio implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio[ idPlanEstudio=" + idPlanEstudio + " ]";
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public short getAnio() {
+        return anio;
+    }
+
+    public void setAnio(short anio) {
+        this.anio = anio;
+    }
+
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
+    }
+
+    @XmlTransient
+    public List<Grupo> getGrupoList() {
+        return grupoList;
+    }
+
+    public void setGrupoList(List<Grupo> grupoList) {
+        this.grupoList = grupoList;
     }
     
 }

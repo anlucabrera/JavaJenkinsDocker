@@ -2,7 +2,6 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.ConfiguracionMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
@@ -47,11 +46,11 @@ public class EjbConfiguracionMateria {
      * @param materia Materia de la que se desea generar la configuración sugerida
      * @return
      */
-    public ResultadoEJB<SortedMap<UnidadMateria, ConfiguracionMateria>> getConfiguracionesSugeridas(Materia materia){
+    /*public ResultadoEJB<SortedMap<UnidadMateria, ConfiguracionMateria>> getConfiguracionesSugeridas(Materia materia){
         return null;
-    }
+    }*/
 
-    public ResultadoEJB<SortedMap<UnidadMateria, ConfiguracionMateria>> getConfiguraciones(PeriodosEscolares periodo, PersonalActivo docente, Materia materia){
+    /*public ResultadoEJB<SortedMap<UnidadMateria, ConfiguracionMateria>> getConfiguraciones(PeriodosEscolares periodo, PersonalActivo docente, Materia materia){
         return null;
-    }
+    }*/
 }

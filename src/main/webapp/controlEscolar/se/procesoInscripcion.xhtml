@@ -591,7 +591,7 @@
                 </p:dialog>
             </p:tab>
             <p:tab title="Incripción T.S.U.">
-                <p:panel id="inscripcion" class="hidden-xs hidden-sm" styleClass="box box-primary">
+                <p:panel id="estudiante" class="hidden-xs hidden-sm" styleClass="box box-primary">
                     <section class="content">
                         <h:form id="frmInscripcion">
                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
@@ -603,7 +603,7 @@
                                                     <div class="row">
                                                         <div class="form-group">
                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                <p:focus context=":tabw1:inscripcion"/>
+                                                                <p:focus context=":tabw1:estudiante"/>
                                                                 <p:outputLabel for="folioI" style="font-size: large;text-align: right;" value="Folio ficha de admisión:" />
                                                                 <p:inputText id="folioI" class="form-control" value="#{procesoInscripcion.folioFichaInscripcion}"  placeholder="Ingresa tu folio de ficha de admisión" required="true" requiredMessage="Es necesario que ingrese su el folio de ficha de admisión">
                                                                     <p:ajax event="change" listener="#{procesoInscripcion.buscarFichaAdmisionValida()}" update="@form"/>
@@ -747,7 +747,7 @@
                             </div>
                         </h:form>
                         <h:form id="frmListaEstudiantes">
-                            <p:dataTable var="estudiantes" value="#{procesoInscripcion.listaEstudiantes}" expandableRowGroups="true" 
+                            <p:dataTable var="estudiantes" value="#{procesoInscripcion.listaEstudiantes}" expandableRowGroups="true"
                                          emptyMessage="No hay estudiantes registrados para este proceso de inscripción" sortBy="#{estudiantes.carrera}">
                                 <p:headerRow>
                                     <p:column colspan="8" style="background-color: #00b5ad;">
@@ -776,7 +776,7 @@
                                     <h:outputText value="#{estudiantes.grupo.grado}"/>
                                 </p:column>
                                 <p:column style="text-align: center;">
-                                    <p:commandButton id="btn" icon="fa fa-refresh" alt="Cambio de Carrera" styleClass="btn-primary" style="width: 30%;" onclick="PF('dglCambioCarrera').show();" actionListener="#{procesoInscripcion.getEstudiante(estudiantes)}" update=":tabw1:frmCambioCarrera"/>
+                                    <p:commandButton id="btn" icon="fa fa-refresh" alt="Cambio de Carrera" styleClass="btn-primary" style="width: 30%;" onclick="PF('dglCambioCarrera').show();" actionListener="#{procesoInscripcion.estudiante(estudiantes)}" update=":tabw1:frmCambioCarrera"/>
                                 </p:column>
                             </p:dataTable>
                         </h:form>

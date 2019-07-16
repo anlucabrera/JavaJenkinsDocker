@@ -113,7 +113,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                     cve_pe = estudiante.getAspirante().getDatosAcademicos().getSegundaOpcion();
                     cve_sistema = estudiante.getAspirante().getDatosAcademicos().getSistemaSegundaOpcion().getIdSistema();
                 }
-                grupos = listaGruposXPeriodoByCarrera((short)estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
+                grupos = listaGruposXPeriodoByCarrera((short) estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
                 grupos.forEach(g ->{
                     if(g.getEstudianteList().size() != g.getCapMaxima()){
                         gruposElegibles.add(g);
@@ -163,7 +163,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                     cve_pe = estudiante.getAspirante().getDatosAcademicos().getSegundaOpcion();
                     cve_sistema = estudiante.getAspirante().getDatosAcademicos().getSistemaSegundaOpcion().getIdSistema();
                 }
-                grupos = listaGruposXPeriodoByCarrera((short)estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
+                grupos = listaGruposXPeriodoByCarrera((short) estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
                
                 grupos.forEach(g ->{
                     if(g.getEstudianteList().size() != g.getCapMaxima()){
@@ -243,7 +243,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             AreasUniversidad areasUniversidad = new AreasUniversidad();
             Grupo grupo = new Grupo();
             grupo = estudiante.getGrupo();
-            areasUniversidad = buscaAreaByClave((short)estudiante.getCarrera());
+            areasUniversidad = buscaAreaByClave((short) estudiante.getCarrera());
             String nombreCarrera = areasUniversidad.getNombre();
             String siglas = areasUniversidad.getSiglas();
             
@@ -273,7 +273,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             if (response instanceof HttpServletResponse) {
                 HttpServletResponse hsr = (HttpServletResponse) response;
                 hsr.setContentType("application/pdf");
-                hsr.setHeader("Content-disposition", "inline; filename=\""+estudiante.getMatricula()+".pdf\"");
+                hsr.setHeader("Content-disposition", "inline; filename=\""+ estudiante.getMatricula()+".pdf\"");
                 hsr.setContentLength(baos.size());
                 try {
                     ServletOutputStream out = hsr.getOutputStream();
@@ -305,7 +305,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             String ruta = "C://archivos//plantillas//cartaCompromiso.pdf";
             FacesContext facesContext = FacesContext.getCurrentInstance();
             AreasUniversidad areasUniversidad = new AreasUniversidad();
-            areasUniversidad = buscaAreaByClave((short)estudiante.getCarrera());
+            areasUniversidad = buscaAreaByClave((short) estudiante.getCarrera());
             String nombreCarrera = areasUniversidad.getNombre();
             
             InputStream is = new FileInputStream(ruta);
@@ -314,7 +314,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             PdfStamper pdfStamper = new PdfStamper(pdfReader, baos);
             
             AcroFields fields = pdfStamper.getAcroFields();
-            fields.setField("txtNombreCC", estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+estudiante.getAspirante().getIdPersona().getNombre());
+            fields.setField("txtNombreCC", estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre());
             fields.setField("txtMatriculaCC", String.valueOf(estudiante.getMatricula()));
             fields.setField("txtCarreraCC", nombreCarrera);
             
@@ -332,7 +332,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             if (response instanceof HttpServletResponse) {
                 HttpServletResponse hsr = (HttpServletResponse) response;
                 hsr.setContentType("application/pdf");
-                hsr.setHeader("Content-disposition", "inline; filename=\""+estudiante.getMatricula()+".pdf\"");
+                hsr.setHeader("Content-disposition", "inline; filename=\""+ estudiante.getMatricula()+".pdf\"");
                 hsr.setContentLength(baos.size());
                 try {
                     ServletOutputStream out = hsr.getOutputStream();

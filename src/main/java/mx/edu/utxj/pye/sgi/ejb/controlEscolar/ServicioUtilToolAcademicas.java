@@ -6,7 +6,8 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import java.util.ArrayList;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 
 import javax.ejb.EJB;
@@ -14,10 +15,8 @@ import javax.ejb.Stateless;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.util.Encrypted;
 

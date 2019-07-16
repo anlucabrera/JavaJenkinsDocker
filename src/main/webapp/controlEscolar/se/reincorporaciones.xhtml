@@ -1,0 +1,1683 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Reincorporaciones
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Reincorporaciones"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{reincorporacionServiciosEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <h:form prependId="false" class="form-inline">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(reincorporacionServiciosEscolares.rol.periodoActivo)}"/>
+                                            <p:spacer width="5" />
+
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandLink
+                                                    class="btn btn-info"
+                                                    rendered="#{true}"
+                                                    disabled="#{false}"
+                                                    onclick="PF('modalAyuda').show();"
+                                                    title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                    class="fa fa-question"/>
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </h:form>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="panel" value="#{'col-sm-12 col-md-6'}"/>
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-6 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-3 col-md-3 col-lg-3'}"/>
+                                    <c:set var="casilla5" value="#{'col-sm-4 col-md-4 col-lg-4'}"/>
+                                    <c:set var="casilla6" value="#{'col-sm-8 col-md-8 col-lg-8'}"/>
+                                    <c:set var="casilla7" value="#{'col-sm-6 col-md-6 col-lg-6'}"/>
+                                    <!--p:remoteCommand id="cmdActualizarmaterias" name="actualizarmaterias" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs)" /-->
+                                    <p:tabView id="tabView">
+                                        <p:tab rendered="#{reincorporacionServiciosEscolares.rol.buscar}">
+                                            <f:facet name="title"><i class="fa fa-list"></i><span> Datos generales</span></f:facet>
+                                            <!--Apartado de la toolbar  para realizar la busqueda del persona-->
+                                            <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                <h:form id="frmBus1" enctype="multipart/form-data">
+                                                    <p:toolbar id="tb1">
+                                                        <f:facet name="left">
+                                                            <div class="pull-left" style="margin-bottom: 20px" >
+                                                                <p:selectOneButton id="scriptMigrate" value="#{reincorporacionServiciosEscolares.rol.opcion}" required="true">
+                                                                    <f:selectItem itemLabel="Buscar por CURP" itemValue="Buscar" />
+                                                                    <f:selectItem itemLabel="Realizar registro nuevo" itemValue="Registrar" />
+                                                                    <p:ajax update="@form, :tabView:frmBtn :tabView:frmBtnDRP :tabView:frmBtnDF :tabView:frmBtnDA @(.ui-tabs)" event="change"
+                                                                            listener="#{reincorporacionServiciosEscolares.actualizarOpciones()}" />
+                                                                </p:selectOneButton>
+                                                            </div>
+                                                            <div class="ui-g-12 ui-md-4">
+                                                                <div class="ui-inputgroup">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="curp2" value="#{reincorporacionServiciosEscolares.rol.buscquedaCurp}" required="true"
+                                                                                     requiredMessage="Por favor ingrese la curp del estudiante a buscar"/>
+                                                                        <p:outputLabel value="CURP" for="curp2"/>
+                                                                        <p:message for="curp2"/>
+                                                                    </div>
+                                                                    <div class="ui-material">
+                                                                        <p:commandButton value="Buscar" iconPos="left" icon="fa fa-search" styleClass="white-button"
+                                                                                         actionListener="#{reincorporacionServiciosEscolares.buscasDatosPersonaPorCurp()}"
+                                                                                         process="@form" update=":tabView:frmGeneral"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </f:facet>
+                                                        <f:facet name="right">
+                                                            <div class="pull-right" style="margin-bottom: 20px">
+                                                                <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.buscar}">
+                                                                    <div class="ui-material">
+                                                                        <p:commandButton value="Actualizar información" icon="fa fa-refresh" styleClass="btn btn-success" iconPos="left"
+                                                                                         update=":tabView:frmGeneral" process="@this"
+                                                                                         actionListener="#{reincorporacionServiciosEscolares.guardarDatosPersona}"/>
+                                                                    </div>
+                                                                </p:outputPanel>
+                                                            </div>
+                                                        </f:facet>
+                                                    </p:toolbar>
+                                                    <p:sticky target="tb1" />
+                                                </h:form>
+                                            </div>
+                                            <!--Apartado de los panel's disponibles en la vista-->
+                                            <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                <h:form id="frmGeneral">
+                                                    <div class="row">
+                                                        <div class="#{panel}">
+                                                            <div class="box box-primary">
+                                                                <div class="box-header panel-heading with-border">
+                                                                    <div class="pull-left"><i class="fa fa-user"></i></div>
+                                                                    <h3 class="box-title">Datos personales</h3>
+                                                                    <div class="box-tools pull-right">
+                                                                        <button class="btn btn-box-tool" data-widget="collapse">
+                                                                            <i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="box-body">
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="nombre1" class="form-control" value="#{reincorporacionServiciosEscolares.rol.persona.nombre}"
+                                                                                             readonly="true" required="true"/>
+                                                                                <p:outputLabel for="nombre1" value="Nombre"/>
+                                                                                <p:message for="nombre1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="ap1" class="form-control" value="#{reincorporacionServiciosEscolares.rol.persona.apellidoPaterno}"
+                                                                                             readonly="true" required="true"/>
+                                                                                <p:outputLabel for="ap1" value="Primer apellido"/>
+                                                                                <p:message for="ap1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="am1" class="form-control" value="#{reincorporacionServiciosEscolares.rol.persona.apellidoMaterno}"
+                                                                                             readonly="true" required="true"/>
+                                                                                <p:outputLabel for="am1" value="Segundo apellido"/>
+                                                                                <p:message for="am1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/><br/>
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="curp3" class="form-control" value="#{reincorporacionServiciosEscolares.rol.persona.curp}"
+                                                                                             readonly="true" required="true"/>
+                                                                                <p:outputLabel for="curp3" value="CURP"/>
+                                                                                <p:message for="curp3"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="genero1" value="#{reincorporacionServiciosEscolares.rol.persona.genero}" required="true">
+                                                                                    <f:selectItem value="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemGeneros}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="genero1" value="Género"/>
+                                                                                <p:message for="genero1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="ec1" value="#{reincorporacionServiciosEscolares.rol.persona.estadoCivil}" required="true"
+                                                                                                 requiredMessage="Su estado civil es requerido" rendered="true">
+                                                                                    <p:ajax update="@this" process="@this" />
+                                                                                    <f:selectItem itemValue="" itemLabel=""/>
+                                                                                    <f:selectItem itemValue="Soltero (a)" itemLabel="Soltero (a)"/>
+                                                                                    <f:selectItem itemValue="Unión Libre" itemLabel="Unión Libre"/>
+                                                                                    <f:selectItem itemValue="Casado (a)" itemLabel="Casado (a)"/>
+                                                                                    <f:selectItem itemValue="Separado (a)" itemLabel="Separado (a)"/>
+                                                                                    <f:selectItem itemValue="Divorciado (a)" itemLabel="Divorciado (a)"/>
+                                                                                    <f:selectItem itemValue="Viudo (a)" itemLabel="Viudo (a)"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="ec1" value="Estado Civil*"/>
+                                                                                <p:message for="ec1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/><br/>
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="fn1" class="form-control" value="#{reincorporacionServiciosEscolares.rol.persona.fechaNacimiento}"
+                                                                                             readonly="true" required="true">
+                                                                                    <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                                                                </p:inputText>
+                                                                                <p:outputLabel for="fn1" value="Fecha de nacimiento"/>
+                                                                                <p:message for="fn1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="paisN1" value="#{reincorporacionServiciosEscolares.rol.paisItem}" required="true"
+                                                                                                 requiredMessage="El País de nacimiento es requerido" disabled="#{reincorporacionServiciosEscolares.rol.estado}">
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.seleccionarEstado()}" update=":tabView:frmDP:estadoN"/>
+                                                                                    <f:selectItem itemValue="" itemLabel=""/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemPaises}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="paisN1" value="País Nacimiento*"/>
+                                                                                <p:message for="paisN1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="estadoN1" value="#{reincorporacionServiciosEscolares.rol.persona.estado}" required="true"
+                                                                                                 requiredMessage="El estado de nacimiento es requerido" disabled="#{reincorporacionServiciosEscolares.rol.estado}">
+                                                                                    <f:selectItem itemValue="" itemLabel=""/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstados}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="estadoN1" value="Estado Nacimiento*"/>
+                                                                                <p:message for="estadoN1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/><br/>
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="municipioN1" value="#{reincorporacionServiciosEscolares.rol.persona.municipio}"
+                                                                                                 disabled="#{reincorporacionServiciosEscolares.rol.estadoExt}" required="true"
+                                                                                                 requiredMessage="El municipio de nacimiento es requerido">
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.seleccionarLocalidad()}" update=":tabView:frmDP:localidadN"/>
+                                                                                    <f:selectItem itemValue="" itemLabel=""/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipios}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="municipioN1" value="Municipio Nacimiento*"/>
+                                                                                <p:message for="municipioN1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="localidadN1" value="#{reincorporacionServiciosEscolares.rol.persona.localidad}"
+                                                                                                 disabled="#{reincorporacionServiciosEscolares.rol.estadoExt}" required="true"
+                                                                                                 requiredMessage="La localidad de nacimiento es requerido">
+                                                                                    <p:ajax process="@this" update="@this"/>
+                                                                                    <f:selectItem itemValue="" itemLabel=""/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemLocalidades}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="localidadN1" value="Localidad Nacimiento*"/>
+                                                                                <p:message for="localidadN1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="#{panel}">
+                                                            <div class="box box-warning">
+                                                                <div class="box-header panel-heading with-border">
+                                                                    <div class="pull-left"><i class="fa fa-list-alt"></i></div>
+                                                                    <h3 class="box-title">Datos médicos y de comunicación</h3>
+                                                                    <div class="box-tools pull-right">
+                                                                        <button class="btn btn-box-tool" data-widget="collapse">
+                                                                            <i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="box-body">
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="peso1" class="form-control" value="#{reincorporacionServiciosEscolares.rol.datosMedicos.peso}"
+                                                                                             required="true" requiredMessage="Es importante que ingrese su Peso"
+                                                                                             validatorMessage="El Peso colocado es incorrecto">
+                                                                                    <p:ajax process="@this"/>
+                                                                                    <f:convertNumber pattern="#0.00" />
+                                                                                    <f:validateDoubleRange maximum="500.00" minimum="30.00"/>
+                                                                                </p:inputText>
+                                                                                <p:outputLabel for="peso1" value="Peso*"/>
+                                                                                <p:message for="peso1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="estatura1" class="form-control" requiredMessage="Es importante que ingrese su Estatura"
+                                                                                             value="#{reincorporacionServiciosEscolares.rol.datosMedicos.estatura}"
+                                                                                             required="true" validatorMessage="La Estatura colocado es incorrecto">
+                                                                                    <p:ajax process="@this"/>
+                                                                                    <f:convertNumber pattern="#0.00" />
+                                                                                    <f:validateDoubleRange maximum="2.50" minimum="1.30"/>
+                                                                                </p:inputText>
+                                                                                <p:outputLabel for="estatura1" value="Estatura*"/>
+                                                                                <p:message for="estatura1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="tipoS1" required="true" requiredMessage="Es nesesario que ingrese su tipo de sangre"
+                                                                                                 value="#{reincorporacionServiciosEscolares.rol.datosMedicos.cveTipoSangre}"
+                                                                                                 converter="entidadCEConverter">
+                                                                                    <p:ajax process="@this"/>
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemTipoSangre}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="tipoS1" value="Tipo Sangre*"/>
+                                                                                <p:message for="tipoS1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/><br/>
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="tipoDiscapacidad1" required="true" converter="entidadCEConverter"
+                                                                                                 value="#{reincorporacionServiciosEscolares.rol.datosMedicos.cveDiscapacidad}"
+                                                                                                 requiredMessage="Es importante que mencione si tiene alguna discapacidad">
+                                                                                    <p:ajax process="@this"/>
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemDiscapacidades}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="tipoDiscapacidad1" value="Discapacidad*"/>
+                                                                                <p:message for="tipoDiscapacidad1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla6}">
+                                                                            <div class="ui-material">
+                                                                                <p:outputLabel for="amf1" value="Antecedentes médicos familiares"
+                                                                                               style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/>
+                                                                                <p:selectManyCheckbox id="amf1" value="#{reincorporacionServiciosEscolares.rol.selectDM}">
+                                                                                    <p:ajax process="@this"/>
+                                                                                    <f:selectItem itemValue="Dia" itemLabel="Diabetico"/>
+                                                                                    <f:selectItem itemValue="Hip" itemLabel="Hipertenso" />
+                                                                                    <f:selectItem itemValue="Car" itemLabel="Cardiaco" />
+                                                                                    <f:selectItem itemValue="Can" itemLabel="Cancer" />
+                                                                                </p:selectManyCheckbox>
+                                                                                <p:message for="amf1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/><br/>
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="nss1" class="form-control" value="#{reincorporacionServiciosEscolares.rol.datosMedicos.nss}"
+                                                                                             readonly="#{reincorporacionServiciosEscolares.rol.datosMedicos.nssVigente == false}"
+                                                                                             required="true" requiredMessage="Debe de ingresar su número de seguro social"><p:ajax process="@this"/>
+                                                                                </p:inputText>
+                                                                                <p:outputLabel for="nss1" value="Número de seguro social" style="position: absolute"/>
+                                                                                <p:message for="nss1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputMask mask="(99)(999)999-9999" id="telFijo1" class="form-control"
+                                                                                             value="#{reincorporacionServiciosEscolares.rol.medioComunicacion.telefonoFijo}" >
+                                                                                    <p:ajax process="@this"/>
+                                                                                </p:inputMask>
+                                                                                <p:outputLabel for="telFijo1" value="Teléfono fijo"/>
+                                                                                <p:message for="telFijo1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputMask mask="(999)999-9999" id="telMovil1" class="form-control"
+                                                                                             value="#{reincorporacionServiciosEscolares.rol.medioComunicacion.telefonoMovil}">
+                                                                                    <p:ajax process="@this"/>
+                                                                                </p:inputMask>
+                                                                                <p:outputLabel for="telMovil1" value="Teléfono Móvil"/>
+                                                                                <p:message for="telMovil1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/><br/>
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="email1" class="form-control" validatorMessage="El email es incorrecto"
+                                                                                             value="#{reincorporacionServiciosEscolares.rol.medioComunicacion.email}">
+                                                                                    <p:ajax process="@this"/>
+                                                                                    <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+
+                                                                                (\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                                                                </p:inputText>
+                                                                                <p:outputLabel for="email1" value="Correo Electrónico" />
+                                                                                <p:message for="email1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="#{panel}">
+                                                            <div class="box box-success">
+                                                                <div class="box-header panel-heading with-border">
+                                                                    <div class="pull-left"><i class="fa fa-map-marker"></i></div>
+                                                                    <h3 class="box-title">Domicilio (residencia y procedencia)</h3>
+                                                                    <div class="box-tools pull-right">
+                                                                        <button class="btn btn-box-tool" data-widget="collapse">
+                                                                            <i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="box-body">
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="calle1" class="form-control" value="#{reincorporacionServiciosEscolares.rol.domicilio.calle}"
+                                                                                             required="true" requiredMessage="La calle de recidencia es requerida"/>
+                                                                                <p:outputLabel for="calle1" value="Calle*"/>
+                                                                                <p:message for="calle1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="numero1" class="form-control"  value="#{reincorporacionServiciosEscolares.rol.domicilio.numero}"
+                                                                                             required="true" requiredMessage="El numero de casa de recidencia es requerido"/>
+                                                                                <p:outputLabel for="numero1" value="Número*"/>
+                                                                                <p:message for="numero1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="estadoR1" value="#{reincorporacionServiciosEscolares.rol.domicilio.idEstado}" required="true"
+                                                                                                 requiredMessage="El estado de recidencia es requerido">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstadosDomicilioRadica}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectMunicipio()}" update="municipioR1"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="estadoR1" value="Estado*"/>
+                                                                                <p:message for="estadoR1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/><br/>
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="municipioR1" value="#{reincorporacionServiciosEscolares.rol.domicilio.idMunicipio}"
+                                                                                                 required="true" requiredMessage="El municipio de recidencia es requerido">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipios}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectAsentamiento()}" update="asentamientoR1"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="municipioR1" value="Municipio*"/>
+                                                                                <p:message for="municipioR1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="asentamientoR1" value="#{reincorporacionServiciosEscolares.rol.domicilio.idAsentamiento}"
+                                                                                                 filter="true" filterMatchMode="startsWith" required="true"
+                                                                                                 requiredMessage="El asentamiento de recidencia es requerido">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAsentamientos}"/>
+                                                                                    <p:ajax process="@this"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="asentamientoR1" value="Asentamiento*"/>
+                                                                                <p:message for="asentamientoR1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="tiempoResidencoa1" styleClass="form-control" placeholder="Ejem: 1 año"
+                                                                                             value="#{reincorporacionServiciosEscolares.rol.domicilio.tiempoResidencia}" required="true"
+                                                                                             requiredMessage="El tiempo de recidenca es requerido">
+                                                                                    <p:ajax process="@this"/>
+                                                                                </p:inputText>
+                                                                                <p:outputLabel for="tiempoResidencoa1" value="Tiempo de recidencia*"/>
+                                                                                <p:message for="tiempoResidencoa1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/><br/>
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="calleRadicas1" class="form-control" placeholder="Calle"
+                                                                                             value="#{reincorporacionServiciosEscolares.rol.domicilio.calleProcedencia}" required="true"
+                                                                                             requiredMessage="La calle de procedencia es requerida">
+                                                                                    <p:ajax process="@this"/>
+                                                                                </p:inputText>
+                                                                                <p:outputLabel for="calleRadicas1" value="Calle*"/>
+                                                                                <p:message for="calleRadicas1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="numeroRadicas1" class="form-control" placeholder="14,14-B"
+                                                                                             value="#{reincorporacionServiciosEscolares.rol.domicilio.numeroProcedencia}" required="true"
+                                                                                             requiredMessage="El numero de casa de procedencia es requerido">
+                                                                                    <p:ajax process="@this"/>
+                                                                                </p:inputText>
+                                                                                <p:outputLabel for="numeroRadicas1" value="Número*"/>
+                                                                                <p:message for="numeroRadicas1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="estadoP1" value="#{reincorporacionServiciosEscolares.rol.domicilio.estadoProcedencia}"
+                                                                                                 required="true" requiredMessage="El estado de procedencia es requerido">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstadosProcedencia}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectMunicipioProcedencia()}" update="municipioP1"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="estadoP1" value="Estado*"/>
+                                                                                <p:message for="estadoP1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/><br/>
+                                                                    <div class="row">
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="municipioP1" value="#{reincorporacionServiciosEscolares.rol.domicilio.municipioProcedencia}"
+                                                                                                 required="true" requiredMessage="El municipio de procedencia es requerido">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipiosProcedencia}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectAsentamientoProcedencia()}"
+                                                                                            update="asentamientoP1"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="municipioP1" value="Municipio*"/>
+                                                                                <p:message for="municipioP1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:selectOneMenu id="asentamientoP1" requiredMessage="El asentamiento de procedencia es requerido"
+                                                                                                 value="#{reincorporacionServiciosEscolares.rol.domicilio.asentamientoProcedencia}"
+                                                                                                 filter="true" filterMatchMode="startsWith" required="true">
+                                                                                    <p:ajax process="@this"/>
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAsentamientosProcedencia}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:outputLabel for="asentamientoP1" value="Asentamiento*"/>
+                                                                                <p:message for="asentamientoP1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="#{casilla5}">
+                                                                            <div class="ui-material">
+                                                                                <p:inputText id="vives1" class="form-control" placeholder="Padres,Tios.."
+                                                                                             value="#{reincorporacionServiciosEscolares.rol.domicilio.vivesCon}" required="true"
+                                                                                             requiredMessage="Indicar el con que personas vives">
+                                                                                    <p:ajax process="@this"/>
+                                                                                </p:inputText>
+                                                                                <p:outputLabel for="vives1" value="Vives con*"/>
+                                                                                <p:message for="vives1"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="#{panel}">
+                                                            <div class="box box-default">
+                                                                <div class="box-header panel-heading with-border">
+                                                                    <div class="pull-left">
+                                                                        <i class="fa fa-list-alt"></i>
+                                                                    </div>
+                                                                    <h3 class="box-title">Datos familiares</h3>
+                                                                    <div class="box-tools pull-right">
+                                                                        <button class="btn btn-box-tool" data-widget="collapse">
+                                                                            <i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="box-body">
+                                                                    <p:accordionPanel>
+                                                                        <p:tab closable="true">
+                                                                            <f:facet name="title"><i class="fa fa-user"></i><span> Datos del tutor familiar</span></f:facet>
+                                                                            <div class="row">
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:inputText id="nombreTutor1" class="form-control" placeholder="Nombre del Tutor"
+                                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.nombre}"
+                                                                                                     required="true" requiredMessage="Debe de indicar el nombre del tutor familiar"/>
+                                                                                        <p:outputLabel for="nombreTutor1" value="Nombre del Tutor*"/>
+                                                                                        <p:message for="nombreTutor1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:inputText id="apTutor1" class="form-control" placeholder="Apellido Paterno del Tutor"
+                                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.apellidoPaterno}" required="true"
+                                                                                                     requiredMessage="Debe de indicar el apellido paterno del tutor familiar"/>
+                                                                                        <p:outputLabel for="apTutor1" value="Apellido Paterno del Tutor*"/>
+                                                                                        <p:message for="apTutor1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:inputText id="amTutor1" class="form-control" placeholder="Apellido Materno del Tutor"
+                                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.apellidoMaterno}" required="true"
+                                                                                                     requiredMessage="Debe de indicar el apellido materno del tutor familiar"/>
+                                                                                        <p:outputLabel for="amTutor1" value="Apellido Materno del Tutor*"/>
+                                                                                        <p:message for="amTutor1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br/><br/>
+                                                                            <div class="row">
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:inputText id="calleTutor1" class="form-control" placeholder="Calle"
+                                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.calle}" required="true"
+                                                                                                     requiredMessage="Debe de indicar la calle de su tutor familiar"/>
+                                                                                        <p:outputLabel for="calleTutor1" value="Calle*"/>
+                                                                                        <p:message for="calleTutor1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:inputText id="numeroTutor1" class="form-control" placeholder="Numero"
+                                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.numero}"
+                                                                                                     required="true" requiredMessage="Debe de indicar el numero de casa de su tutor familiar"/>
+                                                                                        <p:outputLabel for="numeroTutor1" value="Número*"/>
+                                                                                        <p:message for="numeroTutor1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:selectOneMenu id="estadoT1" value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.estado}" required="true"
+                                                                                                         requiredMessage="Debe de indicar el estado de recidencia de su tutor familiar">
+                                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstadosTutor}"/>
+                                                                                            <p:ajax listener="#{reincorporacionServiciosEscolares.selectMunicipioTutor()}" update="municipioT1"/>
+                                                                                        </p:selectOneMenu>
+                                                                                        <p:outputLabel for="estadoT1" value="Estado*"/>
+                                                                                        <p:message for="estadoT1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br/><br/>
+                                                                            <div class="row">
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:selectOneMenu id="municipioT1" value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.municipio}" required="true"
+                                                                                                         requiredMessage="Debe de indicar el municipio de recidencia de su tutor familiar">
+                                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipios}"/>
+                                                                                            <p:ajax listener="#{reincorporacionServiciosEscolares.selectAsentamientoTutor()}" update="asentamientoT1"/>
+                                                                                        </p:selectOneMenu>
+                                                                                        <p:outputLabel for="municipioT1" value="Municipio*"/>
+                                                                                        <p:message for="municipioT1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:selectOneMenu id="asentamientoT1" value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.asentamiento}"
+                                                                                                         filter="true" filterMatchMode="startsWith" required="true"
+                                                                                                         requiredMessage="Debe de indicar el asentamiento de recidencia de su tutor familiar">
+                                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAsentamientoTutor}"/>
+                                                                                        </p:selectOneMenu>
+                                                                                        <p:outputLabel for="asentamientoT1" value="Asentamiento*"/>
+                                                                                        <p:message for="asentamientoT1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:inputMask mask="(999)999-9999" id="telefonoTutor1" class="form-control" placeholder="(999)999-9999"
+                                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.noTelefono}"/>
+                                                                                        <p:outputLabel for="telefonoTutor1" value="Número de Teléfono"/>
+                                                                                        <p:message for="telefonoTutor1"/>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br/><br/>
+                                                                            <div class="row">
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:inputText id="parentesco1" class="form-control" placeholder="Papá, Mamá, Tío......"
+                                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.parentesco}" required="true"
+                                                                                                     requiredMessage="Debe de indicar el parentesco con su tutor familiar"/>
+                                                                                        <p:outputLabel for="parentesco1" value="Parentesco*"/>
+                                                                                        <p:message for="parentesco1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </p:tab>
+                                                                        <p:tab>
+                                                                            <f:facet name="title"><i class="fa fa-male"></i><span> Datos del padre</span></f:facet>
+                                                                            <div class="row">
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:inputText id="nombrePadre1" class="form-control" placeholder="Nombre del Padre"
+                                                                                                     value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.nombrePadre}"
+                                                                                                     required="true" requiredMessage="Debe de indicar el nombre completo de tu padre"/>
+                                                                                        <p:outputLabel for="nombrePadre1" value="Nombre Completo de tu Padre*"/>
+                                                                                        <p:message for="nombrePadre1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:selectOneMenu id="ocupacionPadre1" converter="entidadCEConverter" required="true"
+                                                                                                         value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.ocupacionPadre}"
+                                                                                                         requiredMessage="Debe de indicar la ocupación de tu padre" style="width: 250px">
+                                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.ocupacion}" var="oc"
+                                                                                                           itemValue="#{oc}" itemLabel="#{oc.descripcion}"/>
+                                                                                        </p:selectOneMenu>
+                                                                                        <p:outputLabel for="ocupacionPadre1" value="Ocupación*"/>
+                                                                                        <p:message for="ocupacionPadre1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:selectOneMenu id="escolaridadPadre1" converter="entidadCEConverter" required="true"
+                                                                                                         value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.escolaridadPadre}"
+                                                                                                         requiredMessage="Debe de indicar la escolaridad de tu padre" style="width: 250px">
+                                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.escolaridad}" var="esp" itemValue="#{esp}"
+                                                                                                           itemLabel="#{esp.descripcion}"/>
+                                                                                        </p:selectOneMenu>
+                                                                                        <p:outputLabel for="escolaridadPadre1" value="Escolaridad*"/>
+                                                                                        <p:message for="escolaridadPadre1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </p:tab>
+                                                                        <p:tab>
+                                                                            <f:facet name="title"><i class="fa fa-female"></i><span> Datos de la madre</span></f:facet>
+                                                                            <div class="row">
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:inputText id="nombreMadre1" class="form-control" placeholder="Nombre del Madre"
+                                                                                                     value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.nombreMadre}" required="true"
+                                                                                                     requiredMessage="Debe de indicar el nombre completo de tu madre"/>
+                                                                                        <p:outputLabel for="nombreMadre1" value="Nombre Completo de tu Madre*"/>
+                                                                                        <p:message for="nombreMadre1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:selectOneMenu id="ocupacionMadre1" requiredMessage="Debe de indicar la ocupación de tu madre"
+                                                                                                         value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.ocupacionMadre}"
+                                                                                                         converter="entidadCEConverter" required="true" style="width: 250px">
+                                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.ocupacion}" var="ocm" itemValue="#{ocm}"
+                                                                                                           itemLabel="#{ocm.descripcion}"/>
+                                                                                        </p:selectOneMenu>
+                                                                                        <p:outputLabel for="ocupacionMadre1" value="Ocupación*" />
+                                                                                        <p:message for="ocupacionMadre1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla5}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:selectOneMenu id="escolaridadMadre1" converter="entidadCEConverter" required="true"
+                                                                                                         value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.escolaridadMadre}"
+                                                                                                         requiredMessage="Debe de indicar la escolaridad de tu madre" style="width: 250px">
+                                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.escolaridad}" var="esm" itemValue="#{esm}"
+                                                                                                           itemLabel="#{esm.descripcion}"/>
+                                                                                        </p:selectOneMenu>
+                                                                                        <p:outputLabel for="escolaridadMadre1" value="Escolaridad*"/>
+                                                                                        <p:message for="escolaridadMadre1"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </p:tab>
+                                                                    </p:accordionPanel>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </h:form>
+                                            </div>
+                                        </p:tab>
+                                        <p:tab rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                            <f:facet name="title"><i class="fa fa-user "></i><span> Datos personales</span></f:facet>
+                                            <h:form id="frmBus" enctype="multipart/form-data">
+                                                <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                    <div class="pull-left" style="margin-bottom: 20px" >
+                                                        <p:selectOneButton id="scriptMigrate1" value="#{reincorporacionServiciosEscolares.rol.opcion}" required="true">
+                                                            <f:selectItem itemLabel="Buscar por CURP" itemValue="Buscar" />
+                                                            <f:selectItem itemLabel="Realizar registro nuevo" itemValue="Registrar" />
+                                                            <p:ajax update="@form, :tabView:frmBtn :tabView:frmBtnDRP :tabView:frmBtnDF :tabView:frmBtnDA @(.ui-tabs)" event="change"
+                                                                    listener="#{reincorporacionServiciosEscolares.actualizarOpciones()}" />
+                                                        </p:selectOneButton>
+                                                    </div>
+                                                    <div class="pull-right" style="margin-bottom: 20px">
+                                                        <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.buscar}">
+                                                            <div class="ui-material">
+                                                                <p:commandButton value="Actualizar información" icon="fa fa-refresh" styleClass="btn btn-success" iconPos="left"
+                                                                                 update=":tabView:frmDP" process="@this" actionListener="#{reincorporacionServiciosEscolares.guardarDatosPersona}"/>
+                                                            </div>
+                                                        </p:outputPanel>
+                                                        <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                                            <div class="ui-material">
+                                                                <p:commandButton value="Guardar información" icon="fa fa-save" styleClass="btn btn-primary" iconPos="left"
+                                                                                 update=":tabView:frmDP" process="@this" actionListener="#{reincorporacionServiciosEscolares.guardarDatosPersona}"/>
+                                                            </div>
+                                                        </p:outputPanel>
+                                                    </div>
+                                                </div>
+                                                <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                    <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.buscar}">
+                                                        <div class="ui-g-12 ui-md-4">
+                                                            <div class="ui-inputgroup">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="curp" value="#{reincorporacionServiciosEscolares.rol.buscquedaCurp}" required="true"
+                                                                    requiredMessage="Por favor ingrese la curp del estudiante a buscar"/>
+                                                                    <p:outputLabel value="CURP" for="curp"/>
+                                                                    <p:message for="curp"/>
+                                                                </div>
+                                                                <div class="ui-material">
+                                                                    <p:commandButton value="Buscar" iconPos="left" icon="fa fa-search" styleClass="white-button"
+                                                                                     actionListener="#{reincorporacionServiciosEscolares.buscasDatosPersonaPorCurp()}"
+                                                                                     process="@form" update=":tabView:frmDP :tabView:frmDmyMc :tabView:frmDryP :tabView:frmDF :tabView:frmDA"/>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel >
+                                                    <p:outputLabel rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                                            <div class="col-sm-4 col-md-4 col-lg-12">
+                                                                <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: medium; color: #dd4b39"
+                                                                                 value="* Debe adjuntar su CURP en formato mas reciente para obtener informacion personal; la liga de descarga es la siguiente.">
+                                                                    <p:link value=" Descargar CURP" href="https://www.gob.mx/curp/" target="_blank"/>
+                                                                </p:outputLabel>
+                                                                <hr/>
+                                                                <div class="ui-inputgroup">
+                                                                    <div class="ui-material">
+                                                                        <o:inputFile id="file" value="#{reincorporacionServiciosEscolares.rol.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF"
+                                                                                     maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB."/>
+                                                                        <h:message id="messageForFile" for="file" />
+                                                                    </div>
+                                                                    <div class="ui-material">
+                                                                        <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info"
+                                                                                         action="#{reincorporacionServiciosEscolares.obtenerDatosQR()}"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                    </p:outputLabel>
+                                                </div>
+                                            </h:form>
+                                            <div class="row margin-bottom" style="margin-top: 20px;">
+                                                <h:form id="frmDP">
+                                                    <p:separator/>
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="nombre" class="form-control" value="#{reincorporacionServiciosEscolares.rol.persona.nombre}"
+                                                                             readonly="true" required="true"/>
+                                                                <p:outputLabel for="nombre" value="Nombre"/>
+                                                                <p:message for="nombre"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                        </div>
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="ap" class="form-control" value="#{reincorporacionServiciosEscolares.rol.persona.apellidoPaterno}"
+                                                                             readonly="true" required="true"/>
+                                                                <p:outputLabel for="ap" value="Primer apellido"/>
+                                                                <p:message for="ap"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                        </div>
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="am" class="form-control" value="#{reincorporacionServiciosEscolares.rol.persona.apellidoMaterno}"
+                                                                             readonly="true" required="true"/>
+                                                                <p:outputLabel for="am" value="Segundo apellido"/>
+                                                                <p:message for="am"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                        </div>
+                                                        <div class="#{casilla4}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="curp1" class="form-control" value="#{reincorporacionServiciosEscolares.rol.persona.curp}"
+                                                                                 readonly="true" required="true"/>
+                                                                    <p:outputLabel for="curp1" value="CURP"/>
+                                                                    <p:message for="curp1"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                    <br/>
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:selectOneMenu id="genero" value="#{reincorporacionServiciosEscolares.rol.persona.genero}" required="true">
+                                                                    <f:selectItem value="#{null}"/>
+                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemGeneros}"/>
+                                                                </p:selectOneMenu>
+                                                                <p:outputLabel for="genero"  value="Género"/>
+                                                                <p:message for="genero"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                        </div>
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:selectOneMenu id="ec" value="#{reincorporacionServiciosEscolares.rol.persona.estadoCivil}" required="true"
+                                                                                 requiredMessage="Su estado civil es requerido" rendered="true">
+                                                                    <p:ajax update="@this" process="@this" />
+                                                                    <f:selectItem itemValue="" itemLabel=""/>
+                                                                    <f:selectItem itemValue="Soltero (a)" itemLabel="Soltero (a)"/>
+                                                                    <f:selectItem itemValue="Unión Libre" itemLabel="Unión Libre"/>
+                                                                    <f:selectItem itemValue="Casado (a)" itemLabel="Casado (a)"/>
+                                                                    <f:selectItem itemValue="Separado (a)" itemLabel="Separado (a)"/>
+                                                                    <f:selectItem itemValue="Divorciado (a)" itemLabel="Divorciado (a)"/>
+                                                                    <f:selectItem itemValue="Viudo (a)" itemLabel="Viudo (a)"/>
+                                                                </p:selectOneMenu>
+                                                                <p:outputLabel for="ec" value="Estado Civil*"/>
+                                                                <p:message for="ec"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                            </div>
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="fn" class="form-control" value="#{reincorporacionServiciosEscolares.rol.persona.fechaNacimiento}"
+                                                                             readonly="true" required="true">
+                                                                    <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                                                </p:inputText>
+                                                                <p:outputLabel for="fn" value="Fecha de nacimiento"/>
+                                                                <p:message for="fn"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                        </div>
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:selectOneMenu id="paisN" value="#{reincorporacionServiciosEscolares.rol.paisItem}" required="true"
+                                                                                 requiredMessage="El País de nacimiento es requerido" disabled="#{reincorporacionServiciosEscolares.rol.estado}">
+                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.seleccionarEstado()}" update=":tabView:frmDP:estadoN"/>
+                                                                    <f:selectItem itemValue="" itemLabel=""/>
+                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemPaises}"/>
+                                                                </p:selectOneMenu>
+                                                                <p:outputLabel for="paisN" value="País Nacimiento*"/>
+                                                                <p:message for="paisN"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <br/>
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:selectOneMenu id="estadoN" value="#{reincorporacionServiciosEscolares.rol.persona.estado}" required="true"
+                                                                                 requiredMessage="El estado de nacimiento es requerido" disabled="#{reincorporacionServiciosEscolares.rol.estado}">
+                                                                    <f:selectItem itemValue="" itemLabel=""/>
+                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstados}"/>
+                                                                </p:selectOneMenu>
+                                                                <p:outputLabel for="estadoN" value="Estado Nacimiento*"/>
+                                                                <p:message for="estadoN"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                        </div>
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:selectOneMenu id="municipioN" value="#{reincorporacionServiciosEscolares.rol.persona.municipio}"
+                                                                                 disabled="#{reincorporacionServiciosEscolares.rol.estadoExt}" required="true"
+                                                                                 requiredMessage="El municipio de nacimiento es requerido">
+                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.seleccionarLocalidad()}" update=":tabView:frmDP:localidadN"/>
+                                                                    <f:selectItem itemValue="" itemLabel=""/>
+                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipios}"/>
+                                                                </p:selectOneMenu>
+                                                                <p:outputLabel for="municipioN" value="Municipio Nacimiento*"/>
+                                                                <p:message for="municipioN"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                            </div>
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:selectOneMenu id="localidadN" value="#{reincorporacionServiciosEscolares.rol.persona.localidad}"
+                                                                                 disabled="#{reincorporacionServiciosEscolares.rol.estadoExt}" required="true"
+                                                                                 requiredMessage="La localidad de nacimiento es requerido">
+                                                                    <p:ajax process="@this" update="@this"/>
+                                                                    <f:selectItem itemValue="" itemLabel=""/>
+                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemLocalidades}"/>
+                                                                </p:selectOneMenu>
+                                                                <p:outputLabel for="localidadN" value="Localidad Nacimiento*"/>
+                                                                <p:message for="localidadN"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                        </div>
+                                                        <div class="#{casilla4}">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="matricula" class="form-control" value="#{reincorporacionServiciosEscolares.rol.aspirante.folioAspirante}"
+                                                                             required="true">
+                                                                    <p:ajax process="@this" update="@this"/>
+                                                                </p:inputText>
+                                                                <p:outputLabel for="matricula" value="Matricula"/>
+                                                                <p:message for="matricula"><p:autoUpdate/></p:message>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <p:separator/>
+                                                </h:form>
+                                            </div>
+                                        </p:tab>
+                                        <p:tab rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                            <f:facet name="title"><i class="fa fa-list-alt "></i><span> Datos médicos y medios de comunicación</span></f:facet>
+                                            <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                <h:form id="frmBtn">
+                                                    <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                        <div class="pull-right" style="margin-bottom: 20px">
+                                                            <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.buscar}">
+                                                                <div class="ui-material">
+                                                                    <p:commandButton value="Actualizar información" icon="fa fa-refresh" styleClass="btn btn-success" iconPos="left"
+                                                                                     update=":tabView:frmDmyMc" process="@this" actionListener="#{reincorporacionServiciosEscolares.ejecutarMetodos}"/>
+                                                                </div>
+                                                            </p:outputPanel>
+                                                            <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                                                <div class="ui-material">
+                                                                    <p:commandButton value="Guardar información" icon="fa fa-save" styleClass="btn btn-primary" iconPos="left"
+                                                                                     update=":tabView:frmDmyMc" process="@this" actionListener="#{reincorporacionServiciosEscolares.ejecutarMetodos}"/>
+                                                                </div>
+                                                            </p:outputPanel>
+                                                        </div>
+                                                    </div>
+                                                </h:form>
+                                            </div>
+                                            <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                <h:form id="frmDmyMc">
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="panel panel-heading primary" >
+                                                                <span id="indicadorNombre" class=""><h:outputText value="Datos médicos" style="font-size: large"/></span>
+                                                            </div>
+                                                            <p:panel id="datoMedicos" style="border-top: 0pt; border-left: 0pt; border-bottom: 0pt; margin-bottom: 20px">
+                                                                <p style="color: red;">
+                                                                    <strong>* En caso de seleccionar que tiene una discapacidad favor de entregar un comprobante médico que lo acredite</strong>
+                                                                </p>
+                                                                <p:separator style="border: 0pt"/>
+                                                                <div class="row">
+                                                                    <div class="#{casilla5}">
+                                                                        <div class="ui-material">
+                                                                            <p:inputText id="peso" class="form-control" value="#{reincorporacionServiciosEscolares.rol.datosMedicos.peso}"
+                                                                                         required="true" requiredMessage="Es importante que ingrese su Peso"
+                                                                                         validatorMessage="El Peso colocado es incorrecto">
+                                                                                <p:ajax process="@this" update="@this"/>
+                                                                                <f:convertNumber pattern="#0.00" />
+                                                                                <f:validateDoubleRange maximum="500.00" minimum="30.00"/>
+                                                                            </p:inputText>
+                                                                            <p:outputLabel for="peso" value="Peso*"/>
+                                                                            <p:message for="peso"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="#{casilla5}">
+                                                                        <div class="ui-material">
+                                                                            <p:inputText id="estatura" class="form-control" requiredMessage="Es importante que ingrese su Estatura"
+                                                                                         value="#{reincorporacionServiciosEscolares.rol.datosMedicos.estatura}"
+                                                                                         required="true" validatorMessage="La Estatura colocado es incorrecto">
+                                                                                <p:ajax process="@this" update="@this"/>
+                                                                                <f:convertNumber pattern="#0.00" />
+                                                                                <f:validateDoubleRange maximum="2.50" minimum="1.30"/>
+                                                                            </p:inputText>
+                                                                            <p:outputLabel for="estatura" value="Estatura*"/>
+                                                                            <p:message for="estatura"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="#{casilla5}">
+                                                                        <div class="ui-material">
+                                                                            <p:selectOneMenu id="tipoS" required="true" requiredMessage="Es nesesario que ingrese su tipo de sangre"
+                                                                                             value="#{reincorporacionServiciosEscolares.rol.datosMedicos.cveTipoSangre}"
+                                                                                             converter="entidadCEConverter">
+                                                                                <p:ajax process="@this" update="@this"/>
+                                                                                <f:selectItem itemValue="#{null}"/>
+                                                                                <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemTipoSangre}"/>
+                                                                            </p:selectOneMenu>
+                                                                            <p:outputLabel for="tipoS" value="Tipo Sangre*"/>
+                                                                            <p:message for="tipoS"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <br/><br/>
+                                                                <div class="row">
+                                                                    <div class="#{casilla5}">
+                                                                        <div class="ui-material">
+                                                                            <p:selectOneMenu id="tipoDiscapacidad" required="true" converter="entidadCEConverter"
+                                                                                             value="#{reincorporacionServiciosEscolares.rol.datosMedicos.cveDiscapacidad}"
+                                                                                             requiredMessage="Es importante que mencione si tiene alguna discapacidad">
+                                                                                <p:ajax process="@this" update="@this"/>
+                                                                                <f:selectItem itemValue="#{null}"/>
+                                                                                <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemDiscapacidades}"/>
+                                                                            </p:selectOneMenu>
+                                                                            <p:outputLabel for="tipoDiscapacidad" value="Discapacidad*"/>
+                                                                            <p:message for="tipoDiscapacidad"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="#{casilla6}">
+                                                                        <div class="ui-material">
+                                                                            <p:outputLabel for="amf" value="Antecedentes médicos familiares"
+                                                                                           style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/>
+                                                                            <p:selectManyCheckbox id="amf" value="#{reincorporacionServiciosEscolares.rol.selectDM}">
+                                                                                <p:ajax process="@this" update="@this"/>
+                                                                                <f:selectItem itemValue="Dia" itemLabel="Diabetico"/>
+                                                                                <f:selectItem itemValue="Hip" itemLabel="Hipertenso" />
+                                                                                <f:selectItem itemValue="Car" itemLabel="Cardiaco" />
+                                                                                <f:selectItem itemValue="Can" itemLabel="Cancer" />
+                                                                            </p:selectManyCheckbox>
+                                                                            <p:message for="amf"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <br/><br/>
+                                                                <div class="row">
+                                                                    <div class="#{casilla5}">
+                                                                        <div class="ui-material">
+                                                                            <p:outputLabel for="css" value="Cuenta con seguro social IMSS*"
+                                                                                           style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/>
+                                                                            <p:selectOneRadio id="css" value="#{reincorporacionServiciosEscolares.rol.datosMedicos.nssVigente}" required="true"
+                                                                                              requiredMessage="Es necesario elegir una opción">
+                                                                                <p:ajax process="@this" update="@this"/>
+                                                                                <f:selectItem itemLabel="Si" itemValue="#{true}" />
+                                                                                <f:selectItem itemLabel="No" itemValue="#{false}" />
+                                                                                <p:ajax update="nss"/>
+                                                                            </p:selectOneRadio >
+                                                                            <p:message for="css"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="#{casilla5}">
+                                                                        <div class="ui-material">
+                                                                            <p:inputText id="nss" class="form-control" value="#{reincorporacionServiciosEscolares.rol.datosMedicos.nss}"
+                                                                                         readonly="#{reincorporacionServiciosEscolares.rol.datosMedicos.nssVigente == false}"
+                                                                                         required="true" requiredMessage="Debe de ingresar su número de seguro social">
+                                                                                <p:ajax process="@this" update="@this"/>
+                                                                            </p:inputText>
+                                                                            <p:outputLabel for="nss" value="Número de seguro social" style="position: absolute"/>
+                                                                            <p:message for="nss"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </p:panel>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <div class="panel panel-heading primary" >
+                                                                <span id="medioComunicacion" class=""><h:outputText value="Medios de comunicación" style="font-size: large"/></span>
+                                                            </div>
+                                                            <p:panel id="mediosComunicacion" style="border-top: 0pt; border-right: 0pt; border-bottom: 0pt; margin-bottom: 20px">
+                                                                <p style="color: red"><strong>
+                                                                    * Es importante proporcionar un correo electrónico ya que a través de este medio se
+                                                                    te enviarán notificaciones
+                                                                </strong></p>
+                                                                <p:separator style="border: 0pt"/>
+                                                                <div class="row">
+                                                                    <div class="#{casilla7}">
+                                                                        <div class="ui-material">
+                                                                            <p:inputMask mask="(99)(999)999-9999" id="telFijo" class="form-control"
+                                                                                         value="#{reincorporacionServiciosEscolares.rol.medioComunicacion.telefonoFijo}">
+                                                                                <p:ajax process="@this" update="@this"/>
+                                                                            </p:inputMask>
+                                                                            <p:outputLabel for="telFijo" value="Teléfono fijo"/>
+                                                                            <p:message for="telFijo"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="#{casilla7}">
+                                                                        <div class="ui-material">
+                                                                            <p:inputMask mask="(999)999-9999" id="telMovil" class="form-control"
+                                                                                         value="#{reincorporacionServiciosEscolares.rol.medioComunicacion.telefonoMovil}">
+                                                                                <p:ajax process="@this" update="@this"/>
+                                                                            </p:inputMask>
+                                                                            <p:outputLabel for="telMovil" value="Teléfono Móvil"/>
+                                                                            <p:message for="telMovil"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <br/>
+                                                                <div class="row">
+                                                                    <div class="#{casilla7}">
+                                                                        <div class="ui-material">
+                                                                            <p:inputText id="email" class="form-control" validatorMessage="El email es incorrecto"
+                                                                                         value="#{reincorporacionServiciosEscolares.rol.medioComunicacion.email}">
+                                                                                <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+
+                                                                                (\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                                                                <p:ajax process="@this" update="@this"/>
+                                                                            </p:inputText>
+                                                                            <p:outputLabel for="email" value="Correo Electrónico" />
+                                                                            <p:message for="email"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </p:panel>
+                                                        </div>
+                                                </h:form>
+                                            </div>
+                                        </p:tab>
+                                        <p:tab rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                            <f:facet name="title"><i class="fa fa-map-marker "></i><span> Domicilio de residencia y procedencia</span></f:facet>
+                                            <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                <h:form id="frmBtnDRP">
+                                                    <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                        <div class="pull-right" style="margin-bottom: 20px">
+                                                            <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.buscar}">
+                                                                <div class="ui-material">
+                                                                    <p:commandButton value="Actualizar información" icon="fa fa-refresh" styleClass="btn btn-success" iconPos="left"
+                                                                                     update=":tabView:frmDryP" process="@this"/>
+                                                                </div>
+                                                            </p:outputPanel>
+                                                            <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                                                <div class="ui-material">
+                                                                    <p:commandButton value="Guardar información" icon="fa fa-save" styleClass="btn btn-primary" iconPos="left"
+                                                                                     update=":tabView:frmDryP" process="@this"/>
+                                                                </div>
+                                                            </p:outputPanel>
+                                                        </div>
+                                                    </div>
+                                                </h:form>
+                                            </div>
+                                            <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                <h:form id="frmDryP">
+                                                    <div class="col-sm-12 col-md-6">
+                                                        <div class="panel panel-heading primary" >
+                                                            <span id="datosResidencia" class=""><h:outputText value="Datos de residencia" style="font-size: large"/></span>
+                                                        </div>
+                                                        <p:panel style="border-top: 0pt; border-left: 0pt; border-bottom: 0pt; margin-bottom: 20px">
+                                                            <div class="row">
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="calle" class="form-control" value="#{reincorporacionServiciosEscolares.rol.domicilio.calle}"
+                                                                                     required="true" requiredMessage="La calle de recidencia es requerida"/>
+                                                                        <p:outputLabel for="calle" value="Calle*"/>
+                                                                        <p:message for="calle"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="numero" class="form-control"  value="#{reincorporacionServiciosEscolares.rol.domicilio.numero}"
+                                                                                     required="true" requiredMessage="El numero de casa de recidencia es requerido"/>
+                                                                        <p:outputLabel for="numero" value="Número*"/>
+                                                                        <p:message for="numero"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="estadoR" value="#{reincorporacionServiciosEscolares.rol.domicilio.idEstado}" required="true"
+                                                                                         requiredMessage="El estado de recidencia es requerido">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstadosDomicilioRadica}"/>
+                                                                            <p:ajax listener="#{reincorporacionServiciosEscolares.selectMunicipio()}" update="municipioR"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="estadoR" value="Estado*"/>
+                                                                        <p:message for="estadoR"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/><br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="municipioR" value="#{reincorporacionServiciosEscolares.rol.domicilio.idMunicipio}" 
+                                                                                         required="true" requiredMessage="El municipio de recidencia es requerido" style="width: 200px">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipios}"/>
+                                                                            <p:ajax listener="#{reincorporacionServiciosEscolares.selectAsentamiento()}" update="asentamientoR"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="municipioR" value="Municipio*"/>
+                                                                        <p:message for="municipioR"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="asentamientoR" value="#{reincorporacionServiciosEscolares.rol.domicilio.idAsentamiento}" 
+                                                                                         filter="true" filterMatchMode="startsWith" required="true" style="width: 200px"
+                                                                                         requiredMessage="El asentamiento de recidencia es requerido">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAsentamientos}"/>
+                                                                            <p:ajax process="@this"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="asentamientoR" value="Asentamiento*"/>
+                                                                        <p:message for="asentamientoR"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="tiempoResidencoa" styleClass="form-control" placeholder="Ejem: 1 año"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.domicilio.tiempoResidencia}" required="true"
+                                                                                     requiredMessage="El tiempo de recidenca es requerido">
+                                                                            <p:ajax process="@this"/>
+                                                                        </p:inputText>
+                                                                        <p:outputLabel for="tiempoResidencoa" value="Tiempo de recidencia*"/>
+                                                                        <p:message for="tiempoResidencoa"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla7}">
+                                                                    <div class="ui-material">
+                                                                        <p:outputLabel for="tiempoResidencoa" value="¿Deseas utilizar la dirección de residencia como de procedencia?"/>
+                                                                        <p:selectBooleanButton id="value2" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" 
+                                                                                               offIcon="fa fa-thumbs-down" style="width:60px">
+                                                                            <p:ajax listener="#{reincorporacionServiciosEscolares.usarDireccionResidencia()}" update="@form" 
+                                                                                    process="@this,tiempoResidencoa,calle,numero"/>
+                                                                        </p:selectBooleanButton>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </p:panel>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-6">
+                                                        <div class="panel panel-heading primary" >
+                                                            <span id="datosProcedencia" class=""><h:outputText value="Datos de procedencia" style="font-size: large"/></span>
+                                                        </div>
+                                                        <p:panel style="border-top: 0pt; border-right: 0pt; border-bottom: 0pt; margin-bottom: 20px">
+                                                            <div class="row">
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="calleRadicas" class="form-control" placeholder="Calle"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.domicilio.calleProcedencia}" required="true"
+                                                                                     requiredMessage="La calle de procedencia es requerida">
+                                                                            <p:ajax process="@this"/>
+                                                                        </p:inputText>
+                                                                        <p:outputLabel for="calleRadicas" value="Calle*"/>
+                                                                        <p:message for="calleRadicas"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="numeroRadicas" class="form-control" placeholder="14,14-B"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.domicilio.numeroProcedencia}" required="true"
+                                                                                     requiredMessage="El numero de casa de procedencia es requerido">
+                                                                            <p:ajax process="@this"/>
+                                                                        </p:inputText>
+                                                                        <p:outputLabel for="numeroRadicas" value="Número*"/>
+                                                                        <p:message for="numeroRadicas"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="estadoP" value="#{reincorporacionServiciosEscolares.rol.domicilio.estadoProcedencia}"
+                                                                                         required="true" requiredMessage="El estado de procedencia es requerido">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstadosProcedencia}"/>
+                                                                            <p:ajax listener="#{reincorporacionServiciosEscolares.selectMunicipioProcedencia()}" update="municipioP"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="estadoP" value="Estado*"/>
+                                                                        <p:message for="estadoP"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/><br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="municipioP" value="#{reincorporacionServiciosEscolares.rol.domicilio.municipioProcedencia}"
+                                                                                         required="true" requiredMessage="El municipio de procedencia es requerido">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipiosProcedencia}"/>
+                                                                            <p:ajax listener="#{reincorporacionServiciosEscolares.selectAsentamientoProcedencia()}"
+                                                                                    update="asentamientoP"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="municipioP" value="Municipio*"/>
+                                                                        <p:message for="municipioP"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="asentamientoP" requiredMessage="El asentamiento de procedencia es requerido"
+                                                                                         value="#{reincorporacionServiciosEscolares.rol.domicilio.asentamientoProcedencia}"
+                                                                                         filter="true" filterMatchMode="startsWith" style="width:  375px" required="true">
+                                                                            <p:ajax process="@this"/>
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAsentamientosProcedencia}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="asentamientoP" value="Asentamiento*"/>
+                                                                        <p:message for="asentamientoP"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="vives" class="form-control" placeholder="Padres,Tios.."
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.domicilio.vivesCon}" required="true"
+                                                                                     requiredMessage="Indicar el con que personas vives">
+                                                                            <p:ajax process="@this"/>
+                                                                        </p:inputText>
+                                                                        <p:outputLabel for="vives" value="Vives con*"/>
+                                                                        <p:message for="vives"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </p:panel>
+                                                    </div>
+                                                </h:form>
+                                            </div>
+                                        </p:tab>
+                                        <p:tab rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                            <f:facet name="title"><i class="fa fa-user-o "></i><span> Datos familiares</span></f:facet>
+                                            <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                <h:form id="frmBtnDF">
+                                                    <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                        <div class="pull-right" style="margin-bottom: 20px">
+                                                            <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.buscar}">
+                                                                <div class="ui-material">
+                                                                    <p:commandButton value="Actualizar información" icon="fa fa-refresh" styleClass="btn btn-success" iconPos="left"
+                                                                                     update="@this" process="@this"/>
+                                                                </div>
+                                                            </p:outputPanel>
+                                                            <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                                                <div class="ui-material">
+                                                                    <p:commandButton value="Guardar información" icon="fa fa-save" styleClass="btn btn-primary" iconPos="left"
+                                                                                     update="@this" process="@this"/>
+                                                                </div>
+                                                            </p:outputPanel>
+                                                        </div>
+                                                    </div>
+                                                </h:form>
+                                            </div>
+                                            <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                <h:form id="frmDF">
+                                                    <div class="row">
+                                                        <div class="panel panel-heading primary" >
+                                                            <span id="datosFamiliares" class=""><h:outputText value="Datos familiares" style="font-size: large"/></span>
+                                                        </div>
+                                                        <p:panel style="margin-bottom: 20px; border: 0pt">
+                                                            <div class="row">
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="nombreTutor" class="form-control" placeholder="Nombre del Tutor"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.nombre}"
+                                                                                     required="true" requiredMessage="Debe de indicar el nombre del tutor familiar"/>
+                                                                        <p:outputLabel for="nombreTutor" value="Nombre del Tutor*"/>
+                                                                        <p:message for="nombreTutor"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="apTutor" class="form-control" placeholder="Apellido Paterno del Tutor"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.apellidoPaterno}" required="true"
+                                                                                     requiredMessage="Debe de indicar el apellido paterno del tutor familiar"/>
+                                                                        <p:outputLabel for="apTutor" value="Apellido Paterno del Tutor*"/>
+                                                                        <p:message for="apTutor"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="amTutor" class="form-control" placeholder="Apellido Materno del Tutor"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.apellidoMaterno}" required="true"
+                                                                                     requiredMessage="Debe de indicar el apellido materno del tutor familiar"/>
+                                                                        <p:outputLabel for="amTutor" value="Apellido Materno del Tutor*"/>
+                                                                        <p:message for="amTutor"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="calleTutor" class="form-control" placeholder="Calle"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.calle}" required="true"
+                                                                                     requiredMessage="Debe de indicar la calle de su tutor familiar"/>
+                                                                        <p:outputLabel for="calleTutor" value="Calle*"/>
+                                                                        <p:message for="calleTutor"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="numeroTutor" class="form-control" placeholder="Numero"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.numero}"
+                                                                                     required="true" requiredMessage="Debe de indicar el numero de casa de su tutor familiar"/>
+                                                                        <p:outputLabel for="numeroTutor" value="Número*"/>
+                                                                        <p:message for="numeroTutor"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="estadoT" value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.estado}" required="true"
+                                                                                         requiredMessage="Debe de indicar el estado de recidencia de su tutor familiar">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstadosTutor}"/>
+                                                                            <p:ajax listener="#{reincorporacionServiciosEscolares.selectMunicipioTutor()}" update="municipioT"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="estadoT" value="Estado*"/>
+                                                                        <p:message for="estadoT"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="municipioT" value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.municipio}" required="true"
+                                                                                         requiredMessage="Debe de indicar el municipio de recidencia de su tutor familiar">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipios}"/>
+                                                                            <p:ajax listener="#{reincorporacionServiciosEscolares.selectAsentamientoTutor()}" update="asentamientoT"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="municipioT" value="Municipio*"/>
+                                                                        <p:message for="municipioT"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="asentamientoT" value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.asentamiento}" filter="true"
+                                                                                         filterMatchMode="startsWith" style="width:  375px" required="true"
+                                                                                         requiredMessage="Debe de indicar el asentamiento de recidencia de su tutor familiar">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAsentamientoTutor}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="asentamientoT" value="Asentamiento*"/>
+                                                                        <p:message for="asentamientoT"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputMask mask="(999)999-9999" id="telefonoTutor" class="form-control" placeholder="(999)999-9999"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.noTelefono}"/>
+                                                                        <p:outputLabel for="telefonoTutor" value="Número de Teléfono"/>
+                                                                        <p:message for="telefonoTutor"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="parentesco" class="form-control" placeholder="Papá, Mamá, Tío......"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.parentesco}" required="true"
+                                                                                     requiredMessage="Debe de indicar el parentesco con su tutor familiar"/>
+                                                                        <p:outputLabel for="parentesco" value="Parentesco*"/>
+                                                                        <p:message for="parentesco"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </p:panel>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="panel panel-heading primary" >
+                                                            <span id="datosPadre" class=""><h:outputText value="Datos familiares" style="font-size: large"/></span>
+                                                        </div>
+                                                        <p:panel style="margin-bottom: 20px; border: 0pt">
+                                                            <div class="row">
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="nombrePadre" class="form-control" placeholder="Nombre del Padre"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.nombrePadre}"
+                                                                                     required="true" requiredMessage="Debe de indicar el nombre completo de tu padre"/>
+                                                                        <p:outputLabel for="nombrePadre" value="Nombre Completo de tu Padre*"/>
+                                                                        <p:message for="nombrePadre"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="ocupacionPadre" value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.ocupacionPadre}"
+                                                                                         converter="entidadCEConverter" style="width:375px" required="true"
+                                                                                         requiredMessage="Debe de indicar la ocupación de tu padre">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.ocupacion}" var="oc" itemValue="#{oc}" itemLabel="#{oc.descripcion}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="ocupacionPadre" value="Ocupación*"/>
+                                                                        <p:message for="ocupacionPadre"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="escolaridadPadre" value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.escolaridadPadre}"
+                                                                                         converter="entidadCEConverter" required="true" requiredMessage="Debe de indicar la escolaridad de tu padre">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.escolaridad}" var="esp" itemValue="#{esp}"
+                                                                                           itemLabel="#{esp.descripcion}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="escolaridadPadre" value="Escolaridad*"/>
+                                                                        <p:message for="escolaridadPadre"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </p:panel>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="panel panel-heading primary" >
+                                                            <span id="datosMadre" class=""><h:outputText value="Datos familiares" style="font-size: large"/></span>
+                                                        </div>
+                                                        <p:panel style="margin-bottom: 20px; border: 0pt">
+                                                            <div class="row">
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="nombreMadre" class="form-control" placeholder="Nombre del Madre"
+                                                                                     value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.nombreMadre}" required="true"
+                                                                                     requiredMessage="Debe de indicar el nombre completo de tu madre"/>
+                                                                        <p:outputLabel for="nombreMadre" value="Nombre Completo de tu Madre*"/>
+                                                                        <p:message for="nombreMadre"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="ocupacionMadre" value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.ocupacionMadre}"
+                                                                                         converter="entidadCEConverter" style="width:  375px" required="true"
+                                                                                         requiredMessage="Debe de indicar la ocupación de tu madre">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.ocupacion}" var="ocm" itemValue="#{ocm}"
+                                                                                           itemLabel="#{ocm.descripcion}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="ocupacionMadre" value="Ocupación*" />
+                                                                        <p:message for="ocupacionPadre"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="escolaridadMadre" value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.escolaridadMadre}"
+                                                                                         converter="entidadCEConverter" required="true" requiredMessage="Debe de indicar la escolaridad de tu madre">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.escolaridad}" var="esm" itemValue="#{esm}"
+                                                                                           itemLabel="#{esm.descripcion}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="escolaridadMadre" value="Escolaridad*"/>
+                                                                        <p:message for="escolaridadPadre"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </p:panel>
+                                                    </div>
+                                                </h:form>
+                                            </div>
+                                        </p:tab>
+                                        <p:tab rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                            <f:facet name="title"><i class="fa fa-graduation-cap "></i><span> Datos académicos</span></f:facet>
+                                            <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                <h:form id="frmBtnDA">
+                                                    <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                        <div class="pull-right" style="margin-bottom: 20px">
+                                                            <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.buscar}">
+                                                                <div class="ui-material">
+                                                                    <p:commandButton value="Actualizar información" icon="fa fa-refresh" styleClass="btn btn-success" iconPos="left"
+                                                                                     update="@this" process="@this"/>
+                                                                </div>
+                                                            </p:outputPanel>
+                                                            <p:outputPanel rendered="#{reincorporacionServiciosEscolares.rol.registrar}">
+                                                                <div class="ui-material">
+                                                                    <p:commandButton value="Guardar información" icon="fa fa-save" styleClass="btn btn-primary" iconPos="left"
+                                                                                     update="@this" process="@this"/>
+                                                                </div>
+                                                            </p:outputPanel>
+                                                        </div>
+                                                    </div>
+                                                </h:form>
+                                            </div>
+                                            <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                <h:form id="frmDA">
+                                                    <div class="row">
+
+                                                    </div>
+                                                </h:form>
+                                            </div>
+                                        </p:tab>
+                                        <p:tab>
+                                            <f:facet name="title"><i class="fa fa-archive"></i><span> Datos escolares</span></f:facet>
+                                        </p:tab>
+
+                                    </p:tabView>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <c:if test="#{!empty reincorporacionServiciosEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{reincorporacionServiciosEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para la reincorporación del estudiante</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{reincorporacionServiciosEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!reincorporacionServiciosEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado al personal perteneciente a servicios escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>
