@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Entity
 @Table(name = "participantes_tutoria", catalog = "control_escolar", schema = "")

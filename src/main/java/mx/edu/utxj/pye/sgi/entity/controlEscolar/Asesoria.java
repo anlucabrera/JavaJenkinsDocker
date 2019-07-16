@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Entity
 @Table(name = "asesoria", catalog = "control_escolar", schema = "")

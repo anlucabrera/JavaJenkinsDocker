@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -14,11 +15,15 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaRegistro;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaUnidades;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPlanEstudioMateriaCompetencias;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AreaConocimiento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Competencia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
@@ -30,29 +35,33 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
  */
 @Stateless(name = "EjbRegistroPlanEstudio")
 public class EjbRegistroPlanEstudio {
-    
-    @EJB EjbAsignacionAcademica ejbAsignacionAcademica;
-    @EJB EjbPropiedades ep;
-    @EJB Facade f;
-    
+
+    @EJB    EjbAsignacionAcademica ejbAsignacionAcademica;
+    @EJB    EjbPropiedades ep;
+    @EJB    Facade f;
+
+    // Se valida el acceso del personal autorizado, así como se obtienen los catálogos necesarios para poder crear un plan de estudios
     /**
-     * Permite validar el usuario autenticado si es como director de área académica
+     * Permite validar el usuario autenticado si es como director de área
+     * académica
+     *
      * @param clave Número de Nomina del usuario autenticado
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Filter<PersonalActivo>> validarDirector(Integer clave){
+    public ResultadoEJB<Filter<PersonalActivo>> validarDirector(Integer clave) {
         try {
             return ejbAsignacionAcademica.validarDirector(clave);
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbRegistroPlanEstudio.validarDirector)", e, null);
         }
     }
-    
+
     /**
      * Permite obtener el listado de áreas de conocimiento activas
+     *
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<AreaConocimiento>> getAreasConocimiento(){
+    public ResultadoEJB<List<AreaConocimiento>> getAreasConocimiento() {
         try {
             final List<AreaConocimiento> areasConocimiento = f.getEntityManager().createQuery("SELECT ac FROM AreaConocimiento ac WHERE ac.estatus = 1", AreaConocimiento.class)
                     .getResultList();
@@ -61,87 +70,120 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "Imposible obtener el listado de áreas de conocimiento", e, null);
         }
     }
-    
+
     /**
-     * Permite obtener el listado de competencias del plan de estudios seleccionado
+     * Permite obtener el listado de competencias del plan de estudios
+     * seleccionado
+     *
      * @param plan clave del plan de estudios activo
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Competencia>> getCompetenciasPlan(PlanEstudio plan){
+    public ResultadoEJB<List<Competencia>> getCompetenciasPlan(PlanEstudio plan) {
         try {
-            final List<Competencia> competenciasPlan = f.getEntityManager().createQuery("SELECT c FROM Competencia c WHERE c.planEstudios = :plan", Competencia.class)
+            final List<Competencia> competenciasPlan = f.getEntityManager().createQuery("SELECT c FROM Competencia c INNER JOIN c.planEstudios plan WHERE plan.idPlanEstudio=:plan", Competencia.class)
                     .setParameter("plan", plan.getIdPlanEstudio())
                     .getResultList();
+            competenciasPlan.add(new Competencia(0, "Nueva Competencia", "Generica"));
+            
+            
+            
             return ResultadoEJB.crearCorrecto(competenciasPlan, "Lista de competenciad activas por plan de estudio");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "Imposible obtener el listado de competenciade del plan de estudio", e, null);
         }
     }
+    
+    public ResultadoEJB<List<DtoPlanEstudioMateriaCompetencias>> obtenerDtoPEMC(PlanEstudio plan) {
+        try {
+            final List<DtoPlanEstudioMateriaCompetencias> l = new ArrayList<>();
+            final List<PlanEstudioMateria> pems = f.getEntityManager().createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio=:plan", PlanEstudioMateria.class)
+                    .setParameter("plan", plan.getIdPlanEstudio())
+                    .getResultList();
 
-            
-            
+            pems.forEach((p) -> {
+                p.getCompetenciaList().forEach((c) -> {
+                    DtoPlanEstudioMateriaCompetencias dpemc = new DtoPlanEstudioMateriaCompetencias(c, c, p, plan);
+                    l.add(dpemc);
+                });
+            });
+
+            return ResultadoEJB.crearCorrecto(l, "Lista de competenciad activas por plan de estudio");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "Imposible obtener el listado de competenciade del plan de estudio", e, null);
+        }
+    }
+
     /**
      * Mapea los programas educativos con sus planes de estudio
+     *
      * @param director Área operativa del director
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> getProgramasEducativos(PersonalActivo director){
+    public ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> getProgramasEducativos(PersonalActivo director) {
         try {
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
-            
+
             List<AreasUniversidad> programas = f.getEntityManager().createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
                     .setParameter("areaPoa", director.getAreaPOA().getArea())
                     .setParameter("categoria", programaEducativoCategoria)
                     .getResultList();
-            
-              Map<AreasUniversidad, List<PlanEstudio>> programasPlanMap = programas.stream()
+
+            Map<AreasUniversidad, List<PlanEstudio>> programasPlanMap = programas.stream()
                     .collect(Collectors.toMap(programa -> programa, programa -> generarPlanesEstudio(programa)));
-              
+
             return ResultadoEJB.crearCorrecto(programasPlanMap, "Listado de Programas Educativos");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No fue posible obtener el listado de programas educativos. (EjbRegistroPlanEstudio)", e, null);
         }
     }
-    
-    public List<PlanEstudio> generarPlanesEstudio(AreasUniversidad programas){
-        return f.getEntityManager().createQuery("SELECT pe FROM PlanEstudio pe WHERE pe.idPe = :programa", PlanEstudio.class)
-                .setParameter("programa", programas.getArea())
-                .getResultList();
-    }
-    
+
     /**
-     * Permite obtener los planes de estudios vigentes de acuerdo al programa educativo
-     * @param ProgramaEducativo clave del programa educativo
-     * @return  Resultado del proceso
+     * Permite listar las materias registradas
+     *
+     * @return Resultado del proceso
      */
-    public ResultadoEJB<PlanEstudio> getPlanEstudios(Integer ProgramaEducativo){
+    public ResultadoEJB<List<Materia>> getListadoMaterias(PlanEstudio pe) {
         try {
-            //TODO: listar los planes de estudios vigente del programa educativo
-            return ResultadoEJB.crearCorrecto(null, "Listado de plan de estudios");
+            final List<Materia> materias = f.getEntityManager().createQuery("SELECT m FROM PlanEstudioMateria pem INNER JOIN pem.idMateria m INNER JOIN pem.idPlan p WHERE p.idPlanEstudio=:idPlanEstudio", Materia.class)
+                    .setParameter("idPlanEstudio", pe.getIdPlanEstudio())
+                    .getResultList();
+            return ResultadoEJB.crearCorrecto(materias, "Listado de materias registradas");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No fue posible obtener el listado de planes de estudio. (EjbRegistroPlanEstudio)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista materias (EjbRegistroPlanEstudio)", e, null);
         }
     }
     
+    // Se inicia con el CRUD de un plan de estudios 
     /**
-     * Permite registrar un nuevo plan de estudios y poder registrar sus materias
-     * @param areasUniversidad área a la cual pertenece el nuevo plan de estudios
+     * Permite registrar un nuevo plan de estudios y poder registrar sus
+     * materias
+     *
+     * @param areasUniversidad área a la cual pertenece el nuevo plan de
+     * estudios
      * @param planEstudio plan de estudios a registrar, actualizar o eliminar
      * @param operacion operación a realizar
      * @return Resultado del proceso
      */
-    public ResultadoEJB<PlanEstudio> registrarPlanEstudio(AreasUniversidad areasUniversidad,PlanEstudio planEstudio, Operacion operacion){
+    public ResultadoEJB<PlanEstudio> registrarPlanEstudio(AreasUniversidad areasUniversidad, PlanEstudio planEstudio, Operacion operacion) {
         try {
-            switch (operacion){
+            f.setEntityClass(PlanEstudio.class);
+            switch (operacion) {
                 case PERSISTIR:
-                    //TODO: registrar plan de estudios
+                    f.create(planEstudio);
+                    f.flush();
                     return ResultadoEJB.crearCorrecto(planEstudio, "Se registró correctamente el Plan Estudio");
                 case ACTUALIZAR:
-                    //TODO: actualizar plan de estudios
+                    f.edit(planEstudio);
+                    f.flush();
                     return ResultadoEJB.crearCorrecto(planEstudio, "Se actualizo correctamente el Plan Estudio");
                 case ELIMINAR:
-                    //TODO: eliminar plan de estudios
-                    return ResultadoEJB.crearCorrecto(null, "Se elimino correctamente el Plan Estudio");
+                    if (planEstudio.getPlanEstudioMateriaList().isEmpty()) {
+                        f.remove(planEstudio);
+                        f.flush();
+                        return ResultadoEJB.crearCorrecto(null, "Se elimino correctamente el Plan Estudio");
+                    } else {
+                        return ResultadoEJB.crearCorrecto(null, "No fue posible la eliminación del Plan de estudio, ya que cuanta con materias cargadas");
+                    }
                 default:
                     return ResultadoEJB.crearErroneo(2, "Operación no autorizada.", PlanEstudio.class);
             }
@@ -149,25 +191,150 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar el Plan Estudio (EjbRegistroPlanEstudio)", e, null);
         }
     }
-    
+
+    // Se inicia con el CRUD de materias con sus Unidades
+    /**
+     * Permite registrar un nuevo plan de estudios y poder registrar sus
+     * materias
+     *
+     * @param materia materia a registrar, actualizar o eliminar
+     * @param unidadesdMateria unidades pertenecientes a la materia registrada
+     * @param operacion operación a realizar
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Materia> registrarMateria(DtoMateriaRegistro dmr, Operacion operacion) {
+        try {
+            f.setEntityClass(Materia.class);
+            switch (operacion) {
+                case PERSISTIR:
+                    dmr.getMateria().setIdAreaConocimiento(dmr.getAreaConocimiento());
+                    f.create(dmr.getMateria());
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(dmr.getMateria(), "Se registró correctamente La Matertia");
+                case ACTUALIZAR:
+                    f.edit(dmr.getMateria());
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(dmr.getMateria(), "Se actualizo correctamente La Matertia");
+                case ELIMINAR:
+                    if (dmr.getMateria().getPlanEstudioMateriaList().isEmpty() && dmr.getMateria().getPlanEstudioMateriaList().isEmpty()) {
+                        f.remove(dmr.getMateria());
+                        f.flush();
+                        return ResultadoEJB.crearCorrecto(null, "Se elimino correctamente La Matertia");
+                    } else {
+                        return ResultadoEJB.crearCorrecto(null, "No fue posible la eliminación de la materia, ya que cuenta con registros de unidades y/o con una asignación a un plan de estudio");
+                    }
+                default:
+                    return ResultadoEJB.crearErroneo(2, "Operación no autorizada.", Materia.class);
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar La Matertia (EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+
+    /**
+     * Permite registrar un nuevo plan de estudios y poder registrar sus
+     * materias
+     *
+     * @param unidadMateria materia a registrar, actualizar o eliminar
+     * @param operacion operación a realizar
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<UnidadMateria> registrarUnidadMateria(DtoMateriaUnidades dmu, Operacion operacion) {
+        try {
+            f.setEntityClass(UnidadMateria.class);
+            switch (operacion) {
+                case PERSISTIR:
+                    dmu.getUnidadMateria().setIdMateria(dmu.getMateria());
+                    f.create(dmu.getUnidadMateria());
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(dmu.getUnidadMateria(), "Se registró correctamente La Unidad Materia");
+                case ACTUALIZAR:
+                    f.edit(dmu.getUnidadMateria());
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(dmu.getUnidadMateria(), "Se actualizo correctamente La Unidad Materia");
+                case ELIMINAR:
+                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.registrarUnidadMateria(1)");
+                    if (dmu.getUnidadMateria().getUnidadMateriaConfiguracionList().isEmpty()) {
+                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.registrarUnidadMateria(2 true)");
+                        f.remove(dmu.getUnidadMateria());
+                        f.flush();
+                        return ResultadoEJB.crearCorrecto(null, "Se elimino correctamente La Unidad Materia");
+                    } else {
+                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.registrarUnidadMateria(2 false)");
+                        return ResultadoEJB.crearCorrecto(null, "No fue posible la eliminación de la unidad, ya que cuenta con registros en el módulo de Configuración unidad materia");
+                    }
+                default:
+                    return ResultadoEJB.crearErroneo(2, "Operación no autorizada.", UnidadMateria.class);
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar La Unidad Materia (EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+
     /**
      * Permite registrar materias al plan de estudios seleccionado
-     * @param planEstudio plan de estudios seleccionado
+     *
      * @param materia materia a registrar
+     * @param unidadMateria unidades que contendra la materia de estudios
+     * seleccionado
      * @param operacion operación a registrar
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Materia>> registrarMateriaPlanEstudio(PlanEstudio planEstudio, Materia materia, Operacion operacion){
+    public ResultadoEJB<PlanEstudioMateria> registrarPlanEstudioMateria(Materia materia, PlanEstudio planEstudio,PlanEstudioMateria estudioMateria, Operacion operacion) {
         try {
-            switch (operacion){
+                    f.setEntityClass(PlanEstudioMateria.class);
+            switch (operacion) {
                 case PERSISTIR:
-                    //TODO: registrar plan de estudios
-                    return ResultadoEJB.crearCorrecto(null, "Se registró correctamente la materia");
+                    estudioMateria.setIdMateria(materia);
+                    estudioMateria.setIdPlan(planEstudio);
+                    f.create(estudioMateria);
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(estudioMateria, "Se registró correctamente la materia");
                 case ACTUALIZAR:
-                    //TODO: actualizar plan de estudios
-                    return ResultadoEJB.crearCorrecto(null, "Se actualizo correctamente la materia");
+                    f.edit(estudioMateria);
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(estudioMateria, "Se actualizo correctamente la materia");
                 case ELIMINAR:
-                    //TODO: eliminar plan de estudios
+                    if (estudioMateria.getCargaAcademicaList().isEmpty()) {
+                        f.remove(estudioMateria);
+                        f.flush();
+                        return ResultadoEJB.crearCorrecto(null, "Se elimino correctamente la materia");
+                    } else {
+                        return ResultadoEJB.crearCorrecto(null, "No fue posible la eliminación del Plan estudio Materia, ya que cuenta con registros en el módulo de Carga académica");
+                    }
+
+                default:
+                    return ResultadoEJB.crearErroneo(1, null, "Operación no autorizada");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(2, "No se pudo registar la materia con el plan de estudios (EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+
+    public ResultadoEJB<Competencia> registrarPlanEstudioMateriaCompetencias(DtoPlanEstudioMateriaCompetencias dpemc, Operacion operacion) {
+        try {
+            switch (operacion) {
+                case PERSISTIR:
+                    f.setEntityClass(Competencia.class);
+                    dpemc.getCompetenciaNewR().setPlanEstudios(dpemc.getPlanEstudio());
+                    dpemc.getPlanEstudioMateria().getCompetenciaList().add(dpemc.getCompetenciaNewR());
+                    f.create(dpemc.getCompetenciaNewR());
+                    dpemc.getCompetenciaNewR().getPlanEstudioMateriaList().add(dpemc.getPlanEstudioMateria());
+                    f.edit(dpemc.getPlanEstudioMateria());
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(dpemc.getCompetencia(), "Se registró correctamente la competencia");
+                case ACTUALIZAR:
+                    dpemc.getCompetencia().setPlanEstudios(dpemc.getPlanEstudio());
+                    dpemc.getPlanEstudioMateria().getCompetenciaList().add(dpemc.getCompetencia());
+                    dpemc.getCompetencia().getPlanEstudioMateriaList().add(dpemc.getPlanEstudioMateria());
+                    f.edit(dpemc.getCompetencia());
+                    f.edit(dpemc.getPlanEstudioMateria());
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(dpemc.getCompetencia(), "Se actualizo correctamente la materia");
+                case ELIMINAR:
+                    f.setEntityClass(Competencia.class);
+                    f.remove(dpemc.getPlanEstudioMateria());
+                    f.flush();
                     return ResultadoEJB.crearCorrecto(null, "Se elimino correctamente la materia");
                 default:
                     return ResultadoEJB.crearErroneo(1, null, "Operación no autorizada");
@@ -176,13 +343,37 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(2, "No se pudo registar la materia con el plan de estudios (EjbRegistroPlanEstudio)", e, null);
         }
     }
-    
+
+    public List<PlanEstudio> generarPlanesEstudio(AreasUniversidad programas) {
+        return f.getEntityManager().createQuery("SELECT pe FROM PlanEstudio pe WHERE pe.idPe = :idPe", PlanEstudio.class)
+                .setParameter("idPe", programas.getArea())
+                .getResultList();
+    }
+
     /**
-     * Permite listar las materias registradas para el plan de estudio seleccionado
+     * Permite obtener los planes de estudios vigentes de acuerdo al programa
+     * educativo
+     *
+     * @param ProgramaEducativo clave del programa educativo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<PlanEstudio> getPlanEstudios(Integer ProgramaEducativo) {
+        try {
+            //TODO: listar los planes de estudios vigente del programa educativo
+            return ResultadoEJB.crearCorrecto(null, "Listado de plan de estudios");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No fue posible obtener el listado de planes de estudio. (EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+
+    /**
+     * Permite listar las materias registradas para el plan de estudio
+     * seleccionado
+     *
      * @param planEstudio Clave de plan de estudios seleccionado
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Materia>> getListadoMateriasPlanEstudio(Integer planEstudio){
+    public ResultadoEJB<List<Materia>> getListadoMateriasPlanEstudio(Integer planEstudio) {
         try {
             //TODO:Consulta de materias de acuerdo al plan de estudios seleccionado
             return ResultadoEJB.crearCorrecto(null, "Listado de materias registrados para este Plan de estudios");
@@ -190,43 +381,82 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista materias para este plan de estudios (EjbRegistroPlanEstudio)", e, null);
         }
     }
-    
     /**
-     * Permite asignar unidades a las materias del plan de estudios seleccionado
-     * @param unidadMateria unidad de la materia a registrar
-     * @param operacion operación a realizar
+     * Permite mapear el listado de materias con sus unidades registradas de
+     * acuerdo al plan de estudios seleccionado
+     *
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Map<Materia, List<UnidadMateria>>> registrarUnidadMateria(UnidadMateria unidadMateria, Operacion operacion){
+    public ResultadoEJB<Map<Materia, List<UnidadMateria>>> getListaUnidadesMateria() {
         try {
-            switch(operacion){
-                case PERSISTIR:
-                    //TODO: registrar Unidad Materia
-                    return ResultadoEJB.crearCorrecto(null, "Se registró la unidad para la materia corectamente");
-                case ACTUALIZAR:
-                    //TODO: actualizar Unidad Materia
-                    return ResultadoEJB.crearCorrecto(null, "Se actualizo correctamente la unidad para la materia");
-                case ELIMINAR:
-                    //TODO: eliminar unidad materia
-                    return ResultadoEJB.crearCorrecto(null, "Se elimino correctamente unidad para la materia");
-                default:
-                    return ResultadoEJB.crearErroneo(1, null, "Operación no autorizada");
-            }
-        } catch (Exception e) {
-             return ResultadoEJB.crearErroneo(1, "No se pudo registrar la unidad(EjbRegistroPlanEstudio)", e, null);
-        }
-    }
-    
-    /**
-     * Permite mapear el listado de materias con sus unidades registradas de acuerdo al plan de estudios seleccionado
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<Map<Materia,List<UnidadMateria>>> getListaUnidadesMateria(){
-        try {
-            //TODO: Listado de unidades por materia
-            return ResultadoEJB.crearCorrecto(null, "Listado de materias registrados para este Plan de estudios");
+            List<Materia> ms = f.getEntityManager().createQuery("select ma from Materia  ma", Materia.class).getResultList();
+
+            Map<Materia, List<UnidadMateria>> UnidadesMa = ms.stream()
+                    .collect(Collectors.toMap(materia -> materia, materia -> generarunidadesMaterias(materia)));
+
+            return ResultadoEJB.crearCorrecto(UnidadesMa, "Listado de materias registrados para este Plan de estudios");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de unidades(EjbRegistroPlanEstudio)", e, null);
         }
     }
+
+    public List<UnidadMateria> generarunidadesMaterias(Materia materia) {
+        List<UnidadMateria> p = f.getEntityManager().createQuery("SELECT um FROM UnidadMateria um INNER JOIN um.idMateria ma WHERE ma.idMateria = :idMateria", UnidadMateria.class)
+                .setParameter("idMateria", materia.getIdMateria())
+                .getResultList();
+        if (p.isEmpty()) {
+            p = new ArrayList<>();
+        }
+        return p;
+    }
+     
+    public ResultadoEJB<List<PlanEstudioMateria>> getListaPlanEstudioMaterias(PersonalActivo director) {
+        try {
+            final List<PlanEstudio> pe=new ArrayList<>();
+            final List<PlanEstudioMateria> pems=new ArrayList<>();
+            Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
+
+            List<AreasUniversidad> programas = f.getEntityManager().createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
+                    .setParameter("areaPoa", director.getAreaPOA().getArea())
+                    .setParameter("categoria", programaEducativoCategoria)
+                    .getResultList();
+            
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(programas)"+programas.size());
+            programas.forEach((t) -> {
+                pe.addAll(generarPlanesEstudio(t));
+            });
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(pe)"+pe.size());
+            
+            pe.forEach((t) -> {
+                pems.addAll(generarPlanEstuidoMaterias(t));
+            });
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(pems)"+pems.size());
+            
+                       
+            return ResultadoEJB.crearCorrecto(pems, "Listado de materias registrados para este Plan de estudios");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de Planes de estudio(EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+    
+    public List<PlanEstudioMateria> generarPlanEstuidoMaterias(PlanEstudio estudio) {
+        return f.getEntityManager().createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", PlanEstudioMateria.class)
+                .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
+                .getResultList();
+    }
+    
+    public List<Competencia> generarCompetenciasPorPlanEstuidoMaterias(PlanEstudioMateria pem) {
+        PlanEstudioMateria estudioMateria = new PlanEstudioMateria();
+        estudioMateria = f.getEntityManager().createQuery("SELECT pem FROM PlanEstudioMateria pem WHERE pem.idPlanMateria = :idPlanMateria", PlanEstudioMateria.class)
+                .setParameter("idPlanMateria", pem.getIdPlanMateria())
+                .getResultList().get(0);
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.generarCompetenciasPorPlanEstuidoMaterias(1)"+estudioMateria);
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.generarCompetenciasPorPlanEstuidoMaterias(1)"+estudioMateria.getCompetenciaList().isEmpty());
+        if (estudioMateria.getCompetenciaList().isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return estudioMateria.getCompetenciaList();
+        }
+    }
+    
 }

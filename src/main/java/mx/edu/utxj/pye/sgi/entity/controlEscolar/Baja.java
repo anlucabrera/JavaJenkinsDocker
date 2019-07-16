@@ -13,7 +13,7 @@ import java.util.Date;
 
 /**
  *
- * @author UTXJ
+ * @author HOME
  */
 @Entity
 @Table(name = "baja", catalog = "control_escolar", schema = "")

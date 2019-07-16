@@ -14,9 +14,10 @@
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
         </c:if>
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -25,7 +26,7 @@
     </ui:define>
 
     <ui:define name="description">
-        
+
     </ui:define>
 
     <ui:define name="head-end">
@@ -41,19 +42,19 @@
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <div class="box box-solid">
-                            <p:accordionPanel style="margin-top: 20px;">
-                                <p:tab title="Plan Estudio" titleStyleClass="box-solid">
-                                    <h:form>
+                            <p:tabView>
+                                <p:tab title="Plane Estudio">
+                                    <h:form id="planEstudioFrm">
                                         <p:growl><p:autoUpdate/></p:growl>
                                         <div id="main-buttons" class="hidden-sm hidden-xs">
                                             <p:toolbar id="tb">
                                                 <f:facet name="left">
 
-                                                <p:spacer width="5" />
+                                                    <p:spacer width="5" />
 
                                                 </f:facet>
                                                 <f:facet name="right">
-                                                    <p:commandButton title="Guardar Plan" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardar()}"/>
+                                                    <p:commandButton title="Guardar Plan" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarPlanEstudio()}"/>
                                                 </f:facet>
                                             </p:toolbar>
                                         </div>
@@ -66,20 +67,7 @@
                                                     </p:selectOneMenu>
                                                     <p:outputLabel for="programa" value="Programa Educativo"/>
                                                     <p:message for="programa"/>
-                                                </div>
-                                            </div>
-                                            <div class="ui-g-6 ui-sm-12">
-                                                <div class="ui-material">
-                                                    <p:inputTextarea id="descripcion" placeholder="Descripción del Plan de Estudio" value="#{administracionPlanEstudioDirector.rol.planEstudio1.planEstudio.descripcion}" />
-                                                    <p:outputLabel for="descripcion" value="Descripción"/>
-                                                    <p:message for="descripcion"/>
-                                                </div>
-                                            </div>
-                                            <div class="ui-g-6 ui-sm-12">
-                                                <div class="ui-material">
-                                                    <p:inputText id="version" placeholder="Versión" required="true" value="#{administracionPlanEstudioDirector.rol.planEstudio1.planEstudio.anio}"/>
-                                                    <p:outputLabel for="version" value="Versión del plan"/>
-                                                    <p:message for="version"/>
+                                                    <br/>
                                                 </div>
                                             </div>
                                             <div class="ui-g-6 ui-sm-12">
@@ -91,87 +79,592 @@
                                                     </p:selectOneMenu>
                                                     <p:outputLabel for="estatus" value="Estatus del plan"/>
                                                     <p:message for="estatus"/>
+                                                    <br/>
                                                 </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputText id="version" placeholder="Versión" required="true" value="#{administracionPlanEstudioDirector.rol.planEstudio1.planEstudio.anio}"/>
+                                                    <p:outputLabel for="version" value="Versión del plan"/>
+                                                    <p:message for="version"/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputTextarea id="descripcion" placeholder="Descripción del Plan de Estudio" value="#{administracionPlanEstudioDirector.rol.planEstudio1.planEstudio.descripcion}" />
+                                                    <p:outputLabel for="descripcion" value="Descripción"/>
+                                                    <p:message for="descripcion"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="ui-g-12 ui-sm-12">
+                                            <div class="ui-material">
+
+                                                <p:dataTable var="planE" value="#{administracionPlanEstudioDirector.rol.planesEstudio}">
+                                                    <f:facet name="header">
+                                                        Planes de Estudio
+                                                    </f:facet>
+
+                                                    <p:headerRow>
+                                                        <p:column colspan="2">
+                                                            <h:outputText value="#{planE.idAreaConocimiento.nombre}" style="text-align: left"/>
+                                                        </p:column>
+                                                    </p:headerRow>
+
+                                                    <p:column headerText="Nombre" sortBy="#{planE.nombre}" filterBy="#{planE.nombre}" filterMatchMode="contains" >
+                                                        <h:outputText value="#{planE.descripcion}" />
+                                                    </p:column>
+                                                    <p:column headerText="Estatus">
+                                                        <h:outputText value="#{planE.estatus}" />
+                                                    </p:column>
+                                                    <p:column headerText="Año">
+                                                        <h:outputText value="#{planE.anio}" />
+                                                    </p:column>
+                                                </p:dataTable>
+
                                             </div>
                                         </div>
                                     </h:form>
                                 </p:tab>
-                                <p:tab id="asignatura" title="Asignaturas" titleStyleClass="box-solid">
-                                    <h:form>
+                                <p:tab title="Programa Educativo">
+                                    <h:form id="planEstudioMateriaFrm">
                                         <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">
                                             <p:toolbar id="tb-asignatura">
                                                 <f:facet name="left">
 
-                                                <p:spacer width="5" />
+                                                    <p:spacer width="5" />
 
                                                 </f:facet>
                                                 <f:facet name="right">
-                                                    <p:commandButton title="Guardar Materias" icon="fa fa-save" styleClass="btn-success" update="@form"/>
+                                                    <p:commandButton title="Guardar Materias" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarMateria()}"/>
                                                 </f:facet>
                                             </p:toolbar>
                                         </div>
-                                        <div class="ui-g ui-fluid" style="margin-top: 20px;">
-                                            <div class="ui-g-6 ui-sm-12">
+                                        <div class="ui-g ui-fluid" style="margin-top: 20px;">                                            
+                                            <div class="ui-g-12 ui-sm-12">
                                                 <div class="ui-material">
-                                                    <p:inputText id="nombreMateria" placeholder="Nombre de la Asignatura"/>
-                                                    <p:outputLabel for="nombreMateria" value="Nombre"/>
-                                                    <p:message for="nombreMateria"/>
-                                                </div>
-                                            </div>
-                                            <div class="ui-g-6 ui-sm-12">
-                                                <div class="ui-material">
-                                                    <p:selectOneMenu id="cuatrimestre">
-
+                                                    <p:selectOneMenu id="planEstudio" value="#{administracionPlanEstudioDirector.rol.materiaPlanEstudio1.planEstudio}" converter="entityConverter">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                        <p:ajax listener="#{administracionPlanEstudioDirector.materiasPorPlanEstudioConsulta()}" update="planEstudioMateriaFrm" process="@this"/>
                                                     </p:selectOneMenu>
-                                                    <p:outputLabel for="cuatrimestre" value="Cuatrimestre"/>
-                                                    <p:message for="cuatrimestre"/>
+                                                    <p:outputLabel for="planEstudio" value="Plan de estudios"/>
+                                                    <p:message for="planEstudio"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputText id="nombreMateria" placeholder="Nombre de la Asignatura" value="#{administracionPlanEstudioDirector.rol.materiaRegistro1.materia.nombre}"/>
+                                                    <p:outputLabel for="nombreMateria" value="Nombre de la Asignatura"/>
+                                                    <p:message for="nombreMateria"/>
+                                                    <br/>
                                                 </div>
                                             </div>
                                             <div class="ui-g-6 ui-sm-12">
                                                 <div class="ui-material">
-                                                    <p:selectOneMenu id="areaConocimiento">
+                                                    <p:selectOneMenu id="estatusMateria" value="#{administracionPlanEstudioDirector.rol.materiaRegistro1.materia.estatus}">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItem itemValue="1" itemLabel="Activo"/>
+                                                        <f:selectItem itemValue="0" itemLabel="Inactivo"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="estatusMateria" value="Estatus del plan"/>
+                                                    <p:message for="estatusMateria"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
 
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="areaConocimiento" value="#{administracionPlanEstudioDirector.rol.materiaRegistro1.areaConocimiento}" converter="entityConverter">
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.conocimientos}" var="cononcimientoe" itemValue="#{cononcimientoe}" itemLabel="#{cononcimientoe.nombre}" />
+                                                        <p:ajax update="@this" process="@this"/>
                                                     </p:selectOneMenu>
                                                     <p:outputLabel for="areaConocimiento" value="Área de Conocimiento"/>
                                                     <p:message for="areaConocimiento"/>
+                                                    <br/>
                                                 </div>
                                             </div>
                                             <div class="ui-g-6 ui-sm-12">
                                                 <div class="ui-material">
-                                                    <p:selectOneMenu id="competencia">
-
-                                                    </p:selectOneMenu>
-                                                    <p:outputLabel for="competencia" value="Competencia"/>
-                                                    <p:message for="competencia"/>
+                                                    <p:inputText id="calveMateria" placeholder="Calve Materia" value="#{administracionPlanEstudioDirector.rol.materiaPlanEstudio1.planEstudioMateria.claveMateria}"/>
+                                                    <p:outputLabel for="calveMateria" value="Clave"/>
+                                                    <p:message for="calveMateria"/>
+                                                    <br/>
                                                 </div>
                                             </div>
-                                            <div class="ui-g-12" style="text-align: center;">
-                                                <p:commandButton id="submitButton" styleClass="btn-primary" value="Agregar Asignatura" update="@form"
-                                                                 ignoreAutoUpdate="true" style="width: 20%;"/>
-                                             </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputText id="grado" placeholder="Grado" value="#{administracionPlanEstudioDirector.rol.materiaPlanEstudio1.planEstudioMateria.grado}"/>
+                                                    <p:outputLabel for="grado" value="Grado"/>
+                                                    <p:message for="grado"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-12 ui-sm-12">
+                                                <div class="ui-material">
+
+                                                    <p:dataTable id="unidadesResultados" var="um" value="#{administracionPlanEstudioDirector.rol.planEstudioMaterias}" sortBy="#{um.grado}"
+                                                                 editable="true" editMode="row">
+                                                        <f:facet name="header">
+                                                            #{administracionPlanEstudioDirector.rol.materiaPlanEstudio1.planEstudio.descripcion}
+                                                        </f:facet>
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column rowspan="2" headerText="" style="width: 32px;"/> 
+                                                                <p:column rowspan="2" headerText="Cuatrimestre" style="width: 100px;"/> 
+                                                                <p:column rowspan="2" headerText="Área Conocimiento" style="width: 200px;"/> 
+                                                                <p:column rowspan="2" headerText="Materia" style="width: 300px;"/>
+                                                                <p:column rowspan="2" headerText="Clave" style="width: 300px;"/>
+                                                                <p:column rowspan="2" headerText="" style="width: 32px;"/> 
+                                                            </p:row>
+                                                        </p:columnGroup>
+
+                                                        <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditPlanEstudioMateria}" update="unidadesResultados" />
+                                                        <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" update="unidadesResultados" />
+
+                                                        <p:column>
+                                                            <p:commandButton actionListener="#{administracionPlanEstudioDirector.eliminarPlanEstudioMateria(um)}" process="@this" update="unidadesResultados" icon="fa fa-trash" 
+                                                                             styleClass="btn-primary" title="Eliminar Plan estudio Materia">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la Materia #{um.idMateria.nombre} del plan de estudios #{administracionPlanEstudioDirector.rol.materiaPlanEstudio1.planEstudio.descripcion}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </p:column>
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{um.grado}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{um.idMateria.idAreaConocimiento.nombre}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"><h:outputText value="#{um.idMateria.nombre}" /></f:facet>
+                                                                <f:facet name="input"> <p:inputText value="#{um.idMateria.nombre}" /> </f:facet>
+                                                            </p:cellEditor>                                                                                                                    
+                                                        </p:column>
+                                                        <p:column>
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"><h:outputText value="#{um.claveMateria}" /></f:facet>
+                                                                <f:facet name="input"> <p:inputText value="#{um.claveMateria}" /> </f:facet>
+                                                            </p:cellEditor>   
+                                                        </p:column>
+                                                        <p:column style="width:32px">
+                                                            <p:rowEditor rendered="#{um.cargaAcademicaList.size() eq 0?true:false}"/>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                    <br/>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
                                     </h:form>
                                 </p:tab>
-                                <p:tab id="unidad_materia" title="Unidad Materia" titleStyleClass="box-solid">
-                                    <h:form>
-                                        <div id="main-buttons-unidad" class="hidden-sm hidden-xs">
-                                            <p:toolbar id="tb-unidad">
+                                <p:tab title="Unidades">
+                                    <h:form id="unidadesFrm">
+                                        <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb-asignatura">
                                                 <f:facet name="left">
 
-                                                <p:spacer width="5" />
+                                                    <p:spacer width="5" />
 
                                                 </f:facet>
                                                 <f:facet name="right">
-
+                                                    <p:commandButton title="Guardar Materias" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarUnidad()}"/>
                                                 </f:facet>
                                             </p:toolbar>
-                                            <div class="ui-g ui-fluid" style="margin-top: 20px;">
+                                        </div>
 
+                                        <div class="ui-g ui-fluid" style="margin-top: 20px;">
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="planEstudioC" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.planEstudio}" converter="entityConverter">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                        <p:ajax listener="#{administracionPlanEstudioDirector.materiasPorPlanEstudioConsulta()}" update="materiaR" process="@this"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
+                                                    <p:message for="planEstudioC"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="materiaR" value="#{administracionPlanEstudioDirector.rol.materiaUnidades1.materia}" converter="entityConverter">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.materias}" var="materiasR" itemValue="#{materiasR}" itemLabel="#{materiasR.nombre}" />
+                                                        <p:ajax listener="#{administracionPlanEstudioDirector.unidadesPorMateriaConsulta()}" update="unidadesFrm:unidadesResultados" process="@this"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="materiaR" value="Materia"/>
+                                                    <p:message for="materiaR"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputText id="nombreUnidad" placeholder="Nombre de la Unidad" value="#{administracionPlanEstudioDirector.rol.materiaUnidades1.unidadMateria.nombre}"/>
+                                                    <p:outputLabel for="nombreUnidad" value="Nombre"/>
+                                                    <p:message for="nombreUnidad"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputText id="numeroU" placeholder="Número Unidad" value="#{administracionPlanEstudioDirector.rol.materiaUnidades1.unidadMateria.noUnidad}"/>
+                                                    <p:outputLabel for="numeroU" value="Número"/>
+                                                    <p:message for="numeroU"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputText id="horasT" placeholder="Horas Teoricas" value="#{administracionPlanEstudioDirector.rol.materiaUnidades1.unidadMateria.horasTeoricas}"/>
+                                                    <p:outputLabel for="horasT" value="Horas Teoricas"/>
+                                                    <p:message for="horasT"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputText id="horasP" placeholder="Horas Practicas" value="#{administracionPlanEstudioDirector.rol.materiaUnidades1.unidadMateria.horasPracticas}"/>
+                                                    <p:outputLabel for="horasP" value="Horas Practicas"/>
+                                                    <p:message for="horasP"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="integsMateria" value="#{administracionPlanEstudioDirector.rol.materiaUnidades1.unidadMateria.integradora}">
+                                                        <f:selectItem itemValue="0" itemLabel="NO"/>
+                                                        <f:selectItem itemValue="1" itemLabel="SI"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="integsMateria" value="Integradora"/>
+                                                    <p:message for="integsMateria"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputTextarea id="objetivoU" placeholder="Objetivo" value="#{administracionPlanEstudioDirector.rol.materiaUnidades1.unidadMateria.objetivo}" />
+                                                    <p:outputLabel for="objetivoU" value="Objetivo"/>
+                                                    <p:message for="objetivoU"/>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="ui-g-12 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:dataTable id="unidadesResultados" var="um" value="#{administracionPlanEstudioDirector.rol.unidadesMateria}" editable="true" editMode="row">
+                                                        <f:facet name="header">
+                                                            Unidades
+                                                        </f:facet>
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column rowspan="2" headerText="" style="width: 40px;"/> 
+                                                                <p:column rowspan="2" headerText="Nombre"/> 
+                                                                <p:column rowspan="2" headerText="Objetivo"/>
+                                                                <p:column rowspan="2" headerText="Número unidad"/>
+                                                                <p:column colspan="3" headerText="Horas"/>
+                                                                <p:column rowspan="2" headerText="Integradora"/>
+                                                                <p:column rowspan="2" headerText="" style="width: 32px;"/> 
+                                                            </p:row>
+                                                            <p:row class="success">
+                                                                <p:column headerText="Teoricas"/>
+                                                                <p:column headerText="Practicas"/>
+                                                                <p:column headerText="Total"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+
+                                                        <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditUnidad}" oncomplete="unidadesResultados" />
+                                                        <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" oncomplete="unidadesResultados" />
+
+                                                        <p:column>
+                                                            <p:commandButton actionListener="#{administracionPlanEstudioDirector.eliminarUnidadMateria(um)}" update="unidadesResultados" process="@this" icon="fa fa-trash" 
+                                                                             styleClass="btn-primary" title="Eliminar Incidencias">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la Unidad Materia de #{um.nombre} de la materia #{administracionPlanEstudioDirector.rol.materiaUnidades1.materia.nombre}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"><h:outputText value="#{um.nombre}" /></f:facet>
+                                                                <f:facet name="input">
+                                                                    <p:inputText value="#{um.nombre}" />
+                                                                </f:facet>
+                                                            </p:cellEditor>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"><h:outputText value="#{um.objetivo}" /></f:facet>
+                                                                <f:facet name="input">
+                                                                    <p:inputTextarea value="#{um.objetivo}" />
+                                                                </f:facet>
+                                                            </p:cellEditor>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"><h:outputText value="#{um.noUnidad}" /></f:facet>
+                                                                <f:facet name="input">
+                                                                    <p:inputText value="#{um.noUnidad}" />
+                                                                </f:facet>
+                                                            </p:cellEditor>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"><h:outputText value="#{um.horasTeoricas}" /></f:facet>
+                                                                <f:facet name="input">
+                                                                    <p:inputText value="#{um.horasTeoricas}" />
+                                                                </f:facet>
+                                                            </p:cellEditor>
+                                                        </p:column> 
+                                                        <p:column>
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"><h:outputText value="#{um.horasPracticas}" /></f:facet>
+                                                                <f:facet name="input">
+                                                                    <p:inputText value="#{um.horasPracticas}" />
+                                                                </f:facet>
+                                                            </p:cellEditor>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{(um.horasPracticas + um.horasTeoricas)}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{um.integradora}" />
+                                                        </p:column>
+                                                        <p:column style="width:32px">
+                                                            <p:rowEditor />
+                                                        </p:column>
+                                                    </p:dataTable> 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p:confirmDialog global="false" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>  
+                                    </h:form>
+                                </p:tab>
+                                <p:tab title="Competencias">
+                                    <h:form id="competenciasFrm">
+                                        <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb-asignatura">
+                                                <f:facet name="left">
+
+                                                    <p:spacer width="5" />
+
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                    <p:commandButton title="Guardar Materias" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarPlanEstudioMateriaCompetencia()}"/>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+                                        <div class="ui-g ui-fluid" style="margin-top: 20px;">                                            
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="planEstudioC" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.planEstudio}" converter="entityConverter">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                        <p:ajax listener="#{administracionPlanEstudioDirector.competenciasPorPlanEstudioMateriaConsulta()}" update="@form" process="@this"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
+                                                    <p:message for="planEstudioC"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="materiaRegistradaC" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.planEstudioMateria}" converter="entityConverter">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.planEstudioMaterias}" var="meteriasR" itemValue="#{meteriasR}" itemLabel="#{meteriasR.idMateria.nombre}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="materiaRegistradaC" value="Materia"/>
+                                                    <p:message for="materiaRegistradaC"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="ui-g-12 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="competenciasR" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.competencia}" converter="entityConverter">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.competencias}" var="competenciaR" itemValue="#{competenciaR}" itemLabel="#{competenciaR.nombre}" />
+                                                        <p:ajax listener="#{administracionPlanEstudioDirector.comprobarRegistroDeCompetencias()}" update="regstroC" process="@this"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="competenciasR" value="Materia"/>
+                                                    <p:message for="competenciasR"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <p:outputPanel id="regstroC" class="ui-g-12 ui-sm-12">
+                                                <p:autoUpdate/>
+                                                <c:if test="#{administracionPlanEstudioDirector.rol.newCompetencia}">
+                                                    <p:autoUpdate/>
+                                                    <div class="ui-g-6 ui-sm-12">
+                                                        <div class="ui-material">
+                                                            <p:inputTextarea id="competenciaNombre" placeholder="Nombre" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.competenciaNewR.nombre}"/>
+                                                            <p:outputLabel for="competenciaNombre" value="Nombre"/>
+                                                            <p:message for="competenciaNombre"/>
+                                                            <br/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ui-g-6 ui-sm-12">
+                                                        <div class="ui-material">
+                                                            <p:selectOneMenu id="tipoCompetencia" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.competenciaNewR.tipo}">
+                                                                <f:selectItem itemValue="Específicas" itemLabel="Específicas"/>
+                                                                <f:selectItem itemValue="Genéricas" itemLabel="Genéricas"/>
+                                                            </p:selectOneMenu>
+                                                            <p:outputLabel for="tipoCompetencia" value="Tipo"/>
+                                                            <p:message for="tipoCompetencia"/>
+                                                            <br/>
+                                                        </div>
+                                                    </div>
+                                                </c:if>                                                
+                                            </p:outputPanel>
+
+                                            <div class="ui-g-12 ui-sm-12">
+                                                <div class="ui-material">
+
+                                                    <p:dataTable id="unidadesResultados" var="com" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetenciasesList}" sortBy="#{com.competencia.idCompetencia}"
+                                                                 editable="true" editMode="row">
+                                                        <f:facet name="header">
+                                                            #{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.planEstudio.descripcion}
+                                                            <br/>
+                                                            #{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.planEstudioMateria.idMateria.nombre}
+                                                        </f:facet>
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column rowspan="2" headerText="Nombre" style="width: 200px;"/> 
+                                                                <p:column rowspan="2" headerText="Tipo" style="width: 300px;"/>
+                                                                <p:column rowspan="2" headerText="Materias" style="width: 300px;"/>
+                                                                <p:column rowspan="2" headerText="" style="width: 32px;"/> 
+                                                            </p:row>
+                                                        </p:columnGroup>
+
+                                                        <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditPlanEstudioMateriaCompetencia}" update="unidadesResultados" />
+                                                        <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" update="unidadesResultados" />
+
+                                                        <p:column groupRow="true">
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"><h:outputText value="#{com.competencia.nombre}" /></f:facet>
+                                                                <f:facet name="input"><p:inputTextarea value="#{com.competencia.nombre}" /></f:facet>
+                                                            </p:cellEditor>                                                            
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{com.competencia.tipo}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{com.planEstudioMateria.idMateria.nombre}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <p:rowEditor />
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                    <br/>
+                                                </div>
                                             </div>
                                         </div>
                                     </h:form>
                                 </p:tab>
-                            </p:accordionPanel>
+                                <p:tab title="Programas eduativos">
+                                    <h:form id="progEduFrm">
+                                        <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb-asignatura">
+                                                <f:facet name="left">
+
+                                                    <p:spacer width="5" />
+
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                    <p:commandButton title="Guardar Materias" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarPlanEstudioMateriaCompetencia()}"/>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+                                        <div class="ui-g ui-fluid" style="margin-top: 20px;">                                            
+                                            <div class="ui-g-12 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="planEstudioC" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.planEstudio}" converter="entityConverter">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                        <p:ajax listener="#{administracionPlanEstudioDirector.listaCompetenciasPorMateria()}" update="progEduFrm" process="@this"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
+                                                    <p:message for="planEstudioC"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-12 ui-sm-12">
+                                                <div class="ui-material">
+
+                                                    <p:dataTable id="unidadesResultados" var="um" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetenciasesList}" 
+                                                                 sortBy="#{um.planEstudioMateria.grado}"  expandedRow="true" expandableRowGroups="true">
+                                                        <f:facet name="header">
+                                                            #{administracionPlanEstudioDirector.rol.materiaPlanEstudio1.planEstudio.descripcion}
+                                                        </f:facet>
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column rowspan="2" headerText="Cuatrimestre" style="width: 6%;"/>
+                                                                <p:column rowspan="2" headerText="Área Conocimiento" style="width: 10%;"/> 
+                                                                <p:column rowspan="2" headerText="Clave materia" style="width: 10%;"/>
+                                                                <p:column rowspan="2" headerText="Materia" style="width: 14%;"/>                                                                 
+                                                                <p:column rowspan="2" headerText="Competencias" style="width: 58%;"/> 
+                                                            </p:row>
+                                                        </p:columnGroup>   
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{um.planEstudioMateria.grado}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{um.planEstudioMateria.idMateria.idAreaConocimiento.nombre}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{um.planEstudioMateria.claveMateria}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{um.planEstudioMateria.idMateria.nombre}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{um.competencia.nombre}" />
+                                                        </p:column>
+
+                                                        <p:rowExpansion>
+                                                            <p:dataTable  var="unidad" value="#{um.planEstudioMateria.idMateria.unidadMateriaList}">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column rowspan="2" headerText="Numero" style="width: 10%;background-color: #d9d9d9; color: #000000;" styleClass="hederTablesTitle"/>
+                                                                        <p:column rowspan="2" headerText="Nombre" style="width: 20%; background-color: #d9d9d9; color: #000000;" styleClass="hederTablesTitle"/>  
+                                                                        <p:column rowspan="2" headerText="Objetivo" style="width:40%; background-color: #d9d9d9; color: #000000;" styleClass="hederTablesTitle"/>
+                                                                        <p:column colspan="3" headerText="Horas" style="width: 30%;text-align: center; background-color: #d9d9d9; color: #000000;" styleClass="hederTablesTitle"/> 
+                                                                    </p:row>
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Teoricas"/>
+                                                                        <p:column headerText="Practicas"/>
+                                                                        <p:column headerText="Totales"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+
+                                                                <p:column style="text-align: center;"> <h:outputText value="#{unidad.noUnidad}" /> </p:column>
+                                                                <p:column style="text-align: justify;"> <h:outputText value="#{unidad.nombre}" /> </p:column>
+                                                                <p:column style="text-align: justify;"> <h:outputText value="#{unidad.objetivo}" /> </p:column>
+                                                                <p:column style="text-align: center;"> <h:outputText value="#{unidad.horasTeoricas}" /> </p:column>
+                                                                <p:column style="text-align: center;"> <h:outputText value="#{unidad.horasPracticas}" /> </p:column>
+                                                                <p:column style="text-align: center;"> <h:outputText value="#{(unidad.horasPracticas + unidad.horasTeoricas)}" /> </p:column>
+
+                                                            </p:dataTable>
+                                                        </p:rowExpansion>
+                                                    </p:dataTable>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </p:tab>
+                            </p:tabView>
                         </div>
                     </div>
                 </div>
@@ -180,7 +673,7 @@
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
                         <h:outputText
-                                value="El acceso solo está autorizado a directores de área académica."/>
+                            value="El acceso solo está autorizado a directores de área académica."/>
                     </h:panelGrid>
                     <f:facet name="footer">
 
