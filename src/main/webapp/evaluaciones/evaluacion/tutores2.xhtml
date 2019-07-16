@@ -9,9 +9,7 @@
 
     <ui:define name="head-end">
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
-        </c:if>
+        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
@@ -36,13 +34,12 @@
     <ui:define name="description">
         Formulario de la evaluación
     </ui:define>
-
     <ui:define name="body">
         <adm:breadcrumb title="Evaluación de tutores - Formulario"/>
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <div id="main-buttons" class="hidden-sm hidden-xs" >                        
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
                     </div>
                     <p:separator/>
                     <div class="box box-solid">
@@ -52,7 +49,7 @@
                                     Sin evaluaciones activas
                                 </c:if>
                                 <c:if test="#{evaluacionTutor2.cargada}">
-                                    Periodo: #{evaluacionTutor2.periodoEscolar.mesInicio.mes} - #{evaluacionTutor2.periodoEscolar.mesFin.mes} #{evaluacionTutor2.periodoEscolar.anio}
+
                                 </c:if>
                             </h3>
 
@@ -83,17 +80,17 @@
                                                 </div>
                                             </c:if>
                                         </p:outputPanel>
-                                    </div>                                                                       
+                                    </div>
                                     <div class="col-lg-4 text-center" style="padding-left: 2px; padding-right: 2px; background-color: aliceblue;">
-                                        <c:set var="numeroNomina" value="#{evaluacionTutor2.estudianteTutor.pk.numeroNomina}" />
+                                        <c:set var="numeroNomina" value="#{evaluacionTutor2.tutorEstudiante.clave}" />
                                         <p:outputPanel >
                                             <p:autoUpdate/>
                                             <h4 class="#{evaluacionTutor2.finalizado?'text-info':'text-warn'} " style="margin: 0px;">#{evaluacionTutor2.finalizado?'Finalizado':'Pendiente'}</h4>
-                                            <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{numeroNomina}.jpg" width="150" alt="#{numeroNomina}" title="Personal #{numeroNomina}" style="border-color: black; border-style: solid; border-width: 2px;" />
+                                            <img src="http://siip.utxicotepec.edu.mx/sgot-images/evidencias/personal/#{numeroNomina}.jpg" width="150" alt="#{numeroNomina}" title="Personal #{numeroNomina}" style="border-color: black; border-style: solid; border-width: 2px;" />
                                         </p:outputPanel>
-                                        <p:outputLabel value="#{evaluacionTutor2.estudianteTutor.nombreTutor}" />
+                                        <p:outputLabel value="#{evaluacionTutor2.tutorEstudiante.nombre}" />
                                         <br/>
-                                        <p:outputLabel value="#{evaluacionTutor2.estudianteTutor.peNombreCarrera}" />
+                                        <p:outputLabel value="#{evaluacionTutor2.estudianteTutor2.nombreCarrera}" />
                                     </div>
                                 </div>
                                 <p:sticky target="filaHeader" margin="5" />
@@ -115,10 +112,11 @@
                                             <div class="col-md-11"> #{pregunta.titulo} </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">                                        
-                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.estudianteTutor.nombreTutor}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                         <f:ajax execute="p#{id}">
                                             <p:selectOneButton id="p#{id}" value="#{evaluacionTutor2.resultados.r1}" valueChangeListener="#{evaluacionTutor2.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
                                                 <f:selectItems value="#{evaluacionTutor2.respuestasPosibles}" />
                                             </p:selectOneButton>
                                             <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
@@ -135,10 +133,11 @@
                                             <div class="col-md-11"> #{pregunta.titulo} </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">                                        
-                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.estudianteTutor.nombreTutor}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                         <f:ajax execute="p#{id}">
                                             <p:selectOneButton id="p#{id}" value="#{evaluacionTutor2.resultados.r2}" valueChangeListener="#{evaluacionTutor2.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
                                                 <f:selectItems value="#{evaluacionTutor2.respuestasPosibles}" />
                                             </p:selectOneButton>
                                             <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
@@ -155,10 +154,11 @@
                                             <div class="col-md-11"> #{pregunta.titulo} </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">                                        
-                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.estudianteTutor.nombreTutor}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                         <f:ajax execute="p#{id}">
                                             <p:selectOneButton id="p#{id}" value="#{evaluacionTutor2.resultados.r3}" valueChangeListener="#{evaluacionTutor2.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
                                                 <f:selectItems value="#{evaluacionTutor2.respuestasPosibles}" />
                                             </p:selectOneButton>
                                             <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
@@ -175,10 +175,11 @@
                                             <div class="col-md-11"> #{pregunta.titulo} </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">                                        
-                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.estudianteTutor.nombreTutor}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                         <f:ajax execute="p#{id}">
                                             <p:selectOneButton id="p#{id}" value="#{evaluacionTutor2.resultados.r4}" valueChangeListener="#{evaluacionTutor2.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
                                                 <f:selectItems value="#{evaluacionTutor2.respuestasPosibles}" />
                                             </p:selectOneButton>
                                             <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
@@ -195,12 +196,12 @@
                                             <div class="col-md-11"> #{pregunta.titulo} </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">                                        
-                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.estudianteTutor.nombreTutor}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                         <f:ajax execute="p#{id}">
                                             <p:selectOneButton id="p#{id}" value="#{evaluacionTutor2.resultados.r5}" valueChangeListener="#{evaluacionTutor2.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
                                                 <f:selectItems value="#{evaluacionTutor2.respuestasPosibles}" />
-                                                <f:selectItem itemValue="4" itemLabel="No aplica" itemDescription="No aplica" />
                                             </p:selectOneButton>
                                             <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
                                         </f:ajax>
@@ -216,10 +217,11 @@
                                             <div class="col-md-11"> #{pregunta.titulo} </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">                                        
-                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.estudianteTutor.nombreTutor}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                         <f:ajax execute="p#{id}">
                                             <p:selectOneButton id="p#{id}" value="#{evaluacionTutor2.resultados.r6}" valueChangeListener="#{evaluacionTutor2.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
                                                 <f:selectItems value="#{evaluacionTutor2.respuestasPosibles}" />
                                             </p:selectOneButton>
                                             <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
@@ -236,10 +238,11 @@
                                             <div class="col-md-11"> #{pregunta.titulo} </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">                                        
-                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.estudianteTutor.nombreTutor}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                         <f:ajax execute="p#{id}">
                                             <p:selectOneButton id="p#{id}" value="#{evaluacionTutor2.resultados.r7}" valueChangeListener="#{evaluacionTutor2.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
                                                 <f:selectItems value="#{evaluacionTutor2.respuestasPosibles}" />
                                             </p:selectOneButton>
                                             <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
@@ -256,10 +259,11 @@
                                             <div class="col-md-11"> #{pregunta.titulo} </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">                                        
-                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.estudianteTutor.nombreTutor}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                         <f:ajax execute="p#{id}">
                                             <p:selectOneButton id="p#{id}" value="#{evaluacionTutor2.resultados.r8}" valueChangeListener="#{evaluacionTutor2.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
                                                 <f:selectItems value="#{evaluacionTutor2.respuestasPosibles}" />
                                             </p:selectOneButton>
                                             <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
@@ -276,9 +280,9 @@
                                             <div class="col-md-11"> #{pregunta.titulo} </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">                                        
-                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.estudianteTutor.nombreTutor}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
-                                        <f:ajax execute="p#{id}"><p:inputTextarea id="p#{id}" class="form-control" value="#{evaluacionTutor2.resultados.r9}" valueChangeListener="#{evaluacionTutor2.guardar}" rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500" cols="40" queryDelay="1500" style="width: available;" /></f:ajax>
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutor2.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                        <f:ajax execute="p#{id}"><p:inputTextarea id="p#{id}" class="form-control" value="#{evaluacionTutor2.resultados.r9}" valueChangeListener="#{evaluacionTutor2.guardar}" rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500" cols="40" queryDelay="1500" style="width: available;" ><p:ajax process="@this" update="@form" /></p:inputTextarea></f:ajax>
                                     </div>
                                 </div>
                             </c:if>

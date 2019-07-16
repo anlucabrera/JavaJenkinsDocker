@@ -551,7 +551,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         try {
 
             Client client = Client.create();
-//            WebResource webResource = client.resource("http://siip.utxj.edu.mx/micro/webresources/pagoAlumno/matricula/" + matricula);
+//            WebResource webResource = client.resource("http://siip.utxicotepec.edu.mx/micro/webresources/pagoAlumno/matricula/" + matricula);
             WebResource webResource = client.resource("http://150.140.1.26:8080/micro/webresources/pagoAlumno/matricula/" + matricula);
            
             ClientResponse response = webResource.accept("application/json").get(ClientResponse.class);

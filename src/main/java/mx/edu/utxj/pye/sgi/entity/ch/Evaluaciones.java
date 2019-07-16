@@ -5,18 +5,28 @@
  */
 package mx.edu.utxj.pye.sgi.entity.ch;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Planeacion
  */
 @Entity
 @Table(name = "evaluaciones", catalog = "capital_humano", schema = "")
@@ -30,36 +40,32 @@ import java.util.List;
     , @NamedQuery(name = "Evaluaciones.findByTipo", query = "SELECT e FROM Evaluaciones e WHERE e.tipo = :tipo")})
 public class Evaluaciones implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "periodo")
-    private int periodo;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "fecha_inicio")
-    @Temporal(TemporalType.DATE)
-    private Date fechaInicio;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "fecha_fin")
-    @Temporal(TemporalType.DATE)
-    private Date fechaFin;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 39)
-    @Column(name = "tipo")
-    private String tipo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
-    private List<EvaluacionEstadiaResultados> evaluacionEstadiaResultadosList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
-    private EvaluacionEstadiaResultados evaluacionEstadiaResultados;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "evaluacion")
     private Integer evaluacion;
+    @Basic(optional = false)
+    @Column(name = "periodo")
+    private int periodo;
+    @Basic(optional = false)
+    @Column(name = "fecha_inicio")
+    @Temporal(TemporalType.DATE)
+    private Date fechaInicio;
+    @Basic(optional = false)
+    @Column(name = "fecha_fin")
+    @Temporal(TemporalType.DATE)
+    private Date fechaFin;
+    @Basic(optional = false)
+    @Column(name = "tipo")
+    private String tipo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionTutoresResultados> evaluacionTutoresResultadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EncuestaServiciosResultados> encuestaServiciosResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EncuestaSatisfaccionEgresadosIng> encuestaSatisfaccionEgresadosIngList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
@@ -69,13 +75,9 @@ public class Evaluaciones implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionesEstudioSocioeconomicoResultados> evaluacionesEstudioSocioeconomicoResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
-    private List<EncuestaServiciosResultados> encuestaServiciosResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
-    private List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
-    private List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList;
+    private List<EvaluacionEstadiaResultados> evaluacionEstadiaResultadosList;
 
     public Evaluaciones() {
     }
@@ -100,6 +102,13 @@ public class Evaluaciones implements Serializable {
         this.evaluacion = evaluacion;
     }
 
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
+    }
 
     public Date getFechaInicio() {
         return fechaInicio;
@@ -117,6 +126,40 @@ public class Evaluaciones implements Serializable {
         this.fechaFin = fechaFin;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    @XmlTransient
+    public List<EvaluacionTutoresResultados> getEvaluacionTutoresResultadosList() {
+        return evaluacionTutoresResultadosList;
+    }
+
+    public void setEvaluacionTutoresResultadosList(List<EvaluacionTutoresResultados> evaluacionTutoresResultadosList) {
+        this.evaluacionTutoresResultadosList = evaluacionTutoresResultadosList;
+    }
+
+    @XmlTransient
+    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesMateriaResultadosList() {
+        return evaluacionDocentesMateriaResultadosList;
+    }
+
+    public void setEvaluacionDocentesMateriaResultadosList(List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList) {
+        this.evaluacionDocentesMateriaResultadosList = evaluacionDocentesMateriaResultadosList;
+    }
+
+    @XmlTransient
+    public List<EncuestaServiciosResultados> getEncuestaServiciosResultadosList() {
+        return encuestaServiciosResultadosList;
+    }
+
+    public void setEncuestaServiciosResultadosList(List<EncuestaServiciosResultados> encuestaServiciosResultadosList) {
+        this.encuestaServiciosResultadosList = encuestaServiciosResultadosList;
+    }
 
     @XmlTransient
     public List<EncuestaSatisfaccionEgresadosIng> getEncuestaSatisfaccionEgresadosIngList() {
@@ -155,15 +198,6 @@ public class Evaluaciones implements Serializable {
     }
 
     @XmlTransient
-    public List<EncuestaServiciosResultados> getEncuestaServiciosResultadosList() {
-        return encuestaServiciosResultadosList;
-    }
-
-    public void setEncuestaServiciosResultadosList(List<EncuestaServiciosResultados> encuestaServiciosResultadosList) {
-        this.encuestaServiciosResultadosList = encuestaServiciosResultadosList;
-    }
-
-    @XmlTransient
     public List<EvaluacionesPremiosResultados> getEvaluacionesPremiosResultadosList() {
         return evaluacionesPremiosResultadosList;
     }
@@ -173,21 +207,12 @@ public class Evaluaciones implements Serializable {
     }
 
     @XmlTransient
-    public List<EvaluacionesTutoresResultados> getEvaluacionesTutoresResultadosList() {
-        return evaluacionesTutoresResultadosList;
+    public List<EvaluacionEstadiaResultados> getEvaluacionEstadiaResultadosList() {
+        return evaluacionEstadiaResultadosList;
     }
 
-    public void setEvaluacionesTutoresResultadosList(List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList) {
-        this.evaluacionesTutoresResultadosList = evaluacionesTutoresResultadosList;
-    }
-
-    @XmlTransient
-    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesMateriaResultadosList() {
-        return evaluacionDocentesMateriaResultadosList;
-    }
-
-    public void setEvaluacionDocentesMateriaResultadosList(List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList) {
-        this.evaluacionDocentesMateriaResultadosList = evaluacionDocentesMateriaResultadosList;
+    public void setEvaluacionEstadiaResultadosList(List<EvaluacionEstadiaResultados> evaluacionEstadiaResultadosList) {
+        this.evaluacionEstadiaResultadosList = evaluacionEstadiaResultadosList;
     }
 
     @Override
@@ -213,39 +238,6 @@ public class Evaluaciones implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones[ evaluacion=" + evaluacion + " ]";
-    }
-
-
-    public EvaluacionEstadiaResultados getEvaluacionEstadiaResultados() {
-        return evaluacionEstadiaResultados;
-    }
-
-    public void setEvaluacionEstadiaResultados(EvaluacionEstadiaResultados evaluacionEstadiaResultados) {
-        this.evaluacionEstadiaResultados = evaluacionEstadiaResultados;
-    }
-
-    public int getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(int periodo) {
-        this.periodo = periodo;
-    }
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    @XmlTransient
-    public List<EvaluacionEstadiaResultados> getEvaluacionEstadiaResultadosList() {
-        return evaluacionEstadiaResultadosList;
-    }
-
-    public void setEvaluacionEstadiaResultadosList(List<EvaluacionEstadiaResultados> evaluacionEstadiaResultadosList) {
-        this.evaluacionEstadiaResultadosList = evaluacionEstadiaResultadosList;
     }
     
 }

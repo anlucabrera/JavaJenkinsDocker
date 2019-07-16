@@ -165,7 +165,7 @@
                                                                                     <div class="row">
                                                                                         <div  id="fotoPersonal" class="col-sm-2 pull-left">
                                                                                             <div class="description-block" style="text-align: center" >
-                                                                                                <img src="http://siip.utxj.edu.mx/sgot-images/evidencias/personal/#{controladorPersonal.nuevoOBJListaPersonal.clave}.jpg" alt="#{controladorPersonal.nuevoOBJListaPersonal.clave}" title="Personal #{controladorPersonal.nuevoOBJListaPersonal.clave}" style="width: 140px; height: 140px; align-content: center;"/>
+                                                                                                <img src="http://siip.utxicotepec.edu.mx/sgot-images/evidencias/personal/#{controladorPersonal.nuevoOBJListaPersonal.clave}.jpg" alt="#{controladorPersonal.nuevoOBJListaPersonal.clave}" title="Personal #{controladorPersonal.nuevoOBJListaPersonal.clave}" style="width: 140px; height: 140px; align-content: center;"/>
                                                                                             </div>  
                                                                                         </div>
                                                                                         <div class="col-sm-6">
@@ -299,6 +299,9 @@
 
                                                                                 <p:column style="width: 20%" headerText="Estudio realizado" >
                                                                                     <h:outputText value="#{formaAL.nivelEscolaridad.nombre}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Carrera" >
+                                                                                    <h:outputText value="#{formaAL.nombreCarrera}" />
                                                                                 </p:column>
                                                                                 <p:column style="width: 15%" headerText="Fecha" >
                                                                                     <h:outputLabel value="#{formaAL.fechaObtencion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
@@ -964,12 +967,12 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
-                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(fac.evidenciaTitulo)}" target="_blank" style="color: #000000">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(fac.evidenciaTitulo)}" target="_blank" style="color: #000000">
                                                                                         <i class="fa fa-search"></i>
                                                                                         <span>Ver Título</span>
                                                                                     </p:link>
                                                                                     <hr/>
-                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(fac.evidenciaCedula)}" target="_blank" style="color: #000000">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(fac.evidenciaCedula)}" target="_blank" style="color: #000000">
                                                                                         <i class="fa fa-search"></i>
                                                                                         <span>Ver Cedula</span>
                                                                                     </p:link>
@@ -1030,7 +1033,7 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(ela.evidenciaNombremiento)}" target="_blank" style="color: #000000">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(ela.evidenciaNombremiento)}" target="_blank" style="color: #000000">
                                                                                         <i class="fa fa-search"></i>
                                                                                         <span>Ver</span>
                                                                                     </p:link>
@@ -1098,7 +1101,7 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(aP.evidenciaCapacitacion)}" target="_blank" style="color: #000000">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(aP.evidenciaCapacitacion)}" target="_blank" style="color: #000000">
                                                                                         <i class="fa fa-search"></i>
                                                                                         <span>Ver</span>
                                                                                     </p:link>
@@ -1164,7 +1167,7 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(habidi.evidenciaDoc)}" target="_blank" style="color: #000000">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(habidi.evidenciaDoc)}" target="_blank" style="color: #000000">
                                                                                         <i class="fa fa-search"></i>
                                                                                         <span>Ver</span>
                                                                                     </p:link>
@@ -1224,7 +1227,7 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(dte.documentoRespaldo)}" target="_blank" style="color: #000000">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(dte.documentoRespaldo)}" target="_blank" style="color: #000000">
                                                                                         <i class="fa fa-search"></i>
                                                                                         <span>Ver</span>
                                                                                     </p:link>
@@ -1284,7 +1287,7 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(dp.evidenciaDistincion)}" target="_blank" style="color: #000000">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(dp.evidenciaDistincion)}" target="_blank" style="color: #000000">
                                                                                         <i class="fa fa-search"></i>
                                                                                         <span>Ver</span>
                                                                                     </p:link>
@@ -1344,7 +1347,7 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(lp.evidencia)}" target="_blank" style="color: #000000">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(lp.evidencia)}" target="_blank" style="color: #000000">
                                                                                         <i class="fa fa-search"></i>
                                                                                         <span>Ver</span>
                                                                                     </p:link>
@@ -1404,7 +1407,7 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(ap.evidencia)}" target="_blank" style="color: #000000">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(ap.evidencia)}" target="_blank" style="color: #000000">
                                                                                         <i class="fa fa-search"></i>
                                                                                         <span>Ver</span>
                                                                                     </p:link>
@@ -1468,7 +1471,7 @@
                                                                                 </p:column>
 
                                                                                 <p:column headerText="Evidencia" style="width:80px;text-align: center">
-                                                                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(mp.evidencia)}" target="_blank" style="color: #000000">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(mp.evidencia)}" target="_blank" style="color: #000000">
                                                                                         <i class="fa fa-search"></i>
                                                                                         <span>Ver</span>
                                                                                     </p:link>
@@ -1516,35 +1519,35 @@
                                                                     <p:tab title="Acta de nacimiento" >
                                                                         <p:outputPanel id="evidenicas1" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="Comprobante de domicilio" >
                                                                         <p:outputPanel id="evidenicas2" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio)}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="CURP" >
                                                                         <p:outputPanel id="evidenicas3" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp)}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="RFC" >
                                                                         <p:outputPanel id="evidenicas4" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc)}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="INE" >
                                                                         <p:outputPanel id="evidenicas5" style="text-align:center;width: 100%;height: 100%" >
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxj.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}"/>       
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}"/>       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
@@ -1588,7 +1591,7 @@
                             <h:panelGrid columns="1"  class="col-md-12">
                                 <h2 class="align-center"> 
                                     <p:outputLabel value="Descargar Plantilla Activa"/>
-                                    <p:link href="http://siip.utxj.edu.mx/archivos/#{exelPlantillaPersonal.direccionDescarga}" target="_blank">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{exelPlantillaPersonal.direccionDescarga}" target="_blank">
                                         <i class="fa fa-download"></i>
                                         <span>Descargar plantilla</span>
                                     </p:link>
@@ -1608,7 +1611,7 @@
                             <h:panelGrid columns="1"  class="col-md-12">
                                 <h2 class="align-center"> 
                                     <p:outputLabel value="Descargar Plantilla Activa"/>
-                                    <p:link href="http://siip.utxj.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/#{controladorPersonal.contactoDestino}.zip" target="_blank">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/#{controladorPersonal.contactoDestino}.zip" target="_blank">
                                         <i class="fa fa-download"></i>
                                         <span>Descargar plantilla</span>
                                     </p:link>

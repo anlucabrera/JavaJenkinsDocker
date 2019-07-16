@@ -292,7 +292,8 @@
             </div> 
         </c:if>
 
-        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
+        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">              
+
             <c:if test="#{controladorEmpleado.tienePOA}">
                 <div class="box box-primary">
                     <div class="box box-solid">
@@ -340,7 +341,7 @@
             </c:if>
 
             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'otro'}">
                     <div class="box box-primary">
                         <div class="box box-solid">
                             <div class="box-header with-border">
@@ -422,7 +423,7 @@
                                     <div class="icon">
                                         <i class="fa fa-bar-chart-o"/>
                                     </div>
-                                    <a href="http://siip.utxj.edu.mx/prontuario-service2" target="_blank" class="small-box-footer">Consultar</a>
+                                    <a href="http://siip.utxicotepec.edu.mx/prontuario-service2" target="_blank" class="small-box-footer">Consultar</a>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-6 col-xs-12">

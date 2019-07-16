@@ -63,9 +63,17 @@ public class AdministracionEncuesta implements Serializable{
                         dto.planeacion = true;
                         aperturarEncuestas();
                     }
+                    if(!ejbAdmEncuesta.esPlaneacion(1, Short.parseShort("2"), Short.parseShort("18"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
+                        dto.planeacion = true;
+                        aperturarEncuestas();
+                    }
+                    if(!ejbAdmEncuesta.esPsicopedagogia( Short.parseShort("18"),  Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
+                    dto.esPsicopedagogia = true;
+                    aperturarEncuestas();
+                }
             }
         } catch (Throwable ex) {
-            dto.director = false; dto.esDeIyE = false; dto.tutor = false; dto.esSecretario = false; dto.planeacion = false; dto.ESTsuActiva = false; dto.ESActiva = false; dto.ESIngActiva = true;
+            dto.director = false; dto.esDeIyE = false; dto.tutor = false; dto.esSecretario = false; dto.planeacion = false; dto.esPsicopedagogia= false;dto.ESTsuActiva = false; dto.ESActiva = false; dto.ESIngActiva = true;
             dto.ESEActiva = false; dto.EEActiva = true;
             Logger.getLogger(AdministracionEncuesta.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -77,6 +85,8 @@ public class AdministracionEncuesta implements Serializable{
         if(ejbAdmEncuesta.aperturaVisualizacionEncuesta("Satisfacción de egresados de ingenieria")){dto.ESIngActiva = true;}
         if(ejbAdmEncuesta.aperturaVisualizacionEncuesta("Estudio socioeconómico")){dto.ESEActiva = true;}
         if(ejbAdmEncuesta.aperturaVisualizacionEncuesta("Evaluación Estadía")){dto.EEActiva = true;}
+        if(ejbAdmEncuesta.aperturaVisualizacionEncuesta("Evaluación a Tutor")){dto.ETutorActiva=true;}
+        if(ejbAdmEncuesta.aperturaVisualizacionEncuesta("Evaluación Docente")){dto.EDocenteActiva=true;}
     }
     
 }

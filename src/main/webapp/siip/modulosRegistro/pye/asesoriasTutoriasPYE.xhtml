@@ -442,7 +442,7 @@
                               hideEffect="fade" 
                               modal="true" 
                               draggable="true" 
-                              header="Edición de Asesoría ó Tutoría Mensual" 
+                              header="Registro de Asesorías y Tutorías" 
                               onHide="actualizar();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
@@ -451,7 +451,9 @@
                         <h:form id="frmEdicionAsesoriaTutoria">
                             <div class="row">
                                 <div class="col-sm-12 col-md-12">
+                                    <c:if test="#{controladorAsesoriasTutoriasCicloEscolarPYE.dto.nuevoRegistro eq false}">
                                     <p:outputLabel value="Edición de : #{controladorAsesoriasTutoriasCicloEscolarPYE.dto.registro.asesoriasTutoriasCicloPeriodos.tipoActividad} del #{controladorAsesoriasTutoriasCicloEscolarPYE.dto.registro.asesoriasTutoriasCicloPeriodos.cuatrimestre} #{controladorAsesoriasTutoriasCicloEscolarPYE.dto.registro.asesoriasTutoriasCicloPeriodos.grupo}"/>
+                                    </c:if>
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 

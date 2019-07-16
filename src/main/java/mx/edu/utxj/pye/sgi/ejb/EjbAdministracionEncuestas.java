@@ -7,18 +7,9 @@ package mx.edu.utxj.pye.sgi.ejb;
 
 import java.util.List;
 import javax.ejb.Local;
+
+import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMaterias;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaEvaluacionDocentesResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
@@ -135,20 +126,20 @@ public interface EjbAdministracionEncuestas {
      * @param evaluado
      * @return 
      */
-    public List<EvaluacionesTutoresResultados> getEvaluacionesTutoresResultados(Evaluaciones evaluacion, Integer evaluado);
+    public List<EvaluacionTutoresResultados> getEvaluacionesTutoresResultados(Evaluaciones evaluacion, Integer evaluado);
     /**
      * obtiene una evaluacion segun sea el periodo que se elija.
      * @param periodo
      * @return 
      */
-    public Evaluaciones getEvaluacionDoncete(Integer periodo);
+    public EvaluacionDocentesMaterias getEvaluacionDoncete(Integer periodo);
     /**
      * obtiene los resultados de los docentes evaluados segun sea la evaluación seleccionada
      * @param evaluacion
      * @param evaluado
      * @return 
      */
-    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesResultadosPromedioGeneral(Evaluaciones evaluacion, Integer evaluado);
+    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesResultadosPromedioGeneral(EvaluacionDocentesMaterias evaluacion, Integer evaluado);
     /**
      * Regresa el listado de las materias que imparte un subordinado si es docente
      * @param subordinado la clave del trabajador
@@ -162,7 +153,7 @@ public interface EjbAdministracionEncuestas {
      * @param materia
      * @return en caso de no ser encontrado regresa null
      */
-    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesResultadosPromedioMateria(Evaluaciones evaluacion, Integer evaluado, String materia);
+    public List<EvaluacionDocentesMateriaResultados> getEvaluacionDocentesResultadosPromedioMateria(EvaluacionDocentesMaterias evaluacion, Integer evaluado, String materia);
 
     /**
      * obtiene la lista del personal docente que se encuentre adscrito a el area seleccionada

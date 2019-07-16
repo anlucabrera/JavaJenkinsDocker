@@ -203,22 +203,15 @@ public class ControladorIncidenciasPersonal implements Serializable {
                                 return;
                             }
                             break;
-                    }
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia()"+utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getDayOfMonth());
-                    if (utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getDayOfMonth() <= 15) {
-                        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia(verdadero)");
+                    }if (utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getDayOfMonth() <= 15) {
                         fechaI = LocalDate.of(utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getYear(), utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getMonthValue(), 01);
                         fechaF = LocalDate.of(utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getYear(), utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getMonthValue(), 15);
                     } else {
-                        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia(Falso)");
                         fechaI = LocalDate.of(utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getYear(), utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getMonthValue(), 16);
                         fechaF = LocalDate.of(utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getYear(), utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getMonthValue(), LocalDate.of(utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getYear(), utilidadesCH.castearDaLD(nuevOBJIncidencias.getFecha()).getMonthValue(), 01).lengthOfMonth());
                     }
-                    
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia(fechaI)"+fechaI);
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasPersonal.crearIncidencia(fechaF)"+fechaF);
-                    
-                    if(ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF)).size()==2){
+
+                    if (ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF)).stream().filter(t -> t.getClavePersonal().equals(nuevOBJIncidencias.getClavePersonal())).count() == 2) {
                         Messages.addGlobalWarn("¡Solo puede registrar 2 incidencias por quincena y ya las ha registrado!");
                         return;
                     }

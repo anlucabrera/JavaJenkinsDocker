@@ -29,8 +29,8 @@ import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionTutor;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacionTutor;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesTutoresResultadosPK;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionesTutores;
@@ -60,11 +60,11 @@ public class EvaluacionTutor implements Serializable {
 
     @Getter private List<Apartado> apartados;
 //    @Getter private List<Alumno> listaEvaluadores;
-    @Getter private List<EvaluacionesTutoresResultados> listaEvaluados;
-    @Getter private List<EvaluacionesTutoresResultados> listaEvaluando;
+    @Getter private List<EvaluacionTutoresResultados> listaEvaluados;
+    @Getter private List<EvaluacionTutoresResultados> listaEvaluando;
     @Getter private List<SelectItem> respuestasPosibles;
-    @Getter private List<EvaluacionesTutoresResultados> listaEvaluado;
-    @Getter private final Map<Integer, List<EvaluacionesTutoresResultados>> opciones = new HashMap<>();
+    @Getter private List<EvaluacionTutoresResultados> listaEvaluado;
+    @Getter private final Map<Integer, List<EvaluacionTutoresResultados>> opciones = new HashMap<>();
 
     @Getter @Setter Map<Integer, Map<Float, Object>> respuestas = new HashMap<>();
     @Getter @Setter List<Integer> clavesOpciones = new ArrayList<>();
@@ -98,7 +98,7 @@ public class EvaluacionTutor implements Serializable {
                 //paso8 inicializar claves de opciones
                 clavesOpciones.clear();
                 for (int i = 0; (i < maxEvaluando && i < listaEvaluados.size()); i++) {
-                    clavesOpciones.add(listaEvaluados.get(i).getEvaluacionesTutoresResultadosPK().getEvaluado());
+                    clavesOpciones.add(listaEvaluados.get(i).getEvaluacionTutoresResultadosPK().getEvaluado());
                 }
 
                 //paso 9 inicializar opciones
@@ -114,7 +114,7 @@ public class EvaluacionTutor implements Serializable {
                 cargada = true;
                 
                 boolean res = true;
-                for(EvaluacionesTutoresResultados etr: listaEvaluados){
+                for(EvaluacionTutoresResultados etr: listaEvaluados){
 //                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.init() comprobando: " + etr);
                     res = res && completo(etr);
                 }
@@ -132,13 +132,13 @@ public class EvaluacionTutor implements Serializable {
         for (Integer clave : clavesOpciones) {
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.initOpciones() clave: " + clave);
             opciones.put(index, new ArrayList<>());
-            facade.setEntityClass(EvaluacionesTutoresResultados.class);
-            EvaluacionesTutoresResultados lpPrimero = (EvaluacionesTutoresResultados) facade.find(new EvaluacionesTutoresResultadosPK(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), clave));
+            facade.setEntityClass(EvaluacionTutoresResultados.class);
+            EvaluacionTutoresResultados lpPrimero = (EvaluacionTutoresResultados) facade.find(new EvaluacionTutoresResultadosPK(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), clave));
             opciones.get(index).add(lpPrimero);
             //opcionesSelect.get(index).add(e)
-            for (EvaluacionesTutoresResultados lp : listaEvaluados) {
+            for (EvaluacionTutoresResultados lp : listaEvaluados) {
 //                System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.initOpciones() res: " + (!clavesOpciones.contains(lp.getPk().getEvaluado()) || clave.equals(lp.getPk().getEvaluado())) + ", lp: " + lp);
-                if ((!clavesOpciones.contains(lp.getEvaluacionesTutoresResultadosPK().getEvaluado()) || clave.equals(lp.getEvaluacionesTutoresResultadosPK().getEvaluado())) && !opciones.get(index).contains(lp)) {
+                if ((!clavesOpciones.contains(lp.getEvaluacionTutoresResultadosPK().getEvaluado()) || clave.equals(lp.getEvaluacionTutoresResultadosPK().getEvaluado())) && !opciones.get(index).contains(lp)) {
                     opciones.get(index).add(lp);
                 }
             }
@@ -150,14 +150,14 @@ public class EvaluacionTutor implements Serializable {
     private void initRespuestas() {
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.initRespuestas() listaevaluados: " + listaEvaluados);
         listaEvaluados.stream().map((subordinado) -> {
-            respuestas.put(subordinado.getEvaluacionesTutoresResultadosPK().getEvaluado(), new HashMap<>());
+            respuestas.put(subordinado.getEvaluacionTutoresResultadosPK().getEvaluado(), new HashMap<>());
             return subordinado;
         }).forEachOrdered((subordinado) -> {
-            Integer index = evaluacion.getEvaluacionesTutoresResultadosList().indexOf(new EvaluacionesTutoresResultados(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), subordinado.getEvaluacionesTutoresResultadosPK().getEvaluado()));
-            EvaluacionesTutoresResultados resultado = evaluacion.getEvaluacionesTutoresResultadosList().get(index);
+            Integer index = evaluacion.getEvaluacionTutoresResultadosList().indexOf(new EvaluacionTutoresResultados(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), subordinado.getEvaluacionTutoresResultadosPK().getEvaluado()));
+            EvaluacionTutoresResultados resultado = evaluacion.getEvaluacionTutoresResultadosList().get(index);
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.initRespuestas(10) resultado: " + resultado);
             for (float fi = 1.0f; fi <= 21.0f; fi++) {
-                respuestas.get(subordinado.getEvaluacionesTutoresResultadosPK().getEvaluado()).put(fi, ejbEvaluacionTutor.obtenerRespuestaPorPregunta(resultado, fi));
+                respuestas.get(subordinado.getEvaluacionTutoresResultadosPK().getEvaluado()).put(fi, ejbEvaluacionTutor.obtenerRespuestaPorPregunta(resultado, fi));
             }
         });
     }
@@ -169,7 +169,7 @@ public class EvaluacionTutor implements Serializable {
         clavesOpciones.stream().map((clave) -> {
             return clave;
         }).forEachOrdered((clave) -> {
-            EvaluacionesTutoresResultados lpde = new EvaluacionesTutoresResultados(new EvaluacionesTutoresResultadosPK(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), clave));
+            EvaluacionTutoresResultados lpde = new EvaluacionTutoresResultados(new EvaluacionTutoresResultadosPK(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), clave));
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.initPersonalEvaluando() lpde: " + lpde);
             Integer index = listaEvaluado.indexOf(lpde);
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.initPersonalEvaluando() index: " + index);
@@ -196,14 +196,14 @@ public class EvaluacionTutor implements Serializable {
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.guardarRespuesta(" + pregunta_id + ") evaluado: " + clave + ", respuesta: " + e.getNewValue() );
 
         //1 detectar si ya se tiene la respuesta, de lo contrario generarla
-        EvaluacionesTutoresResultados resultado = new EvaluacionesTutoresResultados(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), clave);
-        if (evaluacion.getEvaluacionesTutoresResultadosList().contains(resultado)) {
-            int index = evaluacion.getEvaluacionesTutoresResultadosList().indexOf(resultado);
-            resultado = evaluacion.getEvaluacionesTutoresResultadosList().get(index);
+        EvaluacionTutoresResultados resultado = new EvaluacionTutoresResultados(evaluacion.getEvaluacion(), Integer.parseInt(evaluador.getPk().getMatricula()), clave);
+        if (evaluacion.getEvaluacionTutoresResultadosList().contains(resultado)) {
+            int index = evaluacion.getEvaluacionTutoresResultadosList().indexOf(resultado);
+            resultado = evaluacion.getEvaluacionTutoresResultadosList().get(index);
             ejbEvaluacionTutor.actualizarRespuestaPorPregunta(resultado, pregunta_id, e.getNewValue().toString());
         } else {
             ejbEvaluacionTutor.actualizarRespuestaPorPregunta(resultado, pregunta_id, e.getNewValue().toString());
-            evaluacion.getEvaluacionesTutoresResultadosList().add(resultado);
+            evaluacion.getEvaluacionTutoresResultadosList().add(resultado);
         }
         facade.setEntityClass(resultado.getClass());
         facade.edit(resultado);
@@ -236,11 +236,11 @@ public class EvaluacionTutor implements Serializable {
 
         clavesOpciones.clear();
         int total = 0;
-        Comparador<EvaluacionesTutoresResultados> comparador = new ComparadorEvaluacionTutor();
-        for (EvaluacionesTutoresResultados lpde : listaEvaluado.stream().filter(personal -> comparador.isCompleto(personal)).collect(Collectors.toList())) {
+        Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
+        for (EvaluacionTutoresResultados lpde : listaEvaluado.stream().filter(personal -> comparador.isCompleto(personal)).collect(Collectors.toList())) {
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando() incompleto: " + lpde);
             if (total < 4) {
-                clavesOpciones.add(lpde.getEvaluacionesTutoresResultadosPK().getEvaluado());
+                clavesOpciones.add(lpde.getEvaluacionTutoresResultadosPK().getEvaluado());
                 total++;
             } else {
                 break;
@@ -248,10 +248,10 @@ public class EvaluacionTutor implements Serializable {
         }
 
         if (clavesOpciones.size() < 4) {
-            for (EvaluacionesTutoresResultados lpde : listaEvaluado.stream().filter(personal -> comparador.isCompleto(personal)).collect(Collectors.toList())) {
+            for (EvaluacionTutoresResultados lpde : listaEvaluado.stream().filter(personal -> comparador.isCompleto(personal)).collect(Collectors.toList())) {
 //                System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.continuarEvaluando() completo: " + lpde);
                 if (total < 4) {
-                    clavesOpciones.add(lpde.getEvaluacionesTutoresResultadosPK().getEvaluado());
+                    clavesOpciones.add(lpde.getEvaluacionTutoresResultadosPK().getEvaluado());
                     total++;
                 } else {
                     break;
@@ -272,9 +272,9 @@ public class EvaluacionTutor implements Serializable {
         return id;
     }
     
-    public Boolean completo(EvaluacionesTutoresResultados resultado){
+    public Boolean completo(EvaluacionTutoresResultados resultado){
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor.completo() resultado: " + resultado);
-        Comparador<EvaluacionesTutoresResultados> cet = new ComparadorEvaluacionTutor();
+        Comparador<EvaluacionTutoresResultados> cet = new ComparadorEvaluacionTutor();
         return cet.isCompleto(resultado);
     }
 }

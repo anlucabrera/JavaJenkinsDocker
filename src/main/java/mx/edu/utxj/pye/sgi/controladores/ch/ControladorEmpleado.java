@@ -129,6 +129,15 @@ public class ControladorEmpleado implements Serializable {
             if (nuevoOBJListaPersonal == null) {
                 Messages.addGlobalFatal("Sin datos para la clave " + empleadoLogeado);
             }
+            
+            switch (nuevoOBJListaPersonal.getClave()) {
+                case 97:
+                    nuevoOBJListaPersonal.setAreaOperativa(Short.parseShort("21"));
+                    break;
+                case 343:
+                    nuevoOBJListaPersonal.setAreaOperativa(Short.parseShort("19"));
+                    break;
+            }
 
             fechasModulos();
 

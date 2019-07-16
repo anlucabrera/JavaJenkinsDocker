@@ -68,7 +68,7 @@ public class CuerposAcademicosRegistro implements Serializable {
     private Date fechaTermino;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 500)
+    @Size(min = 1, max = 1000)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)

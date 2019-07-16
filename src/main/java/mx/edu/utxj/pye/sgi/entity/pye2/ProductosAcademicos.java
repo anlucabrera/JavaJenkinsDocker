@@ -73,12 +73,12 @@ public class ProductosAcademicos implements Serializable {
     private String tipo;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 500)
+    @Size(min = 1, max = 2000)
     @Column(name = "nombre_prod")
     private String nombreProd;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 500)
+    @Size(min = 1, max = 2000)
     @Column(name = "eventrev_presentacion")
     private String eventrevPresentacion;
     @Basic(optional = false)
@@ -93,12 +93,12 @@ public class ProductosAcademicos implements Serializable {
     private Date fechaFin;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 500)
+    @Size(min = 1, max = 2000)
     @Column(name = "lugar")
     private String lugar;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 1000)
+    @Size(min = 1, max = 5000)
     @Column(name = "descripcion")
     private String descripcion;
     @Basic(optional = false)

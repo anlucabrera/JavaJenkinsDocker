@@ -107,7 +107,7 @@ private Image imagen;
             Paragraph footer1 = new Paragraph(EJEr, myBoldFont);
             ColumnText.showTextAligned(directContent, Element.ALIGN_LEFT,
                     footer1, 15, 25, 0);
-            Paragraph footer2 = new Paragraph("http://siip.utxj.edu.mx/siip/", myBoldFont);
+            Paragraph footer2 = new Paragraph("http://siip.utxicotepec.edu.mx/siip/", myBoldFont);
             ColumnText.showTextAligned(directContent, Element.ALIGN_LEFT,
                     footer2, 15, 15, 0);
         } catch (Exception doc) {

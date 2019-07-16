@@ -89,10 +89,10 @@ public class ControladorEgresados implements Serializable{
     public void guardaEgresados() {
         if (dto.getListaActividadEgresado() != null) {
             try {
-                ejb.guardaActividadEgresadoGeneracion(dto.getListaActividadEgresado(), dto.getRegTipoActividadEgresado(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
+//                ejb.guardaActividadEgresadoGeneracion(dto.getListaActividadEgresado(), dto.getRegTipoActividadEgresado(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
                 ejb.guardaActividadEcnomicaEgresadoG(dto.getListaActividadEconomicaEgresado(), dto.getRegTipoActividadEconomicaEgresado(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
-                ejb.guardaNivelOcupacionEgresadoG(dto.getListaNivelOcupacionEgresado(), dto.getRegTipoNivelOcupacionEgresado(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
-                ejb.guardaNivelIngresoEgresadoG(dto.getListaNivelIngresoEgresado(), dto.getRegTipoNivelIngresoEgresado(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
+//                ejb.guardaNivelOcupacionEgresadoG(dto.getListaNivelOcupacionEgresado(), dto.getRegTipoNivelOcupacionEgresado(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
+//                ejb.guardaNivelIngresoEgresadoG(dto.getListaNivelIngresoEgresado(), dto.getRegTipoNivelIngresoEgresado(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
             } catch (Throwable ex) {
                 Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
                 Logger.getLogger(ControladorEgresados.class.getName()).log(Level.SEVERE, null, ex);

@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ejb.Local;
 import javax.faces.model.SelectItem;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -16,10 +17,22 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionDocenteMateriaPye;
 
 /**
  *
- * @author Carlos Alfredo Vargas Galindo
+ * @author Carlos Alfredo Vargas Galindo edit-->Tatisz xP
  */
 @Local
 public interface EJBEvaluacionDocenteMateria {
+
+    /**
+     * Obtiene la evaluacion a docente activa
+     * @return
+     */
+    public ResultadoEJB<Evaluaciones> getEvDocenteActiva();
+
+    /**
+     * Obtiene la ultima evalaucion a Docente Materia activa
+     * @return Resultado del Proceso
+     */
+    public ResultadoEJB<Evaluaciones> getUltimaEvDocenteActiva();
 
     /**
      * obtiene el periodo de la evaluacion activa
@@ -28,6 +41,15 @@ public interface EJBEvaluacionDocenteMateria {
      * @return
      */
     public PeriodosEscolares getPeriodo(Evaluaciones evaluacion);
+
+    /**
+     * Obtiene el Periodo de la Evalaución
+     * @param evaluacion evaluación a buscar
+     * @return Resultado del Proceso
+     */
+    public ResultadoEJB<PeriodosEscolares>getPeriodoEvaluacion(Evaluaciones evaluacion);
+
+
 
     /**
      * obtiene las posibles respuestas
@@ -51,6 +73,13 @@ public interface EJBEvaluacionDocenteMateria {
      * @return
      */
     public List<VistaEvaluacionDocenteMateriaPye> getDocenteMAteria(String matricula, Integer periodo);
+
+    /**
+     * Obtiene la lista de materias que tiene el estudiante por su matricula
+     * @param matricula matricula del estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<VistaEvaluacionDocenteMateriaPye>> getDocenteMateriabyMatricula(String matricula);
 
     /**
      * Obtiene los datos del docente que sera evaluado
@@ -127,6 +156,7 @@ public interface EJBEvaluacionDocenteMateria {
 
     public List<EvaluacionDocentesMateriaResultados> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones evaluaciones, Integer matricula);
 
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> getListResultadosDocenteMateriabyMatricula(Evaluaciones evaluacion, int matricula);
     /**
      *Comprueba si el resultado de la evaluacion es satisfactoria
      * @param resultado

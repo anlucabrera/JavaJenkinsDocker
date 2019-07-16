@@ -57,7 +57,7 @@ public class CuerpacadLineasBitacora implements Serializable {
     private int registro;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 200)
+    @Size(min = 1, max = 1000)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
