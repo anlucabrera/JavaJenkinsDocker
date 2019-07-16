@@ -15,12 +15,17 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionTutorRolDirector;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoListadoTutores;
+import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.AlertaTipo;
+import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -35,6 +40,7 @@ public class EjbAsignacionTutores {
     @EJB EjbAsignacionAcademica ejbAsignacionAcademica;
     @EJB EjbPropiedades ep;
     @EJB Facade f;
+    @EJB EjbEventoEscolar ejbEventoEscolar;
     
     /**
      * Permite validar si el usuario autenticado es director de área académica
@@ -46,6 +52,19 @@ public class EjbAsignacionTutores {
             return ejbAsignacionAcademica.validarDirector(clave);
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbAsignacionTutores.validarDirector)", e, null);
+        }
+    }
+    
+    /**
+     * Permite verificar si hay un periodo abierto para asignación de tutores
+     * @param director Director que va a realizar la asignación de tutores, permite funcionar como filtro en caso se un permiso especifico a su area o a su clave
+     * @return Evento escolar detectado o null de lo contrario
+     */
+    public ResultadoEJB<EventoEscolar> verificarEvento(PersonalActivo director){
+        try{
+            return ejbEventoEscolar.verificarEventoEnCascada(EventoEscolarTipo.ASIGNACION_TUTORES, director);
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para asignación de tutores por parte del director (EjbAsignacionTutores.).", e, EventoEscolar.class);
         }
     }
     
@@ -157,6 +176,31 @@ public class EjbAsignacionTutores {
             return ResultadoEJB.crearCorrecto(grupos, "Lista de grupos por docente.");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista grupos por docente (EjbAsignacionTutores)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<DtoAlerta>> identificarMensajes(AsignacionTutorRolDirector rol){
+        try {
+            if (!rol.getGruposTutores().isEmpty()) {
+                final List<DtoAlerta> mensajes = new ArrayList<>();
+                rol.getGruposTutores().stream().forEach((t) -> {
+                    if (t.getTutor() == null) {
+                        mensajes.add(new DtoAlerta(String.format("El %s aún no tiene a un tutor asignado, se recomienda realizar el correspondiente registro.", t.getGrupo().getGrado() + "° " + t.getGrupo().getLiteral()), AlertaTipo.SUGERENCIA));
+                    }
+                    f.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.periodo = :periodo AND g.idGrupo <> :idGrupo AND g.tutor = :tutor", Grupo.class)
+                            .setParameter("periodo", t.getGrupo().getPeriodo())
+                            .setParameter("idGrupo", t.getGrupo().getIdGrupo())
+                            .setParameter("tutor", t.getGrupo().getTutor())
+                            .getResultList().forEach((grupoParametro) -> {
+                                mensajes.add(new DtoAlerta(String.format("El docente %s con número de trabajador %s tiene asignado de igual manera al grupo %s del programa educativo %s como grupo tutorado, se recomienda verificar que la información sea correcta.", t.getTutor().getPersonal().getNombre(), t.getTutor().getPersonal().getClave(), grupoParametro.getGrado() + "° " + grupoParametro.getLiteral(), (f.getEntityManager().find(AreasUniversidad.class, grupoParametro.getIdPe()).getNombre())), AlertaTipo.SUGERENCIA));
+                            });
+                });
+                return ResultadoEJB.crearCorrecto(mensajes, "Lista de mensajes");
+            } else {
+                return ResultadoEJB.crearCorrecto(Collections.EMPTY_LIST, "Sin mensajes");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudieron identificar mensajes de asignación (EjbAsignacionTutores.identificarMensajes)", e, null);
         }
     }
 }
