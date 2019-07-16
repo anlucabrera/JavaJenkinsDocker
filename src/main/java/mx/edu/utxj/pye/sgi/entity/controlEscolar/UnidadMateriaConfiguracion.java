@@ -5,27 +5,13 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -39,7 +25,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "UnidadMateriaConfiguracion.findByConfiguracion", query = "SELECT u FROM UnidadMateriaConfiguracion u WHERE u.configuracion = :configuracion")
     , @NamedQuery(name = "UnidadMateriaConfiguracion.findByFechaInicio", query = "SELECT u FROM UnidadMateriaConfiguracion u WHERE u.fechaInicio = :fechaInicio")
     , @NamedQuery(name = "UnidadMateriaConfiguracion.findByFechaFin", query = "SELECT u FROM UnidadMateriaConfiguracion u WHERE u.fechaFin = :fechaFin")
-    , @NamedQuery(name = "UnidadMateriaConfiguracion.findByDirector", query = "SELECT u FROM UnidadMateriaConfiguracion u WHERE u.director = :director")})
+    , @NamedQuery(name = "UnidadMateriaConfiguracion.findByDirector", query = "SELECT u FROM UnidadMateriaConfiguracion u WHERE u.director = :director")
+    , @NamedQuery(name = "UnidadMateriaConfiguracion.findByPorcentaje", query = "SELECT u FROM UnidadMateriaConfiguracion u WHERE u.porcentaje = :porcentaje")})
 public class UnidadMateriaConfiguracion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -60,6 +47,10 @@ public class UnidadMateriaConfiguracion implements Serializable {
     private Date fechaFin;
     @Column(name = "director")
     private Integer director;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "porcentaje")
+    private double porcentaje;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
     private List<UnidadMateriaConfiguracionCriterio> unidadMateriaConfiguracionCriterioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion")
@@ -78,10 +69,11 @@ public class UnidadMateriaConfiguracion implements Serializable {
         this.configuracion = configuracion;
     }
 
-    public UnidadMateriaConfiguracion(Integer configuracion, Date fechaInicio, Date fechaFin) {
+    public UnidadMateriaConfiguracion(Integer configuracion, Date fechaInicio, Date fechaFin, double porcentaje) {
         this.configuracion = configuracion;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
+        this.porcentaje = porcentaje;
     }
 
     public Integer getConfiguracion() {
@@ -114,6 +106,14 @@ public class UnidadMateriaConfiguracion implements Serializable {
 
     public void setDirector(Integer director) {
         this.director = director;
+    }
+
+    public double getPorcentaje() {
+        return porcentaje;
+    }
+
+    public void setPorcentaje(double porcentaje) {
+        this.porcentaje = porcentaje;
     }
 
     @XmlTransient

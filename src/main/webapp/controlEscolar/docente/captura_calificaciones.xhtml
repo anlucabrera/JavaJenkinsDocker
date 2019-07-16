@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Captura de calificaciones
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Captura de calificaciones"/>
+
+        <div class="contenedor">
+            <c:if test="#{capturaCalificacionesDocente.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(capturaCalificacionesDocente.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <p:remoteCommand id="cmdActualizarmaterias" name="actualizar" actionListener="#{capturaCalificacionesDocente.actualizar}" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs)" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{capturaCalificacionesDocente.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{capturaCalificacionesDocente.rol.periodosConCarga}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this" update="@this carga configuracion" oncomplete="actualizar();" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="carga" value="#{capturaCalificacionesDocente.rol.cargaAcademicaSeleccionada}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{capturaCalificacionesDocente.rol.cargasDocente}" var="carga" itemValue="#{carga}" itemLabel="#{caster.dtoCargaAcademicaToString(carga)}" />
+                                                    <p:ajax process="@this" update="@this configuracion" oncomplete="actualizar();" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Carga acadécmica" for="carga"/>
+                                                <p:message for="carga" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="configuracion" value="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguracionSeleccionada}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguraciones}" var="configuracion" itemValue="#{configuracion}" itemLabel="#{caster.dtoUnidadConfiguracionToString(configuracion)}" />
+                                                    <p:ajax process="@this" update="@this" oncomplete="actualizar();" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Unidad" for="configuracion"/>
+                                                <p:message for="configuracion" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info text-center">
+                                            <p:dataTable var="estudiante" rendered="true"
+                                                         emptyMessage="Sin registros."
+                                                         value="#{capturaCalificacionesDocente.rol.estudiantesPorGrupo.estudiantes}"
+                                                         id="tbl" rowIndexVar="rowIndex"
+                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                         tableStyle="vertical-align: middle;">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column rowspan="2" headerText="Matrícula"/>
+                                                        <p:column rowspan="2" headerText="Nombre"/>
+                                                        <p:column colspan="2" headerText="Saber Hacer"/>
+                                                        <p:column colspan="2" headerText="Saber"/>
+                                                        <p:column colspan="2" headerText="Ser"/>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column headerText="1"/>
+                                                        <p:column headerText="2"/>
+                                                        <p:column headerText="1"/>
+                                                        <p:column headerText="2"/>
+                                                        <p:column headerText="1"/>
+                                                        <p:column headerText="2"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column><h:outputText value="#{estudiante.dtoEstudiante.inscripcionActiva.inscripcion.matricula}" /></p:column>
+                                                <p:column><h:outputText value="#{estudiante.dtoEstudiante.persona.apellidoPaterno} #{estudiante.dtoEstudiante.persona.apellidoMaterno} #{estudiante.dtoEstudiante.persona.nombre}"/></p:column>
+                                                <p:column>a</p:column>
+                                                <p:column>b</p:column>
+                                                <p:column>a</p:column>
+                                                <p:column>b</p:column>
+                                                <p:column>a</p:column>
+                                                <p:column>b</p:column>
+                                            </p:dataTable>
+
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                             styleClass="panel panel-primary" width="500"
+                                                             closable="false" closeOnEscape="true">
+                                                <p:commandButton value="Si" type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                                 icon="ui-icon-check"/>
+                                                <p:commandButton value="No" type="button"
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary"
+                                                                 icon="ui-icon-close"/>
+                                            </p:confirmDialog>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty capturaCalificacionesDocente.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{capturaCalificacionesDocente.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para una asignación académica</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{capturaCalificacionesDocente.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!capturaCalificacionesDocente.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a docentes con cargas académicas."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>

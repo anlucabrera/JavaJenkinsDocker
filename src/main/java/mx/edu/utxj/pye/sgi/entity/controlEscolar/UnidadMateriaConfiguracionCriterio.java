@@ -5,18 +5,10 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
  *
@@ -39,12 +31,12 @@ public class UnidadMateriaConfiguracionCriterio implements Serializable {
     @NotNull
     @Column(name = "porcentaje")
     private double porcentaje;
-    @JoinColumn(name = "criterio", referencedColumnName = "criterio", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private Criterio criterio1;
     @JoinColumn(name = "configuracion", referencedColumnName = "configuracion", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UnidadMateriaConfiguracion unidadMateriaConfiguracion;
+    @JoinColumn(name = "criterio", referencedColumnName = "criterio", insertable = false, updatable = false)
+    @ManyToOne(optional = false)
+    private Criterio criterio1;
 
     public UnidadMateriaConfiguracionCriterio() {
     }
@@ -78,20 +70,20 @@ public class UnidadMateriaConfiguracionCriterio implements Serializable {
         this.porcentaje = porcentaje;
     }
 
-    public Criterio getCriterio1() {
-        return criterio1;
-    }
-
-    public void setCriterio1(Criterio criterio1) {
-        this.criterio1 = criterio1;
-    }
-
     public UnidadMateriaConfiguracion getUnidadMateriaConfiguracion() {
         return unidadMateriaConfiguracion;
     }
 
     public void setUnidadMateriaConfiguracion(UnidadMateriaConfiguracion unidadMateriaConfiguracion) {
         this.unidadMateriaConfiguracion = unidadMateriaConfiguracion;
+    }
+
+    public Criterio getCriterio1() {
+        return criterio1;
+    }
+
+    public void setCriterio1(Criterio criterio1) {
+        this.criterio1 = criterio1;
     }
 
     @Override

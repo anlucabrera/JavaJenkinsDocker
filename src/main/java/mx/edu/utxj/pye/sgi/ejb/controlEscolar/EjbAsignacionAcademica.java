@@ -44,7 +44,7 @@ public class EjbAsignacionAcademica {
     }
 
     /**
-     * Permite validar si el usuario autenticado es un director de área académica
+     * Permite crear el filtro para validar si el usuario autenticado es un director de área académica
      * @param clave Número de nómina del usuario autenticado
      * @return Resultado del proceso
      */
@@ -55,9 +55,27 @@ public class EjbAsignacionAcademica {
             filtro.setEntity(p);
             filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
             filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorCategoriaOperativa").orElse(18)));
-            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como un director.");
+            return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un director.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbAsignacionAcademica.validarDirector)", e, null);
+        }
+    }
+
+    /**
+     * Permite crear el filtro para validar si el usuario autenticado es un encarcado de dirección de área académica
+     * @param clave Número de nómina del usuario autenticado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDireccion(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorEncargadoCategoriaOperativa").orElse(48)));
+            return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un encargado de dirección.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbAsignacionAcademica.validarDirector)", e, null);
         }
     }
 
@@ -292,7 +310,7 @@ public class EjbAsignacionAcademica {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicaPorDocente(PersonalActivo docente, PeriodosEscolares periodo){
-        System.out.println("docente = [" + docente + "], periodo = [" + periodo + "]");
+//        System.out.println("docente = [" + docente + "], periodo = [" + periodo + "]");
         try{
             //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
             List<DtoCargaAcademica> cargas = em.createQuery("select c from CargaAcademica c inner join c.cveGrupo g inner join c.idPlanMateria pem inner join pem.idMateria mat inner join pem.idPlan plan where c.docente=:docente and g.periodo=:periodo order by g.idPe, g.grado, g.literal, mat.nombre", CargaAcademica.class)
@@ -484,7 +502,7 @@ public class EjbAsignacionAcademica {
                 final List<DtoAlerta> mensajes = new ArrayList<>();
 
                 ResultadoEJB<List<DtoMateria>> resMaterias = getMaterias(rol.getPrograma(), rol.getGrupo(), rol.getPeriodo(), rol.getPeriodoActivo());
-                System.out.println("resMaterias = " + resMaterias);
+//                System.out.println("resMaterias = " + resMaterias);
                 if(resMaterias.getCorrecto()){
                     List<PersonalActivo> docentes = resMaterias.getValor().stream()
                             .filter(dtoMateria -> dtoMateria.getDtoCargaAcademica() != null)
@@ -494,17 +512,17 @@ public class EjbAsignacionAcademica {
                             .collect(Collectors.toList());
 
                     docentes.forEach(docente -> {
-                        System.out.println("docente = " + docente.getPersonal().getNombre());
+//                        System.out.println("docente = " + docente.getPersonal().getNombre());
                         ResultadoEJB<List<DtoCargaAcademica>> resCargaAcademicaPorDocente = getCargaAcademicaPorDocente(docente, rol.getPeriodo());
-                        System.out.println("resCargaAcademicaPorDocente = " + resCargaAcademicaPorDocente);
+//                        System.out.println("resCargaAcademicaPorDocente = " + resCargaAcademicaPorDocente);
                         ResultadoEJB<Integer> resTotalHorasFrenteAGrupo = getTotalHorasFrenteAGrupo(resCargaAcademicaPorDocente.getCorrecto()?resCargaAcademicaPorDocente.getValor():Collections.EMPTY_LIST);
-                        System.out.println("resTotalHorasFrenteAGrupo = " + resTotalHorasFrenteAGrupo);
+//                        System.out.println("resTotalHorasFrenteAGrupo = " + resTotalHorasFrenteAGrupo);
                         Integer totalHorasFrenteAGrupo = resTotalHorasFrenteAGrupo.getCorrecto()?resTotalHorasFrenteAGrupo.getValor():0;
                         if(docente.getPersonal().getCategoriaOficial().getCategoria().equals(asignacionPTCCategoriaOficial)){
-                            System.out.println("asignacionPTCCategoriaOficial = " + asignacionPTCCategoriaOficial);
+//                            System.out.println("asignacionPTCCategoriaOficial = " + asignacionPTCCategoriaOficial);
                             if(totalHorasFrenteAGrupo > asignacionPTCHorasClaseMaximo) mensajes.add(new DtoAlerta(String.format("El PTC %s tiene %s horas frente a grupo y el máximo permitido es %s horas.", docente.getPersonal().getNombre(), String.valueOf(totalHorasFrenteAGrupo), String.valueOf(asignacionPTCHorasClaseMaximo)), AlertaTipo.SUGERENCIA));
                         }else if(docente.getPersonal().getCategoriaOficial().getCategoria().equals(asignacionPACategoriaOficial)){
-                            System.out.println("asignacionPACategoriaOficial = " + asignacionPACategoriaOficial);
+//                            System.out.println("asignacionPACategoriaOficial = " + asignacionPACategoriaOficial);
                             if(totalHorasFrenteAGrupo > asignacionPAHorasClaseMaximo) mensajes.add(new DtoAlerta(String.format("El PA %s tiene %s horas frente a grupo y el máximo permitido es %s horas.", docente.getPersonal().getNombre(), String.valueOf(totalHorasFrenteAGrupo), String.valueOf(asignacionPAHorasClaseMaximo)), AlertaTipo.SUGERENCIA));
                         }
                         long count = rol.getMateriasPorGrupo().stream()

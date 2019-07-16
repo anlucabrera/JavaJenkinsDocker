@@ -78,7 +78,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public Inscripcion guardaEstudiante(Inscripcion estudiante, Documentosentregadosestudiante documentosentregadosestudiante, Boolean opcionIns) {
+    public Estudiante guardaEstudiante(Estudiante estudiante, Documentosentregadosestudiante documentosentregadosestudiante, Boolean opcionIns) {
         List<Grupo> grupos = new ArrayList<>();
         List<Grupo> gruposElegibles = new ArrayList<>();
         Grupo gps = new Grupo();
@@ -107,7 +107,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 }
                 grupos = listaGruposXPeriodoByCarrera((short)estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
                 grupos.forEach(g ->{
-                    if(g.getInscripcionList().size() != g.getCapMaxima()){
+                    if(g.getEstudianteList().size() != g.getCapMaxima()){
                         gruposElegibles.add(g);
                     }
                 });
@@ -115,7 +115,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 String anyo2 = new SimpleDateFormat("yy").format(new Date());
                 folio = anyo2.concat("0000");
                 
-                TypedQuery<Integer> v = (TypedQuery<Integer>) facadeCE.getEntityManager().createQuery("SELECT MAX(e.matricula) FROM Inscripcion e WHERE e.periodo = :idPeriodo")
+                TypedQuery<Integer> v = (TypedQuery<Integer>) facadeCE.getEntityManager().createQuery("SELECT MAX(e.matricula) FROM Estudiante e WHERE e.periodo = :idPeriodo")
                         .setParameter("idPeriodo", estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo());
                 
                 if(v.getSingleResult() == 0){
@@ -158,7 +158,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 grupos = listaGruposXPeriodoByCarrera((short)estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
                
                 grupos.forEach(g ->{
-                    if(g.getInscripcionList().size() != g.getCapMaxima()){
+                    if(g.getEstudianteList().size() != g.getCapMaxima()){
                         gruposElegibles.add(g);
                     }
                 });
@@ -198,15 +198,15 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public Inscripcion findByIdAspirante(Integer idAspirante) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Inscripcion e WHERE e.aspirante.idAspirante = :idAspirante", Inscripcion.class)
+    public Estudiante findByIdAspirante(Integer idAspirante) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante = :idAspirante", Estudiante.class)
                 .setParameter("idAspirante", idAspirante)
                 .getResultList().stream().findFirst().orElse(null);
                
     }
 
     @Override
-    public void generaComprobanteInscripcion(Inscripcion estudiante) {
+    public void generaComprobanteInscripcion(Estudiante estudiante) {
         try {
             String ruta = "C://archivos//plantillas//comprobanteInscripcion_nuevo.pdf";
             FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -292,7 +292,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public void generaCartaCompromiso(Inscripcion estudiante) {
+    public void generaCartaCompromiso(Estudiante estudiante) {
         try {
             String ruta = "C://archivos//plantillas//cartaCompromiso.pdf";
             FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -352,8 +352,8 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public List<Inscripcion> listaEstudiantesXPeriodo(Integer perido) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Inscripcion e WHERE e.periodo = :idPeriodo", Inscripcion.class)
+    public List<Estudiante> listaEstudiantesXPeriodo(Integer perido) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.periodo = :idPeriodo", Estudiante.class)
                 .setParameter("idPeriodo", perido)
                 .getResultList();
     }
@@ -377,8 +377,8 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public void actualizaEstudiante(Inscripcion estudiante) {
-        facadeCE.setEntityClass(Inscripcion.class);
+    public void actualizaEstudiante(Estudiante estudiante) {
+        facadeCE.setEntityClass(Estudiante.class);
         facadeCE.edit(estudiante);
         facadeCE.flush();
     }

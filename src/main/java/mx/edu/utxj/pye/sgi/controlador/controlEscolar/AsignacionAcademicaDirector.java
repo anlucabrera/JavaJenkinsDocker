@@ -61,22 +61,30 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
     public void init(){
         try{
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
-            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
+//            System.out.println("resAcceso = " + resAcceso);
 
-            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarDirector(logon.getPersonal().getClave());
-            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarEncargadoDireccion(logon.getPersonal().getClave());
+//            System.out.println("resValidacion = " + resValidacion);
+            if(!resValidacion.getCorrecto() && !resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return; }//cortar el flujo si no se pudo validar
 
-            Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
+            Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
             PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
             rol = new AsignacionAcademicaRolDirector(filtro, director, director.getAreaOficial());
             tieneAcceso = rol.tieneAcceso(director);
-            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+//            System.out.println("tieneAcceso1 = " + tieneAcceso);
+            if(!tieneAcceso){
+                rol.setFiltro(resValidacion.getValor());
+                tieneAcceso = rol.tieneAcceso(director);
+            }
+//            System.out.println("tieneAcceso2 = " + tieneAcceso);
+            if(!tieneAcceso){return;} //cortar el flujo si no tiene acceso
 
             rol.setDirector(director);
             ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDirector());
             if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
@@ -85,6 +93,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
             rol.setEventoActivo(resEvento.getValor());
 
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+//            System.out.println("resPeriodos = " + resPeriodos);
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
 

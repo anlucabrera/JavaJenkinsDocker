@@ -5,36 +5,36 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.enterprise.context.ApplicationScoped;
-
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.dto.finanzas.TramitesDto;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesCuatrimestrales;
-import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionOficios;
 import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
-import org.apache.commons.io.FilenameUtils;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
+import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.enums.ComisionOficioEstatus;
-import mx.edu.utxj.pye.sgi.enums.TramiteEstatus;
 import mx.edu.utxj.pye.sgi.enums.converter.ComisionOficioEstatusConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.apache.commons.io.FilenameUtils;
+
+import javax.ejb.EJB;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  *
@@ -200,5 +200,17 @@ public class Caster {
     
     public long getDocsTitulacionTamanioLimite() {
         return 5 * 1024 * 1024;
+    }
+
+    public String dtoCargaAcademicaToString(DtoCargaAcademica dtoCargaAcademica){
+        return DtoCargaAcademica.toLabel(dtoCargaAcademica);
+        /*return dtoCargaAcademica.getPrograma().getSiglas().concat(" - ")
+                .concat(String.valueOf(dtoCargaAcademica.getGrupo().getGrado())).concat(dtoCargaAcademica.getGrupo().getLiteral().toString()).concat(" - ")
+                .concat(dtoCargaAcademica.getMateria().getNombre());*/
+    }
+
+    public String dtoUnidadConfiguracionToString(DtoUnidadConfiguracion dtoUnidadConfiguracion){
+        return String.valueOf(dtoUnidadConfiguracion.getUnidadMateria().getNoUnidad()).concat(".  ")
+                .concat(dtoUnidadConfiguracion.getUnidadMateria().getNombre());
     }
 }

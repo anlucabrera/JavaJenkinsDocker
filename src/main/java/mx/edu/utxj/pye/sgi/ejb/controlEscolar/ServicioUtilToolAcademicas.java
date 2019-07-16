@@ -109,15 +109,15 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
     }
 
     @Override
-    public List<Inscripcion> getEstudianteXMatricula(String matricula) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Inscripcion e WHERE e.matricula LIKE CONCAT('%',:stringMatricula ,'%')", Inscripcion.class)
+    public List<Estudiante> getEstudianteXMatricula(String matricula) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula LIKE CONCAT('%',:stringMatricula ,'%')", Estudiante.class)
                 .setParameter("stringMatricula", matricula)
                 .getResultList();
     }
 
     @Override
-    public List<Inscripcion> getEstudianteXAP(String apellidoPaterno) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Inscripcion e WHERE e.aspirante.idPersona.apellidoPaterno LIKE CONCAT('%',:ap ,'%')", Inscripcion.class)
+    public List<Estudiante> getEstudianteXAP(String apellidoPaterno) {
+        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idPersona.apellidoPaterno LIKE CONCAT('%',:ap ,'%')", Estudiante.class)
                 .setParameter("ap", apellidoPaterno)
                 .getResultList();
     }

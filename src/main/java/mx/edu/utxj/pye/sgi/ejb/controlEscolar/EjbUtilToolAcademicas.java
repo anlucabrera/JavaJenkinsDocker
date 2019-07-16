@@ -5,8 +5,8 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Inscripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -28,8 +28,8 @@ public interface EjbUtilToolAcademicas {
     public List<Grupo> listaByPeriodo(Integer cve_periodo);
     public List<Grupo> listaByPeriodoCarrera(Short carrera, Integer periodo);
     public List<PlanEstudio> listarPlanesXCarrera(Short carrera);
-    public List<Inscripcion> getEstudianteXMatricula(String matricula);
-    public List<Inscripcion> getEstudianteXAP(String apellidoPaterno);
+    public List<Estudiante> getEstudianteXMatricula(String matricula);
+    public List<Estudiante> getEstudianteXAP(String apellidoPaterno);
     public AreasUniversidad buscaAreaByClave(Short area);
     
 }

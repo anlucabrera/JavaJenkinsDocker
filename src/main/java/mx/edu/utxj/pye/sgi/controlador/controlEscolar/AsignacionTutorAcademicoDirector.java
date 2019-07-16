@@ -5,35 +5,36 @@
  */
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import com.github.adminfaces.starter.infra.model.Filter;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import lombok.Getter;
+import lombok.Setter;
+import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
+import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionTutorRolDirector;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoListadoTutores;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionTutores;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.Operacion;
+import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Ajax;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import lombok.Getter;
-import lombok.Setter;
-import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionTutores;
-import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
-import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionTutorRolDirector;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoListadoTutores;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.enums.Operacion;
-import org.omnifaces.cdi.ViewScoped;
-import org.omnifaces.util.Ajax;
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.event.CellEditEvent;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -73,7 +74,7 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
             rol = new AsignacionTutorRolDirector(filtro, director, director.getAreaOficial());
             tieneAcceso = rol.tieneAcceso(director);
             
-            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            if(!tieneAcceso){/*mostrarMensajeNoAcceso();*/ return;} //cortar el flujo si no tiene acceso
             
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDesendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);

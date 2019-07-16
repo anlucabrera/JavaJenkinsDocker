@@ -240,7 +240,7 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignará el grupo correspondiente
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Inscripcion> asignarGrupo(Grupo grupo, Inscripcion estudiante){
+    public ResultadoEJB<Estudiante> asignarGrupo(Grupo grupo, Estudiante estudiante){
         /*try{
             if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no debe ser nulo.", Estudiante.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(3, "El estudiante no debe ser nulo.", Estudiante.class);
@@ -286,7 +286,7 @@ public class EjbReincorporacion {
      * @param materias Lista de materias que se asignarán
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificacion> asignarMateriasEstudiante(Inscripcion estudiante, List<Materia> materias){
+    public ResultadoEJB<Calificacion> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
         /*try{
             if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
             if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);
@@ -438,7 +438,7 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignarán las calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificacion> asignarCalificacionesSAIIUT(List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto, Inscripcion estudiante){
+    public ResultadoEJB<Calificacion> asignarCalificacionesSAIIUT(List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto, Estudiante estudiante){
         /*try{
             if(listaCalificacionesSaiiutDto.isEmpty()) return ResultadoEJB.crearErroneo(3, "La calificación no puede ser nulo.", Calificaciones.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(4, "El estudiante no puede ser nulo.", Calificaciones.class);
@@ -484,7 +484,7 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignarán las materias
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Materia>> getMateriasPorAsignar(PlanEstudio planEstudio, Inscripcion estudiante){
+    public ResultadoEJB<List<Materia>> getMateriasPorAsignar(PlanEstudio planEstudio, Estudiante estudiante){
         /*try{
             //TODO: buscar lista de materias activas previas al grado actual para asignar que pertenecen al plan de estudios seleccionado del estudiante
             List<Materia> materiasPorAsignar = f.getEntityManager().createQuery("SELECT m FROM Materia m WHERE m.idPlan.idPlanEstudio =:planEstudio AND m.grado < :grado AND m.estatus =:estatus", Materia.class)
@@ -506,7 +506,7 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante al que se le asignarán las calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Calificacion> asignarCalificacionesDirectas(Materia materia, Double calificacion, Inscripcion estudiante){
+    public ResultadoEJB<Calificacion> asignarCalificacionesDirectas(Materia materia, Double calificacion, Estudiante estudiante){
         /*try{
             if(materia == null) return ResultadoEJB.crearErroneo(3, "La materia no puede ser nula.", Calificaciones.class);
             if(calificacion == null) return ResultadoEJB.crearErroneo(4, "La calificación no puede ser nula.", Calificaciones.class);
@@ -545,7 +545,7 @@ public class EjbReincorporacion {
      * @param estudiante Estudiante del que se buscarán calificaciones
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Calificacion>> getCalificacionesPrevias(Inscripcion estudiante){
+    public ResultadoEJB<List<Calificacion>> getCalificacionesPrevias(Estudiante estudiante){
         /*try{
             //Identificar claves del alumno para posteriormente buscar las calificaciones
             List<Estudiante> clavesAlumno = f.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.matricula !=:claveActual", Estudiante.class)

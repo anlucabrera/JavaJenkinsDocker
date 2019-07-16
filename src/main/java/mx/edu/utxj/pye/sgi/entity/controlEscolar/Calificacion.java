@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -29,27 +28,21 @@ public class Calificacion implements Serializable {
     @Basic(optional = false)
     @Column(name = "calificacion")
     private Long calificacion;
-    @Basic(optional = false)
-    @NotNull
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "valor")
-    private double valor;
-    @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false)
-    private Inscripcion idEstudiante;
+    private Double valor;
     @JoinColumn(name = "configuracion_detalle", referencedColumnName = "configuracion_detalle")
     @ManyToOne(optional = false)
     private UnidadMateriaConfiguracionDetalle configuracionDetalle;
+    @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante")
+    @ManyToOne(optional = false)
+    private Estudiante idEstudiante;
 
     public Calificacion() {
     }
 
     public Calificacion(Long calificacion) {
         this.calificacion = calificacion;
-    }
-
-    public Calificacion(Long calificacion, double valor) {
-        this.calificacion = calificacion;
-        this.valor = valor;
     }
 
     public Long getCalificacion() {
@@ -60,20 +53,12 @@ public class Calificacion implements Serializable {
         this.calificacion = calificacion;
     }
 
-    public double getValor() {
+    public Double getValor() {
         return valor;
     }
 
-    public void setValor(double valor) {
+    public void setValor(Double valor) {
         this.valor = valor;
-    }
-
-    public Inscripcion getIdEstudiante() {
-        return idEstudiante;
-    }
-
-    public void setIdEstudiante(Inscripcion idEstudiante) {
-        this.idEstudiante = idEstudiante;
     }
 
     public UnidadMateriaConfiguracionDetalle getConfiguracionDetalle() {
@@ -82,6 +67,14 @@ public class Calificacion implements Serializable {
 
     public void setConfiguracionDetalle(UnidadMateriaConfiguracionDetalle configuracionDetalle) {
         this.configuracionDetalle = configuracionDetalle;
+    }
+
+    public Estudiante getIdEstudiante() {
+        return idEstudiante;
+    }
+
+    public void setIdEstudiante(Estudiante idEstudiante) {
+        this.idEstudiante = idEstudiante;
     }
 
     @Override
