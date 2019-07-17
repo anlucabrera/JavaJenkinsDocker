@@ -92,8 +92,8 @@ public final class DtoConvenios {
     public void setArchivos(List<Part> archivos) {
         this.archivos = archivos;
     }
-    
-     public void setListaEvidencias(List<EvidenciasDetalle> listaEvidencias) {
+     
+    public void setListaEvidencias(List<EvidenciasDetalle> listaEvidencias) {
         this.listaEvidencias = listaEvidencias;
         setTieneEvidencia(!listaEvidencias.isEmpty());
     }
