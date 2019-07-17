@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -80,6 +81,8 @@ public class AdminPoaEvaluacion implements Serializable {
     @Getter    @Setter    private Double totalPCuatrimestre=0D,totalACuatrimestre=0D,totalPCorte=0D,totalACorte=0D;
     @Getter    @Setter    private Double porcentajeCuatrimestre=0D,porcentejeAlCorte=0D;
     @Getter    @Setter    private String semaforoC="",semaforoG="",nombreArchivo="";  
+    
+    @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
     
     @Getter    @Setter    private Boolean archivoSC=false;
     @Getter    @Setter    private Part file;
@@ -241,129 +244,16 @@ public class AdminPoaEvaluacion implements Serializable {
                     totalPCuatrimestre = 0D + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre() + t.getNPDiciembre();
                     break;
             }
-            switch (mes) {
-                case 0:
-                    totalACorte = 0D + t.getNAEnero();
-                    totalPCorte = 0D + t.getNPEnero();
-                    break;
-                case 1:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero();
-                    break;
-                case 2:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo();
-                    break;
-                case 3:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril();
-                    break;
-                case 4:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo();
-                    break;
-                case 5:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio();
-                    break;
-                case 6:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio();
-                    break;
-                case 7:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto();
-                    break;
-                case 8:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre();
-                    break;
-                case 9:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre();
-                    break;
-                case 10:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre();
-                    break;
-                case 11:
-                    totalACorte = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril() + t.getNAMayo() + t.getNAJunio() + t.getNAJulio() + t.getNAAgosto() + t.getNASeptiembre() + t.getNAOctubre() + t.getNANoviembre() + t.getNADiciembre();
-                    totalPCorte = 0D + t.getNPEnero() + t.getNPFebrero() + t.getNPMarzo() + t.getNPAbril() + t.getNPMayo() + t.getNPJunio() + t.getNPJulio() + t.getNPAgosto() + t.getNPSeptiembre() + t.getNPOctubre() + t.getNPNoviembre() + t.getNPDiciembre();
-                    break;
-            }
+             totalACorte = pOAUtilidades.totalAlcanzado(t, mes);
+            totalPCorte = pOAUtilidades.totalProgramado(t, mes);
 
-            if (totalPCuatrimestre.equals(totalACuatrimestre)) {
-                porcentajeCuatrimestre = 100.0;
-            } else {
-                if (totalPCuatrimestre == 0D) {
+            porcentajeCuatrimestre = pOAUtilidades.obtenerTotalPorcejateGeneral(totalACuatrimestre, totalPCuatrimestre);
+            porcentejeAlCorte = pOAUtilidades.obtenerTotalPorcejateGeneral(totalACorte, totalPCorte);
+            porcentajeCuatrimestre = pOAUtilidades.obtenerTotalPorcejate(porcentajeCuatrimestre);
+            porcentejeAlCorte = pOAUtilidades.obtenerTotalPorcejate(porcentejeAlCorte);
+            semaforoC = pOAUtilidades.obtenerSemaforo(porcentajeCuatrimestre);
+            semaforoG = pOAUtilidades.obtenerSemaforo(porcentejeAlCorte);
 
-                    if (totalPCuatrimestre == 1D) {
-                        porcentajeCuatrimestre = 84.99;
-                    } else if (totalPCuatrimestre == 2D) {
-                        porcentajeCuatrimestre = 74.99;
-                    } else if (totalPCuatrimestre == 3D) {
-                        porcentajeCuatrimestre = 69.99;
-                    }
-                } else {
-
-                    porcentajeCuatrimestre = (totalACuatrimestre / totalPCuatrimestre) * 100;
-                }
-                if (porcentajeCuatrimestre >= 116 && porcentajeCuatrimestre <= 165) {
-                    porcentajeCuatrimestre = 89.99;
-                } else if (porcentajeCuatrimestre >= 166 && porcentajeCuatrimestre <= 215) {
-                    porcentajeCuatrimestre = 84.99;
-                } else if (porcentajeCuatrimestre >= 216 && porcentajeCuatrimestre <= 265) {
-                    porcentajeCuatrimestre = 79.99;
-                } else if (porcentajeCuatrimestre >= 266 && porcentajeCuatrimestre <= 315) {
-                    porcentajeCuatrimestre = 74.99;
-                } else if (porcentajeCuatrimestre >= 316) {
-                    porcentajeCuatrimestre = 69.99;
-                }
-            }
-            if (totalPCorte.equals(totalACorte)) {
-                porcentejeAlCorte = 100.0;
-            } else {
-                if (totalPCuatrimestre == 0D || totalPCuatrimestre == 0D) {
-
-                    if (totalACorte == 1D) {
-                        porcentejeAlCorte = 84.99;
-                    } else if (totalACorte == 2D) {
-                        porcentejeAlCorte = 74.99;
-                    } else if (totalACorte == 3D) {
-                        porcentejeAlCorte = 69.99;
-                    }
-
-                } else {
-
-                    porcentejeAlCorte = (totalPCorte / totalACorte) * 100;
-                }
-                if (porcentejeAlCorte >= 116 && porcentejeAlCorte <= 165) {
-                    porcentejeAlCorte = 89.99;
-                } else if (porcentejeAlCorte >= 166 && porcentejeAlCorte <= 215) {
-                    porcentejeAlCorte = 84.99;
-                } else if (porcentejeAlCorte >= 216 && porcentejeAlCorte <= 265) {
-                    porcentejeAlCorte = 79.99;
-                } else if (porcentejeAlCorte >= 266 && porcentejeAlCorte <= 315) {
-                    porcentejeAlCorte = 74.99;
-                } else if (porcentejeAlCorte >= 316) {
-                    porcentejeAlCorte = 69.99;
-                }
-            }
-            if (porcentajeCuatrimestre >= 0D && porcentajeCuatrimestre <= 89.99) {
-                semaforoC = "semaforoRojo";
-            } else if (porcentajeCuatrimestre >= 90D && porcentajeCuatrimestre <= 94.99) {
-                semaforoC = "semaforoAmarillo";
-            } else if (porcentajeCuatrimestre >= 95D && porcentajeCuatrimestre <= 115.99) {
-                semaforoC = "semaforoVerde";
-            }
-
-            if (porcentejeAlCorte >= 0D && porcentejeAlCorte <= 89.99) {
-                semaforoG = "semaforoRojo";
-            } else if (porcentejeAlCorte >= 90D && porcentejeAlCorte <= 94.99) {
-                semaforoG = "semaforoAmarillo";
-            } else if (porcentejeAlCorte >= 95D && porcentejeAlCorte <= 115.99) {
-                semaforoG = "semaforoVerde";
-            }
             actividades.add(new actividad(t, totalPCuatrimestre, totalACuatrimestre, totalPCorte, totalACorte, porcentajeCuatrimestre, porcentejeAlCorte, semaforoC, semaforoG));
         });
 

@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.util;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,7 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import org.omnifaces.util.Faces;
 
@@ -30,6 +32,7 @@ public class UtilidadesPOA implements Serializable {
     @Getter    @Setter    private Short ef = 0;
     @Getter    @Setter    private Integer mes=0;
     @Getter    @Setter    private Procesopoa procesopoa = new Procesopoa();
+    @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
 
     @EJB    EjbCarga ejbUtilidadesCH;
     @EJB    EjbCatalogosPoa ecp;
@@ -103,6 +106,83 @@ public class UtilidadesPOA implements Serializable {
         }
     }
 
+    public String obtenerSemaforo(Double porcentaje) {
+        String semaforo = "";
+        if (porcentaje >= 0D && porcentaje <= 89.99) {
+            semaforo = "semaforoRojo";
+        } else if (porcentaje >= 90D && porcentaje <= 94.99) {
+            semaforo = "semaforoAmarillo";
+        } else if (porcentaje >= 95D && porcentaje <= 115.99) {
+            semaforo = "semaforoVerde";
+        } else if (porcentaje >= 116D) {
+            semaforo = "semaforoRojo";
+        }
+        return semaforo;
+    }
+    
+    public Double obtenerTotalPorcejate(Double porcentaje) {
+        if (porcentaje >= 116 && porcentaje <= 165) {
+                porcentaje = 89.99;
+            } else if (porcentaje >= 166 && porcentaje <= 215) {
+                porcentaje = 84.99;
+            } else if (porcentaje >= 216 && porcentaje <= 265) {
+                porcentaje = 79.99;
+            } else if (porcentaje >= 266 && porcentaje <= 315) {
+                porcentaje = 74.99;
+            } else if (porcentaje >= 316) {
+                porcentaje = 69.99;
+            }
+        return porcentaje;
+    }
+    
+    public Double obtenerTotalPorcejateGeneral(Double alcansadas, Double planeadas) {
+        Double porcentaje = 0D;
+        if (planeadas.equals(alcansadas)) {
+            porcentaje = 100.0;
+        } else {
+            porcentaje = (alcansadas / planeadas) * 100;
+        }
+        return porcentaje;
+    }
+
+    public Double totalProgramado(ActividadesPoa actividadesPoas,Integer numeroMes) {
+        Double totalPCorte = 0D;
+        switch (numeroMes) {
+            case 11:                totalPCorte = totalPCorte + actividadesPoas.getNPDiciembre();
+            case 10:                totalPCorte = totalPCorte + actividadesPoas.getNPNoviembre();
+            case 9:                totalPCorte = totalPCorte + actividadesPoas.getNPOctubre();
+            case 8:                totalPCorte = totalPCorte + actividadesPoas.getNPSeptiembre();
+            case 7:                totalPCorte = totalPCorte + actividadesPoas.getNPAgosto();
+            case 6:                totalPCorte = totalPCorte + actividadesPoas.getNPJulio();
+            case 5:                totalPCorte = totalPCorte + actividadesPoas.getNPJunio();
+            case 4:                totalPCorte = totalPCorte + actividadesPoas.getNPMayo();
+            case 3:                totalPCorte = totalPCorte + actividadesPoas.getNPAbril();
+            case 2:                totalPCorte = totalPCorte + actividadesPoas.getNPMarzo();
+            case 1:                totalPCorte = totalPCorte + actividadesPoas.getNPFebrero();
+            case 0:                totalPCorte = totalPCorte + actividadesPoas.getNPEnero();                break;
+        }        
+        return totalPCorte;
+    }
+
+    public Double totalAlcanzado(ActividadesPoa actividadesPoas,Integer numeroMes) {
+        Double totalACorte = 0D;
+        switch (numeroMes) {
+            case 11:                totalACorte = totalACorte + actividadesPoas.getNADiciembre();
+            case 10:                totalACorte = totalACorte + actividadesPoas.getNANoviembre();
+            case 9:                totalACorte = totalACorte + actividadesPoas.getNAOctubre();
+            case 8:                totalACorte = totalACorte + actividadesPoas.getNASeptiembre();
+            case 7:                totalACorte = totalACorte + actividadesPoas.getNAAgosto();
+            case 6:                totalACorte = totalACorte + actividadesPoas.getNAJulio();
+            case 5:                totalACorte = totalACorte + actividadesPoas.getNAJunio();
+            case 4:                totalACorte = totalACorte + actividadesPoas.getNAMayo();
+            case 3:                totalACorte = totalACorte + actividadesPoas.getNAAbril();
+            case 2:                totalACorte = totalACorte + actividadesPoas.getNAMarzo();
+            case 1:                totalACorte = totalACorte + actividadesPoas.getNAFebrero();
+            case 0:                totalACorte = totalACorte + actividadesPoas.getNAEnero();                break;
+        }
+        return totalACorte;
+    }
+    
     public void enviarCorreo(String tipo, String rol, Boolean aceptado, String observaciones, AreasUniversidad areaDestino) {
         Integer tipoDcorreo = 1;
         Boolean refi = false, pye = false;
