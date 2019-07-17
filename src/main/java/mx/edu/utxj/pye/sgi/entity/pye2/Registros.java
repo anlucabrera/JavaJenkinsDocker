@@ -178,6 +178,8 @@ public class Registros implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private DesercionPeriodosEscolares desercionPeriodosEscolares;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    private AsesoriasTutoriasCuatrimestrales asesoriasTutoriasCuatrimestrales;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
     private ActividadesFormacionIntegral actividadesFormacionIntegral;
 
     public Registros() {
@@ -674,6 +676,14 @@ public class Registros implements Serializable {
 
     public void setDesercionPeriodosEscolares(DesercionPeriodosEscolares desercionPeriodosEscolares) {
         this.desercionPeriodosEscolares = desercionPeriodosEscolares;
+    }
+
+    public AsesoriasTutoriasCuatrimestrales getAsesoriasTutoriasCuatrimestrales() {
+        return asesoriasTutoriasCuatrimestrales;
+    }
+
+    public void setAsesoriasTutoriasCuatrimestrales(AsesoriasTutoriasCuatrimestrales asesoriasTutoriasCuatrimestrales) {
+        this.asesoriasTutoriasCuatrimestrales = asesoriasTutoriasCuatrimestrales;
     }
 
     public ActividadesFormacionIntegral getActividadesFormacionIntegral() {

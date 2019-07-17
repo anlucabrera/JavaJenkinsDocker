@@ -17,6 +17,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.AreasConflicto;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadAreasEstudio;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerpacadDisciplinas;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.DatosAsesoriasTutorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EmpresasTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
@@ -210,6 +211,10 @@ public class EntityConverter implements Converter{
                     List<OtrosTiposSesionesPsicopedagogia> otrosTiposSesion = Faces.getSessionAttribute("otroTipoSesion");
                     OtrosTiposSesionesPsicopedagogia otroTipoSesion = new OtrosTiposSesionesPsicopedagogia(Short.valueOf(value));
                     return otrosTiposSesion.get(otrosTiposSesion.indexOf(otroTipoSesion));
+                case "somDatoAsesoriaTutoria":
+                    List<DatosAsesoriasTutorias> datosAsesoriasTurorias = Faces.getSessionAttribute("datosAsesoriasTutorias");
+                    DatosAsesoriasTutorias datoAsesoriaTutoria = new DatosAsesoriasTutorias(Short.valueOf(value));
+                    return datosAsesoriasTurorias.get(datosAsesoriasTurorias.indexOf(datoAsesoriaTutoria));
                 default:
                     throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", component.getClientId() + " no es un componente válido."));
             }
@@ -273,6 +278,8 @@ public class EntityConverter implements Converter{
                 return ((AreasConflicto)value).getAreaConflicto().toString();
             else if(value instanceof OtrosTiposSesionesPsicopedagogia)
                 return ((OtrosTiposSesionesPsicopedagogia)value).getOtroTipoSesionPsicopedagogia().toString();
+            else if(value instanceof DatosAsesoriasTutorias)
+                return ((DatosAsesoriasTutorias)value).getDatoAsesoriaTutoria().toString();
             else if(value instanceof Municipio){
                 String json = (new Gson()).toJson(((Municipio)value).getMunicipioPK());
                 return json;

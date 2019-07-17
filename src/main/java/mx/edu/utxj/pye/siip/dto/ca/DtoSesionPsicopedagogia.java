@@ -7,12 +7,19 @@ package mx.edu.utxj.pye.siip.dto.ca;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
+import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.AreasConflicto;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
+import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
+import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.OtrosTiposSesionesPsicopedagogia;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 
@@ -27,10 +34,28 @@ public final class DtoSesionPsicopedagogia {
     @Getter @Setter private Boolean nuevoRegistro;
     @Getter @Setter private Boolean habilitaProgramaEducativo;
     
+    /************************** Lista áreas ****************************************/
+    @Getter private List<Categorias> listaCategoriasPOA;
+    @Getter private List<AreasUniversidad> listaAreasPOA; 
+    
+    @Getter private Categorias categoria;
+    @Getter private AreasUniversidad areaUniversidadAdministrador;
+    
     /************************** Evidencias *************************************/
     @Getter @Setter private Boolean tieneEvidencia, forzarAperturaDialogo;
+    @Getter private List<EvidenciasDetalle> listaEvidencias;
+    @Getter private List<Part> archivos;
     
     /************************** Alineación POA  *************************************/
+    @Getter private EjesRegistro alineacionEje;
+    @Getter private Estrategias alineacionEstrategia;
+    @Getter private LineasAccion alineacionLinea;
+    @Getter private ActividadesPoa alineacionActividad; 
+    
+    @Getter private List<ActividadesPoa> actividades;
+    @Getter private List<EjesRegistro> ejes;
+    @Getter private List<Estrategias> estrategias;
+    @Getter private List<LineasAccion> lineasAccion;
     
     /******************** Consulta de información *********************/
     @Getter @Setter private List<String> mesesConsulta = new ArrayList<>();
@@ -50,7 +75,7 @@ public final class DtoSesionPsicopedagogia {
     @Getter @Setter private List<OtrosTiposSesionesPsicopedagogia> lstOtrosTiposSesionesPsicopedagogia;
     @Getter @Setter private List<AreasUniversidad> lstProgramasEducativos;
     
-    @Getter @Setter private DTOSesionesPsicopedagogia dtoSesionPsicopedagogia;
+    @Getter private DTOSesionesPsicopedagogia dtoSesionPsicopedagogia;
     @Getter @Setter private List<DTOSesionesPsicopedagogia> lstSesionesPsicopedagogia;
     
     
@@ -62,8 +87,148 @@ public final class DtoSesionPsicopedagogia {
         nuevoRegistro = false;
     }
     
+    public void setDtoSesionPsicopedagogia(DTOSesionesPsicopedagogia dtoSesionPsicopedagogia) {
+        this.dtoSesionPsicopedagogia = dtoSesionPsicopedagogia;
+        if(dtoSesionPsicopedagogia == null){
+            setListaEvidencias(Collections.EMPTY_LIST);
+        }
+    }
+    
+    public void setArchivos(List<Part> archivos) {
+        this.archivos = archivos;
+    }
+    
     public void setForzarAperturaDialogo(Boolean forzarAperturaDialogo){
         this.forzarAperturaDialogo = forzarAperturaDialogo;
     }
     
+    public void setListaEvidencias(List<EvidenciasDetalle> listaEvidencias) {
+        this.listaEvidencias = listaEvidencias;
+        setTieneEvidencia(!listaEvidencias.isEmpty());
+    }
+    
+    /*********************************** Alineación POA *****************************************/
+    
+    public void setAlineacionEje(EjesRegistro alineacionEje) {
+        this.alineacionEje = alineacionEje;
+        
+        if(alineacionEje == null)
+            nulificarEje();
+    }
+    
+    public void nulificarEje(){
+        estrategias = Collections.EMPTY_LIST;
+        nulificarEstrategia();
+    }
+    
+    public void nulificarEstrategia(){
+        lineasAccion = Collections.EMPTY_LIST;
+        nulificarLinea();
+    }
+    
+    public void nulificarLinea(){
+         actividades = Collections.EMPTY_LIST;
+    }
+
+    public void setAlineacionEstrategia(Estrategias alineacionEstrategia) {
+        this.alineacionEstrategia = alineacionEstrategia;
+        
+        if(alineacionEstrategia == null)
+            nulificarEstrategia();
+    }
+    
+    public void setAlineacionLinea(LineasAccion alineacionLinea) {
+        this.alineacionLinea = alineacionLinea;
+        
+        if(alineacionLinea == null)
+            nulificarLinea();
+    }
+    
+    public void setAlineacionActividad(ActividadesPoa alineacionActividad) {
+        this.alineacionActividad = alineacionActividad;
+    }
+    
+    public void nulificarActividad(){
+        setAlineacionActividad(null);
+    }
+
+    public void setEjes(List<EjesRegistro> ejes) {
+        this.ejes = ejes;
+        if(ejes.isEmpty())
+            nulificarEje();
+    }
+
+    public void setEstrategias(List<Estrategias> estrategias) {
+        this.estrategias = estrategias;
+        if(estrategias.isEmpty())
+            nulificarEstrategia();
+    }
+
+    public void setLineasAccion(List<LineasAccion> lineasAccion) {
+        this.lineasAccion = lineasAccion;
+        if(lineasAccion.isEmpty())
+            nulificarLinea();
+    }
+    
+    public void setActividades(List<ActividadesPoa> actividades) {
+        this.actividades = actividades;
+    }
+    
+    public void setListaCategoriasPOA(List<Categorias> listaCategoriasPOA) {
+        this.listaCategoriasPOA = listaCategoriasPOA;
+        if(listaCategoriasPOA.isEmpty())
+            nulificarCategoria();
+    }
+
+    public void setListaAreasPOA(List<AreasUniversidad> listaAreasPOA) {
+        this.listaAreasPOA = listaAreasPOA;
+        if(listaAreasPOA.isEmpty())
+            nulificarAreaPOA();
+    }
+
+    public void setAniosConsulta(List<Short> aniosConsulta) {
+        this.aniosConsulta = aniosConsulta;
+        if(aniosConsulta.isEmpty())
+            nulificarAnioConsulta();
+    }
+    
+    public void setMesesConsulta(List<String> mesesConsulta) {
+        this.mesesConsulta = mesesConsulta;
+    }
+    
+    public void setCategoria(Categorias categoria) {
+        this.categoria = categoria;
+        if(categoria == null)
+            nulificarCategoria();
+    }
+
+    public void setAreaUniversidadAdministrador(AreasUniversidad areaUniversidadAdministrador) {
+        this.areaUniversidadAdministrador = areaUniversidadAdministrador;
+        if(areaUniversidadAdministrador == null)
+            nulificarAreaPOA();
+    }
+
+    public void setAnioConsulta(Short anioConsulta) {
+        this.anioConsulta = anioConsulta;
+        if(anioConsulta == null)
+            nulificarAnioConsulta();
+    }
+    
+    public void setMesConsulta(String mesConsulta) {
+        this.mesConsulta = mesConsulta;
+    }
+    
+    public void nulificarCategoria(){
+        listaAreasPOA = Collections.EMPTY_LIST;
+        nulificarAreaPOA();
+    }
+    
+    public void nulificarAreaPOA(){
+        aniosConsulta = Collections.EMPTY_LIST;
+        nulificarAnioConsulta();
+    }
+    
+    public void nulificarAnioConsulta(){
+        mesesConsulta = Collections.EMPTY_LIST;
+    }
 }
