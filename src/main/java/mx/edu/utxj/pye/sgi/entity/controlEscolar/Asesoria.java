@@ -5,18 +5,30 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
-import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  *
- * @author HOME
+ * @author UTXJ
  */
 @Entity
 @Table(name = "asesoria", catalog = "control_escolar", schema = "")
@@ -50,7 +62,7 @@ public class Asesoria implements Serializable {
     @Size(min = 1, max = 11)
     @Column(name = "tipo")
     private String tipo;
-    @JoinTable(name = "participantes_asesoria", joinColumns = {
+    @JoinTable(name = "control_escolar.participantes_asesoria", joinColumns = {
         @JoinColumn(name = "asesoria", referencedColumnName = "id_asesoria")}, inverseJoinColumns = {
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")})
     @ManyToMany

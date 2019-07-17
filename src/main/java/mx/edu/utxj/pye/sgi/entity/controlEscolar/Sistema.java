@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author HOME
+ * @author UTXJ
  */
 @Entity
 @Table(name = "sistema", catalog = "control_escolar", schema = "")
@@ -36,18 +36,17 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Sistema.findByNombre", query = "SELECT s FROM Sistema s WHERE s.nombre = :nombre")})
 public class Sistema implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
-    @Column(name = "nombre")
-    private String nombre;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id_sistema")
     private Short idSistema;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "nombre")
+    private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sistemaPrimeraOpcion")
     private List<DatosAcademicos> datosAcademicosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sistemaSegundaOpcion")
@@ -75,6 +74,13 @@ public class Sistema implements Serializable {
         this.idSistema = idSistema;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
     @XmlTransient
     public List<DatosAcademicos> getDatosAcademicosList() {
@@ -126,14 +132,6 @@ public class Sistema implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema[ idSistema=" + idSistema + " ]";
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
     
 }
