@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -30,6 +31,10 @@ public class AsignacionTutorRolDirector extends AbstractRol{
      * Representa la referencias hacia personal director
      */
     @Getter @NonNull private PersonalActivo director;
+    /**
+     * Representa la referencia al evento activo de asignación academica
+     */
+    @Getter @NonNull private EventoEscolar eventoActivo;
     /**
      * Representa la pista del docente a buscar y asignar
      */
@@ -83,6 +88,10 @@ public class AsignacionTutorRolDirector extends AbstractRol{
         this.programa = programa;
     }
 
+    public void setEventoActivo(EventoEscolar eventoActivo) {
+        this.eventoActivo = eventoActivo;
+    }
+    
     public void setDirector(PersonalActivo director) {
         this.director = director;
     }

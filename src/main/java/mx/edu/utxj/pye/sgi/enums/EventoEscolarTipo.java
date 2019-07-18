@@ -12,6 +12,7 @@ public enum EventoEscolarTipo {
     REINSCRIPCION_AUTONOMA("Reinscripción_autónoma"),
     REINCORPORACIONES("Reincorporaciones"),
     GENEREACION_GRUPOS("Generacion_de_grupos"),
-    CONFIGURACION_DE_MATERIA("Configuración_de_materia");
+    CONFIGURACION_DE_MATERIA("Configuración_de_materia"),
+    ASIGNACION_TUTORES("Asignación_de_tutores");
     @Getter @NonNull private final String label;
 }

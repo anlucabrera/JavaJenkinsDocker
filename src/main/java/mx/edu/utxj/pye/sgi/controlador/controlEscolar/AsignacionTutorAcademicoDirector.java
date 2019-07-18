@@ -5,42 +5,44 @@
  */
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
-import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import lombok.Getter;
-import lombok.Setter;
-import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
-import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
-import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionTutorRolDirector;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoListadoTutores;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionTutores;
-import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.enums.Operacion;
-import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
-import org.omnifaces.cdi.ViewScoped;
-import org.omnifaces.util.Ajax;
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.event.CellEditEvent;
-
+import com.github.adminfaces.starter.infra.model.Filter;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
+import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionTutores;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionTutorRolDirector;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoListadoTutores;
+import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.Operacion;
+import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Ajax;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 /**
  *
  * @author UTXJ
  */
-@Named(value = "AsignacionTutorAcademico")
+@Named(value = "asignacionTutorAcademico")
 @ViewScoped
 public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements Desarrollable{
     @Getter @Setter AsignacionTutorRolDirector rol;
@@ -74,7 +76,17 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
             rol = new AsignacionTutorRolDirector(filtro, director, director.getAreaOficial());
             tieneAcceso = rol.tieneAcceso(director);
             
-            if(!tieneAcceso){/*mostrarMensajeNoAcceso();*/ return;} //cortar el flujo si no tiene acceso
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            
+            rol.setDirector(director);
+            ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDirector());
+            if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
+            if(verificarInvocacionMenu()) return;
+            if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
+            rol.setNivelRol(NivelRol.OPERATIVO);
+//            rol.setSoloLectura(true);
+            rol.setEventoActivo(resEvento.getValor());
+            
             
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDesendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
@@ -83,6 +95,12 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
             ResultadoEJB<Map<AreasUniversidad, List<DtoListadoTutores >>> resProgramas = ejb.getProgramasEducativosGrupoTutor(rol.getDirector(), rol.getPeriodo());
             if(!resProgramas.getCorrecto()) mostrarMensajeResultadoEJB(resProgramas);
             rol.setTutoresGruposMap(resProgramas.getValor());
+            
+            rol.getInstrucciones().add("Seleccionar el periodo escolar activo");
+            rol.getInstrucciones().add("Seleccionar el programa educativo en el cual pertenece el grupo al que se le asignará el tutor");
+            rol.getInstrucciones().add("Usted podrá visualizar en la tabla de consulta todos los grupos que se encuentran disponibles en el programa educativo previamente seleccionado");
+            rol.getInstrucciones().add("Para asignar al tutor deberá dar clic en el campo vacío de la tabla y usted podrá escribir parte del nombre o número de nómina y elegir al docente en la lista desplegable que aparecerá después de una pausa de un segundo.");
+            rol.getInstrucciones().add("En caso de reasignar o modificar al tutor de grupo usted deberá repetir el paso anterior cuantas veces sean necesarias");
             
         } catch (Exception e) {
             mostrarExcepcion(e);
@@ -119,10 +137,23 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
     public void seleccionarPrograma(ValueChangeEvent e){
         if(e.getNewValue() instanceof AreasUniversidad){
             rol.setPrograma((AreasUniversidad) e.getNewValue());
+            alertas();
             Ajax.update("grupo");//actualizaría al selector de grupos si lleva el id especificado
         }
+        
     }
     
+    public void alertas() {
+        setAlertas(Collections.EMPTY_LIST);
+        ResultadoEJB<List<DtoAlerta>> resMensajes = ejb.identificarMensajes(rol);
+        if (resMensajes.getCorrecto()) {
+            setAlertas(resMensajes.getValor());
+        } else {
+            mostrarMensajeResultadoEJB(resMensajes);
+        }
+        repetirUltimoMensaje();
+    }
+
     /**
      * Permite seleccionar un periodo escolar desde un evento unico, se recomienda actualizar al control de programas de estudio y listado de grupos y que
      * sera sincronozado inmediatamente
@@ -148,7 +179,9 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
         DtoListadoTutores grupoTutor = (DtoListadoTutores) dataTable.getRowData();
         if(grupoTutor.getTutor() == null){
             grupoTutor.setTutor(new PersonalActivo(new Personal()));
+        }else{
+            ejb.asignarTutorGrupo(grupoTutor, Operacion.PERSISTIR);
         }
-        ejb.asignarTutorGrupo(grupoTutor, Operacion.PERSISTIR);
+        alertas();
     }
 }

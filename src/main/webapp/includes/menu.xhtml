@@ -91,6 +91,7 @@
             <c:if test="#{asignacionAcademicaDirector.mostrarEnDesarrollo(request) and asignacionAcademicaDirector.tieneAcceso}"><li><p:link href="/controlEscolar/director/asignacion_academica.xhtml"><i class="fa fa-tags"></i><span>Asignación académica</span></p:link></li></c:if>
             <c:if test="#{AsignacionTutorAcademico.mostrarEnDesarrollo(request) and AsignacionTutorAcademico.tieneAcceso}"><li><p:link href="/controlEscolar/director/asignacion_tutores.xhtml"><i class="fa fa-users"></i><span>Asignación Tutor de Grupo</span></p:link></li></c:if>
             <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="/controlEscolar/docente/captura_calificaciones.xhtml"><i class="fa fa-users"></i><span>Captura de calificaciones</span></p:link></li></c:if>
+            <c:if test="#{asignacionTutorAcademico.mostrarEnDesarrollo(request)}"><li><p:link href="/controlEscolar/director/asignacion_tutores.xhtml"><i class="fa fa-users"></i><span>Asignación Tutor de Grupo</span></p:link></li></c:if>
             <li><p:link href="/controlEscolar/director/plan_estudio.xhtml"><i class="fa fa-users"></i><span>Admin Plan Estudio</span></p:link></li>
             <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request)}"><li><p:link href="/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
         </c:if>
