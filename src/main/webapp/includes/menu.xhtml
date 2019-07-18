@@ -90,6 +90,7 @@
             <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="/controlEscolar/docente/captura_calificaciones.xhtml"><i class="fa fa-users"></i><span>Captura de calificaciones</span></p:link></li></c:if>
             <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request) and configuracionUnidadMateriaDocente.tieneAcceso}"><li><p:link href="/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
             <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
+            <c:if test="#{procesoInscripcion.mostrarEnDesarrollo(request) and procesoInsfcripcion.tieneAcceso}"><li><p:link href="/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-users"></i><span>Inscripciones</span></p:link></li></c:if>
             <c:if test="#{reincorporacionServiciosEscolares.mostrarEnDesarrollo(request) and reincorporacionServiciosEscolares.tieneAcceso}"><li><p:link href="/controlEscolar/se/reincorporaciones.xhtml"><i class="fa fa-user-plus"></i><span>Reincorporaciones</span></p:link></li></c:if>
         </c:if>
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
@@ -810,7 +811,7 @@
                     </p:link>
                 </li>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave  eq 56 || controladorEmpleado.nuevoOBJListaPersonal.clave  eq 444 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 551}">
+            <!--<c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave  eq 56 || controladorEmpleado.nuevoOBJListaPersonal.clave  eq 444 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 551}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Escolares</li>
                 <li class="treeview">
                     <a href="#">
@@ -833,6 +834,7 @@
                     </ul>
                 </li>
             </c:if>
+            -->
             <!--li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">trayectopria escolar</li>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Tramites de pago</li-->
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Comunicacion interna</li>
