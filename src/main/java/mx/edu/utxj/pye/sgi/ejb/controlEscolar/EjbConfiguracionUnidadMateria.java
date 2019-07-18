@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConfiguracionUnidadMateriaRolDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDiasPeriodoEscolares;
@@ -221,7 +222,7 @@ public class EjbConfiguracionUnidadMateria {
             return dtoDiasPeriodoEscolares;
             
     }
-   
+    
      /**
      * Permite obtener configuración sugerida, calculando fecha de inicio y de fin de cada unidad de la carga académica seleccionada
      * @param dtoCargaAcademica Materia de la que se sugerirá configuración
@@ -229,6 +230,9 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> getConfiguracionSugerida(DtoCargaAcademica dtoCargaAcademica){
         try{
+            Double valorPorHora = getValorPorHora(dtoCargaAcademica);
+            System.err.println("getConfiguracionSugerida - valorPorHora " + valorPorHora);
+            
             DtoDiasPeriodoEscolares dtoDiasPeriodoEscolares = getCalculoDiasPeriodoEscolar(dtoCargaAcademica.getCargaAcademica().getEvento().getPeriodo());
            
             Integer diasUnidad = dtoDiasPeriodoEscolares.getDias()/dtoCargaAcademica.getMateria().getUnidadMateriaList().size();
@@ -339,15 +343,48 @@ public class EjbConfiguracionUnidadMateria {
                        
                         break;
                 }
+                
+                Integer horasUnidad = umc.getUnidadMateria().getHorasTeoricas() + umc.getUnidadMateria().getHorasPracticas();
+
+                Double porcentaje = horasUnidad * valorPorHora;
+
+                unidadMateriaConfiguracion.setPorcentaje(porcentaje);
+                        
+                
                 DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria = new DtoConfiguracionUnidadMateria(unidadMateriaBD, unidadMateriaConfiguracion);
                 dtoConfSug.add(dtoConfiguracionUnidadMateria);
                
             });
-            
+            System.err.println("getConfiguracionSugerida - listaDef " + dtoConfSug.toString());
             return ResultadoEJB.crearCorrecto(dtoConfSug, "Lista de configuración sugerida de la unidad materia seleccionada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración sugerida de la materia del docente. (EjbUnidadMateriaConfiguracion.getConfiguracionUnidadMateriaSugerida)", e, null);
         }
+    }
+    
+    public Double getValorPorHora(DtoCargaAcademica dtoCargaAcademica) {
+        Double valorPorHora = 0.0, horasTotales;
+
+        TypedQuery<Double> hP = (TypedQuery<Double>) f.getEntityManager().createQuery("SELECT SUM(u.horasPracticas) FROM UnidadMateria u WHERE u.idMateria.idMateria =:materia GROUP BY u.idMateria.idMateria");
+        hP.setParameter("materia", dtoCargaAcademica.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria());
+        hP.getSingleResult();
+        
+        Number horasPracticas = ((Number) hP.getSingleResult());
+        double horasP = horasPracticas.doubleValue();
+        
+        TypedQuery<Double> hT = (TypedQuery<Double>) f.getEntityManager().createQuery("SELECT SUM(u.horasTeoricas) FROM UnidadMateria u WHERE u.idMateria.idMateria =:materia GROUP BY u.idMateria.idMateria");
+        hT.setParameter("materia", dtoCargaAcademica.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria());
+        hT.getSingleResult();
+
+        Number horasTeorias = ((Number) hT.getSingleResult());
+        double horasT = horasTeorias.doubleValue();
+       
+        horasTotales = horasT + horasP;
+        
+        valorPorHora = 100 / horasTotales;
+        
+        return valorPorHora;
+        
     }
     
     /**

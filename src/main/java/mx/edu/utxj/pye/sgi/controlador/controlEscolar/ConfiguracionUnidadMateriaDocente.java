@@ -81,7 +81,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
             rol.setPeriodoActivo(resEvento.getValor().getPeriodo());
-
+            
             rol.setEventoActivo(resEvento.getValor());
 
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
@@ -101,7 +101,8 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.getInstrucciones().add("Usted podrá visualizar la Configuración Guardada en sistema.");
             rol.getInstrucciones().add("Si desea ELIMINAR la configuración deberá seleccionar que desea realizar esta accción para que se active el botón de eliminar ubicado en la parte inferior.");
             rol.getInstrucciones().add("Al eliminar la configuración de la materia se eliminarán también los criterios de evaluación que se encuentren registrados.");
-
+            
+            rangoFechasPeriodo();
             existeConfiguracion();
             rol.setAddTareaInt(true);
             rol.setAutorizoEliminar(false);
@@ -193,7 +194,6 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
                 mostrarMensajeResultadoEJB(resGuardarTI);
                 rol.setAddTareaInt(false);
             }
-            System.err.println("guardarConfigUnidadMat " + resGuardarConf.getValor().toString() + " carga " + rol.getCarga());
             ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> resUniMatCrit = ejb.guardarConfiguracionUnidadMateriaCriterios(resGuardarConf.getValor(), rol.getCarga());
             mostrarMensajeResultadoEJB(resUniMatCrit);
 //            mostrarConfiguracionGuardada();
@@ -222,10 +222,11 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
         } 
     }
     
-    public void eliminarConfigUnidadMat(DtoCargaAcademica cargaAcademica){
+    public void eliminarConfigUnidadMat(){
         ResultadoEJB<Integer> resEliminarCUM = ejb.eliminarConfUnidadMateria(rol.getCargaEliminar().getCargaAcademica());
         ResultadoEJB<Integer> resEliminarTI = ejb.eliminarTareaIntegradora(rol.getCargaEliminar().getCargaAcademica());
-        rol.setExiste(false);
+//        rol.setExiste(false);
+        existeConfiguracion();
         mostrarMensajeResultadoEJB(resEliminarCUM);
         mostrarMensajeResultadoEJB(resEliminarTI);
     }

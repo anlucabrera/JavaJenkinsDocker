@@ -168,9 +168,11 @@ public class EjbAsignacionIndicadoresCriterios {
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioParaAsignar(DtoCargaAcademica dtoCargaAcademica){ 
         try {
-            System.err.println("getIndicadoresCriterioParaAsignar - dtoCargaAcademica " + dtoCargaAcademica.getCargaAcademica().getCarga());
-            Integer periodo = getPeriodoActivoIndicadores(dtoCargaAcademica); System.err.println("getIndicadoresCriterioParaAsignar - periodo " + periodo);
-            Integer configuracion = getConfiguracion(dtoCargaAcademica); System.err.println("getIndicadoresCriterioParaAsignar - configuracion " + configuracion);
+//            System.err.println("getIndicadoresCriterioParaAsignar - dtoCargaAcademica " + dtoCargaAcademica.getCargaAcademica().getCarga());
+            Integer periodo = getPeriodoActivoIndicadores(dtoCargaAcademica); 
+//            System.err.println("getIndicadoresCriterioParaAsignar - periodo " + periodo);
+            Integer configuracion = getConfiguracion(dtoCargaAcademica); 
+//            System.err.println("getIndicadoresCriterioParaAsignar - configuracion " + configuracion);
        
             List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores = f.getEntityManager().createQuery("SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica =:cargaAcademica AND l.listaindicadoresporcriterioporconfiguracionPK.periodo =:periodo AND l.listaindicadoresporcriterioporconfiguracionPK.configuracion =:configuracion", Listaindicadoresporcriterioporconfiguracion.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
@@ -225,7 +227,7 @@ public class EjbAsignacionIndicadoresCriterios {
                     it.remove();
                 }
             }
-            System.err.println("getIndicadoresCriterioSer - lista " + listaIndicadores.size());
+//            System.err.println("getIndicadoresCriterioSer - lista " + listaIndicadores.size());
             return ResultadoEJB.crearCorrecto(listaIndicadores, "La configuración de la unidad materia se guardo correctamente.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
