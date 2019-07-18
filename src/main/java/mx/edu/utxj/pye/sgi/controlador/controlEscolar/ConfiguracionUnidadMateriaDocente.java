@@ -155,6 +155,14 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
         }  
     }
     
+    public void rangoFechasPeriodo(){
+        if(rol.getPeriodoActivo()== null) return;
+        DtoDiasPeriodoEscolares dtoFechas = ejb.getCalculoDiasPeriodoEscolar(rol.getPeriodoActivo());
+        rol.setFechaInicio(dtoFechas.getFechaInicio());
+        rol.setFechaFin(dtoFechas.getFechaFin());
+    }
+    
+    
     public void mostrarConfiguracionSugerida(){
         if(rol.getCarga() == null) return;
         ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionSugerida(rol.getCarga());

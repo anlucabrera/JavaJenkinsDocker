@@ -88,6 +88,7 @@
             <c:if test="#{AsignacionTutorAcademico.mostrarEnDesarrollo(request)}"><li><p:link href="/controlEscolar/director/asignacion_tutores.xhtml"><i class="fa fa-users"></i><span>Asignación Tutor de Grupo</span></p:link></li></c:if>
             <li><p:link href="/controlEscolar/director/plan_estudio.xhtml"><i class="fa fa-users"></i><span>Admin Plan Estudio</span></p:link></li>
             <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request)}"><li><p:link href="/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
+            <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request)}"><li><p:link href="/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Indicadores Criterio</span></p:link></li></c:if>
         </c:if>
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Perfil del personal</li>

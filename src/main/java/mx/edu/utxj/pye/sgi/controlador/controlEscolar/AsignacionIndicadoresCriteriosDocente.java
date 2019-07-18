@@ -8,10 +8,9 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConfiguracionUnidadMateriaRolDocente;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionIndicadoresCriteriosRolDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
-import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConfiguracionUnidadMateria;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -27,22 +26,17 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDiasPeriodoEscolares;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
-import org.omnifaces.util.Ajax;
-import org.omnifaces.util.Messages;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
 
 /**
  * La selección del grupo, docente y del periodo deben ser directos de un control de entrada
  */
 @Named
 @ViewScoped
-public class AsignacionIndicadoresCriterios extends ViewScopedRol implements Desarrollable {
-    @Getter @Setter ConfiguracionUnidadMateriaRolDocente rol;
+public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol implements Desarrollable {
+    @Getter @Setter AsignacionIndicadoresCriteriosRolDocente rol;
 
-    @EJB EjbConfiguracionUnidadMateria ejb;
+    @EJB EjbAsignacionIndicadoresCriterios ejb;
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
@@ -67,7 +61,7 @@ public class AsignacionIndicadoresCriterios extends ViewScopedRol implements Des
 
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
             PersonalActivo docente = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-            rol = new ConfiguracionUnidadMateriaRolDocente(filtro, docente);
+            rol = new AsignacionIndicadoresCriteriosRolDocente(filtro, docente);
             tieneAcceso = rol.tieneAcceso(docente);
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
@@ -87,7 +81,7 @@ public class AsignacionIndicadoresCriterios extends ViewScopedRol implements Des
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
             
-            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaPorDocente(docente, rol.getPeriodo());
+            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
             rol.setCargas(resCarga.getValor());
             
@@ -101,16 +95,14 @@ public class AsignacionIndicadoresCriterios extends ViewScopedRol implements Des
             rol.getInstrucciones().add("Si desea ELIMINAR la configuración deberá seleccionar que desea realizar esta accción para que se active el botón de eliminar ubicado en la parte inferior.");
             rol.getInstrucciones().add("Al eliminar la configuración de la materia se eliminarán también los criterios de evaluación que se encuentren registrados.");
 
-            existeConfiguracion();
-            rol.setAddTareaInt(true);
-            rol.setAutorizoEliminar(false);
+            listarIndicadores();
             
         }catch (Exception e){mostrarExcepcion(e); }
     }
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
-        String valor = "configuración unidad materia";
+        String valor = "asignación indicador por criterio";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
@@ -123,137 +115,66 @@ public class AsignacionIndicadoresCriterios extends ViewScopedRol implements Des
         if(rol.getPeriodo() == null) return;
         if(rol.getDocente()== null) return;
 
-        ResultadoEJB<List<DtoCargaAcademica>> res = ejb.getCargaAcademicaPorDocente(rol.getDocente(), rol.getPeriodo());
+        ResultadoEJB<List<DtoCargaAcademica>> res = ejb.getCargaAcademicaDocente(rol.getDocente(), rol.getPeriodo());
         if(res.getCorrecto()){
             rol.setCargas(res.getValor());
-            existeConfiguracion();
+            listarIndicadores();
         }else mostrarMensajeResultadoEJB(res);
         
-        ResultadoEJB<List<DtoAlerta>> resMensajes = ejb.identificarMensajes(rol);
-        System.out.println("resMensajes = " + resMensajes);
-        if(resMensajes.getCorrecto()){
-            setAlertas(resMensajes.getValor());
-        }else {
-            mostrarMensajeResultadoEJB(resMensajes);
-        }
-
-        repetirUltimoMensaje();
+        
+//        ResultadoEJB<List<DtoAlerta>> resMensajes = ejb.identificarMensajes(rol);
+//        System.out.println("resMensajes = " + resMensajes);
+//        if(resMensajes.getCorrecto()){
+//            setAlertas(resMensajes.getValor());
+//        }else {
+//            mostrarMensajeResultadoEJB(resMensajes);
+//        }
+//
+//        repetirUltimoMensaje();
     }
     
-    public void existeConfiguracion(){
-        if(rol.getCarga()== null) return;
-        ResultadoEJB<List<UnidadMateriaConfiguracion>> res = ejb.buscarConfiguracionUnidadMateria(rol.getCarga());
-        if(res.getValor().isEmpty() || res.getValor().equals("")){
-            rol.setExiste(false);
-            mostrarConfiguracionSugerida();
-            mostrarConfiguracionGuardada();
-            }else {
-            rol.setExiste(true); 
-            mostrarConfiguracionSugerida();
-            mostrarConfiguracionGuardada();  
-        }  
-    }
+//    public void existeConfiguracion(){
+//        if(rol.getCarga()== null) return;
+//        ResultadoEJB<List<UnidadMateriaConfiguracion>> res = ejb.buscarConfiguracionUnidadMateria(rol.getCarga());
+//        if(res.getValor().isEmpty() || res.getValor().equals("")){
+//            rol.setExiste(false);
+//            mostrarConfiguracionSugerida();
+//            mostrarConfiguracionGuardada();
+//            }else {
+//            rol.setExiste(true); 
+//            mostrarConfiguracionSugerida();
+//            mostrarConfiguracionGuardada();  
+//        }  
+//    }
     
-    public void mostrarConfiguracionSugerida(){
+    public void listarIndicadores(){
         if(rol.getCarga() == null) return;
-        ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionSugerida(rol.getCarga());
-        TareaIntegradora tareaInt = new TareaIntegradora();
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> res = ejb.getIndicadoresCriterioParaAsignar(rol.getCarga());
         if(res.getCorrecto()){
-            rol.setConfUniMateriasSug(res.getValor());
-            rol.setTareaIntegradora(tareaInt);
-        }else mostrarMensajeResultadoEJB(res);     
+            rol.setListaAsignarIndicadoresCriterios(res.getValor());
+            System.err.println("listarIndicadores - lista " + rol.getListaAsignarIndicadoresCriterios());
+//            mostrarIndicadoresCriterioSer();
+        }else mostrarMensajeResultadoEJB(res);  
     }
     
-     public void mostrarTareaIntPrueba(){
-        TareaIntegradora tareaInt = new TareaIntegradora();
-        DtoDiasPeriodoEscolares dtoFechas = ejb.getCalculoDiasPeriodoEscolar(rol.getPeriodoActivo());
-        tareaInt.setDescripcion("Ingresar nombre");
-        tareaInt.setFechaEntrega(dtoFechas.getFechaFin());
-         rol.setTareaIntegradora(tareaInt);
-    }
-    
-    /**
-     * Permite invocar el guardado de la configuración de la unidad materia, para que se lleve acabo, se debió haber seleccionado una carga académica, e ingresado fecha de inicio y fin de cada unidad.
-     */
-    public void guardarConfigUnidadMat(){
-        ResultadoEJB<List<DtoConfiguracionUnidadMateria>> resGuardarConf = ejb.guardarConfUnidadMateria(rol.getConfUniMateriasSug(), rol.getCarga().getCargaAcademica());
-        if(resGuardarConf.getCorrecto()){
-            rol.setExiste(true);
-            if(rol.getAddTareaInt()){
-                ResultadoEJB<TareaIntegradora> resGuardarTI = ejb.guardarTareaIntegradora(rol.getTareaIntegradora(), rol.getCarga().getCargaAcademica());
-                mostrarMensajeResultadoEJB(resGuardarTI);
-                rol.setAddTareaInt(false);
-            }
-            mostrarConfiguracionGuardada();
-        }else  mostrarMensajeResultadoEJB(resGuardarConf);
-    }
-    
-   
-    public void mostrarConfiguracionGuardada(){
-        if(rol.getCarga() == null) return;
-        ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionUnidadMateria(rol.getCarga());
-        if(res.getCorrecto()){
-            rol.setConfUniMateriasGuard(res.getValor());
-            mostrarTareaIntegradora();
-        }else mostrarMensajeResultadoEJB(res);
-    }
-    
-     public void mostrarTareaIntegradora(){
-        ResultadoEJB<TareaIntegradora> resTI = ejb.getTareaIntegradora(rol.getCarga());
-        if(resTI.getCorrecto()){
-            rol.setTareaIntGuardada(resTI.getValor());
-            Ajax.update("tb4");
-        }
-        else{
-              ResultadoEJB<TareaIntegradora> resSinTI = ejb.getTareaIntegradora(rol.getCarga());
-              rol.setTareaIntGuardada(resSinTI.getValor());
-        } 
-    }
-    
-    public void eliminarConfigUnidadMat(DtoCargaAcademica cargaAcademica){
-        ResultadoEJB<Integer> resEliminarCUM = ejb.eliminarConfUnidadMateria(rol.getCargaEliminar().getCargaAcademica());
-        ResultadoEJB<Integer> resEliminarTI = ejb.eliminarTareaIntegradora(rol.getCargaEliminar().getCargaAcademica());
-        rol.setExiste(false);
-        mostrarMensajeResultadoEJB(resEliminarCUM);
-        mostrarMensajeResultadoEJB(resEliminarTI);
-    }
-    
-   
-    public void cambiarCarga(ValueChangeEvent event){
+     public void cambiarCarga(ValueChangeEvent event){
         rol.setCarga((DtoCargaAcademica)event.getNewValue());
-        existeConfiguracion();
-        rol.setAddTareaInt(true);
-        rol.setAutorizoEliminar(false);
+        listarIndicadores();
     }
     
-    public void cambiarAddTareaInt(ValueChangeEvent event){
-        if(rol.getAddTareaInt()){
-            rol.setAddTareaInt(false);
-            Ajax.update("tb2");
-        }else{
-            rol.setAddTareaInt(true);
-             Ajax.update("tb2");
-        }
+     public void mostrarIndicadoresCriterioSer(){
+        System.err.println("mostrarIndicadoresCriterioSer - listaOriginal " + rol.getListaAsignarIndicadoresCriterios().size());
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resInd = ejb.getIndicadoresCriterioSer(rol.getListaAsignarIndicadoresCriterios());
+        if(resInd.getCorrecto()){
+        rol.setListaCriteriosSer(resInd.getValor());
+        System.err.println("mostrarIndicadoresCriterioSer - listaFinal " + rol.getListaCriteriosSer().size());
+        }else mostrarMensajeResultadoEJB(resInd);  
+//        if(resInd.getCorrecto()){
+//            rol.setListaCriteriosSer(resInd.getValor());
+//            System.err.println("mostrarIndicadoresCriterioSer - datos " + rol.getListaCriteriosSer() + "Size " + rol.getListaCriteriosSer().size());
+//            rol.setPorcentajeSer(ejb.getPorcentajeSer(rol.getListaCriteriosSer()));
+//            System.err.println("mostrarIndicadoresCriterioSer - porcentaje " + rol.getPorcentajeSer());
+//        }else mostrarMensajeResultadoEJB(resInd);     
     }
-    
-    public void cambiarEliminar(ValueChangeEvent event){
-        rol.setCargaEliminar(rol.getCarga());
-        if(rol.getAutorizoEliminar()){
-            rol.setAutorizoEliminar(false);
-        }else{
-            rol.setAutorizoEliminar(true);
-            mostrarTareaIntPrueba();
-            rol.setAddTareaInt(false);
-        }
-    }
-    
-     /**
-     * Permite invocar la eliminaciòn de una asignaciòn
-     * @param tareaIntegradora
-     */
-    public void eliminarTareaInt(){
-          System.err.println("eliminarTareaInt - tarea ");
-//        ResultadoEJB<TareaIntegradora> resElimTI = ejb.eliminarTareaIntegradora(tareaIntegradora);
-//        mostrarMensajeResultadoEJB(resElimTI);
-    }
+   
 }

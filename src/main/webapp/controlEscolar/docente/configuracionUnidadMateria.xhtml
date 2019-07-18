@@ -117,7 +117,9 @@
                                                 <p:column headerText="Horas Teóricas"><h:outputText value="#{confSugerida.unidadMateria.horasTeoricas}"/></p:column>
                                                 <p:column headerText="Horas Práctica"><h:outputText value="#{confSugerida.unidadMateria.horasPracticas}" /></p:column>
                                                 <p:column headerText="Porcentaje"><p:inputNumber value="#{confSugerida.unidadMateriaConfiguracion.porcentaje}" symbol="%" symbolPosition="s" required="true" emptyValue="empty"/></p:column>
-                                                <p:column headerText="Fecha Inicio"><p:calendar value="#{confSugerida.unidadMateriaConfiguracion.fechaInicio}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha inicio para la unidad"/></p:column>
+                                                <p:column headerText="Fecha Inicio"><p:calendar id="fechaInicio" value="#{confSugerida.unidadMateriaConfiguracion.fechaInicio}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha inicio para la unidad">
+                                                       
+                                                        </p:calendar></p:column>
                                                 <p:column headerText="Fecha Fin"><p:calendar value="#{confSugerida.unidadMateriaConfiguracion.fechaFin}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha fin para la unidad"/></p:column>
                                             </p:dataTable>
                                             <br />
