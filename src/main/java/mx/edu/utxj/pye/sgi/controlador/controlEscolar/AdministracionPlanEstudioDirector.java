@@ -117,6 +117,7 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
     }
 
     public void guardarUnidad() {
+        rol.getMateriaUnidades1().getUnidadMateria().setIntegradora(false);
         ejb.registrarUnidadMateria(rol.getMateriaUnidades1(), Operacion.PERSISTIR);
         unidadesPorMateriaConsulta();
         rol.setMateriaUnidades1(new DtoMateriaUnidades(new UnidadMateria(), rol.getMateriaUnidades1().getMateria()));
