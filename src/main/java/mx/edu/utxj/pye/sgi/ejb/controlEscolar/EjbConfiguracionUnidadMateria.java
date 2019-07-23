@@ -95,14 +95,6 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicaPorDocente(PersonalActivo docente, PeriodosEscolares periodo){
         try{
-            //buscar carga académica del personal docente logeado del periodo seleccionado
-//            List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
-//                    .setParameter("docente", docente.getPersonal().getClave())
-//                    .setParameter("periodo", periodo.getPeriodo())
-//                    .getResultStream()
-//                    .map(ca -> pack(ca).getValor())
-//                    .filter(dto -> dto != null)
-//                    .collect(Collectors.toList());
               List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("periodo", periodo.getPeriodo())
@@ -231,7 +223,6 @@ public class EjbConfiguracionUnidadMateria {
     public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> getConfiguracionSugerida(DtoCargaAcademica dtoCargaAcademica){
         try{
             Double valorPorHora = getValorPorHora(dtoCargaAcademica);
-            System.err.println("getConfiguracionSugerida - valorPorHora " + valorPorHora);
             
             DtoDiasPeriodoEscolares dtoDiasPeriodoEscolares = getCalculoDiasPeriodoEscolar(dtoCargaAcademica.getCargaAcademica().getEvento().getPeriodo());
            
@@ -355,7 +346,6 @@ public class EjbConfiguracionUnidadMateria {
                 dtoConfSug.add(dtoConfiguracionUnidadMateria);
                
             });
-            System.err.println("getConfiguracionSugerida - listaDef " + dtoConfSug.toString());
             return ResultadoEJB.crearCorrecto(dtoConfSug, "Lista de configuración sugerida de la unidad materia seleccionada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración sugerida de la materia del docente. (EjbUnidadMateriaConfiguracion.getConfiguracionUnidadMateriaSugerida)", e, null);
@@ -590,7 +580,6 @@ public class EjbConfiguracionUnidadMateria {
                 ResultadoEJB<TareaIntegradora> resTareaIntegradora = getTareaIntegradora(rol.getCarga());
                 TareaIntegradora tareaInt = resTareaIntegradora.getCorrecto()?resTareaIntegradora.getValor():null;
                 
-                System.out.println("resUnidadesConf = " + resUnidadesConf);
                 if(resUnidadesConf.getCorrecto()){
                     List<UnidadMateriaConfiguracion> unidadMatConf = resUnidadesConf.getValor().stream()
                             .filter(dtoConfUnidad -> dtoConfUnidad.getUnidadMateriaConfiguracion()!= null)

@@ -93,22 +93,61 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
                                         <p:growl id="msgs" showDetail="true" />
                                         <p:accordionPanel>
-                                                <p:tab title="Primera Unidad">
-                                                    <p:dataGrid var="indSer1Unidad" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" columns="5" layout="grid" id="indSer1Unidad">
-                                                        
+                                                <p:tab title="Ser">
+                                                    <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" columns="5" layout="grid" id="indSer">
                                                         <f:facet name="header">
-                                                            Ser<!--Ser # {asignacionIndicadoresCriteriosDocente.rol.porcentajeSer}-->
+                                                            Ser <h:outputLabel value="#{indSer.porcentaje}" />
                                                         </f:facet>
-                                                        <p:panel header="#{indSer1Unidad.indicador}" style="text-align:center">
+                                                        <p:panel header="#{indSer.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <h:inputText value="0" />
+                                                                <p:inputNumber value="#{indSer.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty"/>
+                                                            </h:panelGrid>
+                                                        </p:panel>
+                                                    </p:dataGrid>
+                                                </p:tab>
+                                                <p:tab title="Saber">
+                                                    <p:dataGrid var="indSaber" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaber}" columns="5" layout="grid" id="indSaber">
+                                                        <f:facet name="header">
+                                                            Saber #{indSaber.porcentaje}
+                                                        </f:facet>
+                                                        <p:panel header="#{indSaber.indicador}" style="text-align:center">
+                                                            <h:panelGrid columns="1" style="width:100%">
+                                                                <p:inputNumber value="#{indSaber.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty"/>
+                                                            </h:panelGrid>
+                                                        </p:panel>
+                                                    </p:dataGrid>
+                                                </p:tab>
+                                                <p:tab title="Saber - Hacer">
+                                                    <p:dataGrid var="indSaberHacer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaberHacer}" columns="5" layout="grid" id="indSaberHacer">
+                                                        <f:facet name="header">
+                                                            Saber - Hacer #{indSaberHacer.porcentaje}
+                                                        </f:facet>
+                                                        <p:panel header="#{indSaberHacer.indicador}" style="text-align:center">
+                                                            <h:panelGrid columns="1" style="width:100%">
+                                                                <p:inputNumber value="#{indSaberHacer.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty"/>
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
                                                 </p:tab>
                                         </p:accordionPanel>
+                                        <p></p>
+                                        <p></p>
+                                        <p></p>
+                                        <center>
+                                            <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterio()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                            <p:autoUpdate />
+                                        </center>
+                                        </c:if>
+                                        <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
+                                            <p:panel id="box-colors-panel" header="No existe configuració de la unidad materia" styleClass="box-fatal box-solid">
+                                                <h:panelGrid columns="2" cellpadding="10">
+                                                    <h:outputText value="Para realizar la Asignación de Indicadores por Criterio, deberá realizar la Configuración por Unidad de la Materia"/>
+                                                </h:panelGrid>
+                                            </p:panel>
+                                        </c:if>
                                     </div>
                                 </div>
                             </div>
@@ -129,7 +168,7 @@
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para configurar unidad materia</h3></div>
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación de indicadores por criterio</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
                                 <c:forEach items="#{asignacionIndicadoresCriteriosDocente.rol.instrucciones}" var="instruccion">

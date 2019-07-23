@@ -36,7 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByCriterio", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.criterio = :criterio")
     , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPorcentaje", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.porcentaje = :porcentaje")
     , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClaveIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.listaindicadoresporcriterioporconfiguracionPK.claveIndicador = :claveIndicador")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.indicador = :indicador")})
+    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.indicador = :indicador")
+    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPorcentajeIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.porcentajeIndicador = :porcentajeIndicador")})
 public class Listaindicadoresporcriterioporconfiguracion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -69,8 +70,12 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
     @Size(min = 1, max = 500)
     @Column(name = "indicador")
     private String indicador;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "porcentajeIndicador")
+    private double porcentajeIndicador;
 
-    public Listaindicadoresporcriterioporconfiguracion() {
+        public Listaindicadoresporcriterioporconfiguracion() {
     }
 
     public Listaindicadoresporcriterioporconfiguracion(ListaindicadoresporcriterioporconfiguracionPK listaindicadoresporcriterioporconfiguracionPK) {
@@ -147,16 +152,25 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
         this.indicador = indicador;
     }
 
+    public double getPorcentajeIndicador() {
+        return porcentajeIndicador;
+    }
+
+    public void setPorcentajeIndicador(double porcentajeIndicador) {
+        this.porcentajeIndicador = porcentajeIndicador;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.listaindicadoresporcriterioporconfiguracionPK);
-        hash = 89 * hash + this.cargaAcademica;
-        hash = 89 * hash + Objects.hashCode(this.nombreUnidad);
-        hash = 89 * hash + this.unidad;
-        hash = 89 * hash + Objects.hashCode(this.criterio);
-        hash = 89 * hash + (int) (Double.doubleToLongBits(this.porcentaje) ^ (Double.doubleToLongBits(this.porcentaje) >>> 32));
-        hash = 89 * hash + Objects.hashCode(this.indicador);
+        int hash = 7;
+        hash = 11 * hash + Objects.hashCode(this.listaindicadoresporcriterioporconfiguracionPK);
+        hash = 11 * hash + this.cargaAcademica;
+        hash = 11 * hash + Objects.hashCode(this.nombreUnidad);
+        hash = 11 * hash + this.unidad;
+        hash = 11 * hash + Objects.hashCode(this.criterio);
+        hash = 11 * hash + (int) (Double.doubleToLongBits(this.porcentaje) ^ (Double.doubleToLongBits(this.porcentaje) >>> 32));
+        hash = 11 * hash + Objects.hashCode(this.indicador);
+        hash = 11 * hash + (int) (Double.doubleToLongBits(this.porcentajeIndicador) ^ (Double.doubleToLongBits(this.porcentajeIndicador) >>> 32));
         return hash;
     }
 
@@ -181,6 +195,9 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
         if (Double.doubleToLongBits(this.porcentaje) != Double.doubleToLongBits(other.porcentaje)) {
             return false;
         }
+        if (Double.doubleToLongBits(this.porcentajeIndicador) != Double.doubleToLongBits(other.porcentajeIndicador)) {
+            return false;
+        }
         if (!Objects.equals(this.nombreUnidad, other.nombreUnidad)) {
             return false;
         }
@@ -198,7 +215,6 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
 
     @Override
     public String toString() {
-        return "Listaindicadoresporcriterioporconfiguracion{" + "listaindicadoresporcriterioporconfiguracionPK=" + listaindicadoresporcriterioporconfiguracionPK + ", cargaAcademica=" + cargaAcademica + ", nombreUnidad=" + nombreUnidad + ", unidad=" + unidad + ", criterio=" + criterio + ", porcentaje=" + porcentaje + ", indicador=" + indicador + '}';
+        return "Listaindicadoresporcriterioporconfiguracion{" + "listaindicadoresporcriterioporconfiguracionPK=" + listaindicadoresporcriterioporconfiguracionPK + ", cargaAcademica=" + cargaAcademica + ", nombreUnidad=" + nombreUnidad + ", unidad=" + unidad + ", criterio=" + criterio + ", porcentaje=" + porcentaje + ", indicador=" + indicador + ", porcentajeIndicador=" + porcentajeIndicador + '}';
     }
-    
 }

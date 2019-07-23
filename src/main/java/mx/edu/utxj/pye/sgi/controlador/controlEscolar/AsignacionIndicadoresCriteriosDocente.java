@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
+import org.omnifaces.util.Ajax;
 
 /**
  * La selección del grupo, docente y del periodo deben ser directos de un control de entrada
@@ -95,7 +97,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             rol.getInstrucciones().add("Si desea ELIMINAR la configuración deberá seleccionar que desea realizar esta accción para que se active el botón de eliminar ubicado en la parte inferior.");
             rol.getInstrucciones().add("Al eliminar la configuración de la materia se eliminarán también los criterios de evaluación que se encuentren registrados.");
 
-            listarIndicadores();
+            existeConfiguracion();
             
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -118,7 +120,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         ResultadoEJB<List<DtoCargaAcademica>> res = ejb.getCargaAcademicaDocente(rol.getDocente(), rol.getPeriodo());
         if(res.getCorrecto()){
             rol.setCargas(res.getValor());
-            listarIndicadores();
+            existeConfiguracion();
         }else mostrarMensajeResultadoEJB(res);
         
         
@@ -133,48 +135,88 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
 //        repetirUltimoMensaje();
     }
     
-//    public void existeConfiguracion(){
-//        if(rol.getCarga()== null) return;
-//        ResultadoEJB<List<UnidadMateriaConfiguracion>> res = ejb.buscarConfiguracionUnidadMateria(rol.getCarga());
-//        if(res.getValor().isEmpty() || res.getValor().equals("")){
-//            rol.setExiste(false);
-//            mostrarConfiguracionSugerida();
-//            mostrarConfiguracionGuardada();
-//            }else {
-//            rol.setExiste(true); 
-//            mostrarConfiguracionSugerida();
-//            mostrarConfiguracionGuardada();  
-//        }  
-//    }
+    public void existeConfiguracion(){
+        if(rol.getCarga()== null) return;
+        ResultadoEJB<List<UnidadMateriaConfiguracion>> res = ejb.buscarConfiguracionUnidadMateria(rol.getCarga());
+        if(res.getValor().size()>0 && !res.getValor().isEmpty()){
+            rol.setExisteConfiguracion(true);
+            listarIndicadoresSer();
+            listarIndicadoresSaber();
+            listarIndicadoresSaberHacer();
+        }else{  
+            rol.setExisteConfiguracion(false);
+            mostrarMensajeResultadoEJB(res);  
+        } 
+        Ajax.update("frm");
+    }
     
-    public void listarIndicadores(){
-        if(rol.getCarga() == null) return;
+    public void listarIndicadoresSer(){
+        if(!rol.getExisteConfiguracion()) return;
         ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> res = ejb.getIndicadoresCriterioParaAsignar(rol.getCarga());
         if(res.getCorrecto()){
             rol.setListaAsignarIndicadoresCriterios(res.getValor());
-            System.err.println("listarIndicadores - lista " + rol.getListaAsignarIndicadoresCriterios());
-//            mostrarIndicadoresCriterioSer();
+            mostrarIndicadoresCriterioSer();
+        }else mostrarMensajeResultadoEJB(res);  
+    }
+    
+    public void listarIndicadoresSaber(){
+        if(!rol.getExisteConfiguracion()) return;
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> res = ejb.getIndicadoresCriterioParaAsignar(rol.getCarga());
+        if(res.getCorrecto()){
+            rol.setListaAsignarIndicadoresCriterios(res.getValor());
+            mostrarIndicadoresCriterioSaber();
+        }else mostrarMensajeResultadoEJB(res);  
+    }
+    
+    public void listarIndicadoresSaberHacer(){
+        if(!rol.getExisteConfiguracion()) return;
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> res = ejb.getIndicadoresCriterioParaAsignar(rol.getCarga());
+        if(res.getCorrecto()){
+            rol.setListaAsignarIndicadoresCriterios(res.getValor());
+            mostrarIndicadoresCriterioSaberHacer();
         }else mostrarMensajeResultadoEJB(res);  
     }
     
      public void cambiarCarga(ValueChangeEvent event){
+        rol.setExisteConfiguracion(false);
         rol.setCarga((DtoCargaAcademica)event.getNewValue());
-        listarIndicadores();
+        existeConfiguracion();
     }
-    
+         
      public void mostrarIndicadoresCriterioSer(){
-        System.err.println("mostrarIndicadoresCriterioSer - listaOriginal " + rol.getListaAsignarIndicadoresCriterios().size());
-        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resInd = ejb.getIndicadoresCriterioSer(rol.getListaAsignarIndicadoresCriterios());
-        if(resInd.getCorrecto()){
-        rol.setListaCriteriosSer(resInd.getValor());
-        System.err.println("mostrarIndicadoresCriterioSer - listaFinal " + rol.getListaCriteriosSer().size());
-        }else mostrarMensajeResultadoEJB(resInd);  
-//        if(resInd.getCorrecto()){
-//            rol.setListaCriteriosSer(resInd.getValor());
-//            System.err.println("mostrarIndicadoresCriterioSer - datos " + rol.getListaCriteriosSer() + "Size " + rol.getListaCriteriosSer().size());
-//            rol.setPorcentajeSer(ejb.getPorcentajeSer(rol.getListaCriteriosSer()));
-//            System.err.println("mostrarIndicadoresCriterioSer - porcentaje " + rol.getPorcentajeSer());
-//        }else mostrarMensajeResultadoEJB(resInd);     
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resIndSer = ejb.getIndicadoresCriterioSer(rol.getListaAsignarIndicadoresCriterios());
+        if(resIndSer.getCorrecto()){
+        rol.setListaCriteriosSer(resIndSer.getValor());
+        }else mostrarMensajeResultadoEJB(resIndSer); 
+    }
+     
+     public void mostrarIndicadoresCriterioSaber(){
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resIndSaber = ejb.getIndicadoresCriterioSaber(rol.getListaAsignarIndicadoresCriterios());
+        if(resIndSaber.getCorrecto()){
+        rol.setListaCriteriosSaber(resIndSaber.getValor());
+        }else mostrarMensajeResultadoEJB(resIndSaber); 
+    }
+      
+     public void mostrarIndicadoresCriterioSaberHacer(){
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resIndSaberHacer = ejb.getIndicadoresCriterioSaberHacer(rol.getListaAsignarIndicadoresCriterios());
+        if(resIndSaberHacer.getCorrecto()){
+        rol.setListaCriteriosSaberHacer(resIndSaberHacer.getValor());
+        }else mostrarMensajeResultadoEJB(resIndSaberHacer); 
+    }
+     
+    public void guardarIndicadoresCriterio(){
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSer(rol.getListaCriteriosSer());
+        if (resGuardarSer.getCorrecto()) {
+            ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaber(rol.getListaCriteriosSaber());
+            if (resGuardarSaber.getCorrecto()) {
+                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaberHacer = ejb.guardarIndicadoresSaberHacer(rol.getListaCriteriosSaberHacer());
+            } else {
+                mostrarMensajeResultadoEJB(resGuardarSaber);
+            }
+        } else {
+            mostrarMensajeResultadoEJB(resGuardarSer);
+        }
+    
     }
    
 }

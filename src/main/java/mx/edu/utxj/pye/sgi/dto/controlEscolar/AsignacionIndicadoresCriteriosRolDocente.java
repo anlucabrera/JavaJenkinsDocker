@@ -78,6 +78,11 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
      */
     @Getter @NonNull private List<Listaindicadoresporcriterioporconfiguracion> listaAsignarIndicadoresCriterios;
     
+    /**
+     * Lista de cargas académicas realizadas al docente seleccionado
+     */
+    @Getter @NonNull private List<Listaindicadoresporcriterioporconfiguracion> listaAsignarIndicadoresCriteriosOriginal;
+    
     
     /**
      * Lista de cargas académicas realizadas al docente seleccionado
@@ -98,6 +103,11 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
      * Lista de configuraciones realizadas
      */
     @Getter @NonNull private List<DtoCargaAcademica> cargas;
+    
+     /**
+     * Existe o no configuración de unidad materia
+     */
+    @Getter @NonNull private Boolean existeConfiguracion;
   
     public AsignacionIndicadoresCriteriosRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
@@ -151,6 +161,10 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
         this.listaAsignarIndicadoresCriterios = listaAsignarIndicadoresCriterios;
     }
 
+    public void setListaAsignarIndicadoresCriteriosOriginal(List<Listaindicadoresporcriterioporconfiguracion> listaAsignarIndicadoresCriteriosOriginal) {
+        this.listaAsignarIndicadoresCriteriosOriginal = listaAsignarIndicadoresCriteriosOriginal;
+    }
+    
     public void setListaCriteriosSer(List<Listaindicadoresporcriterioporconfiguracion> listaCriteriosSer) {
         this.listaCriteriosSer = listaCriteriosSer;
     }
@@ -178,8 +192,8 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
     public void setPorcentajeSaberHacer(Double porcentajeSaberHacer) {
         this.porcentajeSaberHacer = porcentajeSaberHacer;
     }
-     
-     
 
-   
+    public void setExisteConfiguracion(Boolean existeConfiguracion) {
+        this.existeConfiguracion = existeConfiguracion;
+    }
 }

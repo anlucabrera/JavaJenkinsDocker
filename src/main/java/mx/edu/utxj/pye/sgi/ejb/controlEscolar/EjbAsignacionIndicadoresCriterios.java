@@ -19,6 +19,8 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
@@ -227,7 +229,6 @@ public class EjbAsignacionIndicadoresCriterios {
                     it.remove();
                 }
             }
-//            System.err.println("getIndicadoresCriterioSer - lista " + listaIndicadores.size());
             return ResultadoEJB.crearCorrecto(listaIndicadores, "La configuración de la unidad materia se guardo correctamente.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
@@ -251,153 +252,155 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
    
-//    /**
-//     * Permite guardar la configuración de la unidad materia
-//     * @param configuracionUnidadMaterias Unidad configuracion materia que se va a guardar
-//     * @param cargaAcademica Carga académica de la que se guardará configuración
-//     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
-//     */
-//    public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> guardarConfUnidadMateria(List<DtoConfiguracionUnidadMateria> configuracionUnidadMaterias, CargaAcademica cargaAcademica){
-//        try{            
-//            if(configuracionUnidadMaterias == null || configuracionUnidadMaterias.isEmpty()) return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
-//            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(3, "La carga académica no debe ser nula.");
-//          
-//            List<DtoConfiguracionUnidadMateria> l = new ArrayList<>();
-//           
-//            configuracionUnidadMaterias.forEach(cum -> {
-//                try {
-//                    UnidadMateriaConfiguracion umc = new UnidadMateriaConfiguracion();
-//                    umc.setFechaInicio(cum.getUnidadMateriaConfiguracion().getFechaInicio());
-//                    umc.setFechaFin(cum.getUnidadMateriaConfiguracion().getFechaFin());
-//                    umc.setCarga(cargaAcademica);
-//                    umc.setIdUnidadMateria(cum.getUnidadMateria());
-//                    umc.setPorcentaje(cum.getUnidadMateriaConfiguracion().getPorcentaje());
-//                    f.create(umc);
-//                    DtoConfiguracionUnidadMateria dto = new DtoConfiguracionUnidadMateria(cum.getUnidadMateria(), umc);
-//                    l.add(dto);
-//                } catch (Throwable ex) {
-//                    Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            });
-//            return ResultadoEJB.crearCorrecto(l, "La configuración de la unidad materia se guardo correctamente.");
-//        }catch (Throwable e){
-//            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbUnidadMateriaConfiguracion.guardarConfUnidadMateria)", e, null);
-//        }
-//    }
-//    
-//    /**
-//     * Permite guardar la configuración de la unidad materia
-//     * @param tareaIntegradora Unidad configuracion materia que se va a guardar
-//     * @param cargaAcademica Carga académica de la que se guardará configuración
-//     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
-//     */
-//    public ResultadoEJB<TareaIntegradora> guardarTareaIntegradora(TareaIntegradora tareaIntegradora, CargaAcademica cargaAcademica){
-//        try{            
-//            if(tareaIntegradora == null) return ResultadoEJB.crearErroneo(2, "La tarea integradora no debe ser nula.");
-//            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(3, "La carga académica no debe ser nula.");
-//          
-//            TareaIntegradora ti = new TareaIntegradora();
-//            ti.setDescripcion(tareaIntegradora.getDescripcion());
-//            ti.setFechaEntrega(tareaIntegradora.getFechaEntrega());
-//            ti.setCarga(cargaAcademica);
-//            ti.setPorcentaje(tareaIntegradora.getPorcentaje());
-//            f.create(ti);
-//               
-//            return ResultadoEJB.crearCorrecto(ti, "La tarea integradora se guardo correctamente.");
-//        }catch (Throwable e){
-//            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la tarea integradora de la materia. (EjbUnidadMateriaConfiguracion.guardarTareaIntegradora)", e, null);
-//        }
-//    }
-//    
-//    /**
-//     * Permite eliminar la configuración de la unidad materia
-//     * @param cargaAcademica Carga académica de la que se guardará configuración
-//     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
-//     */
-//    public ResultadoEJB<Integer> eliminarConfUnidadMateria(CargaAcademica cargaAcademica){
-//        try{ 
-//            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.");
-//            
-//            Integer delete = f.getEntityManager().createQuery("DELETE FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:carga", UnidadMateriaConfiguracion.class)
-//                .setParameter("carga", cargaAcademica.getCarga())
-//                .executeUpdate();
-//            
-//            return ResultadoEJB.crearCorrecto(delete, "La configuración de la unidad materia se elimino correctamente.");
-//        }catch (Throwable e){
-//            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar  la configuración de unidad materia. (EjbUnidadMateriaConfiguracion.eliminarConfUnidadMateria)", e, null);
-//        }
-//    }
-//    
-//    /**
-//     * Permite obtener la lista de configuración de unidad por materia, de la materia seleccionada previamente
-//     * @param dtoCargaAcademica Materia de la que se obtendrá configuración
-//     * @return Resultado del proceso
-//     */
-//    public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> getConfiguracionUnidadMateria(DtoCargaAcademica dtoCargaAcademica){
-//        try{
-//            List<DtoConfiguracionUnidadMateria> unidadMatConfDto = f.getEntityManager().createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
-//                    .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
-//                    .getResultStream()
-//                    .map(ca -> pack(ca).getValor())
-//                    .filter(dto -> dto != null)
-//                    .collect(Collectors.toList());
-//            return ResultadoEJB.crearCorrecto(unidadMatConfDto, "Lista de configuración de la unidad materia seleccionada.");
-//        }catch (Exception e){
-//            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbUnidadMateriaConfiguracion.getConfiguracionUnidadMateria)", e, null);
-//        }
-//    }
-//    
-//    /**
-//     * Empaqueta una configuración sugeridad de la unidad materia en su DTO Wrapper
-//     * @param unidadMateriaConfiguracion Unidades de la materia a empaquetar
-//     * @return Configuración sugerida de la unidad materia empaquetada
-//     */
-//    public ResultadoEJB<DtoConfiguracionUnidadMateria> pack(UnidadMateriaConfiguracion unidadMateriaConfiguracion){
-//        try{
-//            if(unidadMateriaConfiguracion == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar una configuración de la unidad nula.", DtoConfiguracionUnidadMateria.class);
-//
-//            UnidadMateria unidadMateria = f.getEntityManager().find(UnidadMateria.class, unidadMateriaConfiguracion.getIdUnidadMateria().getIdUnidadMateria());
-//            
-//            DtoConfiguracionUnidadMateria dto = new DtoConfiguracionUnidadMateria(unidadMateria, unidadMateriaConfiguracion);
-//         
-//            return ResultadoEJB.crearCorrecto(dto, "Configuración de la unidad materia empaquetada.");
-//        }catch (Exception e){
-//            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la configuración de la unidad materia (EjbUnidadMateriaConfiguracion.pack).", e, DtoConfiguracionUnidadMateria.class);
-//        }
-//    }
-//    
-//    /**
-//     * Permite obtener la lista de configuración de unidad por materia, de la materia seleccionada previamente
-//     * @param dtoCargaAcademica Materia de la que se obtendrá configuración
-//     * @return Resultado del proceso
-//     */
-//    public ResultadoEJB<TareaIntegradora> getTareaIntegradora(DtoCargaAcademica dtoCargaAcademica){
-//        try{
-//            TareaIntegradora tareaIntegradora = f.getEntityManager().createQuery("SELECT ti FROM TareaIntegradora ti WHERE ti.carga.carga =:carga", TareaIntegradora.class)
-//                    .setParameter("carga", dtoCargaAcademica.getCargaAcademica().getCarga())
-//                    .getSingleResult();
-//            return ResultadoEJB.crearCorrecto(tareaIntegradora, "Tarea Integradora de la materia seleccionada.");
-//        }catch (Exception e){
-//            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la tarea integradora de la materia seleccionada. (EjbUnidadMateriaConfiguracion.getTareaIntegradora)", e, null);
-//        }
-//    }
-//    
-//    /**
-//     * Permite eliminar la configuración de la unidad materia
-//     * @param cargaAcademica Carga académica de la que se guardará configuración
-//     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
-//     */
-//    public ResultadoEJB<Integer> eliminarTareaIntegradora(CargaAcademica cargaAcademica){
-//        try{ 
-//            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.");
-//            
-//            Integer delete = f.getEntityManager().createQuery("DELETE FROM TareaIntegradora t WHERE t.carga.carga =:carga", TareaIntegradora.class)
-//                .setParameter("carga", cargaAcademica.getCarga())
-//                .executeUpdate();
-//            
-//            return ResultadoEJB.crearCorrecto(delete, "La tarea integradora se elimino correctamente.");
-//        }catch (Throwable e){
-//            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar  la tarea integradora. (EjbUnidadMateriaConfiguracion.eliminarTareaIntegradora)", e, null);
-//        }
-//    }
+    /**
+     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
+     * @param listaIndicadores Nivel del que se obtendrán los indicadores por criterio
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSaber(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
+        try{ 
+            if(listaIndicadores == null || listaIndicadores.isEmpty()) return ResultadoEJB.crearErroneo(2, "La lista de indicadores por criterio no debe ser nula.");
+          
+            Iterator<Listaindicadoresporcriterioporconfiguracion> it = listaIndicadores.iterator();
+
+            while (it.hasNext()) {
+                if (!it.next().getCriterio().equals("Saber")) {
+                    it.remove();
+                }
+            }
+            return ResultadoEJB.crearCorrecto(listaIndicadores, "La configuración de la unidad materia se guardo correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
+     * @param listaIndicadores Nivel del que se obtendrán los indicadores por criterio
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
+        try{ 
+            if(listaIndicadores == null || listaIndicadores.isEmpty()) return ResultadoEJB.crearErroneo(2, "La lista de indicadores por criterio no debe ser nula.");
+          
+            Iterator<Listaindicadoresporcriterioporconfiguracion> it = listaIndicadores.iterator();
+
+            while (it.hasNext()) {
+                if (!it.next().getCriterio().equals("Saber hacer")) {
+                    it.remove();
+                }
+            }
+            return ResultadoEJB.crearCorrecto(listaIndicadores, "La configuración de la unidad materia se guardo correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
+        }
+    }
+   
+     /**
+     * Permite guardar la configuración de la unidad materia
+     * @param listaSer Unidad configuracion materia que se va a guardar
+     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     */
+    public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSer(List<Listaindicadoresporcriterioporconfiguracion> listaSer){
+        try{            
+            if(listaSer == null || listaSer.isEmpty()) return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
+          
+            List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
+           
+            listaSer.forEach(ser -> {
+                try {
+                    if(ser.getPorcentajeIndicador() != 0){
+                    UnidadMateriaConfiguracionDetalle umcd = new UnidadMateriaConfiguracionDetalle();
+                    UnidadMateriaConfiguracion umc = f.getEntityManager().find(UnidadMateriaConfiguracion.class, ser.getListaindicadoresporcriterioporconfiguracionPK().getConfiguracion());
+                    umcd.setConfiguracion(umc);
+                    Criterio criterio = f.getEntityManager().find(Criterio.class, ser.getListaindicadoresporcriterioporconfiguracionPK().getClaveCriterio());
+                    umcd.setCriterio(criterio);
+                    Indicador indicador = f.getEntityManager().find(Indicador.class, ser.getListaindicadoresporcriterioporconfiguracionPK().getClaveIndicador());
+                    umcd.setIndicador(indicador);
+                    umcd.setPorcentaje(ser.getPorcentajeIndicador());
+                    f.create(umcd);
+                    Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
+                    l.add(vistaLista);
+                    }
+                } catch (Throwable ex) {
+                    Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            return ResultadoEJB.crearCorrecto(l, "La configuración de la unidad materia se guardo correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbUnidadMateriaConfiguracion.guardarIndicadoresSer)", e, null);
+        }
+    }
+    
+     /**
+     * Permite guardar la configuración de la unidad materia
+     * @param listaSaber Unidad configuracion materia que se va a guardar
+     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     */
+    public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSaber(List<Listaindicadoresporcriterioporconfiguracion> listaSaber){
+        try{            
+            if(listaSaber == null || listaSaber.isEmpty()) return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
+          
+            List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
+           
+            listaSaber.forEach(saber -> {
+                try {
+                    if(saber.getPorcentajeIndicador() != 0){
+                    UnidadMateriaConfiguracionDetalle umcd = new UnidadMateriaConfiguracionDetalle();
+                    UnidadMateriaConfiguracion umc = f.getEntityManager().find(UnidadMateriaConfiguracion.class, saber.getListaindicadoresporcriterioporconfiguracionPK().getConfiguracion());
+                    umcd.setConfiguracion(umc);
+                    Criterio criterio = f.getEntityManager().find(Criterio.class, saber.getListaindicadoresporcriterioporconfiguracionPK().getClaveCriterio());
+                    umcd.setCriterio(criterio);
+                    Indicador indicador = f.getEntityManager().find(Indicador.class, saber.getListaindicadoresporcriterioporconfiguracionPK().getClaveIndicador());
+                    umcd.setIndicador(indicador);
+                    umcd.setPorcentaje(saber.getPorcentajeIndicador());
+                    f.create(umcd);
+                    Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
+                    l.add(vistaLista);
+                    }
+                } catch (Throwable ex) {
+                    Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            return ResultadoEJB.crearCorrecto(l, "La configuración de la unidad materia se guardo correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbUnidadMateriaConfiguracion.guardarIndicadoresSaber)", e, null);
+        }
+    }
+    
+     /**
+     * Permite guardar la configuración de la unidad materia
+     * @param listaSaberHacer Unidad configuracion materia que se va a guardar
+     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     */
+    public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaSaberHacer){
+        try{            
+            if(listaSaberHacer == null || listaSaberHacer.isEmpty()) return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
+          
+            List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
+           
+            listaSaberHacer.forEach(sabhac -> {
+                try {
+                    if(sabhac.getPorcentajeIndicador() != 0){
+                    UnidadMateriaConfiguracionDetalle umcd = new UnidadMateriaConfiguracionDetalle();
+                    UnidadMateriaConfiguracion umc = f.getEntityManager().find(UnidadMateriaConfiguracion.class, sabhac.getListaindicadoresporcriterioporconfiguracionPK().getConfiguracion());
+                    umcd.setConfiguracion(umc);
+                    Criterio criterio = f.getEntityManager().find(Criterio.class, sabhac.getListaindicadoresporcriterioporconfiguracionPK().getClaveCriterio());
+                    umcd.setCriterio(criterio);
+                    Indicador indicador = f.getEntityManager().find(Indicador.class, sabhac.getListaindicadoresporcriterioporconfiguracionPK().getClaveIndicador());
+                    umcd.setIndicador(indicador);
+                    umcd.setPorcentaje(sabhac.getPorcentajeIndicador());
+                    f.create(umcd);
+                    Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
+                    l.add(vistaLista);
+                    }
+                } catch (Throwable ex) {
+                    Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            return ResultadoEJB.crearCorrecto(l, "La configuración de la unidad materia se guardo correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbUnidadMateriaConfiguracion.guardarIndicadoresSaberHacer)", e, null);
+        }
+    }
 }
