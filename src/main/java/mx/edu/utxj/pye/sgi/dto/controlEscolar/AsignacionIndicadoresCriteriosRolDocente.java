@@ -108,7 +108,17 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
      * Existe o no configuración de unidad materia
      */
     @Getter @NonNull private Boolean existeConfiguracion;
-  
+    
+     /**
+     * Dto de configuración de unidad por materia
+     */
+    @Getter @NonNull private DtoConfiguracionUnidadMateria dtoConfUniMat;
+    
+     /**
+     * Lista de dto de configuración de unidad por materia
+     */
+    @Getter @NonNull private List<DtoConfiguracionUnidadMateria> listaDtoConfUniMat;
+            
     public AsignacionIndicadoresCriteriosRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
         this.docente = docente;
@@ -195,5 +205,13 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
 
     public void setExisteConfiguracion(Boolean existeConfiguracion) {
         this.existeConfiguracion = existeConfiguracion;
+    }
+
+    public void setDtoConfUniMat(DtoConfiguracionUnidadMateria dtoConfUniMat) {
+        this.dtoConfUniMat = dtoConfUniMat;
+    }
+
+    public void setListaDtoConfUniMat(List<DtoConfiguracionUnidadMateria> listaDtoConfUniMat) {
+        this.listaDtoConfUniMat = listaDtoConfUniMat;
     }
 }

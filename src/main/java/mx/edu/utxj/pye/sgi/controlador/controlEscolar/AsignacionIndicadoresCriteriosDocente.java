@@ -10,6 +10,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionIndicadoresCriteriosRolDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
@@ -140,6 +141,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         ResultadoEJB<List<UnidadMateriaConfiguracion>> res = ejb.buscarConfiguracionUnidadMateria(rol.getCarga());
         if(res.getValor().size()>0 && !res.getValor().isEmpty()){
             rol.setExisteConfiguracion(true);
+            crearDtoConfiguracionUnidadMateria();
             listarIndicadoresSer();
             listarIndicadoresSaber();
             listarIndicadoresSaberHacer();
@@ -149,6 +151,18 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         } 
         Ajax.update("frm");
     }
+    
+    public void crearDtoConfiguracionUnidadMateria(){
+        if(rol.getCarga()== null) return;
+        ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionUnidadMateria(rol.getCarga());
+        if(res.getCorrecto())
+        {
+           rol.setListaDtoConfUniMat(res.getValor());
+           System.err.println("crearDtoConfiguracionUnidadMateria" + rol.getListaDtoConfUniMat().toString());
+        }else mostrarMensajeResultadoEJB(res);  
+        
+    }
+    
     
     public void listarIndicadoresSer(){
         if(!rol.getExisteConfiguracion()) return;
@@ -205,18 +219,21 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
     }
      
     public void guardarIndicadoresCriterio(){
-        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSer(rol.getListaCriteriosSer());
-        if (resGuardarSer.getCorrecto()) {
-            ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaber(rol.getListaCriteriosSaber());
-            if (resGuardarSaber.getCorrecto()) {
-                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaberHacer = ejb.guardarIndicadoresSaberHacer(rol.getListaCriteriosSaberHacer());
-            } else {
-                mostrarMensajeResultadoEJB(resGuardarSaber);
-            }
-        } else {
-            mostrarMensajeResultadoEJB(resGuardarSer);
-        }
-    
+        if(rol.getCarga()== null) return;
+        
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSer(rol.getListaCriteriosSer(), rol.getDtoConfUniMat());
+        if(resGuardarSer.getCorrecto()){
+        }else mostrarMensajeResultadoEJB(resGuardarSer); 
+        
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaber(rol.getListaCriteriosSaber(), rol.getDtoConfUniMat());
+        if(resGuardarSaber.getCorrecto()){
+        }else mostrarMensajeResultadoEJB(resGuardarSaber); 
+        
+        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSabHac = ejb.guardarIndicadoresSaberHacer(rol.getListaCriteriosSaberHacer(), rol.getDtoConfUniMat());
+        if(resGuardarSabHac.getCorrecto()){
+        }else mostrarMensajeResultadoEJB(resGuardarSabHac); 
+        
+        Ajax.update("frm");
     }
    
 }

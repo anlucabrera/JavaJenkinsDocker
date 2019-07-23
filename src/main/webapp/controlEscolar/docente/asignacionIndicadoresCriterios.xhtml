@@ -96,47 +96,52 @@
                                         <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
                                         <p:growl id="msgs" showDetail="true" />
                                         <p:accordionPanel>
-                                                <p:tab title="Ser">
-                                                    <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" columns="5" layout="grid" id="indSer">
+                                                <p:tab title="Ser" titleStyleClass="box-solid">
+                                                        <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" layout="grid" id="indSer">
                                                         <f:facet name="header">
                                                             Ser <h:outputLabel value="#{indSer.porcentaje}" />
                                                         </f:facet>
                                                         <p:panel header="#{indSer.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputNumber value="#{indSer.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty"/>
+                                                                <p:inputNumber value="#{indSer.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty" requiredMessage="El campo no puede quedarse vacio." />
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
                                                 </p:tab>
-                                                <p:tab title="Saber">
-                                                    <p:dataGrid var="indSaber" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaber}" columns="5" layout="grid" id="indSaber">
+                                                <p:tab title="Saber" titleStyleClass="box-solid">
+                                                    <p:dataGrid var="indSaber" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaber}" layout="grid" id="indSaber">
                                                         <f:facet name="header">
                                                             Saber #{indSaber.porcentaje}
                                                         </f:facet>
                                                         <p:panel header="#{indSaber.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputNumber value="#{indSaber.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty"/>
+                                                                <p:inputNumber value="#{indSaber.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty" requiredMessage="El campo no puede quedarse vacio." />
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
                                                 </p:tab>
-                                                <p:tab title="Saber - Hacer">
-                                                    <p:dataGrid var="indSaberHacer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaberHacer}" columns="5" layout="grid" id="indSaberHacer">
+                                                <p:tab title="Saber - Hacer" titleStyleClass="box-solid">
+                                                    <p:dataGrid var="indSaberHacer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaberHacer}" layout="grid" id="indSaberHacer">
                                                         <f:facet name="header">
                                                             Saber - Hacer #{indSaberHacer.porcentaje}
                                                         </f:facet>
                                                         <p:panel header="#{indSaberHacer.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputNumber value="#{indSaberHacer.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty"/>
+                                                                <p:inputNumber value="#{indSaberHacer.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty" requiredMessage="El campo no puede quedarse vacio."/>
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
                                                 </p:tab>
                                         </p:accordionPanel>
-                                        <p></p>
-                                        <p></p>
-                                        <p></p>
                                         <center>
+                                        <p></p>
+                                        <p:outputLabel value="Seleccione Unidad a las que aplicará asignación de indicadores" />
+                                        <p></p>
+                                        <p:selectOneRadio id="unidad" value="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter">
+                                            <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.listaDtoConfUniMat}" var="c" itemLabel="#{c.unidadMateria.noUnidad}. #{c.unidadMateria.nombre}" itemValue="#{c}"/>
+                                        </p:selectOneRadio>
+                                        <p></p>
+                                        <p></p>
                                             <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterio()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                             <p:autoUpdate />
                                         </center>
