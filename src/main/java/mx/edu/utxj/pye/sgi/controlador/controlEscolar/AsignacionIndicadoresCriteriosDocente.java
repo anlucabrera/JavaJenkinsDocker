@@ -30,6 +30,7 @@ import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Messages;
 
 /**
  * La selección del grupo, docente y del periodo deben ser directos de un control de entrada
@@ -158,7 +159,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         if(res.getCorrecto())
         {
            rol.setListaDtoConfUniMat(res.getValor());
-           System.err.println("crearDtoConfiguracionUnidadMateria" + rol.getListaDtoConfUniMat().toString());
         }else mostrarMensajeResultadoEJB(res);  
         
     }
@@ -221,18 +221,66 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
     public void guardarIndicadoresCriterio(){
         if(rol.getCarga()== null) return;
         
-        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSer(rol.getListaCriteriosSer(), rol.getDtoConfUniMat());
-        if(resGuardarSer.getCorrecto()){
-        }else mostrarMensajeResultadoEJB(resGuardarSer); 
+        Integer valPorSer = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSer());
+        switch (valPorSer) {
+            case 0:
+                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSer(rol.getListaCriteriosSer(), rol.getDtoConfUniMat());
+                if (resGuardarSer.getCorrecto()) {
+                } else {
+                    mostrarMensajeResultadoEJB(resGuardarSer);
+                }
+                break;
+            case 1:
+                Messages.addGlobalWarn("Criterior SER: La suma de los porcentajes por indicador es mayor a 100%.");
+                break;
+            case 2:
+                Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es menor a 100%.");
+                break;
+            default:
+
+                break;
+        }
         
-        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaber(rol.getListaCriteriosSaber(), rol.getDtoConfUniMat());
-        if(resGuardarSaber.getCorrecto()){
-        }else mostrarMensajeResultadoEJB(resGuardarSaber); 
+        Integer valPorSaber = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaber());
+        switch (valPorSaber) {
+            case 0:
+                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaber(rol.getListaCriteriosSaber(), rol.getDtoConfUniMat());
+                if (resGuardarSaber.getCorrecto()) {
+                } else {
+                    mostrarMensajeResultadoEJB(resGuardarSaber);
+                }
+                break;
+            case 1:
+                Messages.addGlobalWarn("Criterior SABER: La suma de los porcentajes por indicador es mayor a 100%.");
+                break;
+            case 2:
+                Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es menor a 100%.");
+                break;
+            default:
+
+                break;
+        }
         
-        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSabHac = ejb.guardarIndicadoresSaberHacer(rol.getListaCriteriosSaberHacer(), rol.getDtoConfUniMat());
-        if(resGuardarSabHac.getCorrecto()){
-        }else mostrarMensajeResultadoEJB(resGuardarSabHac); 
-        
+        Integer valPorSabHac = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaber());
+        switch (valPorSabHac) {
+            case 0:
+                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSabHac = ejb.guardarIndicadoresSaberHacer(rol.getListaCriteriosSaberHacer(), rol.getDtoConfUniMat());
+                if (resGuardarSabHac.getCorrecto()) {
+                } else {
+                    mostrarMensajeResultadoEJB(resGuardarSabHac);
+                }
+                break;
+            case 1:
+                Messages.addGlobalWarn("Criterior SABER - HACER: La suma de los porcentajes por indicador es mayor a 100%.");
+                break;
+            case 2:
+                Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es menor a 100%.");
+                break;
+            default:
+
+                break;
+        }
+      
         Ajax.update("frm");
     }
    

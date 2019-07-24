@@ -293,6 +293,40 @@ public class EjbAsignacionIndicadoresCriterios {
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
         }
     }
+    
+    public void eliminarConfUnidDetalles(DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria){
+        List<UnidadMateriaConfiguracionDetalle> listaConfDetalles = f.getEntityManager().createQuery("SELECT u FROM UnidadMateriaConfiguracionDetalle u WHERE u.configuracion.configuracion =:configuracion", UnidadMateriaConfiguracionDetalle.class)
+            .setParameter("configuracion", dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion())
+            .getResultList();
+      
+        if (listaConfDetalles.size() > 0) {
+
+            Integer delete = f.getEntityManager().createQuery("DELETE FROM UnidadMateriaConfiguracionDetalle umcd WHERE umcd.configuracion.configuracion =:configuracion", UnidadMateriaConfiguracionDetalle.class)
+                    .setParameter("configuracion", dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion())
+                    .executeUpdate();
+        }
+      
+    }
+    
+    public Integer validarSumaPorcentajesIndicadores(List<Listaindicadoresporcriterioporconfiguracion> lista)
+    {
+            Integer valor = 0;
+            
+            Double totalPorcentajes = lista.stream().mapToDouble(Listaindicadoresporcriterioporconfiguracion::getPorcentajeIndicador).sum();
+            System.err.println("validarSumaPorcentajesIndicadores - totalPorcentajes " + totalPorcentajes);
+            
+            if(totalPorcentajes > 100.00){
+                valor = 1;
+            }
+            else if(totalPorcentajes < 100.00){
+                valor = 2;
+            }
+            else{
+                valor = 0;
+            }
+            
+            return valor;
+    }
    
      /**
      * Permite guardar la configuración de la unidad materia
@@ -302,19 +336,11 @@ public class EjbAsignacionIndicadoresCriterios {
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSer(List<Listaindicadoresporcriterioporconfiguracion> listaSer, DtoConfiguracionUnidadMateria dtoConfUnidadMateria){
         try{            
             if(listaSer == null || listaSer.isEmpty()) return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
-          
-            List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
-           
-            UnidadMateriaConfiguracionDetalle unidExiste = new UnidadMateriaConfiguracionDetalle();
-            TypedQuery<UnidadMateriaConfiguracionDetalle> query = f.getEntityManager().createQuery("SELECT u FROM UnidadMateriaConfiguracionDetalle u WHERE u.configuracion.configuracion  =:configuracion", UnidadMateriaConfiguracionDetalle.class);
-            query.setParameter("configuracion", dtoConfUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion());
-            unidExiste = query.getSingleResult();
             
-            if(unidExiste != null)
-            {
-                f.remove(query);
-            }
-        
+            List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
+            
+            eliminarConfUnidDetalles(dtoConfUnidadMateria);
+                   
             listaSer.forEach(ser -> {
                 try {
                     if(ser.getPorcentajeIndicador() != 0){
