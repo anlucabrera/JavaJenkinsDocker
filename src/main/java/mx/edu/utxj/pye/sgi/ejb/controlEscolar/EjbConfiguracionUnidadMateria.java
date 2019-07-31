@@ -609,4 +609,57 @@ public class EjbConfiguracionUnidadMateria {
             return ResultadoEJB.crearErroneo(1, "No se pudieron identificar mensajes de configuración (EjbUnidadMateriaConfiguracion.identificarMensajes).", e, null);
         }
     }
+    
+    public Integer validarSumaPorcentajesUnidadTI(List<DtoConfiguracionUnidadMateria> listaUnidades, TareaIntegradora tareaIntegradora)
+    {
+            Integer valor = 0;
+            Double porcentajeTI = tareaIntegradora.getPorcentaje();
+            List<UnidadMateriaConfiguracion> unidadMatConf = new ArrayList<>();
+          
+            listaUnidades.forEach(l -> {
+            UnidadMateriaConfiguracion umc = l.getUnidadMateriaConfiguracion();
+            unidadMatConf.add(umc);
+            });
+            
+            Double porcentajesUnidad = unidadMatConf.stream().mapToDouble(UnidadMateriaConfiguracion::getPorcentaje).sum();
+            Double totalPorcentajes = porcentajeTI + porcentajesUnidad;
+            
+            if(totalPorcentajes > 100.00){
+                valor = 1;
+            }
+            else if(totalPorcentajes < 100.00){
+                valor = 2;
+            }
+            else{
+                valor = 0;
+            }
+            
+            return valor;
+    }
+    
+    public Integer validarSumaPorcentajesUnidad(List<DtoConfiguracionUnidadMateria> listaUnidades)
+    {
+            Integer valor = 0;
+            
+            List<UnidadMateriaConfiguracion> unidadMatConf = new ArrayList<>();
+          
+            listaUnidades.forEach(l -> {
+            UnidadMateriaConfiguracion umc = l.getUnidadMateriaConfiguracion();
+            unidadMatConf.add(umc);
+            });
+            
+            Double porcentajesUnidad = unidadMatConf.stream().mapToDouble(UnidadMateriaConfiguracion::getPorcentaje).sum();
+            
+            if(porcentajesUnidad > 100.00){
+                valor = 1;
+            }
+            else if(porcentajesUnidad < 100.00){
+                valor = 2;
+            }
+            else{
+                valor = 0;
+            }
+            
+            return valor;
+    }
 }

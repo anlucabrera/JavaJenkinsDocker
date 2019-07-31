@@ -231,7 +231,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
                 }
                 break;
             case 1:
-                Messages.addGlobalWarn("Criterior SER: La suma de los porcentajes por indicador es mayor a 100%.");
+                Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es mayor a 100%.");
                 break;
             case 2:
                 Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es menor a 100%.");
@@ -251,7 +251,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
                 }
                 break;
             case 1:
-                Messages.addGlobalWarn("Criterior SABER: La suma de los porcentajes por indicador es mayor a 100%.");
+                Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es mayor a 100%.");
                 break;
             case 2:
                 Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es menor a 100%.");
@@ -261,7 +261,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
                 break;
         }
         
-        Integer valPorSabHac = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaber());
+        Integer valPorSabHac = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaberHacer());
         switch (valPorSabHac) {
             case 0:
                 ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSabHac = ejb.guardarIndicadoresSaberHacer(rol.getListaCriteriosSaberHacer(), rol.getDtoConfUniMat());
@@ -271,7 +271,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
                 }
                 break;
             case 1:
-                Messages.addGlobalWarn("Criterior SABER - HACER: La suma de los porcentajes por indicador es mayor a 100%.");
+                Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es mayor a 100%.");
                 break;
             case 2:
                 Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es menor a 100%.");
