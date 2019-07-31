@@ -93,7 +93,33 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
+                                            <p:dataTable var="asignacionIndCA" 
+                                                         emptyMessage="Sin registros."
+                                                         value="#{asignacionIndicadoresCriteriosDocente.rol.listaAsignacionCargaAcademica}"
+                                                         id="tbAsigInd1" rowIndexVar="rowIndex"
+                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                <p:column headerText="No. Unidad" style="text-align: center;"><h:outputText value="#{asignacionIndCA.unidad}" style="text-align: center;"/></p:column>
+                                                <p:column headerText="Unidad" style="text-align: center;"><h:outputText value="#{asignacionIndCA.nombreUnidad}" style="text-align: center;"/></p:column>
+                                                <p:column headerText="Criterio" style="text-align: center;"><h:outputText value="#{asignacionIndCA.criterio}" style="text-align: center;"/></p:column>
+                                                <p:column headerText="Indicador" style="text-align: center;"><h:outputText value="#{asignacionIndCA.indicador}" style="text-align: center;"/></p:column>
+                                                <p:column headerText="Porcentaje" style="text-align: center;"><h:outputText value="#{asignacionIndCA.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText></p:column>
+                                            </p:dataTable>
+                                        </c:if>
+                                        <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
                                         <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
+                                        <center>
+                                        <p></p>
+                                        <p:outputLabel value="Seleccione Unidad a las que aplicará asignación de indicadores" />
+                                        <p></p>
+                                        <p:selectOneRadio id="unidad" value="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.validarAsignacionUnidad}" >
+                                            <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.listaDtoConfUniMat}" var="c" itemLabel="#{c.unidadMateria.noUnidad}. #{c.unidadMateria.nombre}" itemValue="#{c}"/>
+                                            <p:ajax update="@this" process="@this"/>
+                                            <p:autoUpdate />
+                                        </p:selectOneRadio>
+                                        <p></p>
+                                        <p></p>
+                                        </center>
                                         <p:growl id="msgs" showDetail="true" />
                                         <p:accordionPanel>
                                                 <p:tab title="Ser" titleStyleClass="box-solid">
@@ -133,26 +159,42 @@
                                                     </p:dataGrid>
                                                 </p:tab>
                                         </p:accordionPanel>
+                                        <p></p>
+                                        <p></p>
                                         <center>
-                                        <p></p>
-                                        <p:outputLabel value="Seleccione Unidad a las que aplicará asignación de indicadores" />
-                                        <p></p>
-                                        <p:selectOneRadio id="unidad" value="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter">
-                                            <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.listaDtoConfUniMat}" var="c" itemLabel="#{c.unidadMateria.noUnidad}. #{c.unidadMateria.nombre}" itemValue="#{c}"/>
-                                        </p:selectOneRadio>
-                                        <p></p>
-                                        <p></p>
                                             <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterio()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                             <p:autoUpdate />
                                         </center>
+                                        <p></p>
+                                        <p></p>
+                                        <p></p>
+                                        <p></p>
+                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionUnidad}">
+                                            <center>
+                                            <p:outputLabel value="Asignación registrada de la Unidad" />
+                                            <p></p>
+                                            <p></p>
+                                            <p></p>
+                                            <p:dataTable var="asignacionIndUnidad" 
+                                                         emptyMessage="Sin registros."
+                                                         value="#{asignacionIndicadoresCriteriosDocente.rol.listaConfiguracionDetalles}"
+                                                         id="tbl" rowIndexVar="rowIndex"
+                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                <p:column headerText="Criterio" style="text-align: center;"><h:outputText value="#{asignacionIndUnidad.criterio.tipo}" style="text-align: center;"/></p:column>
+                                                <p:column headerText="Indicador" style="text-align: center;"><h:outputText value="#{asignacionIndUnidad.indicador.nombre}" style="text-align: center;"/></p:column>
+                                                <p:column headerText="Porcentaje" style="text-align: center;"><h:outputText value="#{asignacionIndUnidad.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText></p:column>
+                                            </p:dataTable>
+                                            </center>
+                                        </c:if>
                                         </c:if>
                                         <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
-                                            <p:panel id="box-colors-panel" header="No existe configuració de la unidad materia" styleClass="box-fatal box-solid">
+                                            <p:panel id="box-colors-panel" header="No existe configuración de la unidad materia" styleClass="box-fatal box-solid">
                                                 <h:panelGrid columns="2" cellpadding="10">
                                                     <h:outputText value="Para realizar la Asignación de Indicadores por Criterio, deberá realizar la Configuración por Unidad de la Materia"/>
                                                 </h:panelGrid>
                                             </p:panel>
                                         </c:if>
+                                       </c:if>
                                     </div>
                                 </div>
                             </div>

@@ -14,6 +14,8 @@ import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaasignacionindicadorescargaacademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
@@ -118,6 +120,26 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
      * Lista de dto de configuración de unidad por materia
      */
     @Getter @NonNull private List<DtoConfiguracionUnidadMateria> listaDtoConfUniMat;
+    
+     /**
+     * Existe o no asignación de indicadores de la unidad seleccionada
+     */
+    @Getter @NonNull private Boolean existeAsignacionUnidad;
+    
+    /**
+     * Lista de asignación de indicadores por unidad por materia
+     */
+    @Getter @NonNull private List<UnidadMateriaConfiguracionDetalle> listaConfiguracionDetalles;
+    
+     /**
+     * Existe o no asignación de indicadores de la carga académica seleccionada
+     */
+    @Getter @NonNull private Boolean existeAsignacionIndicadores;
+    
+     /**
+     * Lista de asignación de indicadores por carga académica
+     */
+    @Getter @NonNull private List<Listaasignacionindicadorescargaacademica> listaAsignacionCargaAcademica;
             
     public AsignacionIndicadoresCriteriosRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
@@ -213,5 +235,21 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
 
     public void setListaDtoConfUniMat(List<DtoConfiguracionUnidadMateria> listaDtoConfUniMat) {
         this.listaDtoConfUniMat = listaDtoConfUniMat;
+    }
+
+    public void setExisteAsignacionUnidad(Boolean existeAsignacionUnidad) {
+        this.existeAsignacionUnidad = existeAsignacionUnidad;
+    }
+
+    public void setListaConfiguracionDetalles(List<UnidadMateriaConfiguracionDetalle> listaConfiguracionDetalles) {
+        this.listaConfiguracionDetalles = listaConfiguracionDetalles;
+    }
+
+    public void setExisteAsignacionIndicadores(Boolean existeAsignacionIndicadores) {
+        this.existeAsignacionIndicadores = existeAsignacionIndicadores;
+    }
+
+    public void setListaAsignacionCargaAcademica(List<Listaasignacionindicadorescargaacademica> listaAsignacionCargaAcademica) {
+        this.listaAsignacionCargaAcademica = listaAsignacionCargaAcademica;
     }
 }

@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
@@ -474,5 +475,68 @@ public class EjbAsignacionIndicadoresCriterios {
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la configuración de la unidad materia (EjbAsignacionIndicadoresCriterios.pack).", e, DtoConfiguracionUnidadMateria.class);
         }
+    }
+    
+     /**
+     * Permite verificar si existe asignación de indicadores por criterio de la unidad seleccionada
+     * @param dtoConfiguracionUnidadMateria Configuración de la que se buscará asignación de indicadores por criterio
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<UnidadMateriaConfiguracionDetalle>> buscarAsignacionIndicadoresUnidad(DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria){
+        try{
+            List<UnidadMateriaConfiguracionDetalle> listaUnidadMatConfDet = f.getEntityManager().createQuery("SELECT umcd FROM UnidadMateriaConfiguracionDetalle umcd WHERE umcd.configuracion.configuracion =:configuracion", UnidadMateriaConfiguracionDetalle.class)
+                    .setParameter("configuracion", dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion())
+                    .getResultList();
+            return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Existe asignación de indicadores por criterio para la unidad seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la unidad seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresUnidad)", e, null);
+        }
+    }
+    
+     /**
+     * Permite verificar si existe asignación de indicadores por criterio de carga académica seleccionada
+     * @param dtoCargaAcademica Configuración de la que se buscará asignación de indicadores por criterio
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Listaasignacionindicadorescargaacademica>> buscarAsignacionIndicadoresCargaAcademica(DtoCargaAcademica dtoCargaAcademica){
+        try{
+            System.err.println("buscarAsignacionIndicadoresCargaAcademica - entro");
+            Boolean asigInd = compararUnidadesConfiguradasConTotales(dtoCargaAcademica);
+            System.err.println("buscarAsignacionIndicadoresCargaAcademica - valor " + asigInd);
+            List<Listaasignacionindicadorescargaacademica> listaUnidadMatConfDet = new ArrayList<>();
+            if(asigInd == true){
+            listaUnidadMatConfDet = f.getEntityManager().createQuery("SELECT l FROM Listaasignacionindicadorescargaacademica l WHERE l.carga =:cargaAcademica", Listaasignacionindicadorescargaacademica.class)
+                    .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .getResultList();
+            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaConsulta " + listaUnidadMatConfDet.size());
+            }else{
+                listaUnidadMatConfDet.clear();
+            }
+            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaFinal " + listaUnidadMatConfDet.size());
+            return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+        }
+    }
+    
+    public Boolean compararUnidadesConfiguradasConTotales(DtoCargaAcademica dtoCargaAcademica)
+    {
+        try {
+            List<UnidadMateriaConfiguracion> listaConfiguracion = f.getEntityManager().createQuery("SELECT c FROM UnidadMateriaConfiguracion c WHERE c.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
+                    .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .getResultList();
+            List<UnidadMateriaConfiguracionDetalle> listaUnidadMatConfDet = f.getEntityManager().createQuery("SELECT DISTINCT(cd.configuracion.configuracion) FROM UnidadMateriaConfiguracionDetalle cd WHERE cd.configuracion.carga.carga =:cargaAcademica", UnidadMateriaConfiguracionDetalle.class)
+                    .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .getResultList();
+
+            if (listaConfiguracion.size() == listaUnidadMatConfDet.size()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Throwable ex) {
+            Logger.getLogger(EjbAsignacionIndicadoresCriterios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 }

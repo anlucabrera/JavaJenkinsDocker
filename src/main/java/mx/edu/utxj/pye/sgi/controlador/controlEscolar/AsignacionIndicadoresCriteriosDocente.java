@@ -28,7 +28,9 @@ import java.util.List;
 import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaasignacionindicadorescargaacademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
@@ -89,6 +91,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
             rol.setCargas(resCarga.getValor());
             
+            rol.getInstrucciones().add("Para poder Asignar Criterios de evaluación debe haber realizado previamente la Configuración de la Unidad Materia");
             rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar configuraciones anteriores.");
             rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo que va a configurar.");
             rol.getInstrucciones().add("Seleccionar si o no aplicará Tarea Integradora en la configuración.");
@@ -99,7 +102,8 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             rol.getInstrucciones().add("Si desea ELIMINAR la configuración deberá seleccionar que desea realizar esta accción para que se active el botón de eliminar ubicado en la parte inferior.");
             rol.getInstrucciones().add("Al eliminar la configuración de la materia se eliminarán también los criterios de evaluación que se encuentren registrados.");
 
-            existeConfiguracion();
+            existeAsignacion();
+//            existeConfiguracion();
             
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -194,7 +198,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
      public void cambiarCarga(ValueChangeEvent event){
         rol.setExisteConfiguracion(false);
         rol.setCarga((DtoCargaAcademica)event.getNewValue());
-        existeConfiguracion();
+        existeAsignacion();
     }
          
      public void mostrarIndicadoresCriterioSer(){
@@ -283,5 +287,35 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
       
         Ajax.update("frm");
     }
+    
+     public void validarAsignacionUnidad(ValueChangeEvent event){
+        rol.setDtoConfUniMat((DtoConfiguracionUnidadMateria)event.getNewValue());
+        ResultadoEJB<List<UnidadMateriaConfiguracionDetalle>> res = ejb.buscarAsignacionIndicadoresUnidad(rol.getDtoConfUniMat());
+        if(res.getValor().size()>0 && !res.getValor().isEmpty()){
+            rol.setExisteAsignacionUnidad(true);
+            Messages.addGlobalWarn("Ya asignó indicadores de evaluación para esta unidad.");
+            rol.setListaConfiguracionDetalles(res.getValor());
+        }else{  
+            rol.setExisteAsignacionUnidad(false);
+        } 
+        Ajax.update("frm");
+    }
+     
+      public void existeAsignacion(){
+        if(rol.getCarga()== null) return;
+        ResultadoEJB<List<Listaasignacionindicadorescargaacademica>> res = ejb.buscarAsignacionIndicadoresCargaAcademica(rol.getCarga());
+        System.err.println("existeAsignacion - res " + res.getValor().size());
+        if(res.getValor().size()>0 && !res.getValor().isEmpty()){
+            rol.setExisteAsignacionIndicadores(true);
+            rol.setListaAsignacionCargaAcademica(res.getValor());
+        }else{  
+            rol.setExisteAsignacionIndicadores(false);
+            existeConfiguracion();
+            mostrarMensajeResultadoEJB(res);  
+        } 
+        System.err.println("existeAsignacion - valor " + rol.getExisteAsignacionIndicadores());
+        Ajax.update("frm");
+    }
+     
    
 }
