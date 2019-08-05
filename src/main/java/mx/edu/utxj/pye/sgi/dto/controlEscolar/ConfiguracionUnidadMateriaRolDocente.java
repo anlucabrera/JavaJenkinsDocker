@@ -105,6 +105,18 @@ public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
      */
     @Getter @NonNull private  Boolean autorizoEliminar;
     
+    /**
+     * Parametro que guarda valor si agregará o no tarea integradora
+     */
+    @Getter @NonNull private  Date fechaInicio;
+    
+    /**
+     * Parametro que guarda valor si agregará o no tarea integradora
+     */
+    @Getter @NonNull private  Date fechaFin;
+    
+    
+    
     public ConfiguracionUnidadMateriaRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
         this.docente = docente;
@@ -199,7 +211,13 @@ public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
     public void setAutorizoEliminar(Boolean autorizoEliminar) {
         this.autorizoEliminar = autorizoEliminar;
     }
-    
-    
+
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
+    }
 
 }

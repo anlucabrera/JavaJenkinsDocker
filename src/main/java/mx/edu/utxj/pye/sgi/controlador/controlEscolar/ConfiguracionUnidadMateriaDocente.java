@@ -81,7 +81,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
             rol.setPeriodoActivo(resEvento.getValor().getPeriodo());
-
+            
             rol.setEventoActivo(resEvento.getValor());
 
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
@@ -101,7 +101,8 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.getInstrucciones().add("Usted podrá visualizar la Configuración Guardada en sistema.");
             rol.getInstrucciones().add("Si desea ELIMINAR la configuración deberá seleccionar que desea realizar esta accción para que se active el botón de eliminar ubicado en la parte inferior.");
             rol.getInstrucciones().add("Al eliminar la configuración de la materia se eliminarán también los criterios de evaluación que se encuentren registrados.");
-
+            
+            rangoFechasPeriodo();
             existeConfiguracion();
             rol.setAddTareaInt(true);
             rol.setAutorizoEliminar(false);
@@ -155,6 +156,14 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
         }  
     }
     
+    public void rangoFechasPeriodo(){
+        if(rol.getPeriodoActivo()== null) return;
+        DtoDiasPeriodoEscolares dtoFechas = ejb.getCalculoDiasPeriodoEscolar(rol.getPeriodoActivo());
+        rol.setFechaInicio(dtoFechas.getFechaInicio());
+        rol.setFechaFin(dtoFechas.getFechaFin());
+    }
+    
+    
     public void mostrarConfiguracionSugerida(){
         if(rol.getCarga() == null) return;
         ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionSugerida(rol.getCarga());
@@ -177,19 +186,62 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
      * Permite invocar el guardado de la configuración de la unidad materia, para que se lleve acabo, se debió haber seleccionado una carga académica, e ingresado fecha de inicio y fin de cada unidad.
      */
     public void guardarConfigUnidadMat(){
-        ResultadoEJB<List<DtoConfiguracionUnidadMateria>> resGuardarConf = ejb.guardarConfUnidadMateria(rol.getConfUniMateriasSug(), rol.getCarga().getCargaAcademica());
-        if(resGuardarConf.getCorrecto()){
-            rol.setExiste(true);
-            if(rol.getAddTareaInt()){
-                ResultadoEJB<TareaIntegradora> resGuardarTI = ejb.guardarTareaIntegradora(rol.getTareaIntegradora(), rol.getCarga().getCargaAcademica());
-                mostrarMensajeResultadoEJB(resGuardarTI);
-                rol.setAddTareaInt(false);
+        if (rol.getAddTareaInt()) {
+            Integer valPorcentajesUnidadTI = ejb.validarSumaPorcentajesUnidadTI(rol.getConfUniMateriasSug(), rol.getTareaIntegradora());
+            switch (valPorcentajesUnidadTI) {
+                case 0:
+                    ResultadoEJB<List<DtoConfiguracionUnidadMateria>> resGuardarConf = ejb.guardarConfUnidadMateria(rol.getConfUniMateriasSug(), rol.getCarga().getCargaAcademica());
+                    if (resGuardarConf.getCorrecto()) {
+                        rol.setExiste(true);
+                        if (rol.getAddTareaInt()) {
+                            ResultadoEJB<TareaIntegradora> resGuardarTI = ejb.guardarTareaIntegradora(rol.getTareaIntegradora(), rol.getCarga().getCargaAcademica());
+                            mostrarMensajeResultadoEJB(resGuardarTI);
+                            rol.setAddTareaInt(false);
+                        }
+                        ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> resUniMatCrit = ejb.guardarConfiguracionUnidadMateriaCriterios(resGuardarConf.getValor(), rol.getCarga());
+                        mostrarMensajeResultadoEJB(resUniMatCrit);
+//                  mostrarConfiguracionGuardada();
+                    } else {
+                        mostrarMensajeResultadoEJB(resGuardarConf);
+                    }
+                    break;
+                case 1:
+                    Messages.addGlobalWarn("La suma de los porcentajes por unidad y tarea integradora es mayor a 100%.");
+                    break;
+                case 2:
+                    Messages.addGlobalWarn("La suma de los porcentajes por unidad y tarea integradora es menor a 100%.");
+                    break;
+                default:
+
+                    break;
             }
-            System.err.println("guardarConfigUnidadMat " + resGuardarConf.getValor().toString() + " carga " + rol.getCarga());
-            ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> resUniMatCrit = ejb.guardarConfiguracionUnidadMateriaCriterios(resGuardarConf.getValor(), rol.getCarga());
-            mostrarMensajeResultadoEJB(resUniMatCrit);
-//            mostrarConfiguracionGuardada();
-        }else  mostrarMensajeResultadoEJB(resGuardarConf);
+        }
+        else {
+            Integer valPorcentajesUnidad = ejb.validarSumaPorcentajesUnidad(rol.getConfUniMateriasSug());
+            switch (valPorcentajesUnidad) {
+                case 0:
+                    ResultadoEJB<List<DtoConfiguracionUnidadMateria>> resGuardarConf = ejb.guardarConfUnidadMateria(rol.getConfUniMateriasSug(), rol.getCarga().getCargaAcademica());
+                    if (resGuardarConf.getCorrecto()) {
+                        rol.setExiste(true);
+                        ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> resUniMatCrit = ejb.guardarConfiguracionUnidadMateriaCriterios(resGuardarConf.getValor(), rol.getCarga());
+                        mostrarMensajeResultadoEJB(resUniMatCrit);
+//                  mostrarConfiguracionGuardada();
+                    } else {
+                        mostrarMensajeResultadoEJB(resGuardarConf);
+                    }
+                    break;
+                case 1:
+                    Messages.addGlobalWarn("La suma de los porcentajes por unidad es mayor a 100%.");
+                    break;
+                case 2:
+                    Messages.addGlobalWarn("La suma de los porcentajes por unidad es menor a 100%.");
+                    break;
+                default:
+
+                    break;
+
+            }
+        }        
     }
     
    
@@ -214,10 +266,11 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
         } 
     }
     
-    public void eliminarConfigUnidadMat(DtoCargaAcademica cargaAcademica){
+    public void eliminarConfigUnidadMat(){
         ResultadoEJB<Integer> resEliminarCUM = ejb.eliminarConfUnidadMateria(rol.getCargaEliminar().getCargaAcademica());
         ResultadoEJB<Integer> resEliminarTI = ejb.eliminarTareaIntegradora(rol.getCargaEliminar().getCargaAcademica());
-        rol.setExiste(false);
+//        rol.setExiste(false);
+        existeConfiguracion();
         mostrarMensajeResultadoEJB(resEliminarCUM);
         mostrarMensajeResultadoEJB(resEliminarTI);
     }

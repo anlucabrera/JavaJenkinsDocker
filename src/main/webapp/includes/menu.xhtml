@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
@@ -92,6 +92,7 @@
             <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
             <c:if test="#{procesoInscripcion.mostrarEnDesarrollo(request) and procesoInsfcripcion.tieneAcceso}"><li><p:link href="/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-users"></i><span>Inscripciones</span></p:link></li></c:if>
             <c:if test="#{reincorporacionServiciosEscolares.mostrarEnDesarrollo(request) and reincorporacionServiciosEscolares.tieneAcceso}"><li><p:link href="/controlEscolar/se/reincorporaciones.xhtml"><i class="fa fa-user-plus"></i><span>Reincorporaciones</span></p:link></li></c:if>
+            <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Indicadores Criterio</span></p:link></li></c:if>
         </c:if>
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Perfil del personal</li>

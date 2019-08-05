@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConfiguracionUnidadMateriaRolDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDiasPeriodoEscolares;
@@ -94,14 +95,6 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicaPorDocente(PersonalActivo docente, PeriodosEscolares periodo){
         try{
-            //buscar carga académica del personal docente logeado del periodo seleccionado
-//            List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
-//                    .setParameter("docente", docente.getPersonal().getClave())
-//                    .setParameter("periodo", periodo.getPeriodo())
-//                    .getResultStream()
-//                    .map(ca -> pack(ca).getValor())
-//                    .filter(dto -> dto != null)
-//                    .collect(Collectors.toList());
               List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("periodo", periodo.getPeriodo())
@@ -221,7 +214,7 @@ public class EjbConfiguracionUnidadMateria {
             return dtoDiasPeriodoEscolares;
             
     }
-   
+    
      /**
      * Permite obtener configuración sugerida, calculando fecha de inicio y de fin de cada unidad de la carga académica seleccionada
      * @param dtoCargaAcademica Materia de la que se sugerirá configuración
@@ -229,6 +222,8 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> getConfiguracionSugerida(DtoCargaAcademica dtoCargaAcademica){
         try{
+            Double valorPorHora = getValorPorHora(dtoCargaAcademica);
+            
             DtoDiasPeriodoEscolares dtoDiasPeriodoEscolares = getCalculoDiasPeriodoEscolar(dtoCargaAcademica.getCargaAcademica().getEvento().getPeriodo());
            
             Integer diasUnidad = dtoDiasPeriodoEscolares.getDias()/dtoCargaAcademica.getMateria().getUnidadMateriaList().size();
@@ -339,15 +334,47 @@ public class EjbConfiguracionUnidadMateria {
                        
                         break;
                 }
+                
+                Integer horasUnidad = umc.getUnidadMateria().getHorasTeoricas() + umc.getUnidadMateria().getHorasPracticas();
+
+                Double porcentaje = horasUnidad * valorPorHora;
+
+                unidadMateriaConfiguracion.setPorcentaje(porcentaje);
+                        
+                
                 DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria = new DtoConfiguracionUnidadMateria(unidadMateriaBD, unidadMateriaConfiguracion);
                 dtoConfSug.add(dtoConfiguracionUnidadMateria);
                
             });
-            
             return ResultadoEJB.crearCorrecto(dtoConfSug, "Lista de configuración sugerida de la unidad materia seleccionada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración sugerida de la materia del docente. (EjbUnidadMateriaConfiguracion.getConfiguracionUnidadMateriaSugerida)", e, null);
         }
+    }
+    
+    public Double getValorPorHora(DtoCargaAcademica dtoCargaAcademica) {
+        Double valorPorHora = 0.0, horasTotales;
+
+        TypedQuery<Double> hP = (TypedQuery<Double>) f.getEntityManager().createQuery("SELECT SUM(u.horasPracticas) FROM UnidadMateria u WHERE u.idMateria.idMateria =:materia GROUP BY u.idMateria.idMateria");
+        hP.setParameter("materia", dtoCargaAcademica.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria());
+        hP.getSingleResult();
+        
+        Number horasPracticas = ((Number) hP.getSingleResult());
+        double horasP = horasPracticas.doubleValue();
+        
+        TypedQuery<Double> hT = (TypedQuery<Double>) f.getEntityManager().createQuery("SELECT SUM(u.horasTeoricas) FROM UnidadMateria u WHERE u.idMateria.idMateria =:materia GROUP BY u.idMateria.idMateria");
+        hT.setParameter("materia", dtoCargaAcademica.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria());
+        hT.getSingleResult();
+
+        Number horasTeorias = ((Number) hT.getSingleResult());
+        double horasT = horasTeorias.doubleValue();
+       
+        horasTotales = horasT + horasP;
+        
+        valorPorHora = 100 / horasTotales;
+        
+        return valorPorHora;
+        
     }
     
     /**
@@ -553,7 +580,6 @@ public class EjbConfiguracionUnidadMateria {
                 ResultadoEJB<TareaIntegradora> resTareaIntegradora = getTareaIntegradora(rol.getCarga());
                 TareaIntegradora tareaInt = resTareaIntegradora.getCorrecto()?resTareaIntegradora.getValor():null;
                 
-                System.out.println("resUnidadesConf = " + resUnidadesConf);
                 if(resUnidadesConf.getCorrecto()){
                     List<UnidadMateriaConfiguracion> unidadMatConf = resUnidadesConf.getValor().stream()
                             .filter(dtoConfUnidad -> dtoConfUnidad.getUnidadMateriaConfiguracion()!= null)
@@ -582,5 +608,58 @@ public class EjbConfiguracionUnidadMateria {
 //            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudieron identificar mensajes de configuración (EjbUnidadMateriaConfiguracion.identificarMensajes).", e, null);
         }
+    }
+    
+    public Integer validarSumaPorcentajesUnidadTI(List<DtoConfiguracionUnidadMateria> listaUnidades, TareaIntegradora tareaIntegradora)
+    {
+            Integer valor = 0;
+            Double porcentajeTI = tareaIntegradora.getPorcentaje();
+            List<UnidadMateriaConfiguracion> unidadMatConf = new ArrayList<>();
+          
+            listaUnidades.forEach(l -> {
+            UnidadMateriaConfiguracion umc = l.getUnidadMateriaConfiguracion();
+            unidadMatConf.add(umc);
+            });
+            
+            Double porcentajesUnidad = unidadMatConf.stream().mapToDouble(UnidadMateriaConfiguracion::getPorcentaje).sum();
+            Double totalPorcentajes = porcentajeTI + porcentajesUnidad;
+            
+            if(totalPorcentajes > 100.00){
+                valor = 1;
+            }
+            else if(totalPorcentajes < 100.00){
+                valor = 2;
+            }
+            else{
+                valor = 0;
+            }
+            
+            return valor;
+    }
+    
+    public Integer validarSumaPorcentajesUnidad(List<DtoConfiguracionUnidadMateria> listaUnidades)
+    {
+            Integer valor = 0;
+            
+            List<UnidadMateriaConfiguracion> unidadMatConf = new ArrayList<>();
+          
+            listaUnidades.forEach(l -> {
+            UnidadMateriaConfiguracion umc = l.getUnidadMateriaConfiguracion();
+            unidadMatConf.add(umc);
+            });
+            
+            Double porcentajesUnidad = unidadMatConf.stream().mapToDouble(UnidadMateriaConfiguracion::getPorcentaje).sum();
+            
+            if(porcentajesUnidad > 100.00){
+                valor = 1;
+            }
+            else if(porcentajesUnidad < 100.00){
+                valor = 2;
+            }
+            else{
+                valor = 0;
+            }
+            
+            return valor;
     }
 }
