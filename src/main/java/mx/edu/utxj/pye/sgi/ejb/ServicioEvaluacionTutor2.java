@@ -43,12 +43,12 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
          * l.add(new SelectItem("1", "Nunca", "Nunca"));
          */
 //        l.add(new SelectItem("4", "No aplica", "No aplica"));Solo para pregunta 5
-        l.add(new SelectItem("1", "I", "Insatisfactorio"));
-        l.add(new SelectItem("2", "M", "Mejorable"));
-        l.add(new SelectItem("3", "PS", "Poco satisfactorio"));
-        l.add(new SelectItem("4", "S", "Satisfactorio"));
-        l.add(new SelectItem("5", "MS", "Muy satisfactorio"));
-        l.add(new SelectItem("0", "N/A", "No aplica"));
+        l.add(new SelectItem("1", "Insatisfactorio", "Insatisfactorio"));
+        l.add(new SelectItem("2", "Mejorable", "Mejorable"));
+        l.add(new SelectItem("3", "Poco satisfactorio", "Poco satisfactorio"));
+        l.add(new SelectItem("4", "Satisfactorio", "Satisfactorio"));
+        l.add(new SelectItem("5", "Muy satisfactorio", "Muy satisfactorio"));
+        l.add(new SelectItem("0", "No aplica", "No aplica"));
 
         return l;
     }

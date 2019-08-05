@@ -10,7 +10,9 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
-        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -46,7 +48,7 @@
                                 </span>
                                 <p:spacer width="15px"/>
                                 <span class="label label-warning"><i class="fa fa-info-circle" />
-                                    Los campos marcados con un <b><strong style="color : red;">*</strong></b> son obligatorias.
+                                    Los campos marcados con un <b><strong style="color : red;">*</strong></b> son obligatorios.
                                 </span>
                             </h4>
                         </f:facet>
@@ -57,7 +59,7 @@
                 <section>
                     <h:form>
                         <p:panel id="toggleable-solid" header="Deseas recuperar tu registro da clic en icono +" toggleable="true" toggleSpeed="500"
-                                     closeSpeed="500" widgetVar="panel-solid" collapsed="true">
+                                 closeSpeed="500" widgetVar="panel-solid" collapsed="true">
                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                 <div class="col-md-12">
                                     <div class="box box-widget widget-user-2">
@@ -153,7 +155,7 @@
                                                                                 <p:message for="curp"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="genero" style="font-size: large" value="Genero"/>
+                                                                                <p:outputLabel for="genero" style="font-size: large" value="Género"/>
                                                                                 <p:selectOneMenu id="genero" disabled="true" value="#{FichaAdmision.persona.genero}">
                                                                                     <f:selectItem value="#{null}"/>
                                                                                     <f:selectItems value="#{FichaAdmision.listaGenero}"/>
@@ -222,13 +224,13 @@
                                                                             <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <c:if test="#{FichaAdmision.persona.idpersona != null}">
-                                                                                    <p:commandButton id="bt-destroyR" value="Guarda Informacón" styleClass="btn-primary btn-block col-md-3"
-                                                                                                 actionListener="#{FichaAdmision.GuardaDatosPesonales()}" icon="fa fa-pencil-square-o" update="@form,:tabw1" process="@form" oncomplete="true">
+                                                                                    <p:commandButton id="bt-destroyR" value="Guarda Información" styleClass="btn-primary btn-block col-md-3"
+                                                                                                     actionListener="#{FichaAdmision.GuardaDatosPesonales()}" icon="fa fa-pencil-square-o" update="@form,:tabw1" process="@form" oncomplete="true">
                                                                                     </p:commandButton>
                                                                                 </c:if>
                                                                                 <c:if test="#{FichaAdmision.persona.idpersona == null}">
-                                                                                    <p:commandButton id="bt-destroySR" value="Guarda Informacón" styleClass="btn-primary btn-block col-md-3"
-                                                                                                 actionListener="#{FichaAdmision.GuardaDatosPesonales()}" icon="fa fa-pencil-square-o" update="@form,:tabw1" process="@form" oncomplete="true">
+                                                                                    <p:commandButton id="bt-destroySR" value="Guarda Información" styleClass="btn-primary btn-block col-md-3"
+                                                                                                     actionListener="#{FichaAdmision.GuardaDatosPesonales()}" icon="fa fa-pencil-square-o" update="@form,:tabw1" process="@form" oncomplete="true">
                                                                                         <p:confirm header="Confirmación de Aviso de Privacidad" message="Aviso de Privacidad" icon="ui-icon-alert" />
                                                                                     </p:commandButton>
                                                                                 </c:if>
@@ -411,7 +413,7 @@
                                                             <div class="col-sm-12 border-right">
                                                                 <div class="description-block">
                                                                     <label class="col-sm-12 control-label"><h3 style="text-align: center">Medios de comunicación</h3></label>
-                                                                    <p style="color: red">* Es importante que proporciones una dirección de correo electrónico ya que a través de este medio se te enviaran notificaciones</p>
+                                                                    <p style="color: red">* Es importante que proporciones una dirección de correo electrónico ya que a través de este medio se enviarán notificaciones</p>
                                                                     <div class="row">
                                                                         <div class="form-group">
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
@@ -427,7 +429,7 @@
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="email" style="font-size: large" value="Correo Electrónico" />
                                                                                 <p:inputText id="email" class="form-control" placeholder="a@utxicotepec.edu.mx" value="#{FichaAdmision.medioComunicacion.email}" validatorMessage="El email es incorrecto">
-                                                                                <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                                                                    <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
                                                                                 </p:inputText>
                                                                                 <p:message for="email"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -451,7 +453,7 @@
                                             </div>
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Domicio de recidencia y procedencia" disabled="#{FichaAdmision.com}">
+                                    <p:tab title="Domicilio de residencia y procedencia" disabled="#{FichaAdmision.com}">
                                         <h:form>
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
@@ -500,7 +502,7 @@
                                                                                 <p:message for="asentamientoR"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="tiempoResidencoa" style="font-size: large" value="Tiempo de recidencia*"/>
+                                                                                <p:outputLabel for="tiempoResidencoa" style="font-size: large" value="Tiempo de residencia*"/>
                                                                                 <p:inputText id="tiempoResidencoa" styleClass="form-control" placeholder="Ejem: 1 año" value="#{FichaAdmision.domicilio.tiempoResidencia}" required="true" requiredMessage="El tiempo de recidenca es requerido"/>
                                                                                 <p:message for="tiempoResidencoa"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -812,7 +814,7 @@
                                                                         <div class="form-group">
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="da1" style="font-size: large" value="División Académica*"/>
-                                                                                <p:selectOneMenu id="da1" value="#{FichaAdmision.areaAcademicaPO}" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
+                                                                                <p:selectOneMenu id="da1" value="#{FichaAdmision.areaAcademicaPO}" required="true" requiredMessage="Debe de indicar la división academica de la carrera de primera opción">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{FichaAdmision.listaAreasSO}"/>
                                                                                     <p:ajax listener="#{FichaAdmision.selectPEPrincipal()}" update="pe1,sistema1"/>
@@ -848,7 +850,7 @@
                                                                         <div class="form-group">
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="da2" style="font-size: large" value="División Académica*"/>
-                                                                                <p:selectOneMenu id="da2" value="#{FichaAdmision.areaAcademicaSO}" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de segunda opción">
+                                                                                <p:selectOneMenu id="da2" value="#{FichaAdmision.areaAcademicaSO}" required="true" requiredMessage="Debe de indicar la división academica de la carrera de segunda opción">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{FichaAdmision.listaAreasSO}"/>
                                                                                     <p:ajax listener="#{FichaAdmision.selectPEOpcional()}" update="pe2,sistema2"/>
@@ -908,7 +910,7 @@
                                                                     </c:if>
                                                                 </f:facet>
                                                                 <f:facet name="right">
-                                                                    
+
                                                                 </f:facet>
                                                             </p:toolbar>
                                                         </p:outputPanel>
@@ -933,7 +935,7 @@
                                                         <c:set var="cellOptionsStyle" value="#{'min-width: 120px; border-bottom-color: #337ab7;padding-bottom: 20px;padding-top: 20px;'}" />
                                                         <c:set var="optionRadioDivClass" value="#{'frb frb-primary col-md-6 col-sm-12'}" />
                                                         <c:set var="separatorStyle" value="#{'max-width: 1200px;'}" />
-                                                        
+
                                                         <div class="row">
                                                             <div class="panel panel-primary" style="#{panelStyle}}">
                                                                 <div class="panel-heading">
@@ -1039,7 +1041,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{FichaAdmision.resultado.r8primerEstudiar}" valueChangeListener="#{FichaAdmision.guardar}">
-                                                                                       <f:selectItems value="#{FichaAdmision.siNo}" />
+                                                                                        <f:selectItems value="#{FichaAdmision.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -1203,8 +1205,8 @@
                                                         <div class="col-sm-4 col-md-4 col-lg-4">
                                                             <p>Estimado(a) #{FichaAdmision.persona.nombre}</p>
 
-                                                            <p style="text-align:  justify">Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior.</p>
-                                                            <p style="text-align:  justify">Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria</p>
+                                                            <p style="text-align:  justify">Gracias por elegir a la Universidad Tecnológica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior.</p>
+                                                            <p style="text-align:  justify">Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entrega la documentación necesaria</p>
                                                             <br />
                                                             <ul>
                                                                 <li>Formato de Ficha de Admisión.</li>

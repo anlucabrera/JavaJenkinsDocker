@@ -365,7 +365,7 @@
                                                 <h:outputText value="#{poa.totalACorte}" />
                                             </p:column>   
                                             <p:column>
-                                                <h:outputText value="#{poa.porcentejeAlCorte} %" />
+                                                <h:outputText value="#{utilidadesPOA.df.format(poa.porcentejeAlCorte)} %" />
                                             </p:column>
                                             <p:column>
                                                 <img src="../../resources/img/#{poa.semaforoG}.png" alt="#{poa.semaforoG}"/>
@@ -377,7 +377,7 @@
                                                 <h:outputText value="#{poa.totalACuatrimestre}"/>
                                             </p:column>   
                                             <p:column>
-                                                <h:outputText value="#{poa.porcentajeCuatrimestre} %" />
+                                                <h:outputText value="#{utilidadesPOA.df.format(poa.porcentajeCuatrimestre)} %" />
                                             </p:column>
                                             <p:column>
                                                 <img src="../../resources/img/#{poa.semaforoC}.png" alt="#{poa.semaforoC}"/>

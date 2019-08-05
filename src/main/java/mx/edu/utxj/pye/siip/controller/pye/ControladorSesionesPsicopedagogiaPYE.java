@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mx.edu.utxj.pye.siip.controller.ca;
+package mx.edu.utxj.pye.siip.controller.pye;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +23,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
@@ -46,8 +47,9 @@ import org.omnifaces.util.Messages;
 @Named
 @ManagedBean
 @ViewScoped
-public class ControladorSesionesPsicopedagogia implements Serializable{
+public class ControladorSesionesPsicopedagogiaPYE implements Serializable{
     
+//    TODO: Pendiente de verificar el modulo completo de administrador
     private static final long serialVersionUID = -1607308138502126918L;
     
     @Getter @Setter DtoSesionPsicopedagogia dto;
@@ -64,17 +66,13 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
     public void init(){
         dto = new DtoSesionPsicopedagogia();
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setLstAreasConflicto(ejbSesionesPsicopedagogia.getListaAreasDeConflicto());
-        dto.setLstOtrosTiposSesionesPsicopedagogia(ejbSesionesPsicopedagogia.getListaOtrosTiposSesionesPsicopedagogia());
-        dto.setLstProgramasEducativos(ejbCatalogos.getProgramasEducativos());
-        
-        Faces.setSessionAttribute("areasConflicto", dto.getLstAreasConflicto());
-        Faces.setSessionAttribute("otroTipoSesion", dto.getLstOtrosTiposSesionesPsicopedagogia());
-        Faces.setSessionAttribute("programasEducativos", dto.getLstProgramasEducativos());
         filtros();
     }
     
     public void filtros(){
+//        llenaCategorias();
+        dto.nulificarCategoria();
+        
         dto.setAniosConsulta(ejbModulos.getEjercicioRegistros(dto.getRegistros(), dto.getArea()));
         if(!dto.getAniosConsulta().isEmpty()){
             dto.setAnioConsulta((short)dto.getAniosConsulta().get(dto.getAniosConsulta().size()-1));
@@ -89,11 +87,26 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
         buscaSesionesIndividuales();
     }
     
+    public void actualizarAreas(ValueChangeEvent e){
+        dto.setCategoria((Categorias)e.getNewValue());
+//        llenaAreas();
+        dto.nulificarAreaPOA();
+        Faces.setSessionAttribute("areas", dto.getListaAreasPOA());
+    }
+    
     public void actualizarMeses(ValueChangeEvent e){
         dto.setAnioConsulta((short)e.getNewValue());
-        dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(), dto.getRegistros(), dto.getArea()));
+//        llenaMeses();
         buscaSesionesIndividuales();
     }
+    
+    
+    
+//    public void actualizarMeses(ValueChangeEvent e){
+//        dto.setAnioConsulta((short)e.getNewValue());
+//        dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(), dto.getRegistros(), dto.getArea()));
+//        buscaSesionesIndividuales();
+//    }
     
     public void buscaSesionesIndividuales(){
         dto.setLstSesionesPsicopedagogia(ejbSesionesPsicopedagogia.getFiltroSesionesIndividualesPorAreaEjercicioMesArea(dto.getArea(), dto.getAnioConsulta(), dto.getMesConsulta()));
@@ -109,7 +122,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
             ejbModulos.eliminarRegistro(registro);
             buscaSesionesIndividuales();
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorSesionesPsicopedagogia.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorSesionesPsicopedagogiaPYE.class.getName()).log(Level.SEVERE, null, ex);
             Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
         }
     }
@@ -125,7 +138,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
             dto.setListaEvidencias(ejbModulos.getListaEvidenciasPorRegistro(dto.getDtoSesionPsicopedagogia().getSesionIndividualMensualPsicopedogia().getRegistro()));
             Ajax.update("frmEvidencias");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorSesionesPsicopedagogia.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorSesionesPsicopedagogiaPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -154,7 +167,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
                 Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(),String.valueOf(dto.getArchivos().size())));
             }
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorSesionesPsicopedagogia.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorSesionesPsicopedagogiaPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -376,7 +389,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
         } catch (Throwable ex) {
-            Logger.getLogger(ControladorSesionesPsicopedagogia.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorSesionesPsicopedagogiaPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -397,7 +410,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
             try {
                 dto.setAlineacionActividad(ejbModulos.getActividadAlineadaGeneral(dto.getDtoSesionPsicopedagogia().getSesionIndividualMensualPsicopedogia().getRegistro()));
             } catch (Throwable ex) {
-                Logger.getLogger(ControladorSesionesPsicopedagogia.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControladorSesionesPsicopedagogiaPYE.class.getName()).log(Level.SEVERE, null, ex);
             }
             actualizarEjes(dto.getDtoSesionPsicopedagogia().getSesionIndividualMensualPsicopedogia().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
             cargarAlineacionXActividad();

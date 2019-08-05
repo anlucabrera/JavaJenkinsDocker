@@ -362,7 +362,7 @@ public class ControladorSubordinados implements Serializable {
                 ejbNotificacionesIncidencias.actualizarIncidencias(incidencias);
                 Messages.addGlobalInfo("¡Operación exitosa!");
             } else {
-                Messages.addGlobalInfo("¡El timepo asiganado para validar incidencia a expirado!");
+                Messages.addGlobalInfo("¡El tiempo asignado para validar incidencia ha expirado!");
             }
             mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));
         } catch (Throwable ex) {

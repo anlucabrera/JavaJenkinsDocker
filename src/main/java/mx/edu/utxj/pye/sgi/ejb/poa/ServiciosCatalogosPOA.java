@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
@@ -220,4 +221,18 @@ public class ServiciosCatalogosPOA implements EjbCatalogosPoa {
         List<Registros> pr = q.getResultList();
         return pr;
     }
+  
+    //  ------------------------------------------EjerciciosFiscales -----------------------------------------------
+    @Override
+    public EjerciciosFiscales mostrarEjercicioFiscaleses(Short idE) {
+        TypedQuery<EjerciciosFiscales> q = em.createQuery("SELECT r FROM EjerciciosFiscales r WHERE r.ejercicioFiscal=:ejercicioFiscal", EjerciciosFiscales.class);
+        q.setParameter("ejercicioFiscal", idE);
+        List<EjerciciosFiscales> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return new EjerciciosFiscales();
+        } else {
+            return pr.get(0);
+        }
+    }
+
 }
