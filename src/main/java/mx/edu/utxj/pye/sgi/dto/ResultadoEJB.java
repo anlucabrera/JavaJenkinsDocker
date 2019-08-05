@@ -121,7 +121,9 @@ public class ResultadoEJB<T> implements Serializable {
                     mensaje = "";
                 }
 //                System.out.println("resultado = [" + resultado + "], mensaje = [" + mensaje + "], ex = [" + ex + "], tipo = [" + tipo + "]");
-                mensaje = mensaje.concat(" ").concat(getExceptionMessage(ex));
+                String exceptionMessage = getExceptionMessage(ex);
+                if(exceptionMessage == null) exceptionMessage = "Mensaje de excepción nula";
+                mensaje = mensaje.concat(" ").concat(exceptionMessage);
             }
             T t = null;                    ;
             return new ResultadoEJB<T>(t,mensaje,ex,resultado);

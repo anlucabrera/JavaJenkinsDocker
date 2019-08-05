@@ -90,8 +90,8 @@ public class EjbCapturaCalificaciones {
      */
     public ResultadoEJB<List<DtoUnidadConfiguracion>> getUnidadesEnEvaluacion(PersonalActivo docente){
         try{
-            System.out.println("EjbCapturaCalificaciones.getUnidadesEnEvaluacion");
-            em.createQuery("select c from UnidadMateriaConfiguracion  c where current_date between c.fechaInicio and  c.fechaFin and c.carga.docente=:docente", UnidadMateriaConfiguracion.class)
+//            System.out.println("EjbCapturaCalificaciones.getUnidadesEnEvaluacion");
+            /*em.createQuery("select c from UnidadMateriaConfiguracion  c where current_date between c.fechaInicio and  c.fechaFin and c.carga.docente=:docente", UnidadMateriaConfiguracion.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .getResultStream()
                     .distinct()
@@ -101,7 +101,7 @@ public class EjbCapturaCalificaciones {
                         if (!resCarga.getCorrecto()) return null;
                         return ejbPacker.packUnidadConfiguracion(unidadMateriaConfiguracion, resCarga.getValor());
                     })
-                    .forEach(System.out::println);
+                    .forEach(System.out::println);*/
             List<DtoUnidadConfiguracion> configuraciones = em.createQuery("select c from UnidadMateriaConfiguracion  c where current_date between c.fechaInicio and  c.fechaFin and c.carga.docente=:docente", UnidadMateriaConfiguracion.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .getResultStream()
@@ -187,6 +187,11 @@ public class EjbCapturaCalificaciones {
      */
     public ResultadoEJB<List<DtoUnidadConfiguracion>> getConfiguraciones(DtoCargaAcademica dtoCargaAcademica){
         try {
+//            System.out.println("EjbCapturaCalificaciones.getConfiguraciones");
+//            em.createQuery("select umc from UnidadMateriaConfiguracion umc where umc.carga=:carga", UnidadMateriaConfiguracion.class)
+//                    .setParameter("carga", dtoCargaAcademica.getCargaAcademica())
+//                    .getResultStream()
+//                    .forEach(System.out::println);
             //obtener mapa de configuraciones
             List<DtoUnidadConfiguracion> configuraciones = em.createQuery("select umc from UnidadMateriaConfiguracion umc where umc.carga=:carga", UnidadMateriaConfiguracion.class)
                     .setParameter("carga", dtoCargaAcademica.getCargaAcademica())
