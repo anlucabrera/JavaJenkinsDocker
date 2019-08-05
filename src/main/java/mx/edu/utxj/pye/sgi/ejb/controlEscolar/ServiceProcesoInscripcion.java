@@ -9,9 +9,11 @@ import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.util.Encrypted;
 
@@ -38,6 +40,8 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
     @EJB
     FacadeCE facadeCE;
+
+    @EJB EjbEventoEscolar ejbEventoEscolar;
 
     @Override
     public List<Aspirante> listaAspirantesTSU(Integer procesoInscripcion) {
@@ -388,5 +392,15 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
         return facadeCE.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.iems = :idIems", Iems.class)
                 .setParameter("idIems", id)
                 .getResultList().stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public ResultadoEJB<EventoEscolar> verificarEvento() {
+        try{
+            return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.INSCRIPCIONES);
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar de inscripciones (EJBProcesoInscripcion.).", e, EventoEscolar.class);
+        }
+
     }
 }

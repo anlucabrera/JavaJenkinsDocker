@@ -1,16 +1,24 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
+import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import com.itextpdf.text.DocumentException;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbProcesoInscripcion;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbUtilToolAcademicas;
+import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
+import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.ProcesoInscripcionRolServiciosEscolares;
+import mx.edu.utxj.pye.sgi.dto.dtoAlumnoFinanzas;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.ejb.finanzasRegistrodePagos.EjbFinanzasRegistroPagos;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Vistapagosprimercuatrimestre;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
+import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
 import org.omnifaces.util.Messages;
 
@@ -20,20 +28,22 @@ import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Named(value = "procesoInscripcion")
 @ViewScoped
-public class ProcesoInscripcion implements Serializable{
+public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     
     @Getter @Setter private ProcesosInscripcion procesosInscripcion;
     @Getter @Setter private Aspirante aspirante, aspiranteValido,selectAspirante;
     @Getter @Setter private Persona persona, personaValido;
-    @Getter @Setter private Estudiante estudiante;
+    @Getter @Setter private Estudiante estudiante,estudianteInscrito;
     @Getter @Setter private Documentosentregadosestudiante documentosentregadosestudiante;
     @Getter @Setter private List<Aspirante> listaAspirantesTSU;
     @Getter @Setter private List<Aspirante> listaAspirantesTSUXPE;
@@ -47,13 +57,20 @@ public class ProcesoInscripcion implements Serializable{
     @Getter @Setter private String nombreCarreraPO,nombreCarreraSO, carreraInscrito,nombrePEPrimeraOpcion;
     @Getter @Setter private Boolean opcionIncripcion = null;
     @Getter @Setter private Short areaIncripcion;
+    @Getter @Setter ProcesoInscripcionRolServiciosEscolares rol;
+    @Getter @Setter private Vistapagosprimercuatrimestre registro;
+    @Getter @Setter private dtoAlumnoFinanzas dtoAlumnoFinanzas;
+    @Inject LogonMB logonMB;
+    @Getter Boolean tieneAcceso = false;
 
-    
     @EJB EjbFichaAdmision ejbFichaAdmision;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
     @EJB EjbSelectItemCE ejbSelectItemCE;
     @EJB EjbAreasLogeo ejbAreasLogeo;
     @EJB EjbUtilToolAcademicas ejbToolAcademicas;
+    @EJB private EjbPropiedades ep;
+    @EJB private EjbGeneracionGrupos ejb;
+    @EJB EjbFinanzasRegistroPagos ejbFinanzas;
     
     @Inject LogonMB login;
     
@@ -70,6 +87,41 @@ public class ProcesoInscripcion implements Serializable{
         listaPe = ejbSelectItemCE.itemPEAll();
         listaAreasUniversidad = ejbAreasLogeo.listaProgramasEducativos();
         listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
+        try{
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares
+            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
+
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarServiciosEscolares(logonMB.getPersonal().getClave());
+            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
+
+            Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
+            PersonalActivo serviciosEscolares = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
+            rol = new ProcesoInscripcionRolServiciosEscolares(filtro, serviciosEscolares, serviciosEscolares.getAreaOperativa());
+            tieneAcceso = rol.tieneAcceso(serviciosEscolares);
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+
+            rol.setServiciosEscolares(serviciosEscolares);
+            ResultadoEJB<EventoEscolar> resEvento = ejbProcesoInscripcion.verificarEvento();
+            if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
+            // ----------------------------------------------------------------------------------------------------------------------------------------------------------
+            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
+            rol.setNivelRol(NivelRol.OPERATIVO);
+
+            rol.setPeriodoActivo(resEvento.getValor().getPeriodo());
+
+            rol.setEventoActivo(resEvento.getValor());
+
+        }catch (Exception e){
+            mostrarExcepcion(e);
+        }
+    }
+    @Override
+    public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
+        String valor = "inscripciones";
+        Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
+//        map.entrySet().forEach(System.out::println);
+        return mostrar(request, map.containsValue(valor));
     }
     
     public void buscarFichaAdmision(){
@@ -140,6 +192,11 @@ public class ProcesoInscripcion implements Serializable{
     public void buscarFichaAdmisionValida(){
         aspiranteValido = ejbProcesoInscripcion.buscaAspiranteByFolioValido(folioFichaInscripcion);
         if(aspiranteValido != null){
+            ResultadoEJB<Vistapagosprimercuatrimestre> resVerficaPago= ejbFinanzas.getRegistroByCurp(aspiranteValido.getIdPersona().getCurp());
+            if(resVerficaPago.getCorrecto()==true){documentosentregadosestudiante.setPagoColegiatura(true);}
+            else {
+                documentosentregadosestudiante.setPagoColegiatura(false);
+                mostrarMensajeResultadoEJB(resVerficaPago);}
             estudiante = ejbProcesoInscripcion.findByIdAspirante(aspiranteValido.getIdAspirante());
             if(estudiante != null){
                 opcionIncripcion = estudiante.getOpcionIncripcion();
@@ -184,6 +241,7 @@ public class ProcesoInscripcion implements Serializable{
                     estudiante.setTrabajadorInscribe(login.getPersonal().getClave());
                     estudiante =ejbProcesoInscripcion.guardaEstudiante(estudiante,documentosentregadosestudiante,opcionIncripcion);
                     carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
+                    Messages.addGlobalInfo("Se ha inscrito al estudiante con éxito!");
                 }
             }else if(opcionIncripcion == false){
                 noGruposPO = gruposElegibles(ejbProcesoInscripcion.listaGruposXPeriodoByCarrera((short)aspiranteValido.getIdProcesoInscripcion().getIdPeriodo(),aspiranteValido.getDatosAcademicos().getSegundaOpcion(), aspiranteValido.getDatosAcademicos().getSistemaSegundaOpcion().getIdSistema(), 1));
@@ -199,6 +257,7 @@ public class ProcesoInscripcion implements Serializable{
                     estudiante.setTrabajadorInscribe(login.getPersonal().getClave());
                     estudiante =ejbProcesoInscripcion.guardaEstudiante(estudiante,documentosentregadosestudiante,opcionIncripcion);
                     carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
+                    Messages.addGlobalInfo("Se ha inscrito al estudiante con éxito!");
                 }
             }
         }else{
@@ -212,6 +271,7 @@ public class ProcesoInscripcion implements Serializable{
         }
         
         listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
+        actualizaPago();
     }
     
     public void clearDatos(){
@@ -271,5 +331,20 @@ public class ProcesoInscripcion implements Serializable{
         });
         
         return listaGrupos.size();
+    }
+    //TODO: Actualiza el registro de pago en Finanazas
+    public void actualizaPago(){
+        estudianteInscrito = new Estudiante();
+        dtoAlumnoFinanzas = new dtoAlumnoFinanzas();
+        estudianteInscrito = ejbProcesoInscripcion.findByIdAspirante(aspiranteValido.getIdAspirante());
+        System.out.println("Estudiante que se encontro por id Aspirtante" + estudianteInscrito);
+        dtoAlumnoFinanzas.setPeriodo(estudianteInscrito.getPeriodo());
+        dtoAlumnoFinanzas.setMatricula(estudianteInscrito.getMatricula());
+        dtoAlumnoFinanzas.setCurp(estudiante.getAspirante().getIdPersona().getCurp());
+        dtoAlumnoFinanzas.setEstudianteCE(estudianteInscrito);
+        System.out.println("dto"+ dtoAlumnoFinanzas);
+        ResultadoEJB<Vistapagosprimercuatrimestre> resActualizaPago= ejbFinanzas.saveCambios(dtoAlumnoFinanzas);
+        if(resActualizaPago.getCorrecto()!=true){mostrarMensajeResultadoEJB(resActualizaPago);}
+        else {mostrarMensajeResultadoEJB(resActualizaPago);}
     }
 }

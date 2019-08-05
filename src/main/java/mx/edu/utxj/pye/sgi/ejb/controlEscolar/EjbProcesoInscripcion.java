@@ -5,10 +5,8 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 
@@ -34,4 +32,5 @@ public interface EjbProcesoInscripcion {
     public List<Estudiante> listaEstudiantesXPeriodo(Integer perido);
     public void actualizaEstudiante(Estudiante estudiante);
     public Iems buscaIemsByClave(Integer id);
+    public ResultadoEJB<EventoEscolar> verificarEvento();
 }
