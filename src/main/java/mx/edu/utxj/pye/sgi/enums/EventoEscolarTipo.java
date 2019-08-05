@@ -14,7 +14,7 @@ public enum EventoEscolarTipo {
     GENEREACION_GRUPOS("Generacion_de_grupos"),
     CONFIGURACION_DE_MATERIA("Configuración_de_materia"),
     ASIGNACION_TUTORES("Asignación_de_tutores"),
-    INSCRIPCIONES("Inscripciones");
+    INSCRIPCIONES("Inscripciones"),
     ASIGNACION_INDICADORES_CRITERIOS("Asignación_indicadores_criterios");
     @Getter @NonNull private final String label;
 }
