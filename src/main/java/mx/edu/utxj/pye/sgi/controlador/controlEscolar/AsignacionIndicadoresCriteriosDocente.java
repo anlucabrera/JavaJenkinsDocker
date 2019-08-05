@@ -224,7 +224,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
      
     public void guardarIndicadoresCriterio(){
         if(rol.getCarga()== null) return;
-        
         Integer valPorSer = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSer());
         switch (valPorSer) {
             case 0:
@@ -244,7 +243,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
 
                 break;
         }
-        
         Integer valPorSaber = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaber());
         switch (valPorSaber) {
             case 0:
@@ -264,7 +262,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
 
                 break;
         }
-        
         Integer valPorSabHac = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaberHacer());
         switch (valPorSabHac) {
             case 0:
@@ -304,7 +301,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
       public void existeAsignacion(){
         if(rol.getCarga()== null) return;
         ResultadoEJB<List<Listaasignacionindicadorescargaacademica>> res = ejb.buscarAsignacionIndicadoresCargaAcademica(rol.getCarga());
-        System.err.println("existeAsignacion - res " + res.getValor().size());
         if(res.getValor().size()>0 && !res.getValor().isEmpty()){
             rol.setExisteAsignacionIndicadores(true);
             rol.setListaAsignacionCargaAcademica(res.getValor());
@@ -313,9 +309,13 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             existeConfiguracion();
             mostrarMensajeResultadoEJB(res);  
         } 
-        System.err.println("existeAsignacion - valor " + rol.getExisteAsignacionIndicadores());
         Ajax.update("frm");
     }
      
+    public void eliminarAsignacionIndicadores(){
+        ResultadoEJB<Integer> resEliminar = ejb.eliminarAsignacionIndicadores(rol.getCarga().getCargaAcademica());
+        mostrarMensajeResultadoEJB(resEliminar);
+        existeAsignacion();
+    }
    
 }

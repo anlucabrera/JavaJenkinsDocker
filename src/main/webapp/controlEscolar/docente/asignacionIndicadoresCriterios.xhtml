@@ -94,17 +94,45 @@
                                     </div>
                                     <div class="row">
                                         <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
-                                            <p:dataTable var="asignacionIndCA" 
-                                                         emptyMessage="Sin registros."
-                                                         value="#{asignacionIndicadoresCriteriosDocente.rol.listaAsignacionCargaAcademica}"
-                                                         id="tbAsigInd1" rowIndexVar="rowIndex"
-                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
-                                                <p:column headerText="No. Unidad" style="text-align: center;"><h:outputText value="#{asignacionIndCA.unidad}" style="text-align: center;"/></p:column>
-                                                <p:column headerText="Unidad" style="text-align: center;"><h:outputText value="#{asignacionIndCA.nombreUnidad}" style="text-align: center;"/></p:column>
-                                                <p:column headerText="Criterio" style="text-align: center;"><h:outputText value="#{asignacionIndCA.criterio}" style="text-align: center;"/></p:column>
-                                                <p:column headerText="Indicador" style="text-align: center;"><h:outputText value="#{asignacionIndCA.indicador}" style="text-align: center;"/></p:column>
-                                                <p:column headerText="Porcentaje" style="text-align: center;"><h:outputText value="#{asignacionIndCA.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText></p:column>
-                                            </p:dataTable>
+                                            <center>
+                                                <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{asignacionIndicadoresCriteriosDocente.rol.listaAsignacionCargaAcademica}" sortBy="#{asignacionIndCA.unidad}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                    <f:facet name="header">
+                                                        #{asignacionIndicadoresCriteriosDocente.rol.carga.materia.nombre}
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="No. Unidad" /> 
+                                                            <p:column headerText="Unidad" /> 
+                                                            <p:column headerText="Criterio" />
+                                                            <p:column headerText="Indicador" />
+                                                            <p:column headerText="Porcentaje" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{asignacionIndCA.unidad}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{asignacionIndCA.nombreUnidad}" style="text-align: center;" />
+                                                    </p:column>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{asignacionIndCA.criterio}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{asignacionIndCA.indicador}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{asignacionIndCA.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{asignacionIndicadoresCriteriosDocente.eliminarAsignacionIndicadores}" class="btn-primary" process="@this" update="@form" icon="fa fa-trash" >
+                                                    <p:confirm header="Confirmación" message="¿Confirma la eliminación de la asignación de indicadores por criterio?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog>  
+                                            </center>
                                         </c:if>
                                         <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
                                         <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
@@ -122,14 +150,14 @@
                                         </center>
                                         <p:growl id="msgs" showDetail="true" />
                                         <p:accordionPanel>
-                                                <p:tab title="Ser" titleStyleClass="box-solid">
+                                                <p:tab title="Ser" titleStyleClass="box-solid" >
                                                         <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" layout="grid" id="indSer">
                                                         <f:facet name="header">
                                                             Ser <h:outputLabel value="#{indSer.porcentaje}" />
                                                         </f:facet>
                                                         <p:panel header="#{indSer.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputNumber value="#{indSer.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty" requiredMessage="El campo no puede quedarse vacio." />
+                                                                <p:inputText value="#{indSer.porcentajeIndicador}"/>
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
@@ -141,7 +169,7 @@
                                                         </f:facet>
                                                         <p:panel header="#{indSaber.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputNumber value="#{indSaber.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty" requiredMessage="El campo no puede quedarse vacio." />
+                                                                <p:inputText value="#{indSaber.porcentajeIndicador}"/>
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
@@ -153,7 +181,7 @@
                                                         </f:facet>
                                                         <p:panel header="#{indSaberHacer.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputNumber value="#{indSaberHacer.porcentajeIndicador}" symbol="%" symbolPosition="s" required="true" emptyValue="empty" requiredMessage="El campo no puede quedarse vacio."/>
+                                                                <p:inputText value="#{indSaberHacer.porcentajeIndicador}"/>
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
@@ -162,7 +190,7 @@
                                         <p></p>
                                         <p></p>
                                         <center>
-                                            <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterio()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                            <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterio}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                             <p:autoUpdate />
                                         </center>
                                         <p></p>
@@ -175,14 +203,27 @@
                                             <p></p>
                                             <p></p>
                                             <p></p>
-                                            <p:dataTable var="asignacionIndUnidad" 
-                                                         emptyMessage="Sin registros."
-                                                         value="#{asignacionIndicadoresCriteriosDocente.rol.listaConfiguracionDetalles}"
-                                                         id="tbl" rowIndexVar="rowIndex"
+                                            <p:dataTable id="tbAsigIndUnidad" var="asignacionIndUnidad" value="#{asignacionIndicadoresCriteriosDocente.rol.listaConfiguracionDetalles}" sortBy="#{asignacionIndUnidad.criterio.criterio}"
                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
-                                                <p:column headerText="Criterio" style="text-align: center;"><h:outputText value="#{asignacionIndUnidad.criterio.tipo}" style="text-align: center;"/></p:column>
-                                                <p:column headerText="Indicador" style="text-align: center;"><h:outputText value="#{asignacionIndUnidad.indicador.nombre}" style="text-align: center;"/></p:column>
-                                                <p:column headerText="Porcentaje" style="text-align: center;"><h:outputText value="#{asignacionIndUnidad.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText></p:column>
+                                                <f:facet name="header">
+                                                            Unidad: #{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat.unidadMateria.nombre}
+                                                </f:facet>
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column headerText="Criterio" /> 
+                                                        <p:column headerText="Indicador" /> 
+                                                        <p:column headerText="Porcentaje" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{asignacionIndUnidad.criterio.tipo}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{asignacionIndUnidad.indicador.nombre}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{asignacionIndUnidad.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
+                                                    </p:column>
                                             </p:dataTable>
                                             </center>
                                         </c:if>
