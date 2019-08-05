@@ -71,8 +71,7 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="periodo" value="#{capturaCalificacionesDocente.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
                                                     <f:selectItems value="#{capturaCalificacionesDocente.rol.periodosConCarga}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this" update="@this carga configuracion" oncomplete="actualizar();" />
-                                                    <p:autoUpdate />
+                                                    <p:ajax process="@this" update="@this carga configuracion tbl" listener="#{capturaCalificacionesDocente.cambiarPeriodo}" />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>
                                                 <p:message for="periodo" />
@@ -82,24 +81,24 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="carga" value="#{capturaCalificacionesDocente.rol.cargaAcademicaSeleccionada}" converter="entityConverter" styleClass="form-control" >
                                                     <f:selectItems value="#{capturaCalificacionesDocente.rol.cargasDocente}" var="carga" itemValue="#{carga}" itemLabel="#{caster.dtoCargaAcademicaToString(carga)}" />
-                                                    <p:ajax process="@this" update="@this configuracion" oncomplete="actualizar();" />
-                                                    <p:autoUpdate />
+                                                    <p:ajax process="@this" update="@this configuracion tbl" listener="#{capturaCalificacionesDocente.cambiarCarga}"  />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Carga acadécmica" for="carga"/>
-                                                <p:message for="carga" />
+                                                <p:message for="carga" ><p:autoUpdate/></p:message>
                                             </div>
                                         </div>
                                         <div class="#{casilla}">
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="configuracion" value="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguracionSeleccionada}" converter="entityConverter" styleClass="form-control" >
                                                     <f:selectItems value="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguraciones}" var="configuracion" itemValue="#{configuracion}" itemLabel="#{caster.dtoUnidadConfiguracionToString(configuracion)}" />
-                                                    <p:ajax process="@this" update="@this" oncomplete="actualizar();" />
-                                                    <p:autoUpdate />
+                                                    <p:ajax process="@this" update="@this tbl" listener="#{capturaCalificacionesDocente.cambiarUnidad}" />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Unidad" for="configuracion"/>
                                                 <p:message for="configuracion" />
                                             </div>
                                         </div>
+                                        <div class="#{casilla}"><p:outputLabel value="#{caster.dtoCargaAcademicaToString(capturaCalificacionesDocente.rol.cargaAcademicaSeleccionada)}"><p:autoUpdate/></p:outputLabel></div>
+                                        <div class="#{casilla}"><p:outputLabel value="#{caster.dtoUnidadConfiguracionToString(capturaCalificacionesDocente.rol.dtoUnidadConfiguracionSeleccionada)}"><p:autoUpdate/></p:outputLabel></div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 text-info text-center">

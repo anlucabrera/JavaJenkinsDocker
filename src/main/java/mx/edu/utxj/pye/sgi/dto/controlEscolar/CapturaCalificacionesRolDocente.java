@@ -61,23 +61,19 @@ public class CapturaCalificacionesRolDocente extends AbstractRol {
 
     public void setCargasDocente(List<DtoCargaAcademica> cargasDocente) {
         this.cargasDocente = cargasDocente;
-        if(!cargasDocente.isEmpty() && cargaAcademicaSeleccionada == null){
-            cargaAcademicaSeleccionada = cargasDocente.get(0);
-        }
+        if(!cargasDocente.isEmpty()) cargaAcademicaSeleccionada = cargasDocente.get(0);
+        else cargaAcademicaSeleccionada = null;
+
     }
 
     public void setDtoUnidadConfiguracionSeleccionada(DtoUnidadConfiguracion dtoUnidadConfiguracionSeleccionada) {
-//        System.out.println("dtoUnidadConfiguracionSeleccionada = [" + dtoUnidadConfiguracionSeleccionada.getUnidadMateria().getNombre() + "]");
         this.dtoUnidadConfiguracionSeleccionada = dtoUnidadConfiguracionSeleccionada;
     }
 
     public void setDtoUnidadConfiguraciones(List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones) {
-//        System.out.println("dtoUnidadConfiguraciones = [" + dtoUnidadConfiguraciones + "]");
         this.dtoUnidadConfiguraciones = dtoUnidadConfiguraciones;
-        if(!dtoUnidadConfiguraciones.isEmpty() && dtoUnidadConfiguracionSeleccionada == null){
-            dtoUnidadConfiguracionSeleccionada = dtoUnidadConfiguraciones.get(0);
-//            System.out.println("dtoUnidadConfiguracionSeleccionada por lista = " + dtoUnidadConfiguracionSeleccionada);
-        }
+        if(!dtoUnidadConfiguraciones.isEmpty()) dtoUnidadConfiguracionSeleccionada = dtoUnidadConfiguraciones.get(0);
+        else dtoUnidadConfiguracionSeleccionada = null;
     }
 
     public void setEstudiantesPorGrupo(DtoGrupoEstudiante estudiantesPorGrupo) {

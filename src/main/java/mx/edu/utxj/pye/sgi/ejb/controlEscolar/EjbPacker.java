@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
@@ -17,10 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Stateless(name = "EjbPacker")
@@ -152,22 +150,37 @@ public class EjbPacker {
     public ResultadoEJB<DtoUnidadConfiguracion> packUnidadConfiguracion(UnidadMateriaConfiguracion unidadMateriaConfiguracion, DtoCargaAcademica dtoCargaAcademica){
         try{
             System.out.println("EjbPacker.packUnidadConfiguracion");
+            System.out.println("unidadMateriaConfiguracion = " + unidadMateriaConfiguracion);
             //empaquetar configuración de unidad
             UnidadMateriaConfiguracion unidadMateriaConfiguracionBD = em.find(UnidadMateriaConfiguracion.class, unidadMateriaConfiguracion.getConfiguracion());
+//            System.out.println("unidadMateriaConfiguracionBD = " + unidadMateriaConfiguracionBD);
             UnidadMateria unidadMateria = unidadMateriaConfiguracionBD.getIdUnidadMateria();
             final Map<Criterio,List<DtoUnidadConfiguracion.Detalle>> detalleListMap = new TreeMap<>();
-            em.createQuery("select d from UnidadMateriaConfiguracionDetalle d where d.configuracion.configuracion=:configuracion and d.configuracion.carga.docente=:docente", UnidadMateriaConfiguracionDetalle.class)
+            /*em.createQuery("select d from UnidadMateriaConfiguracionDetalle d where d.configuracion.configuracion=:configuracion and d.configuracion.carga.docente=:docente", UnidadMateriaConfiguracionDetalle.class)
+                    .setParameter("configuracion", unidadMateriaConfiguracionBD.getConfiguracion())
+                    .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                    .getResultStream()
+                    .forEach(System.out::println);*/
+            List<DtoUnidadConfiguracion.Detalle> detalles = em.createQuery("select d from UnidadMateriaConfiguracionDetalle d where d.configuracion.configuracion=:configuracion and d.configuracion.carga.docente=:docente", UnidadMateriaConfiguracionDetalle.class)
                     .setParameter("configuracion", unidadMateriaConfiguracionBD.getConfiguracion())
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                     .getResultStream()
                     .map(detalle -> packDtoUnidadConfiguracionDetalle(detalle))
                     .filter(ResultadoEJB::getCorrecto)
                     .map(ResultadoEJB::getValor)
-                    .forEach(detalle -> {
-                        System.out.println("detalle = " + detalle);
-//                        if(!detalleListMap.containsKey(detalle.getCriterio())) detalleListMap.put(detalle.getCriterio(), new ArrayList<DtoUnidadConfiguracion.Detalle>());
+                    .collect(Collectors.toList());
+            detalles.forEach(System.out::println);
+            List<Criterio> criterios = detalles.stream().map(DtoUnidadConfiguracion.Detalle::getCriterio).distinct().sorted(Comparator.comparingInt(Criterio::getCriterio)).collect(Collectors.toList());
+            criterios.forEach(criterio -> {
+
+            });
+                    /*forEach(detalle -> {
+//                        System.out.println("detalle = " + detalle);
+                        if(!detalleListMap.containsKey(detalle.getCriterio())) {
+//                            detalleListMap.put(detalle.getCriterio(), null);
+                        }
 //                        detalleListMap.get(detalle.getCriterio()).add(detalle);
-                    });
+                    });*/
 
             DtoUnidadConfiguracion dto = new DtoUnidadConfiguracion(unidadMateria, unidadMateriaConfiguracionBD, detalleListMap, dtoCargaAcademica);
             return ResultadoEJB.crearCorrecto(dto, "Configuración de unidad empaquetada");

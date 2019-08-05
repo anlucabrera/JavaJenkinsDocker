@@ -203,6 +203,7 @@ public class Caster {
     }
 
     public String dtoCargaAcademicaToString(DtoCargaAcademica dtoCargaAcademica){
+        if(dtoCargaAcademica == null) return "Null";
         return DtoCargaAcademica.toLabel(dtoCargaAcademica);
         /*return dtoCargaAcademica.getPrograma().getSiglas().concat(" - ")
                 .concat(String.valueOf(dtoCargaAcademica.getGrupo().getGrado())).concat(dtoCargaAcademica.getGrupo().getLiteral().toString()).concat(" - ")
@@ -210,6 +211,7 @@ public class Caster {
     }
 
     public String dtoUnidadConfiguracionToString(DtoUnidadConfiguracion dtoUnidadConfiguracion){
+        if(dtoUnidadConfiguracion == null) return "Null";
         return String.valueOf(dtoUnidadConfiguracion.getUnidadMateria().getNoUnidad()).concat(".  ")
                 .concat(dtoUnidadConfiguracion.getUnidadMateria().getNombre());
     }
