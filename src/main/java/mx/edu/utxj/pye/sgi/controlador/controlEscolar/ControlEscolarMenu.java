@@ -29,6 +29,7 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
     public Boolean tieneElementos() {
         Boolean get = Faces.evaluateExpressionGet("#{asignacionAcademicaDirector.tieneAcceso}");if(get) return true;
         get = Faces.evaluateExpressionGet("#{reincorporacionServiciosEscolares.tieneAcceso}");if(get)return true;
+        get = Faces.evaluateExpressionGet("#{asignacionTutorAcademico.tieneAcceso}");if(get)return true;
         get = Faces.evaluateExpressionGet("#{generacionGruposServiciosEscolares.tieneAcceso}");if(get)return true;
         get = Faces.evaluateExpressionGet("#{asignacionAcademicaDirector.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{capturaCalificacionesDocente.tieneAcceso}"); if(get) return true;

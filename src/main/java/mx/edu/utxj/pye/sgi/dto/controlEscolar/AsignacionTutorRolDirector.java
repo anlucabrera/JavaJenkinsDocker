@@ -10,9 +10,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
@@ -48,6 +50,10 @@ public class AsignacionTutorRolDirector extends AbstractRol{
      */
     @Getter @NonNull private PeriodosEscolares periodo;
     /**
+     * Representa la clave
+     */
+    @Getter @NonNull private Integer periodoActivo;
+    /**
      * Programa educativo seleccionado
      */
     @Getter @NonNull private AreasUniversidad programa;
@@ -81,6 +87,8 @@ public class AsignacionTutorRolDirector extends AbstractRol{
      * Mapeo de programas educativos con sus grupos
      */    
     @Getter @NonNull private Map<AreasUniversidad, List<DtoListadoTutores>> tutoresGruposMap;
+    
+    @Getter @Setter private Boolean validaPeriodoRegistro;
         
     public AsignacionTutorRolDirector(Filter<PersonalActivo> filtro,PersonalActivo director, AreasUniversidad programa) {
         super(filtro);
@@ -106,6 +114,7 @@ public class AsignacionTutorRolDirector extends AbstractRol{
 
     public void setPeriodo(PeriodosEscolares periodo) {
         this.periodo = periodo;
+        if(periodoActivo != null) soloLectura = !Objects.equals(periodo.getPeriodo(), periodoActivo);
     }
     
     /**
@@ -166,5 +175,9 @@ public class AsignacionTutorRolDirector extends AbstractRol{
 
     public void setDtoListadoTutores(DtoListadoTutores dtoListadoTutores) {
         this.dtoListadoTutores = dtoListadoTutores;
+    }
+    
+    public void setPeriodoActivo(Integer periodoActivo) {
+        this.periodoActivo = periodoActivo;
     }
 }

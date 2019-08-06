@@ -76,7 +76,7 @@ public class EjbAsignacionTutores {
         try {
             return ejbAsignacionAcademica.getPeriodosDescendentes();
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionAcademica)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionTutores)", e, null);
         }
     }
     /**
