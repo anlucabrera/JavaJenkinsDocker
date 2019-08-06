@@ -90,6 +90,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
             rol.setCargas(resCarga.getValor());
+            rol.setCarga(resCarga.getValor().get(0));
             
             rol.getInstrucciones().add("Para poder Asignar Criterios de evaluación debe haber realizado previamente la Configuración de la Unidad Materia");
             rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar configuraciones anteriores.");

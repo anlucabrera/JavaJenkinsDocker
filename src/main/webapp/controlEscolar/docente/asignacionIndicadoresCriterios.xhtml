@@ -36,7 +36,6 @@
 
     <ui:define name="body">
         <adm:breadcrumb title="Asignación de Indicadores por Criterio"/>
-
         <div class="contenedor">
             <c:if test="#{asignacionIndicadoresCriteriosDocente.tieneAcceso}">
                 <!-- zona de importación de enums -->
@@ -125,6 +124,9 @@
                                                         <h:outputText value="#{asignacionIndCA.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
                                                     </p:column>
                                                 </p:dataTable>
+                                                <p></p>
+                                                <p></p>
+                                                <p></p>
                                                 <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{asignacionIndicadoresCriteriosDocente.eliminarAsignacionIndicadores}" class="btn-primary" process="@this" update="@form" icon="fa fa-trash" >
                                                     <p:confirm header="Confirmación" message="¿Confirma la eliminación de la asignación de indicadores por criterio?" icon="ui-icon-alert" />
                                                 </p:commandButton>
@@ -148,8 +150,9 @@
                                         <p></p>
                                         <p></p>
                                         </center>
+                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat ne null}">
                                         <p:growl id="msgs" showDetail="true" />
-                                        <p:accordionPanel>
+                                        <p:accordionPanel widgetVar="accordion">
                                                 <p:tab title="Ser" titleStyleClass="box-solid" >
                                                         <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" layout="grid" id="indSer">
                                                         <f:facet name="header">
@@ -157,8 +160,9 @@
                                                         </f:facet>
                                                         <p:panel header="#{indSer.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSer.porcentajeIndicador}"/>
+                                                                <p:inputNumber value="#{indSer.porcentajeIndicador}" />
                                                             </h:panelGrid>
+                                                            <span>%</span>
                                                         </p:panel>
                                                     </p:dataGrid>
                                                 </p:tab>
@@ -169,7 +173,7 @@
                                                         </f:facet>
                                                         <p:panel header="#{indSaber.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSaber.porcentajeIndicador}"/>
+                                                                <p:inputText value="#{indSaber.porcentajeIndicador}"><span>%</span></p:inputText>
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
@@ -181,12 +185,13 @@
                                                         </f:facet>
                                                         <p:panel header="#{indSaberHacer.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSaberHacer.porcentajeIndicador}"/>
+                                                                <p:inputText value="#{indSaberHacer.porcentajeIndicador}"><span>%</span></p:inputText> 
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
                                                 </p:tab>
                                         </p:accordionPanel>
+                                        </c:if>
                                         <p></p>
                                         <p></p>
                                         <center>

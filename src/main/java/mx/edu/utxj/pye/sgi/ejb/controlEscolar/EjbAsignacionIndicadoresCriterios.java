@@ -105,8 +105,11 @@ public class EjbAsignacionIndicadoresCriterios {
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream()
-                    .map(ca -> pack(ca).getValor())
-                    .filter(dto -> dto != null)
+                    .distinct()
+                    .map(cargaAcademica -> pack(cargaAcademica))
+                    .filter(res -> res.getCorrecto())
+                    .map(ResultadoEJB::getValor)
+                    .sorted(DtoCargaAcademica::compareTo)
                     .collect(Collectors.toList());
             return ResultadoEJB.crearCorrecto(cargas, "Lista de cargas académicas por docente.");
         }catch (Exception e){
@@ -182,7 +185,6 @@ public class EjbAsignacionIndicadoresCriterios {
         try {
             Integer periodo = getPeriodoActivoIndicadores(dtoCargaAcademica); 
             Integer configuracion = getConfiguracion(dtoCargaAcademica); 
-       
             List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores = em.createQuery("SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica =:cargaAcademica AND l.listaindicadoresporcriterioporconfiguracionPK.periodo =:periodo AND l.listaindicadoresporcriterioporconfiguracionPK.configuracion =:configuracion", Listaindicadoresporcriterioporconfiguracion.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .setParameter("periodo", periodo)
@@ -197,8 +199,8 @@ public class EjbAsignacionIndicadoresCriterios {
     public Integer getPeriodoActivoIndicadores(DtoCargaAcademica dtoCargaAcademica)
     {
         int periodo = 0;
-        TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(l.listaindicadoresporcriterioporconfiguracionPK.periodo) FROM Listaindicadoresporcriterioporconfiguracion l");
-        
+        TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(l.listaindicadoresporcriterioporconfiguracionPK.periodo) FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica =:cargaAcademica")
+                                                        .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga());
         if (v.getSingleResult() == 0) {
             periodo = 0;
         } else {
@@ -210,7 +212,8 @@ public class EjbAsignacionIndicadoresCriterios {
     public Integer getConfiguracion(DtoCargaAcademica dtoCargaAcademica)
     {
         int configuracion = 0;
-        TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(l.listaindicadoresporcriterioporconfiguracionPK.configuracion) FROM Listaindicadoresporcriterioporconfiguracion l");
+        TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(l.listaindicadoresporcriterioporconfiguracionPK.configuracion) FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica =:cargaAcademica")
+                                                        .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga());
         
         if (v.getSingleResult() == 0) {
             configuracion = 0;
