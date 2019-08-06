@@ -218,7 +218,7 @@
                     </h:form>
                 </p:tab>
             </c:if>
-            <c:if test="#{administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.director or administracionEncuesta.dto.esDeIyE}">
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.director or administracionEncuesta.dto.esDeIyE}">
                 <p:tab title="Porcentaje de avance por Programa Educativo">
                     <h:form id="fr4">
                         <p:outputPanel>

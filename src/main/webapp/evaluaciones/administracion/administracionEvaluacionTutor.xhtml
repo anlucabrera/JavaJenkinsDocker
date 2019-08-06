@@ -83,7 +83,7 @@
             <p:sticky target="tb" />
         </div>
         <p:tabView id="tabView">
-            <c:if test="#{administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.esPsicopedagogia}">
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.esPsicopedagogia}">
                 <p:tab id="completos" title="Estudiantes con evaluación completa">
                     <h:form id="fr1">
                         <p:outputPanel>
@@ -131,7 +131,7 @@
                                         <p:commandButton actionListener="#{administracionEvaluacionTutor.seguimientoTutor()}" value="Actualizar información" icon="fa fa-refresh"
                                                          class="btn btn-primary" update="tabView:fr1:tblEvaTutorTer tabView:fr2:tblResEvTutorIncom tabView:fr3:tblResEvTutorNoIngreso tabView:fr45:avanceEvaTutor" process="@form"/>
                                     </c:if>
-                                    <c:if test="#{administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
+                                    <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
                                         <p:commandButton actionListener="#{administracionEvaluacionTutor.seguimientoSE()}" value="Actualizar información" icon="fa fa-refresh"
                                                          class="btn btn-primary" update="tabView:fr1:tblEvaTutorTer tabView:fr2:tblResEvTutorIncom tabView:fr3:tblResEvTutorNoIngreso tabView:fr45:avanceEvaTutor tabView:fr4:avanceEvTutorPE" process="@form"/>
                                     </c:if>
@@ -230,7 +230,7 @@
 
             </c:if>
 
-            <c:if test="#{administracionEncuesta.dto.tutor or administracionEncuesta.dto.director or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.tutor or administracionEncuesta.dto.director or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
                 <p:tab title="Porcentaje de avance" >
                     <h:form id="fr45">
                         <p:outputPanel>
@@ -271,7 +271,7 @@
                 </p:tab>
             </c:if>
 
-            <c:if test="#{administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
                 <p:tab title="Porcentaje de avance por programa educativo">
                     <h:form id="fr4">
                         <p:outputPanel>

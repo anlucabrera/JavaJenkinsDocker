@@ -132,7 +132,7 @@
 
                     <!-- Seguimiento de Evaluacion y Encuestas por parte de: Dirección de Planeación, Secretaría Académica, Departamento de Información y Estadística,
                            Directores Académicos y Tutores-->
-                    <c:if test="#{administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor}">
+                    <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor}">
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-check-square-o"></i> <span>Seguimiento encuestas</span>
@@ -149,7 +149,7 @@
                         </li>
                     </c:if>
                     <!-- Segumiento de Evaluciones  a Tutor y Evaluacion a Docente-->
-                    <c:if test="#{administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
+                    <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-check-square-o"></i> <span>Seguimiento Evaluaciones</span>
