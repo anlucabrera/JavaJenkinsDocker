@@ -105,7 +105,7 @@ public class AreaPoaEvaluacion implements Serializable {
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();
         mes = controladorEmpleado.getProcesopoa().getEvaluacion().getFechaInicio().getMonth();
         mesNombre = controladorEmpleado.getProcesopoa().getEvaluacion().getMesEvaluacion();
-        datosArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        datosArea(controladorEmpleado.getProcesopoa().getArea());
 
         consultarListas();
         System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
@@ -163,7 +163,7 @@ public class AreaPoaEvaluacion implements Serializable {
                     if (ejes != null) {
                         estrategiases.clear();
                         estrategiases.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
-                        ejbCatalogosPoa.getEstarategiasPorEje(ejes,ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).forEach((t) -> {
+                        ejbCatalogosPoa.getEstarategiasPorEje(ejes,ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea()).forEach((t) -> {
                             estrategiases.add(t);
                         });
                     }
@@ -351,7 +351,7 @@ public class AreaPoaEvaluacion implements Serializable {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(4)"+modificada.getNumeroP());
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(5)"+modificada.getNumeroS());
         if (modificada.getNumeroS() != 0) {
-            actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),controladorEmpleado.getProcesopoa().getArea());
             System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(6)"+actividads.size());
             if (!actividads.isEmpty()) {
                 actividads.forEach((t) -> {

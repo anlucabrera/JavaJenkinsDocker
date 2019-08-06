@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Zabdiel Pèrez Morale
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "procesopoa", catalog = "capital_humano", schema = "")
@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Procesopoa.findAll", query = "SELECT p FROM Procesopoa p")
     , @NamedQuery(name = "Procesopoa.findByProcesoPOA", query = "SELECT p FROM Procesopoa p WHERE p.procesoPOA = :procesoPOA")
     , @NamedQuery(name = "Procesopoa.findByArea", query = "SELECT p FROM Procesopoa p WHERE p.area = :area")
+    , @NamedQuery(name = "Procesopoa.findByResponsable", query = "SELECT p FROM Procesopoa p WHERE p.responsable = :responsable")
     , @NamedQuery(name = "Procesopoa.findByRegistroAFinalizado", query = "SELECT p FROM Procesopoa p WHERE p.registroAFinalizado = :registroAFinalizado")
     , @NamedQuery(name = "Procesopoa.findByValidacionRegistroA", query = "SELECT p FROM Procesopoa p WHERE p.validacionRegistroA = :validacionRegistroA")
     , @NamedQuery(name = "Procesopoa.findByAsiganacionRFinalizado", query = "SELECT p FROM Procesopoa p WHERE p.asiganacionRFinalizado = :asiganacionRFinalizado")
@@ -38,7 +39,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Procesopoa.findByRegistroJustificacionFinalizado", query = "SELECT p FROM Procesopoa p WHERE p.registroJustificacionFinalizado = :registroJustificacionFinalizado")
     , @NamedQuery(name = "Procesopoa.findByValidacionJustificacion", query = "SELECT p FROM Procesopoa p WHERE p.validacionJustificacion = :validacionJustificacion")
     , @NamedQuery(name = "Procesopoa.findByEjercicioFiscalEtapa1", query = "SELECT p FROM Procesopoa p WHERE p.ejercicioFiscalEtapa1 = :ejercicioFiscalEtapa1")
-    , @NamedQuery(name = "Procesopoa.findByEjercicioFiscalEtapa2", query = "SELECT p FROM Procesopoa p WHERE p.ejercicioFiscalEtapa2 = :ejercicioFiscalEtapa2")})
+    , @NamedQuery(name = "Procesopoa.findByEjercicioFiscalEtapa2", query = "SELECT p FROM Procesopoa p WHERE p.ejercicioFiscalEtapa2 = :ejercicioFiscalEtapa2")
+    , @NamedQuery(name = "Procesopoa.findByActivaEtapa1", query = "SELECT p FROM Procesopoa p WHERE p.activaEtapa1 = :activaEtapa1")
+    , @NamedQuery(name = "Procesopoa.findByActivaEtapa2", query = "SELECT p FROM Procesopoa p WHERE p.activaEtapa2 = :activaEtapa2")})
 public class Procesopoa implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +54,8 @@ public class Procesopoa implements Serializable {
     @NotNull
     @Column(name = "area")
     private short area;
+    @Column(name = "responsable")
+    private Integer responsable;
     @Basic(optional = false)
     @NotNull
     @Column(name = "registroAFinalizado")
@@ -75,14 +80,20 @@ public class Procesopoa implements Serializable {
     @NotNull
     @Column(name = "validacionJustificacion")
     private boolean validacionJustificacion;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "ejercicioFiscalEtapa1")
-    private Short ejercicioFiscalEtapa1;
+    private short ejercicioFiscalEtapa1;
     @Basic(optional = false)
     @NotNull
     @Column(name = "ejercicioFiscalEtapa2")
     private short ejercicioFiscalEtapa2;
+    @Column(name = "activaEtapa1")
+    private Boolean activaEtapa1;
+    @Column(name = "activaEtapa2")
+    private Boolean activaEtapa2;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacionPOA")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Calendarioevaluacionpoa evaluacion;
 
     public Procesopoa() {
@@ -92,7 +103,7 @@ public class Procesopoa implements Serializable {
         this.procesoPOA = procesoPOA;
     }
 
-    public Procesopoa(Integer procesoPOA, short area, boolean registroAFinalizado, boolean validacionRegistroA, boolean asiganacionRFinalizado, boolean validacionRFFinalizado, boolean registroJustificacionFinalizado, boolean validacionJustificacion, short ejercicioFiscalEtapa2) {
+    public Procesopoa(Integer procesoPOA, short area, boolean registroAFinalizado, boolean validacionRegistroA, boolean asiganacionRFinalizado, boolean validacionRFFinalizado, boolean registroJustificacionFinalizado, boolean validacionJustificacion, short ejercicioFiscalEtapa1, short ejercicioFiscalEtapa2) {
         this.procesoPOA = procesoPOA;
         this.area = area;
         this.registroAFinalizado = registroAFinalizado;
@@ -101,6 +112,7 @@ public class Procesopoa implements Serializable {
         this.validacionRFFinalizado = validacionRFFinalizado;
         this.registroJustificacionFinalizado = registroJustificacionFinalizado;
         this.validacionJustificacion = validacionJustificacion;
+        this.ejercicioFiscalEtapa1 = ejercicioFiscalEtapa1;
         this.ejercicioFiscalEtapa2 = ejercicioFiscalEtapa2;
     }
 
@@ -118,6 +130,14 @@ public class Procesopoa implements Serializable {
 
     public void setArea(short area) {
         this.area = area;
+    }
+
+    public Integer getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(Integer responsable) {
+        this.responsable = responsable;
     }
 
     public boolean getRegistroAFinalizado() {
@@ -168,11 +188,11 @@ public class Procesopoa implements Serializable {
         this.validacionJustificacion = validacionJustificacion;
     }
 
-    public Short getEjercicioFiscalEtapa1() {
+    public short getEjercicioFiscalEtapa1() {
         return ejercicioFiscalEtapa1;
     }
 
-    public void setEjercicioFiscalEtapa1(Short ejercicioFiscalEtapa1) {
+    public void setEjercicioFiscalEtapa1(short ejercicioFiscalEtapa1) {
         this.ejercicioFiscalEtapa1 = ejercicioFiscalEtapa1;
     }
 
@@ -182,6 +202,22 @@ public class Procesopoa implements Serializable {
 
     public void setEjercicioFiscalEtapa2(short ejercicioFiscalEtapa2) {
         this.ejercicioFiscalEtapa2 = ejercicioFiscalEtapa2;
+    }
+
+    public Boolean getActivaEtapa1() {
+        return activaEtapa1;
+    }
+
+    public void setActivaEtapa1(Boolean activaEtapa1) {
+        this.activaEtapa1 = activaEtapa1;
+    }
+
+    public Boolean getActivaEtapa2() {
+        return activaEtapa2;
+    }
+
+    public void setActivaEtapa2(Boolean activaEtapa2) {
+        this.activaEtapa2 = activaEtapa2;
     }
 
     public Calendarioevaluacionpoa getEvaluacion() {

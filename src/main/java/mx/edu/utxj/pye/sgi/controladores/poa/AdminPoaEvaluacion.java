@@ -110,7 +110,7 @@ public class AdminPoaEvaluacion implements Serializable {
         mes = controladorEmpleado.getProcesopoa().getEvaluacion().getFechaInicio().getMonth();
         mesNombre = controladorEmpleado.getProcesopoa().getEvaluacion().getMesEvaluacion();
         
-        claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        claveArea = controladorEmpleado.getProcesopoa().getArea();
         
         consultarListas();
             }

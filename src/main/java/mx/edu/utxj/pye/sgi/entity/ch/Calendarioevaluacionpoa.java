@@ -158,5 +158,5 @@ public class Calendarioevaluacionpoa implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa[ evaluacionPOA=" + evaluacionPOA + " ]";
     }
-    
+
 }

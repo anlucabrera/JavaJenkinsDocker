@@ -12,8 +12,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.shiro.User;
@@ -174,9 +174,9 @@ public class ServicioLogin implements EjbLogin {
     }
 
     @Override
-    public List<Modulos> getCategoriaModulos() {
-        StoredProcedureQuery q = f2.getEntityManager().createStoredProcedureQuery("obtener_lista_modulos_usuarios", Modulos.class);
-        List<Modulos> l = q.getResultList();
+    public List<MenuDinamico> getCategoriaModulos() {
+        StoredProcedureQuery q = f2.getEntityManager().createStoredProcedureQuery("obtener_lista_modulos_usuarios", MenuDinamico.class);
+        List<MenuDinamico> l = q.getResultList();
         if (l == null || l.isEmpty()) {
             return null;
         } else {
@@ -220,8 +220,8 @@ public class ServicioLogin implements EjbLogin {
     }
 
     @Override
-    public Modulos getModuloByClave(Integer modulo) {
-        TypedQuery<Modulos> q = f2.getEntityManager().createQuery("SELECT m from Modulos m WHERE m.modulo = :modulo ", Modulos.class);
+    public MenuDinamico getModuloByClave(Integer modulo) {
+        TypedQuery<MenuDinamico> q = f2.getEntityManager().createQuery("SELECT m from MenuDinamico m WHERE m.modulo = :modulo ", MenuDinamico.class);
         q.setParameter("modulo", modulo);
         if (q.getResultList().isEmpty() || q.getResultList() == null) {
             return null;

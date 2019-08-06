@@ -7,8 +7,8 @@ package mx.edu.utxj.pye.sgi.saiiut.ejb;
 
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.shiro.User;
@@ -46,7 +46,7 @@ public interface EjbLogin {
     /*
      *Creacion del menu  posible migracion de metodos Ejb's a otro archivo
      */
-    public List<Modulos> getCategoriaModulos();
+    public List<MenuDinamico> getCategoriaModulos();
 
     public List<Permisos> getPermisosModulos();
 
@@ -54,6 +54,6 @@ public interface EjbLogin {
 
     public PersonalCategorias getCategoriaPersonalByarea(Short categoria);
 
-    public Modulos getModuloByClave(Integer modulo);
+    public MenuDinamico getModuloByClave(Integer modulo);
 
 }

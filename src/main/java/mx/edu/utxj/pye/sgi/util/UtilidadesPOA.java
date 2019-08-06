@@ -188,7 +188,7 @@ public class UtilidadesPOA implements Serializable {
         Boolean refi = false, pye = false;
         String mensajeArea = "", mensajeRefi = "", mensajePye = "", titulo = "", asunto = "";
         try {
-            procesopoa = euch.mostrarEtapaPOA(areaDestino.getArea());
+            procesopoa = euch.mostrarEtapaPOAArea(areaDestino.getArea());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);

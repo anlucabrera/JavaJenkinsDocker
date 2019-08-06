@@ -114,12 +114,12 @@ public class NotificacionesTopBar implements Serializable {
                 if (nuevaAreasUniversidad.getTienePoa()) {
                     if (Objects.equals(nuevaAreasUniversidad.getResponsable(), nuevoOBJListaPersonal.getClave())) {
                         tienePOA = true;
-                        procesopoa = ejbUtilidadesCH.mostrarEtapaPOA(nuevoOBJListaPersonal.getAreaOperativa());
+                        procesopoa = ejbUtilidadesCH.mostrarEtapaPOAArea(nuevoOBJListaPersonal.getAreaOperativa());
                     } else {
                         if (controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 284 ||
                                 controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 613 ||
                                 controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 564) {
-                            procesopoa = ejbUtilidadesCH.mostrarEtapaPOA(nuevoOBJListaPersonal.getAreaOperativa());
+                            procesopoa = ejbUtilidadesCH.mostrarEtapaPOAArea(nuevoOBJListaPersonal.getAreaOperativa());
                         }
                         tienePOA = false;
                     }

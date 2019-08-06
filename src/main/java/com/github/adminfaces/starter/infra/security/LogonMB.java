@@ -23,7 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbUtilToolAcademicas;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
-import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
+import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.shiro.User;
@@ -62,7 +62,7 @@ public class LogonMB extends AdminSession implements Serializable {
     @Getter    @Setter    private String nombreTabla,numeroRegistro,accion;
     
     ////////////////Administración de permisos///////////////
-    @Getter @Setter private List<Modulos> listaModulos;
+    @Getter @Setter private List<MenuDinamico> listaModulos;
     @Getter @Setter private List<Permisos> listaPermisos;
     
     

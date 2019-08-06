@@ -92,11 +92,11 @@ public class AreaPoaPresupuestacion implements Serializable {
         
         consultaListaEstrategias.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
         consultaListaPartidas.add(new Partidas(Short.parseShort("0"), "Selecciones Uno"));
-        if(!presupuestacion.mostrarPartidases(ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).isEmpty()){
-            consultaListaPartidas.addAll(presupuestacion.mostrarPartidases(ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        if(!presupuestacion.mostrarPartidases(ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea()).isEmpty()){
+            consultaListaPartidas.addAll(presupuestacion.mostrarPartidases(ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea()));
         }
         consultaListaEjesRegistros.add(new EjesRegistro(0, "Selecciones Uno", "Selecciones Uno", "Selecciones Uno", "Selecciones Uno"));
-        consultaListaEjesRegistros.addAll(catalogos.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal));
+        consultaListaEjesRegistros.addAll(catalogos.mostrarEjesRegistrosAreas(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal));
         consultarPOARecurso();
     }
     
@@ -108,24 +108,24 @@ public class AreaPoaPresupuestacion implements Serializable {
 
         List<EjesRegistro> ers = new ArrayList<>();
         ers.clear();
-        ers = catalogos.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        ers = catalogos.mostrarEjesRegistrosAreas(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal);
         if (!ers.isEmpty()) {
             ers.forEach((ej) -> {
                 List<Estrategias> estrategiases = new ArrayList<>();
                 estrategiases.clear();
-                estrategiases = catalogos.getEstarategiasPorEje(ej, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                estrategiases = catalogos.getEstarategiasPorEje(ej, ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea());
                 if (!estrategiases.isEmpty()) {
                     estrategiases.forEach((es) -> {
                         List<LineasAccion> lineasAccions = new ArrayList<>();
                         lineasAccions.clear();
-                        lineasAccions = catalogos.mostrarLineasAccionRegistroParametros(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, ej, es);
+                        lineasAccions = catalogos.mostrarLineasAccionRegistroParametros(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, ej, es);
                         if (!lineasAccions.isEmpty()) {
                             lineasAccions.forEach((li) -> {
                                 List<CuadroMandoIntegral> cuadro = new ArrayList<>();
                                 cuadro = catalogos.mostrarCuadroMandoIntegralRegistrpo(ejercicioFiscal, ej, es, li);
                                 List<ActividadesPoa> actividadesPoas = new ArrayList<>();
                                 actividadesPoas.clear();
-                                actividadesPoas = presupuestacion.mostrarActividadesPoaCuadroDeMandoRecurso(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, cuadro.get(0));
+                                actividadesPoas = presupuestacion.mostrarActividadesPoaCuadroDeMandoRecurso(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, cuadro.get(0));
                                 if (!actividadesPoas.isEmpty()) {
                                     actividadesPoas.forEach((ap) -> {
                                         List<RecursosActividad> recursosActividadsP = new ArrayList<>();
@@ -163,14 +163,14 @@ public class AreaPoaPresupuestacion implements Serializable {
         listaLineasAccions.clear();
         listaEstrategiases.clear();
 
-        List<LineasAccion> listaLineasAccionsP = catalogos.mostrarLineasAccionRegistroParametros(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, ejesRegistro, estrategias);
+        List<LineasAccion> listaLineasAccionsP = catalogos.mostrarLineasAccionRegistroParametros(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, ejesRegistro, estrategias);
         if (!listaLineasAccionsP.isEmpty()) {
             listaLineasAccionsP.forEach((li) -> {
                 List<CuadroMandoIntegral> cuadro = new ArrayList<>();
                 cuadro = catalogos.mostrarCuadroMandoIntegralRegistrpo(ejercicioFiscal, ejesRegistro, estrategias, li);
                 List<ActividadesPoa> actividadesPoas = new ArrayList<>();
                 actividadesPoas.clear();
-                actividadesPoas = presupuestacion.mostrarActividadesPoaCuadroDeMandoRecurso(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, cuadro.get(0));
+                actividadesPoas = presupuestacion.mostrarActividadesPoaCuadroDeMandoRecurso(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, cuadro.get(0));
                 if (!actividadesPoas.isEmpty()) {
                     actividadesPoas.forEach((ap) -> {
                         List<RecursosActividad> recursosActividadsP = new ArrayList<>();
@@ -207,7 +207,7 @@ public class AreaPoaPresupuestacion implements Serializable {
                     if (ejesRegistro != null) {
                         consultaListaEstrategias.clear();
                         consultaListaEstrategias.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
-                        consultaListaEstrategias.addAll(catalogos.getEstarategiasPorEje(ejesRegistro,ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                        consultaListaEstrategias.addAll(catalogos.getEstarategiasPorEje(ejesRegistro,ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea()));
                     }
                     resetearValores();
                     break;
@@ -356,8 +356,8 @@ public class AreaPoaPresupuestacion implements Serializable {
         consltaListaProductos = new ArrayList<>();
         consltaListaProductos.clear();
         consltaListaProductos.add(new Productos(new ProductosPK("0", ejercicioFiscal), "Seleccione uno"));
-        if(!presupuestacion.mostrarProductoses(ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), partidas).isEmpty()){
-            consltaListaProductos.addAll(presupuestacion.mostrarProductoses(ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), partidas));
+        if(!presupuestacion.mostrarProductoses(ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea(), partidas).isEmpty()){
+            consltaListaProductos.addAll(presupuestacion.mostrarProductoses(ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea(), partidas));
         }
     }
     
@@ -374,7 +374,7 @@ public class AreaPoaPresupuestacion implements Serializable {
             productos = presupuestacion.mostrarProductos(seleccionado);
 
             productosAreas = new ProductosAreas();
-            productosAreas = presupuestacion.mostrarProductosAreas(productos, partidas, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            productosAreas = presupuestacion.mostrarProductosAreas(productos, partidas, controladorEmpleado.getProcesopoa().getArea());
 
             if (!actividadesPoa.getRecursosActividadList().isEmpty()) {
                 actividadesPoa.getRecursosActividadList().forEach((r) -> {
@@ -440,7 +440,7 @@ public class AreaPoaPresupuestacion implements Serializable {
         capituloTT = new VistaRecurso(0D, 0D, 0D, "#000000",false);
         
         consltaListaPretechoFinancieros.clear();
-        consltaListaPretechoFinancieros = presupuestacion.mostrarPretechoFinancieros(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        consltaListaPretechoFinancieros = presupuestacion.mostrarPretechoFinancieros(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal);
         consltaListaPretechoFinancieros.forEach((t) -> {
             switch (t.getCapituloTipo().getCapituloTipo()) {
                 case 2:
@@ -460,11 +460,11 @@ public class AreaPoaPresupuestacion implements Serializable {
                     break;
             }
         });
-        capitulo2m.setTotalProgramado(totalProgrado(presupuestacion.mostrarRecursosActividad(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, Short.parseShort("2"))));
-        capitulo3m.setTotalProgramado(totalProgrado(presupuestacion.mostrarRecursosActividad(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, Short.parseShort("3"))));
-        capitulo4m.setTotalProgramado(totalProgrado(presupuestacion.mostrarRecursosActividad(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, Short.parseShort("4"))));
-        capitulo5m.setTotalProgramado(totalProgrado(presupuestacion.mostrarRecursosActividad(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, Short.parseShort("5"))));
-        capituloCD.setTotalProgramado(totalProgrado(presupuestacion.mostrarRecursosActividad(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, Short.parseShort("6"))));
+        capitulo2m.setTotalProgramado(totalProgrado(presupuestacion.mostrarRecursosActividad(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, Short.parseShort("2"))));
+        capitulo3m.setTotalProgramado(totalProgrado(presupuestacion.mostrarRecursosActividad(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, Short.parseShort("3"))));
+        capitulo4m.setTotalProgramado(totalProgrado(presupuestacion.mostrarRecursosActividad(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, Short.parseShort("4"))));
+        capitulo5m.setTotalProgramado(totalProgrado(presupuestacion.mostrarRecursosActividad(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, Short.parseShort("5"))));
+        capituloCD.setTotalProgramado(totalProgrado(presupuestacion.mostrarRecursosActividad(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, Short.parseShort("6"))));
         
         capituloTT.setTotalPretecho(capitulo2m.getTotalPretecho() + capitulo3m.getTotalPretecho() + capitulo4m.getTotalPretecho() + capitulo5m.getTotalPretecho() + capituloCD.getTotalPretecho());
         capituloTT.setTotalProgramado(capitulo2m.getTotalProgramado() + capitulo3m.getTotalProgramado() + capitulo4m.getTotalProgramado() + capitulo5m.getTotalProgramado() + capituloCD.getTotalProgramado());

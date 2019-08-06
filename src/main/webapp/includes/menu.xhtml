@@ -293,7 +293,7 @@
                                 </p:link>
                             </li>
                         </c:if>
-                        <c:if test="#{controladorEmpleado.procesopoa.evaluacion ne null}">
+                        <c:if test="#{controladorEmpleado.evaluable}">
                             <li>
                                 <p:link href="/poa/areas/evaluacion.xhtml"><i class="fa fa-list"></i>
                                     <span>Evaluación</span>
@@ -622,69 +622,88 @@
                     </c:if>
                 </ul>
             </li>   
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 148 ||controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 300}">
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Administrador</li>
-            </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 148 ||controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 300}">
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-clipboard"></i> <span>Administración POA</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 7 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 360}">
+            <c:forEach var="i" begin="0" end="#{controladorEmpleado.menus.size()-1}">
+                <c:set var="n1" value="#{controladorEmpleado.menus.get(i)}"/>
+                <c:if test="#{controladorEmpleado.menus.size() ne 0}">
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">#{n1.titulo}</li>
+                    <c:forEach var="j" begin="0" end="#{n1.nivel2s.size()-1}">
+                        <c:set var="n2" value="#{n1.nivel2s.get(j)}"/>
+                        <c:if test="#{n2.nivel3s.size() eq 0}">
                             <li>
-                                <p:link href="/poa/pye/validacionFinanzas.xhtml"><i class="fa fa-credit-card"></i>
-                                    <span>Validación finanzas</span>
+                                <p:link href="#{n2.enlace}">
+                                    <i class="#{n2.icono}"></i>
+                                    <span>#{n2.titulo}</span>
+                                    <c:if test="#{n2.estaus eq 'Nuevo'}">
+                                        <span class="pull-right-container">
+                                            <small class="label pull-right bg-green">#{n2.estaus}</small>
+                                        </span>
+                                    </c:if>
                                 </p:link>
-                            </li>
+                            </li>                          
                         </c:if>
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 148 ||controladorEmpleado.nuevoOBJListaPersonal.areaOperativa  eq 6}">
-                            <li>
-                                <p:link href="/poa/pye/validacionProgramacionActividades.xhtml"><i class="fa fa-wechat"></i>
-                                    <span>Validación Programación</span>
-                                </p:link>
-                            </li>
-
-                            <li>
-                                <p:link href="/poa/pye/validacionPyeFinal.xhtml"><i class="fa fa-check-square"></i>
-                                    <span>Validación final</span>
-                                </p:link>
-                            </li>
-                            <li>
-                                <p:link href="/poa/pye/evaluacionActividadesPyE.xhtml"><i class="fa fa-calendar-check-o"></i>
-                                    <span>Evaluación</span>
-                                </p:link>
-                            </li> 
-                            <li>
-                                <p:link href="/poa/pye/reportePOA.xhtml"><i class="fa fa-calendar-check-o"></i>
-                                    <span>Reportes</span>
-                                </p:link>
-                            </li>
-                            <li>
-                                <p:link href="/poa/pye/planeacionCMI.xhtml"><i class="fa fa-bar-chart"></i>
-                                    <span>CMI PYE admin</span>
-                                </p:link>
-                            </li> 
+                        <c:if test="#{n2.nivel3s.size() ne 0}">
+                            <li class="treeview">
+                                <a href="#{n2.enlace}">
+                                    <i class="#{n2.icono}"></i> <span>#{n2.titulo}</span>
+                                    <span class="pull-right-container">                                        
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>          
+                                <ul class="treeview-menu" style="display: none;">
+                                    <c:forEach var="k" begin="0" end="#{n2.nivel3s.size()-1}">
+                                        <c:set var="n3" value="#{n2.nivel3s.get(k)}"/>
+                                        <c:if test="#{n3.nivel4s.size() eq 0}">
+                                            <li>
+                                                <p:link href="#{n3.enlace}">
+                                                    <i class="#{n3.icono}"></i>
+                                                    <span>#{n3.titulo}</span>
+                                                    <c:if test="#{n3.estaus eq 'Nuevo'}">
+                                                        <span class="pull-right-container">
+                                                            <small class="label pull-right bg-green">#{n3.estaus}</small>
+                                                        </span>
+                                                    </c:if>
+                                                </p:link>
+                                            </li>                             
+                                        </c:if>
+                                        <c:if test="#{n3.nivel4s.size() ne 0}">
+                                            <li class="treeview">
+                                                <a href="#{n3.enlace}">
+                                                    <i class="#{n3.icono}"></i> <span>#{n3.titulo}</span>
+                                                    <span class="pull-right-container">
+                                                        <i class="fa fa-angle-left pull-right"></i>
+                                                    </span>
+                                                </a>          
+                                                <ul class="treeview-menu" style="display: none;">
+                                                    <c:forEach var="l" begin="0" end="#{n3.nivel4s.size()-1}">
+                                                        <c:set var="n4" value="#{n3.nivel4s.get(l)}"/>
+                                                        <li>
+                                                            <p:link href="#{n4.enlace}">
+                                                                <i class="#{n4.icono}"></i>
+                                                                <span>#{n4.titulo}</span>
+                                                                <c:if test="#{n4.estaus eq 'Nuevo'}">
+                                                                    <span class="pull-right-container">
+                                                                        <small class="label pull-right bg-green">#{n4.estaus}</small>
+                                                                    </span>
+                                                                </c:if>
+                                                            </p:link>
+                                                        </li>                           
+                                                    </c:forEach>
+                                                </ul>
+                                            </li>   
+                                        </c:if>
+                                    </c:forEach>
+                                </ul>
+                            </li>   
                         </c:if>
-                    </ul>
-                </li>               
-            </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                    </c:forEach>
+                </c:if>
+            </c:forEach> 
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530}">
                 <li>
                     <p:link href="/capitalHumano/admin/perfilAdminIncidencias.xhtml"><i class="fa fa-hourglass-half"></i>
                         <span>Incidencias</span>
                     </p:link>
                 </li>
-                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
-                    <li>
-                        <p:link href="/capitalHumano/admin/perfilAdminPOA.xhtml"><i class="fa fa-calendar"></i>
-                            <span>Programa Anual de Trabajo</span>
-                        </p:link>
-                    </li>
-                </c:if>
             </c:if>
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 60}">
                  <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Titulación</li>
@@ -872,6 +891,9 @@
                 </li>
             </c:if>      
 
+            
+                      
+            
             <!--li class="treeview">
                 <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
                 <ul class="treeview-menu">

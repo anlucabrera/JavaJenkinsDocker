@@ -53,7 +53,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     @Getter    @Setter    private Integer alca = 0, progra = 0, numeroMes = 0, numeroEje = 0;
     @Getter    @Setter    private Short ejercicioFiscal = 0;
     @Getter    @Setter    private Double avance = 0D;
-    @Getter    @Setter    private String mes = "", mesNombre = "", valores = "";
+    @Getter    @Setter    private String mes = "", valores = "";
     @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
 
     @EJB    EjbRegistroActividades ejbRegistroActividades;
@@ -66,13 +66,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     public void init() {
         au = new AreasUniversidad(Short.parseShort("0"), "Institucional", "Institucional", "1", false);
         numeroMes = fechaActual.getMonth();
-        if (numeroMes == 0) {
-            numeroMes = 11;
-            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 102));
-        } else {
-            numeroMes = numeroMes - 1;
-            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
-        }
+        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();
         switch (numeroMes) {
             case 0:                mes = "Avance al mes de: Enero";                break;
             case 1:                mes = "Avance al mes de: Febrero";                break;
@@ -218,7 +212,6 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                 }
             });
             for (incremento = 0; incremento <= numeroMes; incremento++) {
-                mesNombre = "";
                 alca = 0;
                 progra = 0;
                 actividadesPoa.forEach((t) -> {

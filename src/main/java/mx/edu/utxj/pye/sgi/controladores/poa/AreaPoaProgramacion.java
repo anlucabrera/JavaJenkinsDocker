@@ -109,9 +109,9 @@ public class AreaPoaProgramacion implements Serializable {
         consultaListaUnidadMedidas.addAll(catalogos.mostrarUnidadMedidases());
 
         if (tipo == 1) {
-            consultaListaActividadesPoa = registroActividades.mostrarActividadesPoasTotalArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+            consultaListaActividadesPoa = registroActividades.mostrarActividadesPoasTotalArea(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal);
         } else {
-            consultaListaActividadesPoa = registroActividades.mostrarActividadesPoasEje(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, ejesRegistro);
+            consultaListaActividadesPoa = registroActividades.mostrarActividadesPoasEje(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, ejesRegistro);
         }
         if (!consultaListaActividadesPoa.isEmpty()) {
             Collections.sort(consultaListaActividadesPoa, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
@@ -127,7 +127,7 @@ public class AreaPoaProgramacion implements Serializable {
         List<EjesRegistro> ers = new ArrayList<>();
         ers.clear();
         if (tipo == 1) {
-            ers = catalogos.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+            ers = catalogos.mostrarEjesRegistrosAreas(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal);
         } else {
             ers.add(er);
         }
@@ -135,13 +135,13 @@ public class AreaPoaProgramacion implements Serializable {
             ers.forEach((ej) -> {
                 List<ListaEjeEstrategia> ess = new ArrayList<>();
                 ess.clear();
-                ess.add(new ListaEjeEstrategia(ej, catalogos.getEstarategiasPorEje(ej, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa())));
+                ess.add(new ListaEjeEstrategia(ej, catalogos.getEstarategiasPorEje(ej, ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea())));
                 if (!ess.isEmpty()) {
                     ess.forEach((e) -> {
                         e.getListaEstrategiases1().forEach((t) -> {
                             List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
                             listaActividadesPoasFiltradas.clear();
-                            listaActividadesPoasFiltradas = registroActividades.getActividadesPoasEstarategias(t, e.getEjess(), ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                            listaActividadesPoasFiltradas = registroActividades.getActividadesPoasEstarategias(t, e.getEjess(), ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea());
                             listaEstrategiaActividadesesEje.add(new ListaEstrategiaActividades(t, listaActividadesPoasFiltradas));
                             Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
                         });
@@ -205,7 +205,7 @@ public class AreaPoaProgramacion implements Serializable {
                 actividadesPoa.setBandera("y");
             }
             actividadesPoa.setCuadroMandoInt(new CuadroMandoIntegral(cuadroMandoIntegral.getCuadroMandoInt()));
-            Integer numeroP = registroActividades.mostrarActividadesPoaPrincipalesCuadroMando(cuadroMandoIntegral.getCuadroMandoInt(), controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).size() + 1;
+            Integer numeroP = registroActividades.mostrarActividadesPoaPrincipalesCuadroMando(cuadroMandoIntegral.getCuadroMandoInt(), controladorEmpleado.getProcesopoa().getArea()).size() + 1;
             actividadesPoa.setNumeroP(Short.parseShort(numeroP.toString()));
         } else {
             Integer numeroS = registroActividades.mostrarSubActividadesPoa(actividadPoaPrincipal.getActividadPoa()).size();
@@ -218,7 +218,7 @@ public class AreaPoaProgramacion implements Serializable {
         actividadesPoa.setEsPIDE("NO PIDE");
         actividadesPoa.setActividadPasada(false);
         actividadesPoa.setUnidadMedida(new UnidadMedidas(unidadDMedida));
-        actividadesPoa.setArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        actividadesPoa.setArea(controladorEmpleado.getProcesopoa().getArea());
         actividadesPoa = registroActividades.agregarActividadesPoa(actividadesPoa);
 
         if ("Subactividad".equals(tipo)) {
@@ -473,7 +473,7 @@ public class AreaPoaProgramacion implements Serializable {
         aumentoActividades = 1;
         List<ActividadesPoa> actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
-        actividadesPoas = registroActividades.mostrarActividadesPoaPrincipalesCuadroMando(cuadroDeMando, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        actividadesPoas = registroActividades.mostrarActividadesPoaPrincipalesCuadroMando(cuadroDeMando, controladorEmpleado.getProcesopoa().getArea());
         if (!actividadesPoas.isEmpty()) {
             actividadesPoas.forEach((t) -> {
                 t.setNumeroP(aumentoActividades);

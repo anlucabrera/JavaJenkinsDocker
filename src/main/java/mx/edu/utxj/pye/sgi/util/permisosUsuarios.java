@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.ch.Modulos;
+import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
@@ -36,7 +36,7 @@ import mx.edu.utxj.pye.sgi.saiiut.ejb.EjbLogin;
 @SessionScoped
 public class permisosUsuarios implements Serializable{
    
-    @Getter @Setter private List<Modulos> listaModulosPorUsuario, listaModulos;
+    @Getter @Setter private List<MenuDinamico> listaModulosPorUsuario, listaModulos;
     @Getter @Setter private List<Permisos> listaPermisosGeneral, listaPermisosPorUsuario, listaPermisos;
     
     @Getter @Setter private List<Personal> listaPersonal;

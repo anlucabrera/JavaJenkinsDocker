@@ -97,7 +97,7 @@ public class ControladorEvaluacionActividadesPOA implements Serializable {
         ejercicioFiscal = Short.parseShort("17");
         mes=fechaActual.getMonth();
         
-        claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+        claveArea = controladorEmpleado.getProcesopoa().getArea();
         siglaArea = "PyE";
         switch(mes){
             case 0: mesNombre="Enero"; break;
@@ -423,7 +423,7 @@ public class ControladorEvaluacionActividadesPOA implements Serializable {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(4)"+modificada.getNumeroP());
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(5)"+modificada.getNumeroS());
         if (modificada.getNumeroS() != 0) {
-            actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),controladorEmpleado.getProcesopoa().getArea());
             System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(6)"+actividads.size());
             if (!actividads.isEmpty()) {
                 actividads.forEach((t) -> {
