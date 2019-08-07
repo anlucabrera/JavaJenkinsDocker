@@ -409,7 +409,7 @@
                                                                                                 </p>
                                                                                         </div>
                                                                                         <c:set var="promedio" value="#{controladorTitSegGen.nuevoDtoExpMat.datosTitulacion.promedioFinal}" />
-                                                                                        <c:if test="#{promedio eq null}">
+                                                                                        <c:if test="#{promedio eq 0}">
                                                                                             <div class="col-sm-12 col-md-12 col-lg-4" style="background: red;">
                                                                                             <strong>Aviso:</strong>
                                                                                             <p class="text-muted" style="color: white;">
