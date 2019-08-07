@@ -89,7 +89,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
      * @return Regresa la referencia del estudiante evaluador segun su periodo, si no lo encuentra en el repositorio correspondiente regresa null.
      */
     @Override
-    public EstudiantesClaves getClaveEstudiante(String matricula, Integer periodoEvaluacion) {
+    public ResultadoEJB<EstudiantesClaves> getClaveEstudiante(String matricula, Integer periodoEvaluacion) {
         System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEdtudianteBase.getClaveEstudiante()");
         Estudiante estudianteControlEscolar = new Estudiante();
         MatriculaPeriodosEscolares estudianteSauiit = new MatriculaPeriodosEscolares();
@@ -102,27 +102,47 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
         if(periodoEvaluacion <= ultimoPeriodoSauiit){
             //TODO: buscar referencia correspondiente al empate con SAIIUT
             MatriculaPeriodosEscolares estudiantePeriodo = getEstudianteSauiiut(matricula, periodoEvaluacion);
-            System.err.println("Estudiante en MatriculaPeriodos" + estudiantePeriodo);
-            estudianteClave= f.getEntityManager().createQuery("SELECT e FROM EstudiantesClaves e WHERE e.registro=:registro", EstudiantesClaves.class)
-                    .setParameter("registro", estudiantePeriodo.getRegistro())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-            System.err.println("Estudiante Clave encontrado" + estudiantePeriodo);
-            return  estudianteClave;
-        }else{
+            if(estudiantePeriodo==null){return ResultadoEJB.crearErroneo(4,estudianteClave,"Es egresado");}
+            else{
+                System.err.println("Estudiante en MatriculaPeriodos" + estudiantePeriodo);
+                estudianteClave= f.getEntityManager().createQuery("SELECT e FROM EstudiantesClaves e WHERE e.registro=:registro", EstudiantesClaves.class)
+                        .setParameter("registro", estudiantePeriodo.getRegistro())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+                System.err.println("Estudiante Clave encontrado" + estudiantePeriodo);
+
+                if(estudianteClave!=null){
+                    //todo: existe en la base de sauiit, con el periodo activo
+                    return ResultadoEJB.crearCorrecto(estudianteClave,"El estudiante esta registrado en sauiit");
+
+                }else {//TODO: No esta registrado en la base de sauiit o  es egresado
+                    return ResultadoEJB.crearErroneo(2,estudianteClave,"El estudiante no esta registrado en sauiit o es egresado"); }
+
+            }
+
+        }else {
            //TODO: buscar referencia en el nuevo control escolar
            Estudiante estudianteCE = getEstudianteControlEscolar(matricula);
             System.out.println("Estudiante en base de CE=" + estudianteCE);
-            return f.getEntityManager().createQuery("SELECT ec FROM EstudiantesClaves ec WHERE ec.idEstudiante=:idEstudiante",EstudiantesClaves.class)
+            estudianteClave =f.getEntityManager().createQuery("SELECT ec FROM EstudiantesClaves ec WHERE ec.idEstudiante=:idEstudiante",EstudiantesClaves.class)
                     .setParameter("idEstudiante", estudianteCE.getIdEstudiante())
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
                     ;
-            
-         
+            if(estudianteClave!=null){
+             //TODO: Estudiante registrado en Control Escolar
+                return ResultadoEJB.crearCorrecto(estudianteClave,"Registrado en control escolar");
+
+            }else{
+                //TODO: No esta registrado en Control escolar
+                return ResultadoEJB.crearErroneo(3,estudianteClave,"No existe registro en la base de control escolar del estudiante");
+
+            }
+
         }
+
         
     }
 

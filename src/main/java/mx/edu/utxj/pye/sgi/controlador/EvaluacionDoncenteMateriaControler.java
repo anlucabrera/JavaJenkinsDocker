@@ -96,12 +96,12 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
 //         System.out.println(" datos de la evaluacion : " + listaDatosEvaluacion);
             estudiante = egresados.getAlumnoPorMatricula(logonMB.getCurrentUser());
             if (!estudiante.getActivo()) {
-                Messages.addGlobalWarn("Usted es un alumno que no se encuentra activo o es egresado, por lo tanto no tiene acceso a la evaluacion docente");
+                //Messages.addGlobalWarn("Usted es un alumno que no se encuentra activo o es egresado, por lo tanto no tiene acceso a la evaluacion docente");
 //                return;
                 cargada = false;
             } else {
                 if (estudiante.getGradoActual() == 11 || estudiante.getGradoActual() == 6) {
-                    Messages.addGlobalWarn("Usted esta en proceso de estadia, o es egresado por lo tanto no tiene acceso a la evaluacion docente");
+                    //Messages.addGlobalWarn("Usted esta en proceso de estadia, o es egresado por lo tanto no tiene acceso a la evaluacion docente");
                     cargada = false;
                 } else {
                     if (listaDatosEvaluacion.isEmpty() || listaDatosEvaluacion == null) {
