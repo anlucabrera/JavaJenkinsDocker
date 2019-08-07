@@ -70,9 +70,35 @@ public class EvaluacionTutor2 extends ViewScopedRol{
         System.out.println("EJECUTO TUTOR");
 
         if(evaluacion != null){
-            //buscar estudiantes en bases de SAUIIT Y Control Escolar
+            //TODO:Busca estudiantes en bases de SAUIIT Y Control Escolar
             System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2.init()-->Entro al initi evaluacion no nula -- Periodo de la evaluacion" + evaluacion.getPeriodo());
-            estudianteClave = ejbEstudianteBase.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
+            ResultadoEJB<EstudiantesClaves> resEstudiante = ejbEstudianteBase.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
+            if(resEstudiante.getCorrecto()==true){
+                //TODO: El estudiante se encuentra en alguna de las dos bases (Sauiit o Control escolar)
+                estudianteClave = resEstudiante.getValor();
+                //TODO: Busca los resultados del estudiante que se encontro, si no existen, se crean
+                ResultadoEJB<EvaluacionTutoresResultados>  resResultados = ejbEvaluacionTutor2.getResultadosEvaluacionTutorEstudiante(evaluacion, estudianteClave);
+                if(resResultados.getCorrecto()){
+                    mostrarMensajeResultadoEJB(resResultados);
+                    resultados= resResultados.getValor();
+                    System.out.println("resultados = " + resultados);
+                    apartados = ejbEvaluacionTutor2.getApartados();
+
+                    System.out.println("apartados = " + apartados);
+                    respuestasPosibles = ejbEvaluacionTutor2.getRespuestasPosibles();
+                    System.out.println("respuestasPosibles = " + respuestasPosibles);
+                    //TODO: Se activa la evaluacion
+                    cargada = true;
+                    comprobar();
+                }else {mostrarMensajeResultadoEJB(resResultados);}
+            }else{
+                //TODO:No se encuentra en niguna de las bases o es egresado, no se le muestra la evaluacion
+
+                cargada=false;
+            }
+
+
+                   /* estudianteClave = ejbEstudianteBase.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
             System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2.init()--> Ejecuto bien al estudianyte" + estudianteClave);
             if(estudianteClave !=null){
 
@@ -95,6 +121,7 @@ public class EvaluacionTutor2 extends ViewScopedRol{
             }else{
                 System.out.println("El alumno no esta registrado en ninguna base, pye, sauiit o control escolar");
             }
+            */
 
 
         }

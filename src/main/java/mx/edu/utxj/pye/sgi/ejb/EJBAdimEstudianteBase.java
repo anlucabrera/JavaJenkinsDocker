@@ -30,7 +30,7 @@ public interface EJBAdimEstudianteBase {
     // Busca al estudiante por matricula en la base de Control escolar
     public Estudiante getEstudianteControlEscolar (String matricula);
     // Devuelve la clave del estudiante segun sea un estudiante registrado en SAUIIT o en Control Escolar
-    public EstudiantesClaves getClaveEstudiante (String matricula, Integer periodo);
+    public ResultadoEJB<EstudiantesClaves>  getClaveEstudiante (String matricula, Integer periodo);
    
     /**
     * Buca a un estudiante por su clave  en la tabla de Matricula Periodos Escolares (Que son los que se encuentran registrados en sauitt por periodo)

@@ -5,58 +5,44 @@
  */
 package mx.edu.utxj.pye.titulacion.services;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javax.ejb.EJB;
-import javax.ejb.Stateful;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
-import mx.edu.utxj.pye.sgi.saiiut.entity.StatusAlumno;
-import mx.edu.utxj.pye.sgi.entity.titulacion.Egresados;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
-import mx.edu.utxj.pye.sgi.entity.titulacion.DatosContacto;
-import mx.edu.utxj.pye.sgi.entity.titulacion.DatosTitulacion;
-import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
-import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
-import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
-import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosIntexp;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
-import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
-import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
-import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.titulacion.*;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
+import mx.edu.utxj.pye.sgi.saiiut.entity.StatusAlumno;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
+import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
 import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbEstudianteRegistro;
+import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.omnifaces.util.Messages;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateful;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 
 /**
  *
