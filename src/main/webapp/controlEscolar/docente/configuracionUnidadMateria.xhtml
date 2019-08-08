@@ -117,9 +117,9 @@
                                                 <p:column headerText="Horas Teóricas"><h:outputText value="#{confSugerida.unidadMateria.horasTeoricas}"/></p:column>
                                                 <p:column headerText="Horas Práctica"><h:outputText value="#{confSugerida.unidadMateria.horasPracticas}" /></p:column>
                                                 <p:column headerText="Porcentaje"><p:inputNumber value="#{confSugerida.unidadMateriaConfiguracion.porcentaje}" symbol="%" symbolPosition="s" required="true" emptyValue="empty"/></p:column>
-                                                <p:column headerText="Fecha Inicio"><p:calendar id="fechaInicio" value="#{confSugerida.unidadMateriaConfiguracion.fechaInicio}" mindate="#{configuracionUnidadMateriaDocente.rol.fechaInicio}" maxdate="#{configuracionUnidadMateriaDocente.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha inicio para la unidad"/>
+                                                <p:column headerText="Fecha Inicio"><p:calendar locale="es" id="fechaInicio" value="#{confSugerida.unidadMateriaConfiguracion.fechaInicio}" mindate="#{configuracionUnidadMateriaDocente.rol.fechaInicio}" maxdate="#{configuracionUnidadMateriaDocente.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha inicio para la unidad"/>
                                                 </p:column>
-                                                <p:column headerText="Fecha Fin"><p:calendar id="fechaFin" value="#{confSugerida.unidadMateriaConfiguracion.fechaFin}" mindate="#{configuracionUnidadMateriaDocente.rol.fechaInicio}" maxdate="#{configuracionUnidadMateriaDocente.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha fin para la unidad"/>
+                                                <p:column headerText="Fecha Fin"><p:calendar locale="es" id="fechaFin" value="#{confSugerida.unidadMateriaConfiguracion.fechaFin}" mindate="#{configuracionUnidadMateriaDocente.rol.fechaInicio}" maxdate="#{configuracionUnidadMateriaDocente.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Debe ingresar fecha fin para la unidad"/>
                                                     <o:validateOrder id="compararFechas" components="fechaInicio fechaFin"  message="Error" />
                                                     <p:message for="fechaFin" display="text"><p:autoUpdate/></p:message>
                                                 </p:column>
@@ -134,7 +134,7 @@
                                                          tableStyle="vertical-align: middle;">
                                                  <p:column headerText="Tarea Integradora" style="width: 300px;"><h:inputText value="#{tareaIntN.descripcion}" size="100" /></p:column>
                                                  <p:column headerText="Porcentaje" style="width: 50px;"><p:inputNumber value="#{tareaIntN.porcentaje}" symbol="%" symbolPosition="s"/></p:column>
-                                                 <p:column headerText="Fecha Entrega" style="width: 120px;"><p:calendar value="#{tareaIntN.fechaEntrega}" mindate="#{configuracionUnidadMateriaDocente.rol.fechaInicio}" maxdate="#{configuracionUnidadMateriaDocente.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true"/></p:column>
+                                                 <p:column headerText="Fecha Entrega" style="width: 120px;"><p:calendar locale="es" value="#{tareaIntN.fechaEntrega}" mindate="#{configuracionUnidadMateriaDocente.rol.fechaInicio}" maxdate="#{configuracionUnidadMateriaDocente.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true"/></p:column>
                                             </p:dataTable>
                                                 <p></p>
                                             <center>

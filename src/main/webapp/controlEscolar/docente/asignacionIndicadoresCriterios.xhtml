@@ -156,24 +156,23 @@
                                                 <p:tab title="Ser" titleStyleClass="box-solid" >
                                                         <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" layout="grid" id="indSer">
                                                         <f:facet name="header">
-                                                            Ser <h:outputLabel value="#{indSer.porcentaje}" />
+                                                        <p:outputLabel value="Ser #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
                                                         </f:facet>
                                                         <p:panel header="#{indSer.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputNumber value="#{indSer.porcentajeIndicador}" />
+                                                                <p:inputText value="#{indSer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
                                                             </h:panelGrid>
-                                                            <span>%</span>
                                                         </p:panel>
                                                     </p:dataGrid>
                                                 </p:tab>
                                                 <p:tab title="Saber" titleStyleClass="box-solid">
                                                     <p:dataGrid var="indSaber" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaber}" layout="grid" id="indSaber">
                                                         <f:facet name="header">
-                                                            Saber #{indSaber.porcentaje}
+                                                        <p:outputLabel value="Saber #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaber}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
                                                         </f:facet>
                                                         <p:panel header="#{indSaber.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSaber.porcentajeIndicador}"><span>%</span></p:inputText>
+                                                                <p:inputText value="#{indSaber.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
@@ -181,23 +180,23 @@
                                                 <p:tab title="Saber - Hacer" titleStyleClass="box-solid">
                                                     <p:dataGrid var="indSaberHacer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaberHacer}" layout="grid" id="indSaberHacer">
                                                         <f:facet name="header">
-                                                            Saber - Hacer #{indSaberHacer.porcentaje}
+                                                        <p:outputLabel value="Saber - Hacer #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaberHacer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
                                                         </f:facet>
                                                         <p:panel header="#{indSaberHacer.indicador}" style="text-align:center">
                                                             <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSaberHacer.porcentajeIndicador}"><span>%</span></p:inputText> 
+                                                                <p:inputText value="#{indSaberHacer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
                                                             </h:panelGrid>
                                                         </p:panel>
                                                     </p:dataGrid>
                                                 </p:tab>
                                         </p:accordionPanel>
-                                        </c:if>
                                         <p></p>
                                         <p></p>
                                         <center>
                                             <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterio}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                             <p:autoUpdate />
                                         </center>
+                                        </c:if>
                                         <p></p>
                                         <p></p>
                                         <p></p>

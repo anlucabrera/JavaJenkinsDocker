@@ -606,7 +606,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         dtoPagosFinanzas dto = new dtoPagosFinanzas();
         listaDtoPagosFinanzas.forEach((pagoFinanzas) -> {
             
-         if(pagoFinanzas.getConcepto()==50){
+         if(pagoFinanzas.getConcepto()==40){
              
              dto.setConcepto(pagoFinanzas.getConcepto());
              dto.setCveRegistro(pagoFinanzas.getConcepto());

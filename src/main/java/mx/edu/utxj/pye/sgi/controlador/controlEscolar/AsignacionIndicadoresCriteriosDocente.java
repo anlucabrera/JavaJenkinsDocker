@@ -206,6 +206,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resIndSer = ejb.getIndicadoresCriterioSer(rol.getListaAsignarIndicadoresCriterios());
         if(resIndSer.getCorrecto()){
         rol.setListaCriteriosSer(resIndSer.getValor());
+        rol.setPorcentajeSer(ejb.getPorcentajeSer(rol.getListaCriteriosSer()));
         }else mostrarMensajeResultadoEJB(resIndSer); 
     }
      
@@ -213,6 +214,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resIndSaber = ejb.getIndicadoresCriterioSaber(rol.getListaAsignarIndicadoresCriterios());
         if(resIndSaber.getCorrecto()){
         rol.setListaCriteriosSaber(resIndSaber.getValor());
+        rol.setPorcentajeSaber(ejb.getPorcentajeSaber(rol.getListaCriteriosSaber()));
         }else mostrarMensajeResultadoEJB(resIndSaber); 
     }
       
@@ -220,6 +222,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resIndSaberHacer = ejb.getIndicadoresCriterioSaberHacer(rol.getListaAsignarIndicadoresCriterios());
         if(resIndSaberHacer.getCorrecto()){
         rol.setListaCriteriosSaberHacer(resIndSaberHacer.getValor());
+        rol.setPorcentajeSaberHacer(ejb.getPorcentajeSaberHacer(rol.getListaCriteriosSaberHacer()));
         }else mostrarMensajeResultadoEJB(resIndSaberHacer); 
     }
      
@@ -282,7 +285,9 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
 
                 break;
         }
-      
+        listarIndicadoresSer();
+        listarIndicadoresSaber();
+        listarIndicadoresSaberHacer();
         Ajax.update("frm");
     }
     

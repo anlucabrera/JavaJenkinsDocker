@@ -284,6 +284,23 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
     
+     /**
+     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
+     * @param listaIndicadoresSaber Nivel del que se obtendrán los indicadores por criterio
+     * @return Resultado del proceso
+     */
+    public Double getPorcentajeSaber(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadoresSaber){ 
+        try{            
+            if(listaIndicadoresSaber == null || listaIndicadoresSaber.isEmpty()) return null;
+            Listaindicadoresporcriterioporconfiguracion obtenerPor = listaIndicadoresSaber.get(0);
+            Double porcentajeSaber = obtenerPor.getPorcentaje();
+            
+            return porcentajeSaber;
+        }catch (Throwable e){
+            return null;
+        }
+    }
+    
     /**
      * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
      * @param listaIndicadores Nivel del que se obtendrán los indicadores por criterio
@@ -306,6 +323,23 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
     
+      /**
+     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
+     * @param listaIndicadoresSaber Nivel del que se obtendrán los indicadores por criterio
+     * @return Resultado del proceso
+     */
+    public Double getPorcentajeSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadoresSaberHacer){ 
+        try{            
+            if(listaIndicadoresSaberHacer == null || listaIndicadoresSaberHacer.isEmpty()) return null;
+            Listaindicadoresporcriterioporconfiguracion obtenerPor = listaIndicadoresSaberHacer.get(0);
+            Double porcentajeSaberHacer = obtenerPor.getPorcentaje();
+            
+            return porcentajeSaberHacer;
+        }catch (Throwable e){
+            return null;
+        }
+    }
+    
     public void eliminarConfUnidDetalles(DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria){
         List<UnidadMateriaConfiguracionDetalle> listaConfDetalles = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionDetalle u WHERE u.configuracion.configuracion =:configuracion", UnidadMateriaConfiguracionDetalle.class)
             .setParameter("configuracion", dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion())
@@ -325,7 +359,6 @@ public class EjbAsignacionIndicadoresCriterios {
             Integer valor = 0;
             
             Double totalPorcentajes = lista.stream().mapToDouble(Listaindicadoresporcriterioporconfiguracion::getPorcentajeIndicador).sum();
-            System.err.println("validarSumaPorcentajesIndicadores - totalPorcentajes " + totalPorcentajes);
             
             if(totalPorcentajes > 100.00){
                 valor = 1;
