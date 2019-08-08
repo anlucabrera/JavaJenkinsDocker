@@ -352,6 +352,11 @@ public class EjbConfiguracionUnidadMateria {
         }
     }
     
+    /**
+     * Permite obtener valor por hora dependiendo de las horas totales de la materia (teóricas y prácticas)
+     * @param dtoCargaAcademica Materia de la que se obtendrá el valor
+     * @return Resultado del proceso
+     */
     public Double getValorPorHora(DtoCargaAcademica dtoCargaAcademica) {
         Double valorPorHora = 0.0, horasTotales;
 
@@ -412,10 +417,10 @@ public class EjbConfiguracionUnidadMateria {
     }
     
     /**
-     * Permite guardar la configuración de la unidad materia
-     * @param tareaIntegradora Unidad configuracion materia que se va a guardar
-     * @param cargaAcademica Carga académica de la que se guardará configuración
-     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     * Permite guardar tarea integradora de la configuración de la materia
+     * @param tareaIntegradora Tarea Integradora que se registrará
+     * @param cargaAcademica Carga académica de la que se guardará tarea integradora
+     * @return Resultado del proceso generando la instancia de la tarea integradora obtenida
      */
     public ResultadoEJB<TareaIntegradora> guardarTareaIntegradora(TareaIntegradora tareaIntegradora, CargaAcademica cargaAcademica){
         try{            
@@ -439,7 +444,7 @@ public class EjbConfiguracionUnidadMateria {
      * Permite guardar la configuración de la unidad por criterios
      * @param configuracionUnidadMaterias Lista de Configuración Unidad Materia que se guardó previamente, para obtener la clave de la configuración
      * @param cargaAcademica Carga académica de la que se guardó configuración
-     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     * @return Resultado del proceso generando la instancia de configuración unidad materia por criterio
      */
     public ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> guardarConfiguracionUnidadMateriaCriterios(List<DtoConfiguracionUnidadMateria> configuracionUnidadMaterias, DtoCargaAcademica cargaAcademica){
         try{  
@@ -528,8 +533,8 @@ public class EjbConfiguracionUnidadMateria {
     }
     
     /**
-     * Permite obtener la lista de configuración de unidad por materia, de la materia seleccionada previamente
-     * @param dtoCargaAcademica Materia de la que se obtendrá configuración
+     * Permite obtener tarea integradora registrada de la materia seleccionada previamente
+     * @param dtoCargaAcademica Materia de la que se obtendrá tarea integradora
      * @return Resultado del proceso
      */
     public ResultadoEJB<TareaIntegradora> getTareaIntegradora(DtoCargaAcademica dtoCargaAcademica){
@@ -544,9 +549,9 @@ public class EjbConfiguracionUnidadMateria {
     }
     
     /**
-     * Permite eliminar la configuración de la unidad materia
-     * @param cargaAcademica Carga académica de la que se guardará configuración
-     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     * Permite eliminar tarea integradora registrada
+     * @param cargaAcademica Carga académica de la que se eliminará tarea integradora
+     * @return Resultado del proceso
      */
     public ResultadoEJB<Integer> eliminarTareaIntegradora(CargaAcademica cargaAcademica){
         try{ 
@@ -563,7 +568,7 @@ public class EjbConfiguracionUnidadMateria {
     }
     
      /**
-     * Permite detectar una lista de mensajes de posibles errores en la asignación docente, como es el caso de superar las horas máximas frente a grupo de acuerdo a si es PTC o PA el docente o si se han asignado
+     * Permite detectar una lista de mensajes de posibles errores en la configuración de unidad materia, como es el caso de superar las horas máximas frente a grupo de acuerdo a si es PTC o PA el docente o si se han asignado
      * mas de una materia al mismo docente en un grupo detemrinado
      * @param rol DTO de la capa de sincronización con los datos seleccionados por el usuario
      * @return Lista de mensajes encontrados.
@@ -610,6 +615,12 @@ public class EjbConfiguracionUnidadMateria {
         }
     }
     
+    /**
+     * Permite validar la suma de los porcentajes ingresados por unidad y tarea integradora
+     * @param listaUnidades Lista de configuración de la unidades 
+     * @param tareaIntegradora Tarea integradora
+     * @return Resultado del proceso
+     */
     public Integer validarSumaPorcentajesUnidadTI(List<DtoConfiguracionUnidadMateria> listaUnidades, TareaIntegradora tareaIntegradora)
     {
             Integer valor = 0;
@@ -637,6 +648,11 @@ public class EjbConfiguracionUnidadMateria {
             return valor;
     }
     
+    /**
+     * Permite validar la suma de los porcentajes ingresados por unidad
+     * @param listaUnidades Lista de configuración de la unidades 
+     * @return Resultado del proceso
+     */
     public Integer validarSumaPorcentajesUnidad(List<DtoConfiguracionUnidadMateria> listaUnidades)
     {
             Integer valor = 0;

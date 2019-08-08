@@ -140,7 +140,7 @@
                                         <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
                                         <center>
                                         <p></p>
-                                        <p:outputLabel value="Seleccione Unidad a las que aplicará asignación de indicadores" />
+                                        <p:outputLabel value="Seleccione Unidad a la que aplicará asignación de indicadores" />
                                         <p></p>
                                         <p:selectOneRadio id="unidad" value="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.validarAsignacionUnidad}" >
                                             <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.listaDtoConfUniMat}" var="c" itemLabel="#{c.unidadMateria.noUnidad}. #{c.unidadMateria.nombre}" itemValue="#{c}"/>

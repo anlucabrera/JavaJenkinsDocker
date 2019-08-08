@@ -92,16 +92,16 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             rol.setCargas(resCarga.getValor());
             rol.setCarga(resCarga.getValor().get(0));
             
-            rol.getInstrucciones().add("Para poder Asignar Criterios de evaluación debe haber realizado previamente la Configuración de la Unidad Materia");
+            rol.getInstrucciones().add("Para poder Asignar de Indicadores por Criterio de evaluación debe haber realizado previamente la Configuración de la Unidad Materia.");
             rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar configuraciones anteriores.");
             rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo que va a configurar.");
-            rol.getInstrucciones().add("Seleccionar si o no aplicará Tarea Integradora en la configuración.");
-            rol.getInstrucciones().add("Actualizar fecha de inicio y fin por cada unidad de la materia si no desea utilizar las fechas sugeridas por el sistema.");
-            rol.getInstrucciones().add("En caso de que aplicará Tarea Integradora deberá ingresar nombre y fecha de entrega.");
-            rol.getInstrucciones().add("Una vez que capture toda la información solicitada puede GUARDAR la configuración.");
-            rol.getInstrucciones().add("Usted podrá visualizar la Configuración Guardada en sistema.");
-            rol.getInstrucciones().add("Si desea ELIMINAR la configuración deberá seleccionar que desea realizar esta accción para que se active el botón de eliminar ubicado en la parte inferior.");
-            rol.getInstrucciones().add("Al eliminar la configuración de la materia se eliminarán también los criterios de evaluación que se encuentren registrados.");
+            rol.getInstrucciones().add("Seleccionar Unidad a la que aplicará la asignación que configurará.");
+            rol.getInstrucciones().add("Seleccionar la pestaña del criterio: Ser, Saber o Saber - Hacer.");
+            rol.getInstrucciones().add("Capturar porcentaje que valdrá el o los indicadores indicadores que utilizará por criterio.");
+            rol.getInstrucciones().add("La suma de los porcentajes por criterio deben sumar 100%, de lo contrario el sistema no le permitirá guardar.");
+            rol.getInstrucciones().add("Una vez que haya seleccionado indicadores de los TRES criterios puede proceder a GUARDAR la información.");
+            rol.getInstrucciones().add("Usted podrá actualizar la asignación de indicadores de la unidad siempre y cuando no haya terminado de configurar todas las unidades.");
+            rol.getInstrucciones().add("Una vez que realice la asignación de indicadores de todas las unidades podrá VISUALIZAR la asignación general de la materia, y podrá ELIMINARLA siempre y cuando no esté VALIDADA.");
 
             existeAsignacion();
 //            existeConfiguracion();

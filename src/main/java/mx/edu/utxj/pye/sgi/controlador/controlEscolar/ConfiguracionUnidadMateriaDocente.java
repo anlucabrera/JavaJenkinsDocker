@@ -95,8 +95,9 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar configuraciones anteriores.");
             rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo que va a configurar.");
             rol.getInstrucciones().add("Seleccionar si o no aplicará Tarea Integradora en la configuración.");
-            rol.getInstrucciones().add("Actualizar fecha de inicio y fin por cada unidad de la materia si no desea utilizar las fechas sugeridas por el sistema.");
-            rol.getInstrucciones().add("En caso de que aplicará Tarea Integradora deberá ingresar nombre y fecha de entrega.");
+            rol.getInstrucciones().add("Actualizar Porcentaje, Fecha de Inicio y Fecha Fin por cada unidad de la materia si no desea utilizar las fechas sugeridas por el sistema.");
+            rol.getInstrucciones().add("En caso de que aplicará Tarea Integradora deberá ingresar Nombre, Porcentaje y Fecha de entrega.");
+            rol.getInstrucciones().add("Los porcentajes que ingrese en total deben sumar 100%, en caso contrario el sistema no le permitirá guardar.");
             rol.getInstrucciones().add("Una vez que capture toda la información solicitada puede GUARDAR la configuración.");
             rol.getInstrucciones().add("Usted podrá visualizar la Configuración Guardada en sistema.");
             rol.getInstrucciones().add("Si desea ELIMINAR la configuración deberá seleccionar que desea realizar esta accción para que se active el botón de eliminar ubicado en la parte inferior.");

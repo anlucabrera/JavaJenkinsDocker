@@ -140,7 +140,7 @@ public class EjbAsignacionIndicadoresCriterios {
             DtoCargaAcademica dto = new DtoCargaAcademica(cargaAcademicaBD, periodo, docente, grupo, materia, programa, planEstudio, planEstudioMateria);
             return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica (EjbAsignacionIndicadoresCriterios. pack).", e, DtoCargaAcademica.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica (EjbAsignacionIndicadoresCriterios.pack).", e, DtoCargaAcademica.class);
         }
     }
     
@@ -156,13 +156,13 @@ public class EjbAsignacionIndicadoresCriterios {
                     .getResultList();
             return ResultadoEJB.crearCorrecto(listaUnidMatConf, "Lista de configuración de la unidad materia seleccionada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbAsignacionIndicadoresCriterios.getConfiguracionUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbAsignacionIndicadoresCriterios.buscarConfiguracionUnidadMateria)", e, null);
         }
     }
     
      /**
      * Permite verificar si existe asignación de indicadores por criterio de la carga académica seleccionada
-     * @param dtoCargaAcademica Configuración de la que se buscará asignación de indicadores por criterio
+     * @param dtoCargaAcademica Materia de la que se buscará asignación de indicadores por criterio
      * @return Resultado del proceso
      */
     public ResultadoEJB<UnidadMateriaConfiguracionDetalle> buscarConfiguracionUnidadMateriaDetalle(DtoCargaAcademica dtoCargaAcademica){
@@ -178,7 +178,7 @@ public class EjbAsignacionIndicadoresCriterios {
        
     /**
      * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param dtoCargaAcademica Nivel del que se obtendrán los indicadores por criterio
+     * @param dtoCargaAcademica Materia de la que se buscará la lista de indicadores por criterio
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioParaAsignar(DtoCargaAcademica dtoCargaAcademica){ 
@@ -196,6 +196,11 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
     
+     /**
+     * Permite obtener periodo más actual para obtener la lista de indicadores por criterio vigente
+     * @param dtoCargaAcademica Materia de la que se buscará la lista de indicadores por criterio
+     * @return Resultado del proceso
+     */
     public Integer getPeriodoActivoIndicadores(DtoCargaAcademica dtoCargaAcademica)
     {
         int periodo = 0;
@@ -209,6 +214,11 @@ public class EjbAsignacionIndicadoresCriterios {
         return periodo;
     }
     
+     /**
+     * Permite obtener configuración de la materia para obtener la lista de indicadores por criterio vigente
+     * @param dtoCargaAcademica Materia de la que se buscará la lista de indicadores por criterio
+     * @return Resultado del proceso
+     */
     public Integer getConfiguracion(DtoCargaAcademica dtoCargaAcademica)
     {
         int configuracion = 0;
@@ -224,8 +234,8 @@ public class EjbAsignacionIndicadoresCriterios {
     }
     
     /**
-     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param listaIndicadores Nivel del que se obtendrán los indicadores por criterio
+     * Permite obtener la lista de indicadores del criterio SER de la materia 
+     * @param listaIndicadores Lista de indicadores general
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
@@ -239,15 +249,15 @@ public class EjbAsignacionIndicadoresCriterios {
                     it.remove();
                 }
             }
-            return ResultadoEJB.crearCorrecto(listaIndicadores, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(listaIndicadores, "Lista de indicadores del criterio SER se obtuvo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SER. (EjbAsignacionIndicadoresCriterios.getIndicadoresCriterioSer)", e, null);
         }
     }
     
     /**
-     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param listaIndicadoresSer Nivel del que se obtendrán los indicadores por criterio
+     * Permite obtener el valor porcentual del criterio SER
+     * @param listaIndicadoresSer Lista de indicadores del criterio SER
      * @return Resultado del proceso
      */
     public Double getPorcentajeSer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadoresSer){ 
@@ -262,9 +272,9 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
    
-    /**
-     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param listaIndicadores Nivel del que se obtendrán los indicadores por criterio
+   /**
+     * Permite obtener la lista de indicadores del criterio SABER de la materia 
+     * @param listaIndicadores Lista de indicadores general
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSaber(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
@@ -278,15 +288,15 @@ public class EjbAsignacionIndicadoresCriterios {
                     it.remove();
                 }
             }
-            return ResultadoEJB.crearCorrecto(listaIndicadores, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(listaIndicadores, "Lista de indicadores del criterio SABER se obtuvo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SABER. (EjbAsignacionIndicadoresCriterios.getIndicadoresCriterioSaber)", e, null);
         }
     }
     
      /**
-     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param listaIndicadoresSaber Nivel del que se obtendrán los indicadores por criterio
+     * Permite obtener el valor porcentual del criterio SABER
+     * @param listaIndicadoresSaber Lista de indicadores del criterio SABER
      * @return Resultado del proceso
      */
     public Double getPorcentajeSaber(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadoresSaber){ 
@@ -301,9 +311,9 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
     
-    /**
-     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param listaIndicadores Nivel del que se obtendrán los indicadores por criterio
+   /**
+     * Permite obtener la lista de indicadores del criterio SABER - HACER de la materia 
+     * @param listaIndicadores Lista de indicadores general
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
@@ -317,15 +327,15 @@ public class EjbAsignacionIndicadoresCriterios {
                     it.remove();
                 }
             }
-            return ResultadoEJB.crearCorrecto(listaIndicadores, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(listaIndicadores, "Lista de indicadores del criterio SABER - HACER se obtuvo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SABER - HACER. (EjbAsignacionIndicadoresCriterios.getIndicadoresCriterioSaberHacer)", e, null);
         }
     }
     
-      /**
-     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param listaIndicadoresSaber Nivel del que se obtendrán los indicadores por criterio
+     /**
+     * Permite obtener el valor porcentual del criterio SABER - HACER
+     * @param listaIndicadoresSaberHacer Lista de indicadores del criterio SABER - HACER
      * @return Resultado del proceso
      */
     public Double getPorcentajeSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadoresSaberHacer){ 
@@ -340,6 +350,10 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
     
+     /**
+     * Permite eliminar la asignación de indicadores por criterio registrada
+     * @param dtoConfiguracionUnidadMateria Materia de la que se eliminará asignación
+     */
     public void eliminarConfUnidDetalles(DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria){
         List<UnidadMateriaConfiguracionDetalle> listaConfDetalles = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionDetalle u WHERE u.configuracion.configuracion =:configuracion", UnidadMateriaConfiguracionDetalle.class)
             .setParameter("configuracion", dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion())
@@ -354,6 +368,11 @@ public class EjbAsignacionIndicadoresCriterios {
       
     }
     
+    /**
+     * Permite validar la suma de los porcentajes ingresados por indicador
+     * @param lista Lista de indicadores por criterio
+     * @return Resultado del proceso
+     */
     public Integer validarSumaPorcentajesIndicadores(List<Listaindicadoresporcriterioporconfiguracion> lista)
     {
             Integer valor = 0;
@@ -374,13 +393,14 @@ public class EjbAsignacionIndicadoresCriterios {
     }
    
      /**
-     * Permite guardar la configuración de la unidad materia
-     * @param listaSer Unidad configuracion materia que se va a guardar
-     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     * Permite guardar la asignación de indicadores del criterio SER
+     * @param listaSer Lista de indicadores que se guardarán
+     * @param dtoConfUnidadMateria Materia de la que guardará asignación
+     * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSer(List<Listaindicadoresporcriterioporconfiguracion> listaSer, DtoConfiguracionUnidadMateria dtoConfUnidadMateria){
         try{            
-            if(listaSer == null || listaSer.isEmpty()) return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
+            if(listaSer == null || listaSer.isEmpty()) return ResultadoEJB.crearErroneo(2, "La lista de indicadores SER no debe ser nula.");
             
             List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
             
@@ -405,16 +425,17 @@ public class EjbAsignacionIndicadoresCriterios {
                     Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            return ResultadoEJB.crearCorrecto(l, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SER se guardo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSer)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSer)", e, null);
         }
     }
     
      /**
-     * Permite guardar la configuración de la unidad materia
-     * @param listaSaber Unidad configuracion materia que se va a guardar
-     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     * Permite guardar la asignación de indicadores del criterio SABER
+     * @param listaSaber Lista de indicadores que se guardarán
+     * @param dtoConfUnidadMateria Materia de la que guardará asignación
+     * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSaber(List<Listaindicadoresporcriterioporconfiguracion> listaSaber, DtoConfiguracionUnidadMateria dtoConfUnidadMateria){
         try{            
@@ -441,16 +462,17 @@ public class EjbAsignacionIndicadoresCriterios {
                     Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            return ResultadoEJB.crearCorrecto(l, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SABER se guardo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaber)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaber)", e, null);
         }
     }
     
      /**
-     * Permite guardar la configuración de la unidad materia
-     * @param listaSaberHacer Unidad configuracion materia que se va a guardar
-     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     * Permite guardar la asignación de indicadores del criterio SABER - HACER
+     * @param listaSaberHacer Lista de indicadores que se guardarán
+     * @param dtoConfUnidadMateria Materia de la que guardará asignación
+     * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaSaberHacer, DtoConfiguracionUnidadMateria dtoConfUnidadMateria){
         try{            
@@ -477,9 +499,9 @@ public class EjbAsignacionIndicadoresCriterios {
                     Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            return ResultadoEJB.crearCorrecto(l, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SABER - HACER se guardo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaberHacer)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER - HACER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaberHacer)", e, null);
         }
     }
     
@@ -559,6 +581,11 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
     
+     /**
+     * Permite comparar asignación de indicadores por unidad registradas con el total de unidades de la materia
+     * @param dtoCargaAcademica Configuración de la que se buscará asignación de indicadores por criterio
+     * @return Resultado del proceso
+     */
     public Boolean compararUnidadesConfiguradasConTotales(DtoCargaAcademica dtoCargaAcademica)
     {
         try {
