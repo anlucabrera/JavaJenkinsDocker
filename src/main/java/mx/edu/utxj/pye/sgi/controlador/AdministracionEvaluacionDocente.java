@@ -90,7 +90,7 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
         listCompletos = new ArrayList<>();
         listIncompletos = new ArrayList<>();
         listNoAcceso = new ArrayList<>();
-        //TODO: Rerrore la lista de sus estudiantes
+        //TODO: Recorre la lista de sus estudiantes
         estudiantes.forEach(e->{
             //TODO: Obtiene la lista de docentes que debe evaluar por su numero de matricula
             ResultadoEJB<List<VistaEvaluacionDocenteMateriaPye>> resDocentes = ejbEvaluacionDocenteMateria.getDocenteMateriabyMatricula(e.getMatricula());
@@ -98,23 +98,30 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
                 List<VistaEvaluacionDocenteMateriaPye> listDocentesMateria = resDocentes.getValor();
                 //TODO: Obtiene la lista de resultados del estudiante
                 ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> resResultadosEvaluacion = ejbEvaluacionDocenteMateria.getListResultadosDocenteMateriabyMatricula(evaluacion,Integer.parseInt(e.getMatricula()));
+               List<EvaluacionDocentesMateriaResultados> listTotalResuldos = resResultadosEvaluacion.getValor();
+                //System.out.println("TOTAL DE RESULTADOS ENCONTRADOS "+ listTotalResuldos.size());
                 if(resResultadosEvaluacion.getCorrecto()==true){
-                    List<EvaluacionDocentesMateriaResultados> listResultadosCompletos= resResultadosEvaluacion.getValor();
+                    //TODO: Se filtran los resultados encontrados, para obtener solo los resultados completos
+                    List<EvaluacionDocentesMateriaResultados> listResultadosCompletos= resResultadosEvaluacion.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
+                   // System.out.println("TOTAL DE RESULTADOS COMPLETOS "+ listResultadosCompletos.size());
                     int totalaEvaluar = listDocentesMateria.size();
                     int totalResultadosCompletos = listResultadosCompletos.size();
                     //TODO: Comprueba si ha terminado la evaluacion a docente
                     if(totalResultadosCompletos < totalaEvaluar){
                         //TODO:Si la los registros de resultados completos es menor a la total de la que debe evaluar, la evaluacion esta incompleta y se agrega a la lista de incompletos
                         listIncompletos.add(e);
-
+                        //System.out.println("Ev incompleta");
                     }if(totalResultadosCompletos == totalaEvaluar){
                         //TODO: Si los registros de resultados completos del estudiante es igual al los que debe evaluar, entonces la evaluacion esta finalizada, y se agrega a la lista de completos
                         listCompletos.add(e);
-
+                       // System.out.println("Ev completa");
                     }
                 }
                 //TODO: Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
-                else {listNoAcceso.add(e); totalNoAcceso++;}
+                else {listNoAcceso.add(e); totalNoAcceso++;
+                    //System.out.println("Ev no accedio");
+                }
+
             }else {mostrarMensajeResultadoEJB(resDocentes);}
         });
     }
@@ -134,9 +141,9 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
         dto.setTotalIncompletos(totalIncompletos);
         dto.setTotalNoIngreso(totalNoAcceso);
         dto.setPorcentaje(porcentaje);
-        System.out.println("DTO AVANCE " + dto);
+        //System.out.println("DTO AVANCE " + dto);
         listAvance.add(dto);
-        System.out.println("Seagrego a la listaaa dtooo--<>" + listAvance.size());
+        //System.out.println("Seagrego a la listaaa dtooo--<>" + listAvance.size());
     }
     //TODO: Genera el avanace por programa educativo
     public void generarAvancePE(List<dtoEstudiantesEvalauciones> estudiantes){
@@ -162,9 +169,9 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
                 dto.setTotalNoIngreso(totalNoAccesoPE);
                 dto.setPorcentaje(porcentajePE);
                 listAvancePE.add(dto);
-                System.out.println("dtoo----->" + dto);
+                //System.out.println("dtoo----->" + dto);
             });
-            System.out.println("Lista total por PE"+listAvancePE.size());
+            //System.out.println("Lista total por PE"+listAvancePE.size());
         }else{mostrarMensajeResultadoEJB(resPE);}
     }
     //TODO:Seguimiento para el tutor
