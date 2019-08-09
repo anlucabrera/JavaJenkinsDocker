@@ -5,44 +5,59 @@
  */
 package mx.edu.utxj.pye.titulacion.services;
 
+import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
-import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
-import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
-import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
-import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
-import mx.edu.utxj.pye.sgi.entity.titulacion.*;
-import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
-import mx.edu.utxj.pye.sgi.saiiut.entity.StatusAlumno;
-import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
-import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
-import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
-import mx.edu.utxj.pye.titulacion.interfaces.EjbEstudianteRegistro;
-import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
-import net.sf.jxls.transformer.XLSTransformer;
-import org.omnifaces.util.Messages;
-
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
+import mx.edu.utxj.pye.sgi.saiiut.entity.StatusAlumno;
+import mx.edu.utxj.pye.sgi.entity.titulacion.Egresados;
+import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DatosContacto;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DatosTitulacion;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
+import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
+import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
+import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
+import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosIntexp;
+import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
+import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
+import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
+import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
+import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
+import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
+import mx.edu.utxj.pye.titulacion.interfaces.EjbEstudianteRegistro;
+import net.sf.jxls.transformer.XLSTransformer;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -84,19 +99,19 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         ExpedientesTitulacion exp = facade.getEntityManager().createNamedQuery("ExpedientesTitulacion.findByExpediente", ExpedientesTitulacion.class)
                 .setParameter("expediente", expediente)
                 .getSingleResult();
-         
+        
         Egresados egre = facade.getEntityManager().createQuery("SELECT e FROM Egresados e WHERE e.matricula = :matricula", Egresados.class)
                    .setParameter("matricula", exp.getMatricula().getMatricula())
                    .getSingleResult();
-        
+       
         DatosContacto cont = facade.getEntityManager().createQuery("SELECT d FROM DatosContacto d WHERE d.expediente.expediente =:expediente",  DatosContacto.class)
                    .setParameter("expediente", expediente)
                    .getSingleResult();
-        
+               
         DomiciliosExpediente dom = facade.getEntityManager().createQuery("SELECT d FROM DomiciliosExpediente d WHERE d.expediente.expediente =:expediente", DomiciliosExpediente.class)
                    .setParameter("expediente", expediente)
                    .getSingleResult();
-        
+               
         List<DocumentosExpediente> doc = facade.getEntityManager().createQuery("SELECT d FROM DocumentosExpediente d WHERE d.expediente.expediente =:expediente", DocumentosExpediente.class)
                    .setParameter("expediente", expediente)
                    .getResultList();
@@ -108,22 +123,22 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         Estado edo = facade.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idestado = :idestado", Estado.class)
                 .setParameter("idestado", dom.getEstado())
                 .getSingleResult();
-        
+       
         Municipio mun = facade.getEntityManager().createQuery("SELECT m FROM Municipio m WHERE m.municipioPK.claveEstado = :claveEstado AND m.municipioPK.claveMunicipio = :claveMunicipio", Municipio.class)
                 .setParameter("claveEstado", dom.getEstado())
                 .setParameter("claveMunicipio", dom.getMunicipio())
                 .getSingleResult();
-        
+       
         Asentamiento loc = facade.getEntityManager().createQuery("SELECT a FROM Asentamiento a WHERE a.asentamientoPK.estado = :estado AND a.asentamientoPK.municipio = :municipio AND a.asentamientoPK.asentamiento = :asentamiento", Asentamiento.class)
                 .setParameter("estado", dom.getEstado())
                 .setParameter("municipio", dom.getMunicipio())
                 .setParameter("asentamiento", dom.getLocalidad())
                 .getSingleResult();
-        
+               
         Iems iems = facade.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.iems = :iems", Iems.class)
                 .setParameter("iems", ant.getIems())
                 .getSingleResult();
-        
+       
         Estado edoIems = facade.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idestado = :idestado", Estado.class)
                 .setParameter("idestado", iems.getLocalidad().getMunicipio().getEstado().getIdestado())
                 .getSingleResult();
@@ -133,7 +148,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         AreasUniversidad prog = facade.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.siglas = :siglas", AreasUniversidad.class)
                 .setParameter("siglas", exp.getProgramaEducativo())
                 .getSingleResult();
-        
+                
         FechasDocumentos fecDoc = buscarFechasDocumentos(exp, prog);
         
         //Dependiendo del nivel del egresado se asignada el grado académico y se obtienen los pagos para determinar si ha realizado pago de titulo
@@ -147,7 +162,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
             gradoAcademico = "TÉCNICO SUPERIOR UNIVERSITARIO";
             pagoFinanzas = getDtoPagosFinanzasTSU(listaPagos);
         }
-        
+       
         //Obtener nombre del personal que validó o invalidó el expediente de titulación
         String personalValido;
         
@@ -156,7 +171,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         }else{
             personalValido = buscarPersonalValido(exp.getPersonalValido());
         }
-        
+       
         String statusAlumno = obtenerStatusSAIIUT(exp);
         
         try {
@@ -201,7 +216,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
             dto.setPagosFinanzas(null);
             dto.setSituacionAcademica(null);
         }
-        
+      
         return dto;
     }
 
@@ -344,9 +359,10 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
                     .getSingleResult();
 
         } catch (Throwable ex) {
+            BigDecimal promedio = BigDecimal.ZERO;
             datosTit.setExpediente(buscarExpedienteTitulacion(expediente));
             datosTit.setModalidadTitulacion("Por Reporte de Estadía");
-            datosTit.setPromedioFinal(null);
+            datosTit.setPromedioFinal(promedio);
             datosTit.setServicioSocial(false);
         }
         
@@ -381,7 +397,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     public dtoExpedienteMatricula guardarAntecedentesAcad(AntecedentesAcademicos antecedentesAcademicos, Integer expediente) throws Throwable {
         facade.setEntityClass(AntecedentesAcademicos.class);
         facade.edit(antecedentesAcademicos);
-        Messages.addGlobalInfo("<b>Se actualizaron los datos de titulación del expediente: </b> " + expediente);
+        Messages.addGlobalInfo("<b>Se actualizaron los antecedentes académicos del expediente: </b> " + expediente);
         facade.flush();
 
         dtoExpedienteMatricula dto = mostrarExpediente(expediente);
@@ -538,7 +554,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
 
             Client client = Client.create();
 //            WebResource webResource = client.resource("http://siip.utxicotepec.edu.mx/micro/webresources/pagoAlumno/matricula/" + matricula);
-            WebResource webResource = client.resource("http://150.140.1.26:8080/micro/webresources/pagoAlumno/matricula/" + matricula);
+            WebResource webResource = client.resource("http://150.140.1.26/micro/webresources/pagoAlumno/matricula/" + matricula);
            
             ClientResponse response = webResource.accept("application/json").get(ClientResponse.class);
 
@@ -649,7 +665,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     public AntecedentesAcademicos guardarAntAcadInd(AntecedentesAcademicos antecedentesAcademicos, Integer expediente) throws Throwable {
         facade.setEntityClass(AntecedentesAcademicos.class);
         facade.edit(antecedentesAcademicos);
-        Messages.addGlobalInfo("<b>Se actualizaron los datos de titulación del expediente: </b> " + expediente);
+        Messages.addGlobalInfo("<b>Se actualizaron los antecedentes académicos del expediente: </b> " + expediente);
         facade.flush();
         return antecedentesAcademicos;
     }

@@ -264,9 +264,6 @@ public class AreaPoaEvaluacion implements Serializable {
         actividadesPoasAreasEjes.clear();
         listaListaEjeEstrategia.clear();
         listaEstrategiaActividadesesEje.clear();
-
-        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias, ejes, ejercicioFiscal, claveArea))));
-            
         if (mes <= 3) {
             cuatrimestre = 1;
         } else {
@@ -276,8 +273,11 @@ public class AreaPoaEvaluacion implements Serializable {
                 cuatrimestre = 3;
             }
         }
-                
+
         mostradaL = 1;
+
+        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias, ejes, ejercicioFiscal, claveArea))));
+
     }
 
     public List<actividad> aconsultarTotales(List<ActividadesPoa> actividadesPoas) {
@@ -292,7 +292,7 @@ public class AreaPoaEvaluacion implements Serializable {
             totalPCuatrimestre = 0D;
             porcentejeAlCorte = 0D;
             porcentajeCuatrimestre = 0D;
-
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AreaPoaEvaluacion.aconsultarTotales(1)"+cuatrimestre);
             switch (cuatrimestre) {
                 case 1:
                     totalACuatrimestre = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril();
@@ -310,7 +310,6 @@ public class AreaPoaEvaluacion implements Serializable {
 
             totalACorte = pOAUtilidades.totalAlcanzado(t, mes);
             totalPCorte = pOAUtilidades.totalProgramado(t, mes);
-
             porcentajeCuatrimestre = pOAUtilidades.obtenerTotalPorcejateGeneral(totalACuatrimestre, totalPCuatrimestre);
             porcentejeAlCorte = pOAUtilidades.obtenerTotalPorcejateGeneral(totalACorte, totalPCorte);
             porcentajeCuatrimestre = pOAUtilidades.obtenerTotalPorcejate(porcentajeCuatrimestre);
@@ -323,7 +322,7 @@ public class AreaPoaEvaluacion implements Serializable {
 
         return actividades;
     }
-    
+
     public void actualizarNuavActividad() {
         actividadesPoaEditando = ejbRegistroActividades.actualizaActividadesPoa(actividadesPoaEditando);
         if (mostradaL == 1) {
