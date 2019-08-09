@@ -25,10 +25,9 @@ import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
@@ -670,6 +669,26 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public Long getConteoMatriculaInicialPorPeriodo(PeriodosEscolares periodoEscolar) {
+        try {
+            Query numero = f.getEntityManager().createQuery("SELECT COUNT(m.registro) FROM MatriculaPeriodosEscolares m WHERE m.periodo = :periodo")
+                    .setParameter("periodo", periodoEscolar.getPeriodo());
+            Object count = numero.getSingleResult();
+            Long numeroMatricula = (Long) count;
+            return numeroMatricula;
+        } catch (NonUniqueResultException nure){
+            System.out.println("mx.edu.utxj.pye.siip.services.eb.ServicioMatriculaPeriodosEscolares.getConteoMatriculaInicialPorPeriodo() NonUniqueResultException" + nure);
+            return null;
+        } catch (NoResultException nre) {
+            System.out.println("mx.edu.utxj.pye.siip.services.eb.ServicioMatriculaPeriodosEscolares.getConteoMatriculaInicialPorPeriodo() NoResultException" + nre);
+            return null;
+        }catch (Exception e){
+            System.out.println("mx.edu.utxj.pye.siip.services.eb.ServicioMatriculaPeriodosEscolares.getConteoMatriculaInicialPorPeriodo() Exception" + e);
+            return null;
         }
     }
 

@@ -8,10 +8,12 @@ package mx.edu.utxj.pye.siip.controller.pye;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -22,7 +24,9 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
@@ -58,6 +62,7 @@ public class ControladorSesionesPsicopedagogiaPYE implements Serializable{
     @EJB    EjbFiscalizacion            ejbFiscalizacion;
     @EJB    EjbModulos                  ejbModulos;
     @EJB    EjbCatalogos                ejbCatalogos;
+    @EJB    EjbAreasLogeo               ejbAreasLogeo;
     
     @Inject ControladorEmpleado         controladorEmpleado;
     @Inject ControladorModulosRegistro  controladorModulosRegistro;
@@ -65,54 +70,84 @@ public class ControladorSesionesPsicopedagogiaPYE implements Serializable{
     @PostConstruct
     public void init(){
         dto = new DtoSesionPsicopedagogia();
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        dto.setAreaUniversidadAdministrador(ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        dto.setLstAreasConflicto(ejbSesionesPsicopedagogia.getListaAreasDeConflicto());
+        dto.setLstOtrosTiposSesionesPsicopedagogia(ejbSesionesPsicopedagogia.getListaOtrosTiposSesionesPsicopedagogia());
+        dto.setLstProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+        
+        Faces.setSessionAttribute("areasConflicto", dto.getLstAreasConflicto());
+        Faces.setSessionAttribute("otroTipoSesion", dto.getLstOtrosTiposSesionesPsicopedagogia());
+        Faces.setSessionAttribute("programasEducativos", dto.getLstProgramasEducativos());
         filtros();
     }
     
     public void filtros(){
-//        llenaCategorias();
+        llenaCategorias();
         dto.nulificarCategoria();
-        
-        dto.setAniosConsulta(ejbModulos.getEjercicioRegistros(dto.getRegistros(), dto.getArea()));
-        if(!dto.getAniosConsulta().isEmpty()){
-            dto.setAnioConsulta((short)dto.getAniosConsulta().get(dto.getAniosConsulta().size()-1));
-        }
-        dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(),dto.getRegistros(),dto.getArea()));
-        if(!dto.getMesesConsulta().isEmpty()){
-            dto.setMesConsulta(dto.getMesesConsulta().stream()
-                .filter(t -> ejbModulos.getEventoRegistro().getMes().equals(t))
-                .findAny()
-                .orElse(dto.getMesesConsulta().get(dto.getMesesConsulta().size()-1)));
-        }
-        buscaSesionesIndividuales();
+        Faces.setSessionAttribute("categorias", dto.getListaCategoriasPOA());
     }
-    
-    public void actualizarAreas(ValueChangeEvent e){
-        dto.setCategoria((Categorias)e.getNewValue());
-//        llenaAreas();
+    public void actualizarAreas(ValueChangeEvent e) {
+        dto.setCategoria((Categorias) e.getNewValue());
+        llenaAreas();
         dto.nulificarAreaPOA();
         Faces.setSessionAttribute("areas", dto.getListaAreasPOA());
     }
     
+    public void actualizarAnios(ValueChangeEvent e){
+        dto.setArea((AreasUniversidad)e.getNewValue());
+        llenaAnios();
+        dto.nulificarAnioConsulta();
+    }
+    
     public void actualizarMeses(ValueChangeEvent e){
-        dto.setAnioConsulta((short)e.getNewValue());
-//        llenaMeses();
+        dto.setAnioConsulta((short) e.getNewValue());
+        llenaMeses();
         buscaSesionesIndividuales();
     }
     
+    public void llenaCategorias() {
+        dto.setListaCategoriasPOA(ejbCatalogos.getCategoriaAreasConPoa()
+                .stream()
+                .filter(categoria -> (short) 7 == categoria.getCategoria())
+                .collect(Collectors.toList()));
+        if (!dto.getListaCategoriasPOA().isEmpty() && dto.getCategoria() == null) {
+            dto.setCategoria(null);
+        }
+    }
+
+    public void llenaAreas() {
+        dto.setListaAreasPOA(ejbCatalogos.getAreasUniversidadPorCategoriaConPoa(dto.getCategoria())
+                .stream()
+                .filter(area -> (short) 18 == area.getArea())
+                .collect(Collectors.toList()));
+        if (!dto.getListaAreasPOA().isEmpty() && dto.getArea() == null) {
+            dto.setArea(null);
+        }
+    }
     
+    public void llenaAnios() {
+        dto.setAniosConsulta(ejbModulos.getEjercicioRegistros(dto.getRegistros(), dto.getArea()));
+        if (!dto.getAniosConsulta().isEmpty()) {
+            dto.setAnioConsulta(null);
+        }
+    }
     
-//    public void actualizarMeses(ValueChangeEvent e){
-//        dto.setAnioConsulta((short)e.getNewValue());
-//        dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(), dto.getRegistros(), dto.getArea()));
-//        buscaSesionesIndividuales();
-//    }
+    public void llenaMeses() {
+        dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(), dto.getRegistros(), dto.getArea()));
+        if (!dto.getMesesConsulta().isEmpty()) {
+            dto.setMesConsulta(null);
+        }
+    }
     
-    public void buscaSesionesIndividuales(){
-        dto.setLstSesionesPsicopedagogia(ejbSesionesPsicopedagogia.getFiltroSesionesIndividualesPorAreaEjercicioMesArea(dto.getArea(), dto.getAnioConsulta(), dto.getMesConsulta()));
-        dto.getLstSesionesPsicopedagogia().stream().forEach((sp) -> {
-            sp.getSesionIndividualMensualPsicopedogia().setRegistros(ejbModulos.buscaRegistroPorClave(sp.getSesionIndividualMensualPsicopedogia().getRegistro()));
-        });
+    public void buscaSesionesIndividuales() {
+        if (dto.getMesConsulta() != null && !dto.getMesesConsulta().isEmpty()) {
+            dto.setLstSesionesPsicopedagogia(ejbSesionesPsicopedagogia.getFiltroSesionesIndividualesPorAreaEjercicioMesArea(dto.getArea(), dto.getAnioConsulta(), dto.getMesConsulta()));
+            dto.getLstSesionesPsicopedagogia().stream().forEach((sp) -> {
+                sp.getSesionIndividualMensualPsicopedogia().setRegistros(ejbModulos.buscaRegistroPorClave(sp.getSesionIndividualMensualPsicopedogia().getRegistro()));
+            });
+        } else {
+            dto.setLstSesionesPsicopedagogia(Collections.EMPTY_LIST);
+        }
         Ajax.update("formMuestraDatosActivos");
     }
     
@@ -215,23 +250,32 @@ public class ControladorSesionesPsicopedagogiaPYE implements Serializable{
     }
     
     public void abrirEdicionSesionPsicopedagogia(DTOSesionesPsicopedagogia sesionPsicopedagogia) {
-        dto.setNuevoRegistro(Boolean.FALSE);
-        dto.setDtoSesionPsicopedagogia(sesionPsicopedagogia);
-        accionProgramaEducativo(dto.getDtoSesionPsicopedagogia().getSesionIndividualMensualPsicopedogia().getOtroTipoSesion());
-        if(dto.getHabilitaProgramaEducativo()){
-            dto.setProgramaEducativo(dto.getDtoSesionPsicopedagogia().getProgramaEducativo());
-        }else{
-            dto.setProgramaEducativo(null);
+        try {
+            dto.setNuevoRegistro(Boolean.FALSE);
+            dto.setDtoSesionPsicopedagogia(sesionPsicopedagogia);
+            accionProgramaEducativo(dto.getDtoSesionPsicopedagogia().getSesionIndividualMensualPsicopedogia().getOtroTipoSesion());
+            if (dto.getDtoSesionPsicopedagogia().getSesionIndividualMensualPsicopedogia().getOtroTipoSesion().getOtroTipoSesionPsicopedagogia() == 2) {
+                dto.setLstProgramasEducativos(ejbAreasLogeo.mostrarAllAreasUniversidad());
+                Faces.setSessionAttribute("programasEducativos", dto.getLstProgramasEducativos());
+            }
+            if (dto.getHabilitaProgramaEducativo()) {
+                dto.setProgramaEducativo(dto.getDtoSesionPsicopedagogia().getProgramaEducativo());
+                Faces.setSessionAttribute("programasEducativos", dto.getLstProgramasEducativos());
+            } else {
+                dto.setProgramaEducativo(null);
+            }
+            dto.setMensaje("");
+            actualizaInterfazSesionPsicopedagogia();
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorSesionesPsicopedagogiaPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
-        dto.setMensaje("");
-        actualizaInterfazSesionPsicopedagogia();
-    }   
+    }
     
     public void guardarSesionPsipedagogia(SesionIndividualMensualPsicopedogia sesionPsicopedagogia) {
         sesionPsicopedagogia.setMes(controladorModulosRegistro.getEventosRegistros().getMes());
         sesionPsicopedagogia.setProgramaEducativo(dto.getProgramaEducativo().getArea());
         if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia).isEmpty()) {
-            dto.setMensaje("Los datos que ha ingresado corresponden con un registro previamente registrado");
+            dto.setMensaje("No se ha podido guardar, los datos que ha ingresado corresponden con un registro previamente registrado");
             actualizaInterfazSesionPsicopedagogia();
         } else {
             ejbSesionesPsicopedagogia.guardaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia, dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
@@ -249,7 +293,7 @@ public class ControladorSesionesPsicopedagogiaPYE implements Serializable{
         sesionPsicopedagogia.setMes(controladorModulosRegistro.getEventosRegistros().getMes());
         sesionPsicopedagogia.setProgramaEducativo(null);
         if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaSPE(sesionPsicopedagogia).isEmpty()) {
-            dto.setMensaje("Los datos que ha ingresado corresponden con un registro previamente registrado");
+            dto.setMensaje("No se ha podido guardar, los datos que ha ingresado corresponden con un registro previamente registrado");
             actualizaInterfazSesionPsicopedagogia();
         } else {
             ejbSesionesPsicopedagogia.guardaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia, dto.getRegistroTipo(), dto.getEjesRegistro(), dto.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
@@ -267,7 +311,7 @@ public class ControladorSesionesPsicopedagogiaPYE implements Serializable{
         DTOSesionesPsicopedagogia dtoSP = new DTOSesionesPsicopedagogia();
         sesionPsicopedagogia.setProgramaEducativo(dto.getProgramaEducativo().getArea());
         if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaParaEdicion(sesionPsicopedagogia).isEmpty()) {
-            dto.setMensaje("Los datos que ha ingresado corresponden con un registro previo");
+            dto.setMensaje("No se ha podido actualizar, los datos que ha ingresado corresponden con un registro previo");
             actualizaInterfazSesionPsicopedagogia();
         }else{
             dto.setMensaje(ejbSesionesPsicopedagogia.editaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia));
@@ -282,9 +326,12 @@ public class ControladorSesionesPsicopedagogiaPYE implements Serializable{
     public void editaSesionPsicopedagogiaSPE(SesionIndividualMensualPsicopedogia sesionPsicopedagogia){
         DTOSesionesPsicopedagogia dtoSP = new DTOSesionesPsicopedagogia();
         if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaSPEParaEdicion(sesionPsicopedagogia).isEmpty()) {
-            dto.setMensaje("Los datos que ha ingresado corresponden con un registro previo");
+            dto.setMensaje("No se ha podido actualizar, los datos que ha ingresado corresponden con un registro previo");
             actualizaInterfazSesionPsicopedagogia();
         }else{
+            if(dto.getProgramaEducativo() == null){
+                sesionPsicopedagogia.setProgramaEducativo(null);
+            }
             dto.setMensaje(ejbSesionesPsicopedagogia.editaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia));
             dtoSP.setSesionIndividualMensualPsicopedogia(sesionPsicopedagogia);
             dto.setDtoSesionPsicopedagogia(dtoSP);
@@ -315,14 +362,26 @@ public class ControladorSesionesPsicopedagogiaPYE implements Serializable{
         accionProgramaEducativo((OtrosTiposSesionesPsicopedagogia)e.getNewValue());
     }
     
-    public void accionProgramaEducativo(OtrosTiposSesionesPsicopedagogia otroTipoSesionPsicopedagogia){
-        if((otroTipoSesionPsicopedagogia.getOtroTipoSesionPsicopedagogia() == 1) || (otroTipoSesionPsicopedagogia.getOtroTipoSesionPsicopedagogia() == 3)){
-            dto.setHabilitaProgramaEducativo(Boolean.FALSE);
-        }else{
-            dto.setHabilitaProgramaEducativo(Boolean.TRUE);
+    public void accionProgramaEducativo(OtrosTiposSesionesPsicopedagogia otroTipoSesionPsicopedagogia) {
+        try {
+            if ((otroTipoSesionPsicopedagogia.getOtroTipoSesionPsicopedagogia() == 1) || (otroTipoSesionPsicopedagogia.getOtroTipoSesionPsicopedagogia() == 3)) {
+                dto.setHabilitaProgramaEducativo(Boolean.FALSE);
+            } else {
+                dto.setHabilitaProgramaEducativo(Boolean.TRUE);
+                if (otroTipoSesionPsicopedagogia.getOtroTipoSesionPsicopedagogia() == 2) {
+                    dto.setLstProgramasEducativos(ejbAreasLogeo.mostrarAllAreasUniversidad());
+                    Faces.setSessionAttribute("programasEducativos", dto.getLstProgramasEducativos());
+                }
+            }
+            dto.setMensaje("");
+            Ajax.update("mensaje");
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorSesionesPsicopedagogiaPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
-        dto.setMensaje("");
-        Ajax.update("mensaje");
+    }
+    
+    public void actualizaProgramaEducativoChange(ValueChangeEvent e){
+        dto.setProgramaEducativo((AreasUniversidad)e.getNewValue());
     }
     
     /****************************** Alineación de actividades con registros ***********************************************/
