@@ -156,7 +156,23 @@ public interface EJBEvaluacionDocenteMateria {
 
     public List<EvaluacionDocentesMateriaResultados> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones evaluaciones, Integer matricula);
 
+    /**
+     * Obtiene lista de resultados generales de la evaluacion activa  por matricula
+     * @param evaluacion Evaluacion activa
+     * @param matricula matricula del estudiante
+     * @return Resultado del proceso , lista de resultados por matricula
+     */
+
     public ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> getListResultadosDocenteMateriabyMatricula(Evaluaciones evaluacion, int matricula);
+
+    /**
+     * Obtiene la lista de resultados  completos de la evalacion por matricula del estudiante,
+     * @param evaluacion evaluacion activa
+     * @param matricula matricula del estudiante
+     * @return Resultado del proceso, y lista de resultados completos
+     */
+
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> getListResultadosDocenteMateriaCompletosbyMatricula(Evaluaciones evaluacion, int matricula);
     /**
      *Comprueba si el resultado de la evaluacion es satisfactoria
      * @param resultado
