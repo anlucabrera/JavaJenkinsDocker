@@ -35,8 +35,21 @@ public interface EjbMatriculaPeriodosEscolares {
     
     public MatriculaPeriodosEscolares getRegistroMatriculaPeriodoEscolar(String matricula, Integer periodo);
     
+    /**
+     * Obtiene una lista completa de Matricula del periodo escolar activo
+     * Uso:
+     *  ServicioPlantillasCAExcel
+     * @return  Lista de entidades MatriculaPeriodosEscolares
+     */
     public List<MatriculaPeriodosEscolares> getMatriculasVigentes();
     
+    /**
+     * Obtiene una lista completa de Matricula del periodo escolar activo
+     * Uso:
+     *  ServicioPlantillasCAExcel
+     * @return Lista de DTO'S DTOMatriculaPeriodosEscolares (Contiene información mas completa del estudiante)
+     */
+    public List<DTOMatriculaPeriodosEscolares> getDtoMatriculasVigentes();
     
     /**
      * Obtiene la lista de periodos con registros de matricula por periodo escolar

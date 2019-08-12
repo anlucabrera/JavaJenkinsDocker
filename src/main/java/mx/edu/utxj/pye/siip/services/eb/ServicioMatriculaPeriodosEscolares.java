@@ -388,6 +388,28 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
           return matPerEscLst;
     }
     
+    @Override
+    public List<DTOMatriculaPeriodosEscolares> getDtoMatriculasVigentes() {
+        List<MatriculaPeriodosEscolares> matPerEscLst = new ArrayList<>();
+        List<DTOMatriculaPeriodosEscolares> dtoList = new ArrayList<>();
+        TypedQuery<MatriculaPeriodosEscolares> query = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.periodo = :periodo ORDER BY m.matricula ASC", MatriculaPeriodosEscolares.class);
+        query.setParameter("periodo", ejbModulos.getPeriodoEscolarActivo().getPeriodo());
+        try {
+            matPerEscLst = query.getResultList();
+            matPerEscLst.stream().forEach((mpe) -> {
+                dtoList.add(new DTOMatriculaPeriodosEscolares(
+                        mpe,
+                        caster.periodoToString(f.getEntityManager().find(PeriodosEscolares.class, mpe.getPeriodo())),
+                        f.getEntityManager().find(AreasUniversidad.class, mpe.getProgramaEducativo())
+                ));
+            });
+            return dtoList;
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    
     
     @Override
     public List<PeriodosEscolares> getPeriodosConregistro(RegistrosTipo registroTipo, EventosRegistros eventoRegistro) {
@@ -691,5 +713,5 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
             return null;
         }
     }
-
+    
 }
