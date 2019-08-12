@@ -53,6 +53,16 @@ public interface EjbAsesoriasTutoriasCuatrimestrales {
     public Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> comprobarEventoActual(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoActual, RegistrosTipo registrosTipo, AreasUniversidad area) throws PeriodoEscolarNecesarioNoRegistradoException;    
     
     /**
+     * Método que permite la búsqueda de registros de tipo AsesoriasTutoriasCuatrimestral (Principal Uso: getListaAsesoriaTutoriaCuatrimestralPorEventoAreaPeriodo) Apoyo en el llenado de información del DTO
+     * @param registroTipo  Tipo de registro
+     * @param areaUniversidad   Área de registro
+     * @param periodoEscolar    Periodo Escolar de registro
+     * @param datoAsesoriaTutoria   Tipo de servicio, el cual contiene la información y descripción
+     * @return  Lista de tipo AsesoriasTutoriasCuatrimestrales el cual solo deberia devolver un solo registro o la lista debería estar vacía
+     */
+    public List<AsesoriasTutoriasCuatrimestrales> buscaAsesoriaTutoriaCuatrimestralEspecifico(RegistrosTipo registroTipo, AreasUniversidad areaUniversidad, PeriodosEscolares periodoEscolar, DatosAsesoriasTutorias datoAsesoriaTutoria);
+    
+    /**
      * Obtiene la lista de registros correspondientes al evento seleccionado.
      * @param evento Evento seleccionado.
      * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
@@ -92,4 +102,5 @@ public interface EjbAsesoriasTutoriasCuatrimestrales {
      * @return  Devuelve una lista de entidades de tipo AsesoriasTutoriasCuatrimestrales, utilizada para validar si contiene o no resultados de la consulta
      */
     public List<AsesoriasTutoriasCuatrimestrales> buscaAsesoriaTutoriaCuatrimestralParaEdicion(AsesoriasTutoriasCuatrimestrales asesoriaTutoriaCuatrimestral);
+    
 }

@@ -20,10 +20,8 @@ import javax.persistence.NonUniqueResultException;
 import javax.servlet.annotation.MultipartConfig;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.AsesoriasTutoriasCuatrimestrales;
 import mx.edu.utxj.pye.sgi.entity.pye2.DatosAsesoriasTutorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -34,6 +32,7 @@ import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoExceptio
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.siip.dto.ca.DTOAsesoriasTutoriasCuatrimestrales;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbAsesoriasTutoriasCuatrimestrales;
+import mx.edu.utxj.pye.siip.interfaces.eb.EjbMatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.util.Messages;
 
@@ -45,11 +44,11 @@ import org.omnifaces.util.Messages;
 @MultipartConfig
 public class ServicioAsesoriasTutoriasCuatrimestrales implements EjbAsesoriasTutoriasCuatrimestrales{
 
-    @EJB    Facade              f;
-    @EJB    EjbFiscalizacion    ejbFiscalizacion;
-    @EJB    EjbModulos          ejbModulos;
-    
-    @Inject Caster              caster;
+    @EJB    Facade                          f;
+    @EJB    EjbFiscalizacion                ejbFiscalizacion;
+    @EJB    EjbModulos                      ejbModulos;
+    @EJB    EjbMatriculaPeriodosEscolares   ejbMatriculaPeriodosEscolares;
+    @Inject Caster                          caster;
     
     @Override
     public List<DatosAsesoriasTutorias> getDatosAsesoriasTutorias() {
@@ -112,6 +111,33 @@ public class ServicioAsesoriasTutoriasCuatrimestrales implements EjbAsesoriasTut
     }
     
     @Override
+    public List<AsesoriasTutoriasCuatrimestrales> buscaAsesoriaTutoriaCuatrimestralEspecifico(RegistrosTipo registroTipo, AreasUniversidad areaUniversidad, PeriodosEscolares periodoEscolar, DatosAsesoriasTutorias datoAsesoriaTutoria) {
+        List<AsesoriasTutoriasCuatrimestrales> listaATC = new ArrayList<>();
+        try {
+            listaATC = f.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasCuatrimestrales atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE t.registroTipo=:tipoRegistro AND r.area = :areaRegistro AND atc.periodoEscolar = :periodo AND atc.datoAsesoriaTutoria.datoAsesoriaTutoria = :datoAsesoriaTutoria AND atc.area = :area", AsesoriasTutoriasCuatrimestrales.class)
+                    .setParameter("tipoRegistro", registroTipo.getRegistroTipo())
+                    .setParameter("areaRegistro", areaUniversidad.getArea())
+                    .setParameter("periodo", periodoEscolar.getPeriodo())
+                    .setParameter("datoAsesoriaTutoria", datoAsesoriaTutoria.getDatoAsesoriaTutoria())
+                    .setParameter("area", areaUniversidad.getArea())
+                    .getResultList();
+            listaATC.stream().forEach((t) -> {
+//                System.err.println(t.getRegistro());
+            });
+            return listaATC;
+        } catch (NoResultException e) {
+//            LOG.log(Level.SEVERE, "No se ha encontrado ninguna coincidencia: SesionIndividualMensualPsicopedogia.", e);
+            return Collections.EMPTY_LIST;
+        } catch (NonUniqueResultException e) {
+//            LOG.log(Level.SEVERE, "Se ha encontrado más de un resultado durante la consulta del registro SesionIndividualMensualPsicopedogia.", e);
+            return Collections.EMPTY_LIST;
+        } catch (Exception e) {
+//            LOG.log(Level.SEVERE, "Ha ocurrido una excepción durante la busqueda del registro SesionIndividualMensualPsicopedogia.", e);
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
+    @Override
     public List<DTOAsesoriasTutoriasCuatrimestrales> getListaAsesoriaTutoriaCuatrimestralPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo) {
         if(evento == null || claveArea == null || periodo == null){
             return null;
@@ -119,28 +145,30 @@ public class ServicioAsesoriasTutoriasCuatrimestrales implements EjbAsesoriasTut
         AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
 
         List<DTOAsesoriasTutoriasCuatrimestrales> listaDtos = new ArrayList<>();
-        List<AsesoriasTutoriasCuatrimestrales> entities = f.getEntityManager().createQuery("SELECT atc FROM AsesoriasTutoriasCuatrimestrales atc INNER JOIN atc.registros r INNER JOIN r.tipo t INNER JOIN r.eventoRegistro er WHERE atc.periodoEscolar = :periodo AND t.registroTipo=:tipo AND r.area = :area", AsesoriasTutoriasCuatrimestrales.class)
-                .setParameter("periodo", periodo.getPeriodo())
-                .setParameter("tipo", registrosTipo.getRegistroTipo())
-                .setParameter("area", area.getArea())
-                .getResultList();
-        entities.forEach(e -> {
-            f.getEntityManager().refresh(e);
-            ActividadesPoa a = e.getRegistros().getActividadesPoaList().isEmpty() ? null : e.getRegistros().getActividadesPoaList().get(0);
-            if (a != null) {
-                listaDtos.add(new DTOAsesoriasTutoriasCuatrimestrales(
-                        e,
-                        f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar()),
-                        f.getEntityManager().find(AreasUniversidad.class, e.getArea()),
-                        a
-                ));
-            } else {
-                listaDtos.add(new DTOAsesoriasTutoriasCuatrimestrales(
-                        e,
-                        f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar()),
-                        f.getEntityManager().find(AreasUniversidad.class, e.getArea())
-                ));
+        List<DatosAsesoriasTutorias> entidades = getDatosAsesoriasTutorias();
+        entidades.stream().forEach(e -> {
+            AsesoriasTutoriasCuatrimestrales asesoriaTutoria = new AsesoriasTutoriasCuatrimestrales();
+            List<AsesoriasTutoriasCuatrimestrales> valoresBD = buscaAsesoriaTutoriaCuatrimestralEspecifico(registrosTipo, area, periodo, e);
+            Integer suma = 0;
+            Double promedio = 0.0D;
+            if(!valoresBD.isEmpty()){
+                asesoriaTutoria = valoresBD.get(0);
+                suma = (int)asesoriaTutoria.getHombres() + (int)asesoriaTutoria.getMujeres();
+                promedio = (double)Math.round(((double)(suma)/ejbMatriculaPeriodosEscolares.getConteoMatriculaInicialPorPeriodo(periodo).intValue()*100) * 100d) / 100d;
+            }else{
+                asesoriaTutoria.setHombres((short)0);
+                asesoriaTutoria.setMujeres((short)0);
+                asesoriaTutoria.setDatoAsesoriaTutoria(e);
+                asesoriaTutoria.setTipo(e.getTipo());
+                asesoriaTutoria.setArea(area.getArea());
+                asesoriaTutoria.setPeriodoEscolar(periodo.getPeriodo());
             }
+            listaDtos.add(new DTOAsesoriasTutoriasCuatrimestrales(
+                    asesoriaTutoria, 
+                    f.getEntityManager().find(PeriodosEscolares.class, periodo.getPeriodo()),  
+                    promedio, 
+                    f.getEntityManager().find(AreasUniversidad.class, area.getArea()))
+            );
         });
         return listaDtos;
     }

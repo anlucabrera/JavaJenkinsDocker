@@ -22,7 +22,7 @@
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
-        Asesorías y tutorías
+        Asesorías y tutorías cuatrimestral
     </ui:define>
 
     <ui:define name="description">
@@ -45,21 +45,65 @@
                         <p:toolbar id="tb">
                             <f:facet name="left">
                                 <h:form prependId="true" id="frmMainButtons" class="form-inline">
-                                    <p:spacer width="10" />
-                                    <p:outputLabel value="Periodo: " for="periodo" />
+                                    <p:outputLabel value="Área " for="area" />
                                     <p:spacer width="3" />
-                                    <p:selectOneMenu id="periodo" converter="entityConverter"
-                                                     value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.periodo}" valueChangeListener="#{controladorAsesoriasTutoriasCuatrimestrales.actualizarMeses}"
-                                                     class="form-control" style="padding-top: 0px;">
-                                        <f:selectItems value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
+                                    <p:selectOneMenu id="area"
+                                                     required="true"
+                                                     value="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.areaUniversidadPOAAdministrador}"
+                                                     valueChangeListener="#{controladorAsesoriasTutoriasCuartrimestralesPYE.actualizaPeriodosEscolares}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.listaAreasPOA}" 
+                                                       var="area" 
+                                                       itemValue="#{area}" 
+                                                       itemLabel="#{area.nombre}"
+                                                       itemDescription="#{area.nombre}" />
                                         <p:ajax process="@this" update="@(form)" />
                                     </p:selectOneMenu>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Mes: " for="mes" />
+
+                                    <p:outputLabel value="Periodo: " 
+                                                   for="periodo" />
                                     <p:spacer width="3" />
-                                    <p:selectOneMenu id="mes" value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
-                                        <f:selectItems value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
-                                        <p:ajax process="@this" listener="#{controladorAsesoriasTutoriasCuatrimestrales.cargarListaPorEvento()}" update="@(form)" />
+                                    <p:selectOneMenu id="periodo" 
+                                                     converter="entityConverter"
+                                                     value="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.periodo}" 
+                                                     valueChangeListener="#{controladorAsesoriasTutoriasCuartrimestralesPYE.actualizarMeses}"
+                                                     class="form-control" 
+                                                     style="padding-top: 0px;">
+                                        <f:selectItems value="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.periodos}" 
+                                                       var="periodo" 
+                                                       itemValue="#{periodo}" 
+                                                       itemLabel="#{caster.periodoToString(periodo)}" 
+                                                       itemDescription="#{caster.periodoToString(periodo)}" />
+                                        <p:ajax process="@this" 
+                                                update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Mes: " 
+                                                   for="mes" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="mes" 
+                                                     value="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.eventoSeleccionado}" 
+                                                     converter="entityConverter" 
+                                                     class="form-control" 
+                                                     style="padding-top: 0px;">
+                                        <f:selectItems value="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.eventosPorPeriodo}" 
+                                                       var="evento" 
+                                                       itemValue="#{evento}" 
+                                                       itemLabel="#{evento.mes}" 
+                                                       itemDescription="#{evento.mes}"  />
+                                        <p:ajax process="@this" 
+                                                listener="#{controladorAsesoriasTutoriasCuartrimestralesPYE.cargarListaPorEvento()}" 
+                                                update="@(form)" />
                                     </p:selectOneMenu>
                                 </h:form>
                             </f:facet>
@@ -77,17 +121,6 @@
                 <p:separator/>
 
                 <div class="box-body">
-                    <h:form id="abrirNuevoRegistroInfo">
-                        <c:if test="#{controladorAsesoriasTutoriasCuatrimestrales.dto.mensaje ne ''}">
-                            <div class="col-sm-12 col-md-12" style="margin-bottom: 5px">
-                                <div class="callout callout-info">
-                                    <p style="font-weight: bold;">Mensaje de verificación:</p>
-                                    <p><code style="color:#4185A0;">#{controladorAsesoriasTutoriasCuatrimestrales.dto.mensaje}</code></p>
-                                </div>
-                                <p:outputLabel id="mensaje" value=""/>
-                            </div>  
-                        </c:if>
-                    </h:form>
                     <!-- Sección de visualización y eliminación -->
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
@@ -95,7 +128,7 @@
                                 <p:remoteCommand name="actualizar" update="@form:dtbAsesoriasTutoriasPrevia" global="false"/>
                                 <p:dataTable id="dtbAsesoriasTutoriasPrevia" 
                                              emptyMessage="Sin datos en el periodo seleccionado." 
-                                             value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.listaDtoAsesoriasTutoriasCuatrimestrales}" 
+                                             value="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.listaDtoAsesoriasTutoriasCuatrimestrales}" 
                                              var="asesoriaTutoria"
                                              paginator="true" 
                                              rows="10" 
@@ -105,8 +138,9 @@
                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
                                              editable="true"
                                              editMode="cell"
+                                             widgetVar="theWidget"
                                              >
-                                    <p:ajax event="cellEdit" listener="#{controladorAsesoriasTutoriasCuatrimestrales.onCellEditAsesoriaTutoria}" process="@form:dtbAsesoriasTutoriasPrevia" update="@form:dtbAsesoriasTutoriasPrevia"/>
+                                    <p:ajax event="cellEdit" listener="#{controladorAsesoriasTutoriasCuartrimestralesPYE.onCellEditAsesoriaTutoria}" process="@form:dtbAsesoriasTutoriasPrevia" update="@form:dtbAsesoriasTutoriasPrevia"/>
                                     <p:columnGroup type="header">
                                         <p:row>
                                             <p:column headerText="Periodo Escolar"          width="80"  />
@@ -134,6 +168,7 @@
                                                                value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.hombres}"
                                                                size="9"
                                                                title="Favor de ingresar el valor correspondiente a la cantidad de hombres"
+                                                               disabled="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.habilitaEdicion}"
                                                                />
                                             </f:facet>
                                             <f:facet name="input">
@@ -142,8 +177,9 @@
                                                                minValue="0" 
                                                                maxValue="10000"
                                                                value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.hombres}"
-                                                               size="8"
                                                                title="Favor de ingresar el valor correspondiente a la cantidad de hombres"
+                                                               size="8"
+                                                               disabled="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.habilitaEdicion}"
                                                                />
                                             </f:facet>
                                         </p:cellEditor>
@@ -158,6 +194,7 @@
                                                                value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.mujeres}"
                                                                size="9"
                                                                title="Favor de ingresar el valor correspondiente a la cantidad de mujeres"
+                                                               disabled="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.habilitaEdicion}"
                                                                />
                                             </f:facet>
                                             <f:facet name="input">
@@ -168,12 +205,13 @@
                                                                value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.mujeres}"
                                                                title="Favor de ingresar el valor correspondiente a la cantidad de mujeres"
                                                                size="8"
+                                                               disabled="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.habilitaEdicion}"
                                                                />
                                             </f:facet>
                                         </p:cellEditor>
                                     </p:column>
                                     <p:column style="text-align: center;"><h:outputText value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.hombres + asesoriaTutoria.asesoriaTutoriaCuatrimestral.mujeres}"/></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.matriculaInicial}"/></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{controladorAsesoriasTutoriasCuartrimestralesPYE.dto.matriculaInicial}"/></p:column>
                                     <p:column style="text-align: center;"><h:outputText value="#{asesoriaTutoria.promedio} %"/></p:column>
                                     <p:column style="text-align: center;"><p:commandButton id="actualizar" onclick="actualizar()" global="false" icon="fa fa-refresh" class="btn-primary btn-sm" title="En caso de que el total y el promedio no correspondan con los parametros, dar clic aquí"/></p:column>
                                 </p:dataTable>
