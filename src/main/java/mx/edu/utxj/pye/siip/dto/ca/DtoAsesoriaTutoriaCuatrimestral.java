@@ -65,12 +65,16 @@ public final class DtoAsesoriaTutoriaCuatrimestral {
     @Getter private List<Estrategias> estrategias;
     @Getter private List<LineasAccion> lineasAccion;
     
+    @Getter @Setter private Long matriculaInicial;
+    
+    @Getter @Setter private Boolean habilitaEdicion;
     
     public DtoAsesoriaTutoriaCuatrimestral(){
         setRegistroTipo(new RegistrosTipo((short)53));
         setEje(new EjesRegistro(3));
         tieneEvidencia = false;
         forzarAperturaDialogo = false;
+        setHabilitaEdicion(true);
     }
     
     public void setEje(EjesRegistro eje) {

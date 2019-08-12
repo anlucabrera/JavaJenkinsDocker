@@ -36,17 +36,23 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "DatosAsesoriasTutorias.findByDescripcion", query = "SELECT d FROM DatosAsesoriasTutorias d WHERE d.descripcion = :descripcion")})
 public class DatosAsesoriasTutorias implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 1000)
+    @Column(name = "descripcion")
+    private String descripcion;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 9)
+    @Column(name = "tipo")
+    private String tipo;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "dato_asesoria_tutoria")
     private Short datoAsesoriaTutoria;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1000)
-    @Column(name = "descripcion")
-    private String descripcion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "datoAsesoriaTutoria")
     private List<AsesoriasTutoriasCuatrimestrales> asesoriasTutoriasCuatrimestralesList;
 
@@ -70,13 +76,6 @@ public class DatosAsesoriasTutorias implements Serializable {
         this.datoAsesoriaTutoria = datoAsesoriaTutoria;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 
     @XmlTransient
     public List<AsesoriasTutoriasCuatrimestrales> getAsesoriasTutoriasCuatrimestralesList() {
@@ -110,6 +109,22 @@ public class DatosAsesoriasTutorias implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.DatosAsesoriasTutorias[ datoAsesoriaTutoria=" + datoAsesoriaTutoria + " ]";
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
     
 }

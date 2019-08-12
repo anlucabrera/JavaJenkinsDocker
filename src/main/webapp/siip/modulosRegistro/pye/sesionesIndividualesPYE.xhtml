@@ -47,33 +47,96 @@
                         <p:toolbar id="tb"> 
                             <f:facet name="left">
                                 <h:form prependId="true" id="frmMainButtons" class="form-inline">
-                                    
-                                    
-                                    <p:outputLabel value="Ejercicio: " for="anioConsulta" />
+                                    <p:spacer width="10" />
+                                    <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    <p:outputLabel value="Categoría " for="categoria"/>
                                     <p:spacer width="5" />
-                                    <p:selectOneMenu id="anioConsulta"
-                                                     value="#{controladorSesionesPsicopedagogia.dto.anioConsulta}"
-                                                     valueChangeListener="#{controladorSesionesPsicopedagogia.actualizarMeses}"
+                                    <p:selectOneMenu id="categoria"
+                                                     required="true"
+                                                     value="#{controladorSesionesPsicopedagogiaPYE.dto.categoria}"
+                                                     valueChangeListener="#{controladorSesionesPsicopedagogiaPYE.actualizarAreas}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
                                                      class="form-control"
                                                      style="padding-top: 0px">
-                                        <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.aniosConsulta}" 
-                                                       var="anio" 
-                                                       itemValue="#{anio}" 
-                                                       itemLabel="#{anio}" />
-                                        <p:ajax process="@this" listener="#{controladorSesionesPsicopedagogia.buscaSesionesIndividuales()}" update="@(form)" />
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.listaCategoriasPOA}" 
+                                                       var="categoria" 
+                                                       itemValue="#{categoria}" 
+                                                       itemLabel="#{categoria.descripcion}"
+                                                       itemDescription="#{categoria.descripcion}"/>
+                                        <p:ajax process="@this" listener="#{controladorSesionesPsicopedagogiaPYE.buscaSesionesIndividuales()}" update="@(form)" />
                                     </p:selectOneMenu>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:outputLabel value="Mes: " for="mesConsulta" />
+
+                                    <p:outputLabel value="Área " for="area" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="area"
+                                                     required="true"
+                                                     value="#{controladorSesionesPsicopedagogiaPYE.dto.areaUniversidadAdministrador}"
+                                                     valueChangeListener="#{controladorSesionesPsicopedagogiaPYE.actualizarAnios}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.listaAreasPOA}" 
+                                                       var="area" 
+                                                       itemValue="#{area}" 
+                                                       itemLabel="#{area.nombre}"
+                                                       itemDescription="#{area.nombre}" />
+                                        <p:ajax process="@this" listener="#{controladorSesionesPsicopedagogiaPYE.buscaSesionesIndividuales()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Ejercicio: " for="anioConsulta"/>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="anioConsulta"
+                                                     required="true"
+                                                     value="#{controladorSesionesPsicopedagogiaPYE.dto.anioConsulta}"
+                                                     valueChangeListener="#{controladorSesionesPsicopedagogiaPYE.actualizarMeses}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.aniosConsulta}"
+                                                       var="anio"
+                                                       itemValue="#{anio}"
+                                                       itemLabel="#{anio}" />
+                                        <p:ajax process="@this" listener="#{controladorSesionesPsicopedagogiaPYE.buscaSesionesIndividuales()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Mes: " for="@form:mesConsulta" />
                                     <p:spacer width="5" />
                                     <p:selectOneMenu id="mesConsulta"
-                                                     value="#{controladorSesionesPsicopedagogia.dto.mesConsulta}"
+                                                     required="true"
+                                                     value="#{controladorSesionesPsicopedagogiaPYE.dto.mesConsulta}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
                                                      class="form-control"
                                                      style="padding-top:  0px">
-                                        <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.mesesConsulta}" 
-                                                       var="mes" 
-                                                       itemValue="#{mes}" 
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.mesesConsulta}"
+                                                       var="mes"
+                                                       itemValue="#{mes}"
                                                        itemLabel="#{mes}" />
-                                        <p:ajax process="@this" listener="#{controladorSesionesPsicopedagogia.buscaSesionesIndividuales()}" update="@(form)" />
+                                        <p:ajax process="@this" listener="#{controladorSesionesPsicopedagogiaPYE.buscaSesionesIndividuales()}" update="@(form)" />
                                     </p:selectOneMenu>
                                 </h:form>
                                 <!--Filtros pendientes-->
@@ -82,7 +145,7 @@
                                 <h:form id="frmReporte">
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:spacer width="3" />
-                                    <p:commandLink class="btn btn-primary btn-sm" ajax="true" actionListener="#{controladorSesionesPsicopedagogia.abrirNuevoRegistroSesionPsicopedagogia()}" title="Nuevo registro"><i class="fa fa-plus-square"></i></p:commandLink>
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="true" actionListener="#{controladorSesionesPsicopedagogiaPYE.abrirNuevoRegistroSesionPsicopedagogia()}" title="Nuevo registro"><i class="fa fa-plus-square"></i></p:commandLink>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:spacer width="3" />
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
@@ -100,14 +163,14 @@
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formMuestraDatosActivos">
                                 <p:remoteCommand update="@form:formMuestraDatosActivos"  name="actualizar"/>
-                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parámetros seleccionados: Ejercicio: #{controladorSesionesPsicopedagogia.dto.anioConsulta} y Mes: #{controladorSesionesPsicopedagogia.dto.mesConsulta}" 
+                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parámetros seleccionados: Ejercicio: #{controladorSesionesPsicopedagogiaPYE.dto.anioConsulta} y Mes: #{controladorSesionesPsicopedagogiaPYE.dto.mesConsulta}" 
                                              paginator="true"
                                              rows="10"
                                              rowsPerPageTemplate="10,20,30,40,50"
                                              resizeMode="expand"
                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                              id="dtbActividadesPrevias"
-                                             var="sp" value="#{controladorSesionesPsicopedagogia.dto.lstSesionesPsicopedagogia}"
+                                             var="sp" value="#{controladorSesionesPsicopedagogiaPYE.dto.lstSesionesPsicopedagogia}"
                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                     <p:columnGroup type="header">
                                         <p:row>
@@ -125,24 +188,24 @@
                                         <div class="btn-group">
                                             <p:commandButton class="btn btn-info btn-sm"
                                                                  icon="fa fa-trash"
-                                                                 actionListener="#{controladorSesionesPsicopedagogia.eliminarRegistro(sp.sesionIndividualMensualPsicopedogia.registro)}"
+                                                                 actionListener="#{controladorSesionesPsicopedagogiaPYE.eliminarRegistro(sp.sesionIndividualMensualPsicopedogia.registro)}"
                                                                  onsuccess="actualizar();"
                                                                  title="Eliminar convenio"
-                                                                 rendered="#{controladorSesionesPsicopedagogia.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorSesionesPsicopedagogia.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                 rendered="#{controladorSesionesPsicopedagogiaPYE.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorSesionesPsicopedagogiaPYE.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
                                                     <p:confirm header="Eliminar registro" 
                                                                message="¿Está seguro de eliminar las sesiones del programa educativo: #{sp.programaEducativo.nombre} ?" 
                                                                icon="ui-icon-alert" />
                                                 </p:commandButton>
-                                            <c:set var="evidencias" value="#{controladorSesionesPsicopedagogia.consultarEvidencias(sp.sesionIndividualMensualPsicopedogia.registro)}" />
-                                                <p:commandButton actionListener="#{controladorSesionesPsicopedagogia.seleccionarRegistro(sp)}"
+                                            <c:set var="evidencias" value="#{controladorSesionesPsicopedagogiaPYE.consultarEvidencias(sp.sesionIndividualMensualPsicopedogia.registro)}" />
+                                                <p:commandButton actionListener="#{controladorSesionesPsicopedagogiaPYE.seleccionarRegistro(sp)}"
                                                                  class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
                                                                  icon="fa fa-image"
                                                                  title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                <p:commandButton actionListener="#{controladorSesionesPsicopedagogia.abrirAlineacionPOA(sp)}"
-                                                                 class="btn btn-sm #{controladorSesionesPsicopedagogia.verificaAlineacion(sp.sesionIndividualMensualPsicopedogia.registro)?'btn-info':'btn-warning'}"
+                                                <p:commandButton actionListener="#{controladorSesionesPsicopedagogiaPYE.abrirAlineacionPOA(sp)}"
+                                                                 class="btn btn-sm #{controladorSesionesPsicopedagogiaPYE.verificaAlineacion(sp.sesionIndividualMensualPsicopedogia.registro)?'btn-info':'btn-warning'}"
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
-                                            <p:commandButton actionListener="#{controladorSesionesPsicopedagogia.abrirEdicionSesionPsicopedagogia(sp)}"
+                                            <p:commandButton actionListener="#{controladorSesionesPsicopedagogiaPYE.abrirEdicionSesionPsicopedagogia(sp)}"
                                                              class="btn btn-sm btn-info"
                                                              icon="fa fa-pencil-square-o"
                                                              title="Editar Sesión de Psicopedagogía."/>
@@ -175,7 +238,7 @@
                                     </p:column>
 
                                     <f:facet name="footer">
-                                        En el mes de: #{controladorSesionesPsicopedagogia.dto.mesConsulta} hay un total de: #{fn:length(controladorSesionesPsicopedagogia.dto.lstSesionesPsicopedagogia)} registros de Sesiones Individuales de Psicopedagogía.
+                                        En el mes de: #{controladorSesionesPsicopedagogiaPYE.dto.mesConsulta} hay un total de: #{fn:length(controladorSesionesPsicopedagogiaPYE.dto.lstSesionesPsicopedagogia)} registros de Sesiones Individuales de Psicopedagogía.
                                     </f:facet>
                                 </p:dataTable>
 
@@ -205,7 +268,7 @@
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{controladorSesionesPsicopedagogia.dto.forzarAperturaDialogo}"
+                              visible="#{controladorSesionesPsicopedagogiaPYE.dto.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -229,7 +292,7 @@
                                                 enctype="multipart/form-data" 
                                                 class="form-inline">
                                             <o:inputFile id="files" 
-                                                         value="#{controladorSesionesPsicopedagogia.dto.archivos}"  
+                                                         value="#{controladorSesionesPsicopedagogiaPYE.dto.archivos}"  
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
@@ -240,7 +303,7 @@
                                                          requiredMessage="Debe elegir al menos un archivo." 
                                                          >
                                             </o:inputFile>
-                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{controladorSesionesPsicopedagogia.subirEvidencias()}" 
+                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{controladorSesionesPsicopedagogiaPYE.subirEvidencias()}" 
                                                              />
                                         </o:form>
                                     </f:facet>
@@ -250,14 +313,14 @@
                         <h:form id="frmEvidencias" >
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
-                                <div class="col-md-12"><p:outputLabel value="Sesiónes individuales de: #{controladorSesionesPsicopedagogia.dto.dtoSesionPsicopedagogia.programaEducativo.nombre}" /></div>
+                                <div class="col-md-12"><p:outputLabel value="Sesiónes individuales de: #{controladorSesionesPsicopedagogiaPYE.dto.dtoSesionPsicopedagogia.programaEducativo.nombre}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px" />
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" 
-                                                 value="#{controladorSesionesPsicopedagogia.dto.listaEvidencias}" 
+                                                 value="#{controladorSesionesPsicopedagogiaPYE.dto.listaEvidencias}" 
                                                  var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
@@ -279,7 +342,7 @@
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                  icon="fa fa-trash" 
-                                                                 actionListener="#{controladorSesionesPsicopedagogia.eliminarEvidencia(evidencia)}" 
+                                                                 actionListener="#{controladorSesionesPsicopedagogiaPYE.eliminarEvidencia(evidencia)}" 
                                                                  onsuccess="actualizar2();" 
                                                                  title="Eliminar evidencia.">
                                                     <p:confirm header="Eliminar evidencia" 
@@ -289,7 +352,7 @@
                                                 <p:spacer width="5" />
                                                 <p:commandLink class="btn btn-info btn-sm"
                                                                ajax="false" 
-                                                               action="#{controladorSesionesPsicopedagogia.descargarEvidencia(evidencia)}" 
+                                                               action="#{controladorSesionesPsicopedagogiaPYE.descargarEvidencia(evidencia)}" 
                                                                target="_blank" 
                                                                title="Descargar evidencia.">
                                                     <i class="fa fa-download" />
@@ -300,7 +363,7 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorSesionesPsicopedagogia.dto.listaEvidencias)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorSesionesPsicopedagogiaPYE.dto.listaEvidencias)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
@@ -335,18 +398,18 @@
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Eliminar alineación" 
                                                              icon="fa fa-trash" 
-                                                             actionListener="#{controladorSesionesPsicopedagogia.eliminarAlineacion()}" 
-                                                             rendered="#{controladorSesionesPsicopedagogia.verificaAlineacion(controladorSesionesPsicopedagogia.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.registro)}" >
+                                                             actionListener="#{controladorSesionesPsicopedagogiaPYE.eliminarAlineacion()}" 
+                                                             rendered="#{controladorSesionesPsicopedagogiaPYE.verificaAlineacion(controladorSesionesPsicopedagogiaPYE.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.registro)}" >
                                                 <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
-                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorSesionesPsicopedagogia.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorSesionesPsicopedagogiaPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
                                     </p:toolbar>
                                 </div>
                             </div>                            
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
-                                <div class="col-md-12"><p:outputLabel value="Sesiones individuales de: #{controladorSesionesPsicopedagogia.dto.dtoSesionPsicopedagogia.programaEducativo.nombre}" /></div>
+                                <div class="col-md-12"><p:outputLabel value="Sesiones individuales de: #{controladorSesionesPsicopedagogiaPYE.dto.dtoSesionPsicopedagogia.programaEducativo.nombre}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
@@ -355,10 +418,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="eje" value="#{controladorSesionesPsicopedagogia.dto.alineacionEje}" valueChangeListener="#{controladorSesionesPsicopedagogia.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="eje" value="#{controladorSesionesPsicopedagogiaPYE.dto.alineacionEje}" valueChangeListener="#{controladorSesionesPsicopedagogiaPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="eje"><p:autoUpdate /></p:message>
@@ -367,10 +430,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategia" value="#{controladorSesionesPsicopedagogia.dto.alineacionEstrategia}" valueChangeListener="#{controladorSesionesPsicopedagogia.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorSesionesPsicopedagogiaPYE.dto.alineacionEstrategia}" valueChangeListener="#{controladorSesionesPsicopedagogiaPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategia" update="lineaAccion,actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="estrategia"><p:autoUpdate /></p:message>
@@ -379,10 +442,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccion" value="#{controladorSesionesPsicopedagogia.dto.alineacionLinea}" valueChangeListener="#{controladorSesionesPsicopedagogia.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorSesionesPsicopedagogiaPYE.dto.alineacionLinea}" valueChangeListener="#{controladorSesionesPsicopedagogiaPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccion" update="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="lineaAccion"><p:autoUpdate /></p:message>
@@ -391,10 +454,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="actividad" value="#{controladorSesionesPsicopedagogia.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                    <p:selectOneMenu id="actividad" value="#{controladorSesionesPsicopedagogiaPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="actividad"><p:autoUpdate /></p:message>
@@ -410,7 +473,7 @@
                               width="700"
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{controladorSesionesPsicopedagogia.dto.forzarAperturaDialogo}"
+                              visible="#{controladorSesionesPsicopedagogiaPYE.dto.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -423,11 +486,11 @@
                               maximizable="false">
                         <h:form id="frmRegistroSesionPsicopedagogia">
                             <div class="row">
-                                <c:if test="#{controladorSesionesPsicopedagogia.dto.mensaje ne ''}">
+                                <c:if test="#{controladorSesionesPsicopedagogiaPYE.dto.mensaje ne ''}">
                                     <div class="col-sm-12 col-md-12" style="margin-bottom: 5px">
                                         <div class="callout callout-info">
                                             <p style="font-weight: bold;">Mensaje de verificación:</p>
-                                            <p><code style="color:#4185A0;">#{controladorSesionesPsicopedagogia.dto.mensaje}</code></p>
+                                            <p><code style="color:#4185A0;">#{controladorSesionesPsicopedagogiaPYE.dto.mensaje}</code></p>
                                         </div>
                                         <p:outputLabel id="mensaje" value=""/>
                                     </div>  
@@ -440,7 +503,7 @@
                                         <p:selectOneMenu id="somOtrosTiposSesiones"
                                                          required="true"
                                                          requiredMessage="Seleccione el tipo de sesión"
-                                                         value="#{controladorSesionesPsicopedagogia.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.otroTipoSesion}"
+                                                         value="#{controladorSesionesPsicopedagogiaPYE.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.otroTipoSesion}"
                                                          filter="true"
                                                          filterPlaceholder="Buscar"
                                                          filterMatchMode="contains"
@@ -448,11 +511,11 @@
                                                          converter="entidadConverter2"
                                                          style="padding-top: 0px"
                                                          styleClass="campo2Partes"
-                                                         valueChangeListener="#{controladorSesionesPsicopedagogia.habilitaProgramaEducativo}"
+                                                         valueChangeListener="#{controladorSesionesPsicopedagogiaPYE.habilitaProgramaEducativo}"
                                                          >
                                             <f:selectItem itemLabel=" - Seleccione - "
                                                           itemValue="#{null}"/>
-                                            <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.lstOtrosTiposSesionesPsicopedagogia}"
+                                            <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.lstOtrosTiposSesionesPsicopedagogia}"
                                                            var="otroTipoSesion"
                                                            itemValue="#{otroTipoSesion}"
                                                            itemLabel="#{otroTipoSesion.descripcion}"
@@ -469,7 +532,7 @@
                                         <p:selectOneMenu id="somAreasConflicto"
                                                          required="true"
                                                          requiredMessage="Seleccione el área de conflicto"
-                                                         value="#{controladorSesionesPsicopedagogia.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.areaConflicto}"
+                                                         value="#{controladorSesionesPsicopedagogiaPYE.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.areaConflicto}"
                                                          filter="true"
                                                          filterPlaceholder="Buscar"
                                                          filterMatchMode="contains"
@@ -480,7 +543,7 @@
                                                          >
                                             <f:selectItem itemLabel=" - Seleccione - "
                                                           itemValue="#{null}"/>
-                                            <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.lstAreasConflicto}"
+                                            <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.lstAreasConflicto}"
                                                            var="areasConflicto"
                                                            itemValue="#{areasConflicto}"
                                                            itemLabel="#{areasConflicto.descripcion}"
@@ -493,11 +556,11 @@
 
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 20px"></div>
 
-                                <c:if test="#{controladorSesionesPsicopedagogia.dto.habilitaProgramaEducativo}">
+                                <c:if test="#{controladorSesionesPsicopedagogiaPYE.dto.habilitaProgramaEducativo}">
                                     <div class="col-sm-12 col-md-12" style="margin-bottom: 20px">
                                         <div class="ui-material">
                                             <p:selectOneMenu id="somProgramasEducativos"
-                                                             value="#{controladorSesionesPsicopedagogia.dto.programaEducativo}"
+                                                             value="#{controladorSesionesPsicopedagogiaPYE.dto.programaEducativo}"
                                                              filter="true"
                                                              filterPlaceholder="Buscar"
                                                              filterMatchMode="contains"
@@ -505,17 +568,19 @@
                                                              converter="entidadConverter2"
                                                              style="padding-top: 0px;"
                                                              styleClass="campo2Partes"
+                                                             valueChangeListener="#{controladorSesionesPsicopedagogiaPYE.actualizaProgramaEducativoChange}"
                                                              >
                                                 <f:selectItem itemLabel=" - Seleccione - "
                                                               itemValue="#{null}"/>
-                                                <f:selectItems value="#{controladorSesionesPsicopedagogia.dto.lstProgramasEducativos}"
+                                                <f:selectItems value="#{controladorSesionesPsicopedagogiaPYE.dto.lstProgramasEducativos}"
                                                                var="programaEducativo"
                                                                itemValue="#{programaEducativo}"
                                                                itemLabel="#{programaEducativo.nombre}"
                                                                itemDescription="#{programaEducativo.siglas}"/>
+                                                <p:ajax process="@this" update="@this"/>
                                                 <p:message for="somProgramasEducativos" />
                                             </p:selectOneMenu>
-                                            <p:outputLabel value="Programa Educativo: " for="somProgramasEducativos" />
+                                            <p:outputLabel value="#{controladorSesionesPsicopedagogiaPYE.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.otroTipoSesion.otroTipoSesionPsicopedagogia eq 2?'Área Universidad':'Programa Educativo'}" for="somProgramasEducativos" />
                                         </div>
                                     </div>
                                 </c:if>
@@ -526,7 +591,7 @@
                                                    label="spnHombres"
                                                    required="true"
                                                    requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
-                                                   value="#{controladorSesionesPsicopedagogia.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.hombres}" 
+                                                   value="#{controladorSesionesPsicopedagogiaPYE.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.hombres}" 
                                                    min="0" max="1000"
                                                    styleClass="campo2Partes"
                                                    placeholder="100 *"
@@ -542,7 +607,7 @@
                                                    label="spnMujeres"
                                                    required="true"
                                                    requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
-                                                   value="#{controladorSesionesPsicopedagogia.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.mujeres}" 
+                                                   value="#{controladorSesionesPsicopedagogiaPYE.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.mujeres}" 
                                                    min="0" max="1000"
                                                    styleClass="campo2Partes"
                                                    placeholder="100 *"
@@ -556,10 +621,10 @@
                                     <center>
                                         <div class="ui-material">
                                             <p:commandButton id="btnEditaActividad" 
-                                                             value="#{controladorSesionesPsicopedagogia.dto.nuevoRegistro?'Guardar':'Actualizar cambios'}" 
+                                                             value="#{controladorSesionesPsicopedagogiaPYE.dto.nuevoRegistro?'Guardar':'Actualizar cambios'}" 
                                                              icon="fa fa-save"
                                                              class="btn-primary"
-                                                             actionListener="#{controladorSesionesPsicopedagogia.accionSesionPsicopedagogia(controladorSesionesPsicopedagogia.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia)}"/>
+                                                             actionListener="#{controladorSesionesPsicopedagogiaPYE.accionSesionPsicopedagogia(controladorSesionesPsicopedagogiaPYE.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia)}"/>
                                         </div>
                                     </center>
                                 </div>
