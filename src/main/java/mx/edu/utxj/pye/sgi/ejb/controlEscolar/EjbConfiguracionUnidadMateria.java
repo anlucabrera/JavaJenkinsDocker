@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.text.SimpleDateFormat;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
@@ -29,6 +30,7 @@ import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.AlertaTipo;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
+import org.primefaces.event.CellEditEvent;
 
 @Stateless(name = "EjbConfiguracionUnidadMateria")
 public class EjbConfiguracionUnidadMateria {
@@ -571,44 +573,28 @@ public class EjbConfiguracionUnidadMateria {
      * Permite detectar una lista de mensajes de posibles errores en la configuración de unidad materia, como es el caso de superar las horas máximas frente a grupo de acuerdo a si es PTC o PA el docente o si se han asignado
      * mas de una materia al mismo docente en un grupo detemrinado
      * @param rol DTO de la capa de sincronización con los datos seleccionados por el usuario
+     * @param porcentaje Porcentaje capturado por indicador
      * @return Lista de mensajes encontrados.
      */
-    public ResultadoEJB<List<DtoAlerta>> identificarMensajes(ConfiguracionUnidadMateriaRolDocente rol){
+    public ResultadoEJB<List<DtoAlerta>> identificarMensajes(ConfiguracionUnidadMateriaRolDocente rol, Double porcentaje){
         try{
-            
-            if(rol.getPeriodo().getPeriodo().equals(rol.getEventoActivo().getPeriodo()) && rol.getExiste()){
-                
+           
                 DtoDiasPeriodoEscolares dtoDiasPeriodosEscolares = getCalculoDiasPeriodoEscolar(rol.getPeriodoActivo());
                 final List<DtoAlerta> mensajes = new ArrayList<>();
 
-                ResultadoEJB<List<DtoConfiguracionUnidadMateria>> resUnidadesConf = getConfiguracionUnidadMateria(rol.getCarga());
-                ResultadoEJB<TareaIntegradora> resTareaIntegradora = getTareaIntegradora(rol.getCarga());
-                TareaIntegradora tareaInt = resTareaIntegradora.getCorrecto()?resTareaIntegradora.getValor():null;
+                mensajes.add(new DtoAlerta(String.format("Las fecha de inicio y fin de cada unidad deben estar entre el %s - %s.", dtoDiasPeriodosEscolares.getFechaInicio(), dtoDiasPeriodosEscolares.getFechaFin()), AlertaTipo.SUGERENCIA));
                 
-                if(resUnidadesConf.getCorrecto()){
-                    List<UnidadMateriaConfiguracion> unidadMatConf = resUnidadesConf.getValor().stream()
-                            .filter(dtoConfUnidad -> dtoConfUnidad.getUnidadMateriaConfiguracion()!= null)
-                            .map(DtoConfiguracionUnidadMateria::getUnidadMateriaConfiguracion)
-                            .distinct()
-                            .collect(Collectors.toList());
-
-                    unidadMatConf.forEach(conf -> {
-                        if(conf.getFechaInicio().before(dtoDiasPeriodosEscolares.getFechaInicio()))
-                        {
-                            mensajes.add(new DtoAlerta(String.format("La fecha de inicio de la unidad %s es %s,y el periodo escolar activo inicia %s.", conf.getIdUnidadMateria().getNoUnidad(), conf.getFechaInicio(), dtoDiasPeriodosEscolares.getFechaInicio()), AlertaTipo.SUGERENCIA));
-                        }
-                        else if(conf.getFechaFin().before(dtoDiasPeriodosEscolares.getFechaFin())){
-                            mensajes.add(new DtoAlerta(String.format("La fecha de fin de la unidad %s es %s,y el periodo escolar activo termina %s.", conf.getIdUnidadMateria().getNoUnidad(), conf.getFechaFin(), dtoDiasPeriodosEscolares.getFechaFin()), AlertaTipo.SUGERENCIA));
-                        }
-                        else if(tareaInt.getFechaEntrega().before(dtoDiasPeriodosEscolares.getFechaInicio()) || tareaInt.getFechaEntrega().after(dtoDiasPeriodosEscolares.getFechaInicio())){
-                            mensajes.add(new DtoAlerta(String.format("La fecha de entrega de la tarea integradora es %s y los periodos en los que se debe encontrar son %s y %s.", tareaInt.getFechaEntrega(), dtoDiasPeriodosEscolares.getFechaInicio(), dtoDiasPeriodosEscolares.getFechaFin()), AlertaTipo.SUGERENCIA));
-                        }
-                    });
+                if(porcentaje > 100.00)
+                {
+                    mensajes.add(new DtoAlerta(String.format("El porcentaje de un indicador no puede ser mayor a 100"), AlertaTipo.SUGERENCIA));
                 }
+                if(porcentaje < 0.0)
+                {
+                    mensajes.add(new DtoAlerta(String.format("El porcentaje de un indicador no puede ser negativo"), AlertaTipo.SUGERENCIA));
+                }
+           
                 return ResultadoEJB.crearCorrecto(mensajes, "Lista de mensajes");
-            }else{
-                return ResultadoEJB.crearCorrecto(Collections.EMPTY_LIST, "Sin mensajes");
-            }
+           
         }catch (Exception e){
 //            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudieron identificar mensajes de configuración (EjbUnidadMateriaConfiguracion.identificarMensajes).", e, null);
@@ -677,5 +663,32 @@ public class EjbConfiguracionUnidadMateria {
             }
             
             return valor;
+    }
+    
+    /**
+     * Permite verificar si la configuracion se encuentra validada por el director de carrera
+     * @param cargaAcademica Materia de la que se obtendrá configuración
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<UnidadMateriaConfiguracion> verificarValidacionConfiguracion(CargaAcademica cargaAcademica){
+        try {
+            UnidadMateriaConfiguracion unidadMateriaConfiguracion = new UnidadMateriaConfiguracion();
+            
+            List<UnidadMateriaConfiguracion> listaConfiguracion = em.createQuery("SELECT u FROM UnidadMateriaConfiguracion u WHERE u.carga.carga =:carga", UnidadMateriaConfiguracion.class)
+                    .setParameter("carga", cargaAcademica.getCarga())
+                    .getResultList();
+            
+            if(listaConfiguracion.size() >0 && !listaConfiguracion.isEmpty()){
+            
+                unidadMateriaConfiguracion = listaConfiguracion.get(0);
+            } else{
+            
+                unidadMateriaConfiguracion = null;
+            }
+            return ResultadoEJB.crearCorrecto(unidadMateriaConfiguracion, "Configuración encontrada de la materia seleccionada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la configuracioón de la materia seleccionada. (EjbUnidadMateriaConfiguracion.verificarValidacionConfiguracion)", e, null);
+        }
+       
     }
 }

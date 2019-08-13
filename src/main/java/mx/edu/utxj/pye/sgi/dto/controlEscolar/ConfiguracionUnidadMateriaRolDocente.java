@@ -11,6 +11,7 @@ import mx.edu.utxj.pye.sgi.enums.Operacion;
 
 import java.util.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 
 public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
@@ -115,6 +116,10 @@ public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
      */
     @Getter @NonNull private  Date fechaFin;
     
+    /**
+     * Parametro que guardar valor si la configuración se encuentra validada por el director
+     */
+    @Getter private Integer directorValido;
     
     
     public ConfiguracionUnidadMateriaRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
@@ -220,4 +225,7 @@ public class ConfiguracionUnidadMateriaRolDocente extends AbstractRol {
         this.fechaFin = fechaFin;
     }
 
+    public void setDirectorValido(Integer directorValido) {
+        this.directorValido = directorValido;
+    }
 }
