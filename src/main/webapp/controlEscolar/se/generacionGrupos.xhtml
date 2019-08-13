@@ -17,6 +17,9 @@
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
         </c:if>
+        <style type="text/css">
+
+        </style>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -50,16 +53,35 @@
                                             #{generacionGruposServiciosEscolares.rol.generaciones.fin}"/>
                                         </f:facet>
                                         <f:facet name="right">
-                                            <p:commandButton class="btn-primary" icon="fa fa-save" process=":frmGeneral:noEstu @this" update=":frmGeneral :frmTabla"
-                                                             actionListener="#{generacionGruposServiciosEscolares.generarGrupo()}"/>
-                                            <p:commandLink
-                                                    class="btn btn-info"
-                                                    rendered="#{true}"
-                                                    disabled="#{false}"
-                                                    onclick="PF('modalAyuda').show();"
-                                                    title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
-                                                    class="fa fa-question"/>
-                                            </p:commandLink>
+                                            <div class="btn-group">
+                                                <p:commandLink
+                                                        actionListener="#{generacionGruposServiciosEscolares.generarGrupo}"
+                                                        type="submit"
+                                                        class="btn btn-primary"
+                                                        rendered="#{true}"
+                                                        disabled="#{false}"
+                                                        process=":frmGeneral:noEstu @this" update=":frmGeneral :frmTabla">
+                                                    <i class="fa fa-save"/>
+                                                </p:commandLink>
+                                                <p:commandButton id="guardar" actionListener="#{generacionGruposServiciosEscolares.generarGrupo}" style="display: none" icon="fa fa-save"
+                                                                 styleClass="btn btn-primary"  process=":frmGeneral:noEstu @this" update=":frmGeneral :frmTabla"/>
+                                                <p:commandLink
+                                                        class="btn btn-info"
+                                                        rendered="#{true}"
+                                                        disabled="#{false}"
+                                                        onclick="PF('modalAyuda').show();"
+                                                        title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                        class="fa fa-question"/>
+                                                </p:commandLink>
+                                                <p:commandLink
+                                                        class="btn btn-warning"
+                                                        rendered="#{true}"
+                                                        disabled="#{false}"
+                                                        onclick="PF('modalSugerencia').show();"
+                                                        title="Presione el botón para visualizar la sugerencia de creacion de los grupos, en base al total de aspirantes existentes"><i
+                                                        class="fa fa-commenting"/>
+                                                </p:commandLink>
+                                            </div>
                                         </f:facet>
                                     </p:toolbar>
                                     <p:sticky target="tb"/>
@@ -108,8 +130,8 @@
                                                                 </div>
                                                                 <div class="#{casilla4}">
                                                                     <div class="ui-material">
-                                                                        <p:selectOneMenu id="pe" class="form-control" style="width: 100%;"
-                                                                                         value="#{generacionGruposServiciosEscolares.rol.grupo.idPe}">
+                                                                        <p:selectOneMenu id="pe" class="form-control" style="width: 100%;" requiredMessage="Debe seleccionar el programa educativo"
+                                                                                         value="#{generacionGruposServiciosEscolares.rol.grupo.idPe}" required="true">
                                                                             <f:selectItem itemValue="#{null}"/>
                                                                             <f:selectItems var="pe" value="#{generacionGruposServiciosEscolares.rol.areasUniversidades}"
                                                                                            itemLabel="#{pe.nombre}" itemValue="#{pe.area}"/>
@@ -136,7 +158,8 @@
                                                                 </div>
                                                                 <div class="#{casilla4}">
                                                                     <div class="ui-material">
-                                                                        <p:selectOneMenu id="cuatrimestre" value="#{generacionGruposServiciosEscolares.rol.grupo.grado}">
+                                                                        <p:selectOneMenu id="cuatrimestre" value="#{generacionGruposServiciosEscolares.rol.grupo.grado}" required="true"
+                                                                            requiredMessage="Debe seleccionar el cuatrimestre a registrar">
                                                                             <f:selectItem itemValue="#{null}"/>
                                                                             <f:selectItem itemValue="1" itemLabel="1"/>
                                                                             <f:selectItem itemValue="2" itemLabel="2"/>
@@ -162,8 +185,8 @@
                                                                     <div class="ui-material">
                                                                         <p:outputLabel for="sistema2" value="Sistema"
                                                                                        style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/>
-                                                                        <p:selectOneMenu id="sistema2" value="#{generacionGruposServiciosEscolares.rol.grupo.idSistema}"
-                                                                                         converter="entidadCEConverter">
+                                                                        <p:selectOneMenu id="sistema2" value="#{generacionGruposServiciosEscolares.rol.grupo.idSistema}" converter="entidadCEConverter"
+                                                                                         required="true" requiredMessage="Debe seleccionar el sistema para dicho grupo">
                                                                             <f:selectItem itemValue="#{null}"/>
                                                                             <f:selectItems var="sistema" value="#{FichaAdmision.listaSistema}" itemLabel="#{sistema.nombre}"
                                                                                            itemValue="#{sistema}"/>
@@ -216,19 +239,21 @@
                                                         </div>
                                                         <div class="box-body">
                                                             <p:dataTable var="grupo" value="#{generacionGruposServiciosEscolares.rol.grupos}" sortBy="#{grupo.idPe}" expandableRowGroups="true"
-                                                                         rendered="true" emptyMessage="Sin registros." id="tbl2" rowIndexVar="rowIndex" editable="true" editMode="cell"
+                                                                         paginator="true" rows="10" paginatorPosition="top" rowsPerPageTemplate="10,20,30,40,50"
+                                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                                         {RowsPerPageDropdown}" rendered="true" emptyMessage="Sin registros." id="tbl2" rowIndexVar="rowIndex" editable="true"
                                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                                         tableStyle="vertical-align: middle;">
+                                                                         tableStyle="vertical-align: middle;" editMode="cell">
                                                                 <p:headerRow>
-                                                                    <p:column colspan="7" style="background-color: #00b5ad;">
+                                                                    <p:column colspan="6" style="background-color: #00b5ad;">
                                                                         <h:outputText value="#{procesoInscripcion.nombrePE(grupo.idPe)}" />
                                                                     </p:column>
                                                                 </p:headerRow>
                                                                 <p:ajax event="cellEdit" listener="#{generacionGruposServiciosEscolares.actualizarGrupo}"/>
                                                                 <p:column style="text-align: center;width: 40px;">
                                                                     <p:commandButton icon="fa fa-trash" styleClass="btn-warning"
-                                                                                     actionListener="#{generacionGruposServiciosEscolares.eliminarGrupo(grupo)}" update="@form"
-                                                                                     disabled="#{!(grupo.estudianteList.size() == 0) or true}"/>
+                                                                                     disabled="#{grupo.estudianteList.size() eq 0 ? false:true}"
+                                                                                     actionListener="#{generacionGruposServiciosEscolares.eliminarGrupo(grupo)}" update="tbl2"/>
                                                                 </p:column>
                                                                 <p:column headerText="Cuatrimestre" style="width: 120px;text-align: center;">
                                                                     <h:outputText value="#{grupo.grado}"/>
@@ -257,12 +282,6 @@
                                                                                                itemValue="#{turno}"/>
                                                                             </p:selectOneMenu>
                                                                         </f:facet>
-                                                                    </p:cellEditor>
-                                                                </p:column>
-                                                                <p:column headerText="Tutor" style="width: 120px;text-align: center;">
-                                                                    <p:cellEditor>
-                                                                        <f:facet name="output"><h:outputText value="#{grupo.tutor}" /></f:facet>
-                                                                        <f:facet name="input"><p:inputText value="#{grupo.tutor}" style="width:96%" label="Year"/></f:facet>
                                                                     </p:cellEditor>
                                                                 </p:column>
                                                                 <p:column headerText="Capacidad Maxima" style="width: 120px;text-align: center;">
@@ -307,6 +326,42 @@
                             </ul>
                         </div>
                         <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();">
+                            <i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                <p:dialog id="modalSugerencia"
+                          widgetVar="modalSugerencia" width="1500" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Tabla de sugerencias para la generación de grupos aproximados</h3></div>
+                        <div class="box-body">
+                            <p:dataTable var="sugerencia" value="#{generacionGruposServiciosEscolares.rol.listaSugerencia}"
+                                         paginator="true" rows="10" paginatorPosition="top" rowsPerPageTemplate="10,20,30,40,50"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rendered="true" emptyMessage="Sin registros." id="tbl3"
+                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                         tableStyle="vertical-align: middle;">
+                                <p:column headerText="Siglas" style="width: 200px;text-align: center; display: none">
+                                    <h:outputText value="#{sugerencia.siglas}"/>
+                                </p:column>
+                                <p:column headerText="Programa educativo" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{sugerencia.nombre}"/>
+                                </p:column>
+                                <p:column headerText="Total de aspirantes" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{sugerencia.totalAspirantes}" />
+                                </p:column>
+                                <p:column headerText="No. de grupos sugeridos" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{sugerencia.totalGrupos}" />
+                                </p:column>
+                                <p:column headerText="No. de grupos existentes" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{sugerencia.gruposExistentes}" />
+                                </p:column>
+                                <p:column headerText="Sistema" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{sugerencia.sistemaOpcion}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalSugerencia').hide();">
                             <i class="fa fa-times"></i> Cerrar</button></div>
                     </div>
                 </p:dialog>

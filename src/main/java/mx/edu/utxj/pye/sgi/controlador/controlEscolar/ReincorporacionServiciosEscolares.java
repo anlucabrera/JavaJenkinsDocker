@@ -64,6 +64,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
             if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
             rol.setNivelRol(NivelRol.OPERATIVO);
 

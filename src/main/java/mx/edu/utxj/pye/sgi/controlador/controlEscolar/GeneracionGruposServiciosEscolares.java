@@ -7,8 +7,10 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConteoGrupos;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.GeneracionGruposRolServiciosEscolares;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReincorporacionRolServiciosEscolares;
+import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbGeneracionGrupos;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -30,6 +32,7 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +66,7 @@ public class GeneracionGruposServiciosEscolares extends ViewScopedRol implements
             if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
             if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
             rol.setNivelRol(NivelRol.OPERATIVO);
 
@@ -74,9 +78,12 @@ public class GeneracionGruposServiciosEscolares extends ViewScopedRol implements
             rol.setPeriodos(ejbSI.itemsPeriodos());
             obtenerAreasUniversidad();
             obtenerGeneraciones();
-            rol.getInstrucciones().add("\u0097 Grupos");
+            obtenerSugerencia();
             rol.getInstrucciones().add("Seleccionar el periodo activo");
-            rol.getInstrucciones().add("Llenar cada uno de los campos requeridos con la información correspondiente.");
+            rol.getInstrucciones().add("Realizar la selección del programa educativo.");
+            rol.getInstrucciones().add("Realizar la selección del plan de estudio.");
+            rol.getInstrucciones().add("Realizar la selección del sistema (Semanal o Sabatino)");
+            rol.getInstrucciones().add("Ingresar el total de alumnos pertenecientes al grupo");
             rol.getInstrucciones().add("Realizar el registro de la información");
         }catch (Exception e){
             mostrarExcepcion(e);
@@ -87,34 +94,42 @@ public class GeneracionGruposServiciosEscolares extends ViewScopedRol implements
         ResultadoEJB<List<Grupo>> res = ejb.obtenerGruposPorPeriodo(rol.getPeriodoAct());
         if(res.getCorrecto()){
             rol.setGrupos(res.getValor());
-            mostrarMensajeResultadoEJB(res);
+            //mostrarMensajeResultadoEJB(res);
         }
+        alertas();
     }
 
     public void obtenerPlanesEstudioPorPE(){
         ResultadoEJB<List<PlanEstudio>> res = ejb.obtenerPlanesEstudioPorCarrera(rol.getGrupo().getIdPe());
-        System.out.println("Planes de estudio:"+ res.getValor());
+        //System.out.println("Planes de estudio:"+ res.getValor());
         if(res.getCorrecto()){
             rol.setPlanEstudios(res.getValor());
-            mostrarMensajeResultadoEJB(res);
+            //mostrarMensajeResultadoEJB(res);
         }
     }
 
     public void obtenerAreasUniversidad(){
         ResultadoEJB<List<AreasUniversidad>> resAU = ejb.obtenerAreasUniversidad();
-        System.out.println("Areas de universidad:"+resAU.getValor());
+        //System.out.println("Areas de universidad:"+resAU.getValor());
         if(resAU.getCorrecto()){
             rol.setAreasUniversidades(resAU.getValor());
-            mostrarMensajeResultadoEJB(resAU);
+            //mostrarMensajeResultadoEJB(resAU);
         }
     }
 
     public void obtenerGeneraciones(){
         ResultadoEJB<Generaciones> res = ejb.obtenerGeneraciones();
-        System.out.println("Generacion:"+res.getValor());
+        //System.out.println("Generacion:"+res.getValor());
         if(res.getCorrecto()){
             rol.setGeneraciones(res.getValor());
-            mostrarMensajeResultadoEJB(res);
+            //mostrarMensajeResultadoEJB(res);
+        }
+    }
+
+    public void obtenerSugerencia(){
+        ResultadoEJB<List<DtoConteoGrupos>> res = ejb.obtenerSugerenciaGeneracionGrupos();
+        if(res.getCorrecto()){
+            rol.setListaSugerencia(res.getValor());
         }
     }
 
@@ -127,6 +142,7 @@ public class GeneracionGruposServiciosEscolares extends ViewScopedRol implements
             res = ejb.guardarGrupo(rol.getGrupo(), rol.getPeriodoAct(), rol.getNoGrupos(), rol.getPlanEstudio(), rol.getGeneraciones(), Operacion.PERSISTIR);
             mostrarMensajeResultadoEJB(res);
             obtenerGrupos();
+            obtenerSugerencia();
             rol.setGrupo(new Grupo());
             rol.setNoGrupos(0);
         }
@@ -142,6 +158,19 @@ public class GeneracionGruposServiciosEscolares extends ViewScopedRol implements
     public void eliminarGrupo(Grupo grupo){
         ResultadoEJB<Grupo> res = ejb.eliminarGrupo(grupo, Operacion.ELIMINAR);
         mostrarMensajeResultadoEJB(res);
+        obtenerGrupos();
+        alertas();
+    }
+
+    public void alertas(){
+        setAlertas(Collections.EMPTY_LIST);
+        ResultadoEJB<List<DtoAlerta>> resMensajes = ejb.identificarAlertas(rol);
+        if (resMensajes.getCorrecto()) {
+            setAlertas(resMensajes.getValor());
+        } else {
+            mostrarMensajeResultadoEJB(resMensajes);
+        }
+        repetirUltimoMensaje();
     }
 
     @Override

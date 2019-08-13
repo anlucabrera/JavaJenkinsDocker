@@ -5,11 +5,15 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConteoGrupos;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.GeneracionGruposRolServiciosEscolares;
+import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.enums.AlertaTipo;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
@@ -18,7 +22,10 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -28,6 +35,8 @@ public class EjbGeneracionGrupos {
     @EJB EjbPropiedades ep;
     @EJB EjbEventoEscolar ejbEventoEscolar;
     @Getter @Setter private SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+    @Getter @Setter private Integer grupo;
+    @Getter @Setter private Boolean activo;
 
     /**
      * Permite validar si el usuario autenticado es personal adscrito al departamento de servicios escolares
@@ -98,10 +107,9 @@ public class EjbGeneracionGrupos {
             if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no puede ser nulo.", Grupo.class);
             if(periodoActivo == null) return ResultadoEJB.crearErroneo(3, "El periodo no puede ser nulo.", Grupo.class);
             if(operacion == null) return ResultadoEJB.crearErroneo(4, "La operación no debe ser nula.", Grupo.class);
-            Integer gruposReg = 0;
             Grupo g = f.getEntityManager().createQuery("select g from Grupo as g where g.idGrupo = :grupo", Grupo.class)
                     .setParameter("grupo", grupo.getIdGrupo()).getResultStream().findFirst().orElse(null);
-            gruposReg = f.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.idPe = :id_Pe AND g.periodo = :idPeriodo AND g.grado = :grado")
+            Integer gruposReg = f.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.idPe = :id_Pe AND g.periodo = :idPeriodo AND g.grado = :grado")
                     .setParameter("id_Pe", grupo.getIdPe()).setParameter("idPeriodo", periodoActivo).setParameter("grado", grupo.getGrado()).getResultList().size();
             switch (operacion){
                 case PERSISTIR:
@@ -114,8 +122,6 @@ public class EjbGeneracionGrupos {
                             g.setLiteral((abecedario[i]));
                             g.setPlan(planEstudio);
                             g.setGeneracion(generacion.getGeneracion());
-                            System.out.println(g.getGrado()+"-"+g.getCapMaxima()+"-"+g.getIdSistema()+"-"+g.getIdPe()+
-                                    "-"+g.getPeriodo()+"-"+g.getPlan().getIdPlanEstudio());
                             f.create(g);
                             return ResultadoEJB.crearCorrecto(g, "El grupo ha sido agregado correctamente");
                         }
@@ -150,6 +156,7 @@ public class EjbGeneracionGrupos {
             if(o == null) return ResultadoEJB.crearErroneo(3, "La operación no debe ser nula.", Grupo.class);
             List<CargaAcademica> cg = f.getEntityManager().createQuery("select c from CargaAcademica as c where c.cveGrupo.idGrupo =:grupo", CargaAcademica.class)
                     .setParameter("grupo", g.getIdGrupo()).getResultStream().collect(Collectors.toList());
+
             switch (o){
                 case ELIMINAR:
                     if(cg.isEmpty()){
@@ -173,6 +180,64 @@ public class EjbGeneracionGrupos {
             return ResultadoEJB.crearCorrecto(g, "Generaciones encontradas con éxito");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se encontraron areas para este periodo. (EjbGeneracionGrupos.obtenerAreasUniversidad())", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<DtoAlerta>> identificarAlertas(GeneracionGruposRolServiciosEscolares rol){
+        try {
+            if (!rol.getGrupos().isEmpty()) {
+                final List<DtoAlerta> mensajes = new ArrayList<>();
+                List<Grupo> g = f.getEntityManager().createQuery("select g from Grupo as g group by g.grado, g.literal, g.idPe having count(g.literal)>1",Grupo.class)
+                        .getResultStream().collect(Collectors.toList());
+                g.stream().forEach(x -> {
+                    mensajes.add(new DtoAlerta(String.format("Existe un duplicado del grupo %s, en el programa educativo %s. Realizar las acciones correspondientes.",
+                            x.getGrado() + "° " + x.getLiteral(), x.getPlan().getDescripcion()), AlertaTipo.ERROR));
+                });
+                /*List<Grupo> g1 = f.getEntityManager().createQuery("select g from Grupo as g", Grupo.class).getResultStream().collect(Collectors.toList());
+                List<Grupo> g2 = f.getEntityManager().createQuery("select g from Grupo as g group by g.idPe, g.idSistema.idSistema", Grupo.class).getResultStream().collect(Collectors.toList());
+                List<AreasUniversidad> au = f.getEntityManager().createQuery("select a from AreasUniversidad as a", AreasUniversidad.class).getResultStream().collect(Collectors.toList());
+                List<DatosAcademicos> da = f.getEntityManager().createQuery("select d from DatosAcademicos as d", DatosAcademicos.class).getResultStream().collect(Collectors.toList());
+                g2.stream().forEach(x -> {
+                    au.stream().filter(c -> c.getArea().equals(x.getIdPe())).forEach(y -> {
+                        Integer gruposExistentes = (int)g1.stream().filter(a -> a.getIdPe() == x.getIdPe() && a.getIdSistema().equals(x.getIdSistema())).count();
+                        Integer gruposSugeridos  = (int)da.stream().filter(b -> b.getPrimeraOpcion() == x.getIdPe() && b.getSistemaPrimeraOpcion().equals(x.getIdSistema())).count();
+                        if(gruposExistentes > gruposSugeridos){
+                            mensajes.add(new DtoAlerta(
+                                    String.format("Ha sobrepasado el número de grupos en el programa educativo %s, de acuerdo a los sugeridos.", x.getPlan().getDescripcion()), AlertaTipo.SUGERENCIA));
+                        }
+                    });
+                });*/
+                mensajes.stream().collect(Collectors.toSet());
+                return ResultadoEJB.crearCorrecto(mensajes, "Lista de mensajes");
+            } else {
+                return ResultadoEJB.crearCorrecto(Collections.EMPTY_LIST, "Sin mensajes");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudieron identificar mensajes de asignación (EjbAsignacionTutores.identificarMensajes)", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<DtoConteoGrupos>> obtenerSugerenciaGeneracionGrupos(){
+        try {
+            List<DtoConteoGrupos> listaSugerencias = new ArrayList<>();
+            List<DatosAcademicos> da = f.getEntityManager().createQuery("select d from DatosAcademicos as d", DatosAcademicos.class).getResultStream().collect(Collectors.toList());
+            List<AreasUniversidad> au = f.getEntityManager().createQuery("select a from AreasUniversidad as a", AreasUniversidad.class).getResultStream().collect(Collectors.toList());
+            List<Grupo> g = f.getEntityManager().createQuery("select g from Grupo as g", Grupo.class).getResultStream().collect(Collectors.toList());
+            List<Grupo> g1 = f.getEntityManager().createQuery("select g from Grupo as g group by g.idPe, g.idSistema", Grupo.class).getResultStream().collect(Collectors.toList());
+            g1.stream().forEach(x -> {
+                au.stream().filter(a -> a.getArea().equals(x.getIdPe())).forEach(y -> {
+                    String siglas = y.getSiglas();
+                    String pe = y.getNombre();
+                    Integer totalAspirante = (int)da.stream().filter(b -> b.getPrimeraOpcion() == x.getIdPe() && b.getSistemaPrimeraOpcion().equals(x.getIdSistema())).count();
+                    Integer grupos = (totalAspirante / 25)+1;
+                    Integer gruposExistentes = (int)g.stream().filter(c -> c.getIdPe() == x.getIdPe() && c.getIdSistema().equals(x.getIdSistema())).count();
+                    String sistema = x.getIdSistema().getNombre();
+                    listaSugerencias.add(new DtoConteoGrupos(siglas, pe, totalAspirante, grupos, gruposExistentes, sistema));
+                });
+            });
+            return ResultadoEJB.crearCorrecto(listaSugerencias, "Sugerencias realizadas con éxito");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se encontraron areas para este periodo. (EjbGeneracionGrupos.obtenerSugerenciaGeneracionGrupos())", e, null);
         }
     }
 

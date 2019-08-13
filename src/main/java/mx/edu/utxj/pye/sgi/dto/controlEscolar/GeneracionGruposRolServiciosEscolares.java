@@ -60,6 +60,10 @@ public class GeneracionGruposRolServiciosEscolares extends AbstractRol{
 
     @Getter @Setter private Generaciones generaciones;
 
+    @Getter @Setter private List<DtoConteoGrupos> listaSugerencia;
+
+    @Getter @Setter private Boolean botonActivo;
+
     public GeneracionGruposRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
         super(filtro);
         this.serviciosEscolares = serviciosEscolares;
