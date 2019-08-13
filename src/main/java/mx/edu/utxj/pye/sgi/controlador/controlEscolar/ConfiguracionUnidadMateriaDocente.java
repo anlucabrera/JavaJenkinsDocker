@@ -276,7 +276,6 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
         ResultadoEJB<UnidadMateriaConfiguracion> configuracion = ejb.verificarValidacionConfiguracion(rol.getCargaEliminar().getCargaAcademica());
         if (configuracion.getCorrecto()) {
             rol.setDirectorValido(configuracion.getValor().getDirector());
-            System.err.println("eliminarConfigUnidadMat - DIRECTOR " + rol.getDirectorValido());
             if (rol.getDirectorValido() == null){
                 ResultadoEJB<Integer> resEliminarCUM = ejb.eliminarConfUnidadMateria(rol.getCargaEliminar().getCargaAcademica());
                 ResultadoEJB<Integer> resEliminarTI = ejb.eliminarTareaIntegradora(rol.getCargaEliminar().getCargaAcademica());
@@ -325,9 +324,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
     }
     
     public void cambiarEliminar(ValueChangeEvent event){
-        System.err.println("cambiarEliminar - carga " + rol.getCarga().getCargaAcademica());
         rol.setCargaEliminar(rol.getCarga());
-        System.err.println("cambiarEliminar - cargaEliminar " + rol.getCargaEliminar().getCargaAcademica());
         if(rol.getAutorizoEliminar()){
             rol.setAutorizoEliminar(false);
         }else{
