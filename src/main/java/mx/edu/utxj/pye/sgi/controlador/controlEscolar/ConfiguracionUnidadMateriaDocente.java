@@ -206,6 +206,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
                         }
                         ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> resUniMatCrit = ejb.guardarConfiguracionUnidadMateriaCriterios(resGuardarConf.getValor(), rol.getCarga());
                         mostrarMensajeResultadoEJB(resUniMatCrit);
+                        existeConfiguracion();
 //                  mostrarConfiguracionGuardada();
                     } else {
                         mostrarMensajeResultadoEJB(resGuardarConf);
@@ -231,6 +232,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
                         rol.setExiste(true);
                         ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> resUniMatCrit = ejb.guardarConfiguracionUnidadMateriaCriterios(resGuardarConf.getValor(), rol.getCarga());
                         mostrarMensajeResultadoEJB(resUniMatCrit);
+                        existeConfiguracion();
 //                  mostrarConfiguracionGuardada();
                     } else {
                         mostrarMensajeResultadoEJB(resGuardarConf);
