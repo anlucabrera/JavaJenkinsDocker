@@ -55,6 +55,18 @@ public class DateUtils {
     public static Long toWeeks(LocalDate start, LocalDate end){
         return ChronoUnit.WEEKS.between(start, end);
     }
+
+    public static boolean isBetween(Date date, Date start, Date end){
+        LocalDate fecha = asLocalDate(date);
+        LocalDate inicio = asLocalDate(start);
+
+        if(fecha.isEqual(inicio)) return true;
+        if(fecha.isBefore(inicio)) return false;
+
+        LocalDate fin = asLocalDate(end);
+        if(fecha.isEqual(fin)) return true;
+        return !fecha.isAfter(fin);
+    }
     
     public static void main(String[] args) {
         LocalDate hoy = LocalDate.now();

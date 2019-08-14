@@ -13,6 +13,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.util.DateUtils;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -149,18 +150,13 @@ public class EjbPacker {
      */
     public ResultadoEJB<DtoUnidadConfiguracion> packUnidadConfiguracion(UnidadMateriaConfiguracion unidadMateriaConfiguracion, DtoCargaAcademica dtoCargaAcademica){
         try{
-            System.out.println("EjbPacker.packUnidadConfiguracion");
-            System.out.println("unidadMateriaConfiguracion = " + unidadMateriaConfiguracion);
+//            System.out.println("EjbPacker.packUnidadConfiguracion");
+//            System.out.println("unidadMateriaConfiguracion = " + unidadMateriaConfiguracion);
             //empaquetar configuración de unidad
             UnidadMateriaConfiguracion unidadMateriaConfiguracionBD = em.find(UnidadMateriaConfiguracion.class, unidadMateriaConfiguracion.getConfiguracion());
 //            System.out.println("unidadMateriaConfiguracionBD = " + unidadMateriaConfiguracionBD);
             UnidadMateria unidadMateria = unidadMateriaConfiguracionBD.getIdUnidadMateria();
-            final Map<Criterio,List<DtoUnidadConfiguracion.Detalle>> detalleListMap = new TreeMap<>();
-            /*em.createQuery("select d from UnidadMateriaConfiguracionDetalle d where d.configuracion.configuracion=:configuracion and d.configuracion.carga.docente=:docente", UnidadMateriaConfiguracionDetalle.class)
-                    .setParameter("configuracion", unidadMateriaConfiguracionBD.getConfiguracion())
-                    .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
-                    .getResultStream()
-                    .forEach(System.out::println);*/
+            final Map<Criterio,List<DtoUnidadConfiguracion.Detalle>> detalleListMap = new HashMap<>();
             List<DtoUnidadConfiguracion.Detalle> detalles = em.createQuery("select d from UnidadMateriaConfiguracionDetalle d where d.configuracion.configuracion=:configuracion and d.configuracion.carga.docente=:docente", UnidadMateriaConfiguracionDetalle.class)
                     .setParameter("configuracion", unidadMateriaConfiguracionBD.getConfiguracion())
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
@@ -169,20 +165,18 @@ public class EjbPacker {
                     .filter(ResultadoEJB::getCorrecto)
                     .map(ResultadoEJB::getValor)
                     .collect(Collectors.toList());
-            detalles.forEach(System.out::println);
+//            detalles.forEach(System.out::println);
             List<Criterio> criterios = detalles.stream().map(DtoUnidadConfiguracion.Detalle::getCriterio).distinct().sorted(Comparator.comparingInt(Criterio::getCriterio)).collect(Collectors.toList());
             criterios.forEach(criterio -> {
-
+//                System.out.println("criterio = " + criterio);
+                detalleListMap.put(criterio, new ArrayList<>());
             });
-                    /*forEach(detalle -> {
-//                        System.out.println("detalle = " + detalle);
-                        if(!detalleListMap.containsKey(detalle.getCriterio())) {
-//                            detalleListMap.put(detalle.getCriterio(), null);
-                        }
-//                        detalleListMap.get(detalle.getCriterio()).add(detalle);
-                    });*/
+            detalles.forEach(detalle -> {
+                if(detalleListMap.containsKey(detalle.getCriterio())) detalleListMap.get(detalle.getCriterio()).add(detalle);
+            });
+            Boolean activaPorFecha = DateUtils.isBetween(new Date(), unidadMateriaConfiguracionBD.getFechaInicio(), unidadMateriaConfiguracionBD.getFechaFin());
 
-            DtoUnidadConfiguracion dto = new DtoUnidadConfiguracion(unidadMateria, unidadMateriaConfiguracionBD, detalleListMap, dtoCargaAcademica);
+            DtoUnidadConfiguracion dto = new DtoUnidadConfiguracion(unidadMateria, unidadMateriaConfiguracionBD, detalleListMap, dtoCargaAcademica, activaPorFecha);
             return ResultadoEJB.crearCorrecto(dto, "Configuración de unidad empaquetada");
         }catch (Exception e){
             e.printStackTrace();
@@ -199,6 +193,7 @@ public class EjbPacker {
         try{
             UnidadMateriaConfiguracionDetalle unidadMateriaConfiguracionDetalleBD = em.find(UnidadMateriaConfiguracionDetalle.class, unidadMateriaConfiguracionDetalle.getConfiguracionDetalle());
             DtoUnidadConfiguracion.Detalle detalle = new DtoUnidadConfiguracion.Detalle(unidadMateriaConfiguracionDetalleBD, unidadMateriaConfiguracionDetalleBD.getCriterio(), unidadMateriaConfiguracionDetalleBD.getIndicador());
+//            System.out.println("detalle = " + detalle);
             return ResultadoEJB.crearCorrecto(detalle, "Detalle de la configuración de unidad");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el detalle de la configuración de unidad (EjbPacker.packDtoUnidadConfiguracionDetalle)", DtoUnidadConfiguracion.Detalle.class);
@@ -345,15 +340,17 @@ public class EjbPacker {
      */
     public ResultadoEJB<DtoCapturaCalificacion.Captura> packDtoCapturaCalificacionCaptura(DtoUnidadConfiguracion.Detalle detalle, DtoEstudiante dtoEstudiante){
         try{
+//            System.out.println("detalle = [" + detalle + "], dtoEstudiante = [" + dtoEstudiante + "]");
             Estudiante inscripcionActiva = dtoEstudiante.getInscripciones()
                     .stream()
                     .filter(DtoInscripcion::getActivo)
                     .map(DtoInscripcion::getInscripcion)
                     .max(Comparator.comparing(Estudiante::getPeriodo))
                     .orElse(null);
+//            System.out.println("inscripcionActiva = " + inscripcionActiva);
             if(inscripcionActiva == null) return ResultadoEJB.crearErroneo(2, "No se tiene una inscripción activa del estudiante a un grupo", DtoCapturaCalificacion.Captura.class);
             Calificacion calificacion = em.createQuery("select c from Calificacion  c where c.idEstudiante=:estudiante and c.configuracionDetalle=:detalle", Calificacion.class)
-                    .setParameter("estudiante", inscripcionActiva.getIdEstudiante())
+                    .setParameter("estudiante", inscripcionActiva)
                     .setParameter("detalle", detalle.getDetalle())
                     .getResultStream()
                     .findFirst()
@@ -368,8 +365,10 @@ public class EjbPacker {
             }
 
             DtoCapturaCalificacion.Captura captura = new DtoCapturaCalificacion.Captura(detalle, calificacion);
+//            System.out.println("captura = " + captura);
             return ResultadoEJB.crearCorrecto(captura, "Captura de calificación");
         }catch (Exception e){
+            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la captura de calificación (EjbPacker.packDtoCapturaCalificacionCaptura).", DtoCapturaCalificacion.Captura.class);
         }
     }

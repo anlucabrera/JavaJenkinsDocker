@@ -15,6 +15,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
@@ -59,6 +60,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
     @PostConstruct
     public void init(){
         try{
+            setVistaControlador(ControlEscolarVistaControlador.ASIGNACION_INDICADORES);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDocente(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
@@ -304,7 +306,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
       public void existeAsignacion(){
         if(rol.getCarga()== null) return;
         ResultadoEJB<List<Listaasignacionindicadorescargaacademica>> res = ejb.buscarAsignacionIndicadoresCargaAcademica(rol.getCarga());
-        System.err.println("existeAsignacion - res " + res.getValor().size());
+//        System.err.println("existeAsignacion - res " + res.getValor().size());
         if(res.getValor().size()>0 && !res.getValor().isEmpty()){
             rol.setExisteAsignacionIndicadores(true);
             rol.setListaAsignacionCargaAcademica(res.getValor());
@@ -313,7 +315,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             existeConfiguracion();
             mostrarMensajeResultadoEJB(res);  
         } 
-        System.err.println("existeAsignacion - valor " + rol.getExisteAsignacionIndicadores());
+//        System.err.println("existeAsignacion - valor " + rol.getExisteAsignacionIndicadores());
         Ajax.update("frm");
     }
      

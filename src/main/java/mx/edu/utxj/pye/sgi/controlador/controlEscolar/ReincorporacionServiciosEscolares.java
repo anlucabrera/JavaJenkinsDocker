@@ -14,6 +14,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
@@ -47,6 +48,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     @PostConstruct
     public void init(){
         try {
+            setVistaControlador(ControlEscolarVistaControlador.REINCORPORACION);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 

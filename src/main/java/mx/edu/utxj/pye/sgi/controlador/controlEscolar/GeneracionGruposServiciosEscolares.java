@@ -17,6 +17,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
@@ -46,6 +47,7 @@ public class GeneracionGruposServiciosEscolares extends ViewScopedRol implements
     @PostConstruct
     public void init(){
         try {
+            setVistaControlador(ControlEscolarVistaControlador.GENERACION_GRUPOS);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 

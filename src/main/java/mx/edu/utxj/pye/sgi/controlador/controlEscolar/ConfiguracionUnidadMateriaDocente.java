@@ -15,6 +15,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
@@ -60,6 +61,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
     @PostConstruct
     public void init(){
         try{
+            setVistaControlador(ControlEscolarVistaControlador.CONFIGURACION_UNIDAD_MATERIA);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDocente(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 

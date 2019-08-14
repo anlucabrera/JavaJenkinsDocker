@@ -38,6 +38,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
@@ -63,6 +64,7 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
     @PostConstruct
     public void init(){
         try {
+            setVistaControlador(ControlEscolarVistaControlador.ADMINISTRACION_PLAN_ESTUDIOS);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
             

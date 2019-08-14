@@ -76,6 +76,7 @@ public class Caster {
     }
 
     public String clavePeriodoToString(Integer periodo){
+        if(periodo == null) return "Clave de periodo nulo";
         PeriodosEscolares periodoEscolar = f.getEntityManager().find(PeriodosEscolares.class, periodo);
         return periodoToString(periodoEscolar);
     }

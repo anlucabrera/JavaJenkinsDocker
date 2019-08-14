@@ -314,7 +314,7 @@ public class EjbAsignacionIndicadoresCriterios {
             Integer valor = 0;
             
             Double totalPorcentajes = lista.stream().mapToDouble(Listaindicadoresporcriterioporconfiguracion::getPorcentajeIndicador).sum();
-            System.err.println("validarSumaPorcentajesIndicadores - totalPorcentajes " + totalPorcentajes);
+//            System.err.println("validarSumaPorcentajesIndicadores - totalPorcentajes " + totalPorcentajes);
             
             if(totalPorcentajes > 100.00){
                 valor = 1;
@@ -500,19 +500,19 @@ public class EjbAsignacionIndicadoresCriterios {
      */
     public ResultadoEJB<List<Listaasignacionindicadorescargaacademica>> buscarAsignacionIndicadoresCargaAcademica(DtoCargaAcademica dtoCargaAcademica){
         try{
-            System.err.println("buscarAsignacionIndicadoresCargaAcademica - entro");
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - entro");
             Boolean asigInd = compararUnidadesConfiguradasConTotales(dtoCargaAcademica);
-            System.err.println("buscarAsignacionIndicadoresCargaAcademica - valor " + asigInd);
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - valor " + asigInd);
             List<Listaasignacionindicadorescargaacademica> listaUnidadMatConfDet = new ArrayList<>();
             if(asigInd == true){
             listaUnidadMatConfDet = f.getEntityManager().createQuery("SELECT l FROM Listaasignacionindicadorescargaacademica l WHERE l.carga =:cargaAcademica", Listaasignacionindicadorescargaacademica.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getResultList();
-            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaConsulta " + listaUnidadMatConfDet.size());
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaConsulta " + listaUnidadMatConfDet.size());
             }else{
                 listaUnidadMatConfDet.clear();
             }
-            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaFinal " + listaUnidadMatConfDet.size());
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaFinal " + listaUnidadMatConfDet.size());
             return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Asignación de indicadores por criterio de la carga académica seleccionada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);

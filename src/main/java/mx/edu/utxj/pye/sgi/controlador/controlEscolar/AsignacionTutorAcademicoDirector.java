@@ -21,6 +21,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionTutores;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
@@ -65,6 +66,7 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
     @PostConstruct
     public void init(){
         try {
+            setVistaControlador(ControlEscolarVistaControlador.ASIGNACION_TUTOR_ACADEMICO);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
                         
