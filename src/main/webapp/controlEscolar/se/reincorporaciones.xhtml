@@ -18,6 +18,11 @@
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
         </c:if>
         <!-- Fin estilos par proceso electoral -->
+        <style type="text/css">
+            .custom-search-form{
+                margin-top:5px;
+            }
+        </style>
     </ui:define>
 
     <ui:define name="title">
@@ -90,7 +95,7 @@
                                                                 </p:selectOneButton>
                                                             </div>
                                                             <div class="ui-g-12 ui-md-4">
-                                                                <div class="ui-inputgroup">
+                                                                <div class="input-group custom-search-form">
                                                                     <div class="ui-material">
                                                                         <p:inputText id="curp2" value="#{reincorporacionServiciosEscolares.rol.buscquedaCurp}" required="true"
                                                                                      requiredMessage="Por favor ingrese la curp del estudiante a buscar"/>

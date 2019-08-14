@@ -197,11 +197,11 @@
                                                                 </div>
                                                                 <div class="#{casilla4}">
                                                                     <div class="ui-material">
-                                                                        <p:outputLabel for="noG" value="No. Grupos"
+                                                                        <p:outputLabel for="noG" value="No. estudiantes"
                                                                                        style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/><br/>
                                                                         <p:spinner id="noG" required="true" value="#{generacionGruposServiciosEscolares.rol.noGrupos}"
-                                                                                   maxlength="3" min="0" max="27" size="2" requiredMessage="Ingrese el número maximo de estudiantes.">
-                                                                            <p:ajax process="@this :frmGeneral:noEstu" update="@this :frmGeneral:noEstu"/>
+                                                                                   maxlength="3" min="0" max="30" size="2" requiredMessage="Ingrese el número maximo de estudiantes.">
+                                                                            <p:ajax process="@this" update="@this"/>
                                                                         </p:spinner>
                                                                         <p:message for="noG"/>
                                                                     </div>
@@ -210,8 +210,8 @@
                                                                     <div class="ui-material">
                                                                         <p:outputLabel for="noEstu" value="Capacidad Maxima Estudiantes"
                                                                                        style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/><br/>
-                                                                        <p:spinner id="noEstu" required="true" value="#{generacionGruposServiciosEscolares.rol.grupo.capMaxima}" maxlength="3"
-                                                                                   min="25" max="25" size="2" requiredMessage="Ingrese la cantidad de días." rendered="true">
+                                                                        <p:spinner id="noEstu" required="true"  maxlength="3" readonly="true"
+                                                                                   min="30" max="30" size="2" requiredMessage="Ingrese la cantidad de días." rendered="true">
                                                                             <p:ajax process="@this" update="@this"/>
                                                                         </p:spinner>
                                                                     </div>

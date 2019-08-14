@@ -120,6 +120,7 @@ public class EjbGeneracionGrupos {
                             g = grupo;
                             g.setPeriodo(periodoActivo);
                             g.setLiteral((abecedario[i]));
+                            g.setCapMaxima(noGrupos);
                             g.setPlan(planEstudio);
                             g.setGeneracion(generacion.getGeneracion());
                             f.create(g);
@@ -229,7 +230,7 @@ public class EjbGeneracionGrupos {
                     String siglas = y.getSiglas();
                     String pe = y.getNombre();
                     Integer totalAspirante = (int)da.stream().filter(b -> b.getPrimeraOpcion() == x.getIdPe() && b.getSistemaPrimeraOpcion().equals(x.getIdSistema())).count();
-                    Integer grupos = (totalAspirante / 25)+1;
+                    Integer grupos = (totalAspirante / 30)+1;
                     Integer gruposExistentes = (int)g.stream().filter(c -> c.getIdPe() == x.getIdPe() && c.getIdSistema().equals(x.getIdSistema())).count();
                     String sistema = x.getIdSistema().getNombre();
                     listaSugerencias.add(new DtoConteoGrupos(siglas, pe, totalAspirante, grupos, gruposExistentes, sistema));
