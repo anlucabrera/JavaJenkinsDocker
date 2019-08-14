@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.Collections;
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
@@ -35,6 +36,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionCriterio;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.CellEditEvent;
 
 /**
  * La selección del grupo, docente y del periodo deben ser directos de un control de entrada
@@ -97,8 +99,9 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar configuraciones anteriores.");
             rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo que va a configurar.");
             rol.getInstrucciones().add("Seleccionar si o no aplicará Tarea Integradora en la configuración.");
-            rol.getInstrucciones().add("Actualizar fecha de inicio y fin por cada unidad de la materia si no desea utilizar las fechas sugeridas por el sistema.");
-            rol.getInstrucciones().add("En caso de que aplicará Tarea Integradora deberá ingresar nombre y fecha de entrega.");
+            rol.getInstrucciones().add("Actualizar Porcentaje, Fecha de Inicio y Fecha Fin por cada unidad de la materia si no desea utilizar las fechas sugeridas por el sistema.");
+            rol.getInstrucciones().add("En caso de que aplicará Tarea Integradora deberá ingresar Nombre, Porcentaje y Fecha de entrega.");
+            rol.getInstrucciones().add("Los porcentajes que ingrese en total deben sumar 100%, en caso contrario el sistema no le permitirá guardar.");
             rol.getInstrucciones().add("Una vez que capture toda la información solicitada puede GUARDAR la configuración.");
             rol.getInstrucciones().add("Usted podrá visualizar la Configuración Guardada en sistema.");
             rol.getInstrucciones().add("Si desea ELIMINAR la configuración deberá seleccionar que desea realizar esta accción para que se active el botón de eliminar ubicado en la parte inferior.");
@@ -132,16 +135,19 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             rol.setCargas(res.getValor());
             existeConfiguracion();
         }else mostrarMensajeResultadoEJB(res);
-        
-        ResultadoEJB<List<DtoAlerta>> resMensajes = ejb.identificarMensajes(rol);
-        System.out.println("resMensajes = " + resMensajes);
-        if(resMensajes.getCorrecto()){
-            setAlertas(resMensajes.getValor());
-        }else {
-            mostrarMensajeResultadoEJB(resMensajes);
-        }
-
-        repetirUltimoMensaje();
+       
+    }
+    
+    public void alertas(){
+        System.err.println("alertas");
+//        ResultadoEJB<List<DtoAlerta>> resMensajes = ejb.identificarMensajes(rol, porcentaje);
+//        System.out.println("resMensajes = " + resMensajes);
+//        if(resMensajes.getCorrecto()){
+//            setAlertas(resMensajes.getValor());
+//        }else {
+//            mostrarMensajeResultadoEJB(resMensajes);
+//        }
+//        repetirUltimoMensaje();
     }
     
     public void existeConfiguracion(){
@@ -202,6 +208,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
                         }
                         ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> resUniMatCrit = ejb.guardarConfiguracionUnidadMateriaCriterios(resGuardarConf.getValor(), rol.getCarga());
                         mostrarMensajeResultadoEJB(resUniMatCrit);
+                        existeConfiguracion();
 //                  mostrarConfiguracionGuardada();
                     } else {
                         mostrarMensajeResultadoEJB(resGuardarConf);
@@ -227,6 +234,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
                         rol.setExiste(true);
                         ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> resUniMatCrit = ejb.guardarConfiguracionUnidadMateriaCriterios(resGuardarConf.getValor(), rol.getCarga());
                         mostrarMensajeResultadoEJB(resUniMatCrit);
+                        existeConfiguracion();
 //                  mostrarConfiguracionGuardada();
                     } else {
                         mostrarMensajeResultadoEJB(resGuardarConf);
@@ -269,12 +277,36 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
     }
     
     public void eliminarConfigUnidadMat(){
-        ResultadoEJB<Integer> resEliminarCUM = ejb.eliminarConfUnidadMateria(rol.getCargaEliminar().getCargaAcademica());
-        ResultadoEJB<Integer> resEliminarTI = ejb.eliminarTareaIntegradora(rol.getCargaEliminar().getCargaAcademica());
-//        rol.setExiste(false);
-        existeConfiguracion();
-        mostrarMensajeResultadoEJB(resEliminarCUM);
-        mostrarMensajeResultadoEJB(resEliminarTI);
+        ResultadoEJB<UnidadMateriaConfiguracion> configuracion = ejb.verificarValidacionConfiguracion(rol.getCargaEliminar().getCargaAcademica());
+        if (configuracion.getCorrecto()) {
+            rol.setDirectorValido(configuracion.getValor().getDirector());
+            if (rol.getDirectorValido() == null){
+                ResultadoEJB<Integer> resEliminarCUM = ejb.eliminarConfUnidadMateria(rol.getCargaEliminar().getCargaAcademica());
+                ResultadoEJB<Integer> resEliminarTI = ejb.eliminarTareaIntegradora(rol.getCargaEliminar().getCargaAcademica());
+//                rol.setExiste(false);
+                existeConfiguracion();
+                mostrarMensajeResultadoEJB(resEliminarCUM);
+                mostrarMensajeResultadoEJB(resEliminarTI);
+                
+            } else {
+               Messages.addGlobalWarn("La Configuración ya ha sido validada por el director, por lo que no puede eliminarla");
+            }
+            
+        } else {
+            mostrarMensajeResultadoEJB(configuracion);
+        }
+       
+//        if (director.getValor().getDirector() == null) {
+//            Messages.addGlobalWarn("La Configuración ya ha sido validada por el director, por lo que no puede eliminarla");
+//        } else {
+//
+//            ResultadoEJB<Integer> resEliminarCUM = ejb.eliminarConfUnidadMateria(rol.getCargaEliminar().getCargaAcademica());
+//            ResultadoEJB<Integer> resEliminarTI = ejb.eliminarTareaIntegradora(rol.getCargaEliminar().getCargaAcademica());
+////        rol.setExiste(false);
+//            existeConfiguracion();
+//            mostrarMensajeResultadoEJB(resEliminarCUM);
+//            mostrarMensajeResultadoEJB(resEliminarTI);
+//        }
     }
     
    

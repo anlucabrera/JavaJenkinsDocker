@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
@@ -140,7 +141,7 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
      * Lista de asignación de indicadores por carga académica
      */
     @Getter @NonNull private List<Listaasignacionindicadorescargaacademica> listaAsignacionCargaAcademica;
-            
+    
     public AsignacionIndicadoresCriteriosRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
         this.docente = docente;

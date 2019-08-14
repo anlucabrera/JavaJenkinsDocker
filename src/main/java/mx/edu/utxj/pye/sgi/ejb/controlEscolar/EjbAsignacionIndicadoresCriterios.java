@@ -23,6 +23,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
@@ -39,6 +41,12 @@ public class EjbAsignacionIndicadoresCriterios {
     @EJB EjbPropiedades ep;
     @EJB Facade f;
     @EJB EjbEventoEscolar ejbEventoEscolar;
+    private EntityManager em;
+
+    @PostConstruct
+    public void init(){
+        em = f.getEntityManager();
+    }
     /**
      * Permite validar si el usuario autenticado es personal docente
      * @param clave Número de nómina del usuario autenticado
@@ -75,7 +83,7 @@ public class EjbAsignacionIndicadoresCriterios {
      */
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosDescendentes(){
         try{
-            final List<PeriodosEscolares> periodos = f.getEntityManager().createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
+            final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
                     .getResultList();
             
             return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
@@ -93,12 +101,15 @@ public class EjbAsignacionIndicadoresCriterios {
     public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicaDocente(PersonalActivo docente, PeriodosEscolares periodo){
         try{
             //buscar carga académica del personal docente logeado del periodo seleccionado
-            List<DtoCargaAcademica> cargas = f.getEntityManager().createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
+            List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream()
-                    .map(ca -> pack(ca).getValor())
-                    .filter(dto -> dto != null)
+                    .distinct()
+                    .map(cargaAcademica -> pack(cargaAcademica))
+                    .filter(res -> res.getCorrecto())
+                    .map(ResultadoEJB::getValor)
+                    .sorted(DtoCargaAcademica::compareTo)
                     .collect(Collectors.toList());
             return ResultadoEJB.crearCorrecto(cargas, "Lista de cargas académicas por docente.");
         }catch (Exception e){
@@ -116,20 +127,20 @@ public class EjbAsignacionIndicadoresCriterios {
             if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar una carga académica nula.", DtoCargaAcademica.class);
             if(cargaAcademica.getCarga() == null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar una carga académica con clave nula.", DtoCargaAcademica.class);
 
-            CargaAcademica cargaAcademicaBD = f.getEntityManager().find(CargaAcademica.class, cargaAcademica.getCarga());
+            CargaAcademica cargaAcademicaBD = em.find(CargaAcademica.class, cargaAcademica.getCarga());
             if(cargaAcademicaBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar una carga académica no registrada previamente en base de datos.", DtoCargaAcademica.class);
             
-            Grupo grupo = f.getEntityManager().find(Grupo.class, cargaAcademicaBD.getCveGrupo().getIdGrupo());
-            PeriodosEscolares periodo = f.getEntityManager().find(PeriodosEscolares.class, cargaAcademicaBD.getEvento().getPeriodo());
-            PlanEstudioMateria planEstudioMateria = f.getEntityManager().find(PlanEstudioMateria.class, cargaAcademicaBD.getIdPlanMateria().getIdPlanMateria());
-            PlanEstudio planEstudio = f.getEntityManager().find(PlanEstudio.class, planEstudioMateria.getIdPlan().getIdPlanEstudio());
-            Materia materia = f.getEntityManager().find(Materia.class, planEstudioMateria.getIdMateria().getIdMateria());
+            Grupo grupo = em.find(Grupo.class, cargaAcademicaBD.getCveGrupo().getIdGrupo());
+            PeriodosEscolares periodo = em.find(PeriodosEscolares.class, cargaAcademicaBD.getEvento().getPeriodo());
+            PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, cargaAcademicaBD.getIdPlanMateria().getIdPlanMateria());
+            PlanEstudio planEstudio = em.find(PlanEstudio.class, planEstudioMateria.getIdPlan().getIdPlanEstudio());
+            Materia materia = em.find(Materia.class, planEstudioMateria.getIdMateria().getIdMateria());
             PersonalActivo docente = ejbPersonalBean.pack(cargaAcademicaBD.getDocente());
-            AreasUniversidad programa = f.getEntityManager().find(AreasUniversidad.class, planEstudioMateria.getIdPlan().getIdPe());
+            AreasUniversidad programa = em.find(AreasUniversidad.class, planEstudioMateria.getIdPlan().getIdPe());
             DtoCargaAcademica dto = new DtoCargaAcademica(cargaAcademicaBD, periodo, docente, grupo, materia, programa, planEstudio, planEstudioMateria);
             return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica (EjbAsignacionIndicadoresCriterios. pack).", e, DtoCargaAcademica.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica (EjbAsignacionIndicadoresCriterios.pack).", e, DtoCargaAcademica.class);
         }
     }
     
@@ -140,23 +151,23 @@ public class EjbAsignacionIndicadoresCriterios {
      */
     public ResultadoEJB<List<UnidadMateriaConfiguracion>> buscarConfiguracionUnidadMateria(DtoCargaAcademica dtoCargaAcademica){
         try{
-            List<UnidadMateriaConfiguracion> listaUnidMatConf = f.getEntityManager().createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
+            List<UnidadMateriaConfiguracion> listaUnidMatConf = em.createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getResultList();
             return ResultadoEJB.crearCorrecto(listaUnidMatConf, "Lista de configuración de la unidad materia seleccionada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbAsignacionIndicadoresCriterios.getConfiguracionUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbAsignacionIndicadoresCriterios.buscarConfiguracionUnidadMateria)", e, null);
         }
     }
     
      /**
      * Permite verificar si existe asignación de indicadores por criterio de la carga académica seleccionada
-     * @param dtoCargaAcademica Configuración de la que se buscará asignación de indicadores por criterio
+     * @param dtoCargaAcademica Materia de la que se buscará asignación de indicadores por criterio
      * @return Resultado del proceso
      */
     public ResultadoEJB<UnidadMateriaConfiguracionDetalle> buscarConfiguracionUnidadMateriaDetalle(DtoCargaAcademica dtoCargaAcademica){
         try{
-            UnidadMateriaConfiguracionDetalle unidadMatConfDet = f.getEntityManager().createQuery("SELECT umcd FROM UnidadMateriaConfiguracionDetalle umcd JOIN umcd.configuracion conf WHERE conf.carga.carga =:cargaAcademica", UnidadMateriaConfiguracionDetalle.class)
+            UnidadMateriaConfiguracionDetalle unidadMatConfDet = em.createQuery("SELECT umcd FROM UnidadMateriaConfiguracionDetalle umcd JOIN umcd.configuracion conf WHERE conf.carga.carga =:cargaAcademica", UnidadMateriaConfiguracionDetalle.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getSingleResult();
             return ResultadoEJB.crearCorrecto(unidadMatConfDet, "Existe asignación de indicadores por criterio para la materia seleccionada.");
@@ -167,15 +178,14 @@ public class EjbAsignacionIndicadoresCriterios {
        
     /**
      * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param dtoCargaAcademica Nivel del que se obtendrán los indicadores por criterio
+     * @param dtoCargaAcademica Materia de la que se buscará la lista de indicadores por criterio
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioParaAsignar(DtoCargaAcademica dtoCargaAcademica){ 
         try {
             Integer periodo = getPeriodoActivoIndicadores(dtoCargaAcademica); 
             Integer configuracion = getConfiguracion(dtoCargaAcademica); 
-       
-            List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores = f.getEntityManager().createQuery("SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica =:cargaAcademica AND l.listaindicadoresporcriterioporconfiguracionPK.periodo =:periodo AND l.listaindicadoresporcriterioporconfiguracionPK.configuracion =:configuracion", Listaindicadoresporcriterioporconfiguracion.class)
+            List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores = em.createQuery("SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica =:cargaAcademica AND l.listaindicadoresporcriterioporconfiguracionPK.periodo =:periodo AND l.listaindicadoresporcriterioporconfiguracionPK.configuracion =:configuracion", Listaindicadoresporcriterioporconfiguracion.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .setParameter("periodo", periodo)
                     .setParameter("configuracion", configuracion)
@@ -186,11 +196,16 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
     
+     /**
+     * Permite obtener periodo más actual para obtener la lista de indicadores por criterio vigente
+     * @param dtoCargaAcademica Materia de la que se buscará la lista de indicadores por criterio
+     * @return Resultado del proceso
+     */
     public Integer getPeriodoActivoIndicadores(DtoCargaAcademica dtoCargaAcademica)
     {
         int periodo = 0;
-        TypedQuery<Integer> v = (TypedQuery<Integer>) f.getEntityManager().createQuery("SELECT MAX(l.listaindicadoresporcriterioporconfiguracionPK.periodo) FROM Listaindicadoresporcriterioporconfiguracion l");
-        
+        TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(l.listaindicadoresporcriterioporconfiguracionPK.periodo) FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica =:cargaAcademica")
+                                                        .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga());
         if (v.getSingleResult() == 0) {
             periodo = 0;
         } else {
@@ -199,10 +214,16 @@ public class EjbAsignacionIndicadoresCriterios {
         return periodo;
     }
     
+     /**
+     * Permite obtener configuración de la materia para obtener la lista de indicadores por criterio vigente
+     * @param dtoCargaAcademica Materia de la que se buscará la lista de indicadores por criterio
+     * @return Resultado del proceso
+     */
     public Integer getConfiguracion(DtoCargaAcademica dtoCargaAcademica)
     {
         int configuracion = 0;
-        TypedQuery<Integer> v = (TypedQuery<Integer>) f.getEntityManager().createQuery("SELECT MAX(l.listaindicadoresporcriterioporconfiguracionPK.configuracion) FROM Listaindicadoresporcriterioporconfiguracion l");
+        TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(l.listaindicadoresporcriterioporconfiguracionPK.configuracion) FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica =:cargaAcademica")
+                                                        .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga());
         
         if (v.getSingleResult() == 0) {
             configuracion = 0;
@@ -213,8 +234,8 @@ public class EjbAsignacionIndicadoresCriterios {
     }
     
     /**
-     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param listaIndicadores Nivel del que se obtendrán los indicadores por criterio
+     * Permite obtener la lista de indicadores del criterio SER de la materia
+     * @param listaIndicadores Lista de indicadores general
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
@@ -228,15 +249,15 @@ public class EjbAsignacionIndicadoresCriterios {
                     it.remove();
                 }
             }
-            return ResultadoEJB.crearCorrecto(listaIndicadores, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(listaIndicadores, "Lista de indicadores del criterio SER se obtuvo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SER. (EjbAsignacionIndicadoresCriterios.getIndicadoresCriterioSer)", e, null);
         }
     }
     
     /**
-     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param listaIndicadoresSer Nivel del que se obtendrán los indicadores por criterio
+     * Permite obtener el valor porcentual del criterio SER
+     * @param listaIndicadoresSer Lista de indicadores del criterio SER
      * @return Resultado del proceso
      */
     public Double getPorcentajeSer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadoresSer){ 
@@ -251,9 +272,9 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
    
-    /**
-     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param listaIndicadores Nivel del que se obtendrán los indicadores por criterio
+   /**
+     * Permite obtener la lista de indicadores del criterio SABER de la materia
+     * @param listaIndicadores Lista de indicadores general
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSaber(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
@@ -267,15 +288,32 @@ public class EjbAsignacionIndicadoresCriterios {
                     it.remove();
                 }
             }
-            return ResultadoEJB.crearCorrecto(listaIndicadores, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(listaIndicadores, "Lista de indicadores del criterio SABER se obtuvo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SABER. (EjbAsignacionIndicadoresCriterios.getIndicadoresCriterioSaber)", e, null);
         }
     }
     
-    /**
-     * Permite obtener la lista de indicadores por criterio de la materia para realizar la asignación posteriormente
-     * @param listaIndicadores Nivel del que se obtendrán los indicadores por criterio
+     /**
+     * Permite obtener el valor porcentual del criterio SABER
+     * @param listaIndicadoresSaber Lista de indicadores del criterio SABER
+     * @return Resultado del proceso
+     */
+    public Double getPorcentajeSaber(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadoresSaber){
+        try{
+            if(listaIndicadoresSaber == null || listaIndicadoresSaber.isEmpty()) return null;
+            Listaindicadoresporcriterioporconfiguracion obtenerPor = listaIndicadoresSaber.get(0);
+            Double porcentajeSaber = obtenerPor.getPorcentaje();
+
+            return porcentajeSaber;
+        }catch (Throwable e){
+            return null;
+        }
+    }
+
+   /**
+     * Permite obtener la lista de indicadores del criterio SABER - HACER de la materia
+     * @param listaIndicadores Lista de indicadores general
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
@@ -289,26 +327,52 @@ public class EjbAsignacionIndicadoresCriterios {
                     it.remove();
                 }
             }
-            return ResultadoEJB.crearCorrecto(listaIndicadores, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(listaIndicadores, "Lista de indicadores del criterio SABER - HACER se obtuvo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarConfUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SABER - HACER. (EjbAsignacionIndicadoresCriterios.getIndicadoresCriterioSaberHacer)", e, null);
+        }
+    }
+
+     /**
+     * Permite obtener el valor porcentual del criterio SABER - HACER
+     * @param listaIndicadoresSaberHacer Lista de indicadores del criterio SABER - HACER
+     * @return Resultado del proceso
+     */
+    public Double getPorcentajeSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadoresSaberHacer){
+        try{
+            if(listaIndicadoresSaberHacer == null || listaIndicadoresSaberHacer.isEmpty()) return null;
+            Listaindicadoresporcriterioporconfiguracion obtenerPor = listaIndicadoresSaberHacer.get(0);
+            Double porcentajeSaberHacer = obtenerPor.getPorcentaje();
+
+            return porcentajeSaberHacer;
+        }catch (Throwable e){
+            return null;
         }
     }
     
+     /**
+     * Permite eliminar la asignación de indicadores por criterio registrada
+     * @param dtoConfiguracionUnidadMateria Materia de la que se eliminará asignación
+     */
     public void eliminarConfUnidDetalles(DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria){
-        List<UnidadMateriaConfiguracionDetalle> listaConfDetalles = f.getEntityManager().createQuery("SELECT u FROM UnidadMateriaConfiguracionDetalle u WHERE u.configuracion.configuracion =:configuracion", UnidadMateriaConfiguracionDetalle.class)
+        List<UnidadMateriaConfiguracionDetalle> listaConfDetalles = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionDetalle u WHERE u.configuracion.configuracion =:configuracion", UnidadMateriaConfiguracionDetalle.class)
             .setParameter("configuracion", dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion())
             .getResultList();
       
         if (listaConfDetalles.size() > 0) {
 
-            Integer delete = f.getEntityManager().createQuery("DELETE FROM UnidadMateriaConfiguracionDetalle umcd WHERE umcd.configuracion.configuracion =:configuracion", UnidadMateriaConfiguracionDetalle.class)
+            Integer delete = em.createQuery("DELETE FROM UnidadMateriaConfiguracionDetalle umcd WHERE umcd.configuracion.configuracion =:configuracion", UnidadMateriaConfiguracionDetalle.class)
                     .setParameter("configuracion", dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion())
                     .executeUpdate();
         }
       
     }
     
+    /**
+     * Permite validar la suma de los porcentajes ingresados por indicador
+     * @param lista Lista de indicadores por criterio
+     * @return Resultado del proceso
+     */
     public Integer validarSumaPorcentajesIndicadores(List<Listaindicadoresporcriterioporconfiguracion> lista)
     {
             Integer valor = 0;
@@ -330,13 +394,14 @@ public class EjbAsignacionIndicadoresCriterios {
     }
    
      /**
-     * Permite guardar la configuración de la unidad materia
-     * @param listaSer Unidad configuracion materia que se va a guardar
-     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     * Permite guardar la asignación de indicadores del criterio SER
+     * @param listaSer Lista de indicadores que se guardarán
+     * @param dtoConfUnidadMateria Materia de la que guardará asignación
+     * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSer(List<Listaindicadoresporcriterioporconfiguracion> listaSer, DtoConfiguracionUnidadMateria dtoConfUnidadMateria){
         try{            
-            if(listaSer == null || listaSer.isEmpty()) return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
+            if(listaSer == null || listaSer.isEmpty()) return ResultadoEJB.crearErroneo(2, "La lista de indicadores SER no debe ser nula.");
             
             List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
             
@@ -346,11 +411,11 @@ public class EjbAsignacionIndicadoresCriterios {
                 try {
                     if(ser.getPorcentajeIndicador() != 0){
                     UnidadMateriaConfiguracionDetalle umcd = new UnidadMateriaConfiguracionDetalle();
-                    UnidadMateriaConfiguracion umc = f.getEntityManager().find(UnidadMateriaConfiguracion.class, dtoConfUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion());
+                    UnidadMateriaConfiguracion umc = em.find(UnidadMateriaConfiguracion.class, dtoConfUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion());
                     umcd.setConfiguracion(umc);
-                    Criterio criterio = f.getEntityManager().find(Criterio.class, ser.getListaindicadoresporcriterioporconfiguracionPK().getClaveCriterio());
+                    Criterio criterio = em.find(Criterio.class, ser.getListaindicadoresporcriterioporconfiguracionPK().getClaveCriterio());
                     umcd.setCriterio(criterio);
-                    Indicador indicador = f.getEntityManager().find(Indicador.class, ser.getListaindicadoresporcriterioporconfiguracionPK().getClaveIndicador());
+                    Indicador indicador = em.find(Indicador.class, ser.getListaindicadoresporcriterioporconfiguracionPK().getClaveIndicador());
                     umcd.setIndicador(indicador);
                     umcd.setPorcentaje(ser.getPorcentajeIndicador());
                     f.create(umcd);
@@ -361,16 +426,17 @@ public class EjbAsignacionIndicadoresCriterios {
                     Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            return ResultadoEJB.crearCorrecto(l, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SER se guardo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSer)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSer)", e, null);
         }
     }
     
      /**
-     * Permite guardar la configuración de la unidad materia
-     * @param listaSaber Unidad configuracion materia que se va a guardar
-     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     * Permite guardar la asignación de indicadores del criterio SABER
+     * @param listaSaber Lista de indicadores que se guardarán
+     * @param dtoConfUnidadMateria Materia de la que guardará asignación
+     * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSaber(List<Listaindicadoresporcriterioporconfiguracion> listaSaber, DtoConfiguracionUnidadMateria dtoConfUnidadMateria){
         try{            
@@ -382,11 +448,11 @@ public class EjbAsignacionIndicadoresCriterios {
                 try {
                     if(saber.getPorcentajeIndicador() != 0){
                     UnidadMateriaConfiguracionDetalle umcd = new UnidadMateriaConfiguracionDetalle();
-                    UnidadMateriaConfiguracion umc = f.getEntityManager().find(UnidadMateriaConfiguracion.class, dtoConfUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion());
+                    UnidadMateriaConfiguracion umc = em.find(UnidadMateriaConfiguracion.class, dtoConfUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion());
                     umcd.setConfiguracion(umc);
-                    Criterio criterio = f.getEntityManager().find(Criterio.class, saber.getListaindicadoresporcriterioporconfiguracionPK().getClaveCriterio());
+                    Criterio criterio = em.find(Criterio.class, saber.getListaindicadoresporcriterioporconfiguracionPK().getClaveCriterio());
                     umcd.setCriterio(criterio);
-                    Indicador indicador = f.getEntityManager().find(Indicador.class, saber.getListaindicadoresporcriterioporconfiguracionPK().getClaveIndicador());
+                    Indicador indicador = em.find(Indicador.class, saber.getListaindicadoresporcriterioporconfiguracionPK().getClaveIndicador());
                     umcd.setIndicador(indicador);
                     umcd.setPorcentaje(saber.getPorcentajeIndicador());
                     f.create(umcd);
@@ -397,16 +463,17 @@ public class EjbAsignacionIndicadoresCriterios {
                     Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            return ResultadoEJB.crearCorrecto(l, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SABER se guardo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaber)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaber)", e, null);
         }
     }
     
      /**
-     * Permite guardar la configuración de la unidad materia
-     * @param listaSaberHacer Unidad configuracion materia que se va a guardar
-     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     * Permite guardar la asignación de indicadores del criterio SABER - HACER
+     * @param listaSaberHacer Lista de indicadores que se guardarán
+     * @param dtoConfUnidadMateria Materia de la que guardará asignación
+     * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaSaberHacer, DtoConfiguracionUnidadMateria dtoConfUnidadMateria){
         try{            
@@ -418,11 +485,11 @@ public class EjbAsignacionIndicadoresCriterios {
                 try {
                     if(sabhac.getPorcentajeIndicador() != 0){
                     UnidadMateriaConfiguracionDetalle umcd = new UnidadMateriaConfiguracionDetalle();
-                    UnidadMateriaConfiguracion umc = f.getEntityManager().find(UnidadMateriaConfiguracion.class, dtoConfUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion());
+                    UnidadMateriaConfiguracion umc = em.find(UnidadMateriaConfiguracion.class, dtoConfUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion());
                     umcd.setConfiguracion(umc);
-                    Criterio criterio = f.getEntityManager().find(Criterio.class, sabhac.getListaindicadoresporcriterioporconfiguracionPK().getClaveCriterio());
+                    Criterio criterio = em.find(Criterio.class, sabhac.getListaindicadoresporcriterioporconfiguracionPK().getClaveCriterio());
                     umcd.setCriterio(criterio);
-                    Indicador indicador = f.getEntityManager().find(Indicador.class, sabhac.getListaindicadoresporcriterioporconfiguracionPK().getClaveIndicador());
+                    Indicador indicador = em.find(Indicador.class, sabhac.getListaindicadoresporcriterioporconfiguracionPK().getClaveIndicador());
                     umcd.setIndicador(indicador);
                     umcd.setPorcentaje(sabhac.getPorcentajeIndicador());
                     f.create(umcd);
@@ -433,9 +500,9 @@ public class EjbAsignacionIndicadoresCriterios {
                     Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            return ResultadoEJB.crearCorrecto(l, "La configuración de la unidad materia se guardo correctamente.");
+            return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SABER - HACER se guardo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la configuración de unidad materia. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaberHacer)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER - HACER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaberHacer)", e, null);
         }
     }
     
@@ -446,7 +513,7 @@ public class EjbAsignacionIndicadoresCriterios {
      */
     public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> getConfiguracionUnidadMateria(DtoCargaAcademica dtoCargaAcademica){
         try{
-            List<DtoConfiguracionUnidadMateria> unidadMatConfDto = f.getEntityManager().createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
+            List<DtoConfiguracionUnidadMateria> unidadMatConfDto = em.createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getResultStream()
                     .map(ca -> pack(ca).getValor())
@@ -467,7 +534,7 @@ public class EjbAsignacionIndicadoresCriterios {
         try{
             if(unidadMateriaConfiguracion == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar una configuración de la unidad nula.", DtoConfiguracionUnidadMateria.class);
 
-            UnidadMateria unidadMateria = f.getEntityManager().find(UnidadMateria.class, unidadMateriaConfiguracion.getIdUnidadMateria().getIdUnidadMateria());
+            UnidadMateria unidadMateria = em.find(UnidadMateria.class, unidadMateriaConfiguracion.getIdUnidadMateria().getIdUnidadMateria());
             
             DtoConfiguracionUnidadMateria dto = new DtoConfiguracionUnidadMateria(unidadMateria, unidadMateriaConfiguracion);
          
@@ -484,7 +551,7 @@ public class EjbAsignacionIndicadoresCriterios {
      */
     public ResultadoEJB<List<UnidadMateriaConfiguracionDetalle>> buscarAsignacionIndicadoresUnidad(DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria){
         try{
-            List<UnidadMateriaConfiguracionDetalle> listaUnidadMatConfDet = f.getEntityManager().createQuery("SELECT umcd FROM UnidadMateriaConfiguracionDetalle umcd WHERE umcd.configuracion.configuracion =:configuracion", UnidadMateriaConfiguracionDetalle.class)
+            List<UnidadMateriaConfiguracionDetalle> listaUnidadMatConfDet = em.createQuery("SELECT umcd FROM UnidadMateriaConfiguracionDetalle umcd WHERE umcd.configuracion.configuracion =:configuracion ORDER BY umcd.criterio.tipo, umcd.indicador.nombre ASC", UnidadMateriaConfiguracionDetalle.class)
                     .setParameter("configuracion", dtoConfiguracionUnidadMateria.getUnidadMateriaConfiguracion().getConfiguracion())
                     .getResultList();
             return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Existe asignación de indicadores por criterio para la unidad seleccionada.");
@@ -505,7 +572,7 @@ public class EjbAsignacionIndicadoresCriterios {
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - valor " + asigInd);
             List<Listaasignacionindicadorescargaacademica> listaUnidadMatConfDet = new ArrayList<>();
             if(asigInd == true){
-            listaUnidadMatConfDet = f.getEntityManager().createQuery("SELECT l FROM Listaasignacionindicadorescargaacademica l WHERE l.carga =:cargaAcademica", Listaasignacionindicadorescargaacademica.class)
+            listaUnidadMatConfDet = em.createQuery("SELECT l FROM Listaasignacionindicadorescargaacademica l WHERE l.carga =:cargaAcademica", Listaasignacionindicadorescargaacademica.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getResultList();
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaConsulta " + listaUnidadMatConfDet.size());
@@ -519,13 +586,18 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
     
+     /**
+     * Permite comparar asignación de indicadores por unidad registradas con el total de unidades de la materia
+     * @param dtoCargaAcademica Configuración de la que se buscará asignación de indicadores por criterio
+     * @return Resultado del proceso
+     */
     public Boolean compararUnidadesConfiguradasConTotales(DtoCargaAcademica dtoCargaAcademica)
     {
         try {
-            List<UnidadMateriaConfiguracion> listaConfiguracion = f.getEntityManager().createQuery("SELECT c FROM UnidadMateriaConfiguracion c WHERE c.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
+            List<UnidadMateriaConfiguracion> listaConfiguracion = em.createQuery("SELECT c FROM UnidadMateriaConfiguracion c WHERE c.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getResultList();
-            List<UnidadMateriaConfiguracionDetalle> listaUnidadMatConfDet = f.getEntityManager().createQuery("SELECT DISTINCT(cd.configuracion.configuracion) FROM UnidadMateriaConfiguracionDetalle cd WHERE cd.configuracion.carga.carga =:cargaAcademica", UnidadMateriaConfiguracionDetalle.class)
+            List<UnidadMateriaConfiguracionDetalle> listaUnidadMatConfDet = em.createQuery("SELECT DISTINCT(cd.configuracion.configuracion) FROM UnidadMateriaConfiguracionDetalle cd WHERE cd.configuracion.carga.carga =:cargaAcademica", UnidadMateriaConfiguracionDetalle.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getResultList();
 
@@ -538,5 +610,24 @@ public class EjbAsignacionIndicadoresCriterios {
             Logger.getLogger(EjbAsignacionIndicadoresCriterios.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+     /**
+     * Permite eliminar la asignación de indicadores por criterio
+     * @param cargaAcademica Carga académica de la que se guardará configuración
+     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     */
+    public ResultadoEJB<Integer> eliminarAsignacionIndicadores(CargaAcademica cargaAcademica){
+        try{
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.");
+
+            Integer delete = em.createQuery("DELETE FROM UnidadMateriaConfiguracionDetalle umcd WHERE umcd.configuracion.carga.carga =:carga", UnidadMateriaConfiguracionDetalle.class)
+                .setParameter("carga", cargaAcademica.getCarga())
+                .executeUpdate();
+
+            return ResultadoEJB.crearCorrecto(delete, "La asignación de indicadores por criterio se eliminó correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la asignación de indicadores por criterio. (EjbAsignacionIndicadoresCriterios.eliminarAsignacionIndicadores)", e, null);
+        }
     }
 }
