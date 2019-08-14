@@ -10,6 +10,7 @@ import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -87,9 +88,10 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
             if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
+
+            rol.setPeriodoActivo(resEvento.getValor().getPeriodo());
             rol.setEventoActivo(resEvento.getValor());
-            
-            
+
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDesendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
@@ -103,7 +105,7 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
             rol.getInstrucciones().add("Usted podrá visualizar en la tabla de consulta todos los grupos que se encuentran disponibles en el programa educativo previamente seleccionado");
             rol.getInstrucciones().add("Para asignar al tutor deberá dar clic en el campo vacío de la tabla y usted podrá escribir parte del nombre o número de nómina y elegir al docente en la lista desplegable que aparecerá después de una pausa de un segundo.");
             rol.getInstrucciones().add("En caso de reasignar o modificar al tutor de grupo usted deberá repetir el paso anterior cuantas veces sean necesarias");
-            
+            validaPeriodoRegistro();
         } catch (Exception e) {
             mostrarExcepcion(e);
         }
@@ -141,6 +143,7 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
             rol.setPrograma((AreasUniversidad) e.getNewValue());
             alertas();
             Ajax.update("grupo");//actualizaría al selector de grupos si lleva el id especificado
+            validaPeriodoRegistro();
         }
         
     }
@@ -169,6 +172,7 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
             rol.setTutoresGruposMap(resProgramas.getValor());
             Ajax.update("grupo");
             Ajax.update("programa");
+            validaPeriodoRegistro();
         }
     }
     
@@ -185,5 +189,18 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
             ejb.asignarTutorGrupo(grupoTutor, Operacion.PERSISTIR);
         }
         alertas();
+    }
+
+    public void validaPeriodoRegistro(){
+        if(Objects.equals(rol.getPeriodo().getPeriodo(), rol.getPeriodoActivo())){
+            rol.setValidaPeriodoRegistro(false);
+        }else{
+            rol.setValidaPeriodoRegistro(true);
+        }
+        if(rol.getPeriodo().getPeriodo() == rol.getPeriodoActivo()-1){
+            rol.setValidaPeriodoRegistro(false);
+        }else{
+            rol.setValidaPeriodoRegistro(true);
+        }
     }
 }
