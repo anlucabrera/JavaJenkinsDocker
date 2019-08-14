@@ -160,5 +160,5 @@ public class Criterio implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio[ criterio=" + criterio + " ]";
     }
-    
+
 }

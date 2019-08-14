@@ -17,6 +17,7 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Vistapagosprimercuatrimestre;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
@@ -76,6 +77,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     
     @PostConstruct
     public void init(){
+        setVistaControlador(ControlEscolarVistaControlador.INSCRIPCION);
         aspirante = new Aspirante();
         persona = new Persona();
         aspiranteValido = new Aspirante();

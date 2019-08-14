@@ -8,21 +8,21 @@ import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.CapturaCalificacionesRolDocente;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +50,8 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
 
     @PostConstruct
     public void init(){
+//        System.out.println("CapturaCalificacionesDocente.init");
+        setVistaControlador(ControlEscolarVistaControlador.CAPTURA_CALIFICACIONES);
         ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDocente(logon.getPersonal().getClave());
 //        System.out.println("resAcceso = " + resAcceso);
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
@@ -65,7 +67,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         ResultadoEJB<List<DtoUnidadConfiguracion>> resUnidades = null;
         if(!resEvento.getCorrecto()) {
             resUnidades = ejb.getUnidadesEnEvaluacion(rol.getDocenteLogueado());
-            System.out.println("resUnidades = " + resUnidades);
+//            System.out.println("resUnidades = " + resUnidades);
             if(!resUnidades.getCorrecto()){ tieneAcceso = false;return;}
         }//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
         ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosConCaptura(rol.getDocenteLogueado());
@@ -73,6 +75,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         if(!resPeriodos.getCorrecto()) {mostrarMensajeResultadoEJB(resPeriodos); tieneAcceso = false;}
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
         if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+        if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
         if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
         if(!resEvento.getCorrecto() && (resUnidades!= null && !resUnidades.getCorrecto())) mostrarMensajeResultadoEJB(resEvento);
         rol.setNivelRol(NivelRol.OPERATIVO);
@@ -159,18 +162,13 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
 
         ResultadoEJB<List<DtoUnidadConfiguracion>> resConfiguraciones = ejb.getConfiguraciones(rol.getCargaAcademicaSeleccionada());//obtener las configuraciones de la carga académica seleccionada
         if(!resConfiguraciones.getCorrecto()) mostrarMensajeResultadoEJB(resConfiguraciones);
-        else rol.setDtoUnidadConfiguraciones(resConfiguraciones.getValor());//almacenar el valor en la capa SET
-
-        if(rol.getDtoUnidadConfiguracionSeleccionada() != null){
-            System.out.println("rol.getDtoUnidadConfiguracionSeleccionada().getUnidadMateriaConfiguracionDetalles() = " + rol.getDtoUnidadConfiguracionSeleccionada().getUnidadMateriaConfiguracionDetalles());
-            rol.getDtoUnidadConfiguracionSeleccionada().getUnidadMateriaConfiguracionDetalles().forEach((criterio, detalles) -> {
-                System.out.println("criterio = " + criterio);
-                System.out.println("detalles.size() = " + detalles.size());
-                System.out.println("detalles = " + detalles);
-            });
+        else {
+            rol.setDtoUnidadConfiguraciones(resConfiguraciones.getValor());//almacenar el valor en la capa SET
+//            System.out.println("rol.getDtoUnidadConfiguraciones().size() = " + rol.getDtoUnidadConfiguraciones().size());
+//            rol.getDtoUnidadConfiguraciones().forEach(System.out::println);
         }
+//        System.out.println("rol.getDtoUnidadConfiguracionSeleccionada() = " + rol.getDtoUnidadConfiguracionSeleccionada());
         cambiarUnidad();
-//        System.out.println("rol.getCargaAcademicaSeleccionada(2) = " + caster.dtoCargaAcademicaToString(rol.getCargaAcademicaSeleccionada()));
     }
 
     public void cambiarUnidad(){
@@ -184,8 +182,22 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         if(!resGrupo.getCorrecto()) mostrarMensajeResultadoEJB(resGrupo);
         else {
             rol.setEstudiantesPorGrupo(resGrupo.getValor());
-            System.out.println("resGrupo = " + resGrupo.getValor().getEstudiantes().size());
+//            System.out.println("resGrupo = " + resGrupo.getValor().getEstudiantes().size());
         }
-        //TODO: agregar al grupo la alineacion con la materia de la unidad seleccionada
+    }
+
+    public void guardarCalificacion(ValueChangeEvent event){
+        System.out.println("event.getNewValue() = " + event.getNewValue());
+//        System.out.println("event.getComponent().getAttributes() = " + event.getComponent().getAttributes());
+        DtoCapturaCalificacion.Captura captura = (DtoCapturaCalificacion.Captura) event.getComponent().getAttributes().get("captura");
+        Double valor = Double.parseDouble(event.getNewValue().toString());
+        captura.getCalificacion().setValor(valor);
+        rol.getCalificacionMap().put(captura.getCalificacion().getCalificacion(), valor);
+        ResultadoEJB<Calificacion> res = ejb.guardarCapturaCalificacion(captura);
+        if(res.getCorrecto()) rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor());
+        else mostrarMensajeResultadoEJB(res);
+        System.out.println("captura = " + captura);
+        System.out.println("valor = " + valor);
+        System.out.println("rol.getCalificacionMap() = " + rol.getCalificacionMap());
     }
 }

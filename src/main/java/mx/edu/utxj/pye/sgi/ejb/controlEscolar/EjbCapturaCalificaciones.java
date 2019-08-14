@@ -8,6 +8,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
@@ -209,15 +210,19 @@ public class EjbCapturaCalificaciones {
 
     /**
      * Permite guardar la calificación capturada de un estudiante
-     * @param dtoCapturaCalificacion Empaquetado con la calificacion capturada
-     * @return Regresa TRUE si la calificación fuer guardada correctamente FALSE de lo contrario
+     * @param captura Empaquetado con la calificacion capturada
+     * @return Regresa la instancia de entity de calificacion guardada si la calificación fuer guardada correctamente FALSE de lo contrario
      */
-    public  ResultadoEJB<Boolean> guardarCapturaCalificacion(DtoCapturaCalificacion dtoCapturaCalificacion){
+    public  ResultadoEJB<Calificacion> guardarCapturaCalificacion(DtoCapturaCalificacion.Captura captura){
         try{
-            //TODO:guardar calificacion capturada
-            return ResultadoEJB.crearCorrecto(null, "Captura de calificación guardada");
+            //guardar calificacion capturada
+            Calificacion calificacionBD = em.find(Calificacion.class, captura.getCalificacion().getCalificacion());
+            if(calificacionBD == null) return ResultadoEJB.crearErroneo(2, "La clave de la calificación no se encuentra en la base de datos, para guardar una calificación ya debe estar persistida.", Calificacion.class);
+            calificacionBD.setValor(captura.getCalificacion().getValor());
+            f.edit(calificacionBD);
+            return ResultadoEJB.crearCorrecto(calificacionBD, "Captura de calificación guardada");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo guardar la captura de calificación(EjbCapturaCalificaciones.packCapturaCalificacion).", e, Boolean.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardar la captura de calificación(EjbCapturaCalificaciones.packCapturaCalificacion).", e, Calificacion.class);
         }
     }
 
