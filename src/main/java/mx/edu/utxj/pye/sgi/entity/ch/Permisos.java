@@ -82,7 +82,7 @@ public class Permisos implements Serializable {
     private PersonalCategorias categoria;
     @JoinColumn(name = "modulo", referencedColumnName = "modulo")
     @ManyToOne(optional = false)
-    private Modulos modulo;
+    private MenuDinamico modulo;
     @JoinColumn(name = "clave", referencedColumnName = "clave")
     @ManyToOne
     private Personal clave;
@@ -183,11 +183,11 @@ public class Permisos implements Serializable {
         this.categoria = categoria;
     }
 
-    public Modulos getModulo() {
+    public MenuDinamico getModulo() {
         return modulo;
     }
 
-    public void setModulo(Modulos modulo) {
+    public void setModulo(MenuDinamico modulo) {
         this.modulo = modulo;
     }
 

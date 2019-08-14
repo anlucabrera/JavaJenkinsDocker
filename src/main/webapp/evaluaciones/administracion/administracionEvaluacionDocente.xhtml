@@ -83,7 +83,7 @@
             <p:sticky target="tb" />
         </div>
         <p:tabView id="tabView">
-            <c:if test="#{administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.esSecretario}">
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.esSecretario}">
                 <p:tab id="completos" title="Estudiantes con evaluación completa">
                     <h:form id="fr1">
                         <p:outputPanel>
@@ -122,7 +122,7 @@
                                     </p:column>
                                 </c:if>
                                 <f:facet name="footer">
-                                    <c:if test="#{administracionEncuesta.dto.esSecretario}">
+                                    <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario}">
                                         <p:commandButton actionListener="#{administracionEvaluacionDocente.seguimientoSE()}" value="Actualizar información" icon="fa fa-refresh"
                                                          class="btn btn-primary" update="tabView:fr1:tblEvDocenteTer tabView:fr2:tblEvDocenteNoTer tabView:fr3:tblEvDocenteNoAcceso tabView:fr4:avanceEvaDocSA tabView:fr45:avanceEvaDocente" process="@form"/>
                                     </c:if>
@@ -232,7 +232,7 @@
 
             </c:if>
 
-            <c:if test="#{administracionEncuesta.dto.tutor or administracionEncuesta.dto.director or administracionEncuesta.dto.esSecretario}">
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.tutor or administracionEncuesta.dto.director or administracionEncuesta.dto.esSecretario}">
                 <p:tab title="Porcentaje de avance">
                     <h:form id="fr45">
                         <p:outputPanel>
@@ -272,7 +272,7 @@
                 </p:tab>
             </c:if>
 
-            <c:if test="#{administracionEncuesta.dto.esSecretario}">
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario}">
                 <p:tab title="Porcentaje de avance por Programa Educativo">
                     <h:form id="fr4">
                         <p:outputPanel>

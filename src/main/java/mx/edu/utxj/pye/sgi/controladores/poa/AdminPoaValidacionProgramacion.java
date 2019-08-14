@@ -83,7 +83,7 @@ public class AdminPoaValidacionProgramacion implements Serializable {
             procesopoa = new Procesopoa();
             claveArea = Short.parseShort(event.getNewValue().toString());
             areaPOASeleccionada = ejbAreasLogeo.mostrarAreasUniversidad(claveArea);
-            procesopoa = ejbUtilidadesCH.mostrarEtapaPOA(claveArea);
+            procesopoa = ejbUtilidadesCH.mostrarEtapaPOAArea(claveArea);
             consultarListasValidacionFinal();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

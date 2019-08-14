@@ -503,6 +503,7 @@
                                                              converter="entidadConverter2"
                                                              style="padding-top: 0px;"
                                                              styleClass="campo2Partes"
+                                                             valueChangeListener="#{controladorSesionesPsicopedagogia.actualizaProgramaEducativoChange}"
                                                              >
                                                 <f:selectItem itemLabel=" - Seleccione - "
                                                               itemValue="#{null}"/>
@@ -511,9 +512,10 @@
                                                                itemValue="#{programaEducativo}"
                                                                itemLabel="#{programaEducativo.nombre}"
                                                                itemDescription="#{programaEducativo.siglas}"/>
+                                                <p:ajax process="@this" update="@this"/>
                                                 <p:message for="somProgramasEducativos" />
                                             </p:selectOneMenu>
-                                            <p:outputLabel value="Programa Educativo: " for="somProgramasEducativos" />
+                                            <p:outputLabel value="#{controladorSesionesPsicopedagogia.dto.dtoSesionPsicopedagogia.sesionIndividualMensualPsicopedogia.otroTipoSesion.otroTipoSesionPsicopedagogia eq 2?'Área Universidad':'Programa Educativo'}" for="somProgramasEducativos" />
                                         </div>
                                     </div>
                                 </c:if>

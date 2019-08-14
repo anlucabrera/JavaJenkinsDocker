@@ -50,6 +50,10 @@ public class AdministracionEncuesta implements Serializable{
                         dto.esDeIyE = true;
                         aperturarEncuestas();
                     }
+                    if(logonMB.getPersonal().getAreaOperativa() == 11 && logonMB.getPersonal().getAreaSuperior() == 2){
+                        dto.esServEst = true;
+                        aperturarEncuestas();
+                    }
                     if(!ejbAdmEncuesta.estTutordeGrupo(dto.cveTrabajador).isEmpty()){
                         dto.tutor = true;
                         aperturarEncuestas();
@@ -59,11 +63,7 @@ public class AdministracionEncuesta implements Serializable{
                         aperturarEncuestas();
                     }
 
-                    if(!ejbAdmEncuesta.esPlaneacion(1, Short.parseShort("2"), Short.parseShort("18"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
-                        dto.planeacion = true;
-                        aperturarEncuestas();
-                    }
-                    if(!ejbAdmEncuesta.esPlaneacion(1, Short.parseShort("2"), Short.parseShort("18"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
+                    if(!ejbAdmEncuesta.esPlaneacion(1, Short.parseShort("2"), Short.parseShort("18"), Short.parseShort("48"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
                         dto.planeacion = true;
                         aperturarEncuestas();
                     }

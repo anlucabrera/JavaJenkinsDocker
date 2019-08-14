@@ -560,6 +560,26 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
     @Override
     public ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> getListResultadosDocenteMateriabyMatricula(Evaluaciones evaluacion, int matricula) {
         try{
+
+            List<EvaluacionDocentesMateriaResultados> listResultados = new ArrayList<>();
+            if(evaluacion==null){return ResultadoEJB.crearErroneo(2,listResultados,"La evaluación no debe ser nula.");}
+            if(matricula == 0){return ResultadoEJB.crearErroneo(3,listResultados,"La matricula no debe ser nula");}
+            //TODO: Busca si existen resultados de la evaluación por la matrcicula del estudiante
+            listResultados = f.getEntityManager().createQuery("select e from EvaluacionDocentesMateriaResultados e where e.evaluaciones.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultadosPK.evaluador=:evaluador", EvaluacionDocentesMateriaResultados.class)
+                    .setParameter("evaluacion",evaluacion.getEvaluacion())
+                    .setParameter("evaluador",matricula)
+                    .getResultList()
+                ;
+            if (listResultados.isEmpty() || listResultados ==null){return ResultadoEJB.crearErroneo(4,listResultados,"No se han econtrado registro del estudiante");}
+            else {return ResultadoEJB.crearCorrecto(listResultados,"Se han encontrado registro");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de resultados por estudiante (EJBEvaluacionDocenteMteria, getListaReusltadosDocenteMateriabyMatricula)", e, null);
+        }
+    }
+
+    @Override
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> getListResultadosDocenteMateriaCompletosbyMatricula(Evaluaciones evaluacion, int matricula) {
+        try{
             //TODO: Obtiene la los resultados completos por evaluacion y por la matricula
             List<EvaluacionDocentesMateriaResultados> listaResultados= f.getEntityManager().createQuery("select e from EvaluacionDocentesMateriaResultados e where e.evaluacionDocentesMateriaResultadosPK.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultadosPK.evaluador=:matricula and e.completo=true",EvaluacionDocentesMateriaResultados.class)
                     .setParameter("evaluacion",evaluacion.getEvaluacion())
@@ -570,7 +590,7 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
             else{ return ResultadoEJB.crearCorrecto(listaResultados,"Lista de resultados encontrada");}
 
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de resultados por estudiante (EJBEvaluacionDocenteMteria, getListaReusltadosDocenteMateriabyMatricula)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de resultados por estudiante (EJBEvaluacionDocenteMteria, getListaReusltadosDocenteMateriaCompletobyMatricula)", e, null);
         }
     }
 }

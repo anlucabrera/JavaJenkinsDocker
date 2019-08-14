@@ -878,7 +878,7 @@ public class ServicioPlantillasCAExcel implements EjbPlantillasCAExcel {
         String plantillaC = rutaPlantillaC.concat(PARTACTFORMINT_ACTUALIZADO);
         Map beans = new HashMap();
         beans.put("claveActividad", actForIntClave);
-        beans.put("matriculaPeriodosEscolares", ejbMatriculaPeriodosEscolares.getMatriculasVigentes());
+        beans.put("DTOMatriculaPeriodosEscolares", ejbMatriculaPeriodosEscolares.getDtoMatriculasVigentes());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 

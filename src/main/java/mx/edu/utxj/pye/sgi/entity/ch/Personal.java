@@ -127,6 +127,8 @@ public class Personal implements Serializable {
     private List<FormacionAcademica> formacionAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
     private List<EvaluacionTutoresResultados> evaluacionTutoresResultadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "persona")
+    private List<Permisosadminstracion> permisosadminstracionList;
     @JoinColumn(name = "categoria_360", referencedColumnName = "categoria")
     @ManyToOne
     private PersonalCategorias categoria360;
@@ -454,6 +456,15 @@ public class Personal implements Serializable {
 
     public void setEvaluacionTutoresResultadosList(List<EvaluacionTutoresResultados> evaluacionTutoresResultadosList) {
         this.evaluacionTutoresResultadosList = evaluacionTutoresResultadosList;
+    }
+
+    @XmlTransient
+    public List<Permisosadminstracion> getPermisosadminstracionList() {
+        return permisosadminstracionList;
+    }
+
+    public void setPermisosadminstracionList(List<Permisosadminstracion> permisosadminstracionList) {
+        this.permisosadminstracionList = permisosadminstracionList;
     }
 
     public PersonalCategorias getCategoria360() {

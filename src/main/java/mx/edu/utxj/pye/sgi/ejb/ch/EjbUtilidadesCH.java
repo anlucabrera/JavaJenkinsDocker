@@ -4,11 +4,16 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
+import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
+import mx.edu.utxj.pye.sgi.entity.ch.Permisosadminstracion;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 
@@ -26,11 +31,15 @@ public interface EjbUtilidadesCH {
 
     public List<Procesopoa> mostrarProcesopoa() throws Throwable;
 
-    public Procesopoa mostrarEtapaPOA(Short calveArea) throws Throwable;
+    public Procesopoa mostrarEtapaPOAArea(Short calveArea) throws Throwable;
+
+    public Procesopoa mostrarEtapaPOAPersona(Integer responsable) throws Throwable;
 
     public Procesopoa actualizarEtapaPOA(Procesopoa procesopoa) throws Throwable;
 
+    public Calendarioevaluacionpoa mostrarCalendarioEvaluacion(Date fecha) throws Throwable;
 ////////////////////////////////////////////////////////////////////////////////Eventos Áreas
+
     public List<EventosAreas> mostrarEventosesAreases() throws Throwable;
 
     public EventosAreas mostrarEventoAreas(EventosAreasPK areasPK);
@@ -69,5 +78,8 @@ public interface EjbUtilidadesCH {
 
 ////////////////////////////////////////////////////////////////////////////////Elementos Generales Personal
     public Integer mostrarListaPersonalCategoriasAreas(Short categoria, Short area) throws Throwable;
+
+////////////////////////////////////////////////////////////////////////////////Menu
+    public List<MenuDinamico> mostrarListaMenu(ListaPersonal personal, Integer nivel, String titulo, String tipoUsuario);
 
 }

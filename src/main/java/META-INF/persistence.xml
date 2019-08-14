@@ -10,4 +10,13 @@
             <property name="eclipselink.jdbc.password" value=""/>
         </properties>
     </persistence-unit>
+    <persistence-unit name="NewPersistenceUnit">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <properties>
+            <property name="eclipselink.jdbc.url" value=""/>
+            <property name="eclipselink.jdbc.driver" value=""/>
+            <property name="eclipselink.jdbc.user" value=""/>
+            <property name="eclipselink.jdbc.password" value=""/>
+        </properties>
+    </persistence-unit>
 </persistence>

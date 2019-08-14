@@ -74,13 +74,7 @@ public class cuadroMandoIntegralArea implements Serializable {
     @PostConstruct
     public void init() {
         numeroMes = fechaActual.getMonth();
-        if (numeroMes == 0) {
-            numeroMes = 11;
-            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 102));
-        } else {
-            numeroMes = numeroMes - 1;
-            ejercicioFiscal = Short.parseShort(String.valueOf(fechaActual.getYear() - 101));
-        }
+        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();
         
         switch (numeroMes) {
             case 0:                mes = "Avance al mes de: Enero";                break;
@@ -96,9 +90,17 @@ public class cuadroMandoIntegralArea implements Serializable {
             case 10:                mes = "Avance al mes de: Noviembre";                break;
             case 11:                mes = "Avance al mes de: Diciembre del 20" + (fechaActual.getYear() - 101);                break;
         }
+        reseteador();
         cmiEnGeneral();
         cmiPorEje();
-        actividadesProyecto();
+    }
+    
+public void reseteador() {
+        cmiGeneral = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe1 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe2 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe3 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe4 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(), false);
     }
 
     public void cmiEnGeneral() {
@@ -146,7 +148,7 @@ public class cuadroMandoIntegralArea implements Serializable {
     public ResultadosCMI cmiEje(EjesRegistro er) {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
-        actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasEje(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, er);
+            actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasEje(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, er);
         List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
         actividadesPoasFiltradas.clear();
         actividadesPoasFiltradas = actividadesFiltradas(actividadesPoas);
@@ -159,7 +161,6 @@ public class cuadroMandoIntegralArea implements Serializable {
         grafRA.setLabelHeightAdjust(10);
         grafRA.setIntervalOuterRadius(100);
         grafRA.setGaugeLabel(avance + " % avance");
-
         return new ResultadosCMI(er.getNombre(), programadas, realizadas, avance, graf, grafRA, true);
     }
 
@@ -172,7 +173,7 @@ public class cuadroMandoIntegralArea implements Serializable {
 
         if (actividadesPoa.isEmpty()) {
             for (incremento = 0; incremento <= numeroMes; incremento++) {
-                  graf.add(new Grafica(poau.obtenerMesNombre(incremento), 0D));
+                graf.add(new Grafica(poau.obtenerMesNombre(incremento), 0D));
             }
         } else {
             actividadesPoa.forEach((t) -> {
@@ -201,27 +202,26 @@ public class cuadroMandoIntegralArea implements Serializable {
                     }
                 }
             });
-            
-            for(incremento = 0; incremento <= numeroMes; incremento++) {
+            for (incremento = 0; incremento <= numeroMes; incremento++) {
                 alca = 0;
                 progra = 0;
                 actividadesPoa.forEach((t) -> {
                     if (t.getBandera().equals("y")) {
                         Integer tP = 0;
                         Integer tR = 0;
-                        switch (numeroMes) {
-                            case 11:                                tR = tR + t.getNADiciembre();                                tP = tP + t.getNPDiciembre();
-                            case 10:                                tR = tR + t.getNANoviembre();                                tP = tP + t.getNPNoviembre();
-                            case 9:                                tR = tR + t.getNAOctubre();                                tP = tP + t.getNPOctubre();
-                            case 8:                                tR = tR + t.getNASeptiembre();                                tP = tP + t.getNPSeptiembre();
-                            case 7:                                tR = tR + t.getNAAgosto();                                tP = tP + t.getNPAgosto();
-                            case 6:                                tR = tR + t.getNAJulio();                                tP = tP + t.getNPJulio();
-                            case 5:                                tR = tR + t.getNAJunio();                                tP = tP + t.getNPJunio();
-                            case 4:                                tR = tR + t.getNAMayo();                                tP = tP + t.getNPMayo();
-                            case 3:                                tR = tR + t.getNAAbril();                                tP = tP + t.getNPAbril();
-                            case 2:                                tR = tR + t.getNAMarzo();                                tP = tP + t.getNPMarzo();
-                            case 1:                                tR = tR + t.getNAFebrero();                                tP = tP + t.getNPFebrero();
-                            case 0:                                tR = tR + t.getNAEnero();                                tP = tP + t.getNPEnero();                                break;
+                        switch (incremento) {
+                            case 11:                            tR = tR + t.getNADiciembre();                            tP = tP + t.getNPDiciembre();
+                            case 10:                            tR = tR + t.getNANoviembre();                            tP = tP + t.getNPNoviembre();
+                            case 9:                            tR = tR + t.getNAOctubre();                            tP = tP + t.getNPOctubre();
+                            case 8:                            tR = tR + t.getNASeptiembre();                            tP = tP + t.getNPSeptiembre();
+                            case 7:                            tR = tR + t.getNAAgosto();                            tP = tP + t.getNPAgosto();
+                            case 6:                            tR = tR + t.getNAJulio();                            tP = tP + t.getNPJulio();
+                            case 5:                            tR = tR + t.getNAJunio();                            tP = tP + t.getNPJunio();
+                            case 4:                            tR = tR + t.getNAMayo();                            tP = tP + t.getNPMayo();
+                            case 3:                            tR = tR + t.getNAAbril();                            tP = tP + t.getNPAbril();
+                            case 2:                            tR = tR + t.getNAMarzo();                            tP = tP + t.getNPMarzo();
+                            case 1:                            tR = tR + t.getNAFebrero();                            tP = tP + t.getNPFebrero();
+                            case 0:                            tR = tR + t.getNAEnero();                            tP = tP + t.getNPEnero();                            break;
                         }
                         if (tP != 0) {
                             progra = progra + 1;
@@ -245,7 +245,7 @@ public class cuadroMandoIntegralArea implements Serializable {
             avance = 0D;
         }
     }
-
+    
     public List<ActividadesPoa> actividadesFiltradas(List<ActividadesPoa> actividadesPoas) {
         List<ActividadesPoa> actividadesPoasRegistradas = new ArrayList<>();
         actividadesPoasRegistradas.clear();
@@ -270,6 +270,14 @@ public class cuadroMandoIntegralArea implements Serializable {
             }
         };
         return new MeterGaugeChartModel(avance, intervals);
+    }
+
+    public String datosGraica(List<cuadroMandoIntegralPlaneacion.Grafica> er) {
+        valores = "";
+        er.forEach((t) -> {
+            valores = valores + "---- mes: " + t.getMes() + " avance: " + t.getAvance() + "----";
+        });
+        return valores;
     }
 
     public void actividadesProyecto() {
@@ -536,8 +544,8 @@ public class cuadroMandoIntegralArea implements Serializable {
             this.estrategiases = estrategiases;
         }
     }
-
-    public static class ResultadosCMI {
+    
+ public static class ResultadosCMI {
 
         @Getter        @Setter        private String ejesRegistro;
         @Getter        @Setter        private Integer programadas;

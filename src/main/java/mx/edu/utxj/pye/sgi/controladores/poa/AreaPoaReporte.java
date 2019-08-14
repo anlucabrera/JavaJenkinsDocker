@@ -56,24 +56,24 @@ public class AreaPoaReporte implements Serializable {
         lineasAccions.clear();
 
         List<EjesRegistro> ejesRegistros = new ArrayList<>();
-        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal);
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((ej) -> {
                 List<Estrategias> listEstrategias = new ArrayList<>();
-                listEstrategias = ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                listEstrategias = ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea());
                 if (!listEstrategias.isEmpty()) {
                     estrategiases = new ArrayList<>();
                     estrategiases.clear();
                     listEstrategias.forEach((es) -> {
                         List<LineasAccion> listLineasAccions = new ArrayList<>();
-                        listLineasAccions = ejbCatalogosPoa.mostrarLineasAccionRegistroParametros(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, ej, es);
+                        listLineasAccions = ejbCatalogosPoa.mostrarLineasAccionRegistroParametros(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, ej, es);
                         if (!listLineasAccions.isEmpty()) {
                             lineasAccions = new ArrayList<>();
                             lineasAccions.clear();
                             listLineasAccions.forEach((li) -> {
                                 CuadroMandoIntegral cmi = ejbCatalogosPoa.mostrarCuadroMandoIntegralRegistrpo(ejercicioFiscal, ej, es, li).get(0);
                                 List<ActividadesPoa> listActividadesPoas = new ArrayList<>();
-                                listActividadesPoas = ejbRegistroActividades.mostrarActividadesPoaCuadroDeMandoRecurso(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, cmi);
+                                listActividadesPoas = ejbRegistroActividades.mostrarActividadesPoaCuadroDeMandoRecurso(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, cmi);
                                 lineasAccions.add(new ListaLineasAccion(li, listActividadesPoas));
                             });
                         }

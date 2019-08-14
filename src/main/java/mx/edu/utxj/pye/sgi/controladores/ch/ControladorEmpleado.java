@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
@@ -27,8 +29,10 @@ import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Notificaciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Permisosadminstracion;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
@@ -53,15 +57,20 @@ public class ControladorEmpleado implements Serializable {
 
 
     @Getter    @Setter    private Integer empleadoLogeado;
+    @Getter    @Setter    private List<Integer> administradores = new ArrayList();
     @Getter    @Setter    private String clavePersonalLogeado, mandos = "", fechaCVBencimiento, fechaFuncionesBencimiento, fechaLimiteCurriculumVitae = "", fechaLimiteRegistroFunciones = "",
             mensajeIndex1 = "", mensajeIndex2 = "";
 
-    @Getter    @Setter    private Boolean fechaLimiteCV, fechaLimiteFunciones, tienePOA = false, estiloInfo = false, mensajeGeneral = false;
+    @Getter    @Setter    private Boolean fechaLimiteCV, fechaLimiteFunciones, tienePOA = false, estiloInfo = false, mensajeGeneral = false,evaluable=false;
     @Getter    @Setter    private List<Modulosregistro> nuevaListaModulosregistro = new ArrayList<>();
 
     @Getter    @Setter    private EventosAreas nuevaEventosAreas = new EventosAreas();
 
     @Getter    @Setter    private AreasUniversidad nuevaAreasUniversidad = new AreasUniversidad();
+    @Getter    @Setter    private List<MenuDinamico> moduloses = new ArrayList();
+    
+    @Getter    @Setter    private List<Menu> menus = new ArrayList();
+    @Getter    @Setter    private Nivel3 menu;
 
     @Getter    @Setter    private LocalDate fechaActual = LocalDate.now();
     @Getter    @Setter    private LocalDateTime fechaActualHora = LocalDateTime.now();
@@ -85,9 +94,18 @@ public class ControladorEmpleado implements Serializable {
 //      empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNominaShiro().getClaveNomina());
         // fin de asignación
         clavePersonalLogeado = empleadoLogeado.toString();
+        administradores = new ArrayList();
+        administradores.clear();
+        administradores.add(302);
+        administradores.add(564);
+        administradores.add(300);
+        administradores.add(148);
+        administradores.add(284);
+        administradores.add(613);
         mostrarPerfilLogeado();
         informacionComplementariaAEmpleadoLogeado();
         areaPoa();
+        crearMenuAdministrador();
     }
 
     public void informacionComplementariaAEmpleadoLogeado() {
@@ -129,16 +147,6 @@ public class ControladorEmpleado implements Serializable {
             if (nuevoOBJListaPersonal == null) {
                 Messages.addGlobalFatal("Sin datos para la clave " + empleadoLogeado);
             }
-            
-            switch (nuevoOBJListaPersonal.getClave()) {
-                case 97:
-                    nuevoOBJListaPersonal.setAreaOperativa(Short.parseShort("21"));
-                    break;
-                case 343:
-                    nuevoOBJListaPersonal.setAreaOperativa(Short.parseShort("19"));
-                    break;
-            }
-
             fechasModulos();
 
         } catch (Throwable ex) {
@@ -187,21 +195,32 @@ public class ControladorEmpleado implements Serializable {
     public void areaPoa() {
         try {
             procesopoa = new Procesopoa();
-            nuevaAreasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(nuevoOBJListaPersonal.getAreaOperativa());
-            if (nuevaAreasUniversidad != null) {
-                if (nuevaAreasUniversidad.getTienePoa()) {
-                    if (Objects.equals(nuevaAreasUniversidad.getResponsable(), empleadoLogeado)) {
-                        tienePOA = true;
-                        procesopoa = ejbUtilidadesCH.mostrarEtapaPOA(nuevoOBJListaPersonal.getAreaOperativa());
-                        eventosRegistro();
-                    } else {
-                        if (nuevaAreasUniversidad.getArea() == 6) {
-                            procesopoa = ejbUtilidadesCH.mostrarEtapaPOA(nuevoOBJListaPersonal.getAreaOperativa());
-                            eventosRegistro();
-                        }
-                        tienePOA = false;
-                    }
+            procesopoa = ejbUtilidadesCH.mostrarEtapaPOAPersona(nuevoOBJListaPersonal.getClave());
+            if (procesopoa == null) {
+                if (administradores.contains(nuevoOBJListaPersonal.getClave())) {
+                    procesopoa = ejbUtilidadesCH.mostrarEtapaPOAArea(nuevoOBJListaPersonal.getAreaOperativa());
                 }
+            }
+            if (procesopoa != null) {
+                if (procesopoa.getEvaluacion() == null) {
+                    procesopoa.setEvaluacion(new Calendarioevaluacionpoa());
+                    Calendarioevaluacionpoa periodoEvaluacion = new Calendarioevaluacionpoa();
+                    periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(fechaActual));
+                    if (periodoEvaluacion != null) {
+                        evaluable = true;
+                    } else {
+                        periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 1)));
+                        if (periodoEvaluacion != null) {
+                            periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 25)));
+                        }
+                    }
+                    procesopoa.setEvaluacion(periodoEvaluacion);
+                }
+                tienePOA = true;
+                eventosRegistro();
+            } else {
+                tienePOA = false;
+                evaluable = false;
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
@@ -247,4 +266,128 @@ public class ControladorEmpleado implements Serializable {
          }
      }
 
-   }
+//////////////////////////////////////////////////////////////////////////////// Menú dinamico
+    public void crearMenuAdministrador() {
+        try {
+//            List<MenuDinamico> msN1 = new ArrayList<>();
+//            msN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, "Administrador","Trabajador");
+//            if (!msN1.isEmpty()) {
+//                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(msN1)" + msN1.size());
+//                msN1.forEach((n1) -> {
+                    List<MenuDinamico> msN2 = new ArrayList<>();
+//                    msN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, n1.getTituloNivel1(),"Trabajador");
+                    msN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, "Administrador","Trabajador");
+                    List<Nivel2> nivel2s = new ArrayList<>();
+                    if (!msN2.isEmpty()) {
+//                        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(n1)" + n1.getTituloNivel1() + "-msN2-" + msN2.size());
+                        msN2.forEach((n2) -> {
+                            List<MenuDinamico> msN3 = new ArrayList<>();
+                            msN3 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 3, n2.getTituloNivel2(),"Trabajador");
+                            List<Nivel3> nivel3s = new ArrayList<>();
+                            if (!msN3.isEmpty()) {
+//                                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(n2)" + n2.getTituloNivel2() + "-msN3-" + msN3.size());
+                                msN3.forEach((n3) -> {
+//                                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(n3)" + n3.getTitulonivel3());
+                                    List<MenuDinamico> msN4 = new ArrayList<>();
+                                    msN4 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 4, n3.getTitulonivel3(),"Trabajador");
+                                    List<Nivel4> nivel4s = new ArrayList<>();
+                                    if (!msN4.isEmpty()) {
+//                                        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(n3)" + n3.getTitulonivel3() + "-msN4-" + msN4.size());
+                                        msN4.forEach((n4) -> {
+                                            nivel4s.add(new Nivel4(n4.getTitulonivel4(), n4.getIconoNivel4(), n4.getEnlacenivel4(),n4.getEstatus()));
+                                        });
+                                    }
+                                    nivel3s.add(new Nivel3(n3.getTitulonivel3(), n3.getIconoNivel3(), n3.getEnlacenivel3(),n3.getEstatus(), nivel4s));
+                                });
+//                                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(nivel3s)" + nivel3s.size());
+                            }
+                            nivel2s.add(new Nivel2(n2.getTituloNivel2(), n2.getIconoNivel2(), n2.getEnlaceNivel2(),n2.getEstatus(), nivel3s));
+                        });
+//                        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(nivel2s)" + nivel2s.size());
+                    }
+                    menus.add(new Menu("Administrador", nivel2s));
+//                    menus.add(new Menu(n1.getTituloNivel1(), nivel2s));
+//                });
+////                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(menus)" + menus.size());
+//            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    
+public static class listaEstrategiaActividades {
+
+        @Getter        @Setter        private String modulo;
+        @Getter        @Setter        private List<Permisosadminstracion> ps;
+
+        public listaEstrategiaActividades(String modulo, List<Permisosadminstracion> ps) {
+            this.modulo = modulo;
+            this.ps = ps;
+        }      
+        
+    }
+
+    public static class Menu {
+
+        @Getter        @Setter        private String titulo;
+        @Getter        @Setter        private List<Nivel2> nivel2s;
+
+        public Menu(String titulo, List<Nivel2> nivel2s) {
+            this.titulo = titulo;
+            this.nivel2s = nivel2s;
+        }
+    }
+
+    public static class Nivel2 {
+
+        @Getter        @Setter        private String titulo;
+        @Getter        @Setter        private String icono;
+        @Getter        @Setter        private String enlace;
+        @Getter        @Setter        private String estaus;
+        @Getter        @Setter        private List<Nivel3> nivel3s;
+
+        public Nivel2(String titulo, String icono, String enlace, String estaus, List<Nivel3> nivel3s) {
+            this.titulo = titulo;
+            this.icono = icono;
+            this.enlace = enlace;
+            this.estaus = estaus;
+            this.nivel3s = nivel3s;
+        }
+    }
+
+    public static class Nivel3 {
+
+        @Getter        @Setter        private String titulo;
+        @Getter        @Setter        private String icono;
+        @Getter        @Setter        private String enlace;
+        @Getter        @Setter        private String estaus;
+        @Getter        @Setter        private List<Nivel4> nivel4s;
+
+        public Nivel3(String titulo, String icono, String enlace, String estaus, List<Nivel4> nivel4s) {
+            this.titulo = titulo;
+            this.icono = icono;
+            this.enlace = enlace;
+            this.estaus = estaus;
+            this.nivel4s = nivel4s;
+        }   
+    }
+
+    public static class Nivel4 {
+
+        @Getter        @Setter        private String titulo;
+        @Getter        @Setter        private String icono;
+        @Getter        @Setter        private String enlace;
+        @Getter        @Setter        private String estaus;
+
+        public Nivel4(String titulo, String icono, String enlace, String estaus) {
+            this.titulo = titulo;
+            this.icono = icono;
+            this.enlace = enlace;
+            this.estaus = estaus;
+        }   
+    }
+
+}
+

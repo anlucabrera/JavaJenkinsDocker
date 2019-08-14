@@ -105,7 +105,7 @@ public class AreaPoaEvaluacion implements Serializable {
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();
         mes = controladorEmpleado.getProcesopoa().getEvaluacion().getFechaInicio().getMonth();
         mesNombre = controladorEmpleado.getProcesopoa().getEvaluacion().getMesEvaluacion();
-        datosArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        datosArea(controladorEmpleado.getProcesopoa().getArea());
 
         consultarListas();
         System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
@@ -163,7 +163,7 @@ public class AreaPoaEvaluacion implements Serializable {
                     if (ejes != null) {
                         estrategiases.clear();
                         estrategiases.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
-                        ejbCatalogosPoa.getEstarategiasPorEje(ejes,ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).forEach((t) -> {
+                        ejbCatalogosPoa.getEstarategiasPorEje(ejes,ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea()).forEach((t) -> {
                             estrategiases.add(t);
                         });
                     }
@@ -264,9 +264,6 @@ public class AreaPoaEvaluacion implements Serializable {
         actividadesPoasAreasEjes.clear();
         listaListaEjeEstrategia.clear();
         listaEstrategiaActividadesesEje.clear();
-
-        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias, ejes, ejercicioFiscal, claveArea))));
-            
         if (mes <= 3) {
             cuatrimestre = 1;
         } else {
@@ -276,8 +273,11 @@ public class AreaPoaEvaluacion implements Serializable {
                 cuatrimestre = 3;
             }
         }
-                
+
         mostradaL = 1;
+
+        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias, ejes, ejercicioFiscal, claveArea))));
+
     }
 
     public List<actividad> aconsultarTotales(List<ActividadesPoa> actividadesPoas) {
@@ -292,7 +292,7 @@ public class AreaPoaEvaluacion implements Serializable {
             totalPCuatrimestre = 0D;
             porcentejeAlCorte = 0D;
             porcentajeCuatrimestre = 0D;
-
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AreaPoaEvaluacion.aconsultarTotales(1)"+cuatrimestre);
             switch (cuatrimestre) {
                 case 1:
                     totalACuatrimestre = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril();
@@ -310,7 +310,6 @@ public class AreaPoaEvaluacion implements Serializable {
 
             totalACorte = pOAUtilidades.totalAlcanzado(t, mes);
             totalPCorte = pOAUtilidades.totalProgramado(t, mes);
-
             porcentajeCuatrimestre = pOAUtilidades.obtenerTotalPorcejateGeneral(totalACuatrimestre, totalPCuatrimestre);
             porcentejeAlCorte = pOAUtilidades.obtenerTotalPorcejateGeneral(totalACorte, totalPCorte);
             porcentajeCuatrimestre = pOAUtilidades.obtenerTotalPorcejate(porcentajeCuatrimestre);
@@ -323,7 +322,7 @@ public class AreaPoaEvaluacion implements Serializable {
 
         return actividades;
     }
-    
+
     public void actualizarNuavActividad() {
         actividadesPoaEditando = ejbRegistroActividades.actualizaActividadesPoa(actividadesPoaEditando);
         if (mostradaL == 1) {
@@ -351,7 +350,7 @@ public class AreaPoaEvaluacion implements Serializable {
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(4)"+modificada.getNumeroP());
         System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(5)"+modificada.getNumeroS());
         if (modificada.getNumeroS() != 0) {
-            actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),controladorEmpleado.getProcesopoa().getArea());
             System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(6)"+actividads.size());
             if (!actividads.isEmpty()) {
                 actividads.forEach((t) -> {

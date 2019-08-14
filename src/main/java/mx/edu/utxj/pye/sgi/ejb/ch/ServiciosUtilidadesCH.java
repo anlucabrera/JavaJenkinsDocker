@@ -9,12 +9,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
+import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
+import mx.edu.utxj.pye.sgi.entity.ch.Permisosadminstracion;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -62,18 +66,30 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         facade.remove(e);
         return e;
     }
-    
+
     @Override
-    public List<Procesopoa> mostrarProcesopoa() throws Throwable{
+    public List<Procesopoa> mostrarProcesopoa() throws Throwable {
         TypedQuery<Procesopoa> q = em.createQuery("SELECT p FROM Procesopoa p", Procesopoa.class);
         List<Procesopoa> pr = q.getResultList();
         return pr;
     }
 
     @Override
-    public Procesopoa mostrarEtapaPOA(Short calveArea) throws Throwable {
+    public Procesopoa mostrarEtapaPOAArea(Short calveArea) throws Throwable {
         TypedQuery<Procesopoa> q = em.createQuery("SELECT p FROM Procesopoa p WHERE p.area=:area", Procesopoa.class);
         q.setParameter("area", calveArea);
+        List<Procesopoa> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return null;
+        } else {
+            return pr.get(0);
+        }
+    }
+
+    @Override
+    public Procesopoa mostrarEtapaPOAPersona(Integer responsable) throws Throwable {
+        TypedQuery<Procesopoa> q = em.createQuery("SELECT p FROM Procesopoa p WHERE p.responsable=:responsable", Procesopoa.class);
+        q.setParameter("responsable", responsable);
         List<Procesopoa> pr = q.getResultList();
         if (pr.isEmpty()) {
             return null;
@@ -87,6 +103,18 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         facade.setEntityClass(Procesopoa.class);
         facade.edit(procesopoa);
         return procesopoa;
+    }
+
+    @Override
+    public Calendarioevaluacionpoa mostrarCalendarioEvaluacion(Date fecha) throws Throwable {
+        TypedQuery<Calendarioevaluacionpoa> q = em.createQuery("SELECT cp FROM Calendarioevaluacionpoa cp WHERE :fecha BETWEEN cp.fechaInicio AND cp.fechaFin", Calendarioevaluacionpoa.class);
+        q.setParameter("fecha", fecha);
+        List<Calendarioevaluacionpoa> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return null;
+        } else {
+            return pr.get(0);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////Eventos Áreas
@@ -239,5 +267,39 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         List<ListaPersonal> pr = q.getResultList();
         return pr.size();
     }
+////////////////////////////////////////////////////////////////////////////////Menu
 
+    @Override
+    public List<MenuDinamico> mostrarListaMenu(ListaPersonal personal, Integer nivel, String titulo, String tipoUsuario) {
+        TypedQuery<MenuDinamico> q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%',:personas,'%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tipoUsuario=:tipoUsuario", MenuDinamico.class);
+        switch (nivel) {
+            case 1:
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%',:personas,'%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel2!='' AND m.tipoUsuario=:tipoUsuario GROUP BY m.tituloNivel1", MenuDinamico.class);
+                break;
+            case 2:
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%',:personas,'%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel1=:tituloNivel1 AND m.tituloNivel2!='' AND m.tipoUsuario=:tipoUsuario GROUP BY m.tituloNivel2", MenuDinamico.class);
+                q.setParameter("tituloNivel1", titulo);
+                break;
+            case 3:
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%',:personas,'%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel2=:tituloNivel2 AND m.titulonivel3!='' AND m.tipoUsuario=:tipoUsuario GROUP BY m.titulonivel3", MenuDinamico.class);
+                q.setParameter("tituloNivel2", titulo);
+                break;
+            case 4:
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%',:personas,'%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.titulonivel3=:titulonivel3 AND m.titulonivel4!='' AND m.tipoUsuario=:tipoUsuario", MenuDinamico.class);
+                q.setParameter("titulonivel3", titulo);
+                break;
+        }
+        q.setParameter("personas", String.valueOf(personal.getClave()));
+        q.setParameter("areas", String.valueOf(personal.getAreaOperativa()));
+        q.setParameter("categorias", String.valueOf(personal.getCategoriaOperativa()));
+        q.setParameter("actividades", String.valueOf(personal.getActividad()));
+        q.setParameter("tipoUsuario", tipoUsuario);
+        q.setParameter("activo", true);
+        List<MenuDinamico> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return pr;
+        }
+    }
 }
