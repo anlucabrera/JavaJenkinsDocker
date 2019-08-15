@@ -141,9 +141,9 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
     public void seleccionarPrograma(ValueChangeEvent e){
         if(e.getNewValue() instanceof AreasUniversidad){
             rol.setPrograma((AreasUniversidad) e.getNewValue());
-            alertas();
-            Ajax.update("grupo");//actualizaría al selector de grupos si lleva el id especificado
+            actualizar();
             validaPeriodoRegistro();
+            
         }
         
     }
@@ -188,6 +188,7 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
         }else{
             ejb.asignarTutorGrupo(grupoTutor, Operacion.PERSISTIR);
         }
+        actualizar();
         alertas();
     }
 
@@ -202,5 +203,12 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
         }else{
             rol.setValidaPeriodoRegistro(true);
         }
+    }
+    
+    public void actualizar(){
+        ResultadoEJB<Map<AreasUniversidad, List<DtoListadoTutores >>> resProgramas = ejb.getProgramasEducativosGrupoTutor(rol.getDirector(), rol.getPeriodo());
+            rol.setTutoresGruposMap(resProgramas.getValor());
+            alertas();
+            Ajax.update("grupo");//actualizaría al selector de grupos si lleva el id especificado
     }
 }

@@ -94,7 +94,7 @@
                                             <p:dataTable emptyMessage="No hay grupos registrados para este periodo" var="grupoPE" value="#{asignacionTutorAcademico.rol.gruposTutores}" 
                                                          id="tbl" tableStyleClass="table table-condensed table-bordered table-hover table-responsive" tableStyle="vertical-align: middle;"
                                                          editable="true" editMode="cell" >
-                                                <p:ajax event="cellEdit" listener="#{asignacionTutorAcademico.onCellEditTutorGrupo}"/>
+                                                <p:ajax event="cellEdit" listener="#{asignacionTutorAcademico.onCellEditTutorGrupo}" update="@form:tbl"/>
                                                 <p:column headerText="Grupo">
                                                     <h:outputText value="#{grupoPE.grupo.grado}° #{grupoPE.grupo.literal}"/>
                                                 </p:column>
@@ -110,7 +110,7 @@
                                                         <f:facet name="input">
                                                             <p:autoComplete id="docente" value="#{grupoPE.tutor}" completeMethod="#{asignacionTutorAcademico.completeDocentes}" queryDelay="800"
                                                                             var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" converter="entityConverter" forceSelection="true" size="35"
-                                                                            disabled="#{asignacionTutorAcademico.rol.validaPeriodoRegistro}">
+                                                                            >
                                                                 <p:column>#{docente.personal.clave}</p:column>
                                                                 <p:column>#{docente.personal.nombre}</p:column>
                                                                 <p:column>#{docente.areaOperativa.nombre}</p:column>
