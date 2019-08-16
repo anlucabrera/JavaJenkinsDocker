@@ -11,8 +11,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
+
+
 
 /**
  *
@@ -20,10 +21,10 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
  */
 @RequiredArgsConstructor @ToString
 public class DtoAsignadosIndicadoresCriterios implements Serializable{
+    @Getter @Setter @NonNull UnidadMateriaConfiguracionDetalle configuracionDetalle;
+    @Getter @Setter @NonNull UnidadMateriaConfiguracion configuracion;
+    @Getter @Setter @NonNull UnidadMateria unidadMateria;
     @Getter @Setter @NonNull Criterio criterio;
     @Getter @Setter @NonNull Indicador indicador;
-    @Getter @Setter @NonNull CriterioIndicadorPeriodo criterioIndicadorPeriodo;
-    @Getter @Setter @NonNull UnidadMateriaConfiguracionCriterio unidadMateriaConfiguracionCriterio;
-    @Getter @Setter @NonNull DtoCargaAcademica dtoCargaAcademica;
-    @Getter @Setter @NonNull DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria;
+
 }

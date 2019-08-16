@@ -12,5 +12,5 @@ function skin(){
 
 function soloNumeros(e){
 	var key = window.Event ? e.which : e.keyCode
-	return (key >= 48 && key <= 57)
+	return (key ==46 || key >= 48 && key <= 57)
 }

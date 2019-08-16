@@ -15,7 +15,7 @@ import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaasignacionindicadorescargaacademica;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
@@ -140,7 +140,7 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
      /**
      * Lista de asignación de indicadores por carga académica
      */
-    @Getter @NonNull private List<Listaasignacionindicadorescargaacademica> listaAsignacionCargaAcademica;
+    @Getter @NonNull private List<DtoAsignadosIndicadoresCriterios> listaAsignacionCargaAcademica;
     
     public AsignacionIndicadoresCriteriosRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
@@ -250,7 +250,7 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
         this.existeAsignacionIndicadores = existeAsignacionIndicadores;
     }
 
-    public void setListaAsignacionCargaAcademica(List<Listaasignacionindicadorescargaacademica> listaAsignacionCargaAcademica) {
+    public void setListaAsignacionCargaAcademica(List<DtoAsignadosIndicadoresCriterios> listaAsignacionCargaAcademica) {
         this.listaAsignacionCargaAcademica = listaAsignacionCargaAcademica;
     }
 }

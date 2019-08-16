@@ -9,8 +9,8 @@ import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -27,22 +27,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findAll", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByConfiguracion", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.listaindicadoresporcriterioporconfiguracionPK.configuracion = :configuracion")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPeriodo", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.listaindicadoresporcriterioporconfiguracionPK.periodo = :periodo")
+    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClave", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.clave = :clave")
+    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByConfiguracion", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.configuracion = :configuracion")
+    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPeriodo", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.periodo = :periodo")
     , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByCargaAcademica", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica = :cargaAcademica")
     , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByNombreUnidad", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.nombreUnidad = :nombreUnidad")
     , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByUnidad", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.unidad = :unidad")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClaveCriterio", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.listaindicadoresporcriterioporconfiguracionPK.claveCriterio = :claveCriterio")
+    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClaveCriterio", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.claveCriterio = :claveCriterio")
     , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByCriterio", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.criterio = :criterio")
     , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPorcentaje", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.porcentaje = :porcentaje")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClaveIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.listaindicadoresporcriterioporconfiguracionPK.claveIndicador = :claveIndicador")
+    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClaveIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.claveIndicador = :claveIndicador")
     , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.indicador = :indicador")
     , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPorcentajeIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.porcentajeIndicador = :porcentajeIndicador")})
 public class Listaindicadoresporcriterioporconfiguracion implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected ListaindicadoresporcriterioporconfiguracionPK listaindicadoresporcriterioporconfiguracionPK;
+    @Id
+    @Size(max = 44)
+    @Column(name = "clave")
+    private String clave;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "configuracion")
+    private int configuracion;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "periodo")
+    private int periodo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "cargaAcademica")
@@ -58,6 +69,10 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
     private int unidad;
     @Basic(optional = false)
     @NotNull
+    @Column(name = "claveCriterio")
+    private int claveCriterio;
+    @Basic(optional = false)
+    @NotNull
     @Size(min = 1, max = 12)
     @Column(name = "criterio")
     private String criterio;
@@ -65,6 +80,10 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
     @NotNull
     @Column(name = "porcentaje")
     private double porcentaje;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "claveIndicador")
+    private int claveIndicador;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 500)
@@ -75,35 +94,33 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
     @Column(name = "porcentajeIndicador")
     private double porcentajeIndicador;
 
-        public Listaindicadoresporcriterioporconfiguracion() {
+    public Listaindicadoresporcriterioporconfiguracion() {
     }
 
-    public Listaindicadoresporcriterioporconfiguracion(ListaindicadoresporcriterioporconfiguracionPK listaindicadoresporcriterioporconfiguracionPK) {
-        this.listaindicadoresporcriterioporconfiguracionPK = listaindicadoresporcriterioporconfiguracionPK;
+    public String getClave() {
+        return clave;
     }
 
-    public Listaindicadoresporcriterioporconfiguracion(ListaindicadoresporcriterioporconfiguracionPK listaindicadoresporcriterioporconfiguracionPK, int cargaAcademica, String nombreUnidad, int unidad, String criterio, double porcentaje, String indicador) {
-        this.listaindicadoresporcriterioporconfiguracionPK = listaindicadoresporcriterioporconfiguracionPK;
-        this.cargaAcademica = cargaAcademica;
-        this.nombreUnidad = nombreUnidad;
-        this.unidad = unidad;
-        this.criterio = criterio;
-        this.porcentaje = porcentaje;
-        this.indicador = indicador;
-    }
-    
-    public Listaindicadoresporcriterioporconfiguracion(int configuracion, int periodo, int claveCriterio, int claveIndicador) {
-        this.listaindicadoresporcriterioporconfiguracionPK = new ListaindicadoresporcriterioporconfiguracionPK(configuracion, periodo, claveCriterio, claveIndicador);
+    public void setClave(String clave) {
+        this.clave = clave;
     }
 
-    public ListaindicadoresporcriterioporconfiguracionPK getListaindicadoresporcriterioporconfiguracionPK() {
-        return listaindicadoresporcriterioporconfiguracionPK;
+    public int getClaveConfiguracion() {
+        return configuracion;
     }
 
-    public void setListaindicadoresporcriterioporconfiguracionPK(ListaindicadoresporcriterioporconfiguracionPK listaindicadoresporcriterioporconfiguracionPK) {
-        this.listaindicadoresporcriterioporconfiguracionPK = listaindicadoresporcriterioporconfiguracionPK;
+    public void setClaveConfiguracion(int configuracion) {
+        this.configuracion = configuracion;
     }
-    
+
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
+    }
+
     public int getCargaAcademica() {
         return cargaAcademica;
     }
@@ -128,6 +145,14 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
         this.unidad = unidad;
     }
 
+    public int getClaveCriterio() {
+        return claveCriterio;
+    }
+
+    public void setClaveCriterio(int claveCriterio) {
+        this.claveCriterio = claveCriterio;
+    }
+
     public String getCriterio() {
         return criterio;
     }
@@ -142,6 +167,14 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
 
     public void setPorcentaje(double porcentaje) {
         this.porcentaje = porcentaje;
+    }
+
+    public int getClaveIndicador() {
+        return claveIndicador;
+    }
+
+    public void setClaveIndicador(int claveIndicador) {
+        this.claveIndicador = claveIndicador;
     }
 
     public String getIndicador() {
@@ -162,15 +195,19 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 11 * hash + Objects.hashCode(this.listaindicadoresporcriterioporconfiguracionPK);
+        int hash = 5;
+        hash = 11 * hash + Objects.hashCode(this.clave);
+        hash = 11 * hash + this.configuracion;
+        hash = 11 * hash + this.periodo;
         hash = 11 * hash + this.cargaAcademica;
         hash = 11 * hash + Objects.hashCode(this.nombreUnidad);
         hash = 11 * hash + this.unidad;
+        hash = 11 * hash + this.claveCriterio;
         hash = 11 * hash + Objects.hashCode(this.criterio);
         hash = 11 * hash + (int) (Double.doubleToLongBits(this.porcentaje) ^ (Double.doubleToLongBits(this.porcentaje) >>> 32));
+        hash = 11 * hash + this.claveIndicador;
         hash = 11 * hash + Objects.hashCode(this.indicador);
-        hash = 11 * hash + (int) (Double.doubleToLongBits(this.porcentajeIndicador) ^ (Double.doubleToLongBits(this.porcentajeIndicador) >>> 32));
+        hash = 11 * hash + Objects.hashCode(this.porcentajeIndicador);
         return hash;
     }
 
@@ -186,16 +223,28 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
             return false;
         }
         final Listaindicadoresporcriterioporconfiguracion other = (Listaindicadoresporcriterioporconfiguracion) obj;
+        if (this.configuracion != other.configuracion) {
+            return false;
+        }
+        if (this.periodo != other.periodo) {
+            return false;
+        }
         if (this.cargaAcademica != other.cargaAcademica) {
             return false;
         }
         if (this.unidad != other.unidad) {
             return false;
         }
+        if (this.claveCriterio != other.claveCriterio) {
+            return false;
+        }
         if (Double.doubleToLongBits(this.porcentaje) != Double.doubleToLongBits(other.porcentaje)) {
             return false;
         }
-        if (Double.doubleToLongBits(this.porcentajeIndicador) != Double.doubleToLongBits(other.porcentajeIndicador)) {
+        if (this.claveIndicador != other.claveIndicador) {
+            return false;
+        }
+        if (!Objects.equals(this.clave, other.clave)) {
             return false;
         }
         if (!Objects.equals(this.nombreUnidad, other.nombreUnidad)) {
@@ -207,7 +256,7 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
         if (!Objects.equals(this.indicador, other.indicador)) {
             return false;
         }
-        if (!Objects.equals(this.listaindicadoresporcriterioporconfiguracionPK, other.listaindicadoresporcriterioporconfiguracionPK)) {
+        if (!Objects.equals(this.porcentajeIndicador, other.porcentajeIndicador)) {
             return false;
         }
         return true;
@@ -215,6 +264,8 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
 
     @Override
     public String toString() {
-        return "Listaindicadoresporcriterioporconfiguracion{" + "listaindicadoresporcriterioporconfiguracionPK=" + listaindicadoresporcriterioporconfiguracionPK + ", cargaAcademica=" + cargaAcademica + ", nombreUnidad=" + nombreUnidad + ", unidad=" + unidad + ", criterio=" + criterio + ", porcentaje=" + porcentaje + ", indicador=" + indicador + ", porcentajeIndicador=" + porcentajeIndicador + '}';
+        return "Listaindicadoresporcriterioporconfiguracion{" + "clave=" + clave + ", configuracion=" + configuracion + ", periodo=" + periodo + ", cargaAcademica=" + cargaAcademica + ", nombreUnidad=" + nombreUnidad + ", unidad=" + unidad + ", claveCriterio=" + claveCriterio + ", criterio=" + criterio + ", porcentaje=" + porcentaje + ", claveIndicador=" + claveIndicador + ", indicador=" + indicador + ", porcentajeIndicador=" + porcentajeIndicador + '}';
     }
+    
+    
 }
