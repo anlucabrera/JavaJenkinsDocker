@@ -11,6 +11,10 @@
 
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="primefaces62" name="inputnumber.js"  />
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
@@ -24,13 +28,6 @@
 
     <ui:define name="description">
 
-    </ui:define>
-
-    <ui:define name="head-end">
-        <h:outputStylesheet library="css" name="tablaDatos.css"/>
-        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
-        <h:outputScript library="js" name="dialogs.js"/>
-        <h:outputScript library="primefaces62" name="inputnumber.js"  />
     </ui:define>
 
     <ui:define name="body">
@@ -137,15 +134,18 @@
                                                                     <c:if test="#{unidadConfiguracion.activaPorFecha}">
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
                                                                                        valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}"
-                                                                                       inputStyle="text-align: center;" minValue="1" maxValue="10" decimalPlaces="2"  >
+                                                                                       inputStyle="text-align: center;" minValue="1" maxValue="10" decimalPlaces="2" size="3" >
                                                                             <p:ajax process="@this" update="@this"  />
                                                                             <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas)}" />
+                                                                            <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
                                                                         </p:inputNumber>
                                                                     </c:if>
                                                                 </p:column>
                                                             </c:forEach>
                                                         </c:forEach>
-                                                        <p:column>0</p:column>
+                                                        <p:column>
+                                                            <p:outputLabel value="#{estudiante.promedio}"><p:autoUpdate /><f:convertNumber type="number" pattern="#.##" /></p:outputLabel>
+                                                        </p:column>
                                                         <p:column>0</p:column>
                                                     </p:dataTable>
                                                 </c:forEach>
@@ -202,6 +202,12 @@
                     <f:facet name="footer"></f:facet>
                 </p:panel>
             </c:if>
+            <div style="display: none;">
+                <!-- Es necesario este bloque para que se cargue en el navegador el soporte para el control inputnumber necesario para capturar el valor de las calificaciones -->
+                <h:form>
+                    <p:inputNumber />
+                </h:form>
+            </div>
         </div>
         <script>
             //collapseSidebar(); activar para colapsar barra lateral

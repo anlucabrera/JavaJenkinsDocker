@@ -26,6 +26,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -187,17 +188,25 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
     }
 
     public void guardarCalificacion(ValueChangeEvent event){
-        System.out.println("event.getNewValue() = " + event.getNewValue());
+//        System.out.println("event.getNewValue() = " + event.getNewValue());
 //        System.out.println("event.getComponent().getAttributes() = " + event.getComponent().getAttributes());
         DtoCapturaCalificacion.Captura captura = (DtoCapturaCalificacion.Captura) event.getComponent().getAttributes().get("captura");
+        DtoCapturaCalificacion dtoCapturaCalificacion = (DtoCapturaCalificacion) event.getComponent().getAttributes().get("dtoCapturaCalificacion");
         Double valor = Double.parseDouble(event.getNewValue().toString());
         captura.getCalificacion().setValor(valor);
         rol.getCalificacionMap().put(captura.getCalificacion().getCalificacion(), valor);
         ResultadoEJB<Calificacion> res = ejb.guardarCapturaCalificacion(captura);
-        if(res.getCorrecto()) rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor());
+//        System.out.println("res = " + res);
+        ResultadoEJB<BigDecimal> resPromedio = ejb.promediarUnidad(dtoCapturaCalificacion);
+        System.out.println("resPromedio = " + resPromedio);
+        if(res.getCorrecto() && resPromedio.getCorrecto()) {
+            rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor(), resPromedio.getValor());
+            dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
+        }
         else mostrarMensajeResultadoEJB(res);
-        System.out.println("captura = " + captura);
-        System.out.println("valor = " + valor);
-        System.out.println("rol.getCalificacionMap() = " + rol.getCalificacionMap());
+        System.out.println("dtoCapturaCalificacion = " + dtoCapturaCalificacion.getPromedio());
+//        System.out.println("captura = " + captura);
+//        System.out.println("valor = " + valor);
+//        System.out.println("rol.getCalificacionMap() = " + rol.getCalificacionMap());
     }
 }

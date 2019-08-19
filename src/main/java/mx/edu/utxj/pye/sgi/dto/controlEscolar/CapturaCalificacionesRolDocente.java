@@ -132,7 +132,7 @@ public class CapturaCalificacionesRolDocente extends AbstractRol {
                     Double valor = calificacion.getValor();
                     calificacionMap.put(clave, valor);
                 });
-        System.out.println("calificacionMap = " + calificacionMap);
+//        System.out.println("calificacionMap = " + calificacionMap);
     }
 
     public void setCapturaEstudianteSeleccionado(DtoCapturaCalificacion capturaEstudianteSeleccionado) {

@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCapturaCalificacion;
@@ -8,10 +9,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
@@ -21,8 +19,11 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Stateless(name = "EjbCapturaCalificaciones")
@@ -237,6 +238,76 @@ public class EjbCapturaCalificaciones {
             return ResultadoEJB.crearCorrecto(null, "N calificaciones guardadas");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo guardar la captura de calificación(EjbCapturaCalificaciones.packCapturaCalificacion).", e, Integer.class);
+        }
+    }
+
+    public ResultadoEJB<BigDecimal> promediarUnidad(DtoCapturaCalificacion dtoCapturaCalificacion){
+        try{
+//            System.out.println("EjbCapturaCalificaciones.promediarUnidad");
+            if(dtoCapturaCalificacion == null) return ResultadoEJB.crearErroneo(2, "El DTO de captura de calificación es nulo", BigDecimal.class);
+            if(dtoCapturaCalificacion.getCapturas() == null) return  ResultadoEJB.crearErroneo(3, "La lista de capturas de calificaciones es nula.", BigDecimal.class);
+
+            List<Criterio> criterios = dtoCapturaCalificacion.getCapturas()
+                    .stream()
+                    .map(captura -> captura.getDetalle().getCriterio())
+                    .distinct()
+                    .sorted(Comparator.comparingInt(Criterio::getCriterio))
+                    .collect(Collectors.toList());
+
+            BigDecimal suma = criterios
+                    .stream()
+                    .map(criterio -> promediarCriterio(dtoCapturaCalificacion.getCapturas(), criterio))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+//            System.out.println("promedioUnidad = " + suma);
+            return ResultadoEJB.crearCorrecto(suma, "Promedio calculado");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo promediar la unidad (EjbCapturaCalificaciones.promediarUnidad).", e, BigDecimal.class);
+        }
+    }
+
+    public ResultadoEJB<BigDecimal> promediarCriterio(List<DtoCapturaCalificacion.Captura> capturas, Criterio criterio){
+        try{
+//            System.out.println("EjbCapturaCalificaciones.promediarCriterio");
+//            System.out.println("criterio.getTipo() = " + criterio.getTipo());
+            BigDecimal suma = capturas
+                    .stream()
+                    .filter(captura -> Objects.equals(captura.getDetalle().getCriterio(), criterio))
+                    .map(captura -> calificarCaptura(captura))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+//            System.out.println("suma = " + suma);
+            BigDecimal porcentajeRecomendado = new BigDecimal(criterio.getPorcentajeRecomendado());
+//            System.out.println("porcentajeRecomendado = " + porcentajeRecomendado);
+            BigDecimal valor = porcentajeRecomendado.divide(new BigDecimal(100)).multiply(suma);
+//            System.out.println("calificacionCriterio = " + valor);
+            return ResultadoEJB.crearCorrecto(valor, "Promedio por criterio calculado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, BigDecimal.class);
+        }
+    }
+
+    /**
+     * Calcula el valor de una calificación ingresada en vista por el docente en escala del 1 al 10 para obtener el valor correspondiente según el porcentaje del indicador/critero configurado
+     * @param captura DTO de la captura de calificación
+     * @return Regresa el valor de la calificación o error de lo contrario
+     */
+    public ResultadoEJB<BigDecimal> calificarCaptura(DtoCapturaCalificacion.Captura captura){
+        try{
+//            System.out.println("EjbCapturaCalificaciones.calificarCaptura");
+            BigDecimal porcentajeDetalle = new BigDecimal(captura.getDetalle().getDetalle().getPorcentaje());
+//            System.out.println("porcentajeDetalle = " + porcentajeDetalle);
+            BigDecimal valorCalificacion = new BigDecimal(captura.getCalificacion().getValor());
+//            System.out.println("valorCalificacion = " + valorCalificacion);
+            BigDecimal valor = porcentajeDetalle.divide(new BigDecimal(100)).multiply(valorCalificacion); //porcentajeDetalle / 100d * valorCalificacion;
+//            System.out.println("valor = " + valor);
+            return ResultadoEJB.crearCorrecto(valor, "Valor de captura de calificación por detalle, criterio y estudiante, calculado.");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo calificar la captura (EjbCapturaCalificaciones.calificarCaptura).", BigDecimal.class);
         }
     }
 }

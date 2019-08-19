@@ -4,6 +4,7 @@ import lombok.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ public class DtoGrupoEstudiante implements Serializable {
     @Getter @Setter @NonNull private DtoCargaAcademica dtoCargaAcademica;
     @Getter @Setter @NonNull private List<DtoCapturaCalificacion> estudiantes;
 
-    public boolean actualizarCalificacion(Calificacion calificacion){
+    public boolean actualizarCalificacion(Calificacion calificacion, BigDecimal promedio){
         if(calificacion == null || estudiantes == null) return false;
 
         DtoCapturaCalificacion dtoCapturaCalificacion = estudiantes.stream()
@@ -25,6 +26,7 @@ public class DtoGrupoEstudiante implements Serializable {
 
         if(dtoCapturaCalificacion == null) return false;
 
+        dtoCapturaCalificacion.setPromedio(promedio);
         dtoCapturaCalificacion.getCapturas().stream()
                 .filter(dto -> dto.getCalificacion().equals(calificacion))
                 .forEach(dto -> dto.setCalificacion(calificacion));

@@ -4,6 +4,7 @@ import lombok.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ public class DtoCapturaCalificacion implements Serializable {
     @Getter @Setter @NonNull private DtoCargaAcademica dtoCargaAcademica;
     @Getter @Setter @NonNull private DtoUnidadConfiguracion dtoUnidadConfiguracion;
     @Getter @Setter @NonNull private List<Captura> capturas;
+    @Getter @Setter private BigDecimal promedio = BigDecimal.ZERO;
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class Captura{
