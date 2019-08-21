@@ -65,6 +65,8 @@ public class CargaAcademica implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
     private List<Asesoria> asesoriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
+    private List<CasoCritico> casoCriticoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
     private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
 
     public CargaAcademica() {
@@ -142,6 +144,15 @@ public class CargaAcademica implements Serializable {
 
     public void setAsesoriaList(List<Asesoria> asesoriaList) {
         this.asesoriaList = asesoriaList;
+    }
+
+    @XmlTransient
+    public List<CasoCritico> getCasoCriticoList() {
+        return casoCriticoList;
+    }
+
+    public void setCasoCriticoList(List<CasoCritico> casoCriticoList) {
+        this.casoCriticoList = casoCriticoList;
     }
 
     @XmlTransient

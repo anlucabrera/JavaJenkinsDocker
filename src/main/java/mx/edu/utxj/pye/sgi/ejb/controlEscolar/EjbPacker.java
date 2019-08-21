@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ public class EjbPacker {
     @EJB Facade f;
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @EJB EjbAsignacionAcademica ejbAsignacionAcademica;
+    @EJB EjbCapturaCalificaciones ejbCapturaCalificaciones;
     @EJB EjbPropiedades ep;
     private EntityManager em;
 
@@ -326,6 +328,9 @@ public class EjbPacker {
                     .map(ResultadoEJB::getValor)
                     .collect(Collectors.toList());
             DtoCapturaCalificacion dtoCapturaCalificacion = new DtoCapturaCalificacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, capturas);
+            ResultadoEJB<BigDecimal> resPromedio = ejbCapturaCalificaciones.promediarUnidad(dtoCapturaCalificacion);
+            if(resPromedio.getCorrecto()) dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
+
             return ResultadoEJB.crearCorrecto(dtoCapturaCalificacion, "Captura de calificación empaquetada");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la captura de calificaciones a partir del empaquetado de estudiante y carga academica(EjbPacker.packCapturaCalificacion).", e, DtoCapturaCalificacion.class);

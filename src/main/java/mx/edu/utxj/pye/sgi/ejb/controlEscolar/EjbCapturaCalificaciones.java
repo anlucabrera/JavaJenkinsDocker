@@ -6,6 +6,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCapturaCalificacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInscripcion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -13,6 +14,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
+import mx.edu.utxj.pye.sgi.enums.converter.CasoCriticoEstadoConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 import javax.annotation.PostConstruct;
@@ -241,6 +243,11 @@ public class EjbCapturaCalificaciones {
         }
     }
 
+    /**
+     * Permite calcular el promedio exacto que obtuvo un estudiante inscrito con respecto a la relación grupo-asignatura-unidad
+     * @param dtoCapturaCalificacion DTO que contiene los valores de calificaciones del estudiante en una unidad de materia
+     * @return Valor del promedio por unidad del estudianto o código de error en caso no poder calcularlo
+     */
     public ResultadoEJB<BigDecimal> promediarUnidad(DtoCapturaCalificacion dtoCapturaCalificacion){
         try{
 //            System.out.println("EjbCapturaCalificaciones.promediarUnidad");
@@ -263,11 +270,17 @@ public class EjbCapturaCalificaciones {
 //            System.out.println("promedioUnidad = " + suma);
             return ResultadoEJB.crearCorrecto(suma, "Promedio calculado");
         }catch (Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo promediar la unidad (EjbCapturaCalificaciones.promediarUnidad).", e, BigDecimal.class);
         }
     }
 
+    /**
+     * Permite calcular el promedio exacto que obtuvo un estudiante  inscrito con respecto a la relación grupo-asignatura-unidad-criterio, sumando los valores de los indicadores configurados por el docente en el criterio especificado
+     * @param capturas Lista de capturas de calificaciones de todos los criterios/indicadores correspondientes a la unidad de materia
+     * @param criterio Criterio del cual se requiere el valor del promedio
+     * @return Valor del promedio por criterio del estudiante o código de error en caso de no poder calcularlo
+     */
     public ResultadoEJB<BigDecimal> promediarCriterio(List<DtoCapturaCalificacion.Captura> capturas, Criterio criterio){
         try{
 //            System.out.println("EjbCapturaCalificaciones.promediarCriterio");
@@ -306,8 +319,28 @@ public class EjbCapturaCalificaciones {
 //            System.out.println("valor = " + valor);
             return ResultadoEJB.crearCorrecto(valor, "Valor de captura de calificación por detalle, criterio y estudiante, calculado.");
         }catch (Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo calificar la captura (EjbCapturaCalificaciones.calificarCaptura).", BigDecimal.class);
+        }
+    }
+
+    /**
+     * Obtiene la lista de casos críticos sin cerrar de un estudiante con respecto a la relación periodo-carga
+     * @param dtoInscripcion DTO que contiene la referencia del periodo
+     * @param dtoCargaAcademica  DTO que contiene la referencia de la carga
+     * @return Regresa la lista de casos críticos con al menos un elemento o código de error en caso de error o no encontrar casos
+     */
+    public ResultadoEJB<List<CasoCritico>> identificarCasoCritico(DtoInscripcion dtoInscripcion, DtoCargaAcademica dtoCargaAcademica){
+        try{
+            List<CasoCritico> casoCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante and cc.carga=:carga and cc.estado<>'Cerrado'", CasoCritico.class)
+                    .getResultStream()
+                    .filter(casoCritico -> CasoCriticoEstadoConverter.of(casoCritico.getEstado()) != null)
+                    .filter(casoCritico -> CasoCriticoEstadoConverter.of(casoCritico.getEstado()).getNivel() > 0d)
+                    .collect(Collectors.toList());
+            if(casoCriticos.isEmpty()) return ResultadoEJB.crearErroneo(2, null,"No se encontraron casos críticos para el estudiante en la asignatura correspondiente.");
+            return ResultadoEJB.crearCorrecto(casoCriticos, "Casos criticos");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, null);
         }
     }
 }

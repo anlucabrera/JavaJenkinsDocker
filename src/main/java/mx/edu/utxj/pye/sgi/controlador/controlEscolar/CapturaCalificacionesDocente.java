@@ -198,13 +198,13 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         ResultadoEJB<Calificacion> res = ejb.guardarCapturaCalificacion(captura);
 //        System.out.println("res = " + res);
         ResultadoEJB<BigDecimal> resPromedio = ejb.promediarUnidad(dtoCapturaCalificacion);
-        System.out.println("resPromedio = " + resPromedio);
+//        System.out.println("resPromedio = " + resPromedio);
         if(res.getCorrecto() && resPromedio.getCorrecto()) {
             rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor(), resPromedio.getValor());
             dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
         }
         else mostrarMensajeResultadoEJB(res);
-        System.out.println("dtoCapturaCalificacion = " + dtoCapturaCalificacion.getPromedio());
+//        System.out.println("dtoCapturaCalificacion = " + dtoCapturaCalificacion.getPromedio());
 //        System.out.println("captura = " + captura);
 //        System.out.println("valor = " + valor);
 //        System.out.println("rol.getCalificacionMap() = " + rol.getCalificacionMap());

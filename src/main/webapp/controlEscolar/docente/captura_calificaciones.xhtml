@@ -134,8 +134,8 @@
                                                                     <c:if test="#{unidadConfiguracion.activaPorFecha}">
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
                                                                                        valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}"
-                                                                                       inputStyle="text-align: center;" minValue="1" maxValue="10" decimalPlaces="2" size="3" >
-                                                                            <p:ajax process="@this" update="@this"  />
+                                                                                       inputStyle="text-align: center;" minValue="1" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
+                                                                            <p:ajax process="@this" update="@this @(.promedio)"  />
                                                                             <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas)}" />
                                                                             <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
                                                                         </p:inputNumber>
@@ -144,7 +144,7 @@
                                                             </c:forEach>
                                                         </c:forEach>
                                                         <p:column>
-                                                            <p:outputLabel value="#{estudiante.promedio}"><p:autoUpdate /><f:convertNumber type="number" pattern="#.##" /></p:outputLabel>
+                                                            <p:outputLabel styleClass="promedio" value="#{estudiante.promedio}"><f:convertNumber type="number" pattern="#.##" /></p:outputLabel>
                                                         </p:column>
                                                         <p:column>0</p:column>
                                                     </p:dataTable>
