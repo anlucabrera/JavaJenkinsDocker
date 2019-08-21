@@ -11,6 +11,7 @@ import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPermisoCapturaExtemporanea;
 
 import java.util.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
@@ -133,7 +134,7 @@ public class PermisoAperturaExtemporaneaRolAdministrador extends AbstractRol{
     /**
      * Lista de permisos de captura extemporanea
      */
-    @Getter @NonNull private List<PermisosCapturaExtemporaneaGrupal>  listaPermisosCapturasExtemporaneas;
+    @Getter @NonNull private List<DtoPermisoCapturaExtemporanea>  listaPermisosCapturasExtemporaneas;
     
     
     public PermisoAperturaExtemporaneaRolAdministrador(Filter<PersonalActivo> filtro, PersonalActivo administrador) {
@@ -229,7 +230,7 @@ public class PermisoAperturaExtemporaneaRolAdministrador extends AbstractRol{
         this.existePermisoCapturasExt = existePermisoCapturasExt;
     }
 
-    public void setListaPermisosCapturasExtemporaneas(List<PermisosCapturaExtemporaneaGrupal> listaPermisosCapturasExtemporaneas) {
+    public void setListaPermisosCapturasExtemporaneas(List<DtoPermisoCapturaExtemporanea> listaPermisosCapturasExtemporaneas) {
         this.listaPermisosCapturasExtemporaneas = listaPermisosCapturasExtemporaneas;
     }
     

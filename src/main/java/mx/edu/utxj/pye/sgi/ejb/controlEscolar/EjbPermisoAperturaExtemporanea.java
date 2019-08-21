@@ -26,6 +26,7 @@ import java.util.*;
 import javax.persistence.StoredProcedureQuery;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPermisoCapturaExtemporanea;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRangoFechasPermiso;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
 
@@ -329,18 +330,47 @@ public class EjbPermisoAperturaExtemporanea {
      * @param periodo
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<PermisosCapturaExtemporaneaGrupal>> buscarPermisosCapturaVigentes(PersonalActivo docente, Date fechaActual){
+    public ResultadoEJB<List<DtoPermisoCapturaExtemporanea>> buscarPermisosCapturaVigentes(PersonalActivo docente, Date fechaActual){
 //        System.out.println("docente = [" + docente + "], periodo = [" + periodo + "]");
         try{
+            List<DtoPermisoCapturaExtemporanea> listaDtoPermisoCapturaExtemporanea = new ArrayList<>();
             //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
             List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupal = em.createQuery("SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.docente =:docente AND (:fechaActual BETWEEN p.fechaInicio AND p.fechaFin) OR :fechaActual <= p.fechaInicio", PermisosCapturaExtemporaneaGrupal.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("fechaActual", fechaActual)
                     .getResultList();
             
-            return ResultadoEJB.crearCorrecto(permisosCapturaExtemporaneaGrupal, "Lista de permisos de apertura extemporanea vigentes.");
+            permisosCapturaExtemporaneaGrupal.forEach(permiso -> {
+                //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, permiso.getIdGrupo().getIdPe());
+                DtoPermisoCapturaExtemporanea dtoPermisoCapturaExtemporanea = new DtoPermisoCapturaExtemporanea(permiso, programaEducativo);
+                
+                listaDtoPermisoCapturaExtemporanea.add(dtoPermisoCapturaExtemporanea);
+                
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaDtoPermisoCapturaExtemporanea, "Lista de permisos de apertura extemporanea vigentes.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener lista de permisos de apertura extemporanea. (EjbPermisoAperturaExtemporanea.buscarPermisosCapturaVigentes)", e, null);
+        }
+    }
+    
+     /**
+     * Permite eliminar la asignación de indicadores por criterio
+     * @param cargaAcademica Carga académica de la que se guardará configuración
+     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     */
+    public ResultadoEJB<Integer> eliminarPermisoCaptura(Integer clavePermiso){
+        try{
+            if(clavePermiso == null) return ResultadoEJB.crearErroneo(2, "La clave del permiso no puede ser nula.");
+
+            Integer delete = em.createQuery("DELETE FROM PermisosCapturaExtemporaneaGrupal p WHERE p.permisoGrupal =:permiso", PermisosCapturaExtemporaneaGrupal.class)
+                .setParameter("permiso", clavePermiso)
+                .executeUpdate();
+
+            return ResultadoEJB.crearCorrecto(delete, "El permiso de captura extemporanea se eliminó correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el permiso de captura extemporanea. (EjbPermisoAperturaExtemporanea.eliminarPermisoCaptura)", e, null);
         }
     }
 }

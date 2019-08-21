@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPermisoCapturaExtemporanea;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRangoFechasPermiso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.JustificacionPermisosExtemporaneos;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
@@ -234,11 +235,17 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     
     public void existenPermisosCapturasVigentes(PersonalActivo docente){
         Date fechaActual = new Date();
-        ResultadoEJB<List<PermisosCapturaExtemporaneaGrupal>> res = ejb.buscarPermisosCapturaVigentes(docente, fechaActual);
+        ResultadoEJB<List<DtoPermisoCapturaExtemporanea>> res = ejb.buscarPermisosCapturaVigentes(docente, fechaActual);
         if(res.getCorrecto()){
             rol.setListaPermisosCapturasExtemporaneas(res.getValor());
-            System.err.println("existenPermisosCapturasVigentes - lista " + rol.getListaPermisosCapturasExtemporaneas().size());
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    public void eliminarPermiso(Integer clavePermiso){
+        ResultadoEJB<Integer> resEliminar = ejb.eliminarPermisoCaptura(clavePermiso);
+        mostrarMensajeResultadoEJB(resEliminar);
+        existenPermisosCapturasVigentes(rol.getDocente());
+        Ajax.update("frm");
     }
 }
