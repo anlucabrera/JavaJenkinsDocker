@@ -89,16 +89,16 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
 //            rol.setSoloLectura(true);
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
           
-            rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar configuraciones anteriores.");
-            rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo que va a configurar.");
-            rol.getInstrucciones().add("Seleccionar si o no aplicará Tarea Integradora en la configuración.");
-            rol.getInstrucciones().add("Actualizar Porcentaje, Fecha de Inicio y Fecha Fin por cada unidad de la materia si no desea utilizar las fechas sugeridas por el sistema.");
-            rol.getInstrucciones().add("En caso de que aplicará Tarea Integradora deberá ingresar Nombre, Porcentaje y Fecha de entrega.");
-            rol.getInstrucciones().add("Los porcentajes que ingrese en total deben sumar 100%, en caso contrario el sistema no le permitirá guardar.");
-            rol.getInstrucciones().add("Una vez que capture toda la información solicitada puede GUARDAR la configuración.");
-            rol.getInstrucciones().add("Usted podrá visualizar la Configuración Guardada en sistema.");
-            rol.getInstrucciones().add("Si desea ELIMINAR la configuración deberá seleccionar que desea realizar esta accción para que se active el botón de eliminar ubicado en la parte inferior.");
-            rol.getInstrucciones().add("Al eliminar la configuración de la materia se eliminarán también los criterios de evaluación que se encuentren registrados.");
+            rol.getInstrucciones().add("Ingrese nombre o clave del docente al que se le aperturará sistema.");
+            rol.getInstrucciones().add("Seleccionar Periodo Escolar.");
+            rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo.");
+            rol.getInstrucciones().add("Seleccionar Tipo de Evaluación: Ordinaria o Nivelación Final.");
+            rol.getInstrucciones().add("En caso de que haya seleccionado ORDINARIA en tipo de evaluación, DEBERÁ seleccionar la unidad correspondiente, en caso contrario NO es necesario seleccionar UNIDAD");
+            rol.getInstrucciones().add("Ingresar fecha de inicio y fin en la que estará habilitada la captura extemporanea.");
+            rol.getInstrucciones().add("Seleccionar la justificación por la cual el docente solicitó el permiso.");
+            rol.getInstrucciones().add("Una vez que haya ingresado la información, puede proceder a REGISTRAR el permiso.");
+            rol.getInstrucciones().add("En la tabla inferior podrá VISUALIZAR los permisos de captura extemporanea vigentes del docente seleccionado.");
+            rol.getInstrucciones().add("En caso de existir un error puede ELIMINAR el permiso de captura, al dar clic en el botón ubicado en la columna opciones de la tabla.");
            
         }catch (Exception e){mostrarExcepcion(e); }
     }

@@ -214,7 +214,7 @@ public class EjbPermisoAperturaExtemporanea {
 //        System.out.println("docente = [" + docente + "], periodo = [" + periodo + "]");
         try{
             //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
-            List<String> tiposEvaluaciones = Stream.of("Ordinaria", "Nivelación Parcial", "Nivelación Final").collect(Collectors.toList());
+            List<String> tiposEvaluaciones = Stream.of("Ordinaria", "Nivelación Final").collect(Collectors.toList());
             return ResultadoEJB.crearCorrecto(tiposEvaluaciones, "Lista de tipos de evaluaciones.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de tipos de evaluaciones. (EjbPermisoAperturaExtemporanea.getTiposEvaluaciones)", e, null);
