@@ -43,19 +43,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "UnidadMateria.findByIntegradora", query = "SELECT u FROM UnidadMateria u WHERE u.integradora = :integradora")})
 public class UnidadMateria implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_unidad_materia")
-    private Integer idUnidadMateria;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 300)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Size(min = 1, max = 500)
     @Column(name = "objetivo")
     private String objetivo;
@@ -75,6 +69,14 @@ public class UnidadMateria implements Serializable {
     @NotNull
     @Column(name = "integradora")
     private boolean integradora;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUnidadMateria")
+    private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_unidad_materia")
+    private Integer idUnidadMateria;
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
     @ManyToOne(optional = false)
     private Materia idMateria;
@@ -106,21 +108,6 @@ public class UnidadMateria implements Serializable {
         this.idUnidadMateria = idUnidadMateria;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getObjetivo() {
-        return objetivo;
-    }
-
-    public void setObjetivo(String objetivo) {
-        this.objetivo = objetivo;
-    }
 
     public int getNoUnidad() {
         return noUnidad;
@@ -146,13 +133,6 @@ public class UnidadMateria implements Serializable {
         this.horasPracticas = horasPracticas;
     }
 
-    public boolean getIntegradora() {
-        return integradora;
-    }
-
-    public void setIntegradora(boolean integradora) {
-        this.integradora = integradora;
-    }
 
     public Materia getIdMateria() {
         return idMateria;
@@ -194,6 +174,39 @@ public class UnidadMateria implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria[ idUnidadMateria=" + idUnidadMateria + " ]";
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getObjetivo() {
+        return objetivo;
+    }
+
+    public void setObjetivo(String objetivo) {
+        this.objetivo = objetivo;
+    }
+
+    public boolean getIntegradora() {
+        return integradora;
+    }
+
+    public void setIntegradora(boolean integradora) {
+        this.integradora = integradora;
+    }
+
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaGrupal> getPermisosCapturaExtemporaneaGrupalList() {
+        return permisosCapturaExtemporaneaGrupalList;
+    }
+
+    public void setPermisosCapturaExtemporaneaGrupalList(List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList) {
+        this.permisosCapturaExtemporaneaGrupalList = permisosCapturaExtemporaneaGrupalList;
     }
     
 }

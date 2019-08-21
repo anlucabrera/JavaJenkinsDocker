@@ -103,23 +103,23 @@
                                                                                   class="btn btn-sm #{!empty status?'btn-info':'btn-danger'}" icon="#{!empty status?'fa fa-close':'fa fa-check'}"
                                                                                   title="#{!empty status?'Invalidar expediente.':'Validar expediente.'}" />
                                                              </p:column>
-                                                             <p:column headerText="No. Expediente" style="width: 150px; text-align: center;">
+                                                             <p:column headerText="No. Expediente" style="width: 150px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.expediente}">
                                                                  <h:outputText value="#{ExpTit.expedientesTitulacion.expediente}"/>
                                                              </p:column>
                                                              
-                                                             <p:column headerText="Situación Expediente" style="width: 200px; text-align: center;">
+                                                             <p:column headerText="Situación Expediente" style="width: 200px; text-align: center;" sortBy="#{!empty status?'Validado':'Sin validar'}">
                                                                  <h:outputText value="#{!empty status?'Validado':'Sin validar'}" />
                                                              </p:column>
 
-                                                             <p:column headerText="Fecha" style="width: 100px; text-align: center;">
+                                                             <p:column headerText="Fecha" style="width: 100px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.fecha}">
                                                                  <h:outputText value="#{ExpTit.expedientesTitulacion.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                              </p:column>
 
-                                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;">
+                                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;" sortBy="#{car.id}">
                                                                  <h:outputText value="#{ExpTit.expedientesTitulacion.matricula.matricula}"/>
                                                              </p:column>
 
-                                                             <p:column headerText="Nombre" style="width: 250px; text-align: center;">
+                                                             <p:column headerText="Nombre" style="width: 250px; text-align: center;" sortBy="#{ExpTit.egresados.apellidoPaterno} #{ExpTit.egresados.apellidoMaterno} #{ExpTit.egresados.nombre}">
                                                                  <h:outputText value="#{ExpTit.egresados.apellidoPaterno} #{ExpTit.egresados.apellidoMaterno} #{ExpTit.egresados.nombre} "/>
                                                              </p:column>
 
@@ -131,23 +131,23 @@
                                                                  <h:outputText value="#{ExpTit.generacion}"/>
                                                              </p:column>
                                                              
-                                                             <p:column headerText="Situación Académica" style="width: 200px; text-align: center;">
+                                                             <p:column headerText="Situación Académica" style="width: 200px; text-align: center;" sortBy="#{ExpTit.situacionAcademica}">
                                                                  <h:outputText value="#{ExpTit.situacionAcademica}"/>
                                                              </p:column>
                                                              
-                                                             <p:column headerText="Fecha Pago de Titulo" style="width: 200px; text-align: center;">
+                                                             <p:column headerText="Fecha Pago de Titulo" style="width: 200px; text-align: center;" sortBy="#{ExpTit.pagosFinanzas.fechaPago}">
                                                                  <h:outputText value="#{ExpTit.pagosFinanzas.fechaPago}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                              </p:column>
                                                              
-                                                             <p:column headerText="Documentos" style="width: 200px; text-align: center;">
+                                                             <p:column headerText="Documentos" style="width: 200px; text-align: center;" sortBy="#{controladorTitSegGen.numDocs} de #{controladorTitSegGen.numTotalDocs}">
                                                                  <h:outputText value="#{controladorTitSegGen.numDocs} de #{controladorTitSegGen.numTotalDocs}" />
                                                              </p:column>
                                                              
-                                                             <p:column headerText="Validado/Invalidado por" style="width: 200px; text-align: center;">
+                                                             <p:column headerText="Validado/Invalidado por" style="width: 200px; text-align: center;" sortBy="#{ExpTit.personalValido}">
                                                                  <h:outputText value="#{ExpTit.personalValido}"/>
                                                              </p:column>
                                                              
-                                                             <p:column headerText="Fecha Validado/Invalidado" style="width: 200px; text-align: center;">
+                                                             <p:column headerText="Fecha Validado/Invalidado" style="width: 200px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.fechaValidacion}">
                                                                  <h:outputText value="#{ExpTit.expedientesTitulacion.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                              </p:column>
                                                              

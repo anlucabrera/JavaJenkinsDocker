@@ -40,12 +40,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "PlanEstudioMateria.findByGrado", query = "SELECT p FROM PlanEstudioMateria p WHERE p.grado = :grado")})
 public class PlanEstudioMateria implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_plan_materia")
-    private Integer idPlanMateria;
     @Size(max = 90)
     @Column(name = "clave_materia")
     private String claveMateria;
@@ -53,6 +47,15 @@ public class PlanEstudioMateria implements Serializable {
     @NotNull
     @Column(name = "grado")
     private int grado;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
+    private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_plan_materia")
+    private Integer idPlanMateria;
     @ManyToMany(mappedBy = "planEstudioMateriaList")
     private List<Competencia> competenciaList;
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
@@ -92,13 +95,6 @@ public class PlanEstudioMateria implements Serializable {
         this.claveMateria = claveMateria;
     }
 
-    public int getGrado() {
-        return grado;
-    }
-
-    public void setGrado(int grado) {
-        this.grado = grado;
-    }
 
     @XmlTransient
     public List<Competencia> getCompetenciaList() {
@@ -157,6 +153,23 @@ public class PlanEstudioMateria implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria[ idPlanMateria=" + idPlanMateria + " ]";
+    }
+
+    public int getGrado() {
+        return grado;
+    }
+
+    public void setGrado(int grado) {
+        this.grado = grado;
+    }
+
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaGrupal> getPermisosCapturaExtemporaneaGrupalList() {
+        return permisosCapturaExtemporaneaGrupalList;
+    }
+
+    public void setPermisosCapturaExtemporaneaGrupalList(List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList) {
+        this.permisosCapturaExtemporaneaGrupalList = permisosCapturaExtemporaneaGrupalList;
     }
     
 }

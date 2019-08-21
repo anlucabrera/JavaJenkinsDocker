@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Asignación académica
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Permiso Apertura Extemporánea"/>
+
+        <div class="contenedor">
+            <c:if test="#{permisoAperturaExtemporaneaAdministrador.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(permisoAperturaExtemporaneaAdministrador.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:autoComplete id="docente" value="#{permisoAperturaExtemporaneaAdministrador.rol.docente}" completeMethod="#{permisoAperturaExtemporaneaAdministrador.completeDocentes}" queryDelay="800"
+                                                                valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarDocente}"
+                                                                var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" converter="entityConverter" forceSelection="true" size="35">
+                                                    <p:column>#{docente.personal.clave}</p:column>
+                                                    <p:column>#{docente.personal.nombre}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Docente" for="docente"/>
+                                                <p:message for="docente" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{permisoAperturaExtemporaneaAdministrador.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cargasAcademicas}">
+                                                    <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this, carga"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                         <div class="col-sm-12 col-md-12 col-lg-8">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="carga" value="#{permisoAperturaExtemporaneaAdministrador.rol.carga}" converter="entityConverter" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.actualizarUnidadesMateria}">
+                                                    <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.cargasPeriodo}" var="carga"
+                                                                   itemValue="#{carga}" itemLabel="#{carga.materia.nombre} (#{carga.planEstudioMateria.claveMateria}) #{carga.grupo.grado}° #{carga.grupo.literal} de #{carga.programa.nombre}"/>
+                                                    <p:ajax update="@this" process="@this, unidad"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Materia - Grupo - Programa Educativo" for="carga"/>
+                                                <p:message for="carga" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p></p>
+                                    <p></p>
+                                    <p></p>
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                         <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="tipoEvaluacion" value="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion}">
+                                                    <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.tiposEvaluacion}" var="evaluacion"
+                                                                   itemValue="#{evaluacion}" itemLabel="#{evaluacion}"/>
+                                                    <p:ajax update="@this" process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Tipo de Evaluación" for="tipoEvaluacion"/>
+                                                <p:message for="tipoEvaluacion" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="unidad" value="#{permisoAperturaExtemporaneaAdministrador.rol.unidadMateria}" converter="entityConverter" disabled="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion ne 'Ordinaria'}" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarUnidad}">
+                                                    <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.unidadesMateria}" var="unidad"
+                                                                   itemValue="#{unidad}" itemLabel="#{unidad.noUnidad}.- #{unidad.nombre}"/>
+                                                    <p:ajax update="@this" process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Unidad" for="unidad"/>
+                                                <p:message for="unidad" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:calendar id="fechaInicio" locale="es" value="#{permisoAperturaExtemporaneaAdministrador.rol.fechaInicio}" mindate="#{permisoAperturaExtemporaneaAdministrador.rol.rangoFechaInicial}" maxdate="#{permisoAperturaExtemporaneaAdministrador.rol.rangoFechaFinal}" pattern="dd-MM-yyyy" mask="true"/>
+                                                <p:outputLabel value="Fecha Inicio" for="fechaInicio"/>
+                                                <p:message for="fechaInicio" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:calendar id="fechaFin" locale="es" value="#{permisoAperturaExtemporaneaAdministrador.rol.fechaFin}" mindate="#{permisoAperturaExtemporaneaAdministrador.rol.rangoFechaInicial}" maxdate="#{permisoAperturaExtemporaneaAdministrador.rol.rangoFechaFinal}" pattern="dd-MM-yyyy" mask="true"/>
+                                                <p:outputLabel value="Fecha Fin" for="fechaFin"/>
+                                                <p:message for="fechaFin" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="justificacion" value="#{permisoAperturaExtemporaneaAdministrador.rol.justificacionPermisosExtemporaneos}" converter="entityConverter" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarJustificacion}">
+                                                    <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.listaJustificaciones}" var="justificacion"
+                                                                   itemValue="#{justificacion}" itemLabel="#{justificacion.descripcion}"/>
+                                                    <p:ajax update="@this" process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Justificación" for="justificacion"/>
+                                                <p:message for="justificacion" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                    <div class="col-sm-12 col-md-12 col-lg-4"></div>           
+                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                         <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCaptura()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                    </div>   
+                                    <div class="col-sm-12 col-md-12 col-lg-4"></div>   
+                                    </div>
+                                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.periodo ne null}">
+                                    <div class="row margin-bottom" style="margin-top: 60px;">
+                                            <center>
+                                                <p:dataTable id="tbAperExt" var="aperturasExt" value="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas}" sortBy="#{aperturasExt.idGrupo.grado}° '#{aperturasExt.idGrupo.literal}'"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                    <f:facet name="header">
+                                                        <center>Permisos de Captura Extemporaneas Vigentes</center>
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Grupo" /> 
+                                                            <p:column headerText="Materia" /> 
+                                                            <p:column headerText="Unidad" />
+                                                            <p:column headerText="Tipo Evaluacion" />
+                                                            <p:column headerText="Fecha Inicio" />
+                                                            <p:column headerText="Fecha Fin" />
+                                                            <p:column headerText="Justificacion" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{aperturasExt.idGrupo.grado}° '#{aperturasExt.idGrupo.literal}'" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{aperturasExt.idPlanMateria.idMateria.nombre}" style="text-align: center;" />
+                                                    </p:column>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{aperturasExt.idUnidadMateria.noUnidad}. #{aperturasExt.idUnidadMateria.nombre}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aperturasExt.tipoEvaluacion}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aperturasExt.fechaInicio}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aperturasExt.fechaFin}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                     <p:column>
+                                                        <h:outputText value="#{aperturasExt.justificacionPermiso.descripcion}" style="text-align: center;"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p></p>
+                                                <p></p>
+                                                <p></p>
+<!--                                                <p:commandButton id="btnEliminar" value="Eliminar" actionListener="# {asignacionIndicadoresCriteriosDocente.eliminarAsignacionIndicadores}" class="btn-primary" process="@this" update="@form" icon="fa fa-trash" >
+                                                    <p:confirm header="Confirmación" message="¿Confirma la eliminación de la asignación de indicadores por criterio?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog>  -->
+                                            </center>
+                                    </div>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty permisoAperturaExtemporaneaAdministrador.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{permisoAperturaExtemporaneaAdministrador.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para una asignación académica</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{permisoAperturaExtemporaneaAdministrador.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!permisoAperturaExtemporaneaAdministrador.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a directores de área académica."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>
