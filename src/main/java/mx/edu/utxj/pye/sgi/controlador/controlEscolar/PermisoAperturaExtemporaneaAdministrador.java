@@ -34,11 +34,14 @@ import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPermisoCapturaExtemporanea;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRangoFechasPermiso;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.JustificacionPermisosExtemporaneos;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PermisosCapturaExtemporaneaGrupal;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -312,5 +315,11 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         mostrarMensajeResultadoEJB(resEliminar);
         existenPermisosCapturasVigentes(rol.getDocente());
         Ajax.update("frm");
+    }
+    
+    public void onCellEdit(CellEditEvent event) {
+        DataTable dataTable = (DataTable) event.getSource();
+        DtoPermisoCapturaExtemporanea permisoNew = (DtoPermisoCapturaExtemporanea) dataTable.getRowData();
+        ejb.actualizarPermisoCaptura(permisoNew);
     }
 }

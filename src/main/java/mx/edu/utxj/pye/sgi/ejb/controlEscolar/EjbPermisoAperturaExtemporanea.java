@@ -427,4 +427,10 @@ public class EjbPermisoAperturaExtemporanea {
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el permiso de captura extemporánea. (EjbPermisoAperturaExtemporanea.eliminarPermisoCaptura)", e, null);
         }
     }
+    
+    public void actualizarPermisoCaptura(DtoPermisoCapturaExtemporanea dtoPermisoCapturaExtemporanea) {
+        f.setEntityClass(PermisosCapturaExtemporaneaGrupal.class);
+        f.edit(dtoPermisoCapturaExtemporanea.getPermisosCapturaExtemporaneaGrupal());
+        f.flush();
+    }
 }

@@ -172,7 +172,7 @@
                                     <div class="row margin-bottom" style="margin-top: 60px;">
                                             <center>
                                                 <p:dataTable id="tbAperExt" var="aperturasExt" value="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas}" sortBy="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.grado}° '#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.literal}' de #{aperturasExt.programaEducativo.nombre}"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" expandableRowGroups="true" >
                                                     <f:facet name="header">
                                                         <center>Permisos de Captura Extemporaneas Vigentes</center>
                                                     </f:facet>
@@ -188,6 +188,7 @@
                                                             <p:column headerText="Justificacion" />
                                                         </p:row>
                                                     </p:columnGroup>
+                                                    <p:ajax event="cellEdit" listener="#{permisoAperturaExtemporaneaAdministrador.onCellEdit}"/>
                                                     <c:set var="clavePermiso" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.permisoGrupal}"/>
                                                     <p:column>
                                                         <center>
@@ -211,13 +212,27 @@
                                                         <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.tipoEvaluacion}" />
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaInicio}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaInicio}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
+                                                             <f:facet name="input"><p:calendar id="fechaInicio" locale="es" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaInicio}" pattern="dd-MM-yyyy" mask="true"/></f:facet>
+                                                         </p:cellEditor>
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
+                                                             <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" pattern="dd-MM-yyyy" mask="true"/></f:facet>
+                                                         </p:cellEditor>
                                                     </p:column>
                                                      <p:column>
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.justificacionPermiso.descripcion}" style="text-align: center;"/>
+                                                         <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.justificacionPermiso.descripcion}" style="text-align: center;"/></f:facet>
+                                                             <f:facet name="input">
+                                                                 <p:selectOneMenu id="justificacion" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.justificacionPermiso}" converter="entityConverter">
+                                                                     <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.listaJustificaciones}" var="justificacion"
+                                                                                    itemValue="#{justificacion}" itemLabel="#{justificacion.descripcion}"/>
+                                                                 </p:selectOneMenu>
+                                                             </f:facet>
+                                                         </p:cellEditor>
                                                     </p:column>
                                                 </p:dataTable>
                                                 <p></p>

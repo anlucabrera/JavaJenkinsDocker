@@ -213,7 +213,7 @@ public class PermisoAperturaExtemporaneaRolAdministrador extends AbstractRol{
     public void setRangoFechaFinal(Date rangoFechaFinal) {
         this.rangoFechaFinal = rangoFechaFinal;
     }
-
+    
     public void setListaJustificaciones(List<JustificacionPermisosExtemporaneos> listaJustificaciones) {
         this.listaJustificaciones = listaJustificaciones;
     }
