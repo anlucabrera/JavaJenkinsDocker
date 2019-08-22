@@ -37,6 +37,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "AreaConocimiento.findByEstatus", query = "SELECT a FROM AreaConocimiento a WHERE a.estatus = :estatus")})
 public class AreaConocimiento implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_area_conocimiento")
+    private Short idAreaConocimiento;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 45)
@@ -46,13 +52,6 @@ public class AreaConocimiento implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_area_conocimiento")
-    private Short idAreaConocimiento;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idAreaConocimiento")
     private List<Materia> materiaList;
 
@@ -77,6 +76,21 @@ public class AreaConocimiento implements Serializable {
         this.idAreaConocimiento = idAreaConocimiento;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
+    }
 
     @XmlTransient
     public List<Materia> getMateriaList() {
@@ -110,22 +124,6 @@ public class AreaConocimiento implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.AreaConocimiento[ idAreaConocimiento=" + idAreaConocimiento + " ]";
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public boolean getEstatus() {
-        return estatus;
-    }
-
-    public void setEstatus(boolean estatus) {
-        this.estatus = estatus;
     }
     
 }

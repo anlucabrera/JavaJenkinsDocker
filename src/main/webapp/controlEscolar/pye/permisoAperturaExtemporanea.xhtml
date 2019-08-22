@@ -21,7 +21,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Asignación académica
+        Permiso Apertura Extemporánea
     </ui:define>
 
     <ui:define name="description">
@@ -109,7 +109,7 @@
                                     <div class="row margin-bottom" style="margin-top: 30px;">
                                          <div class="col-sm-12 col-md-12 col-lg-2">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="tipoEvaluacion" value="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion}">
+                                                <p:selectOneMenu id="tipoEvaluacion" value="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion}" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarTipoEvaluacion}">
                                                     <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.tiposEvaluacion}" var="evaluacion"
                                                                    itemValue="#{evaluacion}" itemLabel="#{evaluacion}"/>
                                                     <p:ajax update="@this" process="@this"/>
@@ -160,10 +160,15 @@
                                     </div>
                                     <div class="row margin-bottom" style="margin-top: 30px;">
                                     <center>
-                                        <p:commandButton id="btnGuardar" value="Registrar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCaptura()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion eq 'Ordinaria'}">
+                                        <p:commandButton id="btnGuardar1" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCapturaOrdinaria()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        </c:if>
+                                        <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion eq 'Nivelación Final'}">
+                                        <p:commandButton id="btnGuardar2" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCapturaNivFinal()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        </c:if>
                                     </center>   
                                     </div>
-                                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.periodo ne null} AND #{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas ne null}">
+                                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas ne null}">
                                     <div class="row margin-bottom" style="margin-top: 60px;">
                                             <center>
                                                 <p:dataTable id="tbAperExt" var="aperturasExt" value="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas}" sortBy="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.grado}° '#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.literal}' de #{aperturasExt.programaEducativo.nombre}"
@@ -190,7 +195,7 @@
                                                         <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idPlanMateria.idMateria.nombre}" style="text-align: center;" />
                                                     </p:column>
                                                     <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.noUnidad}. #{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.nombre}" style="text-align: center;"/>
+                                                        <h:outputText value="#{aperturasExt.unidadMateria}" style="text-align: center;"/>
                                                     </p:column>
                                                     <p:column>
                                                         <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.tipoEvaluacion}" />
@@ -242,7 +247,7 @@
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para una asignación académica</h3></div>
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registrar permiso de apertura extemporánea</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
                                 <c:forEach items="#{permisoAperturaExtemporaneaAdministrador.rol.instrucciones}" var="instruccion">
@@ -257,7 +262,7 @@
             <c:if test="#{!permisoAperturaExtemporaneaAdministrador.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a directores de área académica."/>
+                        <h:outputText value="El acceso solo está autorizado a personal administrador."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

@@ -20,6 +20,6 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 @RequiredArgsConstructor @ToString
 public class DtoPermisoCapturaExtemporanea implements Serializable{
     @Getter @Setter @NonNull PermisosCapturaExtemporaneaGrupal permisosCapturaExtemporaneaGrupal;
+    @Getter @Setter @NonNull String unidadMateria;
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
-
 }

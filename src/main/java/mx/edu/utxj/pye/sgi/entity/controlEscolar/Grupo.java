@@ -43,6 +43,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Grupo.findByGeneracion", query = "SELECT g FROM Grupo g WHERE g.generacion = :generacion")})
 public class Grupo implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_grupo")
+    private Integer idGrupo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "literal")
@@ -63,21 +69,12 @@ public class Grupo implements Serializable {
     @NotNull
     @Column(name = "periodo")
     private int periodo;
+    @Column(name = "tutor")
+    private Integer tutor;
     @Basic(optional = false)
     @NotNull
     @Column(name = "generacion")
     private short generacion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo")
-    private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_grupo")
-    private Integer idGrupo;
-    @Column(name = "tutor")
-    private Integer tutor;
     @JoinColumn(name = "plan", referencedColumnName = "id_plan_estudio")
     @ManyToOne(optional = false)
     private PlanEstudio plan;
@@ -93,6 +90,8 @@ public class Grupo implements Serializable {
     private List<Estudiante> estudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
     private List<Tutoria> tutoriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo")
+    private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
 
     public Grupo() {
     }
@@ -119,6 +118,21 @@ public class Grupo implements Serializable {
         this.idGrupo = idGrupo;
     }
 
+    public Character getLiteral() {
+        return literal;
+    }
+
+    public void setLiteral(Character literal) {
+        this.literal = literal;
+    }
+
+    public int getGrado() {
+        return grado;
+    }
+
+    public void setGrado(int grado) {
+        this.grado = grado;
+    }
 
     public int getCapMaxima() {
         return capMaxima;
@@ -136,6 +150,13 @@ public class Grupo implements Serializable {
         this.idPe = idPe;
     }
 
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
+    }
 
     public Integer getTutor() {
         return tutor;
@@ -145,6 +166,13 @@ public class Grupo implements Serializable {
         this.tutor = tutor;
     }
 
+    public short getGeneracion() {
+        return generacion;
+    }
+
+    public void setGeneracion(short generacion) {
+        this.generacion = generacion;
+    }
 
     public PlanEstudio getPlan() {
         return plan;
@@ -197,6 +225,15 @@ public class Grupo implements Serializable {
         this.tutoriaList = tutoriaList;
     }
 
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaGrupal> getPermisosCapturaExtemporaneaGrupalList() {
+        return permisosCapturaExtemporaneaGrupalList;
+    }
+
+    public void setPermisosCapturaExtemporaneaGrupalList(List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList) {
+        this.permisosCapturaExtemporaneaGrupalList = permisosCapturaExtemporaneaGrupalList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -220,47 +257,6 @@ public class Grupo implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo[ idGrupo=" + idGrupo + " ]";
-    }
-
-    public Character getLiteral() {
-        return literal;
-    }
-
-    public void setLiteral(Character literal) {
-        this.literal = literal;
-    }
-
-    public int getGrado() {
-        return grado;
-    }
-
-    public void setGrado(int grado) {
-        this.grado = grado;
-    }
-
-    public int getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(int periodo) {
-        this.periodo = periodo;
-    }
-
-    public short getGeneracion() {
-        return generacion;
-    }
-
-    public void setGeneracion(short generacion) {
-        this.generacion = generacion;
-    }
-
-    @XmlTransient
-    public List<PermisosCapturaExtemporaneaGrupal> getPermisosCapturaExtemporaneaGrupalList() {
-        return permisosCapturaExtemporaneaGrupalList;
-    }
-
-    public void setPermisosCapturaExtemporaneaGrupalList(List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList) {
-        this.permisosCapturaExtemporaneaGrupalList = permisosCapturaExtemporaneaGrupalList;
     }
     
 }

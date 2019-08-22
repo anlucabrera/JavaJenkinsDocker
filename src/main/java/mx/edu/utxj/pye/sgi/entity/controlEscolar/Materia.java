@@ -39,6 +39,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Materia.findByEstatus", query = "SELECT m FROM Materia m WHERE m.estatus = :estatus")})
 public class Materia implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_materia")
+    private Integer idMateria;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
@@ -48,13 +54,6 @@ public class Materia implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_materia")
-    private Integer idMateria;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMateria")
     private List<UnidadMateria> unidadMateriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMateria")
@@ -84,6 +83,21 @@ public class Materia implements Serializable {
         this.idMateria = idMateria;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
+    }
 
     @XmlTransient
     public List<UnidadMateria> getUnidadMateriaList() {
@@ -134,22 +148,6 @@ public class Materia implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia[ idMateria=" + idMateria + " ]";
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public boolean getEstatus() {
-        return estatus;
-    }
-
-    public void setEstatus(boolean estatus) {
-        this.estatus = estatus;
     }
     
 }

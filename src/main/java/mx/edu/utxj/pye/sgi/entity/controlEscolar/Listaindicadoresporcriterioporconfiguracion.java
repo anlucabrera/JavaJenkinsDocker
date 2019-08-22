@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
-import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -105,11 +104,11 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
         this.clave = clave;
     }
 
-    public int getClaveConfiguracion() {
+    public int getConfiguracion() {
         return configuracion;
     }
 
-    public void setClaveConfiguracion(int configuracion) {
+    public void setConfiguracion(int configuracion) {
         this.configuracion = configuracion;
     }
 
@@ -192,80 +191,5 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
     public void setPorcentajeIndicador(double porcentajeIndicador) {
         this.porcentajeIndicador = porcentajeIndicador;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 11 * hash + Objects.hashCode(this.clave);
-        hash = 11 * hash + this.configuracion;
-        hash = 11 * hash + this.periodo;
-        hash = 11 * hash + this.cargaAcademica;
-        hash = 11 * hash + Objects.hashCode(this.nombreUnidad);
-        hash = 11 * hash + this.unidad;
-        hash = 11 * hash + this.claveCriterio;
-        hash = 11 * hash + Objects.hashCode(this.criterio);
-        hash = 11 * hash + (int) (Double.doubleToLongBits(this.porcentaje) ^ (Double.doubleToLongBits(this.porcentaje) >>> 32));
-        hash = 11 * hash + this.claveIndicador;
-        hash = 11 * hash + Objects.hashCode(this.indicador);
-        hash = 11 * hash + Objects.hashCode(this.porcentajeIndicador);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Listaindicadoresporcriterioporconfiguracion other = (Listaindicadoresporcriterioporconfiguracion) obj;
-        if (this.configuracion != other.configuracion) {
-            return false;
-        }
-        if (this.periodo != other.periodo) {
-            return false;
-        }
-        if (this.cargaAcademica != other.cargaAcademica) {
-            return false;
-        }
-        if (this.unidad != other.unidad) {
-            return false;
-        }
-        if (this.claveCriterio != other.claveCriterio) {
-            return false;
-        }
-        if (Double.doubleToLongBits(this.porcentaje) != Double.doubleToLongBits(other.porcentaje)) {
-            return false;
-        }
-        if (this.claveIndicador != other.claveIndicador) {
-            return false;
-        }
-        if (!Objects.equals(this.clave, other.clave)) {
-            return false;
-        }
-        if (!Objects.equals(this.nombreUnidad, other.nombreUnidad)) {
-            return false;
-        }
-        if (!Objects.equals(this.criterio, other.criterio)) {
-            return false;
-        }
-        if (!Objects.equals(this.indicador, other.indicador)) {
-            return false;
-        }
-        if (!Objects.equals(this.porcentajeIndicador, other.porcentajeIndicador)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "Listaindicadoresporcriterioporconfiguracion{" + "clave=" + clave + ", configuracion=" + configuracion + ", periodo=" + periodo + ", cargaAcademica=" + cargaAcademica + ", nombreUnidad=" + nombreUnidad + ", unidad=" + unidad + ", claveCriterio=" + claveCriterio + ", criterio=" + criterio + ", porcentaje=" + porcentaje + ", claveIndicador=" + claveIndicador + ", indicador=" + indicador + ", porcentajeIndicador=" + porcentajeIndicador + '}';
-    }
-    
     
 }

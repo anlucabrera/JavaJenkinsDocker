@@ -16,7 +16,6 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.PermisoAperturaExtemporaneaRolAdministrador;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
-import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPermisoAperturaExtemporanea;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -40,7 +39,6 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PermisosCapturaExtemporaneaGrupal;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
-import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -58,12 +56,10 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
 
     /**
      * Inicializa:<br/>
-     *      El filtro de rol por area superior y categiría operativa<br/>
-     *      La referencia al director si es que el usuario logueado es efectivamente un director por medio del filtro de rol<br/>
-     *      El programa educativo al que pertenece el director por medio de operación segura antierror<br/>
+     *      El filtro de rol por area superior<br/>
      *      El DTO del rol<br/>
-     *      La lista de periodos escolares en forma descendente por medio de operación segura antierror<br/>
-     *      EL mapa de programas con grupos por medio de operación segura antierror ordenando programas por areas, niveles y nombre del programa y los grupos por grado y letra
+     *      El periodo activo<br/>
+     *      Las instrucciones de operación de la herramienta<br/>
      */
     @PostConstruct
     public void init(){
@@ -127,7 +123,7 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     
     /**
      * Permite que al cambiar o seleccionar un docente se puedan actualizar las materias asignadas a este docente
-     * @param e Evento del cambio de calor
+     * @param e Evento del cambio de valor
      */
     public void cambiarDocente(ValueChangeEvent e){
         if(e.getNewValue() instanceof PersonalActivo){
@@ -144,7 +140,9 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         }else mostrarMensaje("El valor seleccionado como docente no es del tipo necesario.");
     }
     
-   
+    /**
+     * Permite obtener la lista de periodo escolares en los que el docente tiene carga académica
+     */
     public void periodosCargas(){
         ResultadoEJB<List<PeriodosEscolares>> res = ejb.getPeriodosCargas(rol.getCargasDocente());
         if(res.getCorrecto()){
@@ -154,6 +152,9 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         }else mostrarMensajeResultadoEJB(res);
     }
     
+    /**
+     * Permite obtener la lista de cargas académicas del docente y el periodo seleccionado previamente
+     */
     public void cargasAcademicas(){
         if(rol.getPeriodo() == null) return;
         if(rol.getDocente()== null) return;
@@ -168,6 +169,9 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     
     }
     
+     /**
+     * Permite obtener la lista de tipos de evaluaciones disponibles para realizar permiso
+     */
     public void tiposEvaluaciones(){
         if(rol.getCarga()== null) return;
         ResultadoEJB<List<String>> res = ejb.getTiposEvaluaciones();
@@ -178,6 +182,9 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     
     }
     
+     /**
+     * Permite actualizar las unidades materia dependiendo de la carga académica seleccionada
+     */
     public void actualizarUnidadesMateria(){
         ResultadoEJB<List<UnidadMateria>> res = ejb.getUnidadesMateria(rol.getCarga());
         if(res.getCorrecto()){
@@ -189,37 +196,63 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     
      /**
      * Permite que al cambiar el tipo de evaluación se pueda habilitar o deshabilitar la opción de unidad de la materia
-     * @param e Evento del cambio de calor
+     * @param e Evento del cambio de valor
      */
     public void cambiarTipoEvaluacion(ValueChangeEvent e){
        rol.setTipoEvaluacion((String)e.getNewValue());
+       Ajax.update("frm");
     }
     
+      /**
+     * Permite que al cambiar la unidad se pueda obtener el rango de fechas disponibles para realizar permiso
+     * @param e Evento del cambio de valor
+     */
     public void cambiarUnidad(ValueChangeEvent e){
        rol.setUnidadMateria((UnidadMateria)e.getNewValue());
        rangoFechasPermiso();
     }
     
+     /**
+     * Permite obtener el rango de fechas disponibles para realizar permiso, dependiendo de la fecha de fin de la unidad seleccionada y de la fecha fin del 
+     * periodo escolar
+     */
     public void rangoFechasPermiso(){
         ResultadoEJB<DtoRangoFechasPermiso> res = ejb.getRangoFechasPermiso(rol.getCarga(), rol.getUnidadMateria());
         if(res.getCorrecto()){
             rol.setDtoRangoFechasPermiso(res.getValor());
             rol.setRangoFechaInicial(rol.getDtoRangoFechasPermiso().getRangoFechaInicial());
             rol.setRangoFechaFinal(rol.getDtoRangoFechasPermiso().getRangoFechaFinal());
+            Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
     }
     
      /**
-     * Permite invocar el guardado de la configuración de la unidad materia, para que se lleve acabo, se debió haber seleccionado una carga académica, e ingresado fecha de inicio y fin de cada unidad.
+     * Permite guardar el permiso de captura extemporánea ordinaria, para ello el usuario debió haber llenado todos los datos correspondientes y haber seleccionado
+     * en tipo de evaluacion "Ordinaria"
      */
-    public void guardarPermisoCaptura(){
-        ResultadoEJB<PermisosCapturaExtemporaneaGrupal> res = ejb.guardarPermisoCaptura(rol.getCarga(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
+    public void guardarPermisoCapturaOrdinaria(){
+        ResultadoEJB<PermisosCapturaExtemporaneaGrupal> res = ejb.guardarPermisoCapturaOrdinaria(rol.getCarga(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
         if(res.getCorrecto()){
             rol.setPermisosCapturaExtemporaneaGrupal(res.getValor());
         }else mostrarMensajeResultadoEJB(res);
         
     }
     
+    /**
+     * Permite guardar el permiso de captura extemporánea de nivelación final, para ello el usuario debió haber llenado todos los datos correspondientes y haber 
+     * seleccionado en tipo de evaluacion "Nivelación Final"
+     */
+    public void guardarPermisoCapturaNivFinal(){
+        ResultadoEJB<PermisosCapturaExtemporaneaGrupal> res = ejb.guardarPermisoCapturaNivFinal(rol.getCarga(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
+        if(res.getCorrecto()){
+            rol.setPermisosCapturaExtemporaneaGrupal(res.getValor());
+        }else mostrarMensajeResultadoEJB(res);
+        
+    }
+    
+    /**
+     * Permite obtener la lista de justificación disponibles para solicitar permiso de captura extemporánea
+     */
     public void justificacionesPermiso(){
         if(rol.getCarga()== null) return;
         ResultadoEJB<List<JustificacionPermisosExtemporaneos>> res = ejb.getJustificacionesPermisoCaptura();
@@ -229,10 +262,19 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         }else mostrarMensajeResultadoEJB(res);
     }
     
+     /**
+     * Permite cambiar la justificación del permiso
+     * @param e Evento del cambio de valor
+     */
     public void cambiarJustificacion(ValueChangeEvent e){
        rol.setJustificacionPermisosExtemporaneos((JustificacionPermisosExtemporaneos)e.getNewValue());
     }
     
+    
+     /**
+     * Permite verificar si existen permisos de captura extemporánea vigentes del docente seleccionado
+     * @param docente Docente del que se obtendrá la información
+     */
     public void existenPermisosCapturasVigentes(PersonalActivo docente){
         Date fechaActual = new Date();
         ResultadoEJB<List<DtoPermisoCapturaExtemporanea>> res = ejb.buscarPermisosCapturaVigentes(docente, fechaActual);
@@ -242,6 +284,10 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         }else mostrarMensajeResultadoEJB(res);
     }
     
+     /**
+     * Permite eliminar un permiso de captura extemporánea vigente
+     * @param clavePermiso Clave del permiso que se desea eliminar
+     */
     public void eliminarPermiso(Integer clavePermiso){
         ResultadoEJB<Integer> resEliminar = ejb.eliminarPermisoCaptura(clavePermiso);
         mostrarMensajeResultadoEJB(resEliminar);
