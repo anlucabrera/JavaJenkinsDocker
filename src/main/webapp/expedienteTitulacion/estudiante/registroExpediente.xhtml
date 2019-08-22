@@ -198,9 +198,8 @@
                                                                                 <p:message for="generoE" display="tooltip" />
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                                <p:outputLabel for="fechaNacE" style="font-size: medium" value="Fecha de Nacimiento*"/>
-                                                                                <p:inputText id="fechaNacE" class="form-control" value="#{controladorEstReg.nuevoOBJegresado.fechaNacimiento}" required="true" requiredMessage="Es necesario que ingrese su fecha de nacimiento">
-                                                                                    <f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText>
+                                                                                <p:outputLabel for="fechaNacE" style="height: 100%; width: 100%; object-fit: contain; font-size: medium" value="Fecha de Nacimiento*"/>
+                                                                                <p:calendar style="object-fit: contain; font-size: medium" locale="es" id="fechaNacE" value="#{controladorEstReg.nuevoOBJegresado.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese su fecha de nacimiento"/>
                                                                                 <p:message for="fechaNacE" display="tooltip" />
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-6">
