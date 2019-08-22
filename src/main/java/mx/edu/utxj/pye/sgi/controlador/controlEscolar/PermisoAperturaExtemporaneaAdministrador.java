@@ -200,6 +200,7 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
      */
     public void cambiarTipoEvaluacion(ValueChangeEvent e){
        rol.setTipoEvaluacion((String)e.getNewValue());
+       rangoFechasPermiso();
        Ajax.update("frm");
     }
     
@@ -217,13 +218,25 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
      * periodo escolar
      */
     public void rangoFechasPermiso(){
-        ResultadoEJB<DtoRangoFechasPermiso> res = ejb.getRangoFechasPermiso(rol.getCarga(), rol.getUnidadMateria());
-        if(res.getCorrecto()){
-            rol.setDtoRangoFechasPermiso(res.getValor());
-            rol.setRangoFechaInicial(rol.getDtoRangoFechasPermiso().getRangoFechaInicial());
-            rol.setRangoFechaFinal(rol.getDtoRangoFechasPermiso().getRangoFechaFinal());
-            Ajax.update("frm");
-        }else mostrarMensajeResultadoEJB(res);
+        if("Ordinaria".equals(rol.getTipoEvaluacion()))
+        {
+            ResultadoEJB<DtoRangoFechasPermiso> res = ejb.getRangoFechasPermisoOrdinarias(rol.getCarga(), rol.getUnidadMateria());
+            if(res.getCorrecto()){
+                rol.setDtoRangoFechasPermiso(res.getValor());
+                rol.setRangoFechaInicial(rol.getDtoRangoFechasPermiso().getRangoFechaInicial());
+                rol.setRangoFechaFinal(rol.getDtoRangoFechasPermiso().getRangoFechaFinal());
+                Ajax.update("frm");
+            }else mostrarMensajeResultadoEJB(res);
+        }
+        else{
+            ResultadoEJB<DtoRangoFechasPermiso> res = ejb.getRangoFechasPermisoNivFinal(rol.getCarga());
+            if(res.getCorrecto()){
+                rol.setDtoRangoFechasPermiso(res.getValor());
+                rol.setRangoFechaInicial(rol.getDtoRangoFechasPermiso().getRangoFechaInicial());
+                rol.setRangoFechaFinal(rol.getDtoRangoFechasPermiso().getRangoFechaFinal());
+                Ajax.update("frm");
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
     
      /**
@@ -234,6 +247,9 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         ResultadoEJB<PermisosCapturaExtemporaneaGrupal> res = ejb.guardarPermisoCapturaOrdinaria(rol.getCarga(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
         if(res.getCorrecto()){
             rol.setPermisosCapturaExtemporaneaGrupal(res.getValor());
+            mostrarMensajeResultadoEJB(res);
+            existenPermisosCapturasVigentes(rol.getDocente());
+            Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
         
     }
@@ -246,6 +262,9 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         ResultadoEJB<PermisosCapturaExtemporaneaGrupal> res = ejb.guardarPermisoCapturaNivFinal(rol.getCarga(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
         if(res.getCorrecto()){
             rol.setPermisosCapturaExtemporaneaGrupal(res.getValor());
+            mostrarMensajeResultadoEJB(res);
+            existenPermisosCapturasVigentes(rol.getDocente());
+            Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
         
     }

@@ -235,7 +235,7 @@ public class EjbPermisoAperturaExtemporanea {
      * @param unidadMateria Unidad materia seleccionada para registrar permiso
      * @return Resultado del proceso
      */
-    public ResultadoEJB<DtoRangoFechasPermiso> getRangoFechasPermiso(DtoCargaAcademica cargaAcademica, UnidadMateria unidadMateria){
+    public ResultadoEJB<DtoRangoFechasPermiso> getRangoFechasPermisoOrdinarias(DtoCargaAcademica cargaAcademica, UnidadMateria unidadMateria){
         try{
             UnidadMateriaConfiguracion unidadMateriaConfiguracion = em.createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:carga AND umc.idUnidadMateria.idUnidadMateria =:unidadMateria", UnidadMateriaConfiguracion.class)
                     .setParameter("carga", cargaAcademica.getCargaAcademica().getCarga())
@@ -264,9 +264,36 @@ public class EjbPermisoAperturaExtemporanea {
             
             return ResultadoEJB.crearCorrecto(dtoRangoFechasPermiso, "Rango de fechas obtenidas para la unidad seleccionada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el rango de fechas de la unidad seleccionada. (EjbPermisoAperturaExtemporanea.getRangoFechasPermiso)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el rango de fechas de la unidad seleccionada. (EjbPermisoAperturaExtemporanea.getRangoFechasPermisoOrdinarias)", e, null);
         }
     }
+    
+     /**
+     * Permite obtener el rango de fechas para nivelación final
+     * @param cargaAcademica Carga Académica seleccionada para registrar permiso
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoRangoFechasPermiso> getRangoFechasPermisoNivFinal(DtoCargaAcademica cargaAcademica){
+        try{
+            PeriodoEscolarFechas fechasPeriodos = em.createQuery("SELECT pef FROM PeriodoEscolarFechas pef WHERE pef.periodosEscolares.periodo =:periodo", PeriodoEscolarFechas.class)
+                    .setParameter("periodo", cargaAcademica.getCargaAcademica().getEvento().getPeriodo())
+                    .getSingleResult();
+           
+            Calendar fechaInicio = Calendar.getInstance();
+            fechaInicio.setTime(fechasPeriodos.getFin());
+            fechaInicio.add(Calendar.DAY_OF_YEAR, -5);
+            Date rangoFechaInicio=fechaInicio.getTime();
+            
+            Date rangoFechaFin = fechasPeriodos.getFin();
+            
+            DtoRangoFechasPermiso dtoRangoFechasPermiso = new DtoRangoFechasPermiso(rangoFechaInicio, rangoFechaFin);
+            
+            return ResultadoEJB.crearCorrecto(dtoRangoFechasPermiso, "Rango de fechas obtenidas para nivelación final.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el rango de fechas para nivelación final. (EjbPermisoAperturaExtemporanea.getRangoFechasPermisoNivFinal)", e, null);
+        }
+    }
+    
      /**
      * Permite obtener la lista de justificaciones activas para solicitar el permiso de captura extemporánea
      * @return Resultado del proceso
