@@ -52,6 +52,14 @@ public interface EjbModulos {
      */
     public List<ModulosRegistrosUsuarios> getModulosRegistroUsuario(Integer eje, Integer clavepersonal) throws  Throwable;
 
+    /**
+     * Método que permite la creación de un registro nuevo, su mayor uso se encuentra en los servicios de los diferentes tipos de registro en los métodos de guardado de información
+     * @param registrosTipo
+     * @param ejesRegistro
+     * @param area
+     * @param eventosRegistros
+     * @return 
+     */
     public Registros getRegistro(RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
 
     /**
@@ -93,6 +101,8 @@ public interface EjbModulos {
      */
     public List<Short> getEjercicioRegistros(List<Short> registrosTipo, AreasUniversidad area);
 
+    public List<Short> getEjercicioRegistroRepositorio(AreasUniversidad area);
+    
     /**
      * Método que devuelve meses en los cuales exista únicamente información de
      * módulos de registro, puede ser reutilizado para todos los registros en
@@ -105,6 +115,8 @@ public interface EjbModulos {
      * @return Devuelve una lista de tipo string que contiene únicamente meses
      */
     public List<String> getMesesRegistros(Short ejercicio, List<Short> registroTipo, AreasUniversidad area);
+    
+    public List<String> getMesesRegistroRepositorio(Short ejercicio, AreasUniversidad area);
 
     /**
      * Método que permite la búsqueda del área superior en caso de que el área

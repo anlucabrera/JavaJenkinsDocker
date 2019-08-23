@@ -151,6 +151,17 @@ public class ServicioModulos implements EjbModulos {
     }
 
     @Override
+    public List<Short> getEjercicioRegistroRepositorio(AreasUniversidad area) {
+        try {
+            return f.getEntityManager().createQuery("SELECT DISTINCT er.ejercicioFiscal.anio FROM Registros r JOIN r.eventoRegistro er WHERE r.area = :area ORDER BY er.fechaInicio")
+                    .setParameter("area", area.getArea())
+                    .getResultList();
+        } catch (NoResultException ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
+    @Override
     public List<String> getMesesRegistros(Short ejercicio, List<Short> registroTipo, AreasUniversidad area) {
         List<String> mesesRegistros = new ArrayList<>();
         try {
@@ -163,6 +174,19 @@ public class ServicioModulos implements EjbModulos {
             return mesesRegistros = null;
         }
     }
+    
+    @Override
+    public List<String> getMesesRegistroRepositorio(Short ejercicio, AreasUniversidad area) {
+        try {
+            return f.getEntityManager().createQuery("SELECT DISTINCT er.mes FROM Registros r JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :anio AND r.area = :area ORDER BY er.fechaInicio")
+                    .setParameter("anio", ejercicio)
+                    .setParameter("area", area.getArea())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
 
     @Override
     public AreasUniversidad getAreaUniversidadPrincipalRegistro(Short areaUsuario) {
@@ -622,5 +646,5 @@ public class ServicioModulos implements EjbModulos {
             return null;
         }
     }
-
+    
 }

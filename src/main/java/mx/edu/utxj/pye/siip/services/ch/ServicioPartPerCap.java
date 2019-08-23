@@ -124,8 +124,13 @@ public class ServicioPartPerCap implements EjbPartPerCap{
 
     @Override
     public void guardaPartPerCap(List<DTOPerCapParticipantes> lista, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {
-            
-            lista.forEach((participantes) -> {
+
+        lista.forEach((participantes) -> {
+
+            participantes.setPersonal(f.getEntityManager().find(Personal.class, participantes.getPersonal().getClave()));
+            participantes.getParticipantesPersonalCapacitado().setAreaOperativa(participantes.getPersonal().getAreaOperativa());
+            participantes.getParticipantesPersonalCapacitado().setCategoriaOperativa(participantes.getPersonal().getCategoriaOperativa().getCategoria());
+            participantes.getParticipantesPersonalCapacitado().setActividad(participantes.getPersonal().getActividad().getActividad());
 
             PersonalCapacitado personalCapacitado = ejbPersonalCapacitado.getRegistroPersonalCapacitado(participantes.getParticipantesPersonalCapacitado().getPercap().getCurso());
             if (personalCapacitado == null || personalCapacitado.getCurso().isEmpty()) {
@@ -160,7 +165,7 @@ public class ServicioPartPerCap implements EjbPartPerCap{
                 }
             }
         });
-                
+
           
     }
 
