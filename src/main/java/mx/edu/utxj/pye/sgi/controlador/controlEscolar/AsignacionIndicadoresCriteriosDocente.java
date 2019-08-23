@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaasignacionindicadorescargaacademica;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import org.omnifaces.util.Ajax;
@@ -235,6 +235,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             case 0:
                 ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSer(rol.getListaCriteriosSer(), rol.getDtoConfUniMat());
                 if (resGuardarSer.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGuardarSer);
                 } else {
                     mostrarMensajeResultadoEJB(resGuardarSer);
                 }
@@ -254,6 +255,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             case 0:
                 ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaber(rol.getListaCriteriosSaber(), rol.getDtoConfUniMat());
                 if (resGuardarSaber.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGuardarSaber);
                 } else {
                     mostrarMensajeResultadoEJB(resGuardarSaber);
                 }
@@ -273,6 +275,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             case 0:
                 ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSabHac = ejb.guardarIndicadoresSaberHacer(rol.getListaCriteriosSaberHacer(), rol.getDtoConfUniMat());
                 if (resGuardarSabHac.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGuardarSabHac);
                 } else {
                     mostrarMensajeResultadoEJB(resGuardarSabHac);
                 }
@@ -308,7 +311,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
      
       public void existeAsignacion(){
         if(rol.getCarga()== null) return;
-        ResultadoEJB<List<Listaasignacionindicadorescargaacademica>> res = ejb.buscarAsignacionIndicadoresCargaAcademica(rol.getCarga());
+        ResultadoEJB<List<DtoAsignadosIndicadoresCriterios>> res = ejb.buscarAsignacionIndicadoresCargaAcademica(rol.getCarga());
 //        System.err.println("existeAsignacion - res " + res.getValor().size());
         if(res.getValor().size()>0 && !res.getValor().isEmpty()){
             rol.setExisteAsignacionIndicadores(true);

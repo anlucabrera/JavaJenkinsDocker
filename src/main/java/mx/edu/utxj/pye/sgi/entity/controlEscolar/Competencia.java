@@ -55,7 +55,7 @@ public class Competencia implements Serializable {
     @Size(min = 1, max = 12)
     @Column(name = "tipo")
     private String tipo;
-    @JoinTable(name = "control_escolar.plan_materia_competencias", joinColumns = {
+    @JoinTable(name = "plan_materia_competencias", joinColumns = {
         @JoinColumn(name = "id_competencia", referencedColumnName = "id_competencia")}, inverseJoinColumns = {
         @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")})
     @ManyToMany

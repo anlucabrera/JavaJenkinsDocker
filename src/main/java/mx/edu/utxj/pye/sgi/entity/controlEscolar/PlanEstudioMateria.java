@@ -63,6 +63,8 @@ public class PlanEstudioMateria implements Serializable {
     private PlanEstudio idPlan;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
     private List<CargaAcademica> cargaAcademicaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
+    private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
 
     public PlanEstudioMateria() {
     }
@@ -132,6 +134,15 @@ public class PlanEstudioMateria implements Serializable {
 
     public void setCargaAcademicaList(List<CargaAcademica> cargaAcademicaList) {
         this.cargaAcademicaList = cargaAcademicaList;
+    }
+
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaGrupal> getPermisosCapturaExtemporaneaGrupalList() {
+        return permisosCapturaExtemporaneaGrupalList;
+    }
+
+    public void setPermisosCapturaExtemporaneaGrupalList(List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList) {
+        this.permisosCapturaExtemporaneaGrupalList = permisosCapturaExtemporaneaGrupalList;
     }
 
     @Override

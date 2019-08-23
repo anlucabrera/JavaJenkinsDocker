@@ -6,25 +6,20 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import java.io.Serializable;
+import java.util.Date;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-
-
 
 /**
  *
  * @author UTXJ
  */
 @RequiredArgsConstructor @ToString
-public class DtoAsignadosIndicadoresCriterios implements Serializable{
-    @Getter @Setter @NonNull UnidadMateriaConfiguracionDetalle configuracionDetalle;
-    @Getter @Setter @NonNull UnidadMateriaConfiguracion configuracion;
-    @Getter @Setter @NonNull UnidadMateria unidadMateria;
-    @Getter @Setter @NonNull Criterio criterio;
-    @Getter @Setter @NonNull Indicador indicador;
-
+public class DtoRangoFechasPermiso implements Serializable{
+    @Getter @Setter @NonNull Date rangoFechaInicial;
+    @Getter @Setter @NonNull Date rangoFechaFinal;
+    
 }

@@ -94,7 +94,7 @@
                                     <div class="row">
                                         <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
                                             <center>
-                                                <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{asignacionIndicadoresCriteriosDocente.rol.listaAsignacionCargaAcademica}" sortBy="#{asignacionIndCA.unidad}"
+                                                <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{asignacionIndicadoresCriteriosDocente.rol.listaAsignacionCargaAcademica}" sortBy="#{asignacionIndCA.unidadMateria.noUnidad}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
                                                     <f:facet name="header">
                                                         #{asignacionIndicadoresCriteriosDocente.rol.carga.materia.nombre}
@@ -109,19 +109,19 @@
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column groupRow="true">
-                                                        <h:outputText value="#{asignacionIndCA.unidad}" style="text-align: center;"/>
+                                                        <h:outputText value="#{asignacionIndCA.unidadMateria.noUnidad}" style="text-align: center;"/>
                                                     </p:column>
                                                     <p:column groupRow="true">
-                                                        <h:outputText value="#{asignacionIndCA.nombreUnidad}" style="text-align: center;" />
+                                                        <h:outputText value="#{asignacionIndCA.unidadMateria.nombre}" style="text-align: center;" />
                                                     </p:column>
                                                     <p:column groupRow="true">
-                                                        <h:outputText value="#{asignacionIndCA.criterio}" style="text-align: center;"/>
+                                                        <h:outputText value="#{asignacionIndCA.criterio.tipo}" style="text-align: center;"/>
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{asignacionIndCA.indicador}" />
+                                                        <h:outputText value="#{asignacionIndCA.indicador.nombre}" />
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{asignacionIndCA.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
+                                                        <h:outputText value="#{asignacionIndCA.configuracionDetalle.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
                                                     </p:column>
                                                 </p:dataTable>
                                                 <p></p>

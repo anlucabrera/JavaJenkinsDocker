@@ -11,20 +11,15 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-
-
-
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PermisosCapturaExtemporaneaGrupal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 /**
  *
  * @author UTXJ
  */
 @RequiredArgsConstructor @ToString
-public class DtoAsignadosIndicadoresCriterios implements Serializable{
-    @Getter @Setter @NonNull UnidadMateriaConfiguracionDetalle configuracionDetalle;
-    @Getter @Setter @NonNull UnidadMateriaConfiguracion configuracion;
-    @Getter @Setter @NonNull UnidadMateria unidadMateria;
-    @Getter @Setter @NonNull Criterio criterio;
-    @Getter @Setter @NonNull Indicador indicador;
-
+public class DtoPermisoCapturaExtemporanea implements Serializable{
+    @Getter @Setter @NonNull PermisosCapturaExtemporaneaGrupal permisosCapturaExtemporaneaGrupal;
+    @Getter @Setter @NonNull String unidadMateria;
+    @Getter @Setter @NonNull AreasUniversidad programaEducativo;
 }

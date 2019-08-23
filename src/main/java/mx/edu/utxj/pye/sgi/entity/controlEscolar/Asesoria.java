@@ -62,7 +62,7 @@ public class Asesoria implements Serializable {
     @Size(min = 1, max = 11)
     @Column(name = "tipo")
     private String tipo;
-    @JoinTable(name = "control_escolar.participantes_asesoria", joinColumns = {
+    @JoinTable(name = "participantes_asesoria", joinColumns = {
         @JoinColumn(name = "asesoria", referencedColumnName = "id_asesoria")}, inverseJoinColumns = {
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")})
     @ManyToMany

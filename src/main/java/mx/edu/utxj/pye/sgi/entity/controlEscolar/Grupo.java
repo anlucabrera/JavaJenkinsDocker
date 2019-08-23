@@ -90,6 +90,8 @@ public class Grupo implements Serializable {
     private List<Estudiante> estudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
     private List<Tutoria> tutoriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo")
+    private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
 
     public Grupo() {
     }
@@ -221,6 +223,15 @@ public class Grupo implements Serializable {
 
     public void setTutoriaList(List<Tutoria> tutoriaList) {
         this.tutoriaList = tutoriaList;
+    }
+
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaGrupal> getPermisosCapturaExtemporaneaGrupalList() {
+        return permisosCapturaExtemporaneaGrupalList;
+    }
+
+    public void setPermisosCapturaExtemporaneaGrupalList(List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList) {
+        this.permisosCapturaExtemporaneaGrupalList = permisosCapturaExtemporaneaGrupalList;
     }
 
     @Override
