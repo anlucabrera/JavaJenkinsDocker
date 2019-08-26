@@ -7,7 +7,7 @@ import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
 
 @RequiredArgsConstructor
 public enum ControlEscolarVistaControlador {
-    ASIGNACION_ACADEMICA("", AsignacionAcademicaDirector.class),
+    ASIGNACION_ACADEMICA("/controlEscolar/director/asignacion_academica.xhtml", AsignacionAcademicaDirector.class),
     CAPTURA_CALIFICACIONES("/controlEscolar/docente/captura_calificaciones.xhtml", CapturaCalificacionesDocente.class),
     REINCORPORACION("/controlEscolar/se/reincorporaciones.xhtml", ReincorporacionServiciosEscolares.class),
     GENERACION_GRUPOS("/controlEscolar/se/generacionGrupos.xhtml", GeneracionGruposServiciosEscolares.class),

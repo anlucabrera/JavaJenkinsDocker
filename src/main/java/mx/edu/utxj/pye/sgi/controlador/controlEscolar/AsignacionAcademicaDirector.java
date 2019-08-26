@@ -19,6 +19,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
@@ -60,6 +61,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
     @PostConstruct
     public void init(){
         try{
+            setVistaControlador(ControlEscolarVistaControlador.ASIGNACION_ACADEMICA);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
 //            System.out.println("resAcceso = " + resAcceso);
 
@@ -81,9 +83,11 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
 
             rol.setDirector(director);
             ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDirector());
+//            System.out.println("resEvento = " + resEvento);
             if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!validarIdentificacion()) return;
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
             rol.setNivelRol(NivelRol.OPERATIVO);
@@ -98,6 +102,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
             rol.setPeriodos(resPeriodos.getValor());
 
             ResultadoEJB<Map<AreasUniversidad, List<Grupo>>> resProgramas = ejb.getProgramasActivos(rol.getDirector(), rol.getPeriodo());
+//            System.out.println("resProgramas = " + resProgramas);
             if(!resProgramas.getCorrecto()) mostrarMensajeResultadoEJB(resProgramas);
             rol.setProgramasGruposMap(resProgramas.getValor());
 
@@ -219,6 +224,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
         if(rol.getGrupo() == null) return;
 
         ResultadoEJB<List<DtoMateria>> res = ejb.getMaterias(rol.getPrograma(), rol.getGrupo(), rol.getPeriodo(), rol.getPeriodoActivo());
+//        System.out.println("resMaterias = " + res);
         if(res.getCorrecto()){
             rol.setMateriasPorGrupo(res.getValor());
             /*rol.getMateriasPorGrupo().forEach(dtoMateria -> {
@@ -228,6 +234,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
 
         if(rol.getDocente() != null){
             ResultadoEJB<List<DtoCargaAcademica>> resDocente = ejb.getCargaAcademicaPorDocente(rol.getDocente(), rol.getPeriodo());
+//            System.out.println("resDocente = " + resDocente);
             if(resDocente.getCorrecto()) rol.setCargas(resDocente.getValor());
             else mostrarMensajeResultadoEJB(resDocente);
         }

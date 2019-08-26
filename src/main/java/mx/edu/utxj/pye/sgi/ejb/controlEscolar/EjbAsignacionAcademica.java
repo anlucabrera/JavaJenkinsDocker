@@ -118,10 +118,18 @@ public class EjbAsignacionAcademica {
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosDescendentes(){
         try{
             //buscar lista de periodos escolares ordenados de forma descendente para que al elegir un periodo en la asignación docente aparezca primero el mas actual
-            final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
-                    .getResultList();
+            final List<PeriodosEscolares> periodos = em.createQuery("select ee from EventoEscolar ee where ee.tipo = :tipo order by ee.periodo desc", EventoEscolar.class)
+                    .setParameter("tipo", EventoEscolarTipo.CARGA_ACADEMICA.getLabel())
+                    .getResultStream()
+                    .map(eventoEscolar -> em.find(PeriodosEscolares.class, eventoEscolar.getPeriodo()))
+                    .distinct()
+                    .sorted(Comparator.comparingInt(PeriodosEscolares::getPeriodo).reversed())
+                    .collect(Collectors.toList());
+//            System.out.println("periodos = " + periodos);
+//            System.out.println("EventoEscolarTipo.CARGA_ACADEMICA.getLabel() = " + EventoEscolarTipo.CARGA_ACADEMICA.getLabel());
             return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
         }catch (Exception e){
+            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionAcademica.getPeriodosDescendentes)", e, null);
         }
     }
@@ -137,9 +145,10 @@ public class EjbAsignacionAcademica {
             // buscar lista de programas educativos con plan de estudios vigentes y despues mapear cada programa con su lista de grupos
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
 //            System.out.println("programaEducativoCategoria = " + programaEducativoCategoria);
-            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
+            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' and a.nivelEducativo.nivel = :nivel order by a.nombre", AreasUniversidad.class)
                     .setParameter("areaPoa", director.getAreaPOA().getArea())
                     .setParameter("categoria", programaEducativoCategoria)
+                    .setParameter("nivel", "TSU")
                     .getResultList();
 //            System.out.println("programas = " + programas);
             Map<AreasUniversidad, List<Grupo>> programasMap = programas.stream()
@@ -147,6 +156,7 @@ public class EjbAsignacionAcademica {
 //            System.out.println("programasMap = " + programasMap);
             return ResultadoEJB.crearCorrecto(programasMap, "Mapa de programas y grupos");
         }catch (Exception e){
+            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo mapear los programas y sus grupos. (EjbAsignacionAcademica.getProgramasActivos)", e, null);
         }
     }

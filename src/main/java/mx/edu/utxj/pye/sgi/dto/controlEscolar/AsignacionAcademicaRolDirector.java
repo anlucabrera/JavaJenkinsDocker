@@ -210,9 +210,16 @@ public class AsignacionAcademicaRolDirector extends AbstractRol {
      */
     public void setProgramasGruposMap(Map<AreasUniversidad, List<Grupo>> programasGruposMap) {
         this.programasGruposMap = programasGruposMap;
+//        System.out.println("programasGruposMap = " + programasGruposMap);
         if(programasGruposMap != null){
             this.programas = programasGruposMap.keySet().stream().sorted(Comparator.comparing(AreasUniversidad::getNombre)).collect(Collectors.toList());
+            if(this.programas != null && !this.programas.isEmpty())
+                this.programa = this.programas.get(0);
         }
+
+//        System.out.println("programa = " + programa.getSiglas());
+//        System.out.println("programa = " + programa);
+//        System.out.println("(programasGruposMap != null && programa != null && programasGruposMap.containsKey(programa)) = " + (programasGruposMap != null && programa != null && programasGruposMap.containsKey(programa)));
         if(programasGruposMap != null && programa != null && programasGruposMap.containsKey(programa)) {
             this.grupos = programasGruposMap.get(programa);
             if(grupos!=null){
