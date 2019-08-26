@@ -32,16 +32,29 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "ParticipantesPersonalCapacitado.findByPersonal", query = "SELECT p FROM ParticipantesPersonalCapacitado p WHERE p.personal = :personal")})
 public class ParticipantesPersonalCapacitado implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "personal")
+    private int personal;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "area_operativa")
+    private short areaOperativa;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "categoria_operativa")
+    private short categoriaOperativa;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "actividad")
+    private short actividad;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "registro")
     private Integer registro;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "personal")
-    private int personal;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Registros registros;
@@ -69,13 +82,6 @@ public class ParticipantesPersonalCapacitado implements Serializable {
         this.registro = registro;
     }
 
-    public int getPersonal() {
-        return personal;
-    }
-
-    public void setPersonal(int personal) {
-        this.personal = personal;
-    }
 
     public Registros getRegistros() {
         return registros;
@@ -116,6 +122,38 @@ public class ParticipantesPersonalCapacitado implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.ParticipantesPersonalCapacitado[ registro=" + registro + " ]";
+    }
+
+    public int getPersonal() {
+        return personal;
+    }
+
+    public void setPersonal(int personal) {
+        this.personal = personal;
+    }
+
+    public short getAreaOperativa() {
+        return areaOperativa;
+    }
+
+    public void setAreaOperativa(short areaOperativa) {
+        this.areaOperativa = areaOperativa;
+    }
+
+    public short getCategoriaOperativa() {
+        return categoriaOperativa;
+    }
+
+    public void setCategoriaOperativa(short categoriaOperativa) {
+        this.categoriaOperativa = categoriaOperativa;
+    }
+
+    public short getActividad() {
+        return actividad;
+    }
+
+    public void setActividad(short actividad) {
+        this.actividad = actividad;
     }
     
 }

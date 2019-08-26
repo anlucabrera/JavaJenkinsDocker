@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.siip.interfaces.eb;
 
 import javax.ejb.Local;
 import java.util.List;
+import mx.edu.utxj.pye.siip.dto.eb.DTOArchivoRepositorio;
 
 /**
  *
@@ -15,5 +16,5 @@ import java.util.List;
 @Local
 public interface EjbRepositorio {
 
-    public List<String> getListaArchivosPorAreaEjeRegistroEjercicioMes(String ruta_principal);
+    public List<DTOArchivoRepositorio> getListaArchivosPorAreaEjeRegistroEjercicioMes(Short ejercicio, String siglas, List<String> ejes, String mes, List<String> tiposRegistros);
 }
