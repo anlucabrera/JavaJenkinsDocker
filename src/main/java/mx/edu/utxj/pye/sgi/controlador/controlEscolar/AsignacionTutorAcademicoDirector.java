@@ -69,17 +69,21 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
         try {
             setVistaControlador(ControlEscolarVistaControlador.ASIGNACION_TUTOR_ACADEMICO);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
-            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
-                        
-            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarDirector(logon.getPersonal().getClave());
-            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarEncargadoDireccion(logon.getPersonal().getClave());
             
-            Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
+            if(!resValidacion.getCorrecto() && !resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return; }//cortar el flujo si no se pudo validar
+            
+            Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
             PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
             rol = new AsignacionTutorRolDirector(filtro, director, director.getAreaOficial());
             tieneAcceso = rol.tieneAcceso(director);
             
-            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            if(!tieneAcceso){
+                rol.setFiltro(resValidacion.getValor());
+                tieneAcceso = rol.tieneAcceso(director);
+            }
+            
+            if(!tieneAcceso){return;} //cortar el flujo si no tiene acceso
             
             rol.setDirector(director);
             ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDirector());
