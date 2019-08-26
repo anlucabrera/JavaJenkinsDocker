@@ -131,7 +131,6 @@ public class ServicioPersonalEvaluaciones implements EjbPersonalEvaluaciones {
         }
 
         promedio = calificacion / preguntas;
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPersonalEvaluaciones.calcularPromedio360() EJB  el promedio es  = : " + promedio);
         return promedio;
     }
 
@@ -161,9 +160,7 @@ public class ServicioPersonalEvaluaciones implements EjbPersonalEvaluaciones {
         if (resultados.getR19() != null) {           calificacion = calificacion + resultados.getR19();       }
         if (resultados.getR20() != null) {           calificacion = calificacion + resultados.getR20();       }
         promedio = calificacion / 20;
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPersonalEvaluaciones.calcularPromedioDesempenio() EJB  el promedio es = : " + promedio);
         return promedio;
-        
     }
 
     @Override
@@ -171,27 +168,20 @@ public class ServicioPersonalEvaluaciones implements EjbPersonalEvaluaciones {
         List<ListaEvaluaciones> l = new ArrayList<>();
 
         periodos.stream().forEach(p -> {
-            System.out.println("EJB entra en el for each");
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPersonalEvaluaciones.empaquetar() EJB el periodo es p : " + p );
             ListaEvaluaciones fila = new ListaEvaluaciones(p);
-            System.out.println("lista de ecaluaciones FILA EJB  = :¨" + fila);
-            if (resultadosDesempenio.get(p) != null ) {
+            if (resultadosDesempenio.get(p) != null) {
                 fila.setDesempenioEvaluacionResultado(resultadosDesempenio.get(p));
                 fila.setPromedioDesepenio(calcularPromedioDesempenio(fila.getDesempenioEvaluacionResultado()));
             }
-            
-            if(resultados360.get(p)!= null){
+
+            if (resultados360.get(p) != null) {
                 fila.setEvaluacion360Resultado(resultados360.get(p));
                 fila.setPromedio360(calcularPromedio360(fila.getEvaluacion360Resultado()));
             }
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPersonalEvaluaciones.empaquetar() EJB la fila = : " + fila);
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPersonalEvaluaciones.empaquetar() promedio 360 de la fila EJB : " + fila.getPromedio360());
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioPersonalEvaluaciones.empaquetar() promedio desempenio de la fila EJB : " + fila.getPromedioDesepenio());
-            if(fila.getPromedio360()!=null && fila.getPromedioDesepenio() != null){
-            l.add(fila);
+            if (fila.getPromedio360() != null && fila.getPromedioDesepenio() != null) {
+                l.add(fila);
             }
         });
-        System.out.println("EJB lista de resultados = : "+l);
         return l;
     }
 
