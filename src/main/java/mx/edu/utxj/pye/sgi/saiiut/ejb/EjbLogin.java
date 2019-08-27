@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.saiiut.ejb;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
@@ -28,7 +29,11 @@ public interface EjbLogin {
 
     public Usuarios autenticar(String loginUsuario, String password);
 
+    Login autenticar19(String loginUsuario, String password);
+
     public Usuarios getUsuarioPorLogin(String loginUsuario);
+
+    Login getUsuario19PorLogin(String loginUsuario);
 
     public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario);
 
@@ -37,7 +42,7 @@ public interface EjbLogin {
 
     public String encriptarContrasena(String contrasena);
 
-    public UsuarioTipo getTipoUsuario(Usuarios usuario);
+    public UsuarioTipo getTipoUsuario(String usuario);
 
     public User getUsuarioPorLoginShiro(String loginUsuario);
 
