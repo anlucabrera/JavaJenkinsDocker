@@ -29,6 +29,7 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.ListaUsuarioClaveNomina;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Usuarios;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionesTutores;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
+import mx.edu.utxj.pye.sgi.util.Encrypted;
 
 /**
  *
@@ -70,10 +71,14 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public Login autenticar19(String loginUsuario, String password) {
-        Login login = getUsuario19PorLogin(loginUsuario);
-        if(login == null) return login;
-        Boolean correcta = Objects.equals(login.getPassword(), encriptarContrasena(password)) || Objects.equals(login.getPassword(), "masterkeyutxj");
-        return correcta?login:null;
+        try{
+            Login login = getUsuario19PorLogin(loginUsuario);
+            if(login == null) return login;
+            Boolean correcta = Objects.equals(login.getPassword(), Encrypted.encrypt(Encrypted.KEY,Encrypted.IV,password)) || Objects.equals(login.getPassword(), "masterkeyutxj");
+            return correcta?login:null;
+        }catch (Exception e){
+            return null;
+        }
     }
 
     @Override

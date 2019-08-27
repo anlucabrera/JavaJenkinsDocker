@@ -7,7 +7,7 @@ public class PatronMatricula19 implements Patron {
         if(!PATRON_MATRICULA.coincide(cadena)) return false;
 
         Integer anio = Integer.parseInt(cadena.substring(0,2));
-        System.out.println("anio = " + anio);
+//        System.out.println("anio = " + anio);
         return anio >= 19;
     }
 

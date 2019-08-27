@@ -2,6 +2,7 @@ package com.github.adminfaces.starter.infra.security;
 
 import com.github.adminfaces.template.session.AdminSession;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
+import mx.edu.utxj.pye.sgi.util.Encrypted;
 import org.omnifaces.util.Faces;
 
 import javax.enterprise.context.SessionScoped;
@@ -124,6 +125,9 @@ public class LogonMB extends AdminSession implements Serializable {
                 Login usuario = ejbLogin.autenticar19(email, password);
                 if(usuario == null){
                     addDetailMessage("La contraseña ingresada es incorrecta.");
+                    try{
+                        System.out.println("Encrypted.decrypt(res.getPassword()) = " + Encrypted.decrypt(Encrypted.KEY, Encrypted.IV, res.getPassword()));
+                    }catch (Exception e){e.printStackTrace();}
                     Faces.getExternalContext().getFlash().setKeepMessages(true);
                     Faces.redirect("login.xhtml");
                     return;
