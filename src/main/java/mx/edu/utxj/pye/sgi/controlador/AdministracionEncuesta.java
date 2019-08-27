@@ -62,8 +62,7 @@ public class AdministracionEncuesta implements Serializable{
                         dto.esSecretario = true;
                         aperturarEncuestas();
                     }
-
-                    if(!ejbAdmEncuesta.esPlaneacion(1, Short.parseShort("2"), Short.parseShort("18"), Short.parseShort("48"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
+                    if(logonMB.getPersonal().getAreaOperativa() == 6){
                         dto.planeacion = true;
                         aperturarEncuestas();
                     }
