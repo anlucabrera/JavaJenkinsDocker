@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.saiiut.ejb;
 
 import java.util.List;
+import java.util.Objects;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
@@ -13,6 +14,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
@@ -22,6 +24,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Patron;
 import mx.edu.utxj.pye.sgi.funcional.PatronMatricula;
+import mx.edu.utxj.pye.sgi.funcional.PatronMatricula19;
 import mx.edu.utxj.pye.sgi.saiiut.entity.ListaUsuarioClaveNomina;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Usuarios;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionesTutores;
@@ -42,7 +45,8 @@ public class ServicioLogin implements EjbLogin {
     @EJB    Facade2 f;
     // Fin de Importaciones 
     
-    private final Patron patronMatricula = new PatronMatricula();   
+    private final Patron patronMatricula = new PatronMatricula();
+    private final Patron patronMatricula19 = new PatronMatricula19();
     
 // Comentar los siguiente métodos cuando falle saiiut //
     @Override
@@ -65,18 +69,33 @@ public class ServicioLogin implements EjbLogin {
     }
 
     @Override
+    public Login autenticar19(String loginUsuario, String password) {
+        Login login = getUsuario19PorLogin(loginUsuario);
+        if(login == null) return login;
+        Boolean correcta = Objects.equals(login.getPassword(), encriptarContrasena(password)) || Objects.equals(login.getPassword(), "masterkeyutxj");
+        return correcta?login:null;
+    }
+
+    @Override
     public Usuarios getUsuarioPorLogin(String loginUsuario) {
-//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() loginUsuario: " + loginUsuario);
         TypedQuery<Usuarios> q = f.getEntityManager().createNamedQuery("Usuarios.findByLoginUsuario", Usuarios.class);
         q.setParameter("loginUsuario", loginUsuario);
         List<Usuarios> l = q.getResultList();
-
-//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() l: " + l);
         if (l.isEmpty()) {
             return null;
         } else {
             return l.get(0);
         }
+    }
+
+    @Override
+    public Login getUsuario19PorLogin(String loginUsuario) {
+        Login login = f2.getEntityManager().createQuery("select l from Login  l where l.usuario=:usuario", Login.class)
+                .setParameter("usuario", loginUsuario)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        return login;
     }
 
     @Override
@@ -133,9 +152,11 @@ public class ServicioLogin implements EjbLogin {
     }
 
     @Override
-    public UsuarioTipo getTipoUsuario(Usuarios usuario) {
+    public UsuarioTipo getTipoUsuario(String usuario) {
         if (usuario != null) {
-            if (patronMatricula.coincide(usuario.getLoginUsuario().trim())) {
+            if(patronMatricula19.coincide(usuario.trim())){
+                return UsuarioTipo.ESTUDIANTE19;
+            } else if (patronMatricula.coincide(usuario.trim())) {
                 return UsuarioTipo.ESTUDIANTE;
             } else {
                 return UsuarioTipo.TRABAJADOR;

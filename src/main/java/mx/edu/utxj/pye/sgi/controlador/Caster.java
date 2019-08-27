@@ -27,9 +27,11 @@ import mx.edu.utxj.pye.sgi.enums.converter.ComisionOficioEstatusConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.apache.commons.io.FilenameUtils;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -48,7 +50,13 @@ public class Caster {
     @EJB EjbPropiedades ep;
     private DecimalFormat df = new DecimalFormat("0.##");
     @EJB Facade f;
+    private EntityManager em;
     @EJB EjbPersonalBean ejbPersonalBean;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager();
+    }
 
     public Caster() {
     }
@@ -77,7 +85,7 @@ public class Caster {
 
     public String clavePeriodoToString(Integer periodo){
         if(periodo == null) return "Clave de periodo nulo";
-        PeriodosEscolares periodoEscolar = f.getEntityManager().find(PeriodosEscolares.class, periodo);
+        PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, periodo);
         return periodoToString(periodoEscolar);
     }
 
@@ -157,8 +165,8 @@ public class Caster {
     }
 
     public TramitesDto tramiteToListaTramitesDto(Tramites tramite){
-        PersonalActivo seguidor = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramite.getClave()));
-        PersonalActivo comisionado = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramite.getComisionOficios().getComisionado()));
+        PersonalActivo seguidor = ejbPersonalBean.pack(em.find(Personal.class, tramite.getClave()));
+        PersonalActivo comisionado = ejbPersonalBean.pack(em.find(Personal.class, tramite.getComisionOficios().getComisionado()));
         return new TramitesDto(seguidor,comisionado,tramite);
     }
 
@@ -172,8 +180,8 @@ public class Caster {
 
     public String tramiteToDestino(Tramites tramite){
         if(tramite == null) return "";
-        Municipio municipio = f.getEntityManager().find(Municipio.class, new MunicipioPK(tramite.getComisionOficios().getEstado(), tramite.getComisionOficios().getMunicipio()));
-        Estado estado = f.getEntityManager().find(Estado.class, tramite.getComisionOficios().getEstado());
+        Municipio municipio = em.find(Municipio.class, new MunicipioPK(tramite.getComisionOficios().getEstado(), tramite.getComisionOficios().getMunicipio()));
+        Estado estado = em.find(Estado.class, tramite.getComisionOficios().getEstado());
         return tramite.getComisionOficios().getDependencia().concat(", ").concat(municipio.getNombre()).concat(", ").concat(estado.getNombre());
     }
 

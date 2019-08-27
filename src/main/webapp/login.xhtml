@@ -69,6 +69,15 @@
                     </h:panelGrid>
                 </p:dialog>
             </h:form>
+            <script>
+                var cookie = '#{cookie["JSESSIONID"].value}';
+                var session = '#{session.id}';
+                var coincide = cookie === session;
+                if(!coincide){
+                    $.removeCookie('JSESSIONID', { path: '/' });
+                    location.reload();
+                }
+            </script>
         </h:body>
     </f:view>
 </html>
