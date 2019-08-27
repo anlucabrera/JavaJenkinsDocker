@@ -55,6 +55,14 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbRegistroPlanEstudio.validarDirector)", e, null);
         }
     }
+    
+    public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDirector(Integer clave) {
+        try {
+            return ejbAsignacionAcademica.validarEncargadoDireccion(clave);
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbRegistroPlanEstudio.validarDirector)", e, null);
+        }
+    }
 
     /**
      * Permite obtener el listado de áreas de conocimiento activas

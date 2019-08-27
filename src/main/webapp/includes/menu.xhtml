@@ -45,7 +45,8 @@
                 <c:if test="#{encuestaServicios.dto.cargada}"><li><p:link href="/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
                 <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
                 <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
-            </li>
+                <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-plus-circle"></i><span>Planeacion Cuatrimestral</span></p:link></li></c:if>
+        </li>
             <c:if test="#{controladorEstReg.cargada}">
                 <li class="header" style="color: #040404;background: #ffffff">Titulación</li>
                 <li class="treeview ">

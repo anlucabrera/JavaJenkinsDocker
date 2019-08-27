@@ -65,19 +65,27 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
     public void init(){
         try {
             setVistaControlador(ControlEscolarVistaControlador.ADMINISTRACION_PLAN_ESTUDIOS);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
-            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
-            
+
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarDirector(logon.getPersonal().getClave());
-            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
-            
+            ResultadoEJB<Filter<PersonalActivo>> resValidaEnc = ejb.validarEncargadoDirector(logon.getPersonal().getClave());//validar si es director
+
+            if (!resValidaEnc.getCorrecto() && !resValidacion.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resValidacion);
+                return;
+            }//cortar el flujo si no se pudo validar
+
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
             PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
             rol = new RegistroPlanesEstudioRolDirector(filtro, director, director.getAreaOficial());
             tieneAcceso = rol.tieneAcceso(director);
-            
+
+            if (!tieneAcceso) {
+                rol.setFiltro(resValidaEnc.getValor());
+                tieneAcceso = rol.tieneAcceso(director);
+            }
+
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-            
+
             ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = ejb.getProgramasEducativos(director);
             ResultadoEJB<List<AreaConocimiento>> resAreasConocimiento = ejb.getAreasConocimiento();
             

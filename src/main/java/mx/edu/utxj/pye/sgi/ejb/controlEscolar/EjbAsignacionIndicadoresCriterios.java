@@ -661,5 +661,51 @@ public class EjbAsignacionIndicadoresCriterios {
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la asignación de indicadores por criterio. (EjbAsignacionIndicadoresCriterios.eliminarAsignacionIndicadores)", e, null);
         }
+    }    
+    // Consulta para la generacion del formato de Planeacion Cuatrimestral
+    /**
+     * Permite verificar si existe asignación de indicadores por criterio de carga académica seleccionada
+     * @param dtoCargaAcademica Configuración de la que se buscará asignación de indicadores por criterio
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Informeplaneacioncuatrimestraldocenteprint>> buscarInforme(DtoCargaAcademica dtoCargaAcademica){
+        try{
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - entro");
+            Boolean asigInd = compararUnidadesConfiguradasConTotales(dtoCargaAcademica);
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - valor " + asigInd);
+            List<Informeplaneacioncuatrimestraldocenteprint> listaUnidadMatConfDet = new ArrayList<>();
+            if(asigInd == true){
+            listaUnidadMatConfDet = em.createQuery("SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.carga =:cargaAcademica", Informeplaneacioncuatrimestraldocenteprint.class)
+                    .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .getResultList();
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaConsulta " + listaUnidadMatConfDet.size());
+            }else{
+                listaUnidadMatConfDet.clear();
+            }
+            if(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora()!=null && !listaUnidadMatConfDet.isEmpty()){
+                Informeplaneacioncuatrimestraldocenteprint i=new Informeplaneacioncuatrimestraldocenteprint();
+                i.setConfiguracionDetalle(0);
+                i.setCarga(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getCarga().getCarga());
+                i.setConfiguracion(0);
+                i.setUnidad(dtoCargaAcademica.getMateria().getUnidadMateriaList().size()+1);
+                i.setNombreUnidad("T.I.");
+                i.setObjetivo(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getDescripcion());
+                i.setFechaInicio(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getFechaEntrega());
+                i.setFechaFin(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getFechaEntrega());
+                i.setPorUnidad(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getPorcentaje());
+                i.setIdCriterio(0);
+                i.setCriterio("");
+                i.setPorCriterio(0);
+                i.setIdIndicador(0);
+                i.setIndicador("");
+                i.setPorcentaje(0);
+                listaUnidadMatConfDet.add(i);
+                
+            }
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaFinal " + listaUnidadMatConfDet.size());
+            return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+        }
     }
 }
