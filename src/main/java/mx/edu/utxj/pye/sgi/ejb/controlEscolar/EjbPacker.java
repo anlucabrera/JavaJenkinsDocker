@@ -41,16 +41,16 @@ public class EjbPacker {
         if(personal == null) return null;
         if(personal.getStatus().equals('B')) return null;
         PersonalActivo activo = new PersonalActivo(personal);
-        activo.setAreaOficial(f.getEntityManager().find(AreasUniversidad.class, personal.getAreaOficial()));
-        activo.setAreaOperativa(f.getEntityManager().find(AreasUniversidad.class, personal.getAreaOperativa()));
+        activo.setAreaOficial(em.find(AreasUniversidad.class, personal.getAreaOficial()));
+        activo.setAreaOperativa(em.find(AreasUniversidad.class, personal.getAreaOperativa()));
         activo.setAreaPOA(ejbFiscalizacion.getAreaConPOA(personal.getAreaOperativa()));
-        activo.setAreaSuperior(f.getEntityManager().find(AreasUniversidad.class, personal.getAreaSuperior()));
+        activo.setAreaSuperior(em.find(AreasUniversidad.class, personal.getAreaSuperior()));
         return activo;
     }
 
     public PersonalActivo packPersonalActivo(Integer id){
         if(id != null && id >0){
-            Personal personal = f.getEntityManager().find(Personal.class, id);
+            Personal personal = em.find(Personal.class, id);
             return packPersonalActivo(personal);
         }
 
@@ -103,7 +103,7 @@ public class EjbPacker {
                     .findFirst()
                     .orElse(null);
 //            CargaAcademicaPK pk = new CargaAcademicaPK(grupo, materia, docente);
-            return packCargaAcademica(cargaAcademica); //pack(f.getEntityManager().find(CargaAcademica.class, pk));
+            return packCargaAcademica(cargaAcademica); //pack(em.find(CargaAcademica.class, pk));
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica con claves (EjbAsignacionAcademica. pack).", e, DtoCargaAcademica.class);
         }

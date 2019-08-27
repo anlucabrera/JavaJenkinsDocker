@@ -135,7 +135,7 @@ public class EjbPermisoAperturaExtemporanea {
      */
     public PeriodosEscolares getPeriodoActual() {
 
-        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+        StoredProcedureQuery spq = em.createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
         List<PeriodosEscolares> l = spq.getResultList();
 
         if (l == null || l.isEmpty()) {

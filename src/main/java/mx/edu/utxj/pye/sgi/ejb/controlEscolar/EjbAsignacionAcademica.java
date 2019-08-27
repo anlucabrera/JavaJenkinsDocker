@@ -244,7 +244,7 @@ public class EjbAsignacionAcademica {
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
-            //f.getEntityManager().find(CargaAcademica.class, pk);
+            //em.find(CargaAcademica.class, pk);
 
             switch (operacion){
                 case PERSISTIR:
@@ -295,14 +295,14 @@ public class EjbAsignacionAcademica {
     public ResultadoEJB<CargaAcademica> actualizarDocenteEnAsignacion(DtoMateria dtoMateria, PersonalActivo docenteNuevo){
         try{
             if(dtoMateria.getDtoCargaAcademica() == null) return ResultadoEJB.crearErroneo(2, "La materia no ha sido asignada, por lo cual no puede ser cambiado el docente a una asignación que no existe.", CargaAcademica.class);
-             Integer  t = f.getEntityManager().createQuery("update CargaAcademica ca set ca.docente=:docente where ca.carga=:carga")
+             Integer  t = em.createQuery("update CargaAcademica ca set ca.docente=:docente where ca.carga=:carga")
                     .setParameter("docente", docenteNuevo.getPersonal().getClave())
                     .setParameter("carga", dtoMateria.getDtoCargaAcademica().getCargaAcademica().getCarga())
                     .executeUpdate();
 //            System.out.println("t = " + t);
             if(t > 0){
 //                CargaAcademicaPK pk = new CargaAcademicaPK(dtoMateria.getDtoCargaAcademica().getCargaAcademica().getCargaAcademicaPK().getCveGrupo(), dtoMateria.getDtoCargaAcademica().getCargaAcademica().getCargaAcademicaPK().getCveMateria(), docenteNuevo.getPersonal().getClave());
-                CargaAcademica cargaAcademica = f.getEntityManager().find(CargaAcademica.class, dtoMateria.getDtoCargaAcademica().getCargaAcademica().getCarga());
+                CargaAcademica cargaAcademica = em.find(CargaAcademica.class, dtoMateria.getDtoCargaAcademica().getCargaAcademica().getCarga());
 //                System.out.println("cargaAcademica = " + cargaAcademica);
                 return ResultadoEJB.crearCorrecto(cargaAcademica, "La asignación fue actualizada correctamente al docente seleccionado");
             }else{
@@ -450,7 +450,7 @@ public class EjbAsignacionAcademica {
                     .findFirst()
                     .orElse(null);
 //            CargaAcademicaPK pk = new CargaAcademicaPK(grupo, materia, docente);
-            return pack(cargaAcademica); //pack(f.getEntityManager().find(CargaAcademica.class, pk));
+            return pack(cargaAcademica); //pack(em.find(CargaAcademica.class, pk));
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica con claves (EjbAsignacionAcademica. pack).", e, DtoCargaAcademica.class);
         }

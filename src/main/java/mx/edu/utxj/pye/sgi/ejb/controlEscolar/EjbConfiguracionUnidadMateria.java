@@ -362,14 +362,14 @@ public class EjbConfiguracionUnidadMateria {
     public Double getValorPorHora(DtoCargaAcademica dtoCargaAcademica) {
         Double valorPorHora = 0.0, horasTotales;
 
-        TypedQuery<Double> hP = (TypedQuery<Double>) f.getEntityManager().createQuery("SELECT SUM(u.horasPracticas) FROM UnidadMateria u WHERE u.idMateria.idMateria =:materia GROUP BY u.idMateria.idMateria");
+        TypedQuery<Double> hP = (TypedQuery<Double>) em.createQuery("SELECT SUM(u.horasPracticas) FROM UnidadMateria u WHERE u.idMateria.idMateria =:materia GROUP BY u.idMateria.idMateria");
         hP.setParameter("materia", dtoCargaAcademica.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria());
         hP.getSingleResult();
         
         Number horasPracticas = ((Number) hP.getSingleResult());
         double horasP = horasPracticas.doubleValue();
         
-        TypedQuery<Double> hT = (TypedQuery<Double>) f.getEntityManager().createQuery("SELECT SUM(u.horasTeoricas) FROM UnidadMateria u WHERE u.idMateria.idMateria =:materia GROUP BY u.idMateria.idMateria");
+        TypedQuery<Double> hT = (TypedQuery<Double>) em.createQuery("SELECT SUM(u.horasTeoricas) FROM UnidadMateria u WHERE u.idMateria.idMateria =:materia GROUP BY u.idMateria.idMateria");
         hT.setParameter("materia", dtoCargaAcademica.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria());
         hT.getSingleResult();
 

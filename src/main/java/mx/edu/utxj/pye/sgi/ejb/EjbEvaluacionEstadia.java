@@ -269,7 +269,7 @@ public class EjbEvaluacionEstadia {
         if(!veaa.isEmpty()){
             return veaa.get(0);
         }else{
-            return new ViewEstudianteAsesorAcademico();
+            return null;
         }
     }
     

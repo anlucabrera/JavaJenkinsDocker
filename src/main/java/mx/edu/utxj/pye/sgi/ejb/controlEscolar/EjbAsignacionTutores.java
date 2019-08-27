@@ -11,8 +11,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionTutorRolDirector;
@@ -42,6 +44,13 @@ public class EjbAsignacionTutores {
     @EJB Facade f;
     @EJB EjbEventoEscolar ejbEventoEscolar;
     
+    private EntityManager em;
+    
+    @PostConstruct
+    public void init(){
+        em = f.getEntityManager();
+    }
+    
     /**
      * Permite validar si el usuario autenticado es director de área académica
      * @param clave Número de nomína del usuario autenticado
@@ -52,6 +61,14 @@ public class EjbAsignacionTutores {
             return ejbAsignacionAcademica.validarDirector(clave);
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbAsignacionTutores.validarDirector)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDireccion(Integer clave){
+        try{
+            return ejbAsignacionAcademica.validarEncargadoDireccion(clave);
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbAsignacionTutores.validarEncargadoDireccion)", e, null);
         }
     }
     
@@ -104,7 +121,7 @@ public class EjbAsignacionTutores {
         try {
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
             
-            List<AreasUniversidad> programas = f.getEntityManager().createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
+            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
                     .setParameter("areaPoa", director.getAreaPOA().getArea())
                     .setParameter("categoria", programaEducativoCategoria)
                     .getResultList();
@@ -119,7 +136,7 @@ public class EjbAsignacionTutores {
 
     private List<DtoListadoTutores> generarGruposTutor(AreasUniversidad programa, PeriodosEscolares periodo){
         List<DtoListadoTutores> listadoTutorese = new ArrayList<>();
-        f.getEntityManager().createQuery("select g from Grupo g where g.idPe=:programa and g.periodo=:periodo", Grupo.class)
+        em.createQuery("select g from Grupo g where g.idPe=:programa and g.periodo=:periodo", Grupo.class)
                 .setParameter("programa", programa.getArea())
                 .setParameter("periodo", periodo.getPeriodo())
                 .getResultStream().forEach(g ->{
@@ -187,12 +204,12 @@ public class EjbAsignacionTutores {
                     if (t.getTutor() == null) {
                         mensajes.add(new DtoAlerta(String.format("El %s aún no tiene a un tutor asignado, se recomienda realizar el correspondiente registro.", t.getGrupo().getGrado() + "° " + t.getGrupo().getLiteral()), AlertaTipo.SUGERENCIA));
                     }
-                    f.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.periodo = :periodo AND g.idGrupo <> :idGrupo AND g.tutor = :tutor", Grupo.class)
+                    em.createQuery("SELECT g FROM Grupo g WHERE g.periodo = :periodo AND g.idGrupo <> :idGrupo AND g.tutor = :tutor", Grupo.class)
                             .setParameter("periodo", t.getGrupo().getPeriodo())
                             .setParameter("idGrupo", t.getGrupo().getIdGrupo())
                             .setParameter("tutor", t.getGrupo().getTutor())
                             .getResultList().forEach((grupoParametro) -> {
-                                mensajes.add(new DtoAlerta(String.format("El docente %s con número de trabajador %s tiene asignado de igual manera al grupo %s del programa educativo %s como grupo tutorado, se recomienda verificar que la información sea correcta.", t.getTutor().getPersonal().getNombre(), t.getTutor().getPersonal().getClave(), grupoParametro.getGrado() + "° " + grupoParametro.getLiteral(), (f.getEntityManager().find(AreasUniversidad.class, grupoParametro.getIdPe()).getNombre())), AlertaTipo.SUGERENCIA));
+                                mensajes.add(new DtoAlerta(String.format("El docente %s con número de trabajador %s tiene asignado de igual manera al grupo %s del programa educativo %s como grupo tutorado, se recomienda verificar que la información sea correcta.", t.getTutor().getPersonal().getNombre(), t.getTutor().getPersonal().getClave(), grupoParametro.getGrado() + "° " + grupoParametro.getLiteral(), (em.find(AreasUniversidad.class, grupoParametro.getIdPe()).getNombre())), AlertaTipo.SUGERENCIA));
                             });
                 });
                 return ResultadoEJB.crearCorrecto(mensajes, "Lista de mensajes");

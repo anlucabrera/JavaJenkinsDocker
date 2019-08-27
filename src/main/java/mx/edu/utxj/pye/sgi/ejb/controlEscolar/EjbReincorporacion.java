@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
@@ -52,7 +54,12 @@ public class EjbReincorporacion {
     @EJB Facade2 f2;
     @EJB EjbEventoEscolar ejbEventoEscolar;
     Integer claveMateria;
-    
+    private EntityManager em;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager();
+    }
      /**
      * Permite validar si el usuario autenticado es personal adscrito al departamento de servicios escolares
      * @param clave Número de nómina del usuario autenticado
@@ -90,7 +97,7 @@ public class EjbReincorporacion {
     public ResultadoEJB<Persona> buscarDatosPersonalesEstudiante(String curp){
         try{
             //buscar registro de persona por medio de la curp
-            Persona persona = f.getEntityManager().createQuery("select p from Persona p where p.curp =:curp", Persona.class)
+            Persona persona = em.createQuery("select p from Persona p where p.curp =:curp", Persona.class)
                     .setParameter("curp", curp)
                     .getSingleResult();
             return ResultadoEJB.crearCorrecto(persona, "Datos personales del estudiante");
@@ -142,7 +149,7 @@ public class EjbReincorporacion {
                         p.setFechaNacimiento(sm.parse(fecha_nacimiento));
                         String claveEstado = parts[0].substring(11, 13);
 
-                        Estado estado = f.getEntityManager().createNamedQuery("Estado.findByClave", Estado.class)
+                        Estado estado = em.createNamedQuery("Estado.findByClave", Estado.class)
                                 .setParameter("clave",claveEstado)
                                 .getResultList()
                                 .stream().findFirst().orElse(null);
@@ -193,7 +200,7 @@ public class EjbReincorporacion {
         try{
             if(persona == null) return ResultadoEJB.crearErroneo(2, "La persona no debe ser nula.", Persona.class);
             if(operacion == null) return ResultadoEJB.crearErroneo(3, "La operación no debe ser nula.", Persona.class);
-            Persona datosPer = f.getEntityManager().createQuery("select p from Persona p where p.curp =:curp", Persona.class)
+            Persona datosPer = em.createQuery("select p from Persona p where p.curp =:curp", Persona.class)
                     .setParameter("curp", persona.getCurp()).getResultStream().findFirst().orElse(null);
             switch (operacion){
                 case PERSISTIR:
@@ -230,7 +237,7 @@ public class EjbReincorporacion {
         try {
             if(datosMedicos == null) return ResultadoEJB.crearErroneo(2, "Los datos no debe ser nula.", DatosMedicos.class);
             if(operacion == null) return ResultadoEJB.crearErroneo(3, "La operacion no debe ser nula.", DatosMedicos.class);
-            DatosMedicos datosMedicos1 = f.getEntityManager().createQuery("select d from DatosMedicos as d where d.cvePersona = :dm", DatosMedicos.class)
+            DatosMedicos datosMedicos1 = em.createQuery("select d from DatosMedicos as d where d.cvePersona = :dm", DatosMedicos.class)
                     .setParameter("dm", persona.getIdpersona()).getResultStream().findFirst().orElse(null);
             switch (operacion){
                 case PERSISTIR:
@@ -269,7 +276,7 @@ public class EjbReincorporacion {
         try {
             if(mc == null) return ResultadoEJB.crearErroneo(2, "Los datos no debe ser nula.", MedioComunicacion.class);
             if(operacion == null) return ResultadoEJB.crearErroneo(3, "La operacion no debe ser nula.", MedioComunicacion.class);
-            MedioComunicacion medioComunicacion = f.getEntityManager().createQuery("select m from MedioComunicacion as m where m.persona = :mc1", MedioComunicacion.class)
+            MedioComunicacion medioComunicacion = em.createQuery("select m from MedioComunicacion as m where m.persona = :mc1", MedioComunicacion.class)
                     .setParameter("mc1", persona.getIdpersona()).getResultStream().findFirst().orElse(null);
             switch (operacion){
                 case PERSISTIR:
@@ -302,7 +309,7 @@ public class EjbReincorporacion {
             if(p == null) return ResultadoEJB.crearErroneo(3, "Los datos no pueden ser nulo", Aspirante.class);
             if(o == null) return ResultadoEJB.crearErroneo(4, "La operacion no puede ser nula", Aspirante.class);
             System.out.println("Aspirante"+ a.getFolioAspirante());
-            Aspirante a1 = f.getEntityManager().createQuery("select a from Aspirante as a where a.idPersona.idpersona = :aspirante", Aspirante.class)
+            Aspirante a1 = em.createQuery("select a from Aspirante as a where a.idPersona.idpersona = :aspirante", Aspirante.class)
                     .setParameter("aspirante", a.getIdPersona().getIdpersona()).getResultStream().findFirst().orElse(null);
             switch (o){
                 case PERSISTIR:
@@ -332,7 +339,7 @@ public class EjbReincorporacion {
             if(dm == null) return ResultadoEJB.crearErroneo(2, "Los datos de Domicilio no puede ser nula.", Domicilio.class);
             if(a == null) return ResultadoEJB.crearErroneo(3, "Los datos del Aspirante no puede ser nula", Domicilio.class);
             if(o == null) return ResultadoEJB.crearErroneo(4, "La operación no puede ser nula", Domicilio.class);
-            Domicilio dm1 = f.getEntityManager().createQuery("select d from Domicilio as d where d.aspirante = :aspirante", Domicilio.class)
+            Domicilio dm1 = em.createQuery("select d from Domicilio as d where d.aspirante = :aspirante", Domicilio.class)
                     .setParameter("aspirante", a.getIdAspirante()).getResultStream().findFirst().orElse(null);
             switch (o){
                 case PERSISTIR:
@@ -362,7 +369,7 @@ public class EjbReincorporacion {
             if(da == null) return ResultadoEJB.crearErroneo(2, "Los datos no puede ser nulo", DatosAcademicos.class);
             if(a == null) return ResultadoEJB.crearErroneo(3, "Los datos no puede ser nulo", DatosAcademicos.class);
             if(o == null) return ResultadoEJB.crearErroneo(4, "La operación no puede ser nula", DatosAcademicos.class);
-            DatosAcademicos da1 = f.getEntityManager().createQuery("select d from DatosAcademicos as d where d.aspirante = :aspirante", DatosAcademicos.class)
+            DatosAcademicos da1 = em.createQuery("select d from DatosAcademicos as d where d.aspirante = :aspirante", DatosAcademicos.class)
                     .setParameter("aspirante", a.getIdAspirante()).getResultStream().findFirst().orElse(null);
             switch (o){
                 case PERSISTIR:
@@ -395,7 +402,7 @@ public class EjbReincorporacion {
         try{
             Integer periodoEvento = eventoEscolar.getPeriodo();
             //buscar periodo escolar para realizar reincorporación
-            final PeriodosEscolares periodo = f.getEntityManager().createQuery("select p from PeriodosEscolares p where p.periodo =:periodo", PeriodosEscolares.class)
+            final PeriodosEscolares periodo = em.createQuery("select p from PeriodosEscolares p where p.periodo =:periodo", PeriodosEscolares.class)
                     .setParameter("periodo", periodoEvento)
                     .getSingleResult();
             return ResultadoEJB.crearCorrecto(periodo, "Periodo para reinscripción");
@@ -414,7 +421,7 @@ public class EjbReincorporacion {
         try{
             // buscar lista de programas educativos con plan de estudios vigentes y despues mapear cada programa con su lista de grupos
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
-            List<AreasUniversidad> programas = f.getEntityManager().createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
+            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
                     .setParameter("categoria", programaEducativoCategoria)
                     .getResultList();
             Map<AreasUniversidad, List<Grupo>> programasMap = programas.stream()
@@ -426,7 +433,7 @@ public class EjbReincorporacion {
         }
     }
      private List<Grupo> buscarGrupos(AreasUniversidad programa, PeriodosEscolares periodo) {
-        return f.getEntityManager().createQuery("select g from Grupo g where g.idPe=:programa and g.periodo=:periodo", Grupo.class)
+        return em.createQuery("select g from Grupo g where g.idPe=:programa and g.periodo=:periodo", Grupo.class)
                 .setParameter("programa", programa.getArea())
                 .setParameter("periodo", periodo.getPeriodo())
                 .getResultList();
@@ -443,13 +450,13 @@ public class EjbReincorporacion {
             if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no debe ser nulo.", Estudiante.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(3, "El estudiante no debe ser nulo.", Estudiante.class);
 
-            TypedQuery<Estudiante> q1 = f.getEntityManager().createQuery("update Estudiante e SET e.grupo =:grupo AND e.periodo =:periodo WHERE e.idEstudiante =:estudiante", Estudiante.class);
+            TypedQuery<Estudiante> q1 = em.createQuery("update Estudiante e SET e.grupo =:grupo AND e.periodo =:periodo WHERE e.idEstudiante =:estudiante", Estudiante.class);
             q1.setParameter("grupo", grupo.getIdGrupo());
             q1.setParameter("periodo", grupo.getPeriodo());
             q1.setParameter("estudiante", estudiante.getIdEstudiante());
             q1.executeUpdate();
             
-            Estudiante asignaGrupo = f.getEntityManager().find(Estudiante.class, estudiante.getIdEstudiante());
+            Estudiante asignaGrupo = em.find(Estudiante.class, estudiante.getIdEstudiante());
             return ResultadoEJB.crearCorrecto(asignaGrupo, "Grupo asignado"); 
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar el grupo al estudiante. (EjbReinscripcionAutonoma.asignarGrupo)", e, null);
@@ -465,7 +472,7 @@ public class EjbReincorporacion {
     public ResultadoEJB<List<Materia>> getMateriasPorAsignar(AreasUniversidad programa, Grupo grupo){
         try{
             //TODO: buscar lista de materias por asignar que pertenecen al grupo seleccionado
-            List<Materia> materiasPorAsignar = f.getEntityManager().createQuery("select m from Materia m inner join m.idPlan p where p.idPe=:programaEducativo and m.grado =:grado and m.estatus =:estatus", Materia.class)
+            List<Materia> materiasPorAsignar = em.createQuery("select m from Materia m inner join m.idPlan p where p.idPe=:programaEducativo and m.grado =:grado and m.estatus =:estatus", Materia.class)
                     .setParameter("programaEducativo", programa.getArea())
                     .setParameter("grado", grupo.getGrado())
                     .setParameter("estatus", true)
@@ -489,10 +496,10 @@ public class EjbReincorporacion {
             
             //Obtener la clave de la materia
             materias.forEach(mat -> {claveMateria = mat.getIdMateria();});
-            Materia materia = f.getEntityManager().find(Materia.class, claveMateria);
+            Materia materia = em.find(Materia.class, claveMateria);
             
             CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), claveMateria);
-            Calificaciones calificaciones = f.getEntityManager().createQuery("select c from Calificaciones c where c.estudiante1.idEstudiante =:estudiante and c.estudiante1.grupo =:grupo and c.materia1.idMateria =:materia", Calificaciones.class)
+            Calificaciones calificaciones = em.createQuery("select c from Calificaciones c where c.estudiante1.idEstudiante =:estudiante and c.estudiante1.grupo =:grupo and c.materia1.idMateria =:materia", Calificaciones.class)
                     .setParameter("estudiante", estudiante.getIdEstudiante())
                     .setParameter("grupo", estudiante.getGrupo().getIdGrupo())
                     .setParameter("materia", claveMateria)
@@ -528,7 +535,7 @@ public class EjbReincorporacion {
             String nss = parts[3].replace(" ", "");
             String curp = parts[7].replace(" ", "");
             
-            Persona persona = f.getEntityManager().createQuery("select p from Persona p where p.curp =:curp", Persona.class)
+            Persona persona = em.createQuery("select p from Persona p where p.curp =:curp", Persona.class)
                     .setParameter("curp", curp)
                     .getSingleResult();
             
@@ -553,7 +560,7 @@ public class EjbReincorporacion {
         try{
             if(datosQr == null) return ResultadoEJB.crearErroneo(3, "El nss no puede ser nulo.", DatosMedicos.class);
             
-            DatosMedicos datosMedicos = f.getEntityManager().createQuery("select d from DatosMedicos d WHERE d.persona.idpersona =:persona and d.nss =:nss", DatosMedicos.class)
+            DatosMedicos datosMedicos = em.createQuery("select d from DatosMedicos d WHERE d.persona.idpersona =:persona and d.nss =:nss", DatosMedicos.class)
                     .setParameter("persona",  datosQr.getPersona().getIdpersona())
                     .setParameter("nss", datosQr.getNss())
                     .getResultStream()
@@ -639,7 +646,7 @@ public class EjbReincorporacion {
             
             listaCalificacionesSaiiutDto.forEach((calificacionesAlumno) -> {
 
-            Calificaciones calificaciones = f.getEntityManager().createQuery("select c from Calificaciones c INNER JOIN c.estudiante1 e INNER JOIN c.materia1 m WHERE e.matricula =:matricula AND m.claveMateria =:materia", Calificaciones.class)
+            Calificaciones calificaciones = em.createQuery("select c from Calificaciones c INNER JOIN c.estudiante1 e INNER JOIN c.materia1 m WHERE e.matricula =:matricula AND m.claveMateria =:materia", Calificaciones.class)
                     .setParameter("matricula", calificacionesAlumno.getAlumno().getMatricula())
                     .setParameter("materia", calificacionesAlumno.getCalificacionesAlumno().getCalificacionesAlumnoPK().getCveMateria())
                     .getResultStream()
@@ -648,7 +655,7 @@ public class EjbReincorporacion {
 
             if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
 
-                Materia mat = f.getEntityManager().createQuery("SELECT m FROM Materia m WHERE m.claveMateria =:claveMateria", Materia.class)
+                Materia mat = em.createQuery("SELECT m FROM Materia m WHERE m.claveMateria =:claveMateria", Materia.class)
                 .setParameter("claveMateria", calificacionesAlumno.getMateria1().getCveMateria())
                 .getSingleResult();
 
@@ -678,7 +685,7 @@ public class EjbReincorporacion {
     public ResultadoEJB<List<Materia>> getMateriasPorAsignar(PlanEstudio planEstudio, Estudiante estudiante){
         try{
             //TODO: buscar lista de materias activas previas al grado actual para asignar que pertenecen al plan de estudios seleccionado del estudiante
-            List<Materia> materiasPorAsignar = f.getEntityManager().createQuery("SELECT m FROM Materia m WHERE m.idPlan.idPlanEstudio =:planEstudio AND m.grado < :grado AND m.estatus =:estatus", Materia.class)
+            List<Materia> materiasPorAsignar = em.createQuery("SELECT m FROM Materia m WHERE m.idPlan.idPlanEstudio =:planEstudio AND m.grado < :grado AND m.estatus =:estatus", Materia.class)
                     .setParameter("planEstudio", planEstudio.getIdPlanEstudio())
                     .setParameter("grado", estudiante.getGrupo().getGrado())
                     .setParameter("estatus", true)
@@ -702,7 +709,7 @@ public class EjbReincorporacion {
             if(calificacion == null) return ResultadoEJB.crearErroneo(4, "La calificación no puede ser nula.", Calificaciones.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(5, "El estudiante no puede ser nulo.", Calificaciones.class);
 
-            Calificaciones calificaciones = f.getEntityManager().createQuery("SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante =:estudiante AND c.calificacionesPK.materia =:materia AND c.cf !=:null", Calificaciones.class)
+            Calificaciones calificaciones = em.createQuery("SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante =:estudiante AND c.calificacionesPK.materia =:materia AND c.cf !=:null", Calificaciones.class)
                     .setParameter("estudiante",  estudiante.getIdEstudiante())
                     .setParameter("materia", materia.getIdMateria())
                     .getResultStream()
@@ -738,13 +745,13 @@ public class EjbReincorporacion {
     /*public ResultadoEJB<List<Calificaciones>> getCalificacionesPrevias(Estudiante estudiante){
         try{
             //Identificar claves del alumno para posteriormente buscar las calificaciones
-            List<Estudiante> clavesAlumno = f.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.matricula !=:claveActual", Estudiante.class)
+            List<Estudiante> clavesAlumno = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.matricula !=:claveActual", Estudiante.class)
                     .setParameter("matricula", estudiante.getMatricula())
                     .setParameter("claveActual", estudiante.getIdEstudiante())
                     .getResultList();
             
             //TODO: buscar calificaciones previas al grado actual para asignar que pertenecen al estudiante
-            List<Calificaciones> calificaciones = f.getEntityManager().createQuery("SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante IN :clavesAlumno ORDER BY c.materia1.claveMateria ASC", Calificaciones.class)
+            List<Calificaciones> calificaciones = em.createQuery("SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante IN :clavesAlumno ORDER BY c.materia1.claveMateria ASC", Calificaciones.class)
                     .setParameter("clavesAlumno", clavesAlumno)
                     .getResultList();
              
@@ -756,7 +763,7 @@ public class EjbReincorporacion {
 
     public ResultadoEJB<Aspirante> buscarAspirantePorPersona(Integer idPersona){
         try {
-            Aspirante aspirante = f.getEntityManager().createQuery("select a from Aspirante as a where a.idPersona.idpersona = :idP",Aspirante.class)
+            Aspirante aspirante = em.createQuery("select a from Aspirante as a where a.idPersona.idpersona = :idP",Aspirante.class)
                     .setParameter("idP", idPersona).getResultStream().findFirst().orElse(null);
             return ResultadoEJB.crearCorrecto(aspirante,"Aspirante encontrado con éxito");
         }catch (Exception e){

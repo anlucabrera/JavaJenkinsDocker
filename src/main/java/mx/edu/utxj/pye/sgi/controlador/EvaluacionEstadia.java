@@ -65,6 +65,9 @@ public class EvaluacionEstadia implements Serializable{
             evaluacion = ejb.getEvaluacionActiva();
             //System.out.println("Evaluacion estadia"+ evaluacion);
             asesor = ejb.viewEstudianteAsesorAcademico(evaluador);
+            if(asesor==null){
+                return;
+            }
             evaluado = Integer.parseInt(asesor.getNumeroNomina());
             if (evaluacion != null) {
                 

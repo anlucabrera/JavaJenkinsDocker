@@ -43,9 +43,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.Part;
@@ -79,10 +81,15 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Inject LogonMB logonMB;
     @Resource ManagedExecutorService exe;
     @EJB EjbPersonalBean ejbPersonalBean;
+    private EntityManager em;
 
+    @PostConstruct
+    public void init() {
+        em = f.getEntityManager();
+    }
     @Override
     public List<TramitesDto> getTramitesAcargo(Personal personal) {
-        return f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave=:clave OR oc.comisionado = :clave ORDER BY oc.oficio DESC", Tramites.class)
+        return em.createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave=:clave OR oc.comisionado = :clave ORDER BY oc.oficio DESC", Tramites.class)
                 .setParameter("clave", personal.getClave())
                 .getResultStream()
                 .map(tramites -> packTramite(tramites))
@@ -93,7 +100,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     public List<TramitesDto> getTramitesAcargoDto(Personal personal) {
 //        System.err.println("La persona de quien se obtiene el listado es : " + personal);
         List<TramitesDto> ldto;
-        TypedQuery<Tramites> qt = f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave=:clave OR oc.comisionado = :clave ORDER BY oc.oficio DESC", Tramites.class);
+        TypedQuery<Tramites> qt = em.createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave=:clave OR oc.comisionado = :clave ORDER BY oc.oficio DESC", Tramites.class);
         qt.setParameter("clave", personal.getClave());
         List<Tramites> lt = qt.getResultList();
         if (lt.isEmpty() || lt == null) {
@@ -108,14 +115,14 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Override
     public List<TramitesDto> getTramitesAreaDto(Short area) {
         List<TramitesDto> ldto;
-        List<Integer> claves = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.areaOperativa=:area", Personal.class)
+        List<Integer> claves = em.createQuery("SELECT p FROM Personal p WHERE p.areaOperativa=:area", Personal.class)
                 .setParameter("area", area)
                 .getResultList()
                 .stream()
                 .map(p -> p.getClave())
                 .collect(Collectors.toList());
 
-        TypedQuery<Tramites> qt = f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave IN :claves OR oc.comisionado in :claves ORDER BY oc.oficio DESC", Tramites.class);
+        TypedQuery<Tramites> qt = em.createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave IN :claves OR oc.comisionado in :claves ORDER BY oc.oficio DESC", Tramites.class);
         qt.setParameter("claves", claves);
         List<Tramites> lt = qt.getResultList();
         if (lt.isEmpty() || lt == null) {
@@ -128,18 +135,18 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public List<TramitesDto> getTramitesArea(Short area) {
-        List<Integer> claves = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.areaOperativa=:area", Personal.class)
+        List<Integer> claves = em.createQuery("SELECT p FROM Personal p WHERE p.areaOperativa=:area", Personal.class)
                 .setParameter("area", area)
                 .getResultStream()
                 .map(p -> p.getClave())
                 .collect(Collectors.toList());
 
-        return f.getEntityManager().createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave IN :claves OR oc.comisionado in :claves ORDER BY oc.oficio DESC", Tramites.class)
+        return em.createQuery("SELECT t FROM Tramites t LEFT JOIN t.comisionOficios oc where t.clave IN :claves OR oc.comisionado in :claves ORDER BY oc.oficio DESC", Tramites.class)
                 .setParameter("claves", claves)
                 .getResultStream()
                 .map(tramites -> {
-                    PersonalActivo seguidor = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramites.getClave()));
-                    PersonalActivo comisionado = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramites.getComisionOficios().getComisionado()));
+                    PersonalActivo seguidor = ejbPersonalBean.pack(em.find(Personal.class, tramites.getClave()));
+                    PersonalActivo comisionado = ejbPersonalBean.pack(em.find(Personal.class, tramites.getComisionOficios().getComisionado()));
                     return new TramitesDto(seguidor, comisionado, tramites);
                 })
                 .sorted(Comparator.comparing(t -> t.getTramite().getComisionOficios().getOficio(), Comparator.reverseOrder()))
@@ -167,7 +174,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         comision.getTramite().setAnio((short)Year.now().getValue());
         comision.getTramite().setFolio((short)0);
         
-        comision.setAlineacionArea(f.getEntityManager().find(AreasUniversidad.class, (short)generador.getAreaOperativa()));
+        comision.setAlineacionArea(em.find(AreasUniversidad.class, (short)generador.getAreaOperativa()));
         comision.setAreas(getAreasConPOA(Short.valueOf(caster.getEjercicioFiscal())));
         comision.setAreaPOA(getAreaConPOA(generador.getAreaOperativa()));
         comision.setEjes(getEjes(Short.valueOf(caster.getEjercicioFiscal()), comision.getAreaPOA()));
@@ -201,18 +208,18 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     public Comision inicializarComision(Personal logueado, Integer tramiteid) {
         if(tramiteid == null) return null;
 
-        Tramites tramite = f.getEntityManager().find(Tramites.class, tramiteid);
+        Tramites tramite = em.find(Tramites.class, tramiteid);
 
         if(tramite != null){
             PersonalActivo comisionadoA = ejbPersonalBean.pack(tramite.getComisionOficios().getComisionado());
             AreasUniversidad areaPOA = comisionadoA.getAreaPOA();
-            AreasUniversidad alineacionArea = f.getEntityManager().find(AreasUniversidad.class, tramite.getAlineacionTramites().getArea());
-            EjesRegistro alineacionEje = f.getEntityManager().find(EjesRegistro.class, tramite.getAlineacionTramites().getEje());
-            Estrategias alineacionEstrategia = f.getEntityManager().find(Estrategias.class, tramite.getAlineacionTramites().getEstrategia());
-            LineasAccion alineacionLinea = f.getEntityManager().find(LineasAccion.class, tramite.getAlineacionTramites().getLineaAccion());
-            ActividadesPoa alineacionActividad = f.getEntityManager().find(ActividadesPoa.class, tramite.getAlineacionTramites().getActividad());
-            Estado estado = f.getEntityManager().find(Estado.class, tramite.getComisionOficios().getEstado());
-            Municipio municipio = f.getEntityManager().find(Municipio.class, new MunicipioPK(tramite.getComisionOficios().getEstado(), tramite.getComisionOficios().getMunicipio()));
+            AreasUniversidad alineacionArea = em.find(AreasUniversidad.class, tramite.getAlineacionTramites().getArea());
+            EjesRegistro alineacionEje = em.find(EjesRegistro.class, tramite.getAlineacionTramites().getEje());
+            Estrategias alineacionEstrategia = em.find(Estrategias.class, tramite.getAlineacionTramites().getEstrategia());
+            LineasAccion alineacionLinea = em.find(LineasAccion.class, tramite.getAlineacionTramites().getLineaAccion());
+            ActividadesPoa alineacionActividad = em.find(ActividadesPoa.class, tramite.getAlineacionTramites().getActividad());
+            Estado estado = em.find(Estado.class, tramite.getComisionOficios().getEstado());
+            Municipio municipio = em.find(Municipio.class, new MunicipioPK(tramite.getComisionOficios().getEstado(), tramite.getComisionOficios().getMunicipio()));
             Personal comisionado = comisionadoA.getPersonal();
             Date inicio = tramite.getComisionOficios().getFechaComisionInicio();
             Date fin = tramite.getComisionOficios().getFechaComisionFin();
@@ -248,7 +255,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 //        final Double tramitesTabuladorKilometrosMaximo = ep.leerPropiedadDecimal("tramitesTabuladorKilometrosMaximo").orElse(397);
 //        Tarifas tarifaViatico = null;
 //        if(distancia <= tramitesTabuladorKilometrosMaximo){
-//            List<Tarifas> l = f.getEntityManager().createQuery("SELECT t FROM Tarifas t INNER JOIN t.tarifasPorKilometro tk WHERE (:distancia BETWEEN tk.minimo AND tk.maximo) AND (t.fechaCancelacion IS NULL or t.fechaCancelacion <= :fechaActual)", Tarifas.class)
+//            List<Tarifas> l = em.createQuery("SELECT t FROM Tarifas t INNER JOIN t.tarifasPorKilometro tk WHERE (:distancia BETWEEN tk.minimo AND tk.maximo) AND (t.fechaCancelacion IS NULL or t.fechaCancelacion <= :fechaActual)", Tarifas.class)
 //                    .setParameter("distancia", distancia)
 //                    .setParameter("fechaActual", (new Date()))
 //                    .getResultList();
@@ -258,7 +265,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 //            final Short directivoActividad = (short)ep.leerPropiedadEntera("directivoActividad").orElse(2);
 //            final Integer tramitesNivelRestoPersonal = ep.leerPropiedadEntera("tramitesNivelRestoPersonal").orElse(3);
 //
-//            Personal comisionado = f.getEntityManager().find(Personal.class, tramite.getComisionOficios().getComisionado());
+//            Personal comisionado = em.find(Personal.class, tramite.getComisionOficios().getComisionado());
 //            Integer nivel = tramitesNivelRestoPersonal;
 ////            Boolean esLocal = false;
 //
@@ -274,7 +281,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 ////                esLocal = true;
 ////            }
 //
-//            List<Tarifas> l = f.getEntityManager().createQuery("SELECT t FROM Tarifas t INNER JOIN t.tarifasPorZona tz WHERE tz.nivel=:nivel", Tarifas.class)
+//            List<Tarifas> l = em.createQuery("SELECT t FROM Tarifas t INNER JOIN t.tarifasPorZona tz WHERE tz.nivel=:nivel", Tarifas.class)
 //                    .setParameter("nivel", nivel)
 //                    .getResultList();
 //
@@ -302,7 +309,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 f.refresh(tramite);
                 alineacion.setTramite(tramite.getTramite());
                 f.create(alineacion);
-                oficio.setOficio(ejbDocumentosInternos.generarNumeroOficio(f.getEntityManager().find(AreasUniversidad.class, alineacion.getArea()), ComisionOficios.class));
+                oficio.setOficio(ejbDocumentosInternos.generarNumeroOficio(em.find(AreasUniversidad.class, alineacion.getArea()), ComisionOficios.class));
                 oficio.setTramite(tramite.getTramite());
                 f.create(oficio);
                 aviso.setTramite(tramite.getTramite());
@@ -346,7 +353,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public Tramites obtenerTramite(Integer id, Personal personal) {
-        Tramites tramite = f.getEntityManager().find(Tramites.class, id);
+        Tramites tramite = em.find(Tramites.class, id);
         if (tramite != null) {
             transferirTramite(tramite, personal);
         }
@@ -386,7 +393,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
             return null;
         
         try {
-            return f.getEntityManager().createQuery("SELECT t FROM Tramites t INNER JOIN FETCH t.comisionOficios WHERE t.comisionOficios.oficio=:oficio", Tramites.class)
+            return em.createQuery("SELECT t FROM Tramites t INNER JOIN FETCH t.comisionOficios WHERE t.comisionOficios.oficio=:oficio", Tramites.class)
                     .setParameter("oficio", oficio)
                     .getSingleResult();
         } catch (NoResultException ex) {
@@ -396,7 +403,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public List<AreasUniversidad> getAreasConPOA(Short ejercicio) {
-        List<Short> clavesAreas = f.getEntityManager().createQuery("SELECT ap FROM ActividadesPoa ap INNER JOIN ap.cuadroMandoInt cm WHERE cm.ejercicioFiscal.anio=:ejercicio", ActividadesPoa.class)
+        List<Short> clavesAreas = em.createQuery("SELECT ap FROM ActividadesPoa ap INNER JOIN ap.cuadroMandoInt cm WHERE cm.ejercicioFiscal.anio=:ejercicio", ActividadesPoa.class)
                 .setParameter("ejercicio", ejercicio)
                 .getResultStream()
                 .map(a -> a.getArea())
@@ -405,7 +412,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
                 .collect(Collectors.toList());
 //        System.out.println("clavesAreas = " + clavesAreas);
 
-        return  f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au INNER JOIN FETCH au.categoria WHERE au.area in :claves order by au.categoria.descripcion, au.nombre", AreasUniversidad.class)
+        return  em.createQuery("SELECT au FROM AreasUniversidad au INNER JOIN FETCH au.categoria WHERE au.area in :claves order by au.categoria.descripcion, au.nombre", AreasUniversidad.class)
                 .setParameter("claves", clavesAreas)
                 .getResultList();
     }
@@ -413,7 +420,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Override
     public List<EjesRegistro> getEjes(Short ejercicio, AreasUniversidad areaPOA) {
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.getEjes() ejercicio,areas: " + ejercicio + "," + areaPOA);
-        return f.getEntityManager()
+        return em
                 .createQuery("SELECT e FROM EjesRegistro e INNER JOIN e.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.ejercicioFiscal ef WHERE ac.area = :area AND ef.anio=:ejercicio ORDER BY e.nombre", EjesRegistro.class)
                 .setParameter("area", areaPOA.getArea())
                 .setParameter("ejercicio", ejercicio)
@@ -425,7 +432,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public List<Estrategias> getEstrategiasPorEje(EjesRegistro eje, AreasUniversidad areaPOA) {
-        return f.getEntityManager()
+        return em
                 .createQuery("SELECT es FROM Estrategias es INNER JOIN es.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.eje ej WHERE ac.area = :area AND ej.eje=:eje ORDER BY es.nombre", Estrategias.class)
                 .setParameter("area", areaPOA.getArea())
                 .setParameter("eje", eje.getEje())
@@ -437,7 +444,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public List<LineasAccion> getLineasAccionPorEstrategia(Estrategias estrategia, AreasUniversidad areaPOA) {
-        return f.getEntityManager()
+        return em
                 .createQuery("SELECT la FROM LineasAccion la INNER JOIN la.cuadroMandoIntegralList cmi INNER JOIN cmi.actividadesPoaList ac INNER JOIN cmi.estrategia es WHERE ac.area = :area AND es.estrategia=:estrategia ORDER BY la.nombre", LineasAccion.class)
                 .setParameter("area", areaPOA.getArea())
                 .setParameter("estrategia", estrategia.getEstrategia())
@@ -450,7 +457,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Override
     public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, AreasUniversidad areaPOA) {
         try {
-            return f.getEntityManager()
+            return em
                     .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area = :area AND la.lineaAccion=:lineaAccion ORDER BY ac.denominacion", ActividadesPoa.class)
                     .setParameter("area", areaPOA.getArea())
                     .setParameter("lineaAccion", lineaaccion.getLineaAccion())
@@ -467,7 +474,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     public UsuariosRegistros getUsuarioSIIP(Integer claveArea) {
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.finanzas.ServicioFiscalizacion.getUsuarioSIIP(): " + claveArea);
         try {
-            return f.getEntityManager().
+            return em.
                     createQuery("SELECT u FROM UsuariosRegistros u WHERE u.area=:area", UsuariosRegistros.class)
                     .setParameter("area", claveArea)
                     .getSingleResult();
@@ -478,7 +485,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public List<ProductosAreas> getProductosPlaneadosPorActividad(Actividades actividad) {
-        return f.getEntityManager()
+        return em
                 .createQuery("SELECT pa FROM ProductosAreas pa INNER JOIN pa.recursosActividadList ra INNER JOIN ra.actividadPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.ejercicioFiscal ej WHERE ra.actividadPoa=:actividad AND ej.anio=:ejercicio", ProductosAreas.class)
 //                .createNativeQuery("SELECT producto.clave, producto.nombre, producto.descripcion, recursoactividad.RP_Enero, recursoactividad.RP_Febero, recursoactividad.RP_Marzo, recursoactividad.RP_Abril, recursoactividad.RP_Mayo, recursoactividad.RP_Junio, recursoactividad.RP_Julio, recursoactividad.RP_Agosto, recursoactividad.RP_Septiembre, recursoactividad.RP_Octubre, recursoactividad.RP_Noviembre, recursoactividad.RP_Diciembre, recursoactividad.total, actividad.idactividad FROM producto INNER JOIN productoarea ON productoarea.idProducto = producto.clave AND productoarea.ejercicio = producto.ejercicio INNER JOIN recursoactividad ON recursoactividad.claveProducto = productoarea.idproductoArea INNER JOIN actividad ON recursoactividad.claveActividad = actividad.idactividad WHERE actividad.idactividad=:actividad AND producto.ejercicio = :ejercicio")
                 .setParameter("actividad", actividad.getActividad())
@@ -488,7 +495,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public List<Facturas> actualizarFacturasEnTramite(Tramites tramite) {
-        return f.getEntityManager()
+        return em
                 .createQuery("SELECT f FROM Facturas f INNER JOIN f.tramitesList t WHERE t.tramite=:tramite ORDER BY f.fechaAplicacion, f.fechaCoberturaInicio, f.fechaCoberturaFin, f.rfcEmisor", Facturas.class)
                 .setParameter("tramite", tramite.getTramite())
                 .getResultList();
@@ -649,7 +656,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Override
     public void eliminarFactura(Tramites tramite, Facturas factura) {
         f.setEntityClass(Facturas.class);
-        factura = f.getEntityManager().find(Facturas.class, factura.getFactura());
+        factura = em.find(Facturas.class, factura.getFactura());
         if (tramite.getFacturasList().contains(factura)) {
             tramite.getFacturasList().remove(factura);
         }
@@ -659,7 +666,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public Map.Entry<Boolean, List<Tramites>> comprobarFacturaRepetida(Facturas factura) {
-        List<Tramites> tramites = f.getEntityManager().createQuery("SELECT t FROM Tramites t INNER JOIN t.facturasList f WHERE f.rfcEmisor=:rfc AND f.timbreFiscalUUID=:uuid", Tramites.class)
+        List<Tramites> tramites = em.createQuery("SELECT t FROM Tramites t INNER JOIN t.facturasList f WHERE f.rfcEmisor=:rfc AND f.timbreFiscalUUID=:uuid", Tramites.class)
                 .setParameter("rfc", factura.getRfcEmisor())
                 .setParameter("uuid", factura.getTimbreFiscalUUID())
                 .getResultList()
@@ -857,14 +864,14 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public List<Estado> getEstados() {
-        return f.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idpais.idpais=:pais ORDER BY e.nombre", Estado.class)
+        return em.createQuery("SELECT e FROM Estado e WHERE e.idpais.idpais=:pais ORDER BY e.nombre", Estado.class)
                 .setParameter("pais", 42)
                 .getResultList();
     }
 
     @Override
     public List<Pais> getPaises() {
-        return f.getEntityManager().createQuery("SELECT p FROM Pais p ORDER BY p.nombre", Pais.class)
+        return em.createQuery("SELECT p FROM Pais p ORDER BY p.nombre", Pais.class)
                 .getResultList();
     }
 
@@ -872,7 +879,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     public List<Estado> getEstadosPorPais(Pais pais) {
         if(pais == null)
             return Collections.EMPTY_LIST;
-        return f.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idpais.idpais=:pais ORDER BY e.nombre", Estado.class)
+        return em.createQuery("SELECT e FROM Estado e WHERE e.idpais.idpais=:pais ORDER BY e.nombre", Estado.class)
                 .setParameter("pais", pais.getIdpais())
                 .getResultList();
     }
@@ -881,7 +888,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     public List<Localidad> getLocalidadesPorMunicipio(Municipio municipio) {
         if(municipio == null)
             return Collections.EMPTY_LIST;
-        return f.getEntityManager().createQuery("SELECT l FROM Localidad l WHERE l.municipio.municipioPK.claveEstado =:estado AND l.municipio.municipioPK.claveMunicipio = :municipio ORDER BY l.nombre", Localidad.class)
+        return em.createQuery("SELECT l FROM Localidad l WHERE l.municipio.municipioPK.claveEstado =:estado AND l.municipio.municipioPK.claveMunicipio = :municipio ORDER BY l.nombre", Localidad.class)
                 .setParameter("estado", municipio.getMunicipioPK().getClaveEstado())
                 .setParameter("municipio", municipio.getMunicipioPK().getClaveMunicipio())
                 .getResultList();
@@ -893,7 +900,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         if(estado == null)
             return Collections.EMPTY_LIST;
 
-        return f.getEntityManager().createQuery("SELECT m FROM Municipio m WHERE m.estado.idestado=:estado ORDER BY m.nombre", Municipio.class)
+        return em.createQuery("SELECT m FROM Municipio m WHERE m.estado.idestado=:estado ORDER BY m.nombre", Municipio.class)
                 .setParameter("estado", estado.getIdestado())
                 .getResultList();
     }
@@ -908,7 +915,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
         /*System.out.println("subordinado.getAreaOperativa() = " + subordinado.getAreaOperativa());
 //        System.out.println("areaPOA = " + areaPOA);*/
-        List<Personal> l = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.areaOperativa=:area AND p.actividad.actividad IN :actividades", Personal.class)
+        List<Personal> l = em.createQuery("SELECT p FROM Personal p WHERE p.areaOperativa=:area AND p.actividad.actividad IN :actividades", Personal.class)
                 .setParameter("area", areaPOA.getArea())
                 .setParameter("actividades", Stream.of(2,4).collect(Collectors.toList()))
                 .getResultList();
@@ -921,7 +928,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
     @Override
     public List<Personal> getPosiblesComisionados(Short areaSeguimiento, Short areaAlineacion) {
-        return f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.areaOperativa in :areas ORDER BY p.nombre", Personal.class)
+        return em.createQuery("SELECT p FROM Personal p WHERE p.areaOperativa in :areas ORDER BY p.nombre", Personal.class)
                 .setParameter("areas", Stream.of(areaAlineacion, areaSeguimiento).collect(Collectors.toList()))
                 .getResultList();
     }
@@ -930,11 +937,11 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     public AreasUniversidad getAreaConPOA(Short claveArea) {
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getAreaConPOA(1)");
         //obtener la referencia al area operativa del trabajador
-        AreasUniversidad area = f.getEntityManager().find(AreasUniversidad.class, claveArea);
+        AreasUniversidad area = em.find(AreasUniversidad.class, claveArea);
         
         while(!area.getTienePoa()){
 //            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getAreaConPOA() area: " + area);
-            area = f.getEntityManager().find(AreasUniversidad.class, area.getAreaSuperior());
+            area = em.find(AreasUniversidad.class, area.getAreaSuperior());
         }
         
 //        System.out.println("mx.edu.utxj.pye.siip.services.ca.ServiciosAsesoriasTutoriasCiclosPeriodos.getAreaConPOA(2)");
@@ -949,13 +956,13 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     @Override
     public List<AreasUniversidad> getAreasConPOA() {
 //        System.out.println("ServicioFiscalizacion.getAreasConPOA");
-        return f.getEntityManager().createQuery("select a from AreasUniversidad a where (a.areaSuperior is not null or a.area = 1) and a.tienePoa = true order by a.categoria.categoria, a.nombre", AreasUniversidad.class)
+        return em.createQuery("select a from AreasUniversidad a where (a.areaSuperior is not null or a.area = 1) and a.tienePoa = true order by a.categoria.categoria, a.nombre", AreasUniversidad.class)
                 .getResultList();
     }
 
     @Override
     public List<AreasUniversidad> getAreasSubordinadasSinPOA(AreasUniversidad areaPOA) {
-        return f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1' AND au.tienePoa=:tienePoa", AreasUniversidad.class)
+        return em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior=:areaSuperior AND au.vigente='1' AND au.tienePoa=:tienePoa", AreasUniversidad.class)
                 .setParameter("areaSuperior", areaPOA.getArea())
                 .setParameter("tienePoa", false)
                 .getResultList()
@@ -967,7 +974,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     
     @Override
     public Tramites seguirTramiteDeArea(Tramites tramite) {
-        Tramites t = f.getEntityManager().find(Tramites.class, tramite.getTramite());
+        Tramites t = em.find(Tramites.class, tramite.getTramite());
         t.setClave(logonMB.getPersonal().getClave());
         f.edit(t);
         f.flush();
@@ -987,7 +994,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
             if(Arrays.asList(tramite.getComisionado().getPersonal(), tramite.getPersonalSiguiendoTramite().getPersonal()).contains(logueado)) {
                 f.edit(tramite.getTramite().getComisionOficios());
                 f.edit(tramite.getTramite());
-                tramite.setTramite(f.getEntityManager().find(Tramites.class, tramite.getTramite().getTramite()));
+                tramite.setTramite(em.find(Tramites.class, tramite.getTramite().getTramite()));
                 return  ResultadoEJB.crearCorrecto(tramite, "El trámite se liberó correctamente");
             }else{
                 return ResultadoEJB.crearErroneo(1, "Usted no tiene permitido liberar el trámite.", TramitesDto.class);
@@ -1015,7 +1022,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
             Tramites t = tramite.getTramite();
             f.edit(t.getComisionOficios());
-            t = f.getEntityManager().find(Tramites.class, t.getTramite());
+            t = em.find(Tramites.class, t.getTramite());
             ComisionOficioEstatus estatus = ComisionOficioEstatusConverter.of(t.getComisionOficios().getEstatus());
             String mensaje;
             switch (estatus){
@@ -1040,7 +1047,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
      */
     @Override
     public List<TramitesDto> getTramites(AreasUniversidad area, TramitesSupervisorFiltro filtro) {
-        List<TramitesDto> l = f.getEntityManager().createQuery("select t from Tramites t inner join t.comisionOficios co inner join co.comisionAvisos ca left join t.alineacionTramites at where co.estatus in :estatus order by co.oficio desc ", Tramites.class)
+        List<TramitesDto> l = em.createQuery("select t from Tramites t inner join t.comisionOficios co inner join co.comisionAvisos ca left join t.alineacionTramites at where co.estatus in :estatus order by co.oficio desc ", Tramites.class)
                 .setParameter("estatus", getEstadosParaSupervisor())
                 .getResultStream()
                 .map(tramites -> packTramite(tramites)).collect(Collectors.toList());
@@ -1066,14 +1073,14 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     }
 
     private TramitesDto packTramite(Tramites tramites){
-        PersonalActivo seguidor = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramites.getClave()));
-        PersonalActivo comisionado = ejbPersonalBean.pack(f.getEntityManager().find(Personal.class, tramites.getComisionOficios().getComisionado()));
+        PersonalActivo seguidor = ejbPersonalBean.pack(em.find(Personal.class, tramites.getClave()));
+        PersonalActivo comisionado = ejbPersonalBean.pack(em.find(Personal.class, tramites.getComisionOficios().getComisionado()));
         TramitesDto t = new TramitesDto(seguidor, comisionado, tramites);
-        t.setAlineacionArea(f.getEntityManager().find(AreasUniversidad.class, tramites.getAlineacionTramites().getArea()));
-        t.setAlineacionEje(f.getEntityManager().find(EjesRegistro.class, tramites.getAlineacionTramites().getEje()));
-        t.setAlineacionEstrategia(f.getEntityManager().find(Estrategias.class, tramites.getAlineacionTramites().getEstrategia()));
-        t.setAlineacionLinea(f.getEntityManager().find(LineasAccion.class, tramites.getAlineacionTramites().getLineaAccion()));
-        t.setAlineacionActividad(f.getEntityManager().find(ActividadesPoa.class, tramites.getAlineacionTramites().getActividad()));
+        t.setAlineacionArea(em.find(AreasUniversidad.class, tramites.getAlineacionTramites().getArea()));
+        t.setAlineacionEje(em.find(EjesRegistro.class, tramites.getAlineacionTramites().getEje()));
+        t.setAlineacionEstrategia(em.find(Estrategias.class, tramites.getAlineacionTramites().getEstrategia()));
+        t.setAlineacionLinea(em.find(LineasAccion.class, tramites.getAlineacionTramites().getLineaAccion()));
+        t.setAlineacionActividad(em.find(ActividadesPoa.class, tramites.getAlineacionTramites().getActividad()));
         return t;
     }
 
@@ -1114,7 +1121,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
             System.out.println("rol.getOrigen() = " + rol.getOrigen());
             System.out.println("rol.getDestino() = " + rol.getDestino());
             Tarifas tarifa = tramite.getTramite().getComisionOficios().getComisionAvisos().getTarifaViaje();
-            Tarifas tarifaBD = f.getEntityManager().createQuery("select t from Tarifas t inner join t.tarifasViajes tv where tv.origen=:origen and tv.destino=:destino and t.fechaCancelacion is null", Tarifas.class)
+            Tarifas tarifaBD = em.createQuery("select t from Tarifas t inner join t.tarifasViajes tv where tv.origen=:origen and tv.destino=:destino and t.fechaCancelacion is null", Tarifas.class)
                     .setParameter("origen", rol.getOrigen())
                     .setParameter("destino", rol.getDestino())
                     .getResultStream()
@@ -1176,7 +1183,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 //        System.out.println("distancia = " + distancia);
         MunicipioPK municipioPK = new MunicipioPK(rol.getTramite().getTramite().getComisionOficios().getEstado(), rol.getTramite().getTramite().getComisionOficios().getMunicipio());
 //        System.out.println("municipioPK = " + municipioPK);
-        Municipio municipio = f.getEntityManager().find(Municipio.class, municipioPK);
+        Municipio municipio = em.find(Municipio.class, municipioPK);
         Double tramitesTabuladorKilometrosMaximo = ep.leerPropiedadDecimal("tramitesTabuladorKilometrosMaximo").orElse(397);
 
 //        System.out.println("municipio = " + municipio);
@@ -1190,7 +1197,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         //verificar si el estado es puebla sugerir por kilometro o si la distancia no sobrepasa el limite de kilometros sugerir por kilometro
 //        System.out.println("municipioPK.getClaveEstado() == 21 || distancia <= tramitesTabuladorKilometrosMaximo = " + (municipioPK.getClaveEstado() == 21 || distancia <= tramitesTabuladorKilometrosMaximo));
         if(municipioPK.getClaveEstado() == 21 || distancia <= tramitesTabuladorKilometrosMaximo){
-            TarifasPorKilometro porKilometro = f.getEntityManager().createQuery("select t from TarifasPorKilometro t where :distancia between t.minimo and t.maximo", TarifasPorKilometro.class)
+            TarifasPorKilometro porKilometro = em.createQuery("select t from TarifasPorKilometro t where :distancia between t.minimo and t.maximo", TarifasPorKilometro.class)
                     .setParameter("distancia", distancia.shortValue())
                     .getResultStream().findAny().orElse(null);
 //            System.out.println("porKilometro = " + porKilometro);
@@ -1207,11 +1214,11 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
         }
 
         //en caso de que la distancia sea mayor al limite de kilometros y no del estado de puebla determinar si el estado tiene aplicación total, sugerir la zonificación del estado
-        rol.setZonificacionesEstado(f.getEntityManager().find(ZonificacionesEstado.class, municipioPK.getClaveEstado()));
+        rol.setZonificacionesEstado(em.find(ZonificacionesEstado.class, municipioPK.getClaveEstado()));
 //        System.out.println("zonificacionesEstado = " + rol.getZonificacionesEstado());
         ZonificacionesMunicipioPK zonificacionesMunicipioPK = new ZonificacionesMunicipioPK(municipioPK.getClaveEstado(), municipioPK.getClaveMunicipio());
 //        System.out.println("zonificacionesMunicipioPK = " + zonificacionesMunicipioPK);
-        rol.setZonificacionesMunicipio(f.getEntityManager().find(ZonificacionesMunicipio.class, zonificacionesMunicipioPK));
+        rol.setZonificacionesMunicipio(em.find(ZonificacionesMunicipio.class, zonificacionesMunicipioPK));
 //        System.out.println("zonificacionesMunicipio = " + rol.getZonificacionesMunicipio());
 
         if(rol.getZonificacionesEstado() == null) {
@@ -1221,13 +1228,13 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
 
         rol.setNivelServidor(ejbPersonalBean.getNivelPersonal(rol.getTramite().getComisionado()));
 //        System.out.println("nivelServidor = " + rol.getNivelServidor());
-        TarifasPorZona porZona = f.getEntityManager().createQuery("select t from TarifasPorZona t where  t.nivel.nivel=:nivel", TarifasPorZona.class)
+        TarifasPorZona porZona = em.createQuery("select t from TarifasPorZona t where  t.nivel.nivel=:nivel", TarifasPorZona.class)
                 .setParameter("nivel", rol.getNivelServidor().getNivel())
                 .getResultStream().findAny().orElse(null);
 //        System.out.println("porZona = " + porZona);
 
 
-        f.getEntityManager().getEntityManagerFactory().getCache().evictAll();
+        em.getEntityManagerFactory().getCache().evictAll();
 
 //        System.out.println("(zonificacionesEstado.getAplicable().equals(ZonificacionEstadoAplicable.TOTAL) || zonificacionesMunicipio == null) = " + (rol.getZonificacionesEstado().getAplicable().equals(ZonificacionEstadoAplicable.TOTAL) || rol.getZonificacionesMunicipio() == null));
         if(rol.getZonificacionesEstado().getAplicable().equals(ZonificacionEstadoAplicable.TOTAL) || rol.getZonificacionesMunicipio() == null){
