@@ -237,7 +237,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
     @Override
     public void cargarResultadosAlmacenados(DesempenioEvaluaciones desempenioEvaluacion, ListaPersonal directivo, List<ListaPersonal> subordinados) {
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.cargarResultadosAlmacenados() la clave : " + directivo.getClave() + " lista de subordinados : " + subordinados);
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.cargarResultadosAlmacenados() subordinados: " + subordinados);
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.cargarResultadosAlmacenados() subordinados: " + subordinados);
         List<Integer> claves = new ArrayList<>();
         subordinados.forEach((lp) -> {
             if (lp.getClave().equals(directivo.getClave())) {

@@ -80,7 +80,9 @@ public class EvaluacionDesempenioAdmin implements Serializable {
     public void init() {
         try {
             respuestasPosibles = evaluacionDesempenioEJB.getRespuestasPosibles();
+//            System.out.println("respuestasPosibles = " + respuestasPosibles);
             apartados = evaluacionDesempenioEJB.getApartados(cuestionario);
+//            System.out.println("apartados = " + apartados);
 
             //paso 1 obtener lista de directivos
 //        listaDirectivos = evaluacionDesempenioEJB.getListaDirectivos();
@@ -92,10 +94,12 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 //        }
             facade.setEntityClass(ListaPersonal.class);
             directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+//            System.out.println("directivoSeleccionado = " + directivoSeleccionado);
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() elegido: " + evaluador);
 
             //paso 3 obtener la lista de subordnados del directivo elegido
             listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
+//            listaSubordinados.forEach(System.out::println);
             /*listaSubordinados.forEach(s -> {
                 System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() subordinado 1: " + s.getClave());
             });*/
@@ -105,26 +109,29 @@ public class EvaluacionDesempenioAdmin implements Serializable {
             //se convierte en paso 11 debido a que la lista de personal debe decidirse segun las opciones en pantalla
             //paso 5 obtener la evaluacion activa
             desempenioEvaluacion = evaluacionDesempenioEJB.evaluacionActiva();
+//            System.out.println("desempenioEvaluacion = " + desempenioEvaluacion);
             //TODO: tomar acciones en casa de no encontrar una evaluación activa
             if (desempenioEvaluacion != null) {
                 //paso 6 obtener periodo activo
                 facade.setEntityClass(PeriodosEscolares.class);
+//                System.out.println("desempenioEvaluacion.getPeriodo() = " + desempenioEvaluacion.getPeriodo());
                 periodoEscolar = (PeriodosEscolares) facade.find(desempenioEvaluacion.getPeriodo());
+//                System.out.println("periodoEscolar = " + periodoEscolar);
 //        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() periodoEscolar:" + periodoEscolar);
-
+//                System.out/**/.println("(directivoSeleccionado.getActividad() == 2 && desempenioEvaluacion != null || directivoSeleccionado.getActividad() == 4 && desempenioEvaluacion != null) = " + (directivoSeleccionado.getActividad() == 2 && desempenioEvaluacion != null || directivoSeleccionado.getActividad() == 4 && desempenioEvaluacion != null));
                 if (directivoSeleccionado.getActividad() == 2 && desempenioEvaluacion != null || directivoSeleccionado.getActividad() == 4 && desempenioEvaluacion != null) {
 
                     //paso 7 obtener respuestas
                     evaluacionDesempenioEJB.cargarResultadosAlmacenados(desempenioEvaluacion, directivoSeleccionado, listaSubordinados);
-//        for(DesempenioEvaluacionResultados der : desempenioEvaluacion.getDesempenioEvaluacionResultadosList()){
-//            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(7) der: " + der);
-//        }
+                    /*for(DesempenioEvaluacionResultados der : desempenioEvaluacion.getDesempenioEvaluacionResultadosList()){
+                        System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(7) der: " + der);
+                    }*/
 
                     //paso8 inicializar claves de opciones
                     clavesOpciones.clear();
-                    /*for (int i = 0; (i < maxEvaluando && i < listaSubordinados.size()); i++) {
+                    for (int i = 0; (i < maxEvaluando && i < listaSubordinados.size()); i++) {
                         clavesOpciones.add(listaSubordinados.get(i).getClave());
-                    }*/
+                    }
 
                     //paso 9 inicializar opciones
                     initOpciones();
@@ -147,10 +154,12 @@ public class EvaluacionDesempenioAdmin implements Serializable {
     }
 
     private void initOpciones() {
+//        System.out.println("EvaluacionDesempenioAdmin.initOpciones");
         opciones.clear();
         Integer index = 0;
+//        System.out.println("clavesOpciones = " + clavesOpciones);
         for (Integer clave : clavesOpciones) {
-//            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(9) clave: " + clave);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(9) clave: " + clave);
             opciones.put(index, new ArrayList<>());
             facade.setEntityClass(ListaPersonal.class);
             ListaPersonal lpPrimero = (ListaPersonal) facade.find(clave);
@@ -164,7 +173,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
             }
             index++;
         }
-//        opciones.forEach((k,v) -> //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.initOpciones(" + k + "): " +  v ));
+//        opciones.forEach((k,v) -> System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.initOpciones(" + k + "): " +  v ));
     }
 
     private void initRespuestas() {
