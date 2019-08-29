@@ -72,6 +72,14 @@ public class EjbAsignacionTutores {
         }
     }
     
+    public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDireccion(Integer clave){
+        try{
+            return ejbAsignacionAcademica.validarEncargadoDireccion(clave);
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbAsignacionTutores.validarEncargadoDireccion)", e, null);
+        }
+    }
+    
     /**
      * Permite verificar si hay un periodo abierto para asignación de tutores
      * @param director Director que va a realizar la asignación de tutores, permite funcionar como filtro en caso se un permiso especifico a su area o a su clave
