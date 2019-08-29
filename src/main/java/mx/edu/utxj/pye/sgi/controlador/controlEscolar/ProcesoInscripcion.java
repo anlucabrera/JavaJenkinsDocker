@@ -273,7 +273,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         }
         
         listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
-        actualizaPago();
+//        actualizaPago();
     }
     
     public void clearDatos(){

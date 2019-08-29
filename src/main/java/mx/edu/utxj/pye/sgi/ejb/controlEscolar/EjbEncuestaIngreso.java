@@ -10,9 +10,11 @@ import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.model.SelectItem;
+import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.TipoCuestionario;
@@ -29,6 +31,12 @@ import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 public class EjbEncuestaIngreso implements Serializable{
     
     @EJB FacadeCE facadeCE;
+    private EntityManager em;
+
+    @PostConstruct
+    public  void init(){
+        em = facadeCE.getEntityManager();
+    }
     
     public ResultadoEJB<EncuestaAspirante> actualizar(String id, Object valor, EncuestaAspirante resultado){
         try {
@@ -69,7 +77,7 @@ public class EjbEncuestaIngreso implements Serializable{
     }
      
     public EncuestaAspirante getResultado(Integer cve_aspirante){
-        return facadeCE.getEntityManager().createQuery("SELECT ea FROM EncuestaAspirante ea WHERE ea.cveAspirante = :aspirante", EncuestaAspirante.class)
+        return em.createQuery("SELECT ea FROM EncuestaAspirante ea WHERE ea.cveAspirante = :aspirante", EncuestaAspirante.class)
                 .setParameter("aspirante", cve_aspirante)
                 .getResultList().stream().findFirst().orElse(null);
     }

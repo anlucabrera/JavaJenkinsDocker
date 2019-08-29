@@ -39,8 +39,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataSource;
+import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.mail.util.ByteArrayDataSource;
+import javax.persistence.EntityManager;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
@@ -62,8 +64,14 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @EJB FacadeCE facadeCE;
     @EJB EjbPersonal ejbPersonal;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
-    @EJB Facade2 f;
+//    @EJB Facade2 f;
+    private EntityManager em;
 
+    @PostConstruct
+    public void init() {
+        em = facadeCE.getEntityManager();
+    }
+    
     @Override
     public void GuardaPersona(Persona persona) {
         facadeCE.create(persona);
@@ -116,7 +124,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
                         p.setFechaNacimiento(sm.parse(fecha_nacimiento));
                         String claveEstado = parts[0].substring(11, 13);
                         
-                        Estado estado = facadeCE.getEntityManager().createNamedQuery("Estado.findByClave", Estado.class)
+                        Estado estado = em.createNamedQuery("Estado.findByClave", Estado.class)
                                 .setParameter("clave",claveEstado)
                                 .getResultList()
                                 .stream().findFirst().orElse(null);
@@ -157,7 +165,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @Override
     public ProcesosInscripcion getProcesoIncripcionTSU() {
         try {
-            return facadeCE.getEntityManager().createQuery("SELECT pi FROM ProcesosInscripcion pi WHERE pi.activoNi = true AND pi.fechaInicio <= :fi AND pi.fechaFin >= :ff",ProcesosInscripcion.class)
+            return em.createQuery("SELECT pi FROM ProcesosInscripcion pi WHERE pi.activoNi = true AND pi.fechaInicio <= :fi AND pi.fechaFin >= :ff",ProcesosInscripcion.class)
                     .setParameter("fi", new Date())
                     .setParameter("ff", new Date())
                     .getSingleResult();
@@ -182,7 +190,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @Override
     public Persona buscaPersonaByCurp(String curpBusqueda) {
         Persona  persona = new Persona();
-        TypedQuery<Persona> p = facadeCE.getEntityManager().createNamedQuery("Persona.findByCurp",Persona.class)
+        TypedQuery<Persona> p = em.createNamedQuery("Persona.findByCurp",Persona.class)
                 .setParameter("curp",curpBusqueda);
         List<Persona> personas = p.getResultList();
 
@@ -230,7 +238,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public Aspirante buscaAspiranteByClave(Integer id) {
-        return  facadeCE.getEntityManager().createQuery("SELECT a FROM Aspirante a WHERE a.idPersona.idpersona = :idP",Aspirante.class)
+        return  em.createQuery("SELECT a FROM Aspirante a WHERE a.idPersona.idpersona = :idP",Aspirante.class)
                 .setParameter("idP",id)
                 .getResultList().stream().findFirst().orElse(null);
     }
@@ -250,7 +258,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         String anyo2 = new SimpleDateFormat("yy").format(new Date());
         folio = anyo2.concat(String.valueOf(procesosInscripcion.getIdPeriodo())).concat("0000");
 
-        TypedQuery<Integer> v = (TypedQuery<Integer>) facadeCE.getEntityManager().createQuery("SELECT MAX(p.folioAspirante) FROM Aspirante AS p WHERE p.idProcesoInscripcion.idProcesosInscripcion =:idPE AND p.tipoAspirante.idTipoAspirante = 1")
+        TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(p.folioAspirante) FROM Aspirante AS p WHERE p.idProcesoInscripcion.idProcesosInscripcion =:idPE AND p.tipoAspirante.idTipoAspirante = 1")
                 .setParameter("idPE", procesosInscripcion.getIdProcesosInscripcion());
 
         if(v.getSingleResult() == null){
@@ -330,12 +338,12 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public Iems buscaIemsByClave(Integer id) {
-        return facadeCE.getEntityManager().find(Iems.class,id);
+        return em.find(Iems.class,id);
     }
 
     @Override
     public AreasUniversidad buscaPEByClave(Short clave) {
-        return facadeCE.getEntityManager().createNamedQuery("AreasUniversidad.findByArea",AreasUniversidad.class)
+        return em.createNamedQuery("AreasUniversidad.findByArea",AreasUniversidad.class)
                 .setParameter("area",clave)
                 .getSingleResult();
     }
@@ -407,11 +415,11 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
         
         Generos generos = new Generos();
-        generos = facadeCE.getEntityManager().find(Generos.class, persona.getGenero());
+        generos = em.find(Generos.class, persona.getGenero());
         Iems iems = new Iems();
-        iems = facadeCE.getEntityManager().find(Iems.class,academicos.getInstitucionAcademica());
+        iems = em.find(Iems.class,academicos.getInstitucionAcademica());
         Asentamiento asentamiento = new Asentamiento();
-        asentamiento = facadeCE.getEntityManager().createQuery("SELECT a FROM Asentamiento a WHERE a.asentamientoPK.asentamiento = :idA AND a.asentamientoPK.municipio = :idMun AND a.asentamientoPK.estado = :idEst", Asentamiento.class)
+        asentamiento = em.createQuery("SELECT a FROM Asentamiento a WHERE a.asentamientoPK.asentamiento = :idA AND a.asentamientoPK.municipio = :idMun AND a.asentamientoPK.estado = :idEst", Asentamiento.class)
                 .setParameter("idA", domicilio.getIdAsentamiento())
                 .setParameter("idMun", domicilio.getIdMunicipio())
                 .setParameter("idEst", domicilio.getIdEstado())

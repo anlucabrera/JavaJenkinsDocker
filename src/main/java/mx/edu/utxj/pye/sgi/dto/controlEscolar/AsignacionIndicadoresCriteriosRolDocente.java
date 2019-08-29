@@ -16,6 +16,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
@@ -142,6 +143,16 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
      */
     @Getter @NonNull private List<DtoAsignadosIndicadoresCriterios> listaAsignacionCargaAcademica;
     
+     /**
+     * Tipo de asignación de indicadores que realizará el docente (masiva o individual)
+     */
+    @Getter @NonNull private String opcAsignacion;
+    
+     /**
+     * Lista de unidades materia configuración para la asignación masiva de indicadores
+     */
+    @Getter @NonNull private List<UnidadMateriaConfiguracion> listaUnidadMateriaConfiguracion;
+    
     public AsignacionIndicadoresCriteriosRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
         this.docente = docente;
@@ -253,4 +264,14 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
     public void setListaAsignacionCargaAcademica(List<DtoAsignadosIndicadoresCriterios> listaAsignacionCargaAcademica) {
         this.listaAsignacionCargaAcademica = listaAsignacionCargaAcademica;
     }
+
+    public void setOpcAsignacion(String opcAsignacion) {
+        this.opcAsignacion = opcAsignacion;
+    }
+
+    public void setListaUnidadMateriaConfiguracion(List<UnidadMateriaConfiguracion> listaUnidadMateriaConfiguracion) {
+        this.listaUnidadMateriaConfiguracion = listaUnidadMateriaConfiguracion;
+    }
+    
+    
 }

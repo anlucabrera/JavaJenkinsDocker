@@ -122,9 +122,9 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 
                     //paso8 inicializar claves de opciones
                     clavesOpciones.clear();
-                    /*for (int i = 0; (i < maxEvaluando && i < listaSubordinados.size()); i++) {
+                    for (int i = 0; (i < maxEvaluando && i < listaSubordinados.size()); i++) {
                         clavesOpciones.add(listaSubordinados.get(i).getClave());
-                    }*/
+                    }
 
                     //paso 9 inicializar opciones
                     initOpciones();

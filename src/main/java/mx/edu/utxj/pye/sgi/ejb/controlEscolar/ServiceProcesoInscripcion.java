@@ -30,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 
 /**
  *
@@ -41,18 +43,24 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     @EJB
     FacadeCE facadeCE;
 
-    @EJB EjbEventoEscolar ejbEventoEscolar;
+    @EJB    EjbEventoEscolar ejbEventoEscolar;
+    private EntityManager em;
+
+    @PostConstruct
+    public void init() {
+        em = facadeCE.getEntityManager();
+    }
 
     @Override
     public List<Aspirante> listaAspirantesTSU(Integer procesoInscripcion) {
-        return  facadeCE.getEntityManager().createQuery("SELECT a FROM Aspirante a WHERE a.idProcesoInscripcion.idProcesosInscripcion = :idpi AND a.tipoAspirante.idTipoAspirante = 1 AND a.datosAcademicos <> null ORDER BY a.folioAspirante ",Aspirante.class)
+        return  em.createQuery("SELECT a FROM Aspirante a WHERE a.idProcesoInscripcion.idProcesosInscripcion = :idpi AND a.tipoAspirante.idTipoAspirante = 1 AND a.datosAcademicos <> null ORDER BY a.folioAspirante ",Aspirante.class)
                 .setParameter("idpi", procesoInscripcion)
                 .getResultList();
     }
 
     @Override
     public List<Aspirante> lisAspirantesByPE(Short pe,Integer procesoInscripcion) {
-        return facadeCE.getEntityManager().createQuery("SELECT a FROM Aspirante a WHERE a.idProcesoInscripcion.idProcesosInscripcion = :idpi AND a.tipoAspirante.idTipoAspirante = 1 AND a.datosAcademicos.primeraOpcion = :po AND a.datosAcademicos <> null ORDER BY a.folioAspirante ",Aspirante.class)
+        return em.createQuery("SELECT a FROM Aspirante a WHERE a.idProcesoInscripcion.idProcesosInscripcion = :idpi AND a.tipoAspirante.idTipoAspirante = 1 AND a.datosAcademicos.primeraOpcion = :po AND a.datosAcademicos <> null ORDER BY a.folioAspirante ",Aspirante.class)
                 .setParameter("idpi", procesoInscripcion)
                 .setParameter("po", pe)
                 .getResultList();
@@ -60,7 +68,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
     @Override
     public Aspirante buscaAspiranteByFolio(Integer folio) {
-        return facadeCE.getEntityManager().createNamedQuery("Aspirante.findByFolioAspirante", Aspirante.class)
+        return em.createNamedQuery("Aspirante.findByFolioAspirante", Aspirante.class)
                 .setParameter("folioAspirante", folio)
                 .getResultList()
                 .stream().findFirst().orElse(null);
@@ -68,7 +76,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
     @Override
     public Aspirante buscaAspiranteByFolioValido(Integer folio) {
-        return facadeCE.getEntityManager().createQuery("SELECT a FROM Aspirante a WHERE a.folioAspirante = :folioAspirante AND a.estatus = true", Aspirante.class)
+        return em.createQuery("SELECT a FROM Aspirante a WHERE a.folioAspirante = :folioAspirante AND a.estatus = true", Aspirante.class)
                 .setParameter("folioAspirante", folio)
                 .getResultList()
                 .stream().findFirst().orElse(null);
@@ -76,7 +84,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
     @Override
     public AreasUniversidad buscaAreaByClave(Short area) {
-        return facadeCE.getEntityManager().createNamedQuery("AreasUniversidad.findByArea", AreasUniversidad.class)
+        return em.createNamedQuery("AreasUniversidad.findByArea", AreasUniversidad.class)
                 .setParameter("area", area)
                 .getResultList().stream().findFirst().orElse(null);
     }
@@ -119,7 +127,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 String anyo2 = new SimpleDateFormat("yy").format(new Date());
                 folio = anyo2.concat("0000");
                 
-                TypedQuery<Integer> v = (TypedQuery<Integer>) facadeCE.getEntityManager().createQuery("SELECT MAX(e.matricula) FROM Estudiante e WHERE e.periodo = :idPeriodo")
+                TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(e.matricula) FROM Estudiante e WHERE e.periodo = :idPeriodo")
                         .setParameter("idPeriodo", estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo());
                 
                 if(v.getSingleResult() == 0){
@@ -203,7 +211,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
     @Override
     public Estudiante findByIdAspirante(Integer idAspirante) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante = :idAspirante", Estudiante.class)
+        return em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante = :idAspirante", Estudiante.class)
                 .setParameter("idAspirante", idAspirante)
                 .getResultList().stream().findFirst().orElse(null);
                
@@ -217,8 +225,8 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
             Documentosentregadosestudiante documentosentregadosestudiante = new Documentosentregadosestudiante();
             Login login = new Login();
-            documentosentregadosestudiante = facadeCE.getEntityManager().find(Documentosentregadosestudiante.class, estudiante.getIdEstudiante());
-            login = facadeCE.getEntityManager().createQuery("SELECT l FROM Login l WHERE l.persona = :idPer", Login.class)
+            documentosentregadosestudiante = em.find(Documentosentregadosestudiante.class, estudiante.getIdEstudiante());
+            login = em.createQuery("SELECT l FROM Login l WHERE l.persona = :idPer", Login.class)
                     .setParameter("idPer", estudiante.getAspirante().getIdPersona().getIdpersona())
                     .getResultList().stream().findFirst().orElse(null);
                     
@@ -347,7 +355,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
     @Override
     public List<Grupo> listaGruposXPeriodoByCarrera(Short periodo, Short carrera, Short sistema, Integer grado) {
-        return facadeCE.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.grado = :grado AND g.idPe = :cvePe AND g.idSistema.idSistema = :idSistema AND g.periodo = :idPeriodo", Grupo.class)
+        return em.createQuery("SELECT g FROM Grupo g WHERE g.grado = :grado AND g.idPe = :cvePe AND g.idSistema.idSistema = :idSistema AND g.periodo = :idPeriodo", Grupo.class)
                     .setParameter("grado", 1)
                     .setParameter("cvePe", carrera)
                     .setParameter("idSistema", sistema)
@@ -357,7 +365,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
     @Override
     public List<Estudiante> listaEstudiantesXPeriodo(Integer perido) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.periodo = :idPeriodo", Estudiante.class)
+        return em.createQuery("SELECT e FROM Estudiante e WHERE e.periodo = :idPeriodo", Estudiante.class)
                 .setParameter("idPeriodo", perido)
                 .getResultList();
     }
@@ -389,7 +397,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
     @Override
     public Iems buscaIemsByClave(Integer id) {
-        return facadeCE.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.iems = :idIems", Iems.class)
+        return em.createQuery("SELECT i FROM Iems i WHERE i.iems = :idIems", Iems.class)
                 .setParameter("idIems", id)
                 .getResultList().stream().findFirst().orElse(null);
     }

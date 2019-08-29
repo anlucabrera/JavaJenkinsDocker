@@ -96,6 +96,12 @@
                     </p:link>
                 </li>
             </c:if>
+            <li>
+                <p:link href="/capitalHumano/contactoE.xhtml">
+                    <i class="fa fa-book"></i>
+                    <span>Contacto de emergencias</span>
+                </p:link>
+            </li>
 
             <c:if test="#{controlEscolarMenu.tieneElementos()}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Control escolar</li>
@@ -111,12 +117,6 @@
                 <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-plus-circle"></i><span>Planeacion Cuatrimestral</span></p:link></li></c:if>
                 <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}"><li><p:link href="/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-calendar-check"></i><span>Apertura Extemporánea</span></p:link></li></c:if>
             </c:if>
-            <li>
-                <p:link href="/capitalHumano/contactoE.xhtml">
-                    <i class="fa fa-book"></i>
-                    <span>Contacto de emergencias</span>
-                </p:link>
-            </li>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
             <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">
                 <li class="treeview">

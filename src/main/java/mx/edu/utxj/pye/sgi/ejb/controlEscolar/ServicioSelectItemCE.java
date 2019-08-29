@@ -12,9 +12,11 @@ import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.model.SelectItem;
+import javax.persistence.EntityManager;
 
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
@@ -26,9 +28,15 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 public class ServicioSelectItemCE implements EjbSelectItemCE {
 
     @EJB FacadeCE facadeCE;
+    private EntityManager em;
 
+    @PostConstruct
+    public void init() {
+        em = facadeCE.getEntityManager();
+    }
+    
     public List<TipoSangre> getTipoSangre(){
-        return  facadeCE.getEntityManager().createQuery("SELECT ts FROM  TipoSangre ts",TipoSangre.class)
+        return  em.createQuery("SELECT ts FROM  TipoSangre ts",TipoSangre.class)
                 .getResultList();
     }
 
@@ -42,7 +50,7 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
     }
 
     public List<TipoDiscapacidad> getTipoDiscapacidad() {
-        return facadeCE.getEntityManager().createNamedQuery("TipoDiscapacidad.findAll", TipoDiscapacidad.class)
+        return em.createNamedQuery("TipoDiscapacidad.findAll", TipoDiscapacidad.class)
                 .getResultList();
     }
 
@@ -59,18 +67,18 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
 
     @Override
     public List<Ocupacion> itemOcupacion() {
-        return facadeCE.getEntityManager().createNamedQuery("Ocupacion.findAll", Ocupacion.class)
+        return em.createNamedQuery("Ocupacion.findAll", Ocupacion.class)
                 .getResultList();
     }
 
     @Override
     public List<Escolaridad> itemEscolaridad() {
-        return facadeCE.getEntityManager().createNamedQuery("Escolaridad.findAll",Escolaridad.class)
+        return em.createNamedQuery("Escolaridad.findAll",Escolaridad.class)
                 .getResultList();
     }
 
     public List<Iems> getIemsByEstadoMunicipioLocalidad(Integer estado, Integer municipio, Integer localidad){
-        return facadeCE.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.localidad.localidadPK.claveEstado = :estado AND i.localidad.localidadPK.claveMunicipio = :municipio AND i.localidad.localidadPK.claveLocalidad = :localidad", Iems.class)
+        return em.createQuery("SELECT i FROM Iems i WHERE i.localidad.localidadPK.claveEstado = :estado AND i.localidad.localidadPK.claveMunicipio = :municipio AND i.localidad.localidadPK.claveLocalidad = :localidad", Iems.class)
                 .setParameter("estado", estado)
                 .setParameter("municipio", municipio)
                 .setParameter("localidad", localidad)
@@ -90,12 +98,12 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
 
     @Override
     public List<EspecialidadCentro> itemEspecialidadCentro() {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM EspecialidadCentro e",EspecialidadCentro.class)
+        return em.createQuery("SELECT e FROM EspecialidadCentro e",EspecialidadCentro.class)
                 .getResultList();
     }
 
     public List<AreasUniversidad> getProgramasEducativos(){
-        return facadeCE.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.categoria.categoria = 8",AreasUniversidad.class)
+        return em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.categoria.categoria = 8",AreasUniversidad.class)
                 .getResultList();
     }
 
@@ -111,7 +119,7 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
     }
 
     public List<AreasUniversidad> getProgramasEducativosByArea(Short area){
-        return facadeCE.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior = :idArea AND au.nivelEducativo.nivel = 'TSU' AND au.vigente = 1",AreasUniversidad.class)
+        return em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior = :idArea AND au.nivelEducativo.nivel = 'TSU' AND au.vigente = 1",AreasUniversidad.class)
                 .setParameter("idArea", area)
                 .getResultList();
     }
@@ -128,7 +136,7 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
     }
 
     public List<ProgramasEducativos> getProgramasEducativoAll(){
-        return facadeCE.getEntityManager().createQuery("SELECT pe FROM ProgramasEducativos pe WHERE pe.nivel.nivel = 'TSU' AND pe.activo = 1",ProgramasEducativos.class)
+        return em.createQuery("SELECT pe FROM ProgramasEducativos pe WHERE pe.nivel.nivel = 'TSU' AND pe.activo = 1",ProgramasEducativos.class)
                 .getResultList();
     }
 
@@ -146,31 +154,31 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
 
     @Override
     public List<Turno> itemTurno() {
-        return facadeCE.getEntityManager().createQuery("SELECT t FROM Turno t",Turno.class)
+        return em.createQuery("SELECT t FROM Turno t",Turno.class)
                 .getResultList();
     }
 
     @Override
     public List<AreasUniversidad> itemPEAll() {
-        return facadeCE.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.nivelEducativo.nivel = 'TSU' AND au.vigente = 1",AreasUniversidad.class)
+        return em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.nivelEducativo.nivel = 'TSU' AND au.vigente = 1",AreasUniversidad.class)
                 .getResultList();
     }
 
     @Override
     public List<Sistema> itemSistema() {
-        return facadeCE.getEntityManager().createNamedQuery("Sistema.findAll", Sistema.class)
+        return em.createNamedQuery("Sistema.findAll", Sistema.class)
                 .getResultList();
     }
 
     @Override
     public List<LenguaIndigena> itemLenguaIndigena() {
-        return facadeCE.getEntityManager().createNamedQuery("LenguaIndigena.findAll", LenguaIndigena.class)
+        return em.createNamedQuery("LenguaIndigena.findAll", LenguaIndigena.class)
                 .getResultList();
     }
 
     @Override
     public List<MedioDifusion> itemMedioDifusion() {
-        return facadeCE.getEntityManager().createNamedQuery("MedioDifusion.findAll", MedioDifusion.class)
+        return em.createNamedQuery("MedioDifusion.findAll", MedioDifusion.class)
                 .getResultList();
     }
 }
