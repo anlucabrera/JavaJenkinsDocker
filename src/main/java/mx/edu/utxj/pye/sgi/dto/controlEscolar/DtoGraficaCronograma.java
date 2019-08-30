@@ -14,17 +14,19 @@ import java.util.Date;
 public class DtoGraficaCronograma implements Serializable {
 
     @Getter    @Setter    private String unidatTematica;
-    @Getter    @Setter    private Integer numeroSemaInicio;
-    @Getter    @Setter    private Integer numeroSemanas;
+    @Getter    @Setter    private Double porcInicio;
+    @Getter    @Setter    private Double porcUtili;
+    @Getter    @Setter    private Double porcRes;
 
-    public DtoGraficaCronograma(String unidatTematica, Integer numeroSemaInicio, Integer numeroSemanas) {
+    public DtoGraficaCronograma(String unidatTematica, Double porcInicio, Double porcUtili, Double porcRes) {
         this.unidatTematica = unidatTematica;
-        this.numeroSemaInicio = numeroSemaInicio;
-        this.numeroSemanas = numeroSemanas;
-    }    
-
+        this.porcInicio = porcInicio;
+        this.porcUtili = porcUtili;
+        this.porcRes = porcRes;
+    }
+    
     @Override
     public String toString() {
-        return unidatTematica + "" + numeroSemaInicio+""+numeroSemanas;
+        return unidatTematica + "" + porcInicio+""+porcUtili+""+porcRes;
     }
 }

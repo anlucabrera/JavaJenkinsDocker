@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -31,7 +32,7 @@ import lombok.RequiredArgsConstructor;
  * Uso facade.setEntityClass(ListaPersonal.class); List<ListaPersonal> lp =
  * facade.findAll();
  */
-@Stateful
+@Stateless
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class FacadeService<T> implements Facade {
@@ -73,8 +74,8 @@ public class FacadeService<T> implements Facade {
             }
         } else {
             setEntityClass(entity.getClass());
-            getEntityManager().persist(entity);
-            getEntityManager().flush();
+            em.persist(entity);
+            em.flush();
         }
     }
 
@@ -97,16 +98,16 @@ public class FacadeService<T> implements Facade {
             }
         } else {
             setEntityClass(entity.getClass());
-            getEntityManager().merge(entity);
-            getEntityManager().flush();
+            em.merge(entity);
+            em.flush();
         }
     }
 
     @Override
     public void remove(Object entity) {
         setEntityClass(entity.getClass());
-        getEntityManager().remove(getEntityManager().merge(entity));
-        getEntityManager().flush();
+        em.remove(getEntityManager().merge(entity));
+        em.flush();
     }
 
     @Override

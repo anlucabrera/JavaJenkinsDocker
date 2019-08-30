@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
 import mx.edu.utxj.pye.sgi.exception.PropiedadNoEncontradaException;
@@ -24,7 +25,7 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
  *
  * @author UTXJ
  */
-@Stateful
+@Stateless
 public class ServicioPropiedades implements EjbPropiedades {
 
     private static final long serialVersionUID = 2060090907401662434L;

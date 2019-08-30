@@ -16,17 +16,15 @@ import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Informeplaneacioncuatrimestraldocenteprint;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import org.primefaces.model.chart.LineChartModel;
-import org.primefaces.model.timeline.TimelineModel;
 
 /**
  *
  * @author UTXJ
  */
-public class ImpresionPlaneacionCuatrimestral extends AbstractRol{
+public class PaseDeListaDocente extends AbstractRol{
     
     /**
      * Representa la referencia hacia el personal docente
@@ -76,8 +74,8 @@ public class ImpresionPlaneacionCuatrimestral extends AbstractRol{
      */
     @Getter @Setter private List<DtoGraficaCronograma> cronograma;
     @Getter @Setter private Integer cuatrimestre;
-    @Getter @Setter private Double porcIni;
-    @Getter @Setter private Integer numDtotales;
+    @Getter @Setter private Integer semanaInicio;
+    @Getter @Setter private List<String> asistencias;
     
     /**
      * Carga académica seleccionada
@@ -159,9 +157,9 @@ public class ImpresionPlaneacionCuatrimestral extends AbstractRol{
      /**
      * Lista de asignación de indicadores por carga académica
      */
-    @Getter @NonNull private List<Informeplaneacioncuatrimestraldocenteprint> informeplaneacioncuatrimestraldocenteprints;
+    @Getter @NonNull private List<Listaalumnosca> listaalumnoscas;
     
-    public ImpresionPlaneacionCuatrimestral(Filter<PersonalActivo> filtro, PersonalActivo docente) {
+    public PaseDeListaDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
         this.docente = docente;
     }
@@ -269,7 +267,9 @@ public class ImpresionPlaneacionCuatrimestral extends AbstractRol{
         this.existeAsignacionIndicadores = existeAsignacionIndicadores;
     }
 
-    public void setInformeplaneacioncuatrimestraldocenteprints(List<Informeplaneacioncuatrimestraldocenteprint> informeplaneacioncuatrimestraldocenteprints) {
-        this.informeplaneacioncuatrimestraldocenteprints = informeplaneacioncuatrimestraldocenteprints;
+    public void setListaalumnoscas(List<Listaalumnosca> listaalumnoscas) {
+        this.listaalumnoscas = listaalumnoscas;
     }
+
+    
 }

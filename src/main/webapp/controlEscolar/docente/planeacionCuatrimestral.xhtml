@@ -21,7 +21,7 @@
                 /* indicamos el salto de pagina */
                 .saltoDePagina{
                     display:block;
-                    page-break-before:always;
+                    page-break-inside:auto !important;
                 }
             }
         </style>
@@ -110,7 +110,7 @@
                                                                 <div class="row" style="align-content:  center">
                                                                     <div class="col-sm-3 pull-left">
                                                                         <div class="description-block" style="text-align: center">
-                                                                            <img src="../../resources/img/utxj.png" alt="" width="100px"/>
+                                                                            <img src="../../resources/img/logoSep.jpg" alt="" height="80px"/>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-sm-6 pull-left" >
@@ -118,8 +118,10 @@
                                                                             <div class="row">
                                                                                 <div id="tituloCV" class="col-sm-12">
                                                                                     <div class="description-block" style="text-align: center">
-                                                                                        <h3><strong>Universidad Tecnológica De Xicotepec de Juárez</strong></h3>
-                                                                                        <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>                                                                                        
+                                                                                        <h3><strong>Universidad Tecnológica De</strong></h3>
+                                                                                        <h3><strong>Xicotepec de Juárez</strong></h3>
+                                                                                        <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>       
+                                                                                        <h4><strong>Planeación Cuatrimestral</strong></h4>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -127,28 +129,7 @@
                                                                     </div>
                                                                     <div class="col-sm-3">
                                                                         <div class="description-block" style="text-align: center">
-                                                                            <img src="../../resources/img/sii.png" alt="" width="80px"/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <br/>
-
-                                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                                    <div class="col-md-12">
-                                                                        <div class="box box-widget widget-user-2">
-                                                                            <div class="row" style="align-content:  center">
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="row">
-                                                                                        <div class="row">
-                                                                                            <div id="tituloCV" class="col-sm-12">
-                                                                                                <div class="description-block" style="text-align: center">
-                                                                                                    <h4><strong>Planeación Cuatrimestral</strong></h4>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                            <img src="../../resources/img/utxj.png" alt="" height="80px"/>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -174,13 +155,12 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <br/>
                                                     <div class="row">
                                                         <div class="col-sm-12">
                                                             <div class="description-block">
                                                                 <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{planeacionCuatrimestralImpresion.rol.informeplaneacioncuatrimestraldocenteprints}" 
                                                                              sortBy="#{asignacionIndCA.unidad}" rowStyleClass="subactiviades"
-                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                                             styleClass="saltoDePagina">
                                                                     <f:facet name="header">
                                                                     </f:facet>
                                                                     <p:columnGroup type="header">
@@ -188,13 +168,13 @@
                                                                             <p:column headerText="No. de Evaluación" style="width: 20%;font-size: small;"  /> 
                                                                             <p:column headerText="Periodo" style="width: 10%;font-size: small;"/> 
                                                                             <p:column headerText="% Eval." style="width: 10%;font-size: small;"/>
-                                                                            <p:column headerText="Creterio de evaluacion" style="width: 10%;font-size: small;"/>
+                                                                            <p:column headerText="Criterio de evaluacion" style="width: 10%;font-size: small;"/>
                                                                             <p:column headerText="% Crit" style="width: 10%;font-size: small;"/>
-                                                                            <p:column headerText="Instrumentos de evaluaión" style="width: 30%;font-size: small;"/> 
+                                                                            <p:column headerText="Instrumentos de evaluación" style="width: 30%;font-size: small;"/> 
                                                                             <p:column headerText="% Ins." style="width: 10%;font-size: small;"/> 
                                                                         </p:row>
                                                                     </p:columnGroup>
-                                                                    <p:headerRow>
+                                                                    <p:headerRow >
                                                                         <p:column colspan="3" style="border: #000000 !important;font-size: small;" >
                                                                             <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.unidad} #{asignacionIndCA.nombreUnidad eq 'T.I.'?'':'-'} #{asignacionIndCA.nombreUnidad eq 'T.I.'?asignacionIndCA.objetivo:asignacionIndCA.nombreUnidad}" style="text-align: center;"/>
                                                                         </p:column>
@@ -240,7 +220,9 @@
                                                                             <div class="row">
                                                                                 <div id="tituloCV" class="col-sm-12">
                                                                                     <div class="description-block" style="text-align: center">
+                                                                                        <br/>
                                                                                         <h4><strong>Cronograma de Actividades</strong></h4>
+                                                                                        <br/>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -259,102 +241,136 @@
                                                                     </f:facet>
                                                                     <p:columnGroup type="header">
                                                                         <p:row class="success">
-                                                                            <p:column rowspan="2" headerText="Unidad Tematica" style="width: 400px;font-size: small;"/> 
-                                                                            <p:column colspan="4" headerText="Enero" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Febrero" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Marzo" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Abril" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Mayo" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Junio" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Julio" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Agosto" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Septiembre" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/>  
-                                                                            <p:column colspan="4" headerText="Octubre" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Noviembre" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/>  
-                                                                            <p:column colspan="4" headerText="Diciembre" style="font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/>  
+                                                                            <p:column rowspan="2" headerText="Unidad Temática" style="width: 400px;"/> 
+                                                                            <p:column colspan="4" headerText="Enero" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Febrero" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Marzo" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Abril" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Mayo" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Junio" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Julio" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Agosto" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Septiembre" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/>  
+                                                                            <p:column colspan="4" headerText="Octubre" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Noviembre" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/>  
+                                                                            <p:column colspan="4" headerText="Diciembre" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/>  
                                                                         </p:row>
                                                                         <p:row class="success">
-                                                                            <p:column headerText="1" style="font-size: small;"/> 
-                                                                            <p:column headerText="2" style="font-size: small;"/> 
-                                                                            <p:column headerText="3" style="font-size: small;"/> 
-                                                                            <p:column headerText="4" style="font-size: small;"/> 
-                                                                            <p:column headerText="5" style="font-size: small;"/> 
-                                                                            <p:column headerText="6" style="font-size: small;"/> 
-                                                                            <p:column headerText="7" style="font-size: small;"/> 
-                                                                            <p:column headerText="8" style="font-size: small;"/> 
-                                                                            <p:column headerText="9" style="font-size: small;"/> 
-                                                                            <p:column headerText="10" style="font-size: small;"/> 
-                                                                            <p:column headerText="11" style="font-size: small;"/> 
-                                                                            <p:column headerText="12" style="font-size: small;"/> 
-                                                                            <p:column headerText="13" style="font-size: small;"/> 
-                                                                            <p:column headerText="14" style="font-size: small;"/> 
-                                                                            <p:column headerText="15" style="font-size: small;"/> 
-                                                                            <p:column headerText="16" style="font-size: small;"/> 
+                                                                            <p:column headerText="1" /> 
+                                                                            <p:column headerText="2" /> 
+                                                                            <p:column headerText="3" /> 
+                                                                            <p:column headerText="4" /> 
+                                                                            <p:column headerText="5" /> 
+                                                                            <p:column headerText="6" /> 
+                                                                            <p:column headerText="7" /> 
+                                                                            <p:column headerText="8" /> 
+                                                                            <p:column headerText="9" /> 
+                                                                            <p:column headerText="10" /> 
+                                                                            <p:column headerText="11" /> 
+                                                                            <p:column headerText="12" /> 
+                                                                            <p:column headerText="13" /> 
+                                                                            <p:column headerText="14" /> 
+                                                                            <p:column headerText="15" /> 
+                                                                            <p:column headerText="16" /> 
                                                                         </p:row>
                                                                     </p:columnGroup>
 
                                                                     <p:column style="border: #000000 !important">
-                                                                        <h:outputText value="#{crono.unidatTematica}" style="font-size: small;"/>
+                                                                        <h:outputText value="#{crono.unidatTematica}" />
                                                                     </p:column>
 
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 1?(crono.numeroSemaInicio ge 1?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 1?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 2?(crono.numeroSemaInicio ge 2?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 2?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 3?(crono.numeroSemaInicio ge 3?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 3?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 4?(crono.numeroSemaInicio ge 4?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 4?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 5?(crono.numeroSemaInicio ge 5?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 5?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 6?(crono.numeroSemaInicio ge 6?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 6?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 7?(crono.numeroSemaInicio ge 7?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 7?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 8?(crono.numeroSemaInicio ge 8?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 8?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 9?(crono.numeroSemaInicio ge 9?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 9?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 10?(crono.numeroSemaInicio ge 10?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 10?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 11?(crono.numeroSemaInicio ge 11?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 11?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 12?(crono.numeroSemaInicio ge 12?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 12?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 13?(crono.numeroSemaInicio ge 13?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 13?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 14?(crono.numeroSemaInicio ge 14?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 14?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 15?(crono.numeroSemaInicio ge 15?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 15?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    <p:column><div class="box" style="background: #{(crono.numeroSemaInicio + crono.numeroSemanas) ge 16?(crono.numeroSemaInicio ge 16?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 16?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
-                                                                    
+                                                                    <!--p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 1?(crono.numeroSemaInicio ge 1?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 1?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 2?(crono.numeroSemaInicio ge 2?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 2?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 3?(crono.numeroSemaInicio ge 3?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 3?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 4?(crono.numeroSemaInicio ge 4?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 4?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 5?(crono.numeroSemaInicio ge 5?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 5?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 6?(crono.numeroSemaInicio ge 6?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 6?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 7?(crono.numeroSemaInicio ge 7?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 7?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 8?(crono.numeroSemaInicio ge 8?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 8?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 9?(crono.numeroSemaInicio ge 9?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 9?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 10?(crono.numeroSemaInicio ge 10?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 10?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 11?(crono.numeroSemaInicio ge 11?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 11?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 12?(crono.numeroSemaInicio ge 12?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 12?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 13?(crono.numeroSemaInicio ge 13?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 13?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 14?(crono.numeroSemaInicio ge 14?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 14?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 15?(crono.numeroSemaInicio ge 15?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 15?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column>
+                                                                    <p:column><div class="box" style="background: # {(crono.numeroSemaInicio + crono.numeroSemanas) ge 16?(crono.numeroSemaInicio ge 16?'#FFFFFF':'#000000'):(crono.numeroSemaInicio le 16?'#FFFFFF':'#000000')} !important"> </div><div class="box" style="background: #ffffff"> </div></p:column-->
+                                                                    <p:column colspan="16">
+                                                                        <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:#{crono.porcInicio}%;background: #FFFFFF!important;color: #FFFFFF!important">
+                                                                            Deficiente
+                                                                        </div>
+                                                                        <div class="progress-bar progress-bar-info progress-bar-striped active pgW" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:#{crono.porcUtili}%;background: #cccccc!important;color: #cccccc!important">
+                                                                            Regular
+                                                                        </div>
+                                                                        <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:#{crono.porcRes}%;background: #FFFFFF!important;color: #FFFFFF!important">
+                                                                            Bueno
+                                                                        </div>
+                                                                    </p:column>                 
+
 
                                                                     <!--p:column colspan="# {crono.numeroSemaInicio}" rendered="# {crono.numeroSemaInicio eq 0?false:true}" style="border: #000000 !important"/>
-                                                                    <p:column colspan="# {crono.numeroSemanas}" style="background: #cccccc !important; font-size: small;border: #000000 !important;">
-                                                                        <h:outputText value="# {crono.numeroSemanas}" style="text-align: justify"/>
-                                                                    </p:column-->
+                                                                    <p:column colspan="# {crono.numeroSemanas}" style="background: #cccccc !important; font-size: small;border: #000000 !important;"/>
+                                                                    <p:column colspan="# {16-(crono.numeroSemanas+crono.numeroSemaInicio)}" style="font-size: small;border: #000000 !important;"/-->
+
                                                                 </p:dataTable>  
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <br/>
                                                     <br/>
-                                                    <div class="row">
-                                                        <div class="col-sm-3"/>
-                                                        <div class="col-sm-3">
+
+                                                    <div class="row" style="align-content:  center">
+                                                        <div class="col-sm-3 pull-left">
                                                             <div class="description-block" style="text-align: center">
-                                                                <h:outputLabel value="Elaboró"/>
-                                                                <br/>
-                                                                <br/>
-                                                                <br/>
-                                                                <br/>
-                                                                <h:outputLabel value="#{planeacionCuatrimestralImpresion.rol.carga.docente.personal.nombre}" style="font-weight: bold;"/>
-                                                                <br/>
-                                                                <h:outputLabel value="_____________________________" style="font-weight: bold;"/>
-                                                                <br/>
-                                                                <h:outputLabel value="Docente" style="font-weight: bold;"/>
+                                                                <p:spacer width="100px"/>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3">
-                                                            <div class="description-block" style="text-align: center">
-                                                                <h:outputLabel value="Valido"/>
-                                                                <br/>
-                                                                <br/>
-                                                                <br/>
-                                                                <br/>
-                                                                <h:outputLabel value="#{planeacionCuatrimestralImpresion.buscarDirector(planeacionCuatrimestralImpresion.rol.carga.programa.areaSuperior)}" style="font-weight: bold;"/>
-                                                                <br/>
-                                                                <h:outputLabel value="_____________________________" style="font-weight: bold;"/>
-                                                                <br/>
-                                                                <h:outputLabel value="Director" style="font-weight: bold;"/>
+                                                        <div class="col-sm-3 pull-left" >
+                                                            <div class="row">
+                                                                <div class="row">
+                                                                    <div id="tituloCV" class="col-sm-12">
+                                                                        <div class="description-block" style="text-align: center">
+                                                                            <h:outputLabel value="Elaboró"/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <h:outputLabel value="#{planeacionCuatrimestralImpresion.rol.carga.docente.personal.nombre}" style="font-weight: bold;"/>
+                                                                            <br/>
+                                                                            <h:outputLabel value="_____________________________" style="font-weight: bold;"/>
+                                                                            <br/>
+                                                                            <h:outputLabel value="Docente" style="font-weight: bold;"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                        <div class="col-sm-3 pull-left">
+                                                            <div class="description-block" style="text-align: center">
+                                                                <p:spacer width="100px"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 pull-left" >
+                                                            <div class="row">
+                                                                <div class="row">
+                                                                    <div id="tituloCV" class="col-sm-12">
+                                                                        <div class="description-block" style="text-align: center">
+                                                                            <h:outputLabel value="Validó"/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <h:outputLabel value="#{planeacionCuatrimestralImpresion.buscarDirector(planeacionCuatrimestralImpresion.rol.carga.programa.areaSuperior)}" style="font-weight: bold;"/>
+                                                                            <br/>
+                                                                            <h:outputLabel value="_____________________________" style="font-weight: bold;"/>
+                                                                            <br/>
+                                                                            <h:outputLabel value="Director" style="font-weight: bold;"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
                                                 </p:panel>
                                             </center>

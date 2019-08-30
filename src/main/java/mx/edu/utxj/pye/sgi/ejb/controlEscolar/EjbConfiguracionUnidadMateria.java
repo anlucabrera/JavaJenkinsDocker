@@ -405,7 +405,7 @@ public class EjbConfiguracionUnidadMateria {
                     umc.setCarga(cargaAcademica);
                     umc.setIdUnidadMateria(cum.getUnidadMateria());
                     umc.setPorcentaje(cum.getUnidadMateriaConfiguracion().getPorcentaje());
-                    f.create(umc);
+                    em.persist(umc);
                     DtoConfiguracionUnidadMateria dto = new DtoConfiguracionUnidadMateria(cum.getUnidadMateria(), umc);
                     l.add(dto);
                 } catch (Throwable ex) {
@@ -434,7 +434,7 @@ public class EjbConfiguracionUnidadMateria {
             ti.setFechaEntrega(tareaIntegradora.getFechaEntrega());
             ti.setCarga(cargaAcademica);
             ti.setPorcentaje(tareaIntegradora.getPorcentaje());
-            f.create(ti);
+            em.persist(ti);
                
             return ResultadoEJB.crearCorrecto(ti, "La tarea integradora se guardo correctamente.");
         }catch (Throwable e){
@@ -464,7 +464,7 @@ public class EjbConfiguracionUnidadMateria {
                     listaCriterios.forEach(c -> {
                         UnidadMateriaConfiguracionCriterioPK umcdPK = new UnidadMateriaConfiguracionCriterioPK(cum.getUnidadMateriaConfiguracion().getConfiguracion(), c.getCriterio()); 
                         UnidadMateriaConfiguracionCriterio umcd = new UnidadMateriaConfiguracionCriterio(umcdPK, c.getPorcentajeRecomendado());
-                        f.create(umcd);
+                        em.persist(umcd);
                         lista.add(umcd);
                     });
                 } catch (Throwable ex) {

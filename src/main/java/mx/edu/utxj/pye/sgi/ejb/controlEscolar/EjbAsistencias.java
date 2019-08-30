@@ -36,8 +36,8 @@ import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
  *
  * @author UTXJ
  */
-@Stateless(name = "EjbAsignacionIndicadoresCriterios")
-public class EjbAsignacionIndicadoresCriterios {
+@Stateless(name = "EjbAsistencias")
+public class EjbAsistencias {
     @EJB EjbPersonalBean ejbPersonalBean;
     @EJB EjbPropiedades ep;
     @EJB Facade f;
@@ -62,19 +62,6 @@ public class EjbAsignacionIndicadoresCriterios {
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal docente.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar. (EjbAsignacionIndicadoresCriterios.validarDocente)", e, null);
-        }
-    }
-
-    /**
-     * Permite verificar si hay un periodo abierto para asignación de indicadores por criterio
-     * @param docente Personal Docente que va a realizar la configuración, permite funcionar como filtro en caso de un permiso especifico a su área o a su clave
-     * @return Evento escolar detectado o null de lo contrario
-     */
-    public ResultadoEJB<EventoEscolar> verificarEvento(PersonalActivo docente){
-        try{
-            return ejbEventoEscolar.verificarEventoEnCascada(EventoEscolarTipo.ASIGNACION_INDICADORES_CRITERIOS, docente);
-        }catch (Exception e){
-            return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para asignación de indicadores por criterio del personal docente (EjbAsignacionIndicadoresCriterios.verificarEvento)", e, EventoEscolar.class);
         }
     }
 
@@ -642,7 +629,7 @@ public class EjbAsignacionIndicadoresCriterios {
                 return false;
             }
         } catch (Throwable ex) {
-            Logger.getLogger(EjbAsignacionIndicadoresCriterios.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EjbAsistencias.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
@@ -671,179 +658,19 @@ public class EjbAsignacionIndicadoresCriterios {
      * @param dtoCargaAcademica Configuración de la que se buscará asignación de indicadores por criterio
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Informeplaneacioncuatrimestraldocenteprint>> buscarInforme(DtoCargaAcademica dtoCargaAcademica) {
+    public ResultadoEJB<List<Listaalumnosca>> buscarListaGrupos(DtoCargaAcademica dtoCargaAcademica) {
         try {
-//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - entro");
-            Boolean asigInd = compararUnidadesConfiguradasConTotales(dtoCargaAcademica);
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - valor " + asigInd);
-            List<Informeplaneacioncuatrimestraldocenteprint> listaUnidadMatConfDet = new ArrayList<>();
-            if (asigInd == true) {
-                listaUnidadMatConfDet = em.createQuery("SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.carga =:cargaAcademica", Informeplaneacioncuatrimestraldocenteprint.class)
-                        .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
-                        .getResultList();
+            List<Listaalumnosca> listaUnidadMatConfDet = new ArrayList<>();
+            listaUnidadMatConfDet = em.createQuery("SELECT lac FROM Listaalumnosca lac WHERE lac.carga =:cargaAcademica", Listaalumnosca.class)
+                    .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .getResultList();
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaConsulta " + listaUnidadMatConfDet.size());
-            } else {
-                listaUnidadMatConfDet.clear();
-            }
-            if (dtoCargaAcademica.getCargaAcademica().getTareaIntegradora() != null && !listaUnidadMatConfDet.isEmpty()) {
-                Informeplaneacioncuatrimestraldocenteprint i = new Informeplaneacioncuatrimestraldocenteprint();
-                i.setConfiguracionDetalle(0);
-                i.setCarga(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getCarga().getCarga());
-                i.setConfiguracion(0);
-                i.setUnidad(dtoCargaAcademica.getMateria().getUnidadMateriaList().size() + 1);
-                i.setNombreUnidad("T.I.");
-                i.setObjetivo(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getDescripcion());
-                i.setFechaInicio(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getFechaEntrega());
-                i.setFechaFin(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getFechaEntrega());
-                i.setPorUnidad(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getPorcentaje());
-                i.setIdCriterio(0);
-                i.setCriterio("");
-                i.setPorCriterio(0);
-                i.setIdIndicador(0);
-                i.setIndicador("");
-                i.setPorcentaje(0);
-                listaUnidadMatConfDet.add(i);
 
-            }
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaFinal " + listaUnidadMatConfDet.size());
             return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Asignación de indicadores por criterio de la carga académica seleccionada.");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
-        }
-    }
-
-    /**
-     * Permite guardar la asignación de indicadores del criterio SER
-     * (MASIVAMENTE)
-     *
-     * @param listaSer Lista de indicadores que se guardarán
-     * @param listaUnidadMateriaConfiguracion Obtener la lista de claves de
-     * configuración
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSerMasiva(List<Listaindicadoresporcriterioporconfiguracion> listaSer, List<UnidadMateriaConfiguracion> listaUnidadMateriaConfiguracion) {
-        try {
-            if (listaSer == null || listaSer.isEmpty()) {
-                return ResultadoEJB.crearErroneo(2, "La lista de indicadores SER no debe ser nula.");
-            }
-
-            List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
-
-            listaSer.forEach(ser -> {
-                try {
-                    if (ser.getPorcentajeIndicador() != 0) {
-                        listaUnidadMateriaConfiguracion.forEach(unidad -> {
-                            UnidadMateriaConfiguracionDetalle umcd = new UnidadMateriaConfiguracionDetalle();
-                            UnidadMateriaConfiguracion umc = em.find(UnidadMateriaConfiguracion.class, unidad.getConfiguracion());
-                            umcd.setConfiguracion(umc);
-                            Criterio criterio = em.find(Criterio.class, ser.getClaveCriterio());
-                            umcd.setCriterio(criterio);
-                            Indicador indicador = em.find(Indicador.class, ser.getClaveIndicador());
-                            umcd.setIndicador(indicador);
-                            umcd.setPorcentaje(ser.getPorcentajeIndicador());
-                            em.persist(umcd);
-//                            f.create(umcd);
-                            Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
-                            l.add(vistaLista);
-                        });
-                    }
-                } catch (Throwable ex) {
-                    Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
-            return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SER se guardo correctamente.");
-        } catch (Throwable e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSerMasiva)", e, null);
-        }
-    }
-
-    /**
-     * Permite guardar la asignación de indicadores del criterio SABER
-     * (MASIVAMENTE)
-     *
-     * @param listaSaber Lista de indicadores que se guardarán
-     * @param listaUnidadMateriaConfiguracion Obtener la lista de claves de
-     * configuración
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSaberMasiva(List<Listaindicadoresporcriterioporconfiguracion> listaSaber, List<UnidadMateriaConfiguracion> listaUnidadMateriaConfiguracion) {
-        try {
-            if (listaSaber == null || listaSaber.isEmpty()) {
-                return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
-            }
-
-            List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
-
-            listaSaber.forEach(saber -> {
-                try {
-                    if (saber.getPorcentajeIndicador() != 0) {
-                        listaUnidadMateriaConfiguracion.forEach(unidad -> {
-                            UnidadMateriaConfiguracionDetalle umcd = new UnidadMateriaConfiguracionDetalle();
-                            UnidadMateriaConfiguracion umc = em.find(UnidadMateriaConfiguracion.class, unidad.getConfiguracion());
-                            umcd.setConfiguracion(umc);
-                            Criterio criterio = em.find(Criterio.class, saber.getClaveCriterio());
-                            umcd.setCriterio(criterio);
-                            Indicador indicador = em.find(Indicador.class, saber.getClaveIndicador());
-                            umcd.setIndicador(indicador);
-                            umcd.setPorcentaje(saber.getPorcentajeIndicador());
-                            em.persist(umcd);
-//                            f.create(umcd);
-                            Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
-                            l.add(vistaLista);
-                        });
-                    }
-                } catch (Throwable ex) {
-                    Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
-            return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SABER se guardo correctamente.");
-        } catch (Throwable e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaberMasiva)", e, null);
-        }
-    }
-
-    /**
-     * Permite guardar la asignación de indicadores del criterio SABER - HACER
-     * (MASIVAMENTE)
-     *
-     * @param listaSaberHacer Lista de indicadores que se guardarán
-     * @param listaUnidadMateriaConfiguracion Obtener la lista de claves de
-     * configuración
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSaberHacerMasiva(List<Listaindicadoresporcriterioporconfiguracion> listaSaberHacer, List<UnidadMateriaConfiguracion> listaUnidadMateriaConfiguracion) {
-        try {
-            if (listaSaberHacer == null || listaSaberHacer.isEmpty()) {
-                return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
-            }
-
-            List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
-
-            listaSaberHacer.forEach(sabhac -> {
-                try {
-                    if (sabhac.getPorcentajeIndicador() != 0) {
-                        listaUnidadMateriaConfiguracion.forEach(unidad -> {
-                            UnidadMateriaConfiguracionDetalle umcd = new UnidadMateriaConfiguracionDetalle();
-                            UnidadMateriaConfiguracion umc = em.find(UnidadMateriaConfiguracion.class, unidad.getConfiguracion());
-                            umcd.setConfiguracion(umc);
-                            Criterio criterio = em.find(Criterio.class, sabhac.getClaveCriterio());
-                            umcd.setCriterio(criterio);
-                            Indicador indicador = em.find(Indicador.class, sabhac.getClaveIndicador());
-                            umcd.setIndicador(indicador);
-                            umcd.setPorcentaje(sabhac.getPorcentajeIndicador());
-                            em.persist(umcd);
-//                            f.create(umcd);
-                            Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
-                            l.add(vistaLista);
-                        });
-                    }
-                } catch (Throwable ex) {
-                    Logger.getLogger(EjbConfiguracionUnidadMateria.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
-            return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SABER - HACER se guardo correctamente.");
-        } catch (Throwable e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER - HACER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaberHacerMasiva)", e, null);
         }
     }
 }
