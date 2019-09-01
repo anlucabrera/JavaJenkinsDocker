@@ -5,6 +5,7 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ul class="sidebar-menu" data-widget="tree">
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.UsuarioTipo" var="usuarioTipo" />
         <c:if test="#{logonMB.usuarioTipo ne 'INVITADO'}">
             <li>
                 <p:link href="/index.xhtml" onclick="clearBreadCrumbs()">
@@ -13,7 +14,7 @@
                 </p:link>
             </li>
         </c:if>
-        <c:if test="#{logonMB.usuarioTipo eq 'ASPIRANTE'}">
+        <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.ASPIRANTE or logonMB.usuarioTipo eq usuarioTipo.ESTUDIANTE19}">
             <li>
                 <p:link href="/controlEscolar/fichaAdmision.xhtml">
                     <i class="fa fa-graduation-cap"></i>

@@ -17,6 +17,7 @@ public class DtoUnidadConfiguracion implements Serializable {
     @Getter @Setter @NonNull private Map<Criterio, List<Detalle>> unidadMateriaConfiguracionDetalles;
     @Getter @Setter @NonNull private DtoCargaAcademica dtoCargaAcademica;
     @Getter @Setter @NonNull private Boolean activaPorFecha;
+    @Getter @Setter @NonNull private Boolean activaPorAperturaExtemporanea;
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class Detalle{
