@@ -22,6 +22,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
+
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -73,12 +75,14 @@ public class EvaluacionDesempenioAdmin implements Serializable {
     @Getter @Setter List<Integer> clavesOpciones = new ArrayList<>();
 
     @EJB private EjbEvaluacionDesempenio evaluacionDesempenioEJB;
-    @EJB private Facade facade;
+    @EJB private Facade f;
+    private EntityManager em;
     @Inject private LogonMB logonMB;
 
     @PostConstruct
     public void init() {
         try {
+            em = f.getEntityManager();
             respuestasPosibles = evaluacionDesempenioEJB.getRespuestasPosibles();
             apartados = evaluacionDesempenioEJB.getApartados(cuestionario);
 
@@ -90,8 +94,8 @@ public class EvaluacionDesempenioAdmin implements Serializable {
 //        if(listaDirectivos.contains(evaluador)){
 //            evaluador = listaDirectivos.get(listaDirectivos.indexOf(evaluador));
 //        }
-            facade.setEntityClass(ListaPersonal.class);
-            directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+            //facade.setEntityClass(ListaPersonal.class);
+            directivoSeleccionado = em.find(ListaPersonal.class, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));//(ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() elegido: " + evaluador);
 
             //paso 3 obtener la lista de subordnados del directivo elegido
@@ -108,8 +112,8 @@ public class EvaluacionDesempenioAdmin implements Serializable {
             //TODO: tomar acciones en casa de no encontrar una evaluación activa
             if (desempenioEvaluacion != null) {
                 //paso 6 obtener periodo activo
-                facade.setEntityClass(PeriodosEscolares.class);
-                periodoEscolar = (PeriodosEscolares) facade.find(desempenioEvaluacion.getPeriodo());
+                //facade.setEntityClass(PeriodosEscolares.class);
+                periodoEscolar = em.find(PeriodosEscolares.class, desempenioEvaluacion.getPeriodo());//(PeriodosEscolares) facade.find(desempenioEvaluacion.getPeriodo());
 //        //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init() periodoEscolar:" + periodoEscolar);
 
                 if (directivoSeleccionado.getActividad() == 2 && desempenioEvaluacion != null || directivoSeleccionado.getActividad() == 4 && desempenioEvaluacion != null) {
@@ -152,8 +156,8 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         for (Integer clave : clavesOpciones) {
 //            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.init(9) clave: " + clave);
             opciones.put(index, new ArrayList<>());
-            facade.setEntityClass(ListaPersonal.class);
-            ListaPersonal lpPrimero = (ListaPersonal) facade.find(clave);
+            //facade.setEntityClass(ListaPersonal.class);
+            ListaPersonal lpPrimero = em.find(ListaPersonal.class, clave);//(ListaPersonal) facade.find(clave);
             opciones.get(index).add(lpPrimero);
             //opcionesSelect.get(index).add(e)
             for (ListaPersonal lp : listaSubordinados) {
@@ -186,7 +190,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         initPersonalEvaluado();
         listaPersonalEvaluando = new ArrayList<>();
         clavesOpciones.stream().map((clave) -> {
-            facade.setEntityClass(ListaPersonalDesempenioEvaluacion.class);
+            //facade.setEntityClass(ListaPersonalDesempenioEvaluacion.class);
             return clave;
         }).forEachOrdered((clave) -> {
             ListaPersonalDesempenioEvaluacion lpde = new ListaPersonalDesempenioEvaluacion(new DesempenioEvaluacionResultadosPK(desempenioEvaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave));
@@ -221,8 +225,9 @@ public class EvaluacionDesempenioAdmin implements Serializable {
             evaluacionDesempenioEJB.actualizarRespuestaPorPregunta(resultado, pregunta_id, e.getNewValue().toString());
             desempenioEvaluacion.getDesempenioEvaluacionResultadosList().add(resultado);
         }
-        facade.setEntityClass(resultado.getClass());
-        facade.edit(resultado);
+        //facade.setEntityClass(resultado.getClass());
+        f.edit(resultado);
+        //em.merge(resultado);
 
         initPersonalEvaluando();
 
@@ -309,7 +314,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         DesempenioEvaluaciones ultimaEvaluacion = evaluacionDesempenioEJB.getUltimaEvaluacionDesempenio();
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() la ultima evaluacion es : "+ ultimaEvaluacion);
         
-        directivoSeleccionado =  facade.getEntityManager().find(ListaPersonal.class,logonMB.getPersonal().getClave());
+        directivoSeleccionado = em.find(ListaPersonal.class,logonMB.getPersonal().getClave());
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ evaluador);
         
         listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
@@ -322,7 +327,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el periodo seleccionado = : " + periodoSeleccionado);
         List<ListaPersonalDesempenioEvaluacion> l =
         /*listaPersonalEvaluadoAntes =*/ evaluacionDesempenioEJB.obtenerListaResultadosPorEvaluacionEvaluador(ultimaEvaluacion, directivoSeleccionado);
-        l.forEach(System.out::println);
+        //l.forEach(System.out::println);
         l.forEach(x -> {
             if(x.isCompleto()){
                 listaPersonalEvaluadoAntes.add(x);
@@ -342,7 +347,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         DesempenioEvaluaciones ultimaEvaluacion = evaluacionDesempenioEJB.getUltimaEvaluacionDesempenio();
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() la ultima evaluacion es : "+ ultimaEvaluacion);
         
-        directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+        directivoSeleccionado = em.find(ListaPersonal.class, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));//(ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el directivo es : "+ evaluador);
         
         listaSubordinados = evaluacionDesempenioEJB.getListaSubordinados(directivoSeleccionado);
@@ -355,7 +360,7 @@ public class EvaluacionDesempenioAdmin implements Serializable {
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAdmin.descargarCedulasDestiempo() el periodo seleccionado = : " + periodoSeleccionado);
         List<ListaPersonalDesempenioEvaluacion> l =
         /*listaPersonalEvaluadoAntes =*/ evaluacionDesempenioEJB.obtenerListaResultadosPorEvaluacionEvaluador(ultimaEvaluacion, directivoSeleccionado);
-        l.forEach(System.out::println);
+        //l.forEach(System.out::println);
         l.forEach(x -> {
             if(x.isCompleto()){
                 listaPersonalEvaluadoAntes.add(x);
