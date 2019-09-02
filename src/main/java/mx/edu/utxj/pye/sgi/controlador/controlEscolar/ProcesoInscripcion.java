@@ -77,19 +77,20 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     
     @PostConstruct
     public void init(){
-        setVistaControlador(ControlEscolarVistaControlador.INSCRIPCION);
-        aspirante = new Aspirante();
-        persona = new Persona();
-        aspiranteValido = new Aspirante();
-        personaValido = new Persona();
-        selectAspirante = new Aspirante();
-        documentosentregadosestudiante = new Documentosentregadosestudiante();
-        procesosInscripcion = ejbFichaAdmision.getProcesoIncripcionTSU();
-        listaAspirantesTSU = ejbProcesoInscripcion.listaAspirantesTSU(procesosInscripcion.getIdProcesosInscripcion());
-        listaPe = ejbSelectItemCE.itemPEAll();
-        listaAreasUniversidad = ejbAreasLogeo.listaProgramasEducativos();
-        listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
         try{
+            setVistaControlador(ControlEscolarVistaControlador.INSCRIPCION);
+            aspirante = new Aspirante();
+            persona = new Persona();
+            aspiranteValido = new Aspirante();
+            personaValido = new Persona();
+            selectAspirante = new Aspirante();
+            documentosentregadosestudiante = new Documentosentregadosestudiante();
+            procesosInscripcion = ejbFichaAdmision.getProcesoIncripcionTSU();
+            listaAspirantesTSU = ejbProcesoInscripcion.listaAspirantesTSU(procesosInscripcion.getIdProcesosInscripcion());
+            listaPe = ejbSelectItemCE.itemPEAll();
+            listaAreasUniversidad = ejbAreasLogeo.listaProgramasEducativos();
+            listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
+
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 

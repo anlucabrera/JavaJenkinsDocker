@@ -21,6 +21,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
+
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -72,12 +74,14 @@ public class Evaluacion360Admin1 implements Serializable {
     @Getter @Setter List<Integer> clavesOpciones = new ArrayList<>();
 
     @EJB private EjbEvaluacion3601 ejbEvaluacion360;
-    @EJB private Facade facade;
+    @EJB private Facade f;
     @Inject private LogonMB logonMB;
+    private EntityManager em;
 
     @PostConstruct
     public void init() {
         try {
+            em = f.getEntityManager();
             respuestasPosibles = ejbEvaluacion360.getRespuestasPosibles();
             apartados = ejbEvaluacion360.getApartados();
 
@@ -89,9 +93,9 @@ public class Evaluacion360Admin1 implements Serializable {
 //        if(listaDirectivos.contains(directivoSeleccionado)){
 //            directivoSeleccionado = listaDirectivos.get(listaDirectivos.indexOf(directivoSeleccionado));
 //        }
-            facade.setEntityClass(ListaPersonal.class);
+            //facade.setEntityClass(ListaPersonal.class);
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init() lucn: " + logonMB.getListaUsuarioClaveNomina());
-            directivoSeleccionado = (ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+            directivoSeleccionado = em.find(ListaPersonal.class, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));//(ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init() elegido: " + directivoSeleccionado);
 
             if (directivoSeleccionado != null) {
@@ -109,8 +113,8 @@ public class Evaluacion360Admin1 implements Serializable {
 
                 if (evaluacion != null) {
                     //paso 6 obtener periodo activo
-                    facade.setEntityClass(PeriodosEscolares.class);
-                    periodoEscolar = (PeriodosEscolares) facade.find(evaluacion.getPeriodo());
+                    //facade.setEntityClass(PeriodosEscolares.class);
+                    periodoEscolar = em.find(PeriodosEscolares.class, evaluacion.getPeriodo());//(PeriodosEscolares) facade.find(evaluacion.getPeriodo());
 //                    System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init() periodoEscolar:" + periodoEscolar);
                     //paso 7 obtener respuestas
                     ejbEvaluacion360.cargarResultadosAlmacenados(evaluacion, directivoSeleccionado, listaSubordinados);
@@ -152,8 +156,8 @@ public class Evaluacion360Admin1 implements Serializable {
         for (Integer clave : clavesOpciones) {
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.init(9) clave: " + clave);
             opciones.put(index, new ArrayList<>());
-            facade.setEntityClass(ListaPersonal.class);
-            ListaPersonal lpPrimero = (ListaPersonal) facade.find(clave);
+            //facade.setEntityClass(ListaPersonal.class);
+            ListaPersonal lpPrimero = em.find(ListaPersonal.class, clave);//(ListaPersonal) facade.find(clave);
             opciones.get(index).add(lpPrimero);
             //opcionesSelect.get(index).add(e)
             for (ListaPersonal lp : listaSubordinados) {
@@ -162,8 +166,9 @@ public class Evaluacion360Admin1 implements Serializable {
                     opciones.get(index).add(lp);
                 }
             }
-            facade.setEntityClass(Evaluaciones360Resultados.class);
-            Evaluaciones360Resultados resultado = (Evaluaciones360Resultados) facade.find(new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave));
+            //facade.setEntityClass(Evaluaciones360Resultados.class);
+            Evaluaciones360ResultadosPK pk = new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave);
+            Evaluaciones360Resultados resultado = em.find(Evaluaciones360Resultados.class, pk);//(Evaluaciones360Resultados) facade.find();
             apartadosHabilidades.put(clave, ejbEvaluacion360.getApartadoHabilidades(resultado.getCategoria().getCategoria()));
             index++;
         }
@@ -190,7 +195,7 @@ public class Evaluacion360Admin1 implements Serializable {
         initPersonalEvaluado();
         listaPersonalEvaluando = new ArrayList<>();
         clavesOpciones.stream().map((clave) -> {
-            facade.setEntityClass(ListaPersonalEvaluacion360.class);
+            //facade.setEntityClass(ListaPersonalEvaluacion360.class);
             return clave;
         }).forEachOrdered((clave) -> {
             ListaPersonalEvaluacion360 lpde = new ListaPersonalEvaluacion360(new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave));
@@ -225,9 +230,10 @@ public class Evaluacion360Admin1 implements Serializable {
             ejbEvaluacion360.actualizarRespuestaPorPregunta(resultado, pregunta_id, e.getNewValue().toString());
             evaluacion.getEvaluaciones360ResultadosList().add(resultado);
         }
-        facade.setEntityClass(resultado.getClass());
+        //facade.setEntityClass(resultado.getClass());
         ejbEvaluacion360.comprobarResultado(resultado);
-        facade.edit(resultado);
+        f.edit(resultado);
+        //em.merge(resultado);
 
         initPersonalEvaluando();
 
