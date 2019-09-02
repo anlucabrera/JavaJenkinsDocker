@@ -57,10 +57,10 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
             grupoNew.setCapMaxima(grupo.getCapMaxima());
             grupoNew.setIdSistema(grupo.getIdSistema());
             grupoNew.setLiteral((abecedario[i]));
-            facadeCE.create(grupoNew);
+            em.persist(grupoNew);
             facadeCE.flush();
             facadeCE.setEntityClass(Grupo.class);
-            facadeCE.edit(grupoNew);
+            em.persist(grupoNew);
             facadeCE.flush();
         }
     }
@@ -75,7 +75,7 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
     @Override
     public void actualizaGrupo(Grupo grupo) {
         facadeCE.setEntityClass(Grupo.class);
-        facadeCE.edit(grupo);
+        em.persist(grupo);
         facadeCE.flush();
     }
 

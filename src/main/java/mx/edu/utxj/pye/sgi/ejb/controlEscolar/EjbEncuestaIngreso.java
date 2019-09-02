@@ -69,7 +69,7 @@ public class EjbEncuestaIngreso implements Serializable{
     
      public ResultadoEJB<EncuestaAspirante> guardar(EncuestaAspirante resultado){
         try{
-            facadeCE.edit(resultado);
+            em.persist(resultado);
             return ResultadoEJB.crearCorrecto(resultado, "Valor guardado en base de datos");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Ocurrió un error: ", e, EncuestaAspirante.class);

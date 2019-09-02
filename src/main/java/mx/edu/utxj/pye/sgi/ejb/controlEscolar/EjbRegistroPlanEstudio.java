@@ -185,11 +185,11 @@ public class EjbRegistroPlanEstudio {
             f.setEntityClass(PlanEstudio.class);
             switch (operacion) {
                 case PERSISTIR:
-                    f.create(planEstudio);
+                    em.persist(planEstudio);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(planEstudio, "Se registró correctamente el Plan Estudio");
                 case ACTUALIZAR:
-                    f.edit(planEstudio);
+                    em.persist(planEstudio);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(planEstudio, "Se actualizo correctamente el Plan Estudio");
                 case ELIMINAR:
@@ -224,11 +224,11 @@ public class EjbRegistroPlanEstudio {
             switch (operacion) {
                 case PERSISTIR:
                     dmr.getMateria().setIdAreaConocimiento(dmr.getAreaConocimiento());
-                    f.create(dmr.getMateria());
+                    em.persist(dmr.getMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmr.getMateria(), "Se registró correctamente La Matertia");
                 case ACTUALIZAR:
-                    f.edit(dmr.getMateria());
+                    em.persist(dmr.getMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmr.getMateria(), "Se actualizo correctamente La Matertia");
                 case ELIMINAR:
@@ -261,11 +261,11 @@ public class EjbRegistroPlanEstudio {
             switch (operacion) {
                 case PERSISTIR:
                     dmu.getUnidadMateria().setIdMateria(dmu.getMateria());
-                    f.create(dmu.getUnidadMateria());
+                    em.persist(dmu.getUnidadMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmu.getUnidadMateria(), "Se registró correctamente La Unidad Materia");
                 case ACTUALIZAR:
-                    f.edit(dmu.getUnidadMateria());
+                    em.persist(dmu.getUnidadMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmu.getUnidadMateria(), "Se actualizo correctamente La Unidad Materia");
                 case ELIMINAR:
@@ -303,11 +303,11 @@ public class EjbRegistroPlanEstudio {
                 case PERSISTIR:
                     estudioMateria.setIdMateria(materia);
                     estudioMateria.setIdPlan(planEstudio);
-                    f.create(estudioMateria);
+                    em.persist(estudioMateria);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(estudioMateria, "Se registró correctamente la materia");
                 case ACTUALIZAR:
-                    f.edit(estudioMateria);
+                    em.persist(estudioMateria);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(estudioMateria, "Se actualizo correctamente la materia");
                 case ELIMINAR:
@@ -334,17 +334,17 @@ public class EjbRegistroPlanEstudio {
                     f.setEntityClass(Competencia.class);
                     dpemc.getCompetenciaNewR().setPlanEstudios(dpemc.getPlanEstudio());
                     dpemc.getPlanEstudioMateria().getCompetenciaList().add(dpemc.getCompetenciaNewR());
-                    f.create(dpemc.getCompetenciaNewR());
+                    em.persist(dpemc.getCompetenciaNewR());
                     dpemc.getCompetenciaNewR().getPlanEstudioMateriaList().add(dpemc.getPlanEstudioMateria());
-                    f.edit(dpemc.getPlanEstudioMateria());
+                    em.persist(dpemc.getPlanEstudioMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dpemc.getCompetencia(), "Se registró correctamente la competencia");
                 case ACTUALIZAR:
                     dpemc.getCompetencia().setPlanEstudios(dpemc.getPlanEstudio());
                     dpemc.getPlanEstudioMateria().getCompetenciaList().add(dpemc.getCompetencia());
                     dpemc.getCompetencia().getPlanEstudioMateriaList().add(dpemc.getPlanEstudioMateria());
-                    f.edit(dpemc.getCompetencia());
-                    f.edit(dpemc.getPlanEstudioMateria());
+                    em.persist(dpemc.getCompetencia());
+                    em.persist(dpemc.getPlanEstudioMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dpemc.getCompetencia(), "Se actualizo correctamente la materia");
                 case ELIMINAR:

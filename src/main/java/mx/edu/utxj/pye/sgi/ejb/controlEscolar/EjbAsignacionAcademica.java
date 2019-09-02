@@ -262,7 +262,7 @@ public class EjbAsignacionAcademica {
 //                        System.out.println("resTotalHorasSugeridasPorSemana = " + resTotalHorasSugeridasPorSemana);
                         if(resTotalHorasSugeridasPorSemana.getCorrecto()){
                             cargaAcademica.setHorasSemana(resTotalHorasSugeridasPorSemana.getValor());
-                            f.create(cargaAcademica);
+                            em.persist(cargaAcademica);
                             return ResultadoEJB.crearCorrecto(cargaAcademica, "La asignación fué registrada correctamente.");
                         }else return ResultadoEJB.crearErroneo(8, "No se pudo calcular el total de horas por semana para la materia que se está asignando. ".concat(resTotalHorasSugeridasPorSemana.getMensaje()), CargaAcademica.class);
                     }else {//si ya existe se informa
@@ -565,7 +565,7 @@ public class EjbAsignacionAcademica {
     public ResultadoEJB<Integer> actualizarHorasPorSemana(DtoMateria dtoMateria){
         try{
             if(dtoMateria.getDtoCargaAcademica() == null) return ResultadoEJB.crearErroneo(2, "No se puede actualizar el valor de horas por semana, ya que la materia aún no ha sido asignada.", Integer.class);
-            f.edit(dtoMateria.getDtoCargaAcademica().getCargaAcademica());
+            em.persist(dtoMateria.getDtoCargaAcademica().getCargaAcademica());
             return  ResultadoEJB.crearCorrecto(dtoMateria.getDtoCargaAcademica().getCargaAcademica().getHorasSemana(), "Se actualizó correctamente el valor de horas por semana.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el valor de horas por semana en la asignación (EjbAsignacionAcademica.actualizarHorasPorSemana).", e, null);

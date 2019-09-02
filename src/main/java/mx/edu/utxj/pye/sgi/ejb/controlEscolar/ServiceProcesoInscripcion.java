@@ -149,11 +149,11 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 login.setUsuario(String.valueOf(matriculaUtilizable));
                 login.setPassword(encriptaPassword(contrasena));
                 login.setPersona(estudiante.getAspirante().getIdPersona().getIdpersona());
-                facadeCE.create(login);
-                facadeCE.create(estudiante);
+                em.persist(login);
+                em.persist(estudiante);
                 facadeCE.flush();
                 documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());
-                facadeCE.create(documentosentregadosestudiante);
+                em.persist(documentosentregadosestudiante);
                 facadeCE.flush();
             } catch (Exception ex) {
                 Logger.getLogger(ServiceProcesoInscripcion.class.getName()).log(Level.SEVERE, null, ex);
@@ -183,25 +183,25 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 estudiante.setCarrera(gps.getIdPe());
                 estudiante.setTipoEstudiante(tipoEstudiante);
                 estudiante.setOpcionIncripcion(opcionIns);
-                facadeCE.edit(estudiante);
+                em.persist(estudiante);
                 facadeCE.flush();
                 documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());
                 if(documentosentregadosestudiante.getEstudiante() == null){
-                    facadeCE.create(documentosentregadosestudiante);
+                    em.persist(documentosentregadosestudiante);
                 }else{
-                    facadeCE.edit(documentosentregadosestudiante);
+                    em.persist(documentosentregadosestudiante);
                 } 
             }else{
                 estudiante.setCarrera(gps.getIdPe());
                 estudiante.setOpcionIncripcion(opcionIns);
                 estudiante.setCarrera(estudiante.getGrupo().getIdPe());
-                facadeCE.edit(estudiante);
+                em.persist(estudiante);
                 facadeCE.flush();
                 documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());
                 if(documentosentregadosestudiante.getEstudiante() == null){
-                    facadeCE.create(documentosentregadosestudiante);
+                    em.persist(documentosentregadosestudiante);
                 }else{
-                    facadeCE.edit(documentosentregadosestudiante);
+                    em.persist(documentosentregadosestudiante);
                 }
             }
         }
@@ -391,7 +391,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     @Override
     public void actualizaEstudiante(Estudiante estudiante) {
         facadeCE.setEntityClass(Estudiante.class);
-        facadeCE.edit(estudiante);
+        em.persist(estudiante);
         facadeCE.flush();
     }
 

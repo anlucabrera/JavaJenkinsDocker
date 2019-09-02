@@ -207,7 +207,7 @@ public class EjbReincorporacion {
                     //registrar datos personales
                     if(datosPer == null){//comprobar si la asignación existe para impedir  duplicar
                         datosPer = persona;
-                        f.create(datosPer);
+                        em.persist(datosPer);
                         return ResultadoEJB.crearCorrecto(persona, "Los datos personales se han registrado correctamente.");
                     }else {//si ya existe se informa
                         return ResultadoEJB.crearErroneo(4, "Los datos personales ya existen", Persona.class);
@@ -215,7 +215,7 @@ public class EjbReincorporacion {
                 case ACTUALIZAR:
                     //actualizar datos personales
                         datosPer = persona;
-                        f.edit(datosPer);
+                        em.persist(datosPer);
                         return ResultadoEJB.crearCorrecto(null, "Los datos personales se han actualizado correctamente.");
 
                     default:
@@ -245,7 +245,7 @@ public class EjbReincorporacion {
                     if(datosMedicos1 == null){//comprobar si la asignación existe para impedir  duplicar
                         datosMedicos1 = datosMedicos;
                         datosMedicos1.setPersona(persona);
-                        f.create(datosMedicos1);
+                        em.persist(datosMedicos1);
                         return ResultadoEJB.crearCorrecto(datosMedicos1, "Los datos personales se han registrado correctamente.");
                     }else {//si ya existe se informa
                         return ResultadoEJB.crearErroneo(4, "Los datos personales ya existen", DatosMedicos.class);
@@ -253,7 +253,7 @@ public class EjbReincorporacion {
                 case ACTUALIZAR:
                     //actualizar datos personales
                     datosMedicos1 = datosMedicos;
-                    f.edit(datosMedicos1);
+                    em.persist(datosMedicos1);
                     return ResultadoEJB.crearCorrecto(null, "Los datos personales se han actualizado correctamente.");
 
                 default:
@@ -284,7 +284,7 @@ public class EjbReincorporacion {
                     if(medioComunicacion == null){//comprobar si la asignación existe para impedir  duplicar
                         medioComunicacion = mc;
                         medioComunicacion.setPersona1(persona);
-                        f.create(medioComunicacion);
+                        em.persist(medioComunicacion);
                         return ResultadoEJB.crearCorrecto(medioComunicacion, "Los datos personales se han registrado correctamente.");
                     }else {//si ya existe se informa
                         return ResultadoEJB.crearErroneo(4, "Los datos personales ya existen", MedioComunicacion.class);
@@ -292,7 +292,7 @@ public class EjbReincorporacion {
                 case ACTUALIZAR:
                     //actualizar datos personales
                     medioComunicacion = mc;
-                    f.edit(medioComunicacion);
+                    em.persist(medioComunicacion);
                     return ResultadoEJB.crearCorrecto(null, "Los datos personales se han actualizado correctamente.");
 
                 default:
@@ -321,7 +321,7 @@ public class EjbReincorporacion {
                         a1.getTipoAspirante().setIdTipoAspirante(Short.parseShort("2"));
                         a1.setEstatus(true);
                         a1.setFechaRegistro(new Date());
-                        f.create(a1);
+                        em.persist(a1);
                         return ResultadoEJB.crearCorrecto(a1, "Los datos del aspirante han sido agregados correctamente");
                     }else{
                         ResultadoEJB.crearErroneo(5, "Los datos del aspirante ya existen", Aspirante.class);
@@ -346,14 +346,14 @@ public class EjbReincorporacion {
                     if(dm1 == null){
                         dm1 = dm;
                         dm1.setAspirante1(a);
-                        f.create(dm1);
+                        em.persist(dm1);
                         return ResultadoEJB.crearCorrecto(dm1, "Los datos de domicilio han sido agregados correctamente");
                     }else {
                         ResultadoEJB.crearErroneo(5,"La información ya existen.", Domicilio.class);
                     }
                 case ACTUALIZAR:
                     dm1 = dm;
-                    f.edit(dm1);
+                    em.persist(dm1);
                     return ResultadoEJB.crearCorrecto(null, "La informacion ha sido actualizada con éxito");
                     default:
                         return ResultadoEJB.crearErroneo(6, "Operación no autorizada", Domicilio.class);
@@ -376,14 +376,14 @@ public class EjbReincorporacion {
                     if(da1 == null){
                         da1 = da;
                         da1.setAspirante1(a);
-                        f.create(da1);
+                        em.persist(da1);
                         return ResultadoEJB.crearCorrecto(da1, "Los datos académicos, han sido agregados correctamente");
                     }else{
                         return ResultadoEJB.crearErroneo(5, "La información ya existe", DatosAcademicos.class);
                     }
                 case ACTUALIZAR:
                     da1 = da;
-                    f.edit(da1);
+                    em.persist(da1);
                     return ResultadoEJB.crearCorrecto(null, "La información ha sido actualizada con éxito");
                     default:
                         return ResultadoEJB.crearErroneo(6,"Operación no autorizada", DatosAcademicos.class);
@@ -512,7 +512,7 @@ public class EjbReincorporacion {
                 calificaciones.setCalificacionesPK(pk);
                 calificaciones.setEstudiante1(estudiante);
                 calificaciones.setMateria1(materia);
-                f.create(calificaciones);
+                em.persist(calificaciones);
                 return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fue registrada correctamente.");
             }
             return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", Calificaciones.class);
@@ -571,7 +571,7 @@ public class EjbReincorporacion {
                 datosMedicos = new DatosMedicos();
                 datosMedicos.setCvePersona(datosQr.getPersona().getIdpersona());
                 datosMedicos.setNss(datosQr.getNss());
-                f.create(datosMedicos);
+                em.persist(datosMedicos);
                 return ResultadoEJB.crearCorrecto(datosMedicos, "La asignación fue registrada correctamente.");
             }
             return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarNSS)", DatosMedicos.class);
@@ -665,7 +665,7 @@ public class EjbReincorporacion {
                 calificacionesAsignar.setEstudiante1(estudiante);
                 calificacionesAsignar.setMateria1(mat);
                 calificacionesAsignar.setCf(calificacionesAlumno.getCalificacionesAlumno().getCf().doubleValue());
-                f.create(calificacionesAsignar);
+                em.persist(calificacionesAsignar);
                 }
             });
             return ResultadoEJB.crearCorrecto(calificacionesAsignar, "La calificación ya fue asignada. (EjbReincorporacion.asignarCalificacionesSAIIUT)");
@@ -725,7 +725,7 @@ public class EjbReincorporacion {
                 calificaciones.setEstudiante1(estudiante);
                 calificaciones.setMateria1(materia);
                 calificaciones.setCf(calificacion);
-                f.create(calificaciones);
+                em.persist(calificaciones);
                 return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fue registrada correctamente.");
             }
             return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarCalificacionesDirectas)", Calificaciones.class);

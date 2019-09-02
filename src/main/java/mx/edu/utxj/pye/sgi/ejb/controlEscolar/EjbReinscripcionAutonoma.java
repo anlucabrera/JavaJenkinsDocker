@@ -152,7 +152,7 @@ public class EjbReinscripcionAutonoma {
                 calificaciones.setCalificacionesPK(pk);
                 calificaciones.setEstudiante1(estudiante);
                 calificaciones.setMateria1(materia);
-                f.create(calificaciones);
+                em.persist(calificaciones);
                 return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fué registrada correctamente.");
             }
             return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", Calificaciones.class);

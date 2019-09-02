@@ -74,13 +74,13 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     
     @Override
     public void GuardaPersona(Persona persona) {
-        facadeCE.create(persona);
+        em.persist(persona);
     }
 
     @Override
     public Persona actualizaPersona(Persona persona) {
         facadeCE.setEntityClass(Persona.class);
-        facadeCE.edit(persona);
+        em.persist(persona);
         facadeCE.flush();
         return persona;
     }
@@ -205,25 +205,25 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public void guardaDatosMedicos(DatosMedicos datosMedicos) {
-        facadeCE.create(datosMedicos);
+        em.persist(datosMedicos);
     }
 
     @Override
     public void actualizaDatosMedicos(DatosMedicos datosMedicos) {
         facadeCE.setEntityClass(DatosMedicos.class);
-        facadeCE.edit(datosMedicos);
+        em.persist(datosMedicos);
         facadeCE.flush();
     }
 
     @Override
     public void guardaComunicacion(MedioComunicacion comunicacion) {
-        facadeCE.create(comunicacion);
+        em.persist(comunicacion);
     }
 
     @Override
     public void actualizaComunicacion(MedioComunicacion comunicacion) {
         facadeCE.setEntityClass(MedioComunicacion.class);
-        facadeCE.edit(comunicacion);
+        em.persist(comunicacion);
         facadeCE.flush();
     }
 
@@ -231,7 +231,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     public Aspirante guardaAspirante(Aspirante aspirante) {
         TipoAspirante tipoAspirante = new TipoAspirante((short)1, "Nuevo Ingreso");
         aspirante.setTipoAspirante(tipoAspirante);
-        facadeCE.create(aspirante);
+        em.persist(aspirante);
         facadeCE.flush();
         return aspirante;
     }
@@ -246,7 +246,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @Override
     public void actualizaAspirante(Aspirante aspirante) {
         facadeCE.setEntityClass(Aspirante.class);
-        facadeCE.edit(aspirante);
+        em.persist(aspirante);
         facadeCE.flush();
     }
 
@@ -274,7 +274,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     public void guardaDomicilo(Domicilio domicilio) {
         domicilio.setCalle(ucFirst(domicilio.getCalle().trim()));
         domicilio.setCalleProcedencia(ucFirst(domicilio.getCalleProcedencia().trim()));
-        facadeCE.create(domicilio);
+        em.persist(domicilio);
     }
 
     @Override
@@ -282,7 +282,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         domicilio.setCalle(ucFirst(domicilio.getCalle().trim()));
         domicilio.setCalleProcedencia(ucFirst(domicilio.getCalleProcedencia().trim()));
         facadeCE.setEntityClass(Domicilio.class);
-        facadeCE.edit(domicilio);
+        em.persist(domicilio);
         facadeCE.flush();
     }
 
@@ -292,7 +292,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno().trim()));
         tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno().trim()));
         tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
-        facadeCE.create(tutorFamiliar);
+        em.persist(tutorFamiliar);
     }
 
     @Override
@@ -303,7 +303,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
         tutorFamiliar.setParentesco(ucFirst(tutorFamiliar.getParentesco().trim()));
         facadeCE.setEntityClass(TutorFamiliar.class);
-        facadeCE.edit(tutorFamiliar);
+        em.persist(tutorFamiliar);
         facadeCE.flush();
     }
 
@@ -312,7 +312,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     public void guardaDatosFamiliares(DatosFamiliares datosFamiliares) {
         datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre().trim()));
         datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre().trim()));
-        facadeCE.create(datosFamiliares);
+        em.persist(datosFamiliares);
     }
 
     @Override
@@ -320,19 +320,19 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre().trim()));
         datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre().trim()));
         facadeCE.setEntityClass(DatosFamiliares.class);
-        facadeCE.edit(datosFamiliares);
+        em.persist(datosFamiliares);
         facadeCE.flush();
     }
 
     @Override
     public void guardaDatosAcademicos(DatosAcademicos datosAcademicos) {
-        facadeCE.create(datosAcademicos);
+        em.persist(datosAcademicos);
     }
 
     @Override
     public void actualizaDatosAcademicos(DatosAcademicos datosAcademicos) {
         facadeCE.setEntityClass(DatosAcademicos.class);
-        facadeCE.edit(datosAcademicos);
+        em.persist(datosAcademicos);
         facadeCE.flush();
     }
 
@@ -369,7 +369,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
             if(tipoRequisito.equals("HistorialAcademico")){
                 documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
             }
-            facadeCE.create(documentoAspirante);
+            em.persist(documentoAspirante);
         }else{
             documentoAspirante = aspirante.getDocumentoAspirante();
             if(tipoRequisito.equals("ActaNacimiento")){
@@ -378,7 +378,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
             if(tipoRequisito.equals("HistorialAcademico")){
                 documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
             }
-            facadeCE.edit(documentoAspirante);
+            em.persist(documentoAspirante);
             facadeCE.flush();
         }
 
@@ -404,7 +404,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @Override
     public void actualizaDocumentosAspirante(DocumentoAspirante documentoAspirante) {
         facadeCE.setEntityClass(DocumentoAspirante.class);
-        facadeCE.edit(documentoAspirante);
+        em.persist(documentoAspirante);
         facadeCE.flush();
     }
     

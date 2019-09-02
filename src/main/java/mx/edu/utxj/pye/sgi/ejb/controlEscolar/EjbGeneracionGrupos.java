@@ -130,14 +130,14 @@ public class EjbGeneracionGrupos {
                             g.setCapMaxima(noGrupos);
                             g.setPlan(planEstudio);
                             g.setGeneracion(generacion.getGeneracion());
-                            f.create(g);
+                            em.persist(g);
                             return ResultadoEJB.crearCorrecto(g, "El grupo ha sido agregado correctamente");
                         }
                     }else{
                         return ResultadoEJB.crearErroneo(5, "No se pudo realizar el registro", Grupo.class);
                     }
                 case ACTUALIZAR:
-                    f.edit(grupo);
+                    em.persist(grupo);
                     return ResultadoEJB.crearCorrecto(null, "Los datos de grupo se han actualizado correctamente.");
                 case ELIMINAR:
                     List<CargaAcademica> cg = em.createQuery("select c from CargaAcademica as c where c.cveGrupo.idGrupo = :grupo", CargaAcademica.class)

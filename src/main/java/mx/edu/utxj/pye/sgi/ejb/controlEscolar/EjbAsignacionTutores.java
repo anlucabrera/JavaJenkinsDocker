@@ -173,7 +173,7 @@ public class EjbAsignacionTutores {
                 case PERSISTIR:
                     Grupo grupo = tutor.getGrupo();
                     grupo.setTutor(tutor.getTutor().getPersonal().getClave());
-                    f.edit(grupo);
+                    em.persist(grupo);
                     return ResultadoEJB.crearCorrecto(grupo, "Asignación Tutor Correctamente");
                 default:
                     return ResultadoEJB.crearErroneo(2, "Operación no autorizada.", Grupo.class);

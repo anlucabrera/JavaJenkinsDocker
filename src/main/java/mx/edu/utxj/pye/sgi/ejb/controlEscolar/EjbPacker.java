@@ -366,7 +366,7 @@ public class EjbPacker {
                 calificacion.setConfiguracionDetalle(detalle.getDetalle());
                 calificacion.setIdEstudiante(inscripcionActiva);
                 calificacion.setValor(null);
-                f.create(calificacion);
+                em.persist(calificacion);
             }
 
             DtoCapturaCalificacion.Captura captura = new DtoCapturaCalificacion.Captura(detalle, calificacion);

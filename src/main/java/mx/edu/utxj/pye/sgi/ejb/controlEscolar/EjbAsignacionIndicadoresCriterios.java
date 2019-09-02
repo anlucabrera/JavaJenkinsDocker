@@ -437,7 +437,7 @@ public class EjbAsignacionIndicadoresCriterios {
                     umcd.setIndicador(indicador);
                     umcd.setPorcentaje(ser.getPorcentajeIndicador());
                     em.persist(umcd);
-//                    f.create(umcd);
+//                    em.persist(umcd);
                     Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
                     l.add(vistaLista);
                     }
@@ -475,7 +475,7 @@ public class EjbAsignacionIndicadoresCriterios {
                     umcd.setIndicador(indicador);
                     umcd.setPorcentaje(saber.getPorcentajeIndicador());
                     em.persist(umcd);
-//                    f.create(umcd);
+//                    em.persist(umcd);
                     Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
                     l.add(vistaLista);
                     }
@@ -513,7 +513,7 @@ public class EjbAsignacionIndicadoresCriterios {
                     umcd.setIndicador(indicador);
                     umcd.setPorcentaje(sabhac.getPorcentajeIndicador());
                     em.persist(umcd);
-//                    f.create(umcd);
+//                    em.persist(umcd);
                     Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
                     l.add(vistaLista);
                     }
@@ -742,7 +742,7 @@ public class EjbAsignacionIndicadoresCriterios {
                             umcd.setIndicador(indicador);
                             umcd.setPorcentaje(ser.getPorcentajeIndicador());
                             em.persist(umcd);
-//                            f.create(umcd);
+//                            em.persist(umcd);
                             Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
                             l.add(vistaLista);
                         });
@@ -787,7 +787,7 @@ public class EjbAsignacionIndicadoresCriterios {
                             umcd.setIndicador(indicador);
                             umcd.setPorcentaje(saber.getPorcentajeIndicador());
                             em.persist(umcd);
-//                            f.create(umcd);
+//                            em.persist(umcd);
                             Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
                             l.add(vistaLista);
                         });
@@ -832,7 +832,7 @@ public class EjbAsignacionIndicadoresCriterios {
                             umcd.setIndicador(indicador);
                             umcd.setPorcentaje(sabhac.getPorcentajeIndicador());
                             em.persist(umcd);
-//                            f.create(umcd);
+//                            em.persist(umcd);
                             Listaindicadoresporcriterioporconfiguracion vistaLista = new Listaindicadoresporcriterioporconfiguracion();
                             l.add(vistaLista);
                         });
