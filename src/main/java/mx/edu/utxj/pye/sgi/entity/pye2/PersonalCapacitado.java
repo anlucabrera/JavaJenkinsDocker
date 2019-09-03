@@ -78,7 +78,7 @@ public class PersonalCapacitado implements Serializable {
     private Date fechaFinal;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 5)
+    @Size(min = 1, max = 10)
     @Column(name = "duracion")
     private String duracion;
     @Basic(optional = false)

@@ -29,6 +29,7 @@ import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 
@@ -669,6 +670,48 @@ public class EjbAsistencias {
 
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaFinal " + listaUnidadMatConfDet.size());
             return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<DtoPaseLista>> agregarPaseLista(List<DtoPaseLista> dpls) {
+        if (!dpls.isEmpty()) {
+            dpls.forEach((t) -> {
+                Asistencias a=new Asistencias();
+                a.setFechaHora(new Date());
+                a.setTipoAsistencia("Calses");
+                em.persist(a);
+                Asistenciasacademicas ac=new Asistenciasacademicas();
+                ac.setAsistencia(a);
+                ac.setEstudiante(t.getPorcInicio());
+                ac.setCargaAcademica(t.getCargaAcademica());
+                ac.setTipoAsistenciaA(t.getListaalumnosca().getAsistenciaT());
+                em.persist(ac);
+            });
+        }
+        return ResultadoEJB.crearCorrecto(dpls, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+    }
+    
+    public ResultadoEJB<Estudiante> buscaEstudiante(Integer matricula) {
+        try {
+            Estudiante e = new Estudiante();
+            e = em.createQuery("SELECT es FROM Estudiante es WHERE es.matricula =:matricula", Estudiante.class)
+                    .setParameter("matricula", matricula)
+                    .getResultList().get(0);
+            return ResultadoEJB.crearCorrecto(e, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<CargaAcademica> buscaCargaAcademica(Integer carga) {
+        try {
+            CargaAcademica c = new CargaAcademica();
+            c = em.createQuery("SELECT ca FROM CargaAcademica ca WHERE ca.carga =:carga", CargaAcademica.class)
+                    .setParameter("carga", carga)
+                    .getResultList().get(0);
+            return ResultadoEJB.crearCorrecto(c, "Asignación de indicadores por criterio de la carga académica seleccionada.");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
         }

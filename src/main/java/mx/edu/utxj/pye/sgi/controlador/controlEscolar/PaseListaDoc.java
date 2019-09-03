@@ -31,15 +31,19 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGraficaCronograma;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ImpresionPlaneacionCuatrimestral;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.PaseDeListaDocente;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
+import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.timeline.TimelineSelectEvent;
 import org.primefaces.model.timeline.TimelineEvent;
 
@@ -126,6 +130,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         if (rol.getCarga() == null) {
             return;
         }
+        rol.setListaalumnoscas(new ArrayList<>());
         ResultadoEJB<List<Listaalumnosca>> res = ejb.buscarListaGrupos(rol.getCarga());
 //        System.err.println("existeAsignacion - res " + res.getValor().size());
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
@@ -167,5 +172,22 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         FacesContext.getCurrentInstance().addMessage(null, msg);  
     }
     
+    public void onCellEdit(CellEditEvent event) {
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+    }
 
+    public void guardaPaseLista() {
+        rol.setDpls(new ArrayList<>());
+        rol.getDpls().clear();
+        rol.getListaalumnoscas().forEach((t) -> {
+            ResultadoEJB<Estudiante> resE = ejb.buscaEstudiante(t.getMatricula());
+            ResultadoEJB<CargaAcademica> resC = ejb.buscaCargaAcademica(t.getCarga());
+            if ((resE.getCorrecto()) && (resC.getCorrecto())) {
+                rol.getDpls().add(new DtoPaseLista(t, resE.getValor(), resC.getValor()));
+            }
+        });
+        ejb.agregarPaseLista(rol.getDpls());
+        existeAsignacion();
+    }
 }

@@ -169,7 +169,7 @@
                                                     <div class="col-sm-12">
                                                         <div class="description-block">
                                                             <p:dataTable id="tbAsigInd1" var="paseL" value="#{paseListaDoc.rol.listaalumnoscas}" 
-                                                                         sortBy="#{paseL.esApePat}" rowStyleClass="subactiviades"
+                                                                         sortBy="#{paseL.esApePat}" rowStyleClass="subactiviades" editable="true" editMode="cell"
                                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
                                                                 <f:facet name="header">
                                                                     #{paseListaDoc.rol.listaalumnoscas.size()}
@@ -182,6 +182,8 @@
                                                                     </p:row>
                                                                 </p:columnGroup>
 
+                                                                <p:ajax event="cellEdit" listener="#{paseListaDoc.onCellEdit}" update="@this" />
+
                                                                 <p:column>
                                                                     <h:outputText value="#{paseL.matricula}" style="text-align: center;"/>
                                                                 </p:column>
@@ -189,16 +191,30 @@
                                                                     <h:outputText value="#{paseL.esApePat} #{paseL.esApeMat} #{paseL.esNombre}"/>
                                                                 </p:column>
                                                                 <p:column>
-                                                                    <h:outputText value="#{paseL.asistenciaT}"/>
-                                                                    <p:selectCheckboxMenu value="#{paseL.asistenciaT}" label="Tipo">
-                                                                        <f:selectItems value="#{paseListaDoc.rol.asistencias}" />
-                                                                    </p:selectCheckboxMenu>
-
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output"> <h:outputText value="#{paseL.asistenciaT}"/></f:facet>
+                                                                        <f:facet name="input">
+                                                                            <p:selectOneMenu value="#{paseL.asistenciaT}" style="width:100%">
+                                                                                <f:selectItems value="#{paseListaDoc.rol.asistencias}" var="man" itemLabel="#{man}" itemValue="#{man}" />
+                                                                            </p:selectOneMenu>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
                                                                 </p:column>                                                            
                                                             </p:dataTable>       
                                                         </div>
                                                     </div>
-                                                </div>                                                
+                                                </div>    
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <br/>
+                                                    <p:outputPanel>            
+                                                        <p:autoUpdate/>
+                                                        <p:commandButton value="Validar Pase de Lista" id="btnSiguiente" 
+                                                                         actionListener="#{paseListaDoc.guardaPaseLista()}"  
+                                                                         process="@this" icon="fa fa-plus" 
+                                                                         styleClass="btn-primary" update="@this" 
+                                                                         />
+                                                    </p:outputPanel>
+                                                </div>
                                             </p:panel>
                                         </center>
                                     </div>

@@ -133,6 +133,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             return;
         }
         ResultadoEJB<List<Informeplaneacioncuatrimestraldocenteprint>> res = ejb.buscarInforme(rol.getCarga());
+        rol.setInformeplaneacioncuatrimestraldocenteprints(new ArrayList<>());
 //        System.err.println("existeAsignacion - res " + res.getValor().size());
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
             rol.setExisteAsignacionIndicadores(true);

@@ -27,8 +27,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 
@@ -42,6 +45,9 @@ public class EjbAsignacionIndicadoresCriterios {
     @EJB EjbPropiedades ep;
     @EJB Facade f;
     @EJB EjbEventoEscolar ejbEventoEscolar;
+    @EJB EjbAreasLogeo ejbAreasLogeo;
+    @Getter @Setter List<Reporteplaneacioncuatrimestralareaacademica> listaUnidadMatConfDet = new ArrayList<>();
+    @Getter @Setter Integer integradoras = 0;
     private EntityManager em;
 
     @PostConstruct
@@ -712,6 +718,96 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
 
+    public List<Reporteplaneacioncuatrimestralareaacademica> buscarReporteAreaAcademica(Short area) {
+        try {
+            List<AreasUniversidad> aus = new ArrayList<>();
+            List<PlanEstudioMateria> pems = new ArrayList<>();
+            List<CargaAcademica> academicas = new ArrayList<>();
+            listaUnidadMatConfDet = new ArrayList<>();
+
+            aus = ejbAreasLogeo.mostrarAreasUniversidadSubordinadas(area);
+
+            if (aus.isEmpty()) {                return new ArrayList<>();            }
+
+            aus.forEach((t) -> {
+                List<PlanEstudioMateria> list = new ArrayList<>();
+                list = em.createQuery("SELECT p FROM PlanEstudioMateria p INNER JOIN p.idPlan pe WHERE pe.idPe =:idPe ", PlanEstudioMateria.class)
+                        .setParameter("idPe", t.getArea())
+                        .getResultList();
+                if (!list.isEmpty()) {
+                    pems.addAll(list);
+                }
+                list.clear();
+            });
+
+            if (pems.isEmpty()) {                return new ArrayList<>();            }
+
+            pems.forEach((p) -> {
+                List<CargaAcademica> list = new ArrayList<>();
+                list = em.createQuery("SELECT c FROM CargaAcademica c INNER JOIN c.idPlanMateria pe WHERE pe.idPlanMateria =:idPlanMateria ", CargaAcademica.class)
+                        .setParameter("idPlanMateria", p.getIdPlanMateria())
+                        .getResultList();
+                if (!list.isEmpty()) {
+                    academicas.addAll(list);
+                }
+                list.clear();
+            });
+
+            if (academicas.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            academicas.forEach((c) -> {
+                List<Reporteplaneacioncuatrimestralareaacademica> rs = new ArrayList<>();
+                Reporteplaneacioncuatrimestralareaacademica r = new Reporteplaneacioncuatrimestralareaacademica();
+                rs.clear();
+                rs = em.createQuery("SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.carga =:carga", Reporteplaneacioncuatrimestralareaacademica.class)
+                        .setParameter("carga", c.getCarga())
+                        .getResultList();
+                if (!rs.isEmpty()) {
+                    r = rs.get(0);
+                    if (c.getTareaIntegradora() != null && !rs.isEmpty()) {
+                        Reporteplaneacioncuatrimestralareaacademica i=new Reporteplaneacioncuatrimestralareaacademica();
+                        i.setConfiguracionDetalle(integradoras);
+                        i.setCarga(c.getCarga());
+                        i.setDescripcion(c.getIdPlanMateria().getIdPlan().getDescripcion());
+                        i.setDocente(r.getDocente());
+                        i.setGrado(c.getCveGrupo().getGrado());
+                        i.setLiteral(c.getCveGrupo().getLiteral());
+                        i.setClaveMateria(c.getIdPlanMateria().getClaveMateria());                        
+                        i.setMateria(c.getIdPlanMateria().getIdMateria().getNombre());
+                        i.setNoUnidad(c.getIdPlanMateria().getIdMateria().getUnidadMateriaList().size() + 1);
+                        i.setNombreUnidad("T.I.");
+                        i.setObjetivo(c.getTareaIntegradora().getDescripcion());
+                        i.setFechaInicio(c.getTareaIntegradora().getFechaEntrega());
+                        i.setFechaFin(c.getTareaIntegradora().getFechaEntrega());
+                        i.setPorUnidad(c.getTareaIntegradora().getPorcentaje());
+                        i.setCriterio("");
+                        i.setPorCriterio(0);
+                        i.setIndicador("");
+                        i.setPorcentajeInd(0);
+                        i.setAreaSuperior(r.getAreaSuperior());
+                        rs.add(i);
+                        integradoras--;
+                    }
+                    listaUnidadMatConfDet.addAll(rs);
+                    r = new Reporteplaneacioncuatrimestralareaacademica();
+                    rs.clear();
+                }
+
+            });
+
+            if (listaUnidadMatConfDet.isEmpty()) {
+                return new ArrayList<>();
+            } else {
+                return listaUnidadMatConfDet;
+            }
+        } catch (Throwable e) {
+            return new ArrayList<>();
+        }
+    }
+
+    
     /**
      * Permite guardar la asignación de indicadores del criterio SER
      * (MASIVAMENTE)

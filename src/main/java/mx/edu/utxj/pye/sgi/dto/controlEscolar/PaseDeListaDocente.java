@@ -72,9 +72,7 @@ public class PaseDeListaDocente extends AbstractRol{
      /**
      * Representa la clave
      */
-    @Getter @Setter private List<DtoGraficaCronograma> cronograma;
-    @Getter @Setter private Integer cuatrimestre;
-    @Getter @Setter private Integer semanaInicio;
+    @Getter @Setter private List<DtoPaseLista> dpls;
     @Getter @Setter private List<String> asistencias;
     
     /**
