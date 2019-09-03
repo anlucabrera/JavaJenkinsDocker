@@ -39,16 +39,17 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "CargaAcademica.findByHorasSemana", query = "SELECT c FROM CargaAcademica c WHERE c.horasSemana = :horasSemana")})
 public class CargaAcademica implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "docente")
+    private int docente;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "carga")
     private Integer carga;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "docente")
-    private int docente;
     @Column(name = "horas_semana")
     private Integer horasSemana;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "carga")
@@ -68,6 +69,8 @@ public class CargaAcademica implements Serializable {
     private List<CasoCritico> casoCriticoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
     private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
+    @OneToMany(mappedBy = "cargaAcademica")
+    private List<Asistenciasacademicas> asistenciasacademicasList;
 
     public CargaAcademica() {
     }
@@ -89,13 +92,6 @@ public class CargaAcademica implements Serializable {
         this.carga = carga;
     }
 
-    public int getDocente() {
-        return docente;
-    }
-
-    public void setDocente(int docente) {
-        this.docente = docente;
-    }
 
     public Integer getHorasSemana() {
         return horasSemana;
@@ -163,6 +159,15 @@ public class CargaAcademica implements Serializable {
     public void setUnidadMateriaConfiguracionList(List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList) {
         this.unidadMateriaConfiguracionList = unidadMateriaConfiguracionList;
     }
+    
+    @XmlTransient
+    public List<Asistenciasacademicas> getAsistenciasacademicasList() {
+        return asistenciasacademicasList;
+    }
+
+    public void setAsistenciasacademicasList(List<Asistenciasacademicas> asistenciasacademicasList) {
+        this.asistenciasacademicasList = asistenciasacademicasList;
+    }
 
     @Override
     public int hashCode() {
@@ -187,6 +192,14 @@ public class CargaAcademica implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica[ carga=" + carga + " ]";
+    }
+
+    public int getDocente() {
+        return docente;
+    }
+
+    public void setDocente(int docente) {
+        this.docente = docente;
     }
     
 }

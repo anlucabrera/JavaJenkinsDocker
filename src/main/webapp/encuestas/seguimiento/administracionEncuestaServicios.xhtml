@@ -84,7 +84,7 @@
             <p:sticky target="tb" />
         </div>
         <p:tabView id="tabView">
-            <c:if test="#{administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor}">
+            <c:if test="#{administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.planeacion}">
                 <p:tab title="Estudiantes con encuesta completa">
                     <h:form id="fr1">
                         <p:outputPanel>
@@ -141,7 +141,7 @@
                                     </p:column>
                                 </c:if>
                                 <f:facet name="footer">
-                                    <c:if test="#{administracionEncuesta.dto.esDeIyE}">
+                                    <c:if test="#{administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.planeacion}">
                                         <p:commandButton actionListener="#{administracionEncuestaServicios.seguimientoEncuestaServiciosIyE()}" value="Actualizar información" icon="fa fa-refresh"
                                                          class="btn btn-primary" update="tabView:fr1:tblResEncIngTer tabView:fr2:tblResEncIngIncom" process="@form"/>
                                     </c:if>
@@ -271,7 +271,8 @@
                 </p:tab>
             </c:if>
 
-            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.director or administracionEncuesta.dto.esDeIyE}">
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or
+            administracionEncuesta.dto.director or administracionEncuesta.dto.esDeIyE}">
                 <p:tab title="Porcentaje de avance por Programa Educativo">
                     <h:form id="fr4">
                         <p:outputPanel>

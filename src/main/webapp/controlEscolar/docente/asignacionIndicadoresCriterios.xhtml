@@ -139,7 +139,20 @@
                                         <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
                                         <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
                                         <center>
+                                        <p:outputLabel value="¿Cómo desea realizar la asignación de indicadores por criterios?" />
                                         <p></p>
+                                        <p:selectOneRadio id="opcAsignacion" value="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion}" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarOpcionAsignacion}">
+                                            <f:selectItem itemLabel="Masiva (Aplicar asignación a todas las unidades)" itemValue="masiva" />
+                                            <f:selectItem itemLabel="Por Unidad (Asignación por unidad)" itemValue="individual" />
+                                            <p:ajax update="@this" process="@this"/>
+                                            <p:autoUpdate />
+                                        </p:selectOneRadio>
+                                        </center>
+                                        <p></p>  
+                                        <p></p>  
+                                        
+                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion eq 'individual'}">
+                                        <center>
                                         <p:outputLabel value="Seleccione Unidad a la que aplicará asignación de indicadores" />
                                         <p></p>
                                         <p:selectOneRadio id="unidad" value="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.validarAsignacionUnidad}" >
@@ -194,6 +207,54 @@
                                         <p></p>
                                         <center>
                                             <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterio}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                            <p:autoUpdate />
+                                        </center>
+                                        </c:if>
+                                        </c:if>
+                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion ne 'individual'}">
+                                        <p:growl id="msgs" showDetail="true" />
+                                        <p:accordionPanel widgetVar="accordion">
+                                                <p:tab title="Ser" titleStyleClass="box-solid" >
+                                                        <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" layout="grid" id="indSer">
+                                                        <f:facet name="header">
+                                                        <p:outputLabel value="Ser #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
+                                                        </f:facet>
+                                                        <p:panel header="#{indSer.indicador}" style="text-align:center">
+                                                            <h:panelGrid columns="1" style="width:100%">
+                                                                <p:inputText value="#{indSer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
+                                                            </h:panelGrid>
+                                                        </p:panel>
+                                                    </p:dataGrid>
+                                                </p:tab>
+                                                <p:tab title="Saber" titleStyleClass="box-solid">
+                                                    <p:dataGrid var="indSaber" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaber}" layout="grid" id="indSaber">
+                                                        <f:facet name="header">
+                                                        <p:outputLabel value="Saber #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaber}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
+                                                        </f:facet>
+                                                        <p:panel header="#{indSaber.indicador}" style="text-align:center">
+                                                            <h:panelGrid columns="1" style="width:100%">
+                                                                <p:inputText value="#{indSaber.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
+                                                            </h:panelGrid>
+                                                        </p:panel>
+                                                    </p:dataGrid>
+                                                </p:tab>
+                                                <p:tab title="Saber - Hacer" titleStyleClass="box-solid">
+                                                    <p:dataGrid var="indSaberHacer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaberHacer}" layout="grid" id="indSaberHacer">
+                                                        <f:facet name="header">
+                                                        <p:outputLabel value="Saber - Hacer #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaberHacer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
+                                                        </f:facet>
+                                                        <p:panel header="#{indSaberHacer.indicador}" style="text-align:center">
+                                                            <h:panelGrid columns="1" style="width:100%">
+                                                                <p:inputText value="#{indSaberHacer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
+                                                            </h:panelGrid>
+                                                        </p:panel>
+                                                    </p:dataGrid>
+                                                </p:tab>
+                                        </p:accordionPanel>
+                                        <p></p>
+                                        <p></p>
+                                        <center>
+                                            <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterioMasivamente}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                             <p:autoUpdate />
                                         </center>
                                         </c:if>

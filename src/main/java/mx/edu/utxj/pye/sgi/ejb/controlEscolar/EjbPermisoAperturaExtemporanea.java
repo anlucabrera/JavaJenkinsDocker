@@ -135,7 +135,7 @@ public class EjbPermisoAperturaExtemporanea {
      */
     public PeriodosEscolares getPeriodoActual() {
 
-        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+        StoredProcedureQuery spq = em.createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
         List<PeriodosEscolares> l = spq.getResultList();
 
         if (l == null || l.isEmpty()) {
@@ -335,7 +335,7 @@ public class EjbPermisoAperturaExtemporanea {
             permisosCapturaExtemporaneaGrupal.setJustificacionPermiso(justificacion);
             permisosCapturaExtemporaneaGrupal.setPersonalGrabaPermiso(administrador.getPersonal().getClave());
             permisosCapturaExtemporaneaGrupal.setFechaGrabaPermiso(new Date());
-            f.create(permisosCapturaExtemporaneaGrupal);
+            em.persist(permisosCapturaExtemporaneaGrupal);
             f.flush();
             
             return ResultadoEJB.crearCorrecto(permisosCapturaExtemporaneaGrupal, "El permiso de captura extemporánea ordinaria se ha registrado correctamente.");
@@ -368,7 +368,7 @@ public class EjbPermisoAperturaExtemporanea {
             permisosCapturaExtemporaneaGrupal.setJustificacionPermiso(justificacion);
             permisosCapturaExtemporaneaGrupal.setPersonalGrabaPermiso(administrador.getPersonal().getClave());
             permisosCapturaExtemporaneaGrupal.setFechaGrabaPermiso(new Date());
-            f.create(permisosCapturaExtemporaneaGrupal);
+            em.persist(permisosCapturaExtemporaneaGrupal);
             f.flush();
             
             return ResultadoEJB.crearCorrecto(permisosCapturaExtemporaneaGrupal, "El permiso de captura extemporánea de nivelación se ha registrado correctamente.");
@@ -430,7 +430,7 @@ public class EjbPermisoAperturaExtemporanea {
     
     public void actualizarPermisoCaptura(DtoPermisoCapturaExtemporanea dtoPermisoCapturaExtemporanea) {
         f.setEntityClass(PermisosCapturaExtemporaneaGrupal.class);
-        f.edit(dtoPermisoCapturaExtemporanea.getPermisosCapturaExtemporaneaGrupal());
+        em.persist(dtoPermisoCapturaExtemporanea.getPermisosCapturaExtemporaneaGrupal());
         f.flush();
     }
 }

@@ -5,9 +5,11 @@ import edu.mx.utxj.pye.seut.util.util.Cuestionario;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
+import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
@@ -27,8 +29,13 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 @Stateful
 public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
 
-    @EJB
-    Facade f;
+    @EJB Facade f;
+    private EntityManager em;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager();
+    }
 
     @Override
     public List<SelectItem> getRespuestasPosibles() {
@@ -122,7 +129,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
 
     @Override
     public List<ListaPersonal> getListaDirectivos() {
-        TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("select lp from ListaPersonal lp where lp.actividad = 2 order by lp.nombre", ListaPersonal.class);
+        TypedQuery<ListaPersonal> q = em.createQuery("select lp from ListaPersonal lp where lp.actividad = 2 order by lp.nombre", ListaPersonal.class);
 
         return q.getResultList();
     }
@@ -132,7 +139,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
 //        System.out.println("directivo = [" + directivo + "]");
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.getListaEvaluados(): " + (directivo.getActividad() == 2));
         if (directivo.getActividad() == 2 || directivo.getActividad() == 4) {
-            TypedQuery<ListaPersonal> q = f.getEntityManager().createQuery("select lp from ListaPersonal lp where (lp.areaOperativa = :areaOperativa and lp.actividad <> 2 and lp.status <> :status and lp.clave <> :dir) or (lp.areaSuperior = :areaOperativa and lp.status <> :status and lp.clave <> :dir) or (lp.areaOperativa = :areaOperativa and lp.actividad <> 4 and lp.status <> :status and lp.clave <> :dir) order by lp.categoriaOperativaNombre, lp.nombre", ListaPersonal.class);
+            TypedQuery<ListaPersonal> q = em.createQuery("select lp from ListaPersonal lp where (lp.areaOperativa = :areaOperativa and lp.actividad <> 2 and lp.status <> :status and lp.clave <> :dir) or (lp.areaSuperior = :areaOperativa and lp.status <> :status and lp.clave <> :dir) or (lp.areaOperativa = :areaOperativa and lp.actividad <> 4 and lp.status <> :status and lp.clave <> :dir) order by lp.categoriaOperativaNombre, lp.nombre", ListaPersonal.class);
             q.setParameter("areaOperativa", directivo.getAreaOperativa());
             q.setParameter("status", 'B');
             q.setParameter("dir", directivo.getClave());
@@ -155,7 +162,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
 
     @Override
     public DesempenioEvaluaciones evaluacionActiva() {
-        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("buscar_desempenio_evaluacion_activa", DesempenioEvaluaciones.class);
+        StoredProcedureQuery spq = em.createStoredProcedureQuery("buscar_desempenio_evaluacion_activa", DesempenioEvaluaciones.class);
         List<DesempenioEvaluaciones> l = spq.getResultList();
 
         if (l == null || l.isEmpty()) {
@@ -237,7 +244,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
     @Override
     public void cargarResultadosAlmacenados(DesempenioEvaluaciones desempenioEvaluacion, ListaPersonal directivo, List<ListaPersonal> subordinados) {
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.cargarResultadosAlmacenados() la clave : " + directivo.getClave() + " lista de subordinados : " + subordinados);
-//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.cargarResultadosAlmacenados() subordinados: " + subordinados);
+        //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.cargarResultadosAlmacenados() subordinados: " + subordinados);
         List<Integer> claves = new ArrayList<>();
         subordinados.forEach((lp) -> {
             if (lp.getClave().equals(directivo.getClave())) {
@@ -248,7 +255,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
         });
 
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.cargarResultadosAlmacenados() claves: " + claves);
-        TypedQuery<DesempenioEvaluacionResultados> q = f.getEntityManager().createQuery("select a from DesempenioEvaluacionResultados a where a.desempenioEvaluacionResultadosPK.evaluacion=:evaluacion and a.desempenioEvaluacionResultadosPK.evaluador = :evaluador and a.desempenioEvaluacionResultadosPK.evaluado in :claves", DesempenioEvaluacionResultados.class);
+        TypedQuery<DesempenioEvaluacionResultados> q = em.createQuery("select a from DesempenioEvaluacionResultados a where a.desempenioEvaluacionResultadosPK.evaluacion=:evaluacion and a.desempenioEvaluacionResultadosPK.evaluador = :evaluador and a.desempenioEvaluacionResultadosPK.evaluado in :claves", DesempenioEvaluacionResultados.class);
         q.setParameter("evaluacion", desempenioEvaluacion.getEvaluacion());
         q.setParameter("evaluador", directivo.getClave());
         q.setParameter("claves", claves);
@@ -267,10 +274,13 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
                     if (l.contains(der)) {
                         der = l.get(l.indexOf(der));
                     } else {
-                        f.setEntityClass(der.getClass());
+                        /*f.setEntityClass(der.getClass());
                         f.create(der);
                         f.getEntityManager().flush();
-                        f.getEntityManager().refresh(der);
+                        f.getEntityManager().refresh(der);*/
+                        em.persist(der);
+                        em.flush();
+                        em.refresh(der);
                     }
 
                     desempenioEvaluacion.getDesempenioEvaluacionResultadosList().add(der);
@@ -351,7 +361,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
 
     @Override
     public List<ListaPersonalDesempenioEvaluacion> obtenerListaResultadosPorEvaluacionEvaluador(DesempenioEvaluaciones desempenioEvaluacion, ListaPersonal directivo) {
-        StoredProcedureQuery q = f.getEntityManager().createStoredProcedureQuery("obtener_lista_resultados_por_evaluacion_evaluador", ListaPersonalDesempenioEvaluacion.class).
+        StoredProcedureQuery q = em.createStoredProcedureQuery("obtener_lista_resultados_por_evaluacion_evaluador", ListaPersonalDesempenioEvaluacion.class).
                 registerStoredProcedureParameter("par_evaluacion", Integer.class, ParameterMode.IN).setParameter("par_evaluacion", desempenioEvaluacion.getEvaluacion()).
                 registerStoredProcedureParameter("par_evaluador", Integer.class, ParameterMode.IN).setParameter("par_evaluador", directivo.getClave());
 //        TypedQuery<ListaPersonalDesempenioEvaluacion> q = f.getEntityManager().createQuery("from ListaPersonalDesempenioEvaluacion lp where lp.pk.evaluacion = :evaluacion and lp.pk.evaluador=:evaluador", ListaPersonalDesempenioEvaluacion.class);
@@ -364,7 +374,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
 
     @Override
     public DesempenioEvaluaciones getUltimaEvaluacionDesempenio() {
-        TypedQuery<DesempenioEvaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM DesempenioEvaluaciones e ORDER BY e.evaluacion DESC", DesempenioEvaluaciones.class);
+        TypedQuery<DesempenioEvaluaciones> q = em.createQuery("SELECT e FROM DesempenioEvaluaciones e ORDER BY e.evaluacion DESC", DesempenioEvaluaciones.class);
         List<DesempenioEvaluaciones> l = q.getResultList();
         if(l==null || l.isEmpty()){
             return null;
@@ -376,7 +386,7 @@ public class ServicioEvaluacionDesempenio implements EjbEvaluacionDesempenio {
     @Override
     public PeriodosEscolares getPeriodoDeLaEvaluacionDesempenio(Integer periodo) {
         System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDesempenio.getPeriodoDeLaEvaluacion() el periodo es = " +periodo);
-        TypedQuery<PeriodosEscolares> q = f.getEntityManager().createQuery("SELECT p FROM PeriodosEscolares p WHERE p.periodo = :periodo", PeriodosEscolares.class);
+        TypedQuery<PeriodosEscolares> q = em.createQuery("SELECT p FROM PeriodosEscolares p WHERE p.periodo = :periodo", PeriodosEscolares.class);
         q.setParameter("periodo", periodo);
         List<PeriodosEscolares> l = q.getResultList();
         if( l== null || l.isEmpty()){

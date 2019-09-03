@@ -94,12 +94,13 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             rol.setCargas(resCarga.getValor());
             rol.setCarga(resCarga.getValor().get(0));
 
-            rol.getInstrucciones().add("Para poder Asignar de Indicadores por Criterio de evaluación debe haber realizado previamente la Configuración de la Unidad Materia.");
-            rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar configuraciones anteriores.");
+            rol.getInstrucciones().add("Para poder realizar la Asignación de Indicadores por Criterio debe haber realizado previamente la Configuración de la Unidad Materia.");
+            rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar asignaciones anteriores.");
             rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo que va a configurar.");
-            rol.getInstrucciones().add("Seleccionar Unidad a la que aplicará la asignación que configurará.");
+            rol.getInstrucciones().add("Seleccionar si asignará indicadores de forma INDIVIDUAL(por unidad) o MASIVA (aplicar para todas las unidades).");
+            rol.getInstrucciones().add("Si seleccionó INDIVIDUAL, deberá seleccionar Unidad a la que aplicará la asignación que configurará.");
             rol.getInstrucciones().add("Seleccionar la pestaña del criterio: Ser, Saber o Saber - Hacer.");
-            rol.getInstrucciones().add("Capturar porcentaje que valdrá el o los indicadores indicadores que utilizará por criterio.");
+            rol.getInstrucciones().add("Capturar porcentaje que valdrá el o los indicadores que utilizará por criterio.");
             rol.getInstrucciones().add("La suma de los porcentajes por criterio deben sumar 100%, de lo contrario el sistema no le permitirá guardar.");
             rol.getInstrucciones().add("Una vez que haya seleccionado indicadores de los TRES criterios puede proceder a GUARDAR la información.");
             rol.getInstrucciones().add("Usted podrá actualizar la asignación de indicadores de la unidad siempre y cuando no haya terminado de configurar todas las unidades.");
@@ -329,6 +330,82 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         ResultadoEJB<Integer> resEliminar = ejb.eliminarAsignacionIndicadores(rol.getCarga().getCargaAcademica());
         mostrarMensajeResultadoEJB(resEliminar);
         existeAsignacion();
+    }
+    
+     public void guardarIndicadoresCriterioMasivamente(){
+        if(rol.getCarga()== null) return;
+        
+        ResultadoEJB<List<UnidadMateriaConfiguracion>> listaUnidadesMateriaConfiguracion = ejb.buscarConfiguracionUnidadMateria(rol.getCarga());
+        rol.setListaUnidadMateriaConfiguracion(listaUnidadesMateriaConfiguracion.getValor());
+        
+        Integer valPorSer = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSer());
+        switch (valPorSer) {
+            case 0:
+                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSerMasiva(rol.getListaCriteriosSer(), rol.getListaUnidadMateriaConfiguracion());
+                if (resGuardarSer.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGuardarSer);
+                } else {
+                    mostrarMensajeResultadoEJB(resGuardarSer);
+                }
+                break;
+            case 1:
+                Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es mayor a 100%.");
+                break;
+            case 2:
+                Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es menor a 100%.");
+                break;
+            default:
+
+                break;
+        }
+        Integer valPorSaber = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaber());
+        switch (valPorSaber) {
+            case 0:
+                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaberMasiva(rol.getListaCriteriosSaber(), rol.getListaUnidadMateriaConfiguracion());
+                if (resGuardarSaber.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGuardarSaber);
+                } else {
+                    mostrarMensajeResultadoEJB(resGuardarSaber);
+                }
+                break;
+            case 1:
+                Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es mayor a 100%.");
+                break;
+            case 2:
+                Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es menor a 100%.");
+                break;
+            default:
+
+                break;
+        }
+        Integer valPorSabHac = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaberHacer());
+        switch (valPorSabHac) {
+            case 0:
+                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSabHac = ejb.guardarIndicadoresSaberHacerMasiva(rol.getListaCriteriosSaberHacer(), rol.getListaUnidadMateriaConfiguracion());
+                if (resGuardarSabHac.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGuardarSabHac);
+                } else {
+                    mostrarMensajeResultadoEJB(resGuardarSabHac);
+                }
+                break;
+            case 1:
+                Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es mayor a 100%.");
+                break;
+            case 2:
+                Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es menor a 100%.");
+                break;
+            default:
+
+                break;
+        }
+        listarIndicadoresSer();
+        listarIndicadoresSaber();
+        listarIndicadoresSaberHacer();
+        Ajax.update("frm");
+    }
+    public void cambiarOpcionAsignacion(ValueChangeEvent event){
+        rol.setOpcAsignacion((String)event.getNewValue());
+        Ajax.update("frm");
     }
 
 }

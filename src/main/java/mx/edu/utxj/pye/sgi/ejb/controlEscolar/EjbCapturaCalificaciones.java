@@ -242,7 +242,7 @@ public class EjbCapturaCalificaciones {
             Calificacion calificacionBD = em.find(Calificacion.class, captura.getCalificacion().getCalificacion());
             if(calificacionBD == null) return ResultadoEJB.crearErroneo(2, "La clave de la calificación no se encuentra en la base de datos, para guardar una calificación ya debe estar persistida.", Calificacion.class);
             calificacionBD.setValor(captura.getCalificacion().getValor());
-            f.edit(calificacionBD);
+            em.persist(calificacionBD);
             return ResultadoEJB.crearCorrecto(calificacionBD, "Captura de calificación guardada");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo guardar la captura de calificación(EjbCapturaCalificaciones.packCapturaCalificacion).", e, Calificacion.class);

@@ -269,7 +269,8 @@ public class ExcelWritter implements Serializable {
             base = ServicioArchivos.carpetaRaiz
                     .concat("cedulas").concat(File.separator)
                     .concat(evaluacion.toString()).concat(File.separator)
-                    .concat(tipo.name()).concat(File.separator);
+                    .concat(tipo.name()).concat(File.separator)
+                    .concat(directivo.getClave().toString()).concat(File.separator);
 
             ServicioArchivos.addCarpetaRelativa(base);
             salida = nombre;

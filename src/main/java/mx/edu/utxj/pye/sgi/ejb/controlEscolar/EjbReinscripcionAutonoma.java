@@ -11,6 +11,8 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 
 @Stateless(name = "EjbReinscripcionAutonoma")
 public class EjbReinscripcionAutonoma {
@@ -18,6 +20,12 @@ public class EjbReinscripcionAutonoma {
     @EJB Facade f;
     @EJB EjbEventoEscolar ejbEventoEscolar;
     Integer claveMateria;
+    private EntityManager em;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager();
+    }
     /**
      * Permite validar si el usuario autenticado es un estudiante
      * @param clave Número de identificación del estudiante autenticado
@@ -57,7 +65,7 @@ public class EjbReinscripcionAutonoma {
             Integer gradoAct = estudiante.getEstudiante().getGrupo().getGrado();
             Integer gradoSup = gradoAct + 1;
             // buscar grupo inmediato superior para reinscribirse (con la misma literal)
-            Grupo grupoSup = f.getEntityManager().createQuery("select g from Grupo g where g.periodo =:periodo and g.idPe =:programa and g.grado =:grado and g.literal =:literal", Grupo.class)
+            Grupo grupoSup = em.createQuery("select g from Grupo g where g.periodo =:periodo and g.idPe =:programa and g.grado =:grado and g.literal =:literal", Grupo.class)
                     .setParameter("periodo", eventoEscolar.getPeriodo())
                     .setParameter("programa", estudiante.getProgramaEducativo().getArea())
                     .setParameter("grado", gradoSup)
@@ -80,13 +88,13 @@ public class EjbReinscripcionAutonoma {
             if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no debe ser nulo.", Estudiante.class);
             if(estudiante == null) return ResultadoEJB.crearErroneo(3, "El estudiante no debe ser nulo.", Estudiante.class);
 
-            TypedQuery<Estudiante> q1 = f.getEntityManager().createQuery("update Estudiante e SET e.grupo =:grupo AND e.periodo =:periodo WHERE e.idEstudiante =:estudiante", Estudiante.class);
+            TypedQuery<Estudiante> q1 = em.createQuery("update Estudiante e SET e.grupo =:grupo AND e.periodo =:periodo WHERE e.idEstudiante =:estudiante", Estudiante.class);
             q1.setParameter("grupo", grupo.getIdGrupo());
             q1.setParameter("periodo", grupo.getPeriodo());
             q1.setParameter("estudiante", estudiante.getIdEstudiante());
             q1.executeUpdate();
             
-            Estudiante asignaGrupo = f.getEntityManager().find(Estudiante.class, estudiante.getIdEstudiante());
+            Estudiante asignaGrupo = em.find(Estudiante.class, estudiante.getIdEstudiante());
             return ResultadoEJB.crearCorrecto(asignaGrupo, "Grupo asignado"); 
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar el grupo al estudiante. (EjbReinscripcionAutonoma.asignarGrupo)", e, null);
@@ -103,7 +111,7 @@ public class EjbReinscripcionAutonoma {
     public ResultadoEJB<List<Materia>> getMateriasPorAsignar(AreasUniversidad programa, Grupo grupo){
         /*try{
             //TODO: buscar lista de materias por asignar que pertenecen al grupo seleccionado
-            List<Materia> materiasPorAsignar = f.getEntityManager().createQuery("select m from Materia m inner join m.idPlan p where p.idPe=:programaEducativo and m.grado =:grado and m.estatus =:estatus", Materia.class)
+            List<Materia> materiasPorAsignar = em.createQuery("select m from Materia m inner join m.idPlan p where p.idPe=:programaEducativo and m.grado =:grado and m.estatus =:estatus", Materia.class)
                     .setParameter("programaEducativo", programa.getArea())
                     .setParameter("grado", grupo.getGrado())
                     .setParameter("estatus", true)
@@ -128,10 +136,10 @@ public class EjbReinscripcionAutonoma {
             
             //Obtener la clave de la materia
             materias.forEach(mat -> {claveMateria = mat.getIdMateria();});
-            Materia materia = f.getEntityManager().find(Materia.class, claveMateria);
+            Materia materia = em.find(Materia.class, claveMateria);
             
             CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), claveMateria);
-            Calificaciones calificaciones = f.getEntityManager().createQuery("select c from Calificaciones c where c.estudiante1.idEstudiante =:estudiante and c.estudiante1.grupo =:grupo and c.materia1.idMateria =:materia", Calificaciones.class)
+            Calificaciones calificaciones = em.createQuery("select c from Calificaciones c where c.estudiante1.idEstudiante =:estudiante and c.estudiante1.grupo =:grupo and c.materia1.idMateria =:materia", Calificaciones.class)
                     .setParameter("estudiante", estudiante.getIdEstudiante())
                     .setParameter("grupo", estudiante.getGrupo().getIdGrupo())
                     .setParameter("materia", claveMateria)
@@ -144,7 +152,7 @@ public class EjbReinscripcionAutonoma {
                 calificaciones.setCalificacionesPK(pk);
                 calificaciones.setEstudiante1(estudiante);
                 calificaciones.setMateria1(materia);
-                f.create(calificaciones);
+                em.persist(calificaciones);
                 return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fué registrada correctamente.");
             }
             return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", Calificaciones.class);

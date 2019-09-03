@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 
 /**
  *
@@ -24,14 +26,20 @@ import java.util.logging.Logger;
 @Stateless
 public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
 
-    @EJB FacadeCE facadeCE;
+    @EJB    FacadeCE facadeCE;
+    private EntityManager em;
 
+    @PostConstruct
+    public void init() {
+        em = facadeCE.getEntityManager();
+    }
+    
     @Override
     public void guardaGrupo(Grupo grupo,Integer noGrupos,Integer periodo,PlanEstudio planEstudio) {
         Integer noGruposRegistrados = 0;
         
         noGruposRegistrados =
-                facadeCE.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.idPe = :id_Pe AND g.periodo = :idPeriodo AND g.grado = :grado")
+                em.createQuery("SELECT g FROM Grupo g WHERE g.idPe = :id_Pe AND g.periodo = :idPeriodo AND g.grado = :grado")
                 .setParameter("id_Pe", grupo.getIdPe())
                 .setParameter("idPeriodo", periodo)
                 .setParameter("grado", grupo.getGrado())
@@ -49,17 +57,17 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
             grupoNew.setCapMaxima(grupo.getCapMaxima());
             grupoNew.setIdSistema(grupo.getIdSistema());
             grupoNew.setLiteral((abecedario[i]));
-            facadeCE.create(grupoNew);
+            em.persist(grupoNew);
             facadeCE.flush();
             facadeCE.setEntityClass(Grupo.class);
-            facadeCE.edit(grupoNew);
+            em.persist(grupoNew);
             facadeCE.flush();
         }
     }
 
     @Override
     public List<Grupo> listaByPeriodo(Integer cve_periodo) {
-        return facadeCE.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.periodo = :periodo",Grupo.class)
+        return em.createQuery("SELECT g FROM Grupo g WHERE g.periodo = :periodo",Grupo.class)
                 .setParameter("periodo", cve_periodo)
                 .getResultList();
     }
@@ -67,7 +75,7 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
     @Override
     public void actualizaGrupo(Grupo grupo) {
         facadeCE.setEntityClass(Grupo.class);
-        facadeCE.edit(grupo);
+        em.persist(grupo);
         facadeCE.flush();
     }
 
@@ -87,7 +95,7 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
         } catch (Exception ex) {
             Logger.getLogger(ServicioUtilToolAcademicas.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return facadeCE.getEntityManager().createQuery("SELECT l FROM Login l WHERE l.usuario = :user AND l.password = :pass", Login.class)
+        return em.createQuery("SELECT l FROM Login l WHERE l.usuario = :user AND l.password = :pass", Login.class)
                 .setParameter("user", usuario)
                 .setParameter("pass", encripta)
                 .getResultList().stream().findFirst().orElse(null);
@@ -95,7 +103,7 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
 
     @Override
     public List<Grupo> listaByPeriodoCarrera(Short carrera, Integer periodo) {
-        return facadeCE.getEntityManager().createQuery("SELECT g FROM Grupo g WHERE g.periodo = :idPeriodo AND g.idPe = :carrera", Grupo.class)
+        return em.createQuery("SELECT g FROM Grupo g WHERE g.periodo = :idPeriodo AND g.idPe = :carrera", Grupo.class)
                 .setParameter("idPeriodo", periodo)
                 .setParameter("carrera", carrera)
                 .getResultList();
@@ -103,28 +111,28 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
 
     @Override
     public List<PlanEstudio> listarPlanesXCarrera(Short carrera) {
-        return facadeCE.getEntityManager().createQuery("SELECT plan FROM PlanEstudio plan WHERE plan.idPe = :area AND plan.estatus = 1", PlanEstudio.class)
+        return em.createQuery("SELECT plan FROM PlanEstudio plan WHERE plan.idPe = :area AND plan.estatus = 1", PlanEstudio.class)
                 .setParameter("area", carrera)
                 .getResultList();
     }
 
     @Override
     public List<Estudiante> getEstudianteXMatricula(String matricula) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula LIKE CONCAT('%',:stringMatricula ,'%')", Estudiante.class)
+        return em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula LIKE CONCAT('%',:stringMatricula ,'%')", Estudiante.class)
                 .setParameter("stringMatricula", matricula)
                 .getResultList();
     }
 
     @Override
     public List<Estudiante> getEstudianteXAP(String apellidoPaterno) {
-        return facadeCE.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idPersona.apellidoPaterno LIKE CONCAT('%',:ap ,'%')", Estudiante.class)
+        return em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idPersona.apellidoPaterno LIKE CONCAT('%',:ap ,'%')", Estudiante.class)
                 .setParameter("ap", apellidoPaterno)
                 .getResultList();
     }
 
     @Override
     public AreasUniversidad buscaAreaByClave(Short area) {
-        return facadeCE.getEntityManager().createNamedQuery("AreasUniversidad.findByArea", AreasUniversidad.class)
+        return em.createNamedQuery("AreasUniversidad.findByArea", AreasUniversidad.class)
                 .setParameter("area", area)
                 .getResultList().stream().findFirst().orElse(null);
     }

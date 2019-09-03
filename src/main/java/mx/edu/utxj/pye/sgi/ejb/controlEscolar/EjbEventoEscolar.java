@@ -11,6 +11,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 
 /**
  * Permite la interacción con las aperturas de los eventos escolares
@@ -18,6 +20,12 @@ import java.util.Map;
 @Stateless(name = "EjbEventoEscolarEJB")
 public class EjbEventoEscolar {
     @EJB Facade f;
+    private EntityManager em;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager();
+    }
     /**
      * Permite verificar si un evento escolar de un tipo especificado se encuentra activo, no contempla aperturas especificas del evento.
      * Para eventos de captura de información para estudiantes, se debe utilizar este medio.
@@ -27,7 +35,7 @@ public class EjbEventoEscolar {
     public ResultadoEJB<EventoEscolar> verificarEventoAperturado(EventoEscolarTipo tipo){
         try{
             //verificar apertura del evento
-            EventoEscolar eventoEscolar = f.getEntityManager().createQuery("select e from EventoEscolar e where e.tipo=:tipo and current_timestamp between e.inicio and e.fin", EventoEscolar.class)
+            EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar e where e.tipo=:tipo and current_timestamp between e.inicio and e.fin", EventoEscolar.class)
                     .setParameter("tipo", tipo.getLabel())
                     .getResultStream()
                     .findFirst()
@@ -51,7 +59,7 @@ public class EjbEventoEscolar {
     public ResultadoEJB<EventoEscolar> verificarAventoAperturadoPorArea(EventoEscolarTipo tipo, AreasUniversidad area){
         try{
             //verificar apertura del evento contemplando al area como filtro
-            EventoEscolar eventoEscolar = f.getEntityManager().createQuery("select e from EventoEscolar e inner join e.eventoEscolarDetalleList ed where e.tipo=:tipo and ed.area=:area and current_timestamp between ed.inicio and ed.fin", EventoEscolar.class)
+            EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar e inner join e.eventoEscolarDetalleList ed where e.tipo=:tipo and ed.area=:area and current_timestamp between ed.inicio and ed.fin", EventoEscolar.class)
                     .setParameter("tipo", tipo.getLabel())
                     .setParameter("area", area.getArea())
                     .getResultStream()
@@ -76,7 +84,7 @@ public class EjbEventoEscolar {
     public ResultadoEJB<EventoEscolar> verificarEventoAperturadoPorPersona(EventoEscolarTipo tipo, PersonalActivo persona){
         try{
             //TODO: verificar apertura del evento contemplando al area como filtro
-            EventoEscolar eventoEscolar = f.getEntityManager().createQuery("select e from EventoEscolar e inner join e.eventoEscolarDetalleList ed where e.tipo=:tipo and ed.persona=:persona and current_time between ed.inicio and ed.fin", EventoEscolar.class)
+            EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar e inner join e.eventoEscolarDetalleList ed where e.tipo=:tipo and ed.persona=:persona and current_time between ed.inicio and ed.fin", EventoEscolar.class)
                     .setParameter("tipo", tipo.getLabel())
                     .setParameter("persona", persona.getPersonal().getClave())
                     .getResultStream()

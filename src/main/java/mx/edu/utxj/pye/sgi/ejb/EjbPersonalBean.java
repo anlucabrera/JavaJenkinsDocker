@@ -8,12 +8,12 @@ import mx.edu.utxj.pye.sgi.entity.finanzas.NivelServidores;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.Arrays;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 
 @Stateless
 public class EjbPersonalBean  implements Serializable {
@@ -23,10 +23,9 @@ public class EjbPersonalBean  implements Serializable {
     private EntityManager em;
 
     @PostConstruct
-    public void init(){
+    public  void init(){
         em = f.getEntityManager();
     }
-
     public PersonalActivo pack(Personal personal){
         if(personal == null) return null;
         if(personal.getStatus().equals('B')) return null;

@@ -8,7 +8,9 @@ package mx.edu.utxj.pye.sgi.facade;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -31,17 +33,20 @@ import lombok.RequiredArgsConstructor;
  * Uso facade.setEntityClass(ListaPersonal.class); List<ListaPersonal> lp =
  * facade.findAll();
  */
-@Stateful
+@Stateless
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class FacadeService<T> implements Facade {
 
-    @Getter
-    @NonNull
-    private Class<T> entityClass;
+    @Getter @NonNull private Class<T> entityClass;
 
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
+
+    @PostConstruct
+    public  void init(){
+        em = getEntityManager();
+    }
     
     @Override
     public EntityManager getEntityManager() {
@@ -73,8 +78,8 @@ public class FacadeService<T> implements Facade {
             }
         } else {
             setEntityClass(entity.getClass());
-            getEntityManager().persist(entity);
-            getEntityManager().flush();
+            em.persist(entity);
+            em.flush();
         }
     }
 
@@ -97,35 +102,35 @@ public class FacadeService<T> implements Facade {
             }
         } else {
             setEntityClass(entity.getClass());
-            getEntityManager().merge(entity);
-            getEntityManager().flush();
+            em.merge(entity);
+            em.flush();
         }
     }
 
     @Override
     public void remove(Object entity) {
         setEntityClass(entity.getClass());
-        getEntityManager().remove(getEntityManager().merge(entity));
-        getEntityManager().flush();
+        em.remove(em.merge(entity));
+        em.flush();
     }
 
     @Override
     public T find(Object id) {
-        return getEntityManager().find(entityClass, id);
+        return em.find(entityClass, id);
     }
 
     @Override
     public List<T> findAll() {
-        javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
+        javax.persistence.criteria.CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
-        return getEntityManager().createQuery(cq).getResultList();
+        return em.createQuery(cq).getResultList();
     }
 
     @Override
     public List<T> findRange(int[] range) {
-        javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
+        javax.persistence.criteria.CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
-        javax.persistence.Query q = getEntityManager().createQuery(cq);
+        javax.persistence.Query q = em.createQuery(cq);
         q.setMaxResults(range[1] - range[0] + 1);
         q.setFirstResult(range[0]);
         return q.getResultList();
@@ -133,10 +138,10 @@ public class FacadeService<T> implements Facade {
 
     @Override
     public int count() {
-        javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
+        javax.persistence.criteria.CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         javax.persistence.criteria.Root<T> rt = cq.from(entityClass);
-        cq.select(getEntityManager().getCriteriaBuilder().count(rt));
-        javax.persistence.Query q = getEntityManager().createQuery(cq);
+        cq.select(em.getCriteriaBuilder().count(rt));
+        javax.persistence.Query q = em.createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
     }
 

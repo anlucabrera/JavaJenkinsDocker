@@ -110,6 +110,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             existeAsignacion();
             rol.setFechaInpresion(new Date());
 //            existeConfiguracion();
+            crearCronograma(rol.getCarga());
         }catch (Exception e){mostrarExcepcion(e); }
     }
 
@@ -166,10 +167,16 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
     private void crearCronograma(DtoCargaAcademica dca) {
         rol.setCronograma(new ArrayList<>());
         rol.getCronograma().clear();
-        rol.setSemanaInicio(0);
+        rol.setPorcIni(0D);
+        rol.setNumDtotales(0);
+        dca.getCargaAcademica().getUnidadMateriaConfiguracionList().forEach((t) -> {
+            rol.setNumDtotales(rol.getNumDtotales()+((int) ((t.getFechaFin().getTime() - t.getFechaInicio().getTime()) / 86400000)));
+        });
         dca.getCargaAcademica().getUnidadMateriaConfiguracionList().forEach((t) -> {
             Integer cuuatri = 0;
-            Integer numS = 0;
+            Integer numD = 0;
+            Double porcU = 0D;
+            Double porcRes = 0D;
             if (t.getFechaInicio().getMonth() <= 3) {
                 rol.setCuatrimestre(1);
             } else {
@@ -179,10 +186,12 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
                     rol.setCuatrimestre(3);
                 }
             }
-            numS = ((int) ((t.getFechaFin().getTime() - t.getFechaInicio().getTime()) / 86400000))/7;
-                      
-            rol.getCronograma().add(new DtoGraficaCronograma((t.getIdUnidadMateria().getIdUnidadMateria() + ".-" + t.getIdUnidadMateria().getNombre()), rol.getSemanaInicio(), numS));
-            rol.setSemanaInicio(rol.getSemanaInicio()+(numS));
+            
+            numD = ((int) ((t.getFechaFin().getTime() - t.getFechaInicio().getTime()) / 86400000));
+            porcU=((numD*100.0)/rol.getNumDtotales());
+            porcRes=100-(porcU+rol.getPorcIni());          
+            rol.getCronograma().add(new DtoGraficaCronograma((t.getIdUnidadMateria().getNoUnidad() + ".-" + t.getIdUnidadMateria().getNombre()), rol.getPorcIni(), porcU,porcRes));
+            rol.setPorcIni(rol.getPorcIni()+(porcU));
         });
     }
 

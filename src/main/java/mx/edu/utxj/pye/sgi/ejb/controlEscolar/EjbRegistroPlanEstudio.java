@@ -11,8 +11,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaRegistro;
@@ -39,6 +41,12 @@ public class EjbRegistroPlanEstudio {
     @EJB    EjbAsignacionAcademica ejbAsignacionAcademica;
     @EJB    EjbPropiedades ep;
     @EJB    Facade f;
+    private EntityManager em;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager();
+    }
 
     // Se valida el acceso del personal autorizado, así como se obtienen los catálogos necesarios para poder crear un plan de estudios
     /**
@@ -71,7 +79,7 @@ public class EjbRegistroPlanEstudio {
      */
     public ResultadoEJB<List<AreaConocimiento>> getAreasConocimiento() {
         try {
-            final List<AreaConocimiento> areasConocimiento = f.getEntityManager().createQuery("SELECT ac FROM AreaConocimiento ac WHERE ac.estatus = 1", AreaConocimiento.class)
+            final List<AreaConocimiento> areasConocimiento = em.createQuery("SELECT ac FROM AreaConocimiento ac WHERE ac.estatus = 1", AreaConocimiento.class)
                     .getResultList();
             return ResultadoEJB.crearCorrecto(areasConocimiento, "Lista de áreas de conocimiento activas");
         } catch (Exception e) {
@@ -88,7 +96,7 @@ public class EjbRegistroPlanEstudio {
      */
     public ResultadoEJB<List<Competencia>> getCompetenciasPlan(PlanEstudio plan) {
         try {
-            final List<Competencia> competenciasPlan = f.getEntityManager().createQuery("SELECT c FROM Competencia c INNER JOIN c.planEstudios plan WHERE plan.idPlanEstudio=:plan", Competencia.class)
+            final List<Competencia> competenciasPlan = em.createQuery("SELECT c FROM Competencia c INNER JOIN c.planEstudios plan WHERE plan.idPlanEstudio=:plan", Competencia.class)
                     .setParameter("plan", plan.getIdPlanEstudio())
                     .getResultList();
             competenciasPlan.add(new Competencia(0, "Nueva Competencia", "Generica"));
@@ -104,7 +112,7 @@ public class EjbRegistroPlanEstudio {
     public ResultadoEJB<List<DtoPlanEstudioMateriaCompetencias>> obtenerDtoPEMC(PlanEstudio plan) {
         try {
             final List<DtoPlanEstudioMateriaCompetencias> l = new ArrayList<>();
-            final List<PlanEstudioMateria> pems = f.getEntityManager().createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio=:plan", PlanEstudioMateria.class)
+            final List<PlanEstudioMateria> pems = em.createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio=:plan", PlanEstudioMateria.class)
                     .setParameter("plan", plan.getIdPlanEstudio())
                     .getResultList();
 
@@ -131,7 +139,7 @@ public class EjbRegistroPlanEstudio {
         try {
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
 
-            List<AreasUniversidad> programas = f.getEntityManager().createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
+            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
                     .setParameter("areaPoa", director.getAreaPOA().getArea())
                     .setParameter("categoria", programaEducativoCategoria)
                     .getResultList();
@@ -152,7 +160,7 @@ public class EjbRegistroPlanEstudio {
      */
     public ResultadoEJB<List<Materia>> getListadoMaterias(PlanEstudio pe) {
         try {
-            final List<Materia> materias = f.getEntityManager().createQuery("SELECT m FROM PlanEstudioMateria pem INNER JOIN pem.idMateria m INNER JOIN pem.idPlan p WHERE p.idPlanEstudio=:idPlanEstudio", Materia.class)
+            final List<Materia> materias = em.createQuery("SELECT m FROM PlanEstudioMateria pem INNER JOIN pem.idMateria m INNER JOIN pem.idPlan p WHERE p.idPlanEstudio=:idPlanEstudio", Materia.class)
                     .setParameter("idPlanEstudio", pe.getIdPlanEstudio())
                     .getResultList();
             return ResultadoEJB.crearCorrecto(materias, "Listado de materias registradas");
@@ -177,11 +185,11 @@ public class EjbRegistroPlanEstudio {
             f.setEntityClass(PlanEstudio.class);
             switch (operacion) {
                 case PERSISTIR:
-                    f.create(planEstudio);
+                    em.persist(planEstudio);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(planEstudio, "Se registró correctamente el Plan Estudio");
                 case ACTUALIZAR:
-                    f.edit(planEstudio);
+                    em.persist(planEstudio);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(planEstudio, "Se actualizo correctamente el Plan Estudio");
                 case ELIMINAR:
@@ -216,11 +224,11 @@ public class EjbRegistroPlanEstudio {
             switch (operacion) {
                 case PERSISTIR:
                     dmr.getMateria().setIdAreaConocimiento(dmr.getAreaConocimiento());
-                    f.create(dmr.getMateria());
+                    em.persist(dmr.getMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmr.getMateria(), "Se registró correctamente La Matertia");
                 case ACTUALIZAR:
-                    f.edit(dmr.getMateria());
+                    em.persist(dmr.getMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmr.getMateria(), "Se actualizo correctamente La Matertia");
                 case ELIMINAR:
@@ -253,11 +261,11 @@ public class EjbRegistroPlanEstudio {
             switch (operacion) {
                 case PERSISTIR:
                     dmu.getUnidadMateria().setIdMateria(dmu.getMateria());
-                    f.create(dmu.getUnidadMateria());
+                    em.persist(dmu.getUnidadMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmu.getUnidadMateria(), "Se registró correctamente La Unidad Materia");
                 case ACTUALIZAR:
-                    f.edit(dmu.getUnidadMateria());
+                    em.persist(dmu.getUnidadMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmu.getUnidadMateria(), "Se actualizo correctamente La Unidad Materia");
                 case ELIMINAR:
@@ -295,11 +303,11 @@ public class EjbRegistroPlanEstudio {
                 case PERSISTIR:
                     estudioMateria.setIdMateria(materia);
                     estudioMateria.setIdPlan(planEstudio);
-                    f.create(estudioMateria);
+                    em.persist(estudioMateria);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(estudioMateria, "Se registró correctamente la materia");
                 case ACTUALIZAR:
-                    f.edit(estudioMateria);
+                    em.persist(estudioMateria);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(estudioMateria, "Se actualizo correctamente la materia");
                 case ELIMINAR:
@@ -326,17 +334,17 @@ public class EjbRegistroPlanEstudio {
                     f.setEntityClass(Competencia.class);
                     dpemc.getCompetenciaNewR().setPlanEstudios(dpemc.getPlanEstudio());
                     dpemc.getPlanEstudioMateria().getCompetenciaList().add(dpemc.getCompetenciaNewR());
-                    f.create(dpemc.getCompetenciaNewR());
+                    em.persist(dpemc.getCompetenciaNewR());
                     dpemc.getCompetenciaNewR().getPlanEstudioMateriaList().add(dpemc.getPlanEstudioMateria());
-                    f.edit(dpemc.getPlanEstudioMateria());
+                    em.persist(dpemc.getPlanEstudioMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dpemc.getCompetencia(), "Se registró correctamente la competencia");
                 case ACTUALIZAR:
                     dpemc.getCompetencia().setPlanEstudios(dpemc.getPlanEstudio());
                     dpemc.getPlanEstudioMateria().getCompetenciaList().add(dpemc.getCompetencia());
                     dpemc.getCompetencia().getPlanEstudioMateriaList().add(dpemc.getPlanEstudioMateria());
-                    f.edit(dpemc.getCompetencia());
-                    f.edit(dpemc.getPlanEstudioMateria());
+                    em.persist(dpemc.getCompetencia());
+                    em.persist(dpemc.getPlanEstudioMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dpemc.getCompetencia(), "Se actualizo correctamente la materia");
                 case ELIMINAR:
@@ -353,7 +361,7 @@ public class EjbRegistroPlanEstudio {
     }
 
     public List<PlanEstudio> generarPlanesEstudio(AreasUniversidad programas) {
-        return f.getEntityManager().createQuery("SELECT pe FROM PlanEstudio pe WHERE pe.idPe = :idPe", PlanEstudio.class)
+        return em.createQuery("SELECT pe FROM PlanEstudio pe WHERE pe.idPe = :idPe", PlanEstudio.class)
                 .setParameter("idPe", programas.getArea())
                 .getResultList();
     }
@@ -397,7 +405,7 @@ public class EjbRegistroPlanEstudio {
      */
     public ResultadoEJB<Map<Materia, List<UnidadMateria>>> getListaUnidadesMateria() {
         try {
-            List<Materia> ms = f.getEntityManager().createQuery("select ma from Materia  ma", Materia.class).getResultList();
+            List<Materia> ms = em.createQuery("select ma from Materia  ma", Materia.class).getResultList();
 
             Map<Materia, List<UnidadMateria>> UnidadesMa = ms.stream()
                     .collect(Collectors.toMap(materia -> materia, materia -> generarunidadesMaterias(materia)));
@@ -409,7 +417,7 @@ public class EjbRegistroPlanEstudio {
     }
 
     public List<UnidadMateria> generarunidadesMaterias(Materia materia) {
-        List<UnidadMateria> p = f.getEntityManager().createQuery("SELECT um FROM UnidadMateria um INNER JOIN um.idMateria ma WHERE ma.idMateria = :idMateria", UnidadMateria.class)
+        List<UnidadMateria> p = em.createQuery("SELECT um FROM UnidadMateria um INNER JOIN um.idMateria ma WHERE ma.idMateria = :idMateria", UnidadMateria.class)
                 .setParameter("idMateria", materia.getIdMateria())
                 .getResultList();
         if (p.isEmpty()) {
@@ -424,7 +432,7 @@ public class EjbRegistroPlanEstudio {
             final List<PlanEstudioMateria> pems=new ArrayList<>();
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
 
-            List<AreasUniversidad> programas = f.getEntityManager().createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
+            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
                     .setParameter("areaPoa", director.getAreaPOA().getArea())
                     .setParameter("categoria", programaEducativoCategoria)
                     .getResultList();
@@ -448,14 +456,14 @@ public class EjbRegistroPlanEstudio {
     }
     
     public List<PlanEstudioMateria> generarPlanEstuidoMaterias(PlanEstudio estudio) {
-        return f.getEntityManager().createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", PlanEstudioMateria.class)
+        return em.createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", PlanEstudioMateria.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                 .getResultList();
     }
     
     public List<Competencia> generarCompetenciasPorPlanEstuidoMaterias(PlanEstudioMateria pem) {
         PlanEstudioMateria estudioMateria = new PlanEstudioMateria();
-        estudioMateria = f.getEntityManager().createQuery("SELECT pem FROM PlanEstudioMateria pem WHERE pem.idPlanMateria = :idPlanMateria", PlanEstudioMateria.class)
+        estudioMateria = em.createQuery("SELECT pem FROM PlanEstudioMateria pem WHERE pem.idPlanMateria = :idPlanMateria", PlanEstudioMateria.class)
                 .setParameter("idPlanMateria", pem.getIdPlanMateria())
                 .getResultList().get(0);
         System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.generarCompetenciasPorPlanEstuidoMaterias(1)"+estudioMateria);

@@ -76,7 +76,8 @@ public class ImpresionPlaneacionCuatrimestral extends AbstractRol{
      */
     @Getter @Setter private List<DtoGraficaCronograma> cronograma;
     @Getter @Setter private Integer cuatrimestre;
-    @Getter @Setter private Integer semanaInicio;
+    @Getter @Setter private Double porcIni;
+    @Getter @Setter private Integer numDtotales;
     
     /**
      * Carga académica seleccionada
