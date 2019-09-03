@@ -211,7 +211,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @Override
     public void actualizaDatosMedicos(DatosMedicos datosMedicos) {
         facadeCE.setEntityClass(DatosMedicos.class);
-        em.persist(datosMedicos);
+        em.merge(datosMedicos);
         facadeCE.flush();
     }
 
@@ -223,7 +223,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @Override
     public void actualizaComunicacion(MedioComunicacion comunicacion) {
         facadeCE.setEntityClass(MedioComunicacion.class);
-        em.persist(comunicacion);
+        em.merge(comunicacion);
         facadeCE.flush();
     }
 
@@ -246,7 +246,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @Override
     public void actualizaAspirante(Aspirante aspirante) {
         facadeCE.setEntityClass(Aspirante.class);
-        em.persist(aspirante);
+        em.merge(aspirante);
         facadeCE.flush();
     }
 
@@ -282,7 +282,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         domicilio.setCalle(ucFirst(domicilio.getCalle().trim()));
         domicilio.setCalleProcedencia(ucFirst(domicilio.getCalleProcedencia().trim()));
         facadeCE.setEntityClass(Domicilio.class);
-        em.persist(domicilio);
+        em.merge(domicilio);
         facadeCE.flush();
     }
 
@@ -303,7 +303,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
         tutorFamiliar.setParentesco(ucFirst(tutorFamiliar.getParentesco().trim()));
         facadeCE.setEntityClass(TutorFamiliar.class);
-        em.persist(tutorFamiliar);
+        em.merge(tutorFamiliar);
         facadeCE.flush();
     }
 
@@ -320,7 +320,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre().trim()));
         datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre().trim()));
         facadeCE.setEntityClass(DatosFamiliares.class);
-        em.persist(datosFamiliares);
+        em.merge(datosFamiliares);
         facadeCE.flush();
     }
 
@@ -332,7 +332,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @Override
     public void actualizaDatosAcademicos(DatosAcademicos datosAcademicos) {
         facadeCE.setEntityClass(DatosAcademicos.class);
-        em.persist(datosAcademicos);
+        em.merge(datosAcademicos);
         facadeCE.flush();
     }
 
@@ -404,7 +404,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @Override
     public void actualizaDocumentosAspirante(DocumentoAspirante documentoAspirante) {
         facadeCE.setEntityClass(DocumentoAspirante.class);
-        em.persist(documentoAspirante);
+        em.merge(documentoAspirante);
         facadeCE.flush();
     }
     

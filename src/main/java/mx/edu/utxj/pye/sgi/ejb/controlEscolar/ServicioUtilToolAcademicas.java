@@ -75,13 +75,13 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
     @Override
     public void actualizaGrupo(Grupo grupo) {
         facadeCE.setEntityClass(Grupo.class);
-        em.persist(grupo);
+        em.merge(grupo);
         facadeCE.flush();
     }
 
     @Override
     public void eliminaGrupo(Grupo grupo) {
-        facadeCE.remove(grupo);
+        em.remove(grupo);
         facadeCE.flush();
     }
 

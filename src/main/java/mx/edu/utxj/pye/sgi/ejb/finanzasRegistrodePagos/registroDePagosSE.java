@@ -12,8 +12,10 @@ import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Vistapagosprimercuatrimestre;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 @Stateful
@@ -21,13 +23,19 @@ public class registroDePagosSE  implements EjbFinanzasRegistroPagos{
     @EJB Facade facade;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
     @EJB EJBAdimEstudianteBase ejbAdimEstudianteBase;
+    private EntityManager em;
+
+    @PostConstruct
+    public  void init(){
+        em = facade.getEntityManager();
+    }
     @Override
     public ResultadoEJB<Vistapagosprimercuatrimestre> getRegistroByCurp(String curp) {
         try{
             Vistapagosprimercuatrimestre registro= new Vistapagosprimercuatrimestre();
             if(curp==null){ ResultadoEJB.crearErroneo(2,registro,"El CURP no debe ser nulo");}
             //TODO: Se busca el registro del pago, por curp
-            Vistapagosprimercuatrimestre c= facade.getEntityManager().createNamedQuery("Vistapagosprimercuatrimestre.findByCurp", Vistapagosprimercuatrimestre.class)
+            Vistapagosprimercuatrimestre c= em.createNamedQuery("Vistapagosprimercuatrimestre.findByCurp", Vistapagosprimercuatrimestre.class)
             .setParameter("curp",curp)
             .getResultStream()
             .findFirst()
@@ -48,7 +56,7 @@ public class registroDePagosSE  implements EjbFinanzasRegistroPagos{
     @Override
     public ResultadoEJB<Vistapagosprimercuatrimestre> editRegistro(Vistapagosprimercuatrimestre registro) {
         try{
-            facade.edit(registro);
+            em.merge(registro);
             return ResultadoEJB.crearCorrecto(registro,"Se ha modiificado el registro con exito");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo realizar la comprobación del pago del Aspirante(EjbFinanzasRegistroPago(comprobarPago))", e, Vistapagosprimercuatrimestre.class);
@@ -66,7 +74,7 @@ public class registroDePagosSE  implements EjbFinanzasRegistroPagos{
                 ResultadoEJB<Vistapagosprimercuatrimestre> ResRegistro = getRegistroByCurp(estudiante.getCurp());
                 if(ResRegistro.getCorrecto()==true){
                     //TODO:Obtenemos a la persona por curp en la base de Finanzas
-                    Personafinanzas personafinanzas = facade.getEntityManager().createNamedQuery("Personafinanzas.findByCurp",Personafinanzas.class)
+                    Personafinanzas personafinanzas = em.createNamedQuery("Personafinanzas.findByCurp",Personafinanzas.class)
                             .setParameter("curp",estudiante.getCurp())
                             .getResultStream()
                             .findFirst()
@@ -86,7 +94,7 @@ public class registroDePagosSE  implements EjbFinanzasRegistroPagos{
                         alumnoFinanzasPK.setPeriodo(estudiante.getEstudianteCE().getPeriodo());
                         alumnoFinanzas.setAlumnoFinanzasPK(alumnoFinanzasPK);
                         System.out.println("Alumno Finanzas" + alumnoFinanzas);
-                        facade.create(alumnoFinanzas);
+                        em.persist(alumnoFinanzas);
                         //TODO: PROCEDE A EDITAR EL REGISTRO DE PAGO
                         registro = ResRegistro.getValor();
                         registro.setMatricula(estudiante.getMatricula());

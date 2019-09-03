@@ -137,13 +137,13 @@ public class EjbGeneracionGrupos {
                         return ResultadoEJB.crearErroneo(5, "No se pudo realizar el registro", Grupo.class);
                     }
                 case ACTUALIZAR:
-                    em.persist(grupo);
+                    em.merge(grupo);
                     return ResultadoEJB.crearCorrecto(null, "Los datos de grupo se han actualizado correctamente.");
                 case ELIMINAR:
                     List<CargaAcademica> cg = em.createQuery("select c from CargaAcademica as c where c.cveGrupo.idGrupo = :grupo", CargaAcademica.class)
                             .setParameter("grupo", grupo.getIdGrupo()).getResultStream().collect(Collectors.toList());
                     if(cg.isEmpty()){
-                        f.remove(grupo);
+                        em.remove(grupo);
                         return ResultadoEJB.crearCorrecto(null, "Los datos de grupo se han elminado correctamente");
                     }else {
                         return ResultadoEJB.crearErroneo(6, "No es posible eliminar la información seleccionada", Grupo.class);
@@ -168,7 +168,7 @@ public class EjbGeneracionGrupos {
             switch (o){
                 case ELIMINAR:
                     if(cg.isEmpty()){
-                        f.remove(g);
+                        em.remove(g);
                         return ResultadoEJB.crearCorrecto(null,"Se ha eliminado correctamente");
                     }else{
                         return ResultadoEJB.crearErroneo(4, "No se pudo eliminar la información", Grupo.class);

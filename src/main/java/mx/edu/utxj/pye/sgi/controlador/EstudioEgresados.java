@@ -153,6 +153,7 @@ public class EstudioEgresados implements Serializable {
         }else{
         valor = e.getNewValue().toString();
         }
+        System.out.println("id->" + origen + " Valor" + valor);
         ejb.actualizarRespuestaPorPregunta(resultados, origen.getId(), valor);
         finalizado = ejb.actualizarResultado(resultados);
         

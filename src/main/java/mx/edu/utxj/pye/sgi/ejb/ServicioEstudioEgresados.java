@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
+import javax.persistence.EntityManager;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import lombok.NonNull;
@@ -16,6 +18,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstudioEgresadosResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
+import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstudioEgresados;
@@ -31,53 +34,58 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
 
     @EJB
     Facade2 f2;
+    private EntityManager em;
+    private  EntityManager em2;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager();
+        em2 = f2.getEntityManager();
+    }
 
     @Override
     public List<Generaciones> getGeneraciones() {
-        TypedQuery<Generaciones> q = f.getEntityManager().createQuery("SELECT g from Generaciones g WHERE g.fin <= :anioActual ORDER BY g.inicio DESC, g.fin DESC", Generaciones.class);
-        q.setParameter("anioActual", (short) (new Date()).getYear() + 1900);
-        return q.getResultList();
+        List<Generaciones> q= em.createQuery("SELECT g from Generaciones g WHERE g.fin <= :anioActual ORDER BY g.inicio DESC, g.fin DESC", Generaciones.class)
+                .setParameter("anioActual", (short) (new Date()).getYear() + 1900)
+                .getResultList()
+                ;
+        return q;
     }
 
     @Override
     public Evaluaciones geteEvaluacionActiva() {
-        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
-        q.setParameter("tipo", "Estudio egresados");
-        q.setParameter("fecha", new Date());
+        Evaluaciones  q = new Evaluaciones();
+        q = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
+                    .setParameter("tipo", "Estudio egresados")
+                    .setParameter("fecha", new Date())
+                    .getResultStream()
+                    .findFirst()
+                            .orElse(null);
+        return  q;
 
-        //  StoredProcedureQuery q = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_estudio_egresados", Evaluaciones.class);
-        List<Evaluaciones> l = q.getResultList();
-        System.out.println("Evaluacion activa de Seguimiento de Egresados es" + l.get(0).getEvaluacion());
-        if (l.isEmpty()) {
-            return null;
-        } else {
-            return l.get(0);
-
-        }
     }
 
     @Override
     public Alumnos getAlumnoPorMatricula(String matricula) {
-        TypedQuery<Alumnos> q = f2.getEntityManager().createQuery("SELECT a from Alumnos as a WHERE a.matricula = :matricula ORDER BY a.gradoActual DESC", Alumnos.class);
-        q.setParameter("matricula", matricula.toString());
-        List<Alumnos> l = q.getResultList();
-        if (l.isEmpty()) {
-            return new Alumnos();
-        } else {
-            return l.get(0);
-        }
+        Alumnos a= new Alumnos();
+        return a = em2.createQuery("SELECT a from Alumnos as a WHERE a.matricula = :matricula ORDER BY a.gradoActual DESC", Alumnos.class)
+                .setParameter("matricula", matricula.toString())
+                .getResultStream()
+                .findFirst()
+                .orElse(null)
+        ;
+
     }
 
     @Override
     public Personas getDatosPersonalesAlumnos(Integer persona) {
-        TypedQuery<Personas> q = f2.getEntityManager().createQuery("SELECT p from Personas as p WHERE p.personasPK.cvePersona = :persona", Personas.class);
-        q.setParameter("persona", persona);
-        List<Personas> l = q.getResultList();
-        if (l.isEmpty()) {
-            return null;
-        } else {
-            return l.get(0);
-        }
+        Personas p = new Personas();
+        return p = em2.createQuery("SELECT p from Personas as p WHERE p.personasPK.cvePersona = :persona", Personas.class)
+            .setParameter("persona", persona)
+            .getResultStream()
+            .findFirst()
+            .orElse(null);
+
     }
 
     @Override
@@ -89,7 +97,7 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
             EvaluacionEstudioEgresadosResultados r = (EvaluacionEstudioEgresadosResultados) f.find(pk);
             if (r == null) {
                 r = new EvaluacionEstudioEgresadosResultados(pk);
-                f.create(r);
+                em.persist(r);
             }
             System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultados() EJB resultados : =  " + r);
             return r;
@@ -102,7 +110,7 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
     public boolean actualizarResultado(EvaluacionEstudioEgresadosResultados resultado) {
         if (resultado != null) {
             f.setEntityClass(EvaluacionEstudioEgresadosResultados.class);
-            f.edit(resultado);
+            em.merge(resultado);
         }
 
         Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
@@ -438,8 +446,9 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
     }
 
     public List<ProgramasEducativos> getProgramasEducativos() {
-        TypedQuery<ProgramasEducativos> q = f.getEntityManager().createQuery("SELECT p FROM ProgramasEducativos p", ProgramasEducativos.class);
-        List<ProgramasEducativos> l = q.getResultList();
+        List<ProgramasEducativos> l = new ArrayList<>();
+        l = em.createQuery("SELECT p FROM ProgramasEducativos p", ProgramasEducativos.class)
+                .getResultList();
         if (l.isEmpty()) {
             return null;
         } else {
@@ -458,128 +467,123 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
 
     @Override
     public Alumnos getEstudianteSaiiut(String matricula) {
-        TypedQuery<Alumnos> q = f2.getEntityManager().createQuery("SELECT e FROM Alumnos e WHERE e.matricula= :matricula ORDER BY e.fechaAlta DESC", Alumnos.class);
-        q.setParameter("matricula", matricula);
-        List<Alumnos> l = q.getResultList();
-        if (l.isEmpty()) {
-            return null;
-        } else {
-            return l.get(0);
-        }
+        Alumnos a = new Alumnos();
+        return a  = em2.createQuery("SELECT e FROM Alumnos e WHERE e.matricula= :matricula ORDER BY e.fechaAlta DESC", Alumnos.class)
+                .setParameter("matricula", matricula)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public Personas getPersonaSaiiut(Integer clave) {
-        TypedQuery<Personas> q = f2.getEntityManager().createQuery("SELECT p from Personas AS p WHERE p.personasPK.cvePersona = :clave", Personas.class);
-        q.setParameter("clave", clave);
-        List<Personas> l = q.getResultList();
-        if (l.isEmpty()) {
-            return null;
-        } else {
-            return l.get(0);
-        }
+        Personas p = new Personas();
+        return p = em2.createQuery("SELECT p from Personas AS p WHERE p.personasPK.cvePersona = :clave", Personas.class)
+                .setParameter("clave", clave)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public EvaluacionEstudioEgresadosResultados getResultadoIndividual(String evaluador) {
-        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery(""
+        EvaluacionEstudioEgresadosResultados e = new EvaluacionEstudioEgresadosResultados();
+       return e = em.createQuery(""
                 + "SELECT e from EvaluacionEstudioEgresadosResultados as e WHERE e.evaluacionEstudioEgresadosResultadosPK.evaluador = :evaluador "
-                + "ORDER BY e.evaluacionEstudioEgresadosResultadosPK.evaluacion DESC", EvaluacionEstudioEgresadosResultados.class);
-        q.setParameter("evaluador", Integer.parseInt(evaluador));
-        List<EvaluacionEstudioEgresadosResultados> l = q.getResultList();
-        if (l.isEmpty()) {
-            return null;
-        } else {
-            return l.get(0);
-        }
+                + "ORDER BY e.evaluacionEstudioEgresadosResultadosPK.evaluacion DESC", EvaluacionEstudioEgresadosResultados.class)
+                .setParameter("evaluador", Integer.parseInt(evaluador))
+               .getResultStream()
+               .findFirst()
+               .orElse(null);
     }
 
     @Override
     public Evaluaciones getLastEvaluacion() {
-        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
-        q.setParameter("tipo", "Estudio egresados");
-        q.setParameter("fecha", new Date());
-        List<Evaluaciones> l = q.getResultList();
-        if (l.isEmpty()) {
-            return null;
-        } else {
-            return l.get(0);
-        }
+        Evaluaciones e = new Evaluaciones();
+       return e = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
+                .setParameter("tipo", "Estudio egresados")
+                .setParameter("fecha", new Date())
+               .getResultStream()
+               .findFirst()
+               .orElse(null);
     }
 
     @Override
     public List<EvaluacionEstudioEgresadosResultados> getRestultadosEgresados() {
-        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e", EvaluacionEstudioEgresadosResultados.class);
-        List<EvaluacionEstudioEgresadosResultados> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
+        List<EvaluacionEstudioEgresadosResultados> r = new ArrayList<>();
+        r = em.createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e", EvaluacionEstudioEgresadosResultados.class)
+                .getResultList();
+        if (r.isEmpty() || r == null) {
             return null;
         } else {
-            return l;
+            return r;
         }
+
     }
 
     @Override
     public List<EvaluacionEstudioEgresadosResultados> getResultadosPorGeneracionTSU(String generacion) {
+        List<EvaluacionEstudioEgresadosResultados> r = new ArrayList<>();
         System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultadosPorGeneracionTSU() la generacion que entra ; " + generacion);
-        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r2 = :generacion", EvaluacionEstudioEgresadosResultados.class);
-        q.setParameter("generacion", generacion);
-        List<EvaluacionEstudioEgresadosResultados> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
-            System.out.println("regresa null");
+         r = em.createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r2 = :generacion", EvaluacionEstudioEgresadosResultados.class)
+                .setParameter("generacion", generacion)
+                .getResultList();
+        if (r.isEmpty() || r == null) {
             return null;
         } else {
-            System.out.println("regresa la lista _ " + l.size());
-            return l;
+            return r;
         }
     }
 
     @Override
     public List<EvaluacionEstudioEgresadosResultados> getResultadosPorGeneracionING(String generacion) {
         System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultadosPorGeneracionTSU() la generacion que entra ; " + generacion);
-        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r3 = :generacion", EvaluacionEstudioEgresadosResultados.class);
-        q.setParameter("generacion", generacion);
-        List<EvaluacionEstudioEgresadosResultados> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
-            System.out.println("regresa null");
+        List<EvaluacionEstudioEgresadosResultados> e = new ArrayList<>();
+         e = em.createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r3 = :generacion", EvaluacionEstudioEgresadosResultados.class)
+                .setParameter("generacion", generacion)
+                .getResultList();
+        if (e.isEmpty() || e == null) {
             return null;
         } else {
-            System.out.println("regresa la lista _ " + l.size());
-            return l;
+            return e;
         }
     }
 
     @Override
     public List<EvaluacionEstudioEgresadosResultados> getResultadosPorSilgas(String siglas) {
         System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultadosPorSilgas() las siglas que entran son : " + siglas);
-        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r4 = :siglas", EvaluacionEstudioEgresadosResultados.class);
-        q.setParameter("siglas", siglas);
-        List<EvaluacionEstudioEgresadosResultados> l = q.getResultList();
-        if (l.isEmpty() || l == null) {
+        List<EvaluacionEstudioEgresadosResultados> r = new ArrayList<>();
+        r= em.createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r4 = :siglas", EvaluacionEstudioEgresadosResultados.class)
+                .setParameter("siglas", siglas)
+                .getResultList();
+
+        if (r.isEmpty() || r == null) {
             return null;
         } else {
-            return l;
+            return r;
         }
     }
 
     @Override
     public List<EvaluacionEstudioEgresadosResultados> getResultadosEvActiva(Integer evaluacion) {
-        System.out.println("Evalaucion a buscar" + evaluacion);
-        TypedQuery<EvaluacionEstudioEgresadosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.evaluacionEstudioEgresadosResultadosPK.evaluacion=:evaluacion", EvaluacionEstudioEgresadosResultados.class);
-        q.setParameter("evaluacion", evaluacion);
-        List<EvaluacionEstudioEgresadosResultados> l = new ArrayList<>();
-        l = q.getResultList();
-        System.out.println("Tamaño de la lista en ejb de resultados de la evaluacion activa"+l.size());
-        if (l.isEmpty() || l == null) {
+        List<EvaluacionEstudioEgresadosResultados> e = new ArrayList<>();
+        e = em.createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.evaluacionEstudioEgresadosResultadosPK.evaluacion=:evaluacion", EvaluacionEstudioEgresadosResultados.class)
+                .setParameter("evaluacion", evaluacion)
+                .getResultList();
+
+        System.out.println("Tamaño de la lista en ejb de resultados de la evaluacion activa"+e.size());
+        if (e.isEmpty() || e == null) {
             return new ArrayList<>();
         } else {
-            return l;
+            return e;
         }
     }
 
     @Override
     public Alumnos procedimiento(String matricula) {
         Short grado = 6;
-        List<Alumnos> a = f2.getEntityManager()
+
+        List<Alumnos> a = em2
                 .createQuery("select a from Alumnos as a "
                         + "inner join Grupos as g on a.grupos.gruposPK.cveGrupo = g.gruposPK.cveGrupo "
                         + "where g.gruposPK.cvePeriodo = :periodo and (a.cveStatus = :estatus1 or a.cveStatus = :estatus2) and a.matricula = :matricula and a.gradoActual = :grado", Alumnos.class)
