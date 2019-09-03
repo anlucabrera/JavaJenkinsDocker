@@ -215,4 +215,11 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
 //        System.out.println("valor = " + valor);
 //        System.out.println("rol.getCalificacionMap() = " + rol.getCalificacionMap());
     }
+
+    /*public String generarIdTabla(DtoUnidadConfiguracion dtoUnidadConfiguracion){//
+//        System.out.println("dtoUnidadConfiguracion = " + dtoUnidadConfiguracion);
+//        System.out.println("dtoUnidadConfiguracion.getUnidadMateriaConfiguracion() = " + dtoUnidadConfiguracion.getUnidadMateriaConfiguracion());
+//        System.out.println("dtoUnidadConfiguracion.getUnidadMateriaConfiguracion().getConfiguracion() = " + dtoUnidadConfiguracion.getUnidadMateriaConfiguracion().getConfiguracion());
+        return "tbl".concat(dtoUnidadConfiguracion.getUnidadMateriaConfiguracion().getConfiguracion().toString());
+    }*/
 }
