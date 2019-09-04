@@ -4,9 +4,11 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
 
 @RequiredArgsConstructor
 public enum ControlEscolarVistaControlador {
+    
     ASIGNACION_ACADEMICA("/controlEscolar/director/asignacion_academica.xhtml", AsignacionAcademicaDirector.class),
     CAPTURA_CALIFICACIONES("/controlEscolar/docente/captura_calificaciones.xhtml", CapturaCalificacionesDocente.class),
     REINCORPORACION("/controlEscolar/se/reincorporaciones.xhtml", ReincorporacionServiciosEscolares.class),
@@ -18,7 +20,8 @@ public enum ControlEscolarVistaControlador {
     CONFIGURACION_UNIDAD_MATERIA("/controlEscolar/docente/configuracionUnidadMateria.xhtml", ConfiguracionUnidadMateriaDocente.class),
     REPORTE_PLANEACION_CUATRIMESTRAL("/controlEscolar/docente/planeacionCuatrimestral.xhtml", PlaneacionCuatrimestralImpresion.class),
     PERMISO_APERTURA_EXTEMPORANEA("/controlEscolar/pye/permisoAperturaExtemporanea.xhtml", PermisoAperturaExtemporaneaAdministrador.class),
-    PASE_DE_LISTA("/controlEscolar/docente/paseLista.xhtml", PaseListaDoc.class);
+    PASE_DE_LISTA("/controlEscolar/docente/paseLista.xhtml", PaseListaDoc.class),
+    REPORTE_BECAS("/becas/reporteBecas.xhtml", reporteBecas.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
 }
