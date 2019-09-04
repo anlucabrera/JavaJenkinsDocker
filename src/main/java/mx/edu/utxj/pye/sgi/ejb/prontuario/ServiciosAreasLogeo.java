@@ -72,7 +72,6 @@ public class ServiciosAreasLogeo implements EjbAreasLogeo {
 
     @Override
     public AreasUniversidad mostrarAreasUniversidad(Short areaId) throws Throwable {
-        facade.setEntityClass(AreasUniversidad.class);
         AreasUniversidad pr = em.find(AreasUniversidad.class, areaId);
         if (pr == null) {
             return null;

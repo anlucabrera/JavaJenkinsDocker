@@ -271,21 +271,21 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
 
     @Override
     public List<MenuDinamico> mostrarListaMenu(ListaPersonal personal, Integer nivel, String titulo, String tipoUsuario) {
-        TypedQuery<MenuDinamico> q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%',:personas,'%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tipoUsuario=:tipoUsuario", MenuDinamico.class);
+        TypedQuery<MenuDinamico> q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tipoUsuario=:tipoUsuario", MenuDinamico.class);
         switch (nivel) {
             case 1:
-                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%',:personas,'%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel2!='' AND m.tipoUsuario=:tipoUsuario GROUP BY m.tituloNivel1", MenuDinamico.class);
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel2!='' AND m.tipoUsuario=:tipoUsuario GROUP BY m.tituloNivel1", MenuDinamico.class);
                 break;
             case 2:
-                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%',:personas,'%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel1=:tituloNivel1 AND m.tituloNivel2!='' AND m.tipoUsuario=:tipoUsuario GROUP BY m.tituloNivel2", MenuDinamico.class);
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel1=:tituloNivel1 AND m.tituloNivel2!='' AND m.tipoUsuario=:tipoUsuario GROUP BY m.tituloNivel2", MenuDinamico.class);
                 q.setParameter("tituloNivel1", titulo);
                 break;
             case 3:
-                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%',:personas,'%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel2=:tituloNivel2 AND m.titulonivel3!='' AND m.tipoUsuario=:tipoUsuario GROUP BY m.titulonivel3", MenuDinamico.class);
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel2=:tituloNivel2 AND m.titulonivel3!='' AND m.tipoUsuario=:tipoUsuario GROUP BY m.titulonivel3", MenuDinamico.class);
                 q.setParameter("tituloNivel2", titulo);
                 break;
             case 4:
-                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%',:personas,'%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.titulonivel3=:titulonivel3 AND m.titulonivel4!='' AND m.tipoUsuario=:tipoUsuario", MenuDinamico.class);
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.titulonivel3=:titulonivel3 AND m.titulonivel4!='' AND m.tipoUsuario=:tipoUsuario", MenuDinamico.class);
                 q.setParameter("titulonivel3", titulo);
                 break;
         }
