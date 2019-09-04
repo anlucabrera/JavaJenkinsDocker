@@ -120,7 +120,7 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
 
     @Override
     public void actualizarRespuestaPorPregunta(EvaluacionEstudioEgresadosResultados resultado, String pregunta, String respuesta) {
-        System.out.println("EJB ::: ==>>Pregunta : " + pregunta + ", respueta : " + respuesta);
+        //System.out.println("EJB ::: ==>>Pregunta : " + pregunta + ", respueta : " + respuesta);
         switch (pregunta.trim()) {
             // case"p0001":resultado.setR1(respuesta);break;
             case"p0001":resultado.setR1(respuesta);break;

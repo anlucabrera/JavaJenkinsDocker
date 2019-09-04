@@ -105,7 +105,7 @@ public class EstudioEgresados implements Serializable {
                 }
             } catch (Exception e) {
                 cargada = false;
-                System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionControlInterno.init() e: " + e.getMessage());
+                //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionControlInterno.init() e: " + e.getMessage());
             }
         } else if (logonMB.getUsuarioTipo() == UsuarioTipo.INVITADO) {
             Messages.addGlobalInfo("Bienvenido usuario invitado, esta es la evaluacion de estudio a egresados");
@@ -153,7 +153,7 @@ public class EstudioEgresados implements Serializable {
         }else{
         valor = e.getNewValue().toString();
         }
-        System.out.println("id->" + origen + " Valor" + valor);
+        //System.out.println("id->" + origen + " Valor" + valor);
         ejb.actualizarRespuestaPorPregunta(resultados, origen.getId(), valor);
         finalizado = ejb.actualizarResultado(resultados);
         
@@ -226,7 +226,7 @@ public class EstudioEgresados implements Serializable {
             }
         });
 
-        System.err.println("la lista final contiene : " + listaResultadosReporte.size());
+        //System.err.println("la lista final contiene : " + listaResultadosReporte.size());
 //                if (listaResultadosReporte == null || listaResultadosReporte.isEmpty()) {
 //                    listaResultadosReporte.clear();
 //                    Messages.addGlobalInfo("No se encontraron registros de este estudio, si considera esto un error contacte con el administador ");
@@ -245,7 +245,7 @@ public class EstudioEgresados implements Serializable {
                 iniciada = false;
                 Messages.addGlobalWarn("Ocurrio un error inesperado, contacte con un administrador");
             } else {
-                System.err.println("Los resultados son : " + resultados);
+                //System.err.println("Los resultados son : " + resultados);
                 iniciada = true;
             }
         }
@@ -271,7 +271,7 @@ public class EstudioEgresados implements Serializable {
                 
                 Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
                 completo = comparador.isCompleto(resultados);
-                System.err.println("el resultado esta completo ? : " + completo);
+                //System.err.println("el resultado esta completo ? : " + completo);
                 finalizado = ejb.actualizarResultado(resultados);
                 if (resultados == null) {
                     sinRespuestas = true;

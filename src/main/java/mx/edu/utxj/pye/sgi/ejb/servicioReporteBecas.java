@@ -50,7 +50,7 @@ public class servicioReporteBecas implements EjbReporteBecas {
     @Override
     public ResultadoEJB<List<BecasPeriodosEscolares>> getBecasbyPeriodo(PeriodosEscolares periodo) {
         try{
-            System.err.println("Periodo que recibe en ejb"+ periodo.getPeriodo());
+            //System.err.println("Periodo que recibe en ejb"+ periodo.getPeriodo());
             List<BecasPeriodosEscolares> registroBecas = new ArrayList<>();
             //TODO: Comprueba que el periodo no venga nulo
             if(periodo==null){return ResultadoEJB.crearErroneo(2,registroBecas,"El periodo no debe ser nulo");}

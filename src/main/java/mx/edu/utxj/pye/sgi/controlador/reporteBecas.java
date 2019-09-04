@@ -68,21 +68,21 @@ public class reporteBecas extends ViewScopedRol{
     }
     //TODO: Obtiene la lista general de registros de becas, segun el periodo que seleccionó
     public void obReporteGeneralBecas(){
-        System.err.println("--->Entro a reporte general Periodo ->" + periodo);
+        //System.err.println("--->Entro a reporte general Periodo ->" + periodo);
         listRegistroBecas= new ArrayList<>();
         reporteBecas = new ArrayList<>();
         ResultadoEJB<List<BecasPeriodosEscolares>> resRegistroBecas = ejbReporteBecas.getBecasbyPeriodo(periodo);
         if(resRegistroBecas.getCorrecto()==true){
-            System.err.println("Entro a correcto en becas!");
+            //System.err.println("Entro a correcto en becas!");
             listRegistroBecas = resRegistroBecas.getValor();
-            System.err.println("Registros -..>" + listRegistroBecas);
+           // System.err.println("Registros -..>" + listRegistroBecas);
             //TODO: Recorre la lista para determinar si el estudiante esta registrado en Sauiit o en Control Escolar
             listRegistroBecas.forEach(e->{
                 //TODO: Debe comprobar si el estudiante esta registrado en Sauiit o en Control escolar
                 estudiante = new dtoReporteBecas();
                 estudiante = getEstudiante(periodo, e.getMatriculaPeriodosEscolares().getMatricula());
-                System.err.println("Estudiante ->" + estudiante);
-                System.err.println("Matricula ->" + e.getMatriculaPeriodosEscolares().getMatricula());
+                //System.err.println("Estudiante ->" + estudiante);
+                //System.err.println("Matricula ->" + e.getMatriculaPeriodosEscolares().getMatricula());
                 //TODO:Se busca el tipo de beca
                 ResultadoEJB<BecaTipos> resTipoBeca = ejbReporteBecas.getTipoBecabyClave((int) e.getBeca());
                 if(resTipoBeca.getCorrecto()==true){
@@ -127,18 +127,19 @@ public class reporteBecas extends ViewScopedRol{
                 System.err.println("Area " + resArea.getValor());
             }else{mostrarMensajeResultadoEJB(resArea);}
             //TODO: Se obtiene al director
-            ResultadoEJB<Personal> resDirector = ejbReporteBecas.getDirectorArea(resArea.getValor());
+            /*ResultadoEJB<Personal> resDirector = ejbReporteBecas.getDirectorArea(resArea.getValor());
             if(resDirector.getCorrecto()==true){
                     dto.setDirector(resDirector.getValor());
                     System.err.println("DIRECTOR "+ resArea.getValor());
             }else{mostrarMensajeResultadoEJB(resDirector);}
+            */
             
         }else{
         //TODO: Busca al estudiante en CE
         ResultadoEJB<EstudiantesPye> resCE= ejbReporteBecas.getEstudiantesCEbyPeriodo(matricula);
         if(resCE.getCorrecto()==true){
             estudianteCE = resCE.getValor();
-            System.err.println("El estudiante está en CE");
+            //System.err.println("El estudiante está en CE");
             //TODO: Llenar dto
              dto.setNombreC(estudianteCE.getNombre()+ " " + estudianteCE.getAPaterno() + " " + estudianteCE.getAMaterno());
             dto.setMatricula(estudianteCE.getMatricula());
@@ -151,11 +152,13 @@ public class reporteBecas extends ViewScopedRol{
             if(resArea.getCorrecto()==true){
                 dto.setCarrera(resArea.getValor());
             }else{mostrarMensajeResultadoEJB(resArea);}
+            /*
             //TODO: Se obtiene al director
             ResultadoEJB<Personal> resDirector = ejbReporteBecas.getDirectorArea(resArea.getValor());
             if(resDirector.getCorrecto()==true){
                     dto.setDirector(resDirector.getValor());
             }else{mostrarMensajeResultadoEJB(resDirector);}
+            */
         }else{
         Messages.addGlobalWarn("El estudiante no esta registrado en ninguna base");    
             }

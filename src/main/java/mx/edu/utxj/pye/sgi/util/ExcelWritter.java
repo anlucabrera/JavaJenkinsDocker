@@ -266,15 +266,19 @@ public class ExcelWritter implements Serializable {
 
     public void escribirLibro() {
         try {
+            String generador = "0";
+            switch (tipo){
+                case EVALUACION_360: generador = "personal"; break;
+                case EVALUACION_DESEMPENIO: directivo.getClave().toString(); break;
+            }
             base = ServicioArchivos.carpetaRaiz
                     .concat("cedulas").concat(File.separator)
                     .concat(evaluacion.toString()).concat(File.separator)
                     .concat(tipo.name()).concat(File.separator)
-                    .concat(directivo.getClave().toString()).concat(File.separator);
+                    .concat(generador).concat(File.separator);
 
             ServicioArchivos.addCarpetaRelativa(base);
             salida = nombre;
-            System.out.println("base.concat(salida) = " + base.concat(salida));
             ServicioArchivos.eliminarArchivo(base.concat(salida));
 
             out = new FileOutputStream(new File(base.concat(salida)));

@@ -224,6 +224,8 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
     @Override
     public void cargarResultadosAlmacenados(Evaluaciones360 evaluacion, ListaPersonal directivo, List<ListaPersonal> subordinados) {
         try {
+            if (subordinados == null || subordinados.isEmpty()) {return;
+            }
             List<Integer> claves = new ArrayList<>();
             subordinados.forEach((lp) -> {
                 claves.add(lp.getClave());
