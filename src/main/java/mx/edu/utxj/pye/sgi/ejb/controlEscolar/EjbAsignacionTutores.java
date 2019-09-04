@@ -63,14 +63,7 @@ public class EjbAsignacionTutores {
             return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbAsignacionTutores.validarDirector)", e, null);
         }
     }
-    
-    public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDireccion(Integer clave){
-        try{
-            return ejbAsignacionAcademica.validarEncargadoDireccion(clave);
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbAsignacionTutores.validarEncargadoDireccion)", e, null);
-        }
-    }
+
     
     public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDireccion(Integer clave){
         try{

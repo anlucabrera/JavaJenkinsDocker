@@ -578,12 +578,12 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
 
     @Override
     public Alumnos procedimiento(String matricula) {
-        Short grado = 11;
+        Short grado =6;
         List<Alumnos> a = f2.getEntityManager()
                 .createQuery("select a from Alumnos as a "
                         + "inner join Grupos as g on a.grupos.gruposPK.cveGrupo = g.gruposPK.cveGrupo "
                         + "where g.gruposPK.cvePeriodo = :periodo and (a.cveStatus = :estatus1 or a.cveStatus = :estatus2) and a.matricula = :matricula and a.gradoActual = :grado", Alumnos.class)
-                .setParameter("periodo", 44)
+                .setParameter("periodo", 51)
                 .setParameter("estatus1", 1)
                 .setParameter("estatus2", 6)
                 .setParameter("matricula", matricula)

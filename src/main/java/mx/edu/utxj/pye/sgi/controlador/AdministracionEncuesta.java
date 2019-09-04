@@ -54,6 +54,9 @@ public class AdministracionEncuesta implements Serializable{
                         dto.esServEst = true;
                         aperturarEncuestas();
                     }
+                    if(logonMB.getPersonal().getAreaOperativa() == 11 && dto.usuarioNomina.equals(111)){
+                        dto.esServEst2 = true;
+                    }
                     if(!ejbAdmEncuesta.estTutordeGrupo(dto.cveTrabajador).isEmpty()){
                         dto.tutor = true;
                         aperturarEncuestas();

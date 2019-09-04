@@ -179,6 +179,9 @@
                         </li>
                     </c:if>
 
+
+
+
                     <!--Directivos/Directores de carrera-->
 
                     <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera}"><li><p:link href="/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Administración de evaluaciones</span></p:link></li></c:if>
@@ -197,6 +200,13 @@
                     <li><p:link href="/capitalHumano/perfilEmpleadoEvaluaciones.xhtml"><i class="fa fa-exclamation"></i><span>Resultados de evaluaciones</span></p:link></li>
                 </ul>
             </li>
+            <!-- Seccion de becas para Servicios Estudiantiles -->
+            <c:if test="#{administracionEncuesta.dto.esServEst2 or administracionEncuesta.dto.director}">
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Seguimiento de becas</li>
+                <li><p:link href="/becas/reporteBecas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte Becas</span></p:link></li>
+            </c:if>
+
+
             <!-- condicional para que se carge el menu de planeaciones cuatrimestrales -->
             <c:if test="#{planeacionCuatrimestral.activa}">
                 <c:if test="#{((controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29) and controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2) or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
