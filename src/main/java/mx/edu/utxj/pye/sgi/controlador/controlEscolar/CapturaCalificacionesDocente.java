@@ -57,10 +57,19 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
 //        System.out.println("resAcceso = " + resAcceso);
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
+        ResultadoEJB<Boolean> resVerificarCargasExistentes = ejb.verificarCargasExistentes(resAcceso.getValor().getEntity());
+        System.out.println("resVerificarCargasExistentes = " + resVerificarCargasExistentes);
+        if(!resAcceso.getCorrecto()){mostrarMensajeResultadoEJB(resAcceso);return;}
+
         rol = new CapturaCalificacionesRolDocente(resAcceso.getValor());
 
-        tieneAcceso = rol.tieneAcceso(rol.getDocenteLogueado());
+        tieneAcceso = rol.tieneAcceso(rol.getDocenteLogueado()) && resVerificarCargasExistentes.getValor();
 //        System.out.println("tieneAcceso = " + tieneAcceso);
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+        if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
+        if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
         ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDocenteLogueado());
 //        System.out.println("resEvento = " + resEvento);
@@ -69,15 +78,12 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         if(!resEvento.getCorrecto()) {
             resUnidades = ejb.getUnidadesEnEvaluacion(rol.getDocenteLogueado());
 //            System.out.println("resUnidades = " + resUnidades);
-            if(!resUnidades.getCorrecto()){ tieneAcceso = false;return;}
+//            if(!resUnidades.getCorrecto()){ tieneAcceso = false;return;}
         }//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
         ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosConCaptura(rol.getDocenteLogueado());
 //        System.out.println("resPeriodos = " + resPeriodos);
-        if(!resPeriodos.getCorrecto()) {mostrarMensajeResultadoEJB(resPeriodos); tieneAcceso = false;}
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-        if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
-        if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
-        if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+//        if(!resPeriodos.getCorrecto()) {mostrarMensajeResultadoEJB(resPeriodos); tieneAcceso = false;}
+
         if(!resEvento.getCorrecto() && (resUnidades!= null && !resUnidades.getCorrecto())) mostrarMensajeResultadoEJB(resEvento);
         rol.setNivelRol(NivelRol.OPERATIVO);
 

@@ -62,6 +62,26 @@ public class EjbCapturaCalificaciones {
     }
 
     /**
+     * Permite comprobar si el docente tiene el menos una carga académica para poder determinar si puede consultar o registrar calificaciones
+     * @param docente DTO del docente logueado
+     * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
+     */
+    public ResultadoEJB<Boolean> verificarCargasExistentes(PersonalActivo docente){
+        try{
+            //
+            CargaAcademica cargaAcademica = em.createQuery("select ca from CargaAcademica ca where ca.docente=:docente", CargaAcademica.class)
+                    .setParameter("docente", docente.getPersonal().getClave())
+                    .setMaxResults(1)
+                    .getResultStream()
+                    .findAny()
+                    .orElse(null);
+            return ResultadoEJB.crearCorrecto(cargaAcademica != null, "Se comprobó si el docente tiene al menos una carga académica");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
+
+    /**
      * Permite vertificar si hay un evento de captura de calificaciones activo para el docente
      * @param docente Instacia del docente validado
      * @return Regresa el evento escolar detectado para el docente o código de error de lo contrario

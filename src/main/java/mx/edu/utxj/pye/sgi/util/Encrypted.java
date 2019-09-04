@@ -19,6 +19,8 @@ public class Encrypted {
     private final static String alg = "AES";
     // Definición del modo de cifrado a utilizar
     private final static String cI = "AES/CBC/PKCS5Padding";
+    public final static String KEY = "92AE31A79FEEB2A3";
+    public final static String IV = "0123456789ABCDEF";
     
     public static String encrypt(String key, String iv, String cleartext) throws Exception {
             Cipher cipher = Cipher.getInstance(cI);

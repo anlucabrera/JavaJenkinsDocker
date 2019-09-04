@@ -112,7 +112,6 @@
                                                                 <p:column rowspan="2" headerText="Caso crítico" style="width: 80px;" />
                                                                 <p:columns var="criterio" value="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidad(unidadConfiguracion)}" colspan="#{unidadConfiguracion.unidadMateriaConfiguracionDetalles[criterio].size()}" headerText="#{criterio.criterio}. #{criterio.tipo}" />
                                                                 <p:column rowspan="2" headerText="Promedio" style="width: 80px;" />
-                                                                <p:column rowspan="2" headerText="Remedial" style="width: 80px;" />
                                                             </p:row>
                                                             <p:row>
                                                                 <c:forEach var="criterio" items="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidad(unidadConfiguracion)}">
@@ -126,12 +125,12 @@
                                                         <c:forEach var="criterio" items="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidad(unidadConfiguracion)}">
                                                             <c:forEach var="detalle" items="#{unidadConfiguracion.unidadMateriaConfiguracionDetalles[criterio]}">
                                                                 <p:column>
-                                                                    <c:if test="#{!unidadConfiguracion.activaPorFecha}">
+                                                                    <c:if test="#{!(unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea)}">
                                                                         <h:outputText value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.valor}" >
                                                                             <f:convertNumber pattern="0.##" type="number" />
                                                                         </h:outputText>
                                                                     </c:if>
-                                                                    <c:if test="#{unidadConfiguracion.activaPorFecha}">
+                                                                    <c:if test="#{unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea}">
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
                                                                                        valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}"
                                                                                        inputStyle="text-align: center;" minValue="1" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
@@ -146,7 +145,6 @@
                                                         <p:column>
                                                             <p:outputLabel styleClass="promedio" value="#{estudiante.promedio}"><f:convertNumber type="number" pattern="#.##" /></p:outputLabel>
                                                         </p:column>
-                                                        <p:column>0</p:column>
                                                     </p:dataTable>
                                                 </c:forEach>
                                             </p:outputPanel>

@@ -177,8 +177,20 @@ public class EjbPacker {
                 if(detalleListMap.containsKey(detalle.getCriterio())) detalleListMap.get(detalle.getCriterio()).add(detalle);
             });
             Boolean activaPorFecha = DateUtils.isBetween(new Date(), unidadMateriaConfiguracionBD.getFechaInicio(), unidadMateriaConfiguracionBD.getFechaFin());
+            PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad", PermisosCapturaExtemporaneaGrupal.class)
+                    .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                    .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
+                    .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
+                    .setParameter("unidad", unidadMateria.getIdUnidadMateria())
+                    .getResultStream()
+                    .findAny()
+                    .orElse(null);
+//            System.out.println("EjbPacker.packUnidadConfiguracion");
+//            System.out.println("unidadMateria = " + unidadMateria);
+//            System.out.println("permiso = " + permiso);
+            Boolean activaPorPermiso = permiso != null;
 
-            DtoUnidadConfiguracion dto = new DtoUnidadConfiguracion(unidadMateria, unidadMateriaConfiguracionBD, detalleListMap, dtoCargaAcademica, activaPorFecha);
+            DtoUnidadConfiguracion dto = new DtoUnidadConfiguracion(unidadMateria, unidadMateriaConfiguracionBD, detalleListMap, dtoCargaAcademica, activaPorFecha, activaPorPermiso);
             return ResultadoEJB.crearCorrecto(dto, "Configuración de unidad empaquetada");
         }catch (Exception e){
             e.printStackTrace();
