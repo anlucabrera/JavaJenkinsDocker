@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -21,12 +20,12 @@ import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaEncuestaServicios;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
 @Stateless
@@ -595,25 +594,18 @@ public class EjbEncuestaServicios implements Serializable {
      * @return Devuelve un objeto de Alumnos que se encuetra en la tabla misma.
      */
     public Alumnos obtenerAlumnos(String matricula) {
-        //Short grado = 11;
-        TypedQuery<Periodos> periodoAct = f2.getEntityManager().createQuery("SELECT p FROM Periodos AS p",Periodos.class);
-        List<Periodos> periodos = periodoAct.getResultList();
-        periodos.stream().forEach(x -> {
-            Boolean activo = true;
-            Boolean acv = x.getActivo().equals(true);
-            if (activo.equals(acv)) {
-                periodo = x.getPeriodosPK().getCvePeriodo();
-            }
-        });
+         f.getEntityManager().createQuery("select v from VariablesProntuario as v", VariablesProntuario.class).getResultStream()
+                 .collect(Collectors.toList()).stream().filter(a -> a.getNombre().equals("periodoEncuestaServicios"))
+                 .forEach(x -> {periodo = Integer.parseInt(x.getValor());});
         TypedQuery<Alumnos> q = f2.getEntityManager()
                 .createQuery("SELECT a from Alumnos a " 
                         + "WHERE a.matricula=:matricula AND "
-                        + "a.cveStatus = :estatus AND "
-                        + "a.grupos.gruposPK.cvePeriodo = :periodo", Alumnos.class);
-                        //+ "a.gradoActual = :grado", Alumnos.class);
+                        + "(a.cveStatus = :estatus or a.cveStatus =:estatus2) AND "
+                        + "(a.grupos.gruposPK.cvePeriodo = :periodo or a.grupos.gruposPK.cvePeriodo =:periodo1)", Alumnos.class);
         q.setParameter("estatus", 1);
+        q.setParameter("estatus2", 6);
         q.setParameter("periodo", periodo);
-        //q.setParameter("grado", grado);
+        q.setParameter("periodo1", periodo - 1);
         q.setParameter("matricula", matricula);
         List<Alumnos> l = q.getResultList();
         if(!l.isEmpty()){
