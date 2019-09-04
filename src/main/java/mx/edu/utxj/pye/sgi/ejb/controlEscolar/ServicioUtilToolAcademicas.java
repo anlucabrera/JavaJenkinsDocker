@@ -81,7 +81,7 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
 
     @Override
     public void eliminaGrupo(Grupo grupo) {
-        facadeCE.remove(grupo);
+        em.remove(grupo);
         facadeCE.flush();
     }
 
