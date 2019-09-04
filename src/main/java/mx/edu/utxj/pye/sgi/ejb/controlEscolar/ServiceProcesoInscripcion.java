@@ -183,25 +183,25 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 estudiante.setCarrera(gps.getIdPe());
                 estudiante.setTipoEstudiante(tipoEstudiante);
                 estudiante.setOpcionIncripcion(opcionIns);
-                em.persist(estudiante);
+                em.merge(estudiante);
                 facadeCE.flush();
                 documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());
                 if(documentosentregadosestudiante.getEstudiante() == null){
                     em.persist(documentosentregadosestudiante);
                 }else{
-                    em.persist(documentosentregadosestudiante);
+                    em.merge(documentosentregadosestudiante);
                 } 
             }else{
                 estudiante.setCarrera(gps.getIdPe());
                 estudiante.setOpcionIncripcion(opcionIns);
                 estudiante.setCarrera(estudiante.getGrupo().getIdPe());
-                em.persist(estudiante);
+                em.merge(estudiante);
                 facadeCE.flush();
                 documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());
                 if(documentosentregadosestudiante.getEstudiante() == null){
                     em.persist(documentosentregadosestudiante);
                 }else{
-                    em.persist(documentosentregadosestudiante);
+                    em.merge(documentosentregadosestudiante);
                 }
             }
         }
@@ -391,7 +391,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     @Override
     public void actualizaEstudiante(Estudiante estudiante) {
         facadeCE.setEntityClass(Estudiante.class);
-        em.persist(estudiante);
+        em.merge(estudiante);
         facadeCE.flush();
     }
 

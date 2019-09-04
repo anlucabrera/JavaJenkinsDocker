@@ -215,7 +215,7 @@ public class EjbReincorporacion {
                 case ACTUALIZAR:
                     //actualizar datos personales
                         datosPer = persona;
-                        em.persist(datosPer);
+                        em.merge(datosPer);
                         return ResultadoEJB.crearCorrecto(null, "Los datos personales se han actualizado correctamente.");
 
                     default:
@@ -253,7 +253,7 @@ public class EjbReincorporacion {
                 case ACTUALIZAR:
                     //actualizar datos personales
                     datosMedicos1 = datosMedicos;
-                    em.persist(datosMedicos1);
+                    em.merge(datosMedicos1);
                     return ResultadoEJB.crearCorrecto(null, "Los datos personales se han actualizado correctamente.");
 
                 default:
@@ -292,7 +292,7 @@ public class EjbReincorporacion {
                 case ACTUALIZAR:
                     //actualizar datos personales
                     medioComunicacion = mc;
-                    em.persist(medioComunicacion);
+                    em.merge(medioComunicacion);
                     return ResultadoEJB.crearCorrecto(null, "Los datos personales se han actualizado correctamente.");
 
                 default:
@@ -353,7 +353,7 @@ public class EjbReincorporacion {
                     }
                 case ACTUALIZAR:
                     dm1 = dm;
-                    em.persist(dm1);
+                    em.merge(dm1);
                     return ResultadoEJB.crearCorrecto(null, "La informacion ha sido actualizada con éxito");
                     default:
                         return ResultadoEJB.crearErroneo(6, "Operación no autorizada", Domicilio.class);
@@ -383,7 +383,7 @@ public class EjbReincorporacion {
                     }
                 case ACTUALIZAR:
                     da1 = da;
-                    em.persist(da1);
+                    em.merge(da1);
                     return ResultadoEJB.crearCorrecto(null, "La información ha sido actualizada con éxito");
                     default:
                         return ResultadoEJB.crearErroneo(6,"Operación no autorizada", DatosAcademicos.class);

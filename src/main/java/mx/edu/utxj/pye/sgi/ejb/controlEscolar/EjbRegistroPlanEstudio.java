@@ -189,7 +189,7 @@ public class EjbRegistroPlanEstudio {
                     f.flush();
                     return ResultadoEJB.crearCorrecto(planEstudio, "Se registró correctamente el Plan Estudio");
                 case ACTUALIZAR:
-                    em.persist(planEstudio);
+                    em.merge(planEstudio);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(planEstudio, "Se actualizo correctamente el Plan Estudio");
                 case ELIMINAR:
@@ -228,7 +228,7 @@ public class EjbRegistroPlanEstudio {
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmr.getMateria(), "Se registró correctamente La Matertia");
                 case ACTUALIZAR:
-                    em.persist(dmr.getMateria());
+                    em.merge(dmr.getMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmr.getMateria(), "Se actualizo correctamente La Matertia");
                 case ELIMINAR:
@@ -265,7 +265,7 @@ public class EjbRegistroPlanEstudio {
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmu.getUnidadMateria(), "Se registró correctamente La Unidad Materia");
                 case ACTUALIZAR:
-                    em.persist(dmu.getUnidadMateria());
+                    em.merge(dmu.getUnidadMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmu.getUnidadMateria(), "Se actualizo correctamente La Unidad Materia");
                 case ELIMINAR:
@@ -307,7 +307,7 @@ public class EjbRegistroPlanEstudio {
                     f.flush();
                     return ResultadoEJB.crearCorrecto(estudioMateria, "Se registró correctamente la materia");
                 case ACTUALIZAR:
-                    em.persist(estudioMateria);
+                    em.merge(estudioMateria);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(estudioMateria, "Se actualizo correctamente la materia");
                 case ELIMINAR:
@@ -336,15 +336,15 @@ public class EjbRegistroPlanEstudio {
                     dpemc.getPlanEstudioMateria().getCompetenciaList().add(dpemc.getCompetenciaNewR());
                     em.persist(dpemc.getCompetenciaNewR());
                     dpemc.getCompetenciaNewR().getPlanEstudioMateriaList().add(dpemc.getPlanEstudioMateria());
-                    em.persist(dpemc.getPlanEstudioMateria());
+                    em.merge(dpemc.getPlanEstudioMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dpemc.getCompetencia(), "Se registró correctamente la competencia");
                 case ACTUALIZAR:
                     dpemc.getCompetencia().setPlanEstudios(dpemc.getPlanEstudio());
                     dpemc.getPlanEstudioMateria().getCompetenciaList().add(dpemc.getCompetencia());
                     dpemc.getCompetencia().getPlanEstudioMateriaList().add(dpemc.getPlanEstudioMateria());
-                    em.persist(dpemc.getCompetencia());
-                    em.persist(dpemc.getPlanEstudioMateria());
+                    em.merge(dpemc.getCompetencia());
+                    em.merge(dpemc.getPlanEstudioMateria());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dpemc.getCompetencia(), "Se actualizo correctamente la materia");
                 case ELIMINAR:

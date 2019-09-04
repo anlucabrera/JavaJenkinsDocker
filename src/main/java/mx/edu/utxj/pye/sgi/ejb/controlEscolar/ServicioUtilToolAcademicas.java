@@ -60,7 +60,7 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
             em.persist(grupoNew);
             facadeCE.flush();
             facadeCE.setEntityClass(Grupo.class);
-            em.persist(grupoNew);
+            em.merge(grupoNew);
             facadeCE.flush();
         }
     }
@@ -75,7 +75,7 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
     @Override
     public void actualizaGrupo(Grupo grupo) {
         facadeCE.setEntityClass(Grupo.class);
-        em.persist(grupo);
+        em.merge(grupo);
         facadeCE.flush();
     }
 

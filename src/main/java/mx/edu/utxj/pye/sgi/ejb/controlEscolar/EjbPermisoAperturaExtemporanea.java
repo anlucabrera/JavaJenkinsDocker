@@ -430,7 +430,7 @@ public class EjbPermisoAperturaExtemporanea {
     
     public void actualizarPermisoCaptura(DtoPermisoCapturaExtemporanea dtoPermisoCapturaExtemporanea) {
         f.setEntityClass(PermisosCapturaExtemporaneaGrupal.class);
-        em.persist(dtoPermisoCapturaExtemporanea.getPermisosCapturaExtemporaneaGrupal());
+        em.merge(dtoPermisoCapturaExtemporanea.getPermisosCapturaExtemporaneaGrupal());
         f.flush();
     }
 }
