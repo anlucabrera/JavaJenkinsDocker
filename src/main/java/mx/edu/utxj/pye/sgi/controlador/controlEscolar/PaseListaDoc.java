@@ -2,6 +2,9 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import lombok.Getter;
@@ -33,6 +36,8 @@ import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGraficaCronograma;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporte;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporteConsulta;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ImpresionPlaneacionCuatrimestral;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.PaseDeListaDocente;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
@@ -219,11 +224,52 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     }
     
     public void consultarReporte(ValueChangeEvent event) {
-        ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio(), rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio(), rol.getCarga().getCargaAcademica());
-//        System.err.println("existeAsignacion - res " + res.getValor().size());
-        rol.setAsistenciasacademicases(new ArrayList<>());
-        if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
-            rol.setAsistenciasacademicases(res.getValor());
+        rol.setDtoConfUniMat((DtoConfiguracionUnidadMateria)event.getNewValue());
+        createDynamicColumns();
+    }
+    
+    private void createDynamicColumns() {
+        rol.setDtoPaseListaReporteConsultas(new ArrayList<>());
+        rol.getListaalumnoscas().forEach((a) -> {
+//            rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio()
+//            rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio()
+            ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getCarga().getCargaAcademica(),a.getMatricula());
+            if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
+                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(a, res.getValor()));
+            }
+        });
+        DateFormat df=new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        rol.setVALID_COLUMN_KEYS(new ArrayList<>());
+        rol.getVALID_COLUMN_KEYS().add("Matricula");
+        rol.getVALID_COLUMN_KEYS().add("Nombre");
+        ResultadoEJB<List<Asistenciasacademicas>> resF = ejb.buscarAsistenciasacademicasFechasMes(rol.getCarga().getCargaAcademica());
+        
+        rol.setColumnTemplate("Matricula/Nombre");
+        if (resF.getValor().size() > 0 && !resF.getValor().isEmpty()) {
+            resF.getValor().forEach((t) -> {
+                rol.setColumnTemplate(rol.getColumnTemplate()+"/"+df.format(t.getAsistencia().getFechaHora()));
+                rol.getVALID_COLUMN_KEYS().add(df.format(t.getAsistencia().getFechaHora()));
+            });
         }
+        
+        rol.setDplsReportes(new ArrayList<>());
+        String[] columnKeys = rol.getColumnTemplate().split("/");        
+        rol.getDtoPaseListaReporteConsultas().forEach((t) -> {
+            for (String columnKey : columnKeys) {
+                String key = columnKey.trim();
+                if(key.equals("Matricula")){
+                    rol.getDplsReportes().add(new DtoPaseListaReporte(columnKey.toUpperCase(), String.valueOf(t.getListaalumnosca().getMatricula())));
+                } else if (key.equals("Nombre")) {
+                    rol.getDplsReportes().add(new DtoPaseListaReporte(columnKey.toUpperCase(), t.getListaalumnosca().getEsApePat() + " " + t.getListaalumnosca().getEsApeMat() + " " + t.getListaalumnosca().getEsNombre()));
+                } else {
+                    Integer p = 0;
+                    for (Integer i = columnKeys.length; i > 2; i--) {
+                        Asistenciasacademicas a= t.getAsistenciasacademicases().get(p);
+                        rol.getDplsReportes().add(new DtoPaseListaReporte(columnKey.toUpperCase(), a.getTipoAsistenciaA()));
+                        p++;
+                    }
+                }
+            }
+        });     
     }
 }

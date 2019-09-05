@@ -676,10 +676,11 @@ public class EjbAsistencias {
     }
     
     public ResultadoEJB<List<DtoPaseLista>> agregarPaseLista(List<DtoPaseLista> dpls) {
+        Date d=new Date();
         if (!dpls.isEmpty()) {
             dpls.forEach((t) -> {
                 Asistencias a=new Asistencias();
-                a.setFechaHora(new Date());
+                a.setFechaHora(d);
                 a.setTipoAsistencia("Calses");
                 em.persist(a);
                 Asistenciasacademicas ac=new Asistenciasacademicas();
@@ -717,12 +718,23 @@ public class EjbAsistencias {
         }
     }
     
-    public ResultadoEJB<List<Asistenciasacademicas>> buscarAsistenciasacademicas(Date fechaI, Date fechaF, CargaAcademica ca) {
+    public ResultadoEJB<List<Asistenciasacademicas>> buscarAsistenciasacademicas(CargaAcademica ca,Integer matricula) {
         try {
             List<Asistenciasacademicas> as = new ArrayList<>();
-            as = em.createQuery("SELECT ca FROM Asistenciasacademicas ca INNER JOIN ca.asistencia asis INNER JOIN ca.cargaAcademica cg WHERE cg.carga=:carga AND asis.fechaHora BETWEEN :fechaI AND :frchaF", Asistenciasacademicas.class)
-                    .setParameter("fechaI", fechaI)
-                    .setParameter("fechaF", fechaF)
+            as = em.createQuery("SELECT ca FROM Asistenciasacademicas ca INNER JOIN ca.asistencia asis INNER JOIN ca.cargaAcademica cg INNER JOIN ca.estudiante es WHERE cg.carga=:carga AND es.matricula=:matricula", Asistenciasacademicas.class)
+                    .setParameter("carga", ca.getCarga())
+                    .setParameter("matricula", matricula)
+                    .getResultList();
+            return ResultadoEJB.crearCorrecto(as, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<Asistenciasacademicas>> buscarAsistenciasacademicasFechasMes(CargaAcademica ca) {
+        try {
+            List<Asistenciasacademicas> as = new ArrayList<>();
+            as = em.createQuery("SELECT ca FROM Asistenciasacademicas ca INNER JOIN ca.asistencia asis INNER JOIN ca.cargaAcademica cg WHERE cg.carga=:carga GROUP BY asis.fechaHora", Asistenciasacademicas.class)
                     .setParameter("carga", ca.getCarga())
                     .getResultList();
             return ResultadoEJB.crearCorrecto(as, "Asignación de indicadores por criterio de la carga académica seleccionada.");
