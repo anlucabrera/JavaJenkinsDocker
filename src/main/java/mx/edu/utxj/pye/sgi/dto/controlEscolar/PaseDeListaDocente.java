@@ -14,6 +14,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
@@ -73,6 +74,7 @@ public class PaseDeListaDocente extends AbstractRol{
      * Representa la clave
      */
     @Getter @Setter private List<DtoPaseLista> dpls;
+    @Getter @Setter private List<Asistenciasacademicas> asistenciasacademicases;
     @Getter @Setter private List<String> asistencias;
     
     /**

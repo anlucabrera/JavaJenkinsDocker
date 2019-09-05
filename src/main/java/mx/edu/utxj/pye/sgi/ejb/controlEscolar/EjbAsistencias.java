@@ -716,4 +716,18 @@ public class EjbAsistencias {
             return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
         }
     }
+    
+    public ResultadoEJB<List<Asistenciasacademicas>> buscarAsistenciasacademicas(Date fechaI, Date fechaF, CargaAcademica ca) {
+        try {
+            List<Asistenciasacademicas> as = new ArrayList<>();
+            as = em.createQuery("SELECT ca FROM Asistenciasacademicas ca INNER JOIN ca.asistencia asis INNER JOIN ca.cargaAcademica cg WHERE cg.carga=:carga AND asis.fechaHora BETWEEN :fechaI AND :frchaF", Asistenciasacademicas.class)
+                    .setParameter("fechaI", fechaI)
+                    .setParameter("fechaF", fechaF)
+                    .setParameter("carga", ca.getCarga())
+                    .getResultList();
+            return ResultadoEJB.crearCorrecto(as, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+        }
+    }
 }

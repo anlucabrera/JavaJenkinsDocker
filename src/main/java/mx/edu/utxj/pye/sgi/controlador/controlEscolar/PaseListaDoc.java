@@ -30,16 +30,19 @@ import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGraficaCronograma;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ImpresionPlaneacionCuatrimestral;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.PaseDeListaDocente;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
@@ -136,10 +139,34 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
             rol.setExisteAsignacionIndicadores(true);
             rol.setListaalumnoscas(res.getValor());
+            existeConfiguracion();
+        }
+        Ajax.update("frm");
+    }
+    public void existeConfiguracion(){
+        if (rol.getCarga() == null) {            return;        }
+        ResultadoEJB<List<UnidadMateriaConfiguracion>> res = ejb.buscarConfiguracionUnidadMateria(rol.getCarga());
+        if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
+            rol.setExisteConfiguracion(true);
+            crearDtoConfiguracionUnidadMateria();
+        } else {
+            rol.setExisteConfiguracion(false);
+            mostrarMensajeResultadoEJB(res);
         }
         Ajax.update("frm");
     }
     
+    public void crearDtoConfiguracionUnidadMateria() {
+        if (rol.getCarga() == null) {            return;        }
+        ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionUnidadMateria(rol.getCarga());
+        if (res.getCorrecto()) {
+            rol.setListaDtoConfUniMat(res.getValor());
+        } else {
+            mostrarMensajeResultadoEJB(res);
+        }
+
+    }
+
     public String buscarDirector(Short clave){
         try {
             Personal p = new Personal();
@@ -189,5 +216,14 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         });
         ejb.agregarPaseLista(rol.getDpls());
         existeAsignacion();
+    }
+    
+    public void consultarReporte(ValueChangeEvent event) {
+        ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio(), rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio(), rol.getCarga().getCargaAcademica());
+//        System.err.println("existeAsignacion - res " + res.getValor().size());
+        rol.setAsistenciasacademicases(new ArrayList<>());
+        if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
+            rol.setAsistenciasacademicases(res.getValor());
+        }
     }
 }
