@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -229,47 +230,159 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     }
     
     private void createDynamicColumns() {
-        rol.setDtoPaseListaReporteConsultas(new ArrayList<>());
+        rol.setDtoPaseListaReporteConsultas(new ArrayList<>());        
+        Date fI=rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio();
+        Date fF=rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaFin();
         rol.getListaalumnoscas().forEach((a) -> {
-//            rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio()
-//            rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio()
-            ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getCarga().getCargaAcademica(),a.getMatricula());
-            if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
-                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(a, res.getValor()));
-            }
-        });
-        DateFormat df=new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        rol.setVALID_COLUMN_KEYS(new ArrayList<>());
-        rol.getVALID_COLUMN_KEYS().add("Matricula");
-        rol.getVALID_COLUMN_KEYS().add("Nombre");
-        ResultadoEJB<List<Asistenciasacademicas>> resF = ejb.buscarAsistenciasacademicasFechasMes(rol.getCarga().getCargaAcademica());
-        
-        rol.setColumnTemplate("Matricula/Nombre");
-        if (resF.getValor().size() > 0 && !resF.getValor().isEmpty()) {
-            resF.getValor().forEach((t) -> {
-                rol.setColumnTemplate(rol.getColumnTemplate()+"/"+df.format(t.getAsistencia().getFechaHora()));
-                rol.getVALID_COLUMN_KEYS().add(df.format(t.getAsistencia().getFechaHora()));
-            });
-        }
-        
-        rol.setDplsReportes(new ArrayList<>());
-        String[] columnKeys = rol.getColumnTemplate().split("/");        
-        rol.getDtoPaseListaReporteConsultas().forEach((t) -> {
-            for (String columnKey : columnKeys) {
-                String key = columnKey.trim();
-                if(key.equals("Matricula")){
-                    rol.getDplsReportes().add(new DtoPaseListaReporte(columnKey.toUpperCase(), String.valueOf(t.getListaalumnosca().getMatricula())));
-                } else if (key.equals("Nombre")) {
-                    rol.getDplsReportes().add(new DtoPaseListaReporte(columnKey.toUpperCase(), t.getListaalumnosca().getEsApePat() + " " + t.getListaalumnosca().getEsApeMat() + " " + t.getListaalumnosca().getEsNombre()));
-                } else {
-                    Integer p = 0;
-                    for (Integer i = columnKeys.length; i > 2; i--) {
-                        Asistenciasacademicas a= t.getAsistenciasacademicases().get(p);
-                        rol.getDplsReportes().add(new DtoPaseListaReporte(columnKey.toUpperCase(), a.getTipoAsistenciaA()));
-                        p++;
+            ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getCarga().getCargaAcademica(), a.getMatricula());
+            List<Asistenciasacademicas> asFilter = new ArrayList<>();
+            asFilter = res.getValor().stream().filter(t -> (t.getAsistencia().getFechaHora().after(fI) || t.getAsistencia().getFechaHora().equals(fI)) && (t.getAsistencia().getFechaHora().before(fF) || t.getAsistencia().getFechaHora().equals(fF))).collect(Collectors.toList());
+
+            if (asFilter.size() > 0 && !asFilter.isEmpty()) {
+                asFilter.forEach((t) -> {
+                    switch (t.getTipoAsistenciaA()) {
+                        case "Asistencia":                            t.setTipoAsistenciaA("A");                            break;
+                        case "Falta":                            t.setTipoAsistenciaA("F");                            break;
+                        case "Permiso":                            t.setTipoAsistenciaA("P");                            break;
+                        case "Justificado":                            t.setTipoAsistenciaA("J");                            break;
                     }
+                });
+                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(a, asFilter));
+            }
+        });        
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        ResultadoEJB<List<Asistenciasacademicas>> resF = ejb.buscarAsistenciasacademicasFechasMes(rol.getCarga().getCargaAcademica());
+        List<Asistenciasacademicas> asFilter = new ArrayList<>();
+        asFilter = resF.getValor().stream().filter(t -> (t.getAsistencia().getFechaHora().after(fI) || t.getAsistencia().getFechaHora().equals(fI)) && (t.getAsistencia().getFechaHora().before(fF) || t.getAsistencia().getFechaHora().equals(fF))).collect(Collectors.toList());
+        if (asFilter.size() > 0 && !asFilter.isEmpty()) {
+            rol.setDplsReportesMes(new ArrayList<>());
+            rol.setDiasPaseLista(new ArrayList<>());
+            List<Asistenciasacademicas> as = new ArrayList<>();
+            for (int i = 1; i <= 12; i++) {
+                switch (i) {
+                    case 1:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 0).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Enero", as.size()));
+                        }
+                        break;
+                    case 2:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 1).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Febrero", as.size()));
+                        }
+                        break;
+                    case 3:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 2).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Marzo", as.size()));
+                        }
+                        break;
+                    case 4:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 3).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Abril", as.size()));
+                        }
+                        break;
+                    case 5:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 4).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Mayo", as.size()));
+                        }
+                        break;
+                    case 6:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 5).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Junio", as.size()));
+                        }
+                        break;
+                    case 7:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 6).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Julio", as.size()));
+                        }
+                        break;
+                    case 8:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 7).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Agosto", as.size()));
+                        }
+                        break;
+                    case 9:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 8).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Septiembre", as.size()));
+                        }
+                        break;
+                    case 10:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 9).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Octubre", as.size()));
+                        }
+                        break;
+                    case 11:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 10).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Noviembre", as.size()));
+                        }
+                        break;
+                    case 12:
+                        as = new ArrayList<>();
+                        as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 11).collect(Collectors.toList());
+                        if (!as.isEmpty()) {
+                            as.forEach((t) -> {
+                                rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                            });
+                            rol.getDplsReportesMes().add(new DtoPaseListaReporte("Diciembre", as.size()));
+                        }
+                        break;
                 }
             }
-        });     
+        }
+
     }
 }

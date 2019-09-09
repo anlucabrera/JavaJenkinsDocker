@@ -75,11 +75,10 @@ public class PaseDeListaDocente extends AbstractRol{
      */
     @Getter @Setter private List<DtoPaseLista> dpls;
     @Getter @Setter private List<DtoPaseListaReporteConsulta> dtoPaseListaReporteConsultas;
-    @Getter @Setter private List<DtoPaseListaReporte> dplsReportes;
-    @Getter @Setter private List<String> VALID_COLUMN_KEYS;
-    @Getter @Setter private String columnTemplate;
+    @Getter @Setter private List<DtoPaseListaReporte> dplsReportesMes;
     @Getter @Setter private List<Asistenciasacademicas> asistenciasacademicases;
     @Getter @Setter private List<String> asistencias;
+    @Getter @Setter private List<Integer> diasPaseLista;
     
     /**
      * Carga académica seleccionada

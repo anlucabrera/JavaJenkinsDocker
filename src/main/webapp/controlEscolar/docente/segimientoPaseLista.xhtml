@@ -190,12 +190,21 @@
                                                                 <p:panelGrid style="width: 100%">
                                                                     <f:facet name="header">
                                                                         <p:row>
-                                                                            <p:column colspan="#{paseListaDoc.rol.VALID_COLUMN_KEYS.size()}" style="font-size: large">Reporte Asistencias</p:column>
+                                                                            <p:column colspan="#{paseListaDoc.rol.diasPaseLista.size()+2}" style="font-size: large">Reporte Asistencias</p:column>
                                                                         </p:row>
                                                                         <p:row>
-                                                                            <c:forEach var="i" begin="0" end="#{paseListaDoc.rol.VALID_COLUMN_KEYS.size()-1}">
-                                                                                <c:set var="t" value="#{paseListaDoc.rol.VALID_COLUMN_KEYS.get(i)}"/>
-                                                                                <p:column >#{t}</p:column>
+                                                                            <p:column rowspan="2" >Matricula</p:column>
+                                                                            <p:column rowspan="2">Nombre</p:column>
+                                                                            <c:forEach var="i" begin="0" end="#{paseListaDoc.rol.dplsReportesMes.size()-1}">
+                                                                                <c:set var="t" value="#{paseListaDoc.rol.dplsReportesMes.get(i)}"/>
+                                                                                <p:column colspan="#{t.dias}" >#{t.mes}</p:column>
+                                                                            </c:forEach>
+                                                                        </p:row>
+                                                                        
+                                                                        <p:row>
+                                                                            <c:forEach var="i" begin="0" end="#{paseListaDoc.rol.diasPaseLista.size()-1}">
+                                                                                <c:set var="t" value="#{paseListaDoc.rol.diasPaseLista.get(i)}"/>
+                                                                                <p:column>#{t}</p:column>
                                                                             </c:forEach>
                                                                         </p:row>
                                                                     </f:facet>

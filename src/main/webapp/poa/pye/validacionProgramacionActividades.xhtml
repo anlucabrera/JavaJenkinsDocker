@@ -109,8 +109,6 @@
                                             </p:column>
                                         </p:headerRow>
                                         <p:column colspan="1">
-
-
                                             <p:dataTable var="estrategiasRegistro"  sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true"
                                                          value="#{ejesRegistro.listalistaEstrategiaLaAp}">
 
@@ -142,6 +140,7 @@
                                                                 <p:column colspan="2" rowspan="2" headerText="No." style="width: 50px; background-color: #cccccc; color: #000000;"/>
                                                                 <p:column rowspan="2" headerText="Actividad" style="background-color: #cccccc; color: #000000;"/>
                                                                 <p:column rowspan="2" headerText="Unidad de medida" style="width:150px; background-color: #cccccc; color: #000000;"/>
+                                                                <!--p:column rowspan="2" headerText="Meta" style="width: 100px; background-color: #cccccc; color: #000000;"/-->
                                                                 <p:column colspan="12" headerText="Calendarización de Metas" style="width: 1000px; background-color: #cccccc; color: #000000;"/>  
                                                                 <p:column rowspan="2" headerText="Total" style="width: 50px; background-color: #cccccc; color: #000000;"/>
                                                                 <p:column rowspan="2" headerText="T" style="width: 30px; background-color: #cccccc; color: #000000;"/>
@@ -180,44 +179,76 @@
                                                         <p:column style="text-align: justify"> 
                                                             <h:outputText value="#{pOa.unidadMedida.nombre}" />
                                                         </p:column>
-                                                        <p:column> 
+                                                        <!--p:column>
+                                                            <h:outputText value="Planeada" />
+                                                            <hr/>
+                                                            <h:outputText value="A lcanzada" />
+                                                        </p:column-->
+                                                        <p:column>
                                                             <h:outputText value="#{pOa.NPEnero}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NAEnero}"/-->
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{pOa.NPFebrero}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NAFebrero}"/-->
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{pOa.NPMarzo}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NAMarzo}"/-->
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{pOa.NPAbril}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NAAbril}"/-->
                                                         </p:column>
                                                         <p:column> 
-                                                            <h:outputText value="#{pOa.NPFebrero}" /> 
+                                                            <h:outputText value="#{pOa.NPMayo}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NAMayo}"/-->
                                                         </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPMarzo}" /> 
+                                                        <p:column>
+                                                            <h:outputText value="#{pOa.NPJunio}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NAJunio}" /-->
                                                         </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPAbril}" /> 
+                                                        <p:column>
+                                                            <h:outputText value="#{pOa.NPJulio}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NAJulio}"/-->
                                                         </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPMayo}" /> 
+                                                        <p:column>
+                                                            <h:outputText value="#{pOa.NPAgosto}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NAAgosto}"/-->
                                                         </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPJunio}" /> 
+                                                        <p:column>
+                                                            <h:outputText value="#{pOa.NPSeptiembre}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NASeptiembre}"/-->
                                                         </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPJulio}" /> 
+                                                        <p:column>
+                                                            <h:outputText value="#{pOa.NPOctubre}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NAOctubre}"/-->
                                                         </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPAgosto}" /> 
+                                                        <p:column>
+                                                            <h:outputText value="#{pOa.NPNoviembre}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NANoviembre}"/-->
                                                         </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPSeptiembre}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPOctubre}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPNoviembre}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPDiciembre}" /> 
+                                                        <p:column>
+                                                            <h:outputText value="#{pOa.NPDiciembre}" />
+                                                            <!--hr/>
+                                                            <h:outputText value="# {pOa.NADiciembre}"/-->
                                                         </p:column>
                                                         <p:column> 
                                                             <h:outputText value="#{pOa.total}"/> 
+                                                            <!--h:outputText value="#{pOa.NPEnero+pOa.NPFebrero+pOa.NPMarzo+pOa.NPAbril+pOa.NPMayo+pOa.NPJunio+pOa.NPJulio+pOa.NPAgosto+pOa.NPSeptiembre+pOa.NPOctubre+pOa.NPNoviembre+pOa.NPDiciembre}"/> 
+                                                            <hr/>
+                                                            <h:outputText value="# {pOa.NAEnero+pOa.NAFebrero+pOa.NAMarzo+pOa.NAAbril+pOa.NAMayo+pOa.NAJunio+pOa.NAJulio+pOa.NAAgosto+pOa.NASeptiembre+pOa.NAOctubre+pOa.NANoviembre+pOa.NADiciembre}"/--> 
                                                         </p:column>
                                                         <p:column class="noprint" >
                                                             <p:rowEditor />
