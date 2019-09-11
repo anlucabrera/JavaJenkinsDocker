@@ -29,9 +29,11 @@ public class CapturaCalificacionesRolDocente extends AbstractRol {
     @Getter private List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones;
 
     @Getter private DtoGrupoEstudiante estudiantesPorGrupo;
+    @Getter private DtoCapturaCalificacion dtoCapturaCalificacionSeleccionada;
 
     @Getter private DtoCapturaCalificacion capturaEstudianteSeleccionado;
     @Getter @Setter private Map<Long, Double> calificacionMap = new HashMap<>();
+    @Getter @Setter private Map<Long, Boolean> casoCriticoMap = new HashMap<>();
     private Random random = new Random(1000000);
 
     public CapturaCalificacionesRolDocente(@NonNull Filter<PersonalActivo> filtro) {
@@ -145,5 +147,10 @@ public class CapturaCalificacionesRolDocente extends AbstractRol {
 
     public void setPeriodoActivo(Integer periodoActivo) {
         this.periodoActivo = periodoActivo;
+    }
+
+    public void setDtoCapturaCalificacionSeleccionada(DtoCapturaCalificacion dtoCapturaCalificacionSeleccionada) {
+        this.dtoCapturaCalificacionSeleccionada = dtoCapturaCalificacionSeleccionada;
+//        System.out.println("dtoCapturaCalificacionSeleccionada = " + this.dtoCapturaCalificacionSeleccionada);
     }
 }

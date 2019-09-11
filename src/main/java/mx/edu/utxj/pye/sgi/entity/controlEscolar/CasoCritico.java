@@ -59,7 +59,6 @@ public class CasoCritico implements Serializable {
     @Column(name = "tipo")
     private String tipo;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 1500)
     @Column(name = "descripcion")
     private String descripcion;
@@ -90,6 +89,9 @@ public class CasoCritico implements Serializable {
     @Column(name = "fecha_cierre")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCierre;
+    @JoinColumn(name = "configuracion", referencedColumnName = "configuracion")
+    @ManyToOne(optional = false)
+    private UnidadMateriaConfiguracion configuracion;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
     @ManyToOne(optional = false)
     private CargaAcademica carga;
@@ -205,6 +207,14 @@ public class CasoCritico implements Serializable {
 
     public void setFechaCierre(Date fechaCierre) {
         this.fechaCierre = fechaCierre;
+    }
+
+    public UnidadMateriaConfiguracion getConfiguracion() {
+        return configuracion;
+    }
+
+    public void setConfiguracion(UnidadMateriaConfiguracion configuracion) {
+        this.configuracion = configuracion;
     }
 
     public CargaAcademica getCarga() {

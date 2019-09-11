@@ -10,6 +10,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
@@ -19,6 +20,7 @@ import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Ajax;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -36,6 +38,7 @@ import java.util.Map;
 public class CapturaCalificacionesDocente extends ViewScopedRol implements Desarrollable {
     @Getter @Setter private CapturaCalificacionesRolDocente rol;
     @EJB EjbCapturaCalificaciones ejb;
+    @EJB EjbCasoCritico ejbCasoCritico;
     @EJB EjbPacker packer;
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
@@ -58,7 +61,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
         ResultadoEJB<Boolean> resVerificarCargasExistentes = ejb.verificarCargasExistentes(resAcceso.getValor().getEntity());
-        System.out.println("resVerificarCargasExistentes = " + resVerificarCargasExistentes);
+//        System.out.println("resVerificarCargasExistentes = " + resVerificarCargasExistentes);
         if(!resAcceso.getCorrecto()){mostrarMensajeResultadoEJB(resAcceso);return;}
 
         rol = new CapturaCalificacionesRolDocente(resAcceso.getValor());
@@ -215,4 +218,49 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
 //        System.out.println("valor = " + valor);
 //        System.out.println("rol.getCalificacionMap() = " + rol.getCalificacionMap());
     }
+
+    public void iniciarRegistroCasoCritico(DtoCapturaCalificacion dtoCapturaCalificacion){
+        rol.setDtoCapturaCalificacionSeleccionada(dtoCapturaCalificacion);
+//        System.out.println("CapturaCalificacionesDocente.iniciarRegistroCasoCritico");
+//        System.out.println("dtoCapturaCalificacion = " + dtoCapturaCalificacion);
+//        System.out.println("dtoCapturaCalificacion.getTieneCasoCritico() = " + dtoCapturaCalificacion.getTieneCasoCritico());
+        if(!dtoCapturaCalificacion.getTieneCasoCritico()){
+            ResultadoEJB<DtoCasoCritico> generarNuevo = ejbCasoCritico.generarNuevo(dtoCapturaCalificacion.getDtoEstudiante(), dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoUnidadConfiguracion());
+//            System.out.println("generarNuevo = " + generarNuevo);
+            if(generarNuevo.getCorrecto()){
+                rol.getDtoCapturaCalificacionSeleccionada().setDtoCasoCritico(generarNuevo.getValor());
+//                System.out.println("dtoCapturaCalificacion.getDtoCasoCritico() = " + dtoCapturaCalificacion.getDtoCasoCritico());
+//                System.out.println("dtoCapturaCalificacion.getDtoCasoCritico().getCasoCritico() = " + dtoCapturaCalificacion.getDtoCasoCritico().getCasoCritico());
+            }else mostrarMensajeResultadoEJB(generarNuevo);
+
+        }
+
+    }
+
+    public void guardarCasoCritico(){
+        System.out.println("CapturaCalificacionesDocente.guardarCasoCritico");
+        if(rol.getDtoCapturaCalificacionSeleccionada() == null) {
+            mostrarMensaje("No se puede registrar el caso crítico porque la referencia de la captura de calificación es nula.");
+            return;
+        }
+
+        System.out.println("rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion() = " + rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion());
+        if(rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion() == null || rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion().trim().isEmpty()){
+            mostrarMensaje("Debe ingresar una descripción del caso crítico");
+            Ajax.oncomplete("PF('modalCasoCritico').show();");
+            return;
+        }
+        ResultadoEJB<DtoCasoCritico> registrar = ejbCasoCritico.registrar(rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico());
+        System.out.println("registrar = " + registrar);
+        if(registrar.getCorrecto()){
+            rol.getDtoCapturaCalificacionSeleccionada().setDtoCasoCritico(registrar.getValor());
+        }else mostrarMensajeResultadoEJB(registrar);
+    }
+
+    /*public String generarIdTabla(DtoUnidadConfiguracion dtoUnidadConfiguracion){//
+//        System.out.println("dtoUnidadConfiguracion = " + dtoUnidadConfiguracion);
+//        System.out.println("dtoUnidadConfiguracion.getUnidadMateriaConfiguracion() = " + dtoUnidadConfiguracion.getUnidadMateriaConfiguracion());
+//        System.out.println("dtoUnidadConfiguracion.getUnidadMateriaConfiguracion().getConfiguracion() = " + dtoUnidadConfiguracion.getUnidadMateriaConfiguracion().getConfiguracion());
+        return "tbl".concat(dtoUnidadConfiguracion.getUnidadMateriaConfiguracion().getConfiguracion().toString());
+    }*/
 }

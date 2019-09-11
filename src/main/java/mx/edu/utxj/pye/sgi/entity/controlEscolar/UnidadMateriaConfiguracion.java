@@ -68,6 +68,8 @@ public class UnidadMateriaConfiguracion implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
     private List<UnidadMateriaConfiguracionCriterio> unidadMateriaConfiguracionCriterioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion")
+    private List<CasoCritico> casoCriticoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion")
     private List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
     @ManyToOne(optional = false)
@@ -137,6 +139,15 @@ public class UnidadMateriaConfiguracion implements Serializable {
 
     public void setUnidadMateriaConfiguracionCriterioList(List<UnidadMateriaConfiguracionCriterio> unidadMateriaConfiguracionCriterioList) {
         this.unidadMateriaConfiguracionCriterioList = unidadMateriaConfiguracionCriterioList;
+    }
+
+    @XmlTransient
+    public List<CasoCritico> getCasoCriticoList() {
+        return casoCriticoList;
+    }
+
+    public void setCasoCriticoList(List<CasoCritico> casoCriticoList) {
+        this.casoCriticoList = casoCriticoList;
     }
 
     @XmlTransient

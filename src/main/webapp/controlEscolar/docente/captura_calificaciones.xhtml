@@ -5,6 +5,7 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:adm="http://github.com/adminfaces"
+                xmlns:pe="http://primefaces.org/ui/extensions"
                 template="#{layoutMB.template}"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 >
@@ -99,7 +100,14 @@
                                         <div class="col-lg-12 col-md-12 text-info text-center">
                                             <p:outputPanel id="contenedor">
                                                 <c:forEach items="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguraciones}" var="unidadConfiguracion" varStatus="estado">
-                                                    <p:dataTable var="estudiante" rendered="#{unidadConfiguracion eq capturaCalificacionesDocente.rol.dtoUnidadConfiguracionSeleccionada}"
+                                                    <div style="text-align: right;">
+                                                        <p:commandLink ajax="false" styleClass="btn btn-primary" rendered="#{unidadConfiguracion eq capturaCalificacionesDocente.rol.dtoUnidadConfiguracionSeleccionada}">
+                                                            <pe:exporter type="xlsx" target="@next" fileName="calificaciones" datasetPadding="4" />
+                                                            <i class="fa fa-file-excel-o" /> Exportar
+                                                        </p:commandLink>
+                                                    </div>
+                                                    <p:dataTable var="estudiante"
+                                                                 rendered="#{unidadConfiguracion eq capturaCalificacionesDocente.rol.dtoUnidadConfiguracionSeleccionada}"
                                                                  emptyMessage="Sin registros."
                                                                  value="#{capturaCalificacionesDocente.rol.estudiantesPorGrupo.estudiantes}"
                                                                  rowIndexVar="rowIndex"
@@ -121,7 +129,15 @@
                                                         </p:columnGroup>
                                                         <p:column><h:outputText value="#{estudiante.dtoEstudiante.inscripcionActiva.inscripcion.matricula}" /></p:column>
                                                         <p:column style="text-align: left; white-space: nowrap; width: auto;"><h:outputText value="#{estudiante.dtoEstudiante.persona.apellidoPaterno} #{estudiante.dtoEstudiante.persona.apellidoMaterno} #{estudiante.dtoEstudiante.persona.nombre}" title="#{estudiante.dtoEstudiante.persona.apellidoPaterno} #{estudiante.dtoEstudiante.persona.apellidoMaterno} #{estudiante.dtoEstudiante.persona.nombre}"/></p:column>
-                                                        <p:column>No</p:column>
+                                                        <p:column>
+                                                            <p:commandLink class="btn btn-sm #{estudiante.tieneCasoCritico?'btn-info':'btn-default'}"
+                                                                           process="@this"
+                                                                           actionListener="#{capturaCalificacionesDocente.iniciarRegistroCasoCritico(estudiante)}"
+                                                                           oncomplete="PF('modalCasoCritico').show();"
+                                                                           title="Presione el botón para registrar caso crítico."><i class="fa fa-check-square" />
+                                                                <f:setPropertyActionListener target="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada}" value="#{estudiante}" />
+                                                            </p:commandLink>
+                                                        </p:column>
                                                         <c:forEach var="criterio" items="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidad(unidadConfiguracion)}">
                                                             <c:forEach var="detalle" items="#{unidadConfiguracion.unidadMateriaConfiguracionDetalles[criterio]}">
                                                                 <p:column>
@@ -180,7 +196,7 @@
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para una asignación académica</h3></div>
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para capturar calificaciones</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
                                 <c:forEach items="#{capturaCalificacionesDocente.rol.instrucciones}" var="instruccion">
@@ -190,6 +206,55 @@
                         </div>
                         <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
                     </div>
+                </p:dialog>
+                <p:dialog id="modalCasoCritico"
+                          widgetVar="modalCasoCritico" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade" onHide="verificar();"
+                          modal="true" draggable="true" header="Caso crítico" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <p:autoUpdate />
+                    <c:if test="#{!empty capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada}">
+                        <div class="box box-primary">
+                            <h:form>
+                                <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Registro de caso crítico</h3></div>
+                                <div class="box-body">
+                                    <div class="row margin-bottom">
+                                        <div class="col-md-12">
+                                            <div class="ui-material">
+                                                <p:inputText id="ccEstudiante" value="#{caster.dtoEstudianteToString(capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada.dtoEstudiante)}" readonly="true" styleClass="form-control" />
+                                                <p:outputLabel value="Estudiante" for="ccEstudiante"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-bottom">
+                                        <div class="col-md-12">
+                                            <div class="ui-material">
+                                                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo" var="casoCriticoTipo" allSuffix="ALL" />
+                                                <p:selectOneMenu id="ccTipo" value="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada.dtoCasoCritico.tipo}" converter="entityConverter" required="true" styleClass="form-control" >
+                                                    <f:selectItems value="#{casoCriticoTipo.ALL}" var="ccTipo" itemValue="#{ccTipo}" itemLabel="#{ccTipo.label}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Tipo" for="ccTipo"/>
+                                                <p:message for="ccTipo" ><p:autoUpdate/></p:message>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-bottom">
+                                        <div class="col-md-12">
+                                            <div class="ui-material">
+                                                <p:inputTextarea id="ccDescripcion" maxlength="1500" styleClass="form-control"
+                                                                 value="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada.dtoCasoCritico.casoCritico.descripcion}"
+                                                                 placeholder="Ingrese una descripción específica del levantamiento del caso crítico." />
+                                                <p:outputLabel value="Descripcion" for="ccDescripcion"/>
+                                                <p:message for="ccDescripcion" ><p:autoUpdate/></p:message>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box-footer clearfix no-border">
+                                    <p:button value="Cancelar" styleClass="btn btn-primary pull-right" icon="fa fa-times" onclick="PF('modalCasoCritico').hide(); return false;" />
+                                    <p:commandButton value="Registrar" process="@form" update="@form" actionListener="#{capturaCalificacionesDocente.guardarCasoCritico}" styleClass="btn btn-primary pull-right" icon="fa fa-save" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </c:if>
                 </p:dialog>
             </c:if>
             <c:if test="#{!capturaCalificacionesDocente.tieneAcceso}">

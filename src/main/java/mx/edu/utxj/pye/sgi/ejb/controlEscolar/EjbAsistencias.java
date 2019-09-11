@@ -245,8 +245,9 @@ public class EjbAsistencias {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
-        try{ 
-            if(listaIndicadores == null || listaIndicadores.isEmpty()) return ResultadoEJB.crearErroneo(2, "La lista de indicadores por criterio no debe ser nula.");
+        try{
+            List<Listaindicadoresporcriterioporconfiguracion> l = Collections.EMPTY_LIST;
+            if(listaIndicadores == null || listaIndicadores.isEmpty()) return ResultadoEJB.crearErroneo(2, l,  "La lista de indicadores por criterio no debe ser nula.");
           
             Iterator<Listaindicadoresporcriterioporconfiguracion> it = listaIndicadores.iterator();
 
@@ -284,8 +285,9 @@ public class EjbAsistencias {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSaber(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
-        try{ 
-            if(listaIndicadores == null || listaIndicadores.isEmpty()) return ResultadoEJB.crearErroneo(2, "La lista de indicadores por criterio no debe ser nula.");
+        try{
+            List<Listaindicadoresporcriterioporconfiguracion> l = Collections.EMPTY_LIST;
+            if(listaIndicadores == null || listaIndicadores.isEmpty()) return ResultadoEJB.crearErroneo(2, l, "La lista de indicadores por criterio no debe ser nula.");
           
             Iterator<Listaindicadoresporcriterioporconfiguracion> it = listaIndicadores.iterator();
 
@@ -323,8 +325,9 @@ public class EjbAsistencias {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> getIndicadoresCriterioSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaIndicadores){ 
-        try{ 
-            if(listaIndicadores == null || listaIndicadores.isEmpty()) return ResultadoEJB.crearErroneo(2, "La lista de indicadores por criterio no debe ser nula.");
+        try{
+            List<Listaindicadoresporcriterioporconfiguracion> l = Collections.EMPTY_LIST;
+            if(listaIndicadores == null || listaIndicadores.isEmpty()) return ResultadoEJB.crearErroneo(2,l,  "La lista de indicadores por criterio no debe ser nula.");
           
             Iterator<Listaindicadoresporcriterioporconfiguracion> it = listaIndicadores.iterator();
 
@@ -406,8 +409,9 @@ public class EjbAsistencias {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSer(List<Listaindicadoresporcriterioporconfiguracion> listaSer, DtoConfiguracionUnidadMateria dtoConfUnidadMateria){
-        try{            
-            if(listaSer == null || listaSer.isEmpty()) return ResultadoEJB.crearErroneo(2, "La lista de indicadores SER no debe ser nula.");
+        try{
+            List<Listaindicadoresporcriterioporconfiguracion> li = Collections.EMPTY_LIST;
+            if(listaSer == null || listaSer.isEmpty()) return ResultadoEJB.crearErroneo(2, li,  "La lista de indicadores SER no debe ser nula.");
             
             List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
             
@@ -446,8 +450,9 @@ public class EjbAsistencias {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSaber(List<Listaindicadoresporcriterioporconfiguracion> listaSaber, DtoConfiguracionUnidadMateria dtoConfUnidadMateria){
-        try{            
-            if(listaSaber == null || listaSaber.isEmpty()) return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
+        try{
+            List<Listaindicadoresporcriterioporconfiguracion> li = Collections.EMPTY_LIST;
+            if(listaSaber == null || listaSaber.isEmpty()) return ResultadoEJB.crearErroneo(2, li, "La configuración de la unidad materia no debe ser nula.");
           
             List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
            
@@ -484,8 +489,9 @@ public class EjbAsistencias {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> guardarIndicadoresSaberHacer(List<Listaindicadoresporcriterioporconfiguracion> listaSaberHacer, DtoConfiguracionUnidadMateria dtoConfUnidadMateria){
-        try{            
-            if(listaSaberHacer == null || listaSaberHacer.isEmpty()) return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
+        try{
+            List<Listaindicadoresporcriterioporconfiguracion> li = Collections.EMPTY_LIST;
+            if(listaSaberHacer == null || listaSaberHacer.isEmpty()) return ResultadoEJB.crearErroneo(2, li, "La configuración de la unidad materia no debe ser nula.");
           
             List<Listaindicadoresporcriterioporconfiguracion> l = new ArrayList<>();
            
@@ -642,7 +648,7 @@ public class EjbAsistencias {
      */
     public ResultadoEJB<Integer> eliminarAsignacionIndicadores(CargaAcademica cargaAcademica){
         try{
-            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.");
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.", Integer.TYPE);
 
             Integer delete = em.createQuery("DELETE FROM UnidadMateriaConfiguracionDetalle umcd WHERE umcd.configuracion.carga.carga =:carga", UnidadMateriaConfiguracionDetalle.class)
                 .setParameter("carga", cargaAcademica.getCarga())
