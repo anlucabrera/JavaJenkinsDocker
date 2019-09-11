@@ -25,12 +25,7 @@
     <ui:define name="body">
 
         <adm:sidebar collapsed="true"/>
-        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
-            <h1>
-                Esta página está disponible solo para pantallas superiores a 1024px.
-            </h1>
-        </p:panel>
-        <p:panel id="informacion" class="hidden-xs hidden-sm">
+        <p:panel id="informacion">
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 148}">
                 <section class="content">
                     <div class="row">
@@ -71,16 +66,18 @@
 
                                         <p:columnGroup type="header">
                                             <p:row class="success">
-                                                <p:column rowspan="2" headerText="" style="width: 40px;" />
-                                                <p:column rowspan="2" headerText="Nombre" style=" font-weight: bold; font-size: medium" sortBy="#{ByR.nombre}" 
+                                                <p:column rowspan="2" headerText="" style="width: 40px;" sortBy="#{ByR.clave}" 
+                                                          filterBy="#{ByR.clave}" 
+                                                          filterMatchMode="contains"/>
+                                                <p:column rowspan="2" headerText="Nombre" style="width: 200px; font-weight: bold; font-size: medium" sortBy="#{ByR.nombre}" 
                                                           filterBy="#{ByR.nombre}" 
                                                           filterMatchMode="contains"/>
                                                           <p:column rowspan="2" headerText="Fecha Ingreso" style="width: 100px; font-weight: bold; font-size: medium"/>
                                                     <p:column rowspan="2" headerText="Fecha nacimiento" style="width: 100px; font-weight: bold; font-size: medium"/>
                                                     <p:column rowspan="2" headerText="Genero" style="width: 80px; font-weight: bold; font-size: medium"/>  
-                                                    <p:column rowspan="2" headerText="Actividad" style="width: 100px; font-weight: bold; font-size: medium"/>                                                  
-                                                    <p:column colspan="3" headerText="Áreas" style=" font-weight: bold; font-size: medium"/>
-                                                    <p:column colspan="2" headerText="Categorías" style=" font-weight: bold; font-size: medium"/>
+                                                    <p:column rowspan="2" headerText="Actividad" style="width: 110px; font-weight: bold; font-size: medium"/>                                                  
+                                                    <p:column colspan="3" headerText="Áreas" style="width: 600px; font-weight: bold; font-size: medium"/>
+                                                    <p:column colspan="2" headerText="Categorías" style="width: 400px; font-weight: bold; font-size: medium"/>
                                                     <p:column colspan="2" headerText="Experiencia" style="width: 190px; font-weight: bold; font-size: medium"/>
                                                     <p:column colspan="2" headerText="Preparación académica" style=" font-weight: bold; font-size: medium"/>
                                                     <p:column rowspan="2" headerText="Perfil PRODEP" style="width: 80px; font-weight: bold; font-size: medium"/>

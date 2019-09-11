@@ -123,7 +123,7 @@ public class EjbAdministracionEncuestaTsu {
         List<ListaDatosAvanceEncuestaServicio> ldaes = new ArrayList<>();
         List<ListadoGraficaEncuestaServicios> lges = new ArrayList<>();
         List<AlumnosEncuestas> ae = ejbAES.obtenerAlumnosNoAccedieron();
-        ae.forEach(x -> {
+        ae.stream().filter(a -> a.getGrado().equals(Short.parseShort("6"))).forEach(x -> {
             try {
                 ResultadosEncuestaSatisfaccionTsu listaCompleta = getResultadoEncPorEvaluador(Integer.parseInt(x.getMatricula()));
                 Comparador<ResultadosEncuestaSatisfaccionTsu> comparador = new ComparadorEncuestaSatisfaccionEgresadosTsu();
@@ -138,7 +138,7 @@ public class EjbAdministracionEncuestaTsu {
         });
         Map<String, Long> gropingByCareer = lges.stream().collect(Collectors.groupingBy(ListadoGraficaEncuestaServicios::getSiglas, Collectors.counting()));
         gropingByCareer.forEach((k, v) -> {
-            Map<String, Long> groupingByCareer = ae.stream().collect(Collectors.groupingBy(AlumnosEncuestas::getAbreviatura, Collectors.counting()));
+            Map<String, Long> groupingByCareer = ae.stream().filter(a -> a.getGrado().equals(Short.parseShort("6"))).collect(Collectors.groupingBy(AlumnosEncuestas::getAbreviatura, Collectors.counting()));
             groupingByCareer.forEach((k1, v1) -> {
                 if(k.equals(k1)){
                     ldaes.add(new ListaDatosAvanceEncuestaServicio(k, Math.toIntExact(v1), Math.toIntExact(v), Math.toIntExact(v1 - v), (v.doubleValue() * 100) / v1.doubleValue()));

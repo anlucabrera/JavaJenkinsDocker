@@ -132,6 +132,9 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     public void cambiarCarga(ValueChangeEvent event) {
         rol.setExisteConfiguracion(false);
         rol.setCarga((DtoCargaAcademica) event.getNewValue());
+        rol.setDtoPaseListaReporteConsultas(new ArrayList<>());
+        rol.setDplsReportesMes(new ArrayList<>());
+        rol.setDiasPaseLista(new ArrayList<>());
         existeAsignacion();
     }
 
@@ -226,11 +229,16 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     
     public void consultarReporte(ValueChangeEvent event) {
         rol.setDtoConfUniMat((DtoConfiguracionUnidadMateria)event.getNewValue());
+        rol.setDtoPaseListaReporteConsultas(new ArrayList<>());
+        rol.setDplsReportesMes(new ArrayList<>());
+        rol.setDiasPaseLista(new ArrayList<>());
         createDynamicColumns();
     }
     
     private void createDynamicColumns() {
-        rol.setDtoPaseListaReporteConsultas(new ArrayList<>());        
+        rol.setDtoPaseListaReporteConsultas(new ArrayList<>());
+        rol.setDplsReportesMes(new ArrayList<>());
+        rol.setDiasPaseLista(new ArrayList<>());
         Date fI=rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio();
         Date fF=rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaFin();
         rol.getListaalumnoscas().forEach((a) -> {

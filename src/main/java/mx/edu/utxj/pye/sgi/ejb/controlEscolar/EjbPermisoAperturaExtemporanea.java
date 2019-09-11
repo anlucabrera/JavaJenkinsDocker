@@ -135,7 +135,7 @@ public class EjbPermisoAperturaExtemporanea {
      */
     public PeriodosEscolares getPeriodoActual() {
 
-        StoredProcedureQuery spq = em.createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
         List<PeriodosEscolares> l = spq.getResultList();
 
         if (l == null || l.isEmpty()) {
@@ -329,7 +329,7 @@ public class EjbPermisoAperturaExtemporanea {
             permisosCapturaExtemporaneaGrupal.setIdPlanMateria(cargaAcademica.getPlanEstudioMateria());
             permisosCapturaExtemporaneaGrupal.setDocente(cargaAcademica.getDocente().getPersonal().getClave());
             permisosCapturaExtemporaneaGrupal.setTipoEvaluacion(tipoEvaluacion);
-            permisosCapturaExtemporaneaGrupal.setIdUnidadMateria(unidadMateria.getIdUnidadMateria());
+            permisosCapturaExtemporaneaGrupal.setIdUnidadMateria(unidadMateria);
             permisosCapturaExtemporaneaGrupal.setFechaInicio(fechaInicio);
             permisosCapturaExtemporaneaGrupal.setFechaFin(fechaFin);
             permisosCapturaExtemporaneaGrupal.setJustificacionPermiso(justificacion);
@@ -394,12 +394,7 @@ public class EjbPermisoAperturaExtemporanea {
             
             permisosCapturaExtemporaneaGrupal.forEach(permiso -> {
                 AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, permiso.getIdGrupo().getIdPe());
-                String unidad = "No Aplica";
-                if (permiso.getIdUnidadMateria() != null) {
-                    UnidadMateria unidadMateria = em.find(UnidadMateria.class, permiso.getIdUnidadMateria());
-                    unidad = unidadMateria.getNoUnidad()+". "+unidadMateria.getNombre();
-                } 
-                DtoPermisoCapturaExtemporanea dtoPermisoCapturaExtemporanea = new DtoPermisoCapturaExtemporanea(permiso, unidad, programaEducativo);
+                DtoPermisoCapturaExtemporanea dtoPermisoCapturaExtemporanea = new DtoPermisoCapturaExtemporanea(permiso, programaEducativo);
                 listaDtoPermisoCapturaExtemporanea.add(dtoPermisoCapturaExtemporanea);
             });
             
@@ -430,7 +425,7 @@ public class EjbPermisoAperturaExtemporanea {
     
     public void actualizarPermisoCaptura(DtoPermisoCapturaExtemporanea dtoPermisoCapturaExtemporanea) {
         f.setEntityClass(PermisosCapturaExtemporaneaGrupal.class);
-        em.merge(dtoPermisoCapturaExtemporanea.getPermisosCapturaExtemporaneaGrupal());
+        f.edit(dtoPermisoCapturaExtemporanea.getPermisosCapturaExtemporaneaGrupal());
         f.flush();
     }
 }

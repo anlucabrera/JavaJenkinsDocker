@@ -37,7 +37,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByPeriodo", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.periodo = :periodo")
     , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByDocente", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.docente = :docente")
     , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByTipoEvaluacion", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.tipoEvaluacion = :tipoEvaluacion")
-    , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByIdUnidadMateria", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.idUnidadMateria = :idUnidadMateria")
     , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByFechaInicio", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.fechaInicio = :fechaInicio")
     , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByFechaFin", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.fechaFin = :fechaFin")
     , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByPersonalGrabaPermiso", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.personalGrabaPermiso = :personalGrabaPermiso")
@@ -63,8 +62,6 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
     @Size(min = 1, max = 18)
     @Column(name = "tipo_evaluacion")
     private String tipoEvaluacion;
-    @Column(name = "id_unidad_materia")
-    private Integer idUnidadMateria;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha_inicio")
@@ -84,6 +81,9 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
     @Column(name = "fecha_graba_permiso")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaGrabaPermiso;
+    @JoinColumn(name = "id_unidad_materia", referencedColumnName = "id_unidad_materia")
+    @ManyToOne
+    private UnidadMateria idUnidadMateria;
     @JoinColumn(name = "id_grupo", referencedColumnName = "id_grupo")
     @ManyToOne(optional = false)
     private Grupo idGrupo;
@@ -144,14 +144,6 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
         this.tipoEvaluacion = tipoEvaluacion;
     }
 
-    public Integer getIdUnidadMateria() {
-        return idUnidadMateria;
-    }
-
-    public void setIdUnidadMateria(Integer idUnidadMateria) {
-        this.idUnidadMateria = idUnidadMateria;
-    }
-
     public Date getFechaInicio() {
         return fechaInicio;
     }
@@ -182,6 +174,14 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
 
     public void setFechaGrabaPermiso(Date fechaGrabaPermiso) {
         this.fechaGrabaPermiso = fechaGrabaPermiso;
+    }
+
+    public UnidadMateria getIdUnidadMateria() {
+        return idUnidadMateria;
+    }
+
+    public void setIdUnidadMateria(UnidadMateria idUnidadMateria) {
+        this.idUnidadMateria = idUnidadMateria;
     }
 
     public Grupo getIdGrupo() {
