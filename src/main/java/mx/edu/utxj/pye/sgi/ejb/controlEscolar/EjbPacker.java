@@ -181,7 +181,7 @@ public class EjbPacker {
             detalles.forEach(detalle -> {
                 if(detalleListMap.containsKey(detalle.getCriterio())) detalleListMap.get(detalle.getCriterio()).add(detalle);
             });
-            Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), unidadMateriaConfiguracionBD.getFechaInicio(), unidadMateriaConfiguracionBD.getFechaFin(), 7l);
+            Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), unidadMateriaConfiguracionBD.getFechaInicio(), unidadMateriaConfiguracionBD.getFechaFin(), 14l);
             PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad", PermisosCapturaExtemporaneaGrupal.class)
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                     .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
