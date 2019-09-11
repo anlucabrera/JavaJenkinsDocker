@@ -1,4 +1,4 @@
-﻿package mx.edu.utxj.pye.sgi.ejb;
+package mx.edu.utxj.pye.sgi.ejb;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
@@ -223,14 +223,13 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
 
     @Override
     public void cargarResultadosAlmacenados(Evaluaciones360 evaluacion, ListaPersonal directivo, List<ListaPersonal> subordinados) {
-        try {sg
+        try {
             if (subordinados == null || subordinados.isEmpty()) {return;
             }
             List<Integer> claves = new ArrayList<>();
             subordinados.forEach((lp) -> {
                 claves.add(lp.getClave());
             });
-
 
             TypedQuery<Evaluaciones360Resultados> q = em.createQuery("select a from Evaluaciones360Resultados a where a.evaluaciones360ResultadosPK.evaluacion=:evaluacion and a.evaluaciones360ResultadosPK.evaluador = :evaluador and a.evaluaciones360ResultadosPK.evaluado in :claves", Evaluaciones360Resultados.class);
             q.setParameter("evaluacion", evaluacion.getEvaluacion());
