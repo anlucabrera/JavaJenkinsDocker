@@ -416,7 +416,7 @@ public class EjbPermisoAperturaExtemporanea {
      */
     public ResultadoEJB<Integer> eliminarPermisoCaptura(Integer clavePermiso){
         try{
-            if(clavePermiso == null) return ResultadoEJB.crearErroneo(2, "La clave del permiso no puede ser nula.");
+            if(clavePermiso == null) return ResultadoEJB.crearErroneo(2, "La clave del permiso no puede ser nula.", Integer.TYPE);
 
             Integer delete = em.createQuery("DELETE FROM PermisosCapturaExtemporaneaGrupal p WHERE p.permisoGrupal =:permiso", PermisosCapturaExtemporaneaGrupal.class)
                 .setParameter("permiso", clavePermiso)

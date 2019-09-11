@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.*;
 
@@ -15,6 +16,7 @@ import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * Representa el resultado de un proceso EJB especificando:<br/>
@@ -91,16 +93,16 @@ public class ResultadoEJB<T> implements Serializable {
         return crearErroneo(resultado,mensaje,null,tipo);
     }
     
-     /**
+     /*
      *Crea una instancia de resultado erróneo sin excepción.
      * @param resultado Valor del resultado, debe ser mayor que 0.
      * @param mensaje Mensaje del error.
      * @param <T> Tipo del resultado
      * @return Instancia de resultado erróneo sin excepción.
      */
-    public static <T> ResultadoEJB<T> crearErroneo(Integer resultado, String mensaje){
-        return crearErroneo(resultado,mensaje);
-    }
+    /*public static <T> ResultadoEJB<T> crearErroneo(Integer resultado, String mensaje){
+        return crearErroneo(resultado, mensaje);
+    }*/
     
     /**
      * Crea una instancia de resultado erróneo con excepción.
@@ -143,5 +145,32 @@ public class ResultadoEJB<T> implements Serializable {
         }
 
         return ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage();
+    }
+
+    public static <T> void logErroresEnLista( List<ResultadoEJB<T>> lista, Class<T> tipo){
+        if(lista == null || tipo == null) {
+            System.out.println("No se puede mostrar errores en consola porque la lista de resultados o el tipo del contenido es nulo.");
+            System.out.println("lista = [" + lista + "], tipo = [" + tipo + "]");
+            return;
+        }
+
+        lista
+                .stream()
+                .filter(res -> !res.getCorrecto())
+                .forEach(res -> {
+                    String mensaje = String.format("Ocurrió un error en la ejecución de un método ejb para el tipo %s. Mensaje: %s", tipo.getCanonicalName(), res.toString());
+                    System.out.println("res.getMensaje() = " + res.getMensaje());
+                });
+
+    }
+
+    public static <T> List<T> getListaTipo(Class<T> tipo){
+        List<T> l = Collections.EMPTY_LIST;
+        return l;
+    }
+
+    public static <T,U> Map<T,U> getMapaTipo(Class<T> tipoT, Class<U> tipoU){
+        Map<T,U> m = Collections.EMPTY_MAP;
+        return m;
     }
 }

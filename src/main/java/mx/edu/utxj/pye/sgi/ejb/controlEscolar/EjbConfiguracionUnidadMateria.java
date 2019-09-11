@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConfiguracionUnidadMateriaRolDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDiasPeriodoEscolares;
@@ -391,9 +393,10 @@ public class EjbConfiguracionUnidadMateria {
      * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
      */
     public ResultadoEJB<List<DtoConfiguracionUnidadMateria>> guardarConfUnidadMateria(List<DtoConfiguracionUnidadMateria> configuracionUnidadMaterias, CargaAcademica cargaAcademica){
-        try{            
-            if(configuracionUnidadMaterias == null || configuracionUnidadMaterias.isEmpty()) return ResultadoEJB.crearErroneo(2, "La configuración de la unidad materia no debe ser nula.");
-            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(3, "La carga académica no debe ser nula.");
+        try{
+            List<DtoConfiguracionUnidadMateria> li = Collections.EMPTY_LIST;
+            if(configuracionUnidadMaterias == null || configuracionUnidadMaterias.isEmpty()) return ResultadoEJB.crearErroneo(2, li, "La configuración de la unidad materia no debe ser nula.");
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(3, li, "La carga académica no debe ser nula.");
           
             List<DtoConfiguracionUnidadMateria> l = new ArrayList<>();
            
@@ -426,8 +429,8 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<TareaIntegradora> guardarTareaIntegradora(TareaIntegradora tareaIntegradora, CargaAcademica cargaAcademica){
         try{            
-            if(tareaIntegradora == null) return ResultadoEJB.crearErroneo(2, "La tarea integradora no debe ser nula.");
-            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(3, "La carga académica no debe ser nula.");
+            if(tareaIntegradora == null) return ResultadoEJB.crearErroneo(2, "La tarea integradora no debe ser nula.", TareaIntegradora.class);
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(3, "La carga académica no debe ser nula.", TareaIntegradora.class);
           
             TareaIntegradora ti = new TareaIntegradora();
             ti.setDescripcion(tareaIntegradora.getDescripcion());
@@ -449,9 +452,10 @@ public class EjbConfiguracionUnidadMateria {
      * @return Resultado del proceso generando la instancia de configuración unidad materia por criterio
      */
     public ResultadoEJB<List<UnidadMateriaConfiguracionCriterio>> guardarConfiguracionUnidadMateriaCriterios(List<DtoConfiguracionUnidadMateria> configuracionUnidadMaterias, DtoCargaAcademica cargaAcademica){
-        try{  
-            if(configuracionUnidadMaterias == null) return ResultadoEJB.crearErroneo(2, "La lista de configuración unidad materia no puede ser nula.");
-            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(3, "La carga académica no debe ser nula.");
+        try{
+            List<UnidadMateriaConfiguracionCriterio> li = Collections.EMPTY_LIST;
+            if(configuracionUnidadMaterias == null) return ResultadoEJB.crearErroneo(2, li, "La lista de configuración unidad materia no puede ser nula.");
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(3, li, "La carga académica no debe ser nula.");
           
             List<Criterio> listaCriterios = em.createQuery("SELECT c FROM Criterio c WHERE c.nivel =:nivel", Criterio.class)
                     .setParameter("nivel", cargaAcademica.getPrograma().getNivelEducativo().getNivel())
@@ -484,7 +488,7 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<Integer> eliminarConfUnidadMateria(CargaAcademica cargaAcademica){
         try{ 
-            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.");
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.", Integer.TYPE);
             
             Integer delete = em.createQuery("DELETE FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:carga", UnidadMateriaConfiguracion.class)
                 .setParameter("carga", cargaAcademica.getCarga())
@@ -557,7 +561,7 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<Integer> eliminarTareaIntegradora(CargaAcademica cargaAcademica){
         try{ 
-            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.");
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.", Integer.TYPE);
             
             Integer delete = em.createQuery("DELETE FROM TareaIntegradora t WHERE t.carga.carga =:carga", TareaIntegradora.class)
                 .setParameter("carga", cargaAcademica.getCarga())

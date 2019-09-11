@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.controlador;
 
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.dto.finanzas.TramitesDto;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
@@ -223,5 +224,13 @@ public class Caster {
         if(dtoUnidadConfiguracion == null) return "Null";
         return String.valueOf(dtoUnidadConfiguracion.getUnidadMateria().getNoUnidad()).concat(".  ")
                 .concat(dtoUnidadConfiguracion.getUnidadMateria().getNombre());
+    }
+
+    public String dtoEstudianteToString(DtoEstudiante dtoEstudiante){
+        if(dtoEstudiante == null) return "Estudiante nulo";
+        return dtoEstudiante.getPersona().getApellidoPaterno().concat(" ")
+                .concat(dtoEstudiante.getPersona().getApellidoMaterno()).concat(" ")
+                .concat(dtoEstudiante.getPersona().getNombre()).concat(" (")
+                .concat(String.valueOf(dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula())).concat(")");
     }
 }

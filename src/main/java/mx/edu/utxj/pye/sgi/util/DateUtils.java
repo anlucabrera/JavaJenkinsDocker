@@ -67,6 +67,17 @@ public class DateUtils {
         if(fecha.isEqual(fin)) return true;
         return !fecha.isAfter(fin);
     }
+    public static boolean isBetweenWithRange(Date date, Date start, Date end, Long daysRange){
+        LocalDate fecha = asLocalDate(date);
+        LocalDate inicio = asLocalDate(start).minusDays(daysRange);
+
+        if(fecha.isEqual(inicio)) return true;
+        if(fecha.isBefore(inicio)) return false;
+
+        LocalDate fin = asLocalDate(end).plusDays(daysRange);
+        if(fecha.isEqual(fin)) return true;
+        return !fecha.isAfter(fin);
+    }
     
     public static void main(String[] args) {
         LocalDate hoy = LocalDate.now();

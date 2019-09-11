@@ -12,6 +12,10 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
+import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
+import mx.edu.utxj.pye.sgi.enums.converter.CasoCriticoEstadoConverter;
+import mx.edu.utxj.pye.sgi.enums.converter.CasoCriticoTipoConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.DateUtils;
 
@@ -29,6 +33,7 @@ public class EjbPacker {
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @EJB EjbAsignacionAcademica ejbAsignacionAcademica;
     @EJB EjbCapturaCalificaciones ejbCapturaCalificaciones;
+    @EJB EjbCasoCritico ejbCasoCritico;
     @EJB EjbPropiedades ep;
     private EntityManager em;
 
@@ -176,7 +181,7 @@ public class EjbPacker {
             detalles.forEach(detalle -> {
                 if(detalleListMap.containsKey(detalle.getCriterio())) detalleListMap.get(detalle.getCriterio()).add(detalle);
             });
-            Boolean activaPorFecha = DateUtils.isBetween(new Date(), unidadMateriaConfiguracionBD.getFechaInicio(), unidadMateriaConfiguracionBD.getFechaFin());
+            Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), unidadMateriaConfiguracionBD.getFechaInicio(), unidadMateriaConfiguracionBD.getFechaFin(), 7l);
             PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad", PermisosCapturaExtemporaneaGrupal.class)
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                     .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
@@ -284,15 +289,7 @@ public class EjbPacker {
      */
     public ResultadoEJB<DtoGrupoEstudiante> packGrupoEstudiante(DtoCargaAcademica dtoCargaAcademica, DtoUnidadConfiguracion dtoUnidadConfiguracion){
         try{
-            //empaquetar grupo estudiante
-//            System.out.println("EjbPacker.packGrupoEstudiante");
             Grupo grupo = em.find(Grupo.class, dtoCargaAcademica.getGrupo().getIdGrupo());
-//            System.out.println("grupo = " + grupo);
-//            System.out.println("grupo.getInscripcionList() = " + grupo.getInscripcionList());
-            /*List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e where e.grupo=:grupo order by e.aspirante.idPersona.apellidoPaterno, e.aspirante.idPersona.apellidoMaterno, e.aspirante.idPersona.nombre", Estudiante.class)
-                    .setParameter("grupo", grupo)
-                    .getResultList();*/
-//            System.out.println("estudiantes = " + estudiantes);
             List<DtoCapturaCalificacion> dtoCapturaCalificaciones = em.createQuery("select e from Estudiante e where e.grupo=:grupo order by e.aspirante.idPersona.apellidoPaterno, e.aspirante.idPersona.apellidoMaterno, e.aspirante.idPersona.nombre", Estudiante.class)
                     .setParameter("grupo", grupo)
                     .getResultStream()
@@ -342,6 +339,12 @@ public class EjbPacker {
             DtoCapturaCalificacion dtoCapturaCalificacion = new DtoCapturaCalificacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, capturas);
             ResultadoEJB<BigDecimal> resPromedio = ejbCapturaCalificaciones.promediarUnidad(dtoCapturaCalificacion);
             if(resPromedio.getCorrecto()) dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
+
+            ResultadoEJB<List<DtoCasoCritico>> resIdentificarCasoCritico = ejbCasoCritico.identificar(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion);
+            if(resIdentificarCasoCritico.getCorrecto()) {
+                dtoCapturaCalificacion.setDtoCasoCritico(resIdentificarCasoCritico.getValor().get(0));
+                dtoCapturaCalificacion.setTieneCasoCritico(true);
+            }
 
             return ResultadoEJB.crearCorrecto(dtoCapturaCalificacion, "Captura de calificación empaquetada");
         }catch (Exception e){
@@ -412,6 +415,29 @@ public class EjbPacker {
             }
         }catch (Exception e){
             return  ResultadoEJB.crearErroneo(1, "No se pudo obtener el periodo activo (EjbPacker.getPeriodoActivo).", e, PeriodosEscolares.class);
+        }
+    }
+
+    /**
+     * Permite empaquetar un caso critico
+     * @param casoCritico Instancia del caso critico proveniente de la base de datos
+     * @param dtoEstudiante Empaquetado de la inscripción activa del estudiante
+     * @param dtoCargaAcademica Empaquetado de la carga académica del docente en la materia y grupo
+     * @param dtoUnidadConfiguracion Empaquetado de la configuración de unidad que se muestra en pantalla
+     * @return Regresa el empaquetado del caso critico o código de error en caso de no poner generarlo
+     */
+    public ResultadoEJB<DtoCasoCritico> packCasoCritico(CasoCritico casoCritico, DtoEstudiante dtoEstudiante, DtoCargaAcademica dtoCargaAcademica, DtoUnidadConfiguracion dtoUnidadConfiguracion){
+        try{
+//            System.out.println("EjbPacker.packCasoCritico");
+//            System.out.println("casoCritico = [" + casoCritico + "], dtoEstudiante = [" + dtoEstudiante + "], dtoCargaAcademica = [" + dtoCargaAcademica + "], dtoUnidadConfiguracion = [" + dtoUnidadConfiguracion + "]");
+            CasoCriticoEstado estado = CasoCriticoEstadoConverter.of(casoCritico.getEstado());
+            CasoCriticoTipo tipo = CasoCriticoTipoConverter.of(casoCritico.getTipo());
+//            System.out.println("tipo = " + tipo);
+            DtoCasoCritico dtoCasoCritico = new DtoCasoCritico(casoCritico, tipo, estado, dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion);
+            return ResultadoEJB.crearCorrecto(dtoCasoCritico, "Caso crítico empaquetado");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "", e, DtoCasoCritico.class);
         }
     }
 }
