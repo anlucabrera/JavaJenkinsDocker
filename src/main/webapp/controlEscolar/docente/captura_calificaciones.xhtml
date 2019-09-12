@@ -49,6 +49,9 @@
 
                                     </f:facet>
                                     <f:facet name="right">
+                                        <p:commandLink action="asignacion_academica?faces-redirect=true" styleClass="btn btn-primary" >
+                                            <i class="fa fa-arrow-circle-right" /> Actualizar
+                                        </p:commandLink>
                                         <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
                                                        onclick="PF('modalAyuda').show();"
                                                        process="@this"
@@ -117,7 +120,7 @@
                                                             <p:row>
                                                                 <p:column rowspan="2" headerText="Matrícula" style="width: 80px;"/>
                                                                 <p:column rowspan="2" headerText="Nombre" style="width: 250px;"/>
-                                                                <p:column rowspan="2" headerText="Caso crítico" style="width: 250px;" />
+                                                                <p:column rowspan="2" headerText="Caso crítico" style="width: 80px;" />
                                                                 <p:columns var="criterio" value="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidad(unidadConfiguracion)}" colspan="#{unidadConfiguracion.unidadMateriaConfiguracionDetalles[criterio].size()}" headerText="#{criterio.criterio}. #{criterio.tipo}" />
                                                                 <p:column rowspan="2" headerText="Promedio" style="width: 80px;" />
                                                             </p:row>

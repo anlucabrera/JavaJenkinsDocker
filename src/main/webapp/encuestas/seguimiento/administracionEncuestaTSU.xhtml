@@ -76,7 +76,7 @@
         <div id="main-buttons"  >
             <p:toolbar id="tb">
                 <f:facet name="left">
-                    <p:outputLabel value="Administracion de encuesta: Satisfacción de egresados de T.S.U" />
+                    <p:outputLabel value="Administración de encuesta: Satisfacción de egresados de T.S.U" />
                 </f:facet>
                 <f:facet name="right"></f:facet>
             </p:toolbar>
@@ -242,7 +242,7 @@
                         <p:outputPanel>
                             <p:dataTable id="avanceEncIng" lazy="false" value="#{administracionAvanceEncuestas.dto.dtoLDAES1}" var="datosEncEgre"
                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                         rowsPerPageTemplate="10,20,30,40,50" paginator="true" rows="10"
+                                         rowsPerPageTemplate="10,20,30,40,50" paginator="true" rows="30"
                                          emptyMessage="No se encontraron registros"  >
                                 <f:facet name="footer">
                                     <p:commandButton id="actualizar" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary"
