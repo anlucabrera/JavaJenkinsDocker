@@ -211,6 +211,8 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         if(res.getCorrecto() && resPromedio.getCorrecto()) {
             rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor(), resPromedio.getValor());
             dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
+
+            //if(dtoCapturaCalificacion.getPromedio().)
         }
         else mostrarMensajeResultadoEJB(res);
 //        System.out.println("dtoCapturaCalificacion = " + dtoCapturaCalificacion.getPromedio());

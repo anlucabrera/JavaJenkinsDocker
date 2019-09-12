@@ -14,7 +14,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaTotalAlumnosCarreraPye;
 
 @Local
-public interface EjbPlaneacionCuatrimestral extends AbstractEjb {
+public interface EjbPlaneacionCuatrimestral{
 
     /**
      * Consulta el evento de planeación cuatrimestral activa
