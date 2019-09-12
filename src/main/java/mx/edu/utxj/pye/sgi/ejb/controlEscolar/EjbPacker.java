@@ -186,7 +186,7 @@ public class EjbPacker {
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                     .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
                     .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
-                    .setParameter("unidad", unidadMateria.getIdUnidadMateria())
+                    .setParameter("unidad", unidadMateria)
                     .getResultStream()
                     .findAny()
                     .orElse(null);
