@@ -115,10 +115,11 @@
                 <c:if test="#{procesoInscripcion.mostrarEnDesarrollo(request) and procesoInscripcion.tieneAcceso}"><li><p:link href="/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-users"></i><span>Inscripciones</span></p:link></li></c:if>
                 <c:if test="#{reincorporacionServiciosEscolares.mostrarEnDesarrollo(request) and reincorporacionServiciosEscolares.tieneAcceso}"><li><p:link href="/controlEscolar/se/reincorporaciones.xhtml"><i class="fa fa-user-plus"></i><span>Reincorporaciones</span></p:link></li></c:if>
                 <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Indicadores Criterio</span></p:link></li></c:if>
-                <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Planeacion Cuatrimestral</span></p:link></li></c:if>
+                <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral</span></p:link></li></c:if>
                 <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}"><li><p:link href="/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-calendar-check"></i><span>Apertura Extemporánea</span></p:link></li></c:if>
                 <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="/controlEscolar/docente/paseLista.xhtml"><i class="fa fa-list"></i><span>Pase de Lista</span> <span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="/controlEscolar/docente/segimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Segimiento Pase de Lista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de Lista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <!--c:if test="# paseListaSegTutor.mostrarEnDesarrollo(request) and paseListaSegTutor.tieneAcceso}"><li><p:link href="/controlEscolar/tutor/seguimientoPaseListaTutor.xhtml"><i class="fa fa-users"></i><span>Seguimiento Pase de Lista Tutorados</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if-->
             </c:if>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
             <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">
@@ -439,17 +440,17 @@
                 </a>
                 <ul class="treeview-menu" style="display: none;">
                     <li>
-                        <p:link href="/sgi/procesoE.xhtml">
+                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/Formacion_Integral_Visitas.pdf#toolbar=0" target="_blank">
                             <span>Estadía técnica</span>
                         </p:link>
                     </li>     
                     <li>
-                        <p:link href="/sgi/procesoT.xhtml">
-                            <span>Tutorias y Asesorias</span>
+                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/proceso_tutoria_asesoria.pdf#toolbar=0" target="_blank">
+                            <span>Tutorías y Asesorías</span>
                         </p:link>
                     </li>  
                     <li>
-                        <p:link href="/sgi/procesoV.xhtml">
+                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/PROCESO_ESTADIA_TECNICA.pdf#toolbar=0" target="_blank">
                             <span>Visitas</span>
                         </p:link>
                     </li>  
@@ -576,40 +577,70 @@
                             </a>
                             <ul class="treeview-menu" style="display: none;">
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/2. Plan Acción Tutorial modif.docx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/2. Plan Acción Tutorial modif.docx">
                                         <span>2. Plan Acción Tutorial</span>
                                     </p:link>
                                 </li>      
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/3. Cédula de Identificacion del Tutorado modif.xlsx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/3. Cédula de Identificacion del Tutorado modif.xlsx">
                                         <span>3. Cédula de Identificacion del<br/>Tutorado </span>
                                     </p:link>
                                 </li>       
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/4. Tutoría Grupal.xls">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/4. Tutoría Grupal.xls">
                                         <span>4. Tutoría Grupal</span>
                                     </p:link>
                                 </li>       
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/5. Tutoria Indiv y Casos Critícos modif.xlsx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/5. Tutoria Indiv y Casos Critícos modif.xlsx">
                                         <span>5. Tutoria Indiv y Casos Critícos</span>
                                     </p:link>
                                 </li>   
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/6. Justificante modif.xls">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/6. Justificante modif.xls">
                                         <span>6. Justificante</span>
                                     </p:link>
                                 </li>      
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/7. Asesorias.xlsx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/7. Asesorias.xlsx">
                                         <span>7. Asesorias</span>
                                     </p:link>
                                 </li>       
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias y Asesorias/8. Citatorio modif.doc">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/8. Citatorio modif.doc">
                                         <span>8. Citatorio</span>
                                     </p:link>
                                 </li>  
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-file-text-o"></i> <span>Plan de Acción Tutorial</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_1.docx">
+                                        <span>Propuesto 1°</span>
+                                    </p:link>
+                                </li>      
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_4.docx">
+                                        <span>Propuesto 4°</span>
+                                    </p:link>
+                                </li>       
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_7.docx">
+                                        <span>Propuesto 7°</span>
+                                    </p:link>
+                                </li>       
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_10.docx">
+                                        <span>Propuesto 10°</span>
+                                    </p:link>
+                                </li>   
                             </ul>
                         </li>
                     </c:if>
@@ -903,17 +934,35 @@
             </li>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Documentacion</li>
             <li>
-                <p:link href="/manuales.xhtml">
+                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Manual de Organización 2018 con Anexo de Funciones FINAL.pdf#toolbar=0" target="_blank">
                     <i class="fa fa-book"></i>
-                    <span>Manuales</span>
+                    <span>Manual de Organización</span>
                 </p:link>
             </li>
             <li>
+                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Manual de Procedimientos Administrativos 2018.pdf#toolbar=0" target="_blank">
+                    <i class="fa fa-book"></i>
+                    <span>Manual de Procedimientos Administrativos</span>
+                </p:link>
+            </li>
+            <li>
+                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/CODIGO DE CONDUCTA.pdf#toolbar=0" target="_blank">
+                    <i class="fa fa-book"></i>
+                    <span>Código de conducta</span>
+                </p:link>
+            </li>
+            <li>
+                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Código de etica.pdf#toolbar=0" target="_blank">
+                    <i class="fa fa-book"></i>
+                    <span>Código de ética</span>
+                </p:link>
+            </li>
+            <!--li>
                 <p:link href="/soporteTecnico.xhtml">
                     <i class="fa fa-wrench"></i>
                     <span>Soporte técnico</span>
                 </p:link>
-            </li>
+            </li-->
             <c:if test="#{controladorEmpleado.tienePOA}">
                 <li>
                     <p:link href="/calendarioActividades.xhtml">

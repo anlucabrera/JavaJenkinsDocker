@@ -31,7 +31,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Asignación de Indicadores por Criterio
+        Pase de lista
     </ui:define>
 
     <ui:define name="description">
@@ -39,7 +39,7 @@
     </ui:define>
 
     <ui:define name="body">
-        <adm:breadcrumb title="Asignación de Indicadores por Criterio"/>
+        <adm:breadcrumb title="Pase de lista"/>
         <div class="contenedor">
             <c:if test="#{paseListaDoc.tieneAcceso}">
                 <!-- zona de importación de enums -->
@@ -49,9 +49,6 @@
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
-                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(paseListaDoc.rol.periodoActivo)}" />
-                                        <p:spacer width="5" />
-
                                     </f:facet>
                                     <f:facet name="right">
 
@@ -212,7 +209,7 @@
                                                     <br/>
                                                     <p:outputPanel>            
                                                         <p:autoUpdate/>
-                                                        <p:commandButton value="Validar Pase de Lista" id="btnSiguiente" 
+                                                        <p:commandButton value="Guardar Pase de Lista" id="btnSiguiente" 
                                                                          actionListener="#{paseListaDoc.guardaPaseLista()}"  
                                                                          process="@this" icon="fa fa-plus" 
                                                                          styleClass="btn-primary" update="@this" 

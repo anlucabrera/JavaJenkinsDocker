@@ -700,6 +700,11 @@ public class EjbAsistencias {
         return ResultadoEJB.crearCorrecto(dpls, "Asignación de indicadores por criterio de la carga académica seleccionada.");
     }
     
+    public ResultadoEJB<Asistenciasacademicas> actualizarPaseLista(Asistenciasacademicas asistenciasacademicas) {
+        em.merge(asistenciasacademicas);
+        return ResultadoEJB.crearCorrecto(asistenciasacademicas, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+    }
+    
     public ResultadoEJB<Estudiante> buscaEstudiante(Integer matricula) {
         try {
             Estudiante e = new Estudiante();

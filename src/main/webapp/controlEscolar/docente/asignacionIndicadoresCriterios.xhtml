@@ -211,7 +211,7 @@
                                         </center>
                                         </c:if>
                                         </c:if>
-                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion ne 'individual'}">
+                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion eq 'masiva'}">
                                         <p:growl id="msgs" showDetail="true" />
                                         <p:accordionPanel widgetVar="accordion">
                                                 <p:tab title="Ser" titleStyleClass="box-solid" >

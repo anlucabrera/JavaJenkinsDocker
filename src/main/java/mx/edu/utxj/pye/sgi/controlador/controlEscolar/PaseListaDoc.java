@@ -119,6 +119,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             asi.add("Permiso");
             asi.add("Justificado");
             rol.setAsistencias(asi);
+            rol.setDplrcVisible(Boolean.FALSE);
         }catch (Exception e){mostrarExcepcion(e); }
     }
 
@@ -225,6 +226,22 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         });
         ejb.agregarPaseLista(rol.getDpls());
         existeAsignacion();
+    }
+    
+    public void buscarAsistencias(DtoPaseListaReporteConsulta reporteConsulta) {
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.buscarActividadParaEdicion(A)" + reporteConsulta.getListaalumnosca().getMatricula());
+        rol.setDplrcVisible(Boolean.FALSE);
+        rol.setDplrc(reporteConsulta);
+        rol.setDplrcVisible(Boolean.TRUE);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.buscarActividadParaEdicion(B)" + rol.getDplrc().getListaalumnosca().getMatricula());
+    }
+    
+    public void actualizarPaseLista() {
+        rol.getDplrc().getAsistenciasacademicases().forEach((t) -> {
+            ejb.actualizarPaseLista(t);            
+        });
+        existeAsignacion();
+        rol.setDpls(new ArrayList<>());
     }
     
     public void consultarReporte(ValueChangeEvent event) {

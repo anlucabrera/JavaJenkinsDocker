@@ -1518,37 +1518,57 @@
                                                                     </p:tab>
                                                                     <p:tab title="Acta de nacimiento" >
                                                                         <p:outputPanel id="evidenicas1" style="text-align:center;width: 100%;height: 100%" >
-                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}"/>       
-                                                                            </p:panelGrid>
+                                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}" target="_blank">
+                                                                                <i class="fa fa-book"></i>
+                                                                                <span>Ver Acta de nacimiento</span>
+                                                                            </p:link>
+                                                                            <!--p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;# {utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/# {utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}"/>       
+                                                                            </p:panelGrid-->
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="Comprobante de domicilio" >
                                                                         <p:outputPanel id="evidenicas2" style="text-align:center;width: 100%;height: 100%" >
-                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio)}"/>       
-                                                                            </p:panelGrid>
+                                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio)}" target="_blank">
+                                                                                <i class="fa fa-book"></i>
+                                                                                <span>Ver Comprobante de domicilio</span>
+                                                                            </p:link>
+                                                                            <!--p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;# {utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/# {utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio)}"/>       
+                                                                            </p:panelGrid-->
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="CURP" >
                                                                         <p:outputPanel id="evidenicas3" style="text-align:center;width: 100%;height: 100%" >
-                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp)}"/>       
-                                                                            </p:panelGrid>
+                                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp)}" target="_blank">
+                                                                                <i class="fa fa-book"></i>
+                                                                                <span>Ver CURP</span>
+                                                                            </p:link>
+                                                                            <!--p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;# {utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/# {utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp)}"/>       
+                                                                            </p:panelGrid-->
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="RFC" >
                                                                         <p:outputPanel id="evidenicas4" style="text-align:center;width: 100%;height: 100%" >
-                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc)}"/>       
-                                                                            </p:panelGrid>
+                                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc)}" target="_blank">
+                                                                                <i class="fa fa-book"></i>
+                                                                                <span>Ver RFC</span>
+                                                                            </p:link>
+                                                                            <!--p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;# {utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/# {utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc)}"/>       
+                                                                            </p:panelGrid-->
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                     <p:tab title="INE" >
                                                                         <p:outputPanel id="evidenicas5" style="text-align:center;width: 100%;height: 100%" >
-                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <object type="application/pdf" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}"/>       
-                                                                            </p:panelGrid>
+                                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}" target="_blank">
+                                                                                <i class="fa fa-book"></i>
+                                                                                <span>Ver INE</span>
+                                                                            </p:link>
+                                                                            <!--p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;# {utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/# {utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}"/>       
+                                                                            </p:panelGrid-->
                                                                         </p:outputPanel>
                                                                     </p:tab>
                                                                 </p:tabView>

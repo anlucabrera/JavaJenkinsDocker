@@ -30,7 +30,7 @@ public class PaseDeListaDocente extends AbstractRol{
     /**
      * Representa la referencia hacia el personal docente
     */
-    @Getter @NonNull private PersonalActivo docente;
+    @Getter @NonNull private PersonalActivo tutor;
 
     /**
      * Representa la referencia al evento activo de asignación academica
@@ -77,6 +77,8 @@ public class PaseDeListaDocente extends AbstractRol{
     @Getter @Setter private List<DtoPaseListaReporteConsulta> dtoPaseListaReporteConsultas;
     @Getter @Setter private List<DtoPaseListaReporte> dplsReportesMes;
     @Getter @Setter private List<Asistenciasacademicas> asistenciasacademicases;
+    @Getter @Setter private DtoPaseListaReporteConsulta dplrc;
+    @Getter @Setter private Boolean dplrcVisible= Boolean.FALSE;
     @Getter @Setter private List<String> asistencias;
     @Getter @Setter private List<Integer> diasPaseLista;
     
@@ -162,13 +164,13 @@ public class PaseDeListaDocente extends AbstractRol{
      */
     @Getter @NonNull private List<Listaalumnosca> listaalumnoscas;
     
-    public PaseDeListaDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
+    public PaseDeListaDocente(Filter<PersonalActivo> filtro, PersonalActivo tutor) {
         super(filtro);
-        this.docente = docente;
+        this.tutor = tutor;
     }
 
-    public void setDocente(PersonalActivo docente) {
-        this.docente = docente;
+    public void setDocente(PersonalActivo tutor) {
+        this.tutor = tutor;
     }
 
     public void setEventoActivo(EventoEscolar eventoActivo) {

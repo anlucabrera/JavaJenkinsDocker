@@ -35,7 +35,7 @@ public class MediaFileServlet extends FileServlet {
     @Override
     protected File getFile(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
-        System.out.println("jvv.aldesa.sgot.servlet.MediaFileServlet.getFile():" + pathInfo);
+        //System.out.println("jvv.aldesa.sgot.servlet.MediaFileServlet.getFile():" + pathInfo);
         if (pathInfo == null || pathInfo.isEmpty() || "/".equals(pathInfo)) {
             throw new IllegalArgumentException();
         }

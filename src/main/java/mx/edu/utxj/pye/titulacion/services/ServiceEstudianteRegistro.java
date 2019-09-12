@@ -526,7 +526,7 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         List<Integer> listaStatus = Arrays.stream(status).boxed().collect(Collectors.toList());
 
         TypedQuery<Alumnos> q = facadeSAIIUT.getEntityManager()
-                .createQuery("SELECT a FROM Alumnos a WHERE a.matricula=:matricula AND a.cveStatus IN :status ORDER BY a.alumnosPK.cveAlumno DESC", Alumnos.class);
+                .createQuery("SELECT a FROM Alumnos a WHERE a.matricula=:matricula AND a.cveStatus IN :status ORDER BY a.gradoActual DESC", Alumnos.class);
         q.setParameter("status", listaStatus);
         q.setParameter("matricula", matricula);
         
