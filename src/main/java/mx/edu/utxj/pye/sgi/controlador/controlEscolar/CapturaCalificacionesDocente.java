@@ -238,22 +238,23 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
     }
 
     public void guardarCasoCritico(){
-        System.out.println("CapturaCalificacionesDocente.guardarCasoCritico");
+//        System.out.println("CapturaCalificacionesDocente.guardarCasoCritico");
         if(rol.getDtoCapturaCalificacionSeleccionada() == null) {
             mostrarMensaje("No se puede registrar el caso crítico porque la referencia de la captura de calificación es nula.");
             return;
         }
 
-        System.out.println("rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion() = " + rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion());
+//        System.out.println("rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion() = " + rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion());
         if(rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion() == null || rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion().trim().isEmpty()){
             mostrarMensaje("Debe ingresar una descripción del caso crítico");
             Ajax.oncomplete("PF('modalCasoCritico').show();");
             return;
         }
         ResultadoEJB<DtoCasoCritico> registrar = ejbCasoCritico.registrar(rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico());
-        System.out.println("registrar = " + registrar);
+//        System.out.println("registrar = " + registrar);
         if(registrar.getCorrecto()){
             rol.getDtoCapturaCalificacionSeleccionada().setDtoCasoCritico(registrar.getValor());
+//            System.out.println("rol.getDtoCapturaCalificacionSeleccionada().getTieneCasoCritico() = " + rol.getDtoCapturaCalificacionSeleccionada().getTieneCasoCritico());
         }else mostrarMensajeResultadoEJB(registrar);
     }
 

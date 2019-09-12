@@ -151,7 +151,7 @@ public class EjbCasoCritico implements Serializable {
 
             ResultadoEJB<DtoCasoCritico> dtoCasoCriticoResultadoEJB = packer.packCasoCritico(dtoCasoCritico.getCasoCritico(), dtoCasoCritico.getDtoEstudiante(), dtoCasoCritico.getDtoCargaAcademica(), dtoCasoCritico.getDtoUnidadConfiguracion());
 
-            if(dtoCasoCriticoResultadoEJB.getCorrecto()) return ResultadoEJB.crearCorrecto(null, "Caso crítico registrado correctamente.");
+            if(dtoCasoCriticoResultadoEJB.getCorrecto()) return ResultadoEJB.crearCorrecto(dtoCasoCriticoResultadoEJB.getValor(), "Caso crítico registrado correctamente.");
             else return ResultadoEJB.crearErroneo(2, dtoCasoCriticoResultadoEJB.getMensaje(), DtoCasoCritico.class);
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar el caso crítico (EjbCasoCritico.registrarCasoCritico).", e, DtoCasoCritico.class);
