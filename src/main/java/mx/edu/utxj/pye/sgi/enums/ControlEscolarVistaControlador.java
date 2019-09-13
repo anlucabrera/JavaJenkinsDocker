@@ -21,6 +21,7 @@ public enum ControlEscolarVistaControlador {
     REPORTE_PLANEACION_CUATRIMESTRAL("/controlEscolar/docente/planeacionCuatrimestral.xhtml", PlaneacionCuatrimestralImpresion.class),
     PERMISO_APERTURA_EXTEMPORANEA("/controlEscolar/pye/permisoAperturaExtemporanea.xhtml", PermisoAperturaExtemporaneaAdministrador.class),
     PASE_DE_LISTA("/controlEscolar/docente/paseLista.xhtml", PaseListaDoc.class),
+    REGISTRAR_BAJAS("/controlEscolar/se/registrarBajas.xhtml", RegistrarBajaServiciosEscolares.class),
     REPORTE_BECAS("/becas/reporteBecas.xhtml", reporteBecas.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
