@@ -440,7 +440,7 @@
                 </a>
                 <ul class="treeview-menu" style="display: none;">
                     <li>
-                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/Formacion_Integral_Visitas.pdf#toolbar=0" target="_blank">
+                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/PROCESO_ESTADIA_TECNICA.pdf#toolbar=0" target="_blank">
                             <span>Estadía técnica</span>
                         </p:link>
                     </li>     
@@ -450,9 +450,55 @@
                         </p:link>
                     </li>  
                     <li>
-                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/PROCESO_ESTADIA_TECNICA.pdf#toolbar=0" target="_blank">
+                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/Formacion_Integral_Visitas.pdf#toolbar=0" target="_blank">
                             <span>Visitas</span>
                         </p:link>
+                    </li>  
+                </ul>
+            </li>
+
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-chain "></i> <span>Procedimientos</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="display: none;">
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-file"></i> <span>Mandatorios</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_de_Acciones_Correctivas.pdf" target="_blank">
+                                    <span>Acciones Correctivas</span>
+                                </p:link>
+                            </li> 
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_de_quejas_observaciones_y_sugerencias.pdf" target="_blank">
+                                    <span>Quejas, observaciones y sugerencias</span>
+                                </p:link>
+                            </li> 
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_de_Salida_No_Conforme.pdf" target="_blank">
+                                    <span>Salida No Conforme</span>
+                                </p:link>
+                            </li> 
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_del_Control_de_Registros.pdf" target="_blank">
+                                    <span>Control de Registros</span>
+                                </p:link>
+                            </li> 
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_para_el_control_de_documentos.pdf" target="_blank">
+                                    <span>Control de documentos</span>
+                                </p:link>
+                            </li> 
+                        </ul>
                     </li>  
                 </ul>
             </li>
@@ -466,48 +512,46 @@
                 </a>
                 <ul class="treeview-menu" style="display: none;">
 
-                    <c:if test="#{controladorEmpleado.tienePOA}">
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-file"></i> <span>Generales</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span>
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">
-                                <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/AccionesCorrectivas.docx">
-                                        <span>Acciones Correctivas</span>
-                                    </p:link>
-                                </li>      
-                                <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListadoRegistros.xls">
-                                        <span>Listado de Registros</span>
-                                    </p:link>
-                                </li>   
-                                <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListaMaestraDocumentosExternos.xls">
-                                        <span>Lista Maestra Docs. Externos</span>
-                                    </p:link>
-                                </li>
-                                <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListaMaestraDocumentosInternos.xls">
-                                        <span>Lista Maestra Docs. Internos</span>
-                                    </p:link>
-                                </li>      
-                                <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/RegistroSalidaNoConforme.docx">
-                                        <span>Registro de Salida No Conforme</span>
-                                    </p:link>
-                                </li>   
-                                <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/RevisionAprobacionDocumentos.xlsx">
-                                        <span>Revisión y Aprobación de Docs</span>
-                                    </p:link>
-                                </li>
-                            </ul>
-                        </li>   
-                    </c:if>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-file"></i> <span>Mandatorios</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/AccionesCorrectivas.docx">
+                                    <span>Acciones Correctivas</span>
+                                </p:link>
+                            </li>      
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListadoRegistros.xls">
+                                    <span>Listado de Registros</span>
+                                </p:link>
+                            </li>   
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListaMaestraDocumentosExternos.xls">
+                                    <span>Lista Maestra Docs. Externos</span>
+                                </p:link>
+                            </li>
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListaMaestraDocumentosInternos.xls">
+                                    <span>Lista Maestra Docs. Internos</span>
+                                </p:link>
+                            </li>      
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/RegistroSalidaNoConforme.docx">
+                                    <span>Registro de Salida No Conforme</span>
+                                </p:link>
+                            </li>   
+                            <li>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/RevisionAprobacionDocumentos.xlsx">
+                                    <span>Revisión y Aprobación de Docs</span>
+                                </p:link>
+                            </li>
+                        </ul>
+                    </li>  
                     <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) || (controladorEmpleado.nuevoOBJListaPersonal.clave eq 43 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 394 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
                         <li class="treeview">
                             <a href="#">
