@@ -81,6 +81,7 @@ public class PaseDeListaDocente extends AbstractRol{
     @Getter @Setter private Boolean dplrcVisible= Boolean.FALSE;
     @Getter @Setter private List<String> asistencias;
     @Getter @Setter private List<Integer> diasPaseLista;
+    @Getter @Setter private List<String> horasPaseLista;
     
     /**
      * Carga académica seleccionada

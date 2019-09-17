@@ -211,7 +211,7 @@
                                                         <p:autoUpdate/>
                                                         <p:commandButton value="Guardar Pase de Lista" id="btnSiguiente" 
                                                                          actionListener="#{paseListaDoc.guardaPaseLista()}"  
-                                                                         process="@this" icon="fa fa-plus" 
+                                                                         process="@this" icon="fa fa-plus" onclick="PF('bloqueoCargaFile').show()"
                                                                          styleClass="btn-primary" update="@this" 
                                                                          />
                                                     </p:outputPanel>
@@ -224,6 +224,9 @@
                         </div>
                     </div>
                 </h:form>
+                <p:blockUI block="frm" widgetVar="bloqueoCargaFile">
+                    Cargando espere por favor.<br />
+                </p:blockUI>
             </c:if>
             <c:if test="#{!paseListaDoc.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">

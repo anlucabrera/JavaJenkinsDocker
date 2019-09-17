@@ -59,7 +59,7 @@
                                 <div class="box-body">
                                     <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
                                     <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
-                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {paseListaDoc.actualizarCargaAcademica}" update="@form" />
+                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="#{paseListaDoc.actualizarCargaAcademica}" update="@form" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
@@ -170,8 +170,8 @@
                                                                             <p:column colspan="#{paseListaDoc.rol.diasPaseLista.size()+2}" style="font-size: large">Reporte Asistencias</p:column>
                                                                         </p:row>
                                                                         <p:row>
-                                                                            <p:column rowspan="2" >Matricula</p:column>
-                                                                            <p:column rowspan="2">Nombre</p:column>
+                                                                            <p:column rowspan="3" >Matricula</p:column>
+                                                                            <p:column rowspan="3">Nombre</p:column>
                                                                             <c:forEach var="i" begin="0" end="#{paseListaDoc.rol.dplsReportesMes.size()-1}">
                                                                                 <c:set var="t" value="#{paseListaDoc.rol.dplsReportesMes.get(i)}"/>
                                                                                 <p:column colspan="#{t.dias}" >#{t.mes}</p:column>
@@ -182,7 +182,8 @@
                                                                         <p:row>
                                                                             <c:forEach var="i" begin="0" end="#{paseListaDoc.rol.diasPaseLista.size()-1}">
                                                                                 <c:set var="t" value="#{paseListaDoc.rol.diasPaseLista.get(i)}"/>
-                                                                                <p:column>#{t}</p:column>
+                                                                                <c:set var="g" value="#{paseListaDoc.rol.horasPaseLista.get(i)}"/>
+                                                                                <p:column rowspan="2">#{t} <hr/> #{g} hrs.</p:column>
                                                                             </c:forEach>
                                                                         </p:row>
                                                                     </f:facet>
@@ -196,12 +197,12 @@
                                                                                 <c:set var="n" value="#{q.asistenciasacademicases.get(m)}"/>
                                                                                 <p:column >#{n.tipoAsistenciaA}</p:column>
                                                                             </c:forEach>
-                                                                            <!--p:column>
-
-                                                                                <p:commandButton icon="fa fa-edit" title="Editar" styleClass="btn-primary" oncomplete="PF('dlgActualizacionActividad').show()" 
-                                                                                                 actionListener="# {paseListaDoc.buscarAsistencias(q)}" update="@form">
-                                                                                    <p:ajax 
-                                                                            </p:commandButton-->
+                                                                            <p:column>                                                                                                                                                                
+                                                                                <p:commandButton icon="fa fa-edit" title="Editar actividad" styleClass="btn-primary" oncomplete="PF('dlgActualizacionActividad').show()" process="@this" update=":frmActualizaActividad"
+                                                                                                 actionListener="#{paseListaDoc.metodoBase()}">
+                                                                                    <span class="label label-success"></span>
+                                                                                    <f:setPropertyActionListener target="#{paseListaDoc.rol.dplrc}" value="#{q}" />
+                                                                                </p:commandButton>
                                                                             </p:column>
                                                                         </p:row>
                                                                     </c:forEach>
@@ -219,37 +220,60 @@
                     </div>
                 </h:form>
 
-                <!--h:form id="frmActualizaActividad" >
+                <h:form id="frmActualizaActividad" >
                     <p:outputPanel >
                         <p:autoUpdate/>
-                        <p:dialog id="dlgActualizacionActividad"  header="Actualizar Asistencias" widgetVar="dlgActualizacionActividad" minimizable="true" 
-                                  maximizable="true" position="center" visible="# {paseListaDoc.rol.dplrcVisible}">
+                        <p:dialog id="dlgActualizacionActividad"  header="Actualizar Asistencias" widgetVar="dlgActualizacionActividad" minimizable="true" width="500px"
+                                  maximizable="true" position="center" visible="#{paseListaDoc.rol.dplrcVisible}">
                             <div class="row">
                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                     <div class="col-sm-6 col-md-4 col-lg-4">
-                                        <p:outputLabel value="Alumno: # {paseListaDoc.rol.dplrc.listaalumnosca.esApePat}
-                                                       # {paseListaDoc.rol.dplrc.listaalumnosca.esApeMat}
-                                                       # {paseListaDoc.rol.dplrc.listaalumnosca.esNombre}" />
+                                        <p:outputLabel value="Alumno: #{paseListaDoc.rol.dplrc.listaalumnosca.esApePat}
+                                                       #{paseListaDoc.rol.dplrc.listaalumnosca.esApeMat}
+                                                       #{paseListaDoc.rol.dplrc.listaalumnosca.esNombre}" />
                                         <hr/>
                                     </div>                                
                                     <div class="col-sm-12 col-md-12 col-lg-12">
-                                        <p:panelGrid columns="4">
-                                            <c:forEach var="m" begin="0" end="# {paseListaDoc.rol.dplrc.asistenciasacademicases.size()-1}">
-                                                <c:set var="n" value="# {paseListaDoc.rol.dplrc.asistenciasacademicases.get(m)}"/>
-                                                <p:row> # {n.asistencia.fechaHora} <br/> 
-                                                    <p:selectOneMenu value="# {n.tipoAsistenciaA}" style="width:100%">
-                                                        <f:selectItems value="# {paseListaDoc.rol.asistencias}" var="man" itemLabel="# {man}" itemValue="# {man}" />
-                                                    </p:selectOneMenu>
-                                                </p:row>                                                    
-                                            </c:forEach>
-                                        </p:panelGrid>
+
+                                        <p:dataTable id="cars1" var="car" value="#{paseListaDoc.rol.dplrc.asistenciasacademicases}" editable="true" style="margin-bottom:20px">
+                                            <f:facet name="header">
+                                                Asistencias
+                                            </f:facet>
+
+                                            <p:ajax event="rowEdit" listener="#{paseListaDoc.updatePaseDeLista}" update="@form"/>
+                                            <p:ajax event="rowEditCancel" listener="#{paseListaDoc.onRowCancel}" update="@form"/>
+
+                                            <p:column headerText="Mes">
+                                                <h:outputText value="#{car.asistencia.fechaHora}"><f:convertDateTime pattern="MMMMM" locale="es"/></h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Fecha">
+                                                <h:outputText value="#{car.asistencia.fechaHora}"><f:convertDateTime pattern="dd, yyyy" locale="es"/></h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Hora"><h:outputText value="#{car.asistencia.fechaHora.hours ge 10?'':'0'}#{car.asistencia.fechaHora.hours}:#{car.asistencia.fechaHora.minutes}#{car.asistencia.fechaHora.minutes ge 10?'':'0'}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Valor">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{car.tipoAsistenciaA}" /></f:facet>
+                                                    <f:facet name="input">
+                                                        <p:selectOneMenu value="#{car.tipoAsistenciaA}" style="width:100%">
+                                                            <f:selectItems value="#{paseListaDoc.rol.asistencias}" var="man" itemLabel="#{man}" itemValue="#{man}" />
+                                                        </p:selectOneMenu>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+
+                                            <p:column style="width:35px">
+                                                <p:rowEditor />
+                                            </p:column>
+                                        </p:dataTable>
                                     </div>
                                 </div> 
-                                <p:commandButton value="Actualizar" id="btnActualiza" actionListener="# {paseListaDoc.actualizarPaseLista()}"  oncomplete="PF('dlgActualizacionActividad').hide()" process=":frmActualizaActividad" icon="fa fa-edit" styleClass="btn-primary" update=":frm" />
-                                <p:commandButton value="Cancelar" icon="fa fa-refresh" process="@this" class="btn-success btn-block" ajax="true" update="@form" resetValues="true"/> </div>
+                            </div>
+                            
                         </p:dialog>
                     </p:outputPanel>
-                </h:form-->
+                </h:form>
             </c:if>
             <c:if test="#{!paseListaDoc.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">

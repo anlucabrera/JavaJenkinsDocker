@@ -81,9 +81,10 @@ public class EjbAdministracionEncuesta {
             }
         });
         //.setParameter("grado", grado) AND g.grado = :grado
-        List<Grupos> tutor = f2.getEntityManager().createQuery("SELECT g FROM Grupos as g WHERE g.gruposPK.cvePeriodo = :periodo "
+        List<Grupos> tutor = f2.getEntityManager().createQuery("SELECT g FROM Grupos as g WHERE (g.gruposPK.cvePeriodo = :periodo or g.gruposPK.cvePeriodo = :periodo2) "
                 + "AND g.cveMaestro = :cvePersona",Grupos.class)
                 .setParameter("periodo",periodo)
+                .setParameter("periodo2", periodo - 1)
                 .setParameter("cvePersona", cvePersona)
 
                 .getResultStream().collect(Collectors.toList());
