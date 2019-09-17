@@ -35,7 +35,7 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{capturaCalificacionesDocente.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{configuracionUnidadMateriaDocente.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{asignacionIndicadoresCriteriosDocente.tieneAcceso}"); if(get) return true;
-
+        get = Faces.evaluateExpressionGet("#{credencializacionSE.tieneAcceso}"); if(get) return true;
         return false;
     }
 }

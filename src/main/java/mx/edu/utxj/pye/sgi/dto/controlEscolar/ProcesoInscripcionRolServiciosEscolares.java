@@ -23,7 +23,7 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     @Getter @NonNull private Integer periodoActivo, periodoAct;
     @Getter @NonNull private AreasUniversidad programa;
 
-    public ProcesoInscripcionRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
+     public ProcesoInscripcionRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
         super(filtro);
         this.serviciosEscolares = serviciosEscolares;
         this.programa = programa;
