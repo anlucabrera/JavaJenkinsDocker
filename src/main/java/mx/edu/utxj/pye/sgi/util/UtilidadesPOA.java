@@ -19,6 +19,7 @@ import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -36,6 +37,7 @@ public class UtilidadesPOA implements Serializable {
 
     @EJB    EjbCarga ejbUtilidadesCH;
     @EJB    EjbCatalogosPoa ecp;
+    @EJB    EjbAreasLogeo eal;
     @EJB    private EjbUtilidadesCH euch;
     @Inject ControladorEmpleado ce;
     @Inject UtilidadesCorreosElectronicos correosElectronicos;
@@ -99,6 +101,18 @@ public class UtilidadesPOA implements Serializable {
                 case 11:                    nombre= "Diciembre";                    break;
             }
             return nombre;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+
+    public String obtenerAreaNombre(Short clave) {
+        try {
+            AreasUniversidad au = new AreasUniversidad();
+            au = eal.mostrarAreasUniversidad(clave);
+            return au.getNombre();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);

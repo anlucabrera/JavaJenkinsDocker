@@ -106,8 +106,8 @@ public void reseteador() {
     public void cmiEnGeneral() {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
-        actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasTotalArea(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
-        cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel(), false);
+        actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasTotalArea(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal);
+        cmiGeneral = new ResultadosCMI(poau.obtenerAreaNombre(controladorEmpleado.getProcesopoa().getArea()), 0, 0, 0.0, graf, new MeterGaugeChartModel(), false);
         if (!actividadesPoas.isEmpty()) {
             List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
             actividadesPoasFiltradas.clear();
@@ -122,7 +122,7 @@ public void reseteador() {
                 grafRA.setShowTickLabels(true);
                 grafRA.setLabelHeightAdjust(10);
                 grafRA.setIntervalOuterRadius(100);
-                cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), programadas, realizadas, avance, graf, grafRA, true);
+                cmiGeneral = new ResultadosCMI(poau.obtenerAreaNombre(controladorEmpleado.getProcesopoa().getArea()), programadas, realizadas, avance, graf, grafRA, true);
             }
         }
     }
@@ -130,7 +130,7 @@ public void reseteador() {
     public void cmiPorEje() {
         ejesRegistros = new ArrayList<>();
         ejesRegistros.clear();
-        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal);
         
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((t) -> {
@@ -148,7 +148,7 @@ public void reseteador() {
     public ResultadosCMI cmiEje(EjesRegistro er) {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
-            actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasEje(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal, er);
+        actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasEje(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal, er);
         List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
         actividadesPoasFiltradas.clear();
         actividadesPoasFiltradas = actividadesFiltradas(actividadesPoas);
@@ -296,22 +296,22 @@ public void reseteador() {
 
         ejesRegistros = new ArrayList<>();
         ejesRegistros.clear();
-        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa(), ejercicioFiscal);
+        ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal);
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((ej) -> {
                 proyectoses = new ArrayList<>();
                 proyectoses.clear();
-                proyectoses = ejbCatalogosPoa.getProyectosPorEje(ej, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                proyectoses = ejbCatalogosPoa.getProyectosPorEje(ej, ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea());
                 if (!proyectoses.isEmpty()) {
                     proyectoses.forEach((pr) -> {
                         estrategiases = new ArrayList<>();
                         estrategiases.clear();
-                        estrategiases = ejbCatalogosPoa.getEstrategiaPorProyectos(pr, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                        estrategiases = ejbCatalogosPoa.getEstrategiaPorProyectos(pr, ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea());
                         if (!estrategiases.isEmpty()) {
                             estrategiases.forEach((es) -> {
                                 List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
                                 listaActividadesPoasFiltradas.clear();
-                                listaActividadesPoasFiltradas = actividadesFiltradas(ejbRegistroActividades.getActividadesPoasporProyecto(es, ej, pr, ejercicioFiscal, controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                                listaActividadesPoasFiltradas = actividadesFiltradas(ejbRegistroActividades.getActividadesPoasporProyecto(es, ej, pr, ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea()));
                                 if (!listaActividadesPoasFiltradas.isEmpty()) {
                                     Collections.sort(listaActividadesPoasFiltradas, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
                                     listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(es, listaActividadesPoasFiltradas));
