@@ -226,9 +226,10 @@ public class EjbCasoCritico implements Serializable {
                     return registrar;
                 }else return ResultadoEJB.crearErroneo(2, "No se pudo registrar de forma automática el caso crítico correspondiente a una calificación reprobatoria por unidad.", DtoCasoCritico.class);
             }else {
-                if(dtoCapturaCalificacion.getTieneCasoCritico()){
-                    if(dtoCapturaCalificacion.getDtoCasoCritico().getTipo().equals(CasoCriticoTipo.SISTEMA_UNIDAD_REPROBADA)){
-                        ResultadoEJB<Boolean> eliminar = eliminar(dtoCapturaCalificacion.getDtoCasoCritico());
+                if(dtoCapturaCalificacion.getTieneCasoCriticoSistema()){
+                    DtoCasoCritico dtoCasoCritico = dtoCapturaCalificacion.getCasosCriticosSistema().get(CasoCriticoTipo.SISTEMA_UNIDAD_REPROBADA);
+                    if(dtoCasoCritico != null){
+                        ResultadoEJB<Boolean> eliminar = eliminar(dtoCasoCritico);
                         if(!eliminar.getCorrecto()) return ResultadoEJB.crearErroneo(3, eliminar.getMensaje(), DtoCasoCritico.class);
                     }
                 }

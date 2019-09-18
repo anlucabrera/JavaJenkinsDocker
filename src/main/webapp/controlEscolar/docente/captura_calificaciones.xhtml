@@ -49,9 +49,10 @@
 
                                     </f:facet>
                                     <f:facet name="right">
-                                        <p:commandLink process="@this" action="captura_calificaciones?faces-redirect=true" styleClass="btn btn-primary" >
+                                        <p:commandLink process="@this" action="captura_calificaciones?faces-redirect=true" styleClass="btn btn-primary" title="Presione para actualizar estado de casos críticos.">
                                             <i class="fa fa-arrow-circle-right" /> Actualizar
                                         </p:commandLink>
+                                        <p:spacer width="5" />
                                         <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
                                                        onclick="PF('modalAyuda').show();"
                                                        process="@this"
