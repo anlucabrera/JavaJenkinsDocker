@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
@@ -16,6 +17,8 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
+import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
@@ -24,6 +27,7 @@ import org.omnifaces.util.Ajax;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -212,7 +216,10 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
             rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor(), resPromedio.getValor());
             dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
 
-            //if(dtoCapturaCalificacion.getPromedio().)
+            ResultadoEJB<DtoCasoCritico> registrarPorReprobacion = ejbCasoCritico.registrarPorReprobacion(dtoCapturaCalificacion);
+            System.out.println("registrarPorReprobacion = " + registrarPorReprobacion);
+            if(registrarPorReprobacion.getCorrecto()) mostrarMensaje("Se generó un caso crítico automáticamente por promedio reprobatorio.");
+            else if(registrarPorReprobacion.getResultado() < 4) mostrarMensajeResultadoEJB(registrarPorReprobacion);
         }
         else mostrarMensajeResultadoEJB(res);
 //        System.out.println("dtoCapturaCalificacion = " + dtoCapturaCalificacion.getPromedio());
@@ -227,7 +234,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
 //        System.out.println("dtoCapturaCalificacion = " + dtoCapturaCalificacion);
 //        System.out.println("dtoCapturaCalificacion.getTieneCasoCritico() = " + dtoCapturaCalificacion.getTieneCasoCritico());
         if(!dtoCapturaCalificacion.getTieneCasoCritico()){
-            ResultadoEJB<DtoCasoCritico> generarNuevo = ejbCasoCritico.generarNuevo(dtoCapturaCalificacion.getDtoEstudiante(), dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoUnidadConfiguracion());
+            ResultadoEJB<DtoCasoCritico> generarNuevo = ejbCasoCritico.generarNuevo(dtoCapturaCalificacion.getDtoEstudiante(), dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoUnidadConfiguracion(), CasoCriticoTipo.ASISTENCIA_IRREGURLAR);
 //            System.out.println("generarNuevo = " + generarNuevo);
             if(generarNuevo.getCorrecto()){
                 rol.getDtoCapturaCalificacionSeleccionada().setDtoCasoCritico(generarNuevo.getValor());
@@ -239,12 +246,18 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
 
     }
 
-    public void guardarCasoCritico(){
-//        System.out.println("CapturaCalificacionesDocente.guardarCasoCritico");
+    public Boolean comprobarDtoCapturaCalificacionSeleccionada(){
         if(rol.getDtoCapturaCalificacionSeleccionada() == null) {
             mostrarMensaje("No se puede registrar el caso crítico porque la referencia de la captura de calificación es nula.");
-            return;
+            return false;
         }
+
+        return true;
+    }
+
+    public void guardarCasoCritico(){
+//        System.out.println("CapturaCalificacionesDocente.guardarCasoCritico");
+        if(!comprobarDtoCapturaCalificacionSeleccionada()) return;
 
 //        System.out.println("rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion() = " + rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion());
         if(rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion() == null || rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico().getCasoCritico().getDescripcion().trim().isEmpty()){
@@ -258,6 +271,16 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
             rol.getDtoCapturaCalificacionSeleccionada().setDtoCasoCritico(registrar.getValor());
 //            System.out.println("rol.getDtoCapturaCalificacionSeleccionada().getTieneCasoCritico() = " + rol.getDtoCapturaCalificacionSeleccionada().getTieneCasoCritico());
         }else mostrarMensajeResultadoEJB(registrar);
+    }
+
+    public void eliminarCasoCritico(){
+        if(!comprobarDtoCapturaCalificacionSeleccionada() || !rol.getDtoCapturaCalificacionSeleccionada().getTieneCasoCritico()) return;
+        ResultadoEJB<Boolean> eliminar = ejbCasoCritico.eliminar(rol.getDtoCapturaCalificacionSeleccionada().getDtoCasoCritico());
+        mostrarMensajeResultadoEJB(eliminar);
+    }
+
+    public List<CasoCriticoTipo> getListaCasoCriticoTipos(){
+        return CasoCriticoTipo.Lista();
     }
 
     /*public String generarIdTabla(DtoUnidadConfiguracion dtoUnidadConfiguracion){//

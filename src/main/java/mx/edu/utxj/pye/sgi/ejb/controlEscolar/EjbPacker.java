@@ -157,11 +157,7 @@ public class EjbPacker {
      */
     public ResultadoEJB<DtoUnidadConfiguracion> packUnidadConfiguracion(UnidadMateriaConfiguracion unidadMateriaConfiguracion, DtoCargaAcademica dtoCargaAcademica){
         try{
-//            System.out.println("EjbPacker.packUnidadConfiguracion");
-//            System.out.println("unidadMateriaConfiguracion = " + unidadMateriaConfiguracion);
-            //empaquetar configuración de unidad
             UnidadMateriaConfiguracion unidadMateriaConfiguracionBD = em.find(UnidadMateriaConfiguracion.class, unidadMateriaConfiguracion.getConfiguracion());
-//            System.out.println("unidadMateriaConfiguracionBD = " + unidadMateriaConfiguracionBD);
             UnidadMateria unidadMateria = unidadMateriaConfiguracionBD.getIdUnidadMateria();
             final Map<Criterio,List<DtoUnidadConfiguracion.Detalle>> detalleListMap = new HashMap<>();
             List<DtoUnidadConfiguracion.Detalle> detalles = em.createQuery("select d from UnidadMateriaConfiguracionDetalle d where d.configuracion.configuracion=:configuracion and d.configuracion.carga.docente=:docente", UnidadMateriaConfiguracionDetalle.class)
@@ -172,16 +168,14 @@ public class EjbPacker {
                     .filter(ResultadoEJB::getCorrecto)
                     .map(ResultadoEJB::getValor)
                     .collect(Collectors.toList());
-//            detalles.forEach(System.out::println);
             List<Criterio> criterios = detalles.stream().map(DtoUnidadConfiguracion.Detalle::getCriterio).distinct().sorted(Comparator.comparingInt(Criterio::getCriterio)).collect(Collectors.toList());
             criterios.forEach(criterio -> {
-//                System.out.println("criterio = " + criterio);
                 detalleListMap.put(criterio, new ArrayList<>());
             });
             detalles.forEach(detalle -> {
                 if(detalleListMap.containsKey(detalle.getCriterio())) detalleListMap.get(detalle.getCriterio()).add(detalle);
             });
-            Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), unidadMateriaConfiguracionBD.getFechaInicio(), unidadMateriaConfiguracionBD.getFechaFin(), 14l);
+            Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), unidadMateriaConfiguracionBD.getFechaInicio(), unidadMateriaConfiguracionBD.getFechaFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
             PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad", PermisosCapturaExtemporaneaGrupal.class)
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                     .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
@@ -340,11 +334,21 @@ public class EjbPacker {
             ResultadoEJB<BigDecimal> resPromedio = ejbCapturaCalificaciones.promediarUnidad(dtoCapturaCalificacion);
             if(resPromedio.getCorrecto()) dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
 
-            ResultadoEJB<List<DtoCasoCritico>> resIdentificarCasoCritico = ejbCasoCritico.identificar(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion);
-            if(resIdentificarCasoCritico.getCorrecto()) {
-                dtoCapturaCalificacion.setDtoCasoCritico(resIdentificarCasoCritico.getValor().get(0));
+            //identificar caso crítico abierto mas reciente registrado por el usuario
+            ResultadoEJB<DtoCasoCritico> generarNuevo = ejbCasoCritico.generarNuevo(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, CasoCriticoTipo.ASISTENCIA_IRREGURLAR);
+            if(generarNuevo.getCorrecto() && !Objects.equals(CasoCriticoEstado.SIN_REGISTRO, generarNuevo.getValor().getEstado())) {
+                dtoCapturaCalificacion.setDtoCasoCritico(generarNuevo.getValor());
                 dtoCapturaCalificacion.setTieneCasoCritico(true);
             }
+
+            //identificar casos críticos  generados por sistema
+            CasoCriticoTipo.ListaSistema().forEach(casoCriticoTipo -> {
+                ResultadoEJB<DtoCasoCritico> generarNuevo1 = ejbCasoCritico.generarNuevo(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, casoCriticoTipo);
+                if(generarNuevo1.getCorrecto() && !Objects.equals(CasoCriticoEstado.SIN_REGISTRO, generarNuevo1.getValor().getEstado())){
+                    dtoCapturaCalificacion.getCasosCriticosSistema().put(casoCriticoTipo, generarNuevo1.getValor());
+                    dtoCapturaCalificacion.setTieneCasoCriticoSistema(true);
+                }
+            });
 
             return ResultadoEJB.crearCorrecto(dtoCapturaCalificacion, "Captura de calificación empaquetada");
         }catch (Exception e){

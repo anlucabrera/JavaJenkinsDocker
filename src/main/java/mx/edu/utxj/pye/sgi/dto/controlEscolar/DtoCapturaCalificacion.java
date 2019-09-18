@@ -3,10 +3,13 @@ package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 import lombok.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
+import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Representa la captura de calificacion de un estudiante mostrado en pantalla
@@ -17,9 +20,10 @@ public class DtoCapturaCalificacion implements Serializable {
     @Getter @Setter @NonNull private DtoCargaAcademica dtoCargaAcademica;
     @Getter @Setter @NonNull private DtoUnidadConfiguracion dtoUnidadConfiguracion;
     @Getter private DtoCasoCritico dtoCasoCritico;
+    @Getter private Map<CasoCriticoTipo, DtoCasoCritico> casosCriticosSistema = new HashMap<>();
     @Getter @Setter @NonNull private List<Captura> capturas;
     @Getter @Setter private BigDecimal promedio = BigDecimal.ZERO;
-    @Getter @Setter private Boolean tieneCasoCritico = false;
+    @Getter @Setter private Boolean tieneCasoCritico = false, tieneCasoCriticoSistema = false;
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class Captura{
