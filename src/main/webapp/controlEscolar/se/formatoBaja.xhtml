@@ -379,10 +379,10 @@
                         </div>
                     </div>
                 </h:form>
-                <c:if test="#{!registrarBajaServiciosEscolares.tieneAcceso}">
+                <c:if test="#{!registrarBajaServiciosEscolares.tieneAcceso || !tramitarBajaTutor.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a personal docente."/>
+                        <h:outputText value="El acceso solo está autorizado para personal docente y de servicios escolares."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

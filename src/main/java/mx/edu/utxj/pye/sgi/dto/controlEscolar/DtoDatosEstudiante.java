@@ -25,5 +25,5 @@ public class DtoDatosEstudiante implements Serializable{
     @Getter @Setter @NonNull Estudiante estudiante;
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
     @Getter @Setter @NonNull PeriodosEscolares periodoEscolar;
-
+   
 }

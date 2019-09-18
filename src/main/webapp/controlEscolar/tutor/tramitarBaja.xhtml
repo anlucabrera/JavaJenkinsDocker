@@ -9,7 +9,8 @@
                 template="#{layoutMB.template}"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
-                xmlns:o="http://omnifaces.org/ui">
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
 
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
@@ -35,19 +36,18 @@
     </ui:define>
 
     <ui:define name="body">
-        <adm:breadcrumb title="Permiso Apertura Extemporánea"/>
-
+        <adm:breadcrumb title="Tramitar Baja"/>
         <div class="contenedor">
-            <c:if test="#{permisoAperturaExtemporaneaAdministrador.tieneAcceso}">
+            <c:if test="#{tramitarBajaTutor.tieneAcceso}">
                 <!-- zona de importación de enums -->
+                <c:if test="#{tramitarBajaTutor.rol.esTutor}">
                 <h:form id="frm" prependId="false" class="form-inline">
                     <div class="box box-primary">
                         <div class="box-header with-border">
-
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
-                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(permisoAperturaExtemporaneaAdministrador.rol.periodoActivo)}" />
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(tramitarBajaTutor.rol.periodoActivo)}" />
                                         <p:spacer width="5" />
 
                                     </f:facet>
@@ -65,196 +65,243 @@
                             </div>
                             <div class="box box-solid">
                                 <div class="box-body">
-                                    <div class="row margin-bottom" style="margin-top: 30px;">
-                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
                                             <div class="ui-material">
-                                                <p:autoComplete id="docente" value="#{permisoAperturaExtemporaneaAdministrador.rol.docente}" completeMethod="#{permisoAperturaExtemporaneaAdministrador.completeDocentes}" queryDelay="800"
-                                                                valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarDocente}"
-                                                                var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" converter="entityConverter" forceSelection="true" size="35">
-                                                    <p:column>#{docente.personal.clave}</p:column>
-                                                    <p:column>#{docente.personal.nombre}</p:column>
-                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
-                                                </p:autoComplete>
-                                                <p:outputLabel value="Docente" for="docente"/>
-                                                <p:message for="docente" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-2">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="periodo" value="#{permisoAperturaExtemporaneaAdministrador.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cargasAcademicas}">
-                                                    <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, carga"/>
+                                                <p:selectOneMenu id="periodo" value="#{tramitarBajaTutor.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{tramitarBajaTutor.cambiarPeriodo}">
+                                                    <f:selectItems value="#{tramitarBajaTutor.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this, grupo"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>
                                                 <p:message for="periodo" />
                                             </div>
                                         </div>
-                                         <div class="col-sm-12 col-md-12 col-lg-8">
+                                        <div class="#{casilla2}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="carga" value="#{permisoAperturaExtemporaneaAdministrador.rol.carga}" converter="entityConverter" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.actualizarUnidadesMateria}">
-                                                    <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.cargasPeriodo}" var="carga"
-                                                                   itemValue="#{carga}" itemLabel="#{carga.materia.nombre} (#{carga.planEstudioMateria.claveMateria}) #{carga.grupo.grado}° #{carga.grupo.literal} de #{carga.programa.nombre}"/>
-                                                    <p:ajax update="@this" process="@this, unidad"/>
-                                                    <p:autoUpdate />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Materia - Grupo - Programa Educativo" for="carga"/>
-                                                <p:message for="carga" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p></p>
-                                    <p></p>
-                                    <p></p>
-                                    <div class="row margin-bottom" style="margin-top: 30px;">
-                                         <div class="col-sm-12 col-md-12 col-lg-2">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="tipoEvaluacion" value="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion}" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarTipoEvaluacion}">
-                                                    <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.tiposEvaluacion}" var="evaluacion"
-                                                                   itemValue="#{evaluacion}" itemLabel="#{evaluacion}"/>
+                                                <p:selectOneMenu id="grupo" value="#{tramitarBajaTutor.rol.grupo}" converter="entityConverter" valueChangeListener="#{tramitarBajaTutor.cambiarGrupo}">
+                                                    <f:selectItems value="#{tramitarBajaTutor.rol.grupos}" var="grupo"
+                                                                   itemValue="#{grupo}" itemLabel="#{grupo.grupo.grado}° '#{grupo.grupo.literal}' '#{grupo.grupo.idSistema.nombre}' de #{grupo.programaEducativo.nombre}"/>
                                                     <p:ajax update="@this" process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="Tipo de Evaluación" for="tipoEvaluacion"/>
-                                                <p:message for="tipoEvaluacion" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-2">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="unidad" value="#{permisoAperturaExtemporaneaAdministrador.rol.unidadMateria}" converter="entityConverter" disabled="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion ne 'Ordinaria'}" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarUnidad}">
-                                                    <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.unidadesMateria}" var="unidad"
-                                                                   itemValue="#{unidad}" itemLabel="#{unidad.noUnidad}.- #{unidad.nombre}"/>
-                                                    <p:ajax update="@this" process="@this"/>
-                                                    <p:autoUpdate />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Unidad" for="unidad"/>
-                                                <p:message for="unidad" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-2">
-                                            <div class="ui-material">
-                                                <p:calendar id="fechaInicio" locale="es" value="#{permisoAperturaExtemporaneaAdministrador.rol.fechaInicio}" mindate="#{permisoAperturaExtemporaneaAdministrador.rol.rangoFechaInicial}" maxdate="#{permisoAperturaExtemporaneaAdministrador.rol.rangoFechaFinal}" pattern="dd-MM-yyyy" mask="true"/>
-                                                <p:outputLabel value="Fecha Inicio" for="fechaInicio"/>
-                                                <p:message for="fechaInicio" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-2">
-                                            <div class="ui-material">
-                                                <p:calendar id="fechaFin" locale="es" value="#{permisoAperturaExtemporaneaAdministrador.rol.fechaFin}" mindate="#{permisoAperturaExtemporaneaAdministrador.rol.rangoFechaInicial}" maxdate="#{permisoAperturaExtemporaneaAdministrador.rol.rangoFechaFinal}" pattern="dd-MM-yyyy" mask="true"/>
-                                                <p:outputLabel value="Fecha Fin" for="fechaFin"/>
-                                                <p:message for="fechaFin" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="justificacion" value="#{permisoAperturaExtemporaneaAdministrador.rol.justificacionPermisosExtemporaneos}" converter="entityConverter" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarJustificacion}">
-                                                    <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.listaJustificaciones}" var="justificacion"
-                                                                   itemValue="#{justificacion}" itemLabel="#{justificacion.descripcion}"/>
-                                                    <p:ajax update="@this" process="@this"/>
-                                                    <p:autoUpdate />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Justificación" for="justificacion"/>
-                                                <p:message for="justificacion" />
+                                                <p:outputLabel value="Grupo - Programa Educativo" for="grupo"/>
+                                                <p:message for="grupo" />
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row margin-bottom" style="margin-top: 30px;">
-                                    <center>
-                                        <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion eq 'Ordinaria'}">
-                                        <p:commandButton id="btnGuardar1" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCapturaOrdinaria()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
-                                        </c:if>
-                                        <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion eq 'Nivelación Final'}">
-                                        <p:commandButton id="btnGuardar2" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCapturaNivFinal()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
-                                        </c:if>
-                                    </center>   
-                                    </div>
-                                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas ne null}">
-                                    <div class="row margin-bottom" style="margin-top: 60px;">
+                                    <div class="row">
                                             <center>
-                                                <p:dataTable id="tbAperExt" var="aperturasExt" value="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas}" sortBy="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.grado}° '#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.literal}' de #{aperturasExt.programaEducativo.nombre}"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" expandableRowGroups="true" >
+                                                <p:dataTable id="tbListaEstudiantes" var="estudiante" value="#{tramitarBajaTutor.rol.estudiantesGrupo}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                                 tableStyle="vertical-align: middle;" editable="true" editMode="cell">
                                                     <f:facet name="header">
-                                                        <center>Permisos de Captura Extemporaneas Vigentes</center>
+                                                        #{tramitarBajaTutor.rol.grupo.grupo.grado}° "#{tramitarBajaTutor.rol.grupo.grupo.literal}" #{tramitarBajaTutor.rol.grupo.grupo.idSistema.nombre} de #{tramitarBajaTutor.rol.grupo.programaEducativo.nombre}
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column headerText="Opciones" />
-                                                            <p:column headerText="Grupo" /> 
-                                                            <p:column headerText="Materia" /> 
-                                                            <p:column headerText="Unidad" />
-                                                            <p:column headerText="Tipo Evaluacion" />
-                                                            <p:column headerText="Fecha Inicio" />
-                                                            <p:column headerText="Fecha Fin" />
-                                                            <p:column headerText="Justificacion" />
+                                                            <p:column headerText="Opciones" style="width: 120px;"/>
+                                                            <p:column headerText="Matricula" style="width: 80px;"/> 
+                                                            <p:column headerText="Nombre" style="width: 200px;"/>
+                                                            <p:column headerText="Situación" style="width: 80px;"/>
+                                                            <p:column headerText="Fecha de Baja" style="width: 80px;"/>
+                                                            <p:column headerText="Tipo de Baja" style="width: 100px;"/>
+                                                            <p:column headerText="Causa Baja" style="width: 100px;"/>
+                                                            <p:column headerText="Acciones tomadas por el tutor" style="width: 200px;"/>
+                                                            <p:column headerText="Dictamen Psicopedagogía" style="width: 200px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
-                                                    <p:ajax event="cellEdit" listener="#{permisoAperturaExtemporaneaAdministrador.onCellEdit}"/>
-                                                    <c:set var="clavePermiso" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.permisoGrupal}"/>
+                                                    <p:ajax event="cellEdit" listener="#{tramitarBajaTutor.onCellEdit}"/>
+                                                    <c:set var="estudiante" value="#{estudiante}"/>
+                                                    <c:set var="registro" value="#{estudiante.dtoRegistroBaja.registroBaja}"/>
                                                     <p:column>
                                                         <center>
                                                         <div class="btn-group">
-                                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{permisoAperturaExtemporaneaAdministrador.eliminarPermiso(clavePermiso)}" title="Eliminar registro.">
-                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del permiso?" icon="ui-icon-alert" />
-                                                            </p:commandButton>
+                                                            <p:commandButton actionListener="#{tramitarBajaTutor.editarBaja(estudiante)}"
+                                                            class="btn btn-sm btn-info" 
+                                                            icon="fa fa-edit"
+                                                            title="Tramitar baja"/>
+                                                            <p:commandButton actionListener="#{tramitarBajaTutor.buscarMateriasReprobadas(registro)}"
+                                                            class="btn btn-sm btn-info" 
+                                                            icon="fa fa-search"
+                                                            title="Consultar materias reprobadas" 
+                                                            disabled="#{estudiante.dtoRegistroBaja.causaBaja.causa ne 'Reprobación'}"/>
+                                                            <p:commandButton actionListener="#{tramitarBajaTutor.generarFormatoBaja(registro)}" action="/controlEscolar/se/formatoBaja?faces-redirect=true" 
+                                                                                  class="btn btn-sm btn-primary" 
+                                                                                  icon="fa fa-file-text-o"
+                                                                                  title="Generar Formato de Baja"/>  
                                                         </div>
                                                         </center>
                                                     </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.grado}° '#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.literal}' de #{aperturasExt.programaEducativo.nombre}" style="text-align: center;"/>
-                                                    </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idPlanMateria.idMateria.nombre}" style="text-align: center;" />
-                                                    </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.nombre}" style="text-align: center;"/>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{estudiante.dtoEstudiante.estudiante.matricula}"/>
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.tipoEvaluacion}" />
+                                                        <h:outputText value="#{estudiante.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{estudiante.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{estudiante.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{estudiante.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{estudiante.dtoRegistroBaja.tipoBaja.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{estudiante.dtoRegistroBaja.causaBaja.causa}"/>
                                                     </p:column>
                                                     <p:column>
-                                                        <p:cellEditor>
-                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaInicio}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
-                                                             <f:facet name="input"><p:calendar id="fechaInicio" locale="es" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaInicio}" pattern="dd-MM-yyyy" mask="true"/></f:facet>
-                                                         </p:cellEditor>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <p:cellEditor>
-                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
-                                                             <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" pattern="dd-MM-yyyy" mask="true"/></f:facet>
-                                                         </p:cellEditor>
-                                                    </p:column>
-                                                     <p:column>
                                                          <p:cellEditor>
-                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.justificacionPermiso.descripcion}" style="text-align: center;"/></f:facet>
-                                                             <f:facet name="input">
-                                                                 <p:selectOneMenu id="justificacion" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.justificacionPermiso}" converter="entityConverter">
-                                                                     <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.listaJustificaciones}" var="justificacion"
-                                                                                    itemValue="#{justificacion}" itemLabel="#{justificacion.descripcion}"/>
-                                                                 </p:selectOneMenu>
-                                                             </f:facet>
-                                                         </p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}"/></f:facet>
+                                                             <f:facet name="input"><h:inputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}" size="500" style="color: #000000;"/></f:facet>
+                                                        </p:cellEditor> 
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}"/>
                                                     </p:column>
                                                 </p:dataTable>
-                                                <p></p>
-                                                <p></p>
-                                                <p></p>
                                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                                                     <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                                                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                                                 </p:confirmDialog> 
                                             </center>
                                     </div>
-                                    </c:if>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </h:form>
-                <c:if test="#{!empty permisoAperturaExtemporaneaAdministrador.alertas || true}">
+                     <!-- Modal Materias Reprobadas -->
+                    <p:dialog id="modalMateriasReprobadas" 
+                              widgetVar="modalMateriasReprobadas" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{tramitarBajaTutor.rol.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Materias Reprobadas" 
+                              onHide="actualizarModMatRep();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                        <h:form id="frmModalMateriasReprobadas" >
+                            <p:remoteCommand name="actualizarModMatRep" update="@form:tblModalMatRep" />
+                            <p:dataTable id="tblModalMatRep" value="#{tramitarBajaTutor.rol.listaMateriasReprobadas}" var="materiaReprobada"
+                                                 emptyMessage="No se han registrado materias reprobadas" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                 >
+                                       <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones"  width="80" />
+                                                <p:column headerText="Clave Materia"  width="80" />
+                                                <p:column headerText="Materia"  width="100" />
+                                                <p:column headerText="Docente"  width="100" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <c:set var="registroMatRep" value="#{materiaReprobada.bajaReprobacion}"/>
+                                        <p:column style="text-align: center;">
+                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{tramitarBajaTutor.eliminarRegistroMateriaReprobada(registroMatRep)}" title="Eliminar registro.">
+                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                        </p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{materiaReprobada.bajaReprobacion.cargaAcademica.idPlanMateria.claveMateria}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{materiaReprobada.bajaReprobacion.cargaAcademica.idPlanMateria.idMateria.nombre}" /></p:column>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{materiaReprobada.personal.nombre}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Total de materias reprobadas: #{fn:length(tramitarBajaTutor.rol.listaMateriasReprobadas)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+                     <!-- Modal Tramitar Baja -->
+                    <p:dialog id="modalTramitarBaja" 
+                              widgetVar="modalTramitarBaja" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{tramitarBajaTutor.rol.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Tramitar Baja" 
+                              onHide="actualizarModTramitarBaja();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                        <h:form id="frmModalTramitarBaja" >
+                            <div class="col-sm-12 col-md-12 col-lg-6">
+                                <div class="ui-material">
+                                    <p:selectOneMenu id="causaBaja" value="#{tramitarBajaTutor.rol.causaBaja}" converter="entityConverter" valueChangeListener="#{tramitarBajaTutor.cambiarCausaBaja}">
+                                        <f:selectItems value="#{tramitarBajaTutor.rol.causasBaja}" var="causaBaja"
+                                                       itemValue="#{causaBaja}" itemLabel="#{causaBaja.causa}"/>
+                                        <p:ajax update="@this" process="@this"/>
+                                        <p:autoUpdate />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Causa de Baja" for="causaBaja" style="font-weight: bold; font-size: 14px;"/>
+                                    <p:message for="causaBaja" />
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                <div class="ui-material">
+                                    <p:selectOneMenu id="tipoBaja" value="#{tramitarBajaTutor.rol.tipoBaja}" converter="entityConverter" valueChangeListener="#{tramitarBajaTutor.cambiarTipoBaja}">
+                                        <f:selectItems value="#{tramitarBajaTutor.rol.tiposBaja}" var="tipoBaja"
+                                                       itemValue="#{tipoBaja}" itemLabel="#{tipoBaja.descripcion}"/>
+                                        <p:ajax update="@this" process="@this"/>
+                                        <p:autoUpdate />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Tipo de Baja" for="tipoBaja" style="font-weight: bold; font-size: 14px;"/>
+                                    <p:message for="tipoBaja" />
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                <div class="ui-material">
+                                    <p:calendar id="fechaBaja" locale="es" value="#{tramitarBajaTutor.rol.fechaBaja}" mindate="#{tramitarBajaTutor.rol.fechaInicio}" maxdate="#{tramitarBajaTutor.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true"/>
+                                    <p:outputLabel value="Fecha Baja" for="fechaBaja" style="font-weight: bold; font-size: 14px;"/>
+                                    <p:message for="fechaBaja" />
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="ui-material">
+                                    <p:inputText id="accionesTutor" value="#{tramitarBajaTutor.rol.accionesTutor}"/>
+                                    <p:outputLabel value="Acciones tomadas por el tutor" for="accionesTutor" style="font-weight: bold; font-size: 14px;"/>
+                                    <p:message for="accionesTutor" />
+                                </div>
+                                
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12"></div>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <center>
+                                    <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{tramitarBajaTutor.guardarTramitarBaja()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                </center> 
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                </c:if>
+                <c:if test="#{!tramitarBajaTutor.rol.esTutor}">
+                <p:panel id="box-colors-panel" header="Sin grupos tutorados" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="Usted no tiene grupo(s) tutorado(s)."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+                </c:if>
+                
+                <c:if test="#{!empty tramitarBajaTutor.alertas || true}">
                     <div class="box box-info">
                         <div class="box-header">
                             <ui:include src="/includes/alertas.xhtml">
-                                <ui:param name="alertas" value="#{permisoAperturaExtemporaneaAdministrador.alertas}"></ui:param>
+                                <ui:param name="alertas" value="#{tramitarBajaTutor.alertas}"></ui:param>
                             </ui:include>
                         </div>
                     </div>
@@ -264,10 +311,10 @@
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registrar permiso de apertura extemporánea</h3></div>
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para tramitar baja</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
-                                <c:forEach items="#{permisoAperturaExtemporaneaAdministrador.rol.instrucciones}" var="instruccion">
+                                <c:forEach items="#{tramitarBajaTutor.rol.instrucciones}" var="instruccion">
                                     <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
                                 </c:forEach>
                             </ul>
@@ -276,10 +323,10 @@
                     </div>
                 </p:dialog>
             </c:if>
-            <c:if test="#{!permisoAperturaExtemporaneaAdministrador.tieneAcceso}">
+            <c:if test="#{!tramitarBajaTutor.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a personal administrador."/>
+                        <h:outputText value="El acceso solo está autorizado a personal docente."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

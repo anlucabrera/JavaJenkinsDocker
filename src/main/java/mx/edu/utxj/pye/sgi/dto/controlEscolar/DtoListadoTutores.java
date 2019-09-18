@@ -15,6 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
  *
@@ -24,7 +25,18 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class DtoListadoTutores implements Serializable{
+public class DtoListadoTutores implements Serializable, Comparable<DtoListadoTutores>{
     @Getter @Setter @NonNull private Grupo grupo;
     @Getter @Setter private PersonalActivo tutor;
+    @Getter @Setter private AreasUniversidad programaEducativo;
+    
+    @Override
+    public int compareTo(DtoListadoTutores o) {
+        return toLabel(this).compareTo(toLabel(o));
+    }
+
+    public static String toLabel(DtoListadoTutores dtoListadoTutores){
+        return dtoListadoTutores.getProgramaEducativo().getSiglas().concat(" - ")
+                .concat(String.valueOf(dtoListadoTutores.getGrupo().getGrado())).concat(dtoListadoTutores.getGrupo().getLiteral().toString()).concat(" - ");
+    }
 }
