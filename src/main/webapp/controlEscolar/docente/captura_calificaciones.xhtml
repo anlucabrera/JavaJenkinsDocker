@@ -49,9 +49,10 @@
 
                                     </f:facet>
                                     <f:facet name="right">
-                                        <p:commandLink process="@this" action="captura_calificaciones?faces-redirect=true" styleClass="btn btn-primary" >
+                                        <p:commandLink process="@this" action="captura_calificaciones?faces-redirect=true" styleClass="btn btn-primary" title="Presione para actualizar estado de casos críticos.">
                                             <i class="fa fa-arrow-circle-right" /> Actualizar
                                         </p:commandLink>
+                                        <p:spacer width="5" />
                                         <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
                                                        onclick="PF('modalAyuda').show();"
                                                        process="@this"
@@ -66,7 +67,7 @@
                                     <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
                                     <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
                                     <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
-                                    <p:remoteCommand id="cmdActualizarmaterias" name="actualizar" actionListener="#{capturaCalificacionesDocente.actualizar}" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs) @(.btn)  @(.ui-commandlink)" />
+                                    <p:remoteCommand id="cmdActualizarmaterias" name="actualizar" process="@this" actionListener="#{capturaCalificacionesDocente.actualizar}" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs) @(.btn)  @(.ui-commandlink) @(.promedio)" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
@@ -84,7 +85,7 @@
                                                     <f:selectItems value="#{capturaCalificacionesDocente.rol.cargasDocente}" var="carga" itemValue="#{carga}" itemLabel="#{caster.dtoCargaAcademicaToString(carga)}" />
                                                     <p:ajax process="@this" update="@this configuracion contenedor" listener="#{capturaCalificacionesDocente.cambiarCarga}"  />
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="Carga acadécmica" for="carga"/>
+                                                <p:outputLabel value="Carga académica" for="carga"/>
                                                 <p:message for="carga" ><p:autoUpdate/></p:message>
                                             </div>
                                         </div>
@@ -133,11 +134,12 @@
                                                         <p:column><h:outputText value="#{estudiante.dtoEstudiante.inscripcionActiva.inscripcion.matricula}" /></p:column>
                                                         <p:column style="text-align: left; white-space: nowrap; width: auto;"><h:outputText value="#{estudiante.dtoEstudiante.persona.apellidoPaterno} #{estudiante.dtoEstudiante.persona.apellidoMaterno} #{estudiante.dtoEstudiante.persona.nombre}" title="#{estudiante.dtoEstudiante.persona.apellidoPaterno} #{estudiante.dtoEstudiante.persona.apellidoMaterno} #{estudiante.dtoEstudiante.persona.nombre}"/></p:column>
                                                         <p:column>
-                                                            <p:commandLink class="btn btn-sm #{estudiante.tieneCasoCritico?'btn-info':'btn-default'}"
-                                                                           process="@this"
-                                                                           actionListener="#{capturaCalificacionesDocente.iniciarRegistroCasoCritico(estudiante)}"
-                                                                           oncomplete="PF('modalCasoCritico').show();"
-                                                                           title="Presione el botón para registrar caso crítico."><i class="fa fa-check-square" />
+                                                            <p:commandLink class="#{estudiante.tieneCasoCritico or estudiante.tieneCasoCriticoSistema?'promedio btn btn-sm btn-info':'promedio btn btn-sm btn-default'}"
+                                                                            process="@this"
+                                                                            actionListener="#{capturaCalificacionesDocente.iniciarRegistroCasoCritico(estudiante)}"
+                                                                            oncomplete="PF('modalCasoCritico').show();"
+                                                                            title="Presione el botón para registrar caso crítico.">
+                                                                <i class="fa fa-check-square"/>
                                                             </p:commandLink>
                                                         </p:column>
                                                         <c:forEach var="criterio" items="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidad(unidadConfiguracion)}">
@@ -152,7 +154,7 @@
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
                                                                                        valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}"
                                                                                        inputStyle="text-align: center;" minValue="1" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
-                                                                            <p:ajax process="@this" update="@this @(.promedio)"  />
+                                                                            <p:ajax process="@this" update="@this @(.promedio)" oncomplete="actualizar();"/>
                                                                             <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas)}" />
                                                                             <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
                                                                         </p:inputNumber>
@@ -216,6 +218,7 @@
                     <c:if test="#{!empty capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada}">
                         <div class="box box-primary">
                             <h:form>
+                                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo" var="casoCriticoTipo" allSuffix="ALL" />
                                 <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Registro de caso crítico</h3></div>
                                 <div class="box-body">
                                     <div class="row margin-bottom">
@@ -229,9 +232,8 @@
                                     <div class="row margin-bottom">
                                         <div class="col-md-12">
                                             <div class="ui-material">
-                                                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo" var="casoCriticoTipo" allSuffix="ALL" />
                                                 <p:selectOneMenu id="ccTipo" value="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada.dtoCasoCritico.tipo}" converter="entityConverter" required="true" styleClass="form-control" >
-                                                    <f:selectItems value="#{casoCriticoTipo.ALL}" var="ccTipo" itemValue="#{ccTipo}" itemLabel="#{ccTipo.label}" />
+                                                    <f:selectItems value="#{capturaCalificacionesDocente.listaCasoCriticoTipos}" var="ccTipo" itemValue="#{ccTipo}" itemLabel="#{ccTipo.label}" />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Tipo" for="ccTipo"/>
                                                 <p:message for="ccTipo" ><p:autoUpdate/></p:message>
@@ -249,9 +251,24 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <c:if test="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada.tieneCasoCriticoSistema}">
+                                        <div class="row margin-bottom">
+                                            <div class="col-md-12">
+                                                <div class="ui-material">
+                                                    <p:dataList value="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada.casosCriticosSistema}" var="entradaCasoCritico" type="definition">
+                                                        <f:facet name="header">
+                                                            Generados por sistema
+                                                        </f:facet>
+                                                        #{entradaCasoCritico.key.label}
+                                                    </p:dataList>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
                                 </div>
                                 <div class="box-footer clearfix no-border">
                                     <p:button value="Cancelar" styleClass="btn btn-primary pull-right" icon="fa fa-times" onclick="PF('modalCasoCritico').hide(); return false;" />
+                                    <p:commandButton value="Eliminar" actionListener="#{capturaCalificacionesDocente.eliminarCasoCritico}" oncomplete="actualizar();" rendered="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada.tieneCasoCritico}" styleClass="btn btn-primary pull-right" icon="fa fa-trash" />
                                     <p:commandButton value="Registrar" actionListener="#{capturaCalificacionesDocente.guardarCasoCritico}" oncomplete="actualizar();" styleClass="btn btn-primary pull-right" icon="fa fa-save" />
                                 </div>
                             </h:form>

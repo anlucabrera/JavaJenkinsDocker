@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import lombok.Getter;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
@@ -16,6 +17,7 @@ import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.enums.converter.CasoCriticoEstadoConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import sun.font.TrueTypeFont;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -39,8 +41,16 @@ public class EjbCapturaCalificaciones {
     private EntityManager em;
 
     @PostConstruct
-    public  void init(){
+    public void init(){
         em = f.getEntityManager();
+    }
+
+    public Long leerDiasRangoParaCapturarUnidad(){
+        return (long)ep.leerPropiedadEntera("controlEscolarDiasRangoParaCapturarUnidad").orElse(7);
+    }
+
+    public BigDecimal leerCalificacionMínimaAprobatoria(){
+        return new BigDecimal(ep.leerPropiedadDecimal("controlEscolarCalificacionMinimaAprobatoria").orElse(8));
     }
 
     /**
@@ -211,12 +221,6 @@ public class EjbCapturaCalificaciones {
      */
     public ResultadoEJB<List<DtoUnidadConfiguracion>> getConfiguraciones(DtoCargaAcademica dtoCargaAcademica){
         try {
-//            System.out.println("EjbCapturaCalificaciones.getConfiguraciones");
-//            em.createQuery("select umc from UnidadMateriaConfiguracion umc where umc.carga=:carga", UnidadMateriaConfiguracion.class)
-//                    .setParameter("carga", dtoCargaAcademica.getCargaAcademica())
-//                    .getResultStream()
-//                    .forEach(System.out::println);
-            //obtener mapa de configuraciones
             List<DtoUnidadConfiguracion> configuraciones = em.createQuery("select umc from UnidadMateriaConfiguracion umc where umc.carga=:carga", UnidadMateriaConfiguracion.class)
                     .setParameter("carga", dtoCargaAcademica.getCargaAcademica())
                     .getResultStream()
@@ -361,6 +365,29 @@ public class EjbCapturaCalificaciones {
             return ResultadoEJB.crearCorrecto(casoCriticos, "Casos criticos");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "", e, null);
+        }
+    }
+
+    /**
+     * Permite verificar si la captura de calificaciones de un unidad ya tiene todos los valores por cada criterio-indicador
+     * @param dtoCapturaCalificacion Empaquetado de la captura de calificaciones
+     * @return Regresa TRUE si la captura está completa. <br/>
+     * Código 1: Error imprevisto.
+     * Código 2: Valores de calificaciones nulos, es decir, sin captura.
+     */
+    public ResultadoEJB<Boolean> verificarCapturaCompleta(DtoCapturaCalificacion dtoCapturaCalificacion){
+        try{
+            Long nulos = dtoCapturaCalificacion.getCapturas()
+                    .stream()
+                    .map(DtoCapturaCalificacion.Captura::getCalificacion)
+                    .map(Calificacion::getValor)
+                    .filter(Objects::isNull)
+                    .count();
+            if(nulos == 0l) return ResultadoEJB.crearCorrecto(Boolean.TRUE, "La capura de calificaciones de la unidad está completa.");
+            else return  ResultadoEJB.crearErroneo(2, "La captura de calificaciones de la unidad aún está incompleta.", Boolean.TYPE);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar si la captura de calificaciones por unidad está completa (EjbCapturaCalificaciones.verificarCapturaCompleta).", e, Boolean.TYPE);
         }
     }
 }
