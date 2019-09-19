@@ -2,7 +2,6 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -35,19 +33,16 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGraficaCronograma;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporte;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporteConsulta;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ImpresionPlaneacionCuatrimestral;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.PaseDeListaSegTutor;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.PaseDeListaSegTutor;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CasoCritico;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -68,6 +63,7 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
 
     @EJB EjbAsistencias ejb;
     @EJB EjbPropiedades ep;
+    private Integer hora=0,minutos=0,tasis=0;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @Inject LogonMB logon;
@@ -111,7 +107,7 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
             
             
             
-            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(tutor, rol.getPeriodo());
+            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicasPorTutor(tutor, rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
             rol.setCargas(resCarga.getValor());
             rol.setCarga(resCarga.getValor().get(0));
@@ -249,7 +245,7 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
             ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getCarga().getCargaAcademica(), a.getMatricula());
             List<Asistenciasacademicas> asFilter = new ArrayList<>();
             asFilter = res.getValor().stream().filter(t -> (t.getAsistencia().getFechaHora().after(fI) || t.getAsistencia().getFechaHora().equals(fI)) && (t.getAsistencia().getFechaHora().before(fF) || t.getAsistencia().getFechaHora().equals(fF))).collect(Collectors.toList());
-
+            tasis = 0;
             if (asFilter.size() > 0 && !asFilter.isEmpty()) {
                 asFilter.forEach((t) -> {
                     switch (t.getTipoAsistenciaA()) {
@@ -258,8 +254,16 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         case "Permiso":                            t.setTipoAsistenciaA("P");                            break;
                         case "Justificado":                            t.setTipoAsistenciaA("J");                            break;
                     }
+                    if(!t.getTipoAsistenciaA().equals("F")){
+                        tasis=tasis+1;
+                    }
                 });
-                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(a, asFilter));
+                Double d=(tasis*100.0)/asFilter.size();
+                Boolean b=(d<80.0);
+                if(b){
+                    CasoCritico cc=new CasoCritico();
+                }
+                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(a, asFilter,asFilter.size(),d,b));
             }
         });        
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -269,6 +273,7 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
         if (asFilter.size() > 0 && !asFilter.isEmpty()) {
             rol.setDplsReportesMes(new ArrayList<>());
             rol.setDiasPaseLista(new ArrayList<>());
+            rol.setHorasPaseLista(new ArrayList<>());
             List<Asistenciasacademicas> as = new ArrayList<>();
             for (int i = 1; i <= 12; i++) {
                 switch (i) {
@@ -278,6 +283,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Enero", as.size()));
                         }
@@ -288,6 +304,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Febrero", as.size()));
                         }
@@ -298,6 +325,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Marzo", as.size()));
                         }
@@ -308,6 +346,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Abril", as.size()));
                         }
@@ -318,6 +367,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Mayo", as.size()));
                         }
@@ -328,6 +388,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Junio", as.size()));
                         }
@@ -338,6 +409,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Julio", as.size()));
                         }
@@ -348,6 +430,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Agosto", as.size()));
                         }
@@ -358,6 +451,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Septiembre", as.size()));
                         }
@@ -368,6 +472,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Octubre", as.size()));
                         }
@@ -378,6 +493,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Noviembre", as.size()));
                         }
@@ -388,6 +514,17 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         if (!as.isEmpty()) {
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
+                                hora = t.getAsistencia().getFechaHora().getHours();
+                                minutos = t.getAsistencia().getFechaHora().getMinutes();
+                                if (hora >= 10 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
+                                } else if (hora <= 9 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
+                                } else if (hora >= 10 && minutos <= 9) {
+                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
+                                } else if (hora <= 9 && minutos >= 10) {
+                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                }
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Diciembre", as.size()));
                         }
@@ -395,6 +532,5 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                 }
             }
         }
-
     }
 }

@@ -47,6 +47,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CasoCritico;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
@@ -70,7 +71,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
 
     @EJB EjbAsistencias ejb;
     @EJB EjbPropiedades ep;
-    private Integer hora=0,minutos=0;
+    private Integer hora=0,minutos=0,tasis=0;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @Inject LogonMB logon;
@@ -266,7 +267,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getCarga().getCargaAcademica(), a.getMatricula());
             List<Asistenciasacademicas> asFilter = new ArrayList<>();
             asFilter = res.getValor().stream().filter(t -> (t.getAsistencia().getFechaHora().after(fI) || t.getAsistencia().getFechaHora().equals(fI)) && (t.getAsistencia().getFechaHora().before(fF) || t.getAsistencia().getFechaHora().equals(fF))).collect(Collectors.toList());
-
+            tasis = 0;
             if (asFilter.size() > 0 && !asFilter.isEmpty()) {
                 asFilter.forEach((t) -> {
                     switch (t.getTipoAsistenciaA()) {
@@ -275,8 +276,22 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         case "Permiso":                            t.setTipoAsistenciaA("P");                            break;
                         case "Justificado":                            t.setTipoAsistenciaA("J");                            break;
                     }
+                    if(!t.getTipoAsistenciaA().equals("F")){
+                        tasis=tasis+1;
+                    }
                 });
-                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(a, asFilter));
+                Double d=(tasis*100.0)/asFilter.size();
+                Boolean b = (d < 80.0);
+                CasoCritico cc = new CasoCritico();
+                // se buscara el caso critico
+                if (b) {
+                    if (cc == null) {
+                        // crear caso critico
+                    }
+                } else if (cc != null) {
+                    // se elimina caso caritica en caso de existir
+                }
+                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(a, asFilter,asFilter.size(),d,b));
             }
         });        
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -545,7 +560,6 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                 }
             }
         }
-
     }
 
     public void updatePaseDeLista(RowEditEvent event) {

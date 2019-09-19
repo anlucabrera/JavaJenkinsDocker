@@ -79,6 +79,7 @@ public class PaseDeListaSegTutor extends AbstractRol{
     @Getter @Setter private List<Asistenciasacademicas> asistenciasacademicases;
     @Getter @Setter private List<String> asistencias;
     @Getter @Setter private List<Integer> diasPaseLista;
+    @Getter @Setter private List<String> horasPaseLista;
     
     /**
      * Carga académica seleccionada

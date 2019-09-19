@@ -49,7 +49,7 @@
 
                                     </f:facet>
                                     <f:facet name="right">
-                                        <p:commandLink action="asignacion_academica?faces-redirect=true" styleClass="btn btn-primary" >
+                                        <p:commandLink process="@this" action="captura_calificaciones?faces-redirect=true" styleClass="btn btn-primary" >
                                             <i class="fa fa-arrow-circle-right" /> Actualizar
                                         </p:commandLink>
                                         <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"

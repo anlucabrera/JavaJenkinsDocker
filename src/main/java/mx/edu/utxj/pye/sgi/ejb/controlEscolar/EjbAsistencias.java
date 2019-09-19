@@ -65,6 +65,20 @@ public class EjbAsistencias {
             return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar. (EjbAsignacionIndicadoresCriterios.validarDocente)", e, null);
         }
     }
+    
+//    public ResultadoEJB<PersonalActivo> validarTutor(Integer clave) {
+//        try {
+//            PersonalActivo p = ejbPersonalBean.pack(clave);
+//            List<Grupo> gruposes = em.createQuery("select g from Grupo g WHERE g.tutor=:tutor", Grupo.class)
+//                    .setParameter("tutor", clave)
+//                    .getResultList();
+//            if (!gruposes.isEmpty()) {
+//                return ResultadoEJB.crearCorrecto(p, "El usuario ha sido comprobado como personal tutor.");
+//            }
+//        } catch (Exception e) {
+//            return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar. (EjbAsignacionIndicadoresCriterios.validarDocente)", e, null);
+//        }
+//    }
 
     /**
      * Permite obtener la lista de periodos escolares a elegir en el apartado de asignación de indicadores por criterio
@@ -92,6 +106,25 @@ public class EjbAsistencias {
             //buscar carga académica del personal docente logeado del periodo seleccionado
             List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
                     .setParameter("docente", docente.getPersonal().getClave())
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .getResultStream()
+                    .distinct()
+                    .map(cargaAcademica -> pack(cargaAcademica))
+                    .filter(res -> res.getCorrecto())
+                    .map(ResultadoEJB::getValor)
+                    .sorted(DtoCargaAcademica::compareTo)
+                    .collect(Collectors.toList());
+            return ResultadoEJB.crearCorrecto(cargas, "Lista de cargas académicas por docente.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por docente. (EjbAsignacionIndicadoresCriterios.getCargaAcademicaPorDocente)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicasPorTutor(PersonalActivo docente, PeriodosEscolares periodo){
+        try{
+            //buscar carga académica del personal docente logeado del periodo seleccionado
+            List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c INNER JOIN c.cveGrupo g WHERE g.tutor =:tutor AND c.evento.periodo =:periodo", CargaAcademica.class)
+                    .setParameter("tutor", docente.getPersonal().getClave())
                     .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream()
                     .distinct()

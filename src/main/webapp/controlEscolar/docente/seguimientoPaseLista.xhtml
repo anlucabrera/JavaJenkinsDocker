@@ -84,8 +84,11 @@
                                                 <p:message for="carga" />
                                             </div>
                                         </div>
+                                                <br/>
+                                                <br/>
                                         <div class="row">
                                             <center>
+                                                
                                                 <p:outputLabel value="Seleccione Unidad para visualizar Asistencias" />
                                                 <p></p>
                                                 <p:selectOneRadio id="unidad" value="#{paseListaDoc.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{paseListaDoc.consultarReporte}" >
@@ -167,7 +170,7 @@
                                                                 <p:panelGrid style="width: 100%">
                                                                     <f:facet name="header">
                                                                         <p:row>
-                                                                            <p:column colspan="#{paseListaDoc.rol.diasPaseLista.size()+2}" style="font-size: large">Reporte Asistencias</p:column>
+                                                                            <p:column colspan="#{paseListaDoc.rol.diasPaseLista.size()+4}" style="font-size: large">Reporte Asistencias</p:column>
                                                                         </p:row>
                                                                         <p:row>
                                                                             <p:column rowspan="3" >Matricula</p:column>
@@ -175,7 +178,9 @@
                                                                             <c:forEach var="i" begin="0" end="#{paseListaDoc.rol.dplsReportesMes.size()-1}">
                                                                                 <c:set var="t" value="#{paseListaDoc.rol.dplsReportesMes.get(i)}"/>
                                                                                 <p:column colspan="#{t.dias}" >#{t.mes}</p:column>
-                                                                            </c:forEach>                                                                            
+                                                                            </c:forEach>           
+                                                                            <p:column rowspan="3">Total </p:column>
+                                                                            <p:column rowspan="3">% de Asistencias</p:column>                                                                 
                                                                             <p:column rowspan="2">Editar</p:column>
                                                                         </p:row>
 
@@ -197,6 +202,8 @@
                                                                                 <c:set var="n" value="#{q.asistenciasacademicases.get(m)}"/>
                                                                                 <p:column >#{n.tipoAsistenciaA}</p:column>
                                                                             </c:forEach>
+                                                                             <p:column>#{q.totalPasesLista}</p:column>
+                                                                            <p:column>#{q.porAsis}%</p:column>
                                                                             <p:column>                                                                                                                                                                
                                                                                 <p:commandButton icon="fa fa-edit" title="Editar actividad" styleClass="btn-primary" oncomplete="PF('dlgActualizacionActividad').show()" process="@this" update=":frmActualizaActividad"
                                                                                                  actionListener="#{paseListaDoc.metodoBase()}">

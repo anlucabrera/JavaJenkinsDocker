@@ -20,9 +20,15 @@ public class DtoPaseListaReporteConsulta implements Serializable {
 
     @Getter    @Setter    private Listaalumnosca listaalumnosca;
     @Getter    @Setter    private List<Asistenciasacademicas> asistenciasacademicases;
+    @Getter    @Setter    private Integer totalPasesLista;
+    @Getter    @Setter    private Double porAsis;
+    @Getter    @Setter    private Boolean casoCritico;
 
-    public DtoPaseListaReporteConsulta(Listaalumnosca listaalumnosca, List<Asistenciasacademicas> asistenciasacademicases) {
+    public DtoPaseListaReporteConsulta(Listaalumnosca listaalumnosca, List<Asistenciasacademicas> asistenciasacademicases, Integer totalPasesLista, Double porAsis, Boolean casoCritico) {
         this.listaalumnosca = listaalumnosca;
         this.asistenciasacademicases = asistenciasacademicases;
-    }    
+        this.totalPasesLista = totalPasesLista;
+        this.porAsis = porAsis;
+        this.casoCritico = casoCritico;
+    }
 }
