@@ -148,7 +148,7 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     }
     
     public void imprimirValores() {
-        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.imprimirValores()");
+//        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.imprimirValores()");
     }
 
     public void obtenerPretechos() {
@@ -216,7 +216,7 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     }
     
     public void obteneroTotalesCapitulosDesglosado() {
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOAPyE.obteneroTotalesCapitulosDesglosado()");
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorRegistroActividadesPOAPyE.obteneroTotalesCapitulosDesglosado()");
         capitulo2000 = new ArrayList<>();
         capitulo2000.clear();
         capitulo3000 = new ArrayList<>();

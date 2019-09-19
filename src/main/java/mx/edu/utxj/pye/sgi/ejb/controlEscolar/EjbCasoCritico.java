@@ -240,4 +240,38 @@ public class EjbCasoCritico implements Serializable {
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar de forma automática el caso crítico correspondiente a una calificación reprobatoria por unidad (EjbCasoCritico.registrarPorReprobacion).", e, DtoCasoCritico.class);
         }
     }
+    
+    public ResultadoEJB<DtoCasoCritico> registrarPorAsistenciaIrregular(DtoCapturaCalificacion dtoCapturaCalificacion, Double porcentDouble) {
+        try {
+            if (porcentDouble < 80.0) {
+                ResultadoEJB<DtoCasoCritico> generarNuevo = generarNuevo(dtoCapturaCalificacion.getDtoEstudiante(), dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoUnidadConfiguracion(), CasoCriticoTipo.SISTEMA_ASISTENCIA_IRREGURLAR);
+                if (generarNuevo.getCorrecto()) {
+                    DtoCasoCritico dtoCasoCritico = generarNuevo.getValor();
+                    String alumno = dtoCapturaCalificacion.getDtoEstudiante().getPersona().getApellidoPaterno() + " " + dtoCapturaCalificacion.getDtoEstudiante().getPersona().getApellidoMaterno() + " " + dtoCapturaCalificacion.getDtoEstudiante().getPersona().getNombre();
+                    String grupo = dtoCapturaCalificacion.getDtoEstudiante().getInscripcionActiva().getGrupo().getGrado() + "° " + dtoCapturaCalificacion.getDtoEstudiante().getInscripcionActiva().getGrupo().getLiteral();
+                    String carrera = dtoCapturaCalificacion.getDtoCargaAcademica().getPlanEstudio().getDescripcion();
+                    dtoCasoCritico.getCasoCritico().setDescripcion(String.format("Sistema: El Alumno -%s- del grupo -%s- de la carrera -%s- no asiste a clases", alumno, grupo, carrera));
+                    dtoCasoCritico.getCasoCritico().setTipo(CasoCriticoTipo.SISTEMA_ASISTENCIA_IRREGURLAR.getLabel());
+                    ResultadoEJB<DtoCasoCritico> registrar = registrar(dtoCasoCritico);
+                    return registrar;
+                } else {
+                    return ResultadoEJB.crearErroneo(2, "No se pudo registrar de forma automática el caso crítico correspondiente a una Asistencia irregular.", DtoCasoCritico.class);
+                }
+            } else {
+                if (dtoCapturaCalificacion.getTieneCasoCriticoSistema()) {
+                    DtoCasoCritico dtoCasoCritico = dtoCapturaCalificacion.getCasosCriticosSistema().get(CasoCriticoTipo.SISTEMA_ASISTENCIA_IRREGURLAR);
+                    if (dtoCasoCritico != null) {
+                        ResultadoEJB<Boolean> eliminar = eliminar(dtoCasoCritico);
+                        if (!eliminar.getCorrecto()) {
+                            return ResultadoEJB.crearErroneo(3, eliminar.getMensaje(), DtoCasoCritico.class);
+                        }
+                    }
+                }
+                return ResultadoEJB.crearErroneo(4, "No se puede registrar caso crítico por Asistencia irregular ya que el Alumno asistio a clases.", DtoCasoCritico.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar de forma automática el caso crítico correspondiente a una Asistencia irregular (EjbCasoCritico.registrarPorReprobacion).", e, DtoCasoCritico.class);
+        }
+    }
 }

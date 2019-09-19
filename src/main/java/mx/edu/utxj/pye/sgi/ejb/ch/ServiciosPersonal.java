@@ -153,11 +153,8 @@ public class ServiciosPersonal implements EjbPersonal {
 
     @Override
     public Personal actualizarPersonal(Personal nuevoPersonal) throws Throwable {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosDatosUsuarioLogeado.actualizarPersonal(1)");
         facade.setEntityClass(Personal.class);
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosDatosUsuarioLogeado.actualizarPersonal(2)");
         facade.edit(nuevoPersonal);
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosDatosUsuarioLogeado.actualizarPersonal(3)");
         return nuevoPersonal;
     }
 

@@ -308,7 +308,7 @@ public class ControladorEmpleado implements Serializable {
                     menus.add(new Menu("Administrador", nivel2s));
 //                    menus.add(new Menu(n1.getTituloNivel1(), nivel2s));
 //                });
-////                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(menus)" + menus.size());
+//                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(menus)" + menus.size());
 //            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());

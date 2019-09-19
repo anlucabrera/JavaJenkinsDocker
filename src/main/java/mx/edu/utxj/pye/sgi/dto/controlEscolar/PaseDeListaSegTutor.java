@@ -7,7 +7,9 @@ package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NonNull;
@@ -80,6 +82,8 @@ public class PaseDeListaSegTutor extends AbstractRol{
     @Getter @Setter private List<String> asistencias;
     @Getter @Setter private List<Integer> diasPaseLista;
     @Getter @Setter private List<String> horasPaseLista;
+    @Getter private DtoGrupoEstudiante estudiantesPorGrupo;
+    @Getter @Setter private Map<Long, Double> calificacionMap = new HashMap<>();
     
     /**
      * Carga académica seleccionada
@@ -274,6 +278,22 @@ public class PaseDeListaSegTutor extends AbstractRol{
     public void setListaalumnoscas(List<Listaalumnosca> listaalumnoscas) {
         this.listaalumnoscas = listaalumnoscas;
     }
-
+    
+ public void setEstudiantesPorGrupo(DtoGrupoEstudiante estudiantesPorGrupo) {
+        this.estudiantesPorGrupo = estudiantesPorGrupo;
+        if(estudiantesPorGrupo == null) return;
+        calificacionMap.clear();
+        estudiantesPorGrupo.getEstudiantes()
+                .stream()
+                .map(dtoCapturaCalificacion -> dtoCapturaCalificacion.getCapturas())
+                .flatMap(capturas -> capturas.stream())
+                .map(captura -> captura.getCalificacion())
+                .forEach(calificacion -> {
+                    Long clave = calificacion.getCalificacion();
+                    Double valor = calificacion.getValor();
+                    calificacionMap.put(clave, valor);
+                });
+//        System.out.println("calificacionMap = " + calificacionMap);
+    }
     
 }

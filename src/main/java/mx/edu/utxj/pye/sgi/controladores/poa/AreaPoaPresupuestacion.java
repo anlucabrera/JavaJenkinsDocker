@@ -72,13 +72,13 @@ public class AreaPoaPresupuestacion implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("inicio"+System.currentTimeMillis());
+//        System.out.println("inicio"+System.currentTimeMillis());
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
         alineacionSeleccionada = false;
         consultarCatalogos();
-        System.out.println("inicio"+System.currentTimeMillis());
+//        System.out.println("inicio"+System.currentTimeMillis());
     }
     
 //////////////////////////////////////////////////////////////////////////////// consulta de listas
@@ -101,7 +101,7 @@ public class AreaPoaPresupuestacion implements Serializable {
     }
     
     public void consultarPOARecurso() {
-        System.out.println("consultarListasInit");
+//        System.out.println("consultarListasInit");
 
         listaEstrategiases = new ArrayList<>();
         listaEstrategiases.clear();
@@ -230,11 +230,11 @@ public class AreaPoaPresupuestacion implements Serializable {
     }   
 //////////////////////////////////////////////////////////////////////////////// Agregar recurso
     public void asignarRecursoActividad(ActividadesPoa actividadesPoaRecurso) {
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoActividad(1)");
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoActividad(1)");
         actividadesPoa = new ActividadesPoa();
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoActividad(2)");
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoActividad(2)");
         actividadesPoa = actividadesPoaRecurso;
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoActividad(3)"+actividadesPoa);
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoActividad(3)"+actividadesPoa);
         Ajax.oncomplete("PF('delRegistroProdustos').show()");
     }
 
@@ -254,12 +254,12 @@ public class AreaPoaPresupuestacion implements Serializable {
         } else {
             consultarListas();
         }
-        System.out.println("agregacion" + System.currentTimeMillis());
+//        System.out.println("agregacion" + System.currentTimeMillis());
     }
 
     public void asignarRecursoProgramados(ValueChangeEvent event) {
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoProgramados(1) "+event.getComponent().getId());
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoProgramados(2) "+event.getNewValue());
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoProgramados(1) "+event.getComponent().getId());
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.asignarRecursoProgramados(2) "+event.getNewValue());
         switch (event.getComponent().getId()) {
             case "mes1":
                 if (event.getNewValue() != null) {
@@ -399,9 +399,9 @@ public class AreaPoaPresupuestacion implements Serializable {
     }
 //////////////////////////////////////////////////////////////////////////////// Actualizar recurso
     public void onCellEditProductos(RowEditEvent event) {
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.onCellEditProductos(1)"+event.getObject());
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.onCellEditProductos(2)"+event.getObject().getClass());
-        System.out.println("edicion"+System.currentTimeMillis());
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.onCellEditProductos(1)"+event.getObject());
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARecurso.onCellEditProductos(2)"+event.getObject().getClass());
+//        System.out.println("edicion"+System.currentTimeMillis());
         RecursosActividad modificada = (RecursosActividad) event.getObject();
         totalRecursoActividad = modificada.getRPEnero() + modificada.getRPFebero() + modificada.getRPMarzo() + modificada.getRPAbril() + modificada.getRPMayo() + modificada.getRPJunio() + modificada.getRPJulio() + modificada.getRPAgosto() + modificada.getRPSeptiembre() + modificada.getRPOctubre() + modificada.getRPNoviembre() + modificada.getRPDiciembre();
         modificada.setTotal(totalRecursoActividad);
@@ -411,7 +411,7 @@ public class AreaPoaPresupuestacion implements Serializable {
         } else {
             consultarListas();
         }
-        System.out.println("edicion"+System.currentTimeMillis());
+//        System.out.println("edicion"+System.currentTimeMillis());
     }
     
     public void onRowCancel(RowEditEvent event) {
@@ -419,19 +419,19 @@ public class AreaPoaPresupuestacion implements Serializable {
     }
 //////////////////////////////////////////////////////////////////////////////// Eliminar recurso
     public void eliminarRecursoActividad(RecursosActividad recursosActividad) {
-        System.out.println("eliminacion"+System.currentTimeMillis());
+//        System.out.println("eliminacion"+System.currentTimeMillis());
         presupuestacion.eliminarRecursosActividad(recursosActividad);
         if (alineacionSeleccionada == false) {
             consultarCatalogos();
         } else {
             consultarListas();
         }
-        System.out.println("eliminiacion"+System.currentTimeMillis());
+//        System.out.println("eliminiacion"+System.currentTimeMillis());
     }
 
 //////////////////////////////////////////////////////////////////////////////// Utilidades    
     public void obtenerPretechos() {        
-        System.out.println("obtenerPretechos");
+//        System.out.println("obtenerPretechos");
         capitulo2m = new VistaRecurso(0D, 0D, 0D, "#000000",false);
         capitulo3m = new VistaRecurso(0D, 0D, 0D, "#000000",false);        
         capitulo4m = new VistaRecurso(0D, 0D, 0D, "#000000",false);
@@ -504,12 +504,12 @@ public class AreaPoaPresupuestacion implements Serializable {
     }
     
     public void resetearValores() {
-        System.out.println("resetear"+System.currentTimeMillis());
+//        System.out.println("resetear"+System.currentTimeMillis());
         actividadesPoa = new ActividadesPoa();
         actividadesPoa = new ActividadesPoa();
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;        
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
-        System.out.println("resetear"+System.currentTimeMillis());
+//        System.out.println("resetear"+System.currentTimeMillis());
     }
     
     public void imprimirValores() {

@@ -31,7 +31,6 @@ public class UtilidadesCorreosElectronicos implements Serializable {
         properties.put("mail.password", claveCorreo);
 
         if (correoDestino != null) {
-            System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesCorreosElectronicos.enviarConfirmacionCorreoElectronico(A)"+tipo);
             Session session = Session.getInstance(properties, null);
             try {
                 MimeMessage mimeMessage = new MimeMessage(session);

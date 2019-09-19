@@ -195,7 +195,7 @@
 
                                                                     <c:forEach var="k" begin="0" end="#{paseListaDoc.rol.dtoPaseListaReporteConsultas.size()-1}">
                                                                         <c:set var="q" value="#{paseListaDoc.rol.dtoPaseListaReporteConsultas.get(k)}"/>
-                                                                        <p:row>
+                                                                        <p:row style="#{q.casoCritico eq true?'background: #FF4848':''}">
                                                                             <p:column>#{q.listaalumnosca.matricula}</p:column>
                                                                             <p:column>#{q.listaalumnosca.esApePat} #{q.listaalumnosca.esApeMat} #{q.listaalumnosca.esNombre}</p:column>
                                                                             <c:forEach var="m" begin="0" end="#{q.asistenciasacademicases.size()-1}">

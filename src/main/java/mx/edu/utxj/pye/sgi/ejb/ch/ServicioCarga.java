@@ -265,7 +265,7 @@ public class ServicioCarga implements EjbCarga {
 
     @Override
     public String subirDocExpTit(Part file, String tipoDoc, File rutaRelativa, String matricula) {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(): " + rutaRelativa);
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(): " + rutaRelativa);
         try {
             byte[] content = Utils.toByteArray(file.getInputStream());
             File carpeta = new File("C:/archivos/expedientesTitulacion/".concat(rutaRelativa.toString()));
@@ -300,7 +300,7 @@ public class ServicioCarga implements EjbCarga {
                 FileOutputStream fos = new FileOutputStream(name);
                 FileCopyUtils.copy(content, fos);
                 aleatorio = ""; 
-                System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(fin)");
+//                System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(fin)");
                 return name;
         } catch (IOException ex) {
             Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);

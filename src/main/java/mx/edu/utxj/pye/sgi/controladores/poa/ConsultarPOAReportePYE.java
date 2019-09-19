@@ -53,13 +53,13 @@ public class ConsultarPOAReportePYE implements Serializable {
     
     @PostConstruct
     public void init() {
-        System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
+//        System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();;
-        System.out.println("ControladorHabilidadesIIL Inicio: " + ejercicioFiscal);
+//        System.out.println("ControladorHabilidadesIIL Inicio: " + ejercicioFiscal);
         ejeses=new ArrayList<>();
         ejeses.clear();
         mostrarAreasTienenPOA();
-        System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
+//        System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
     }
 
     public void mostrarAreasTienenPOA() {
@@ -72,7 +72,7 @@ public class ConsultarPOAReportePYE implements Serializable {
                     areasUniversidads.add(t);
                 }
             });
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ConsultarPOAReportePYE.mostrarAreasTienenPOA()" + areasUniversidads.size());
+//            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ConsultarPOAReportePYE.mostrarAreasTienenPOA()" + areasUniversidads.size());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ConsultarPOAReportePYE.class.getName()).log(Level.SEVERE, null, ex);
@@ -103,7 +103,7 @@ public class ConsultarPOAReportePYE implements Serializable {
 
         List<EjesRegistro> ejesRegistros = new ArrayList<>();
         ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(areasUniversidad.getArea(), ejercicioFiscal);
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ConsultarPOAReportePYE.consultarListasValidacionFinal()"+ejesRegistros.size());
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ConsultarPOAReportePYE.consultarListasValidacionFinal()"+ejesRegistros.size());
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((ej) -> {
                 List<Estrategias> listEstrategias = new ArrayList<>();
@@ -134,7 +134,7 @@ public class ConsultarPOAReportePYE implements Serializable {
     }
 
     public void imprimirValores() {
-        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.imprimirValores()");
+//        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.imprimirValores()");
     }
 
     public static class ListaEjes {

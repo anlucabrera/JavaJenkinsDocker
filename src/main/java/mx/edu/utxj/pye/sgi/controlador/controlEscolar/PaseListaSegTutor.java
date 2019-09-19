@@ -32,20 +32,25 @@ import java.util.stream.Collectors;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCasoCritico;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporte;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporteConsulta;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.PaseDeListaSegTutor;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CasoCritico;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.CellEditEvent;
@@ -63,6 +68,8 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
 
     @EJB EjbAsistencias ejb;
     @EJB EjbPropiedades ep;
+    @EJB EjbPacker packer;
+    @EJB EjbCasoCritico ecc;
     private Integer hora=0,minutos=0,tasis=0;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
@@ -232,6 +239,19 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
         rol.setDtoPaseListaReporteConsultas(new ArrayList<>());
         rol.setDplsReportesMes(new ArrayList<>());
         rol.setDiasPaseLista(new ArrayList<>());
+        
+        if(rol.getDtoConfUniMat() == null) {
+            mostrarMensaje("No hay unidad de evaluación seleccionada.");
+            rol.setEstudiantesPorGrupo(null);
+            return;
+        }
+        ResultadoEJB<DtoUnidadConfiguracion> ducB=packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
+        ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCarga(), ducB.getValor());
+        if(!resGrupo.getCorrecto()) mostrarMensajeResultadoEJB(resGrupo);
+        else {
+            rol.setEstudiantesPorGrupo(resGrupo.getValor());
+        }
+        
         createDynamicColumns();
     }
     
@@ -241,8 +261,9 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
         rol.setDiasPaseLista(new ArrayList<>());
         Date fI=rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio();
         Date fF=rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaFin();
-        rol.getListaalumnoscas().forEach((a) -> {
-            ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getCarga().getCargaAcademica(), a.getMatricula());
+        
+        rol.getEstudiantesPorGrupo().getEstudiantes().forEach((a) -> {
+            ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getCarga().getCargaAcademica(), a.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
             List<Asistenciasacademicas> asFilter = new ArrayList<>();
             asFilter = res.getValor().stream().filter(t -> (t.getAsistencia().getFechaHora().after(fI) || t.getAsistencia().getFechaHora().equals(fI)) && (t.getAsistencia().getFechaHora().before(fF) || t.getAsistencia().getFechaHora().equals(fF))).collect(Collectors.toList());
             tasis = 0;
@@ -258,14 +279,24 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
                         tasis=tasis+1;
                     }
                 });
-                Double d=(tasis*100.0)/asFilter.size();
-                Boolean b=(d<80.0);
-                if(b){
-                    CasoCritico cc=new CasoCritico();
+                Double d = (tasis * 100.0) / asFilter.size();
+                Boolean b = (d < 80.0);
+                ResultadoEJB<DtoCasoCritico> rejb=ecc.generarNuevo(a.getDtoEstudiante(), a.getDtoCargaAcademica(), a.getDtoUnidadConfiguracion(), CasoCriticoTipo.SISTEMA_ASISTENCIA_IRREGURLAR);
+                if (rejb.getCorrecto()) {
+                    a.setDtoCasoCritico(rejb.getValor());
                 }
-                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(a, asFilter,asFilter.size(),d,b));
+
+                ResultadoEJB<DtoCasoCritico> registrarPorAsistenciaIrregular = ecc.registrarPorAsistenciaIrregular(a, d);
+                if (registrarPorAsistenciaIrregular.getCorrecto()) {
+                    mostrarMensaje("Se generó un caso crítico automáticamente por Asistencia irregular.");
+                } else if (registrarPorAsistenciaIrregular.getResultado() < 4) {
+                    mostrarMensajeResultadoEJB(registrarPorAsistenciaIrregular);
+                }
+
+                List<Listaalumnosca> ls = rol.getListaalumnoscas().stream().filter(t -> t.getMatricula() == a.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula()).collect(Collectors.toList());
+                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(ls.get(0), asFilter, asFilter.size(), d, b));
             }
-        });        
+        });     
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         ResultadoEJB<List<Asistenciasacademicas>> resF = ejb.buscarAsistenciasacademicasFechasMes(rol.getCarga().getCargaAcademica());
         List<Asistenciasacademicas> asFilter = new ArrayList<>();

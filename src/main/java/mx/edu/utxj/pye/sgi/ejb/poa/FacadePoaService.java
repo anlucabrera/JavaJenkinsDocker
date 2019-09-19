@@ -65,7 +65,7 @@ public class FacadePoaService<T> implements FacadePoa {
                 ConstraintViolation<Object> cv = iterator.next();
                 System.err.println(cv.getRootBeanClass().getName() + "." + cv.getPropertyPath() + " " + cv.getMessage());
 
-                System.out.println("jvv.aldesa.sgot.facade.AbstractFacade.create(" + entity.toString() + "): " + cv.getRootBeanClass().getSimpleName() + "." + cv.getPropertyPath() + " " + cv.getMessage());
+//                System.out.println("jvv.aldesa.sgot.facade.AbstractFacade.create(" + entity.toString() + "): " + cv.getRootBeanClass().getSimpleName() + "." + cv.getPropertyPath() + " " + cv.getMessage());
             }
         } else {
             setEntityClass(entity.getClass());
@@ -89,7 +89,7 @@ public class FacadePoaService<T> implements FacadePoa {
                 ConstraintViolation<Object> cv = iterator.next();
                 System.err.println(cv.getRootBeanClass().getName() + "." + cv.getPropertyPath() + " " + cv.getMessage());
 
-                System.out.println("jvv.aldesa.sgot.facade.AbstractFacade.create(" + entity.toString() + "): " + cv.getRootBeanClass().getSimpleName() + "." + cv.getPropertyPath() + " " + cv.getMessage());
+//                System.out.println("jvv.aldesa.sgot.facade.AbstractFacade.create(" + entity.toString() + "): " + cv.getRootBeanClass().getSimpleName() + "." + cv.getPropertyPath() + " " + cv.getMessage());
             }
         } else {
             setEntityClass(entity.getClass());

@@ -462,7 +462,7 @@ public class AdminPoaEvaluacion implements Serializable {
     }
 
     public void imprimirValores() {
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.imprimirValores()");
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.imprimirValores()");
     }
 
     public static class listaEjesEsLaAp {

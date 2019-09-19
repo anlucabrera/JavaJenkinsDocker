@@ -349,14 +349,11 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
     }
 
     public void comprobarRegistroDeCompetencias() {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AdministracionPlanEstudioDirector.comprobarRegistroDeCompetencias()"+rol.getPlanEstudioMateriaCompetencias1().getCompetencia().getIdCompetencia());
-        if(rol.getPlanEstudioMateriaCompetencias1().getCompetencia().getIdCompetencia().equals(0)){
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AdministracionPlanEstudioDirector.comprobarRegistroDeCompetencias(1)"+rol.getNewCompetencia());
+        if (rol.getPlanEstudioMateriaCompetencias1().getCompetencia().getIdCompetencia().equals(0)) {
             rol.setNewCompetencia(true);
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AdministracionPlanEstudioDirector.comprobarRegistroDeCompetencias(2)"+rol.getNewCompetencia());
     }
-    
+
 // eventos de tablas
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalInfo("¡Operación cancelada!");

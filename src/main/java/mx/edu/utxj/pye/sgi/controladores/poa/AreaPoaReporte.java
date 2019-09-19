@@ -40,10 +40,10 @@ public class AreaPoaReporte implements Serializable {
     
     @PostConstruct
     public void init() {
-        System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
+//        System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         consultarListasValidacionFinal();
-        System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
+//        System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
     }
 
     public void consultarListasValidacionFinal() {
@@ -86,7 +86,7 @@ public class AreaPoaReporte implements Serializable {
     }
 
     public void imprimirValores() {
-        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.imprimirValores()");
+//        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.imprimirValores()");
     }
 
     public static class ListaEjes {

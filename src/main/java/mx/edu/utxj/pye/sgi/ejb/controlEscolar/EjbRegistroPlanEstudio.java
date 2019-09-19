@@ -269,14 +269,14 @@ public class EjbRegistroPlanEstudio {
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmu.getUnidadMateria(), "Se actualizo correctamente La Unidad Materia");
                 case ELIMINAR:
-                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.registrarUnidadMateria(1)");
+//                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.registrarUnidadMateria(1)");
                     if (dmu.getUnidadMateria().getUnidadMateriaConfiguracionList().isEmpty()) {
-                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.registrarUnidadMateria(2 true)");
+//                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.registrarUnidadMateria(2 true)");
                         f.remove(dmu.getUnidadMateria());
                         f.flush();
                         return ResultadoEJB.crearCorrecto(null, "Se elimino correctamente La Unidad Materia");
                     } else {
-                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.registrarUnidadMateria(2 false)");
+//                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.registrarUnidadMateria(2 false)");
                         return ResultadoEJB.crearCorrecto(null, "No fue posible la eliminación de la unidad, ya que cuenta con registros en el módulo de Configuración unidad materia");
                     }
                 default:
@@ -437,16 +437,16 @@ public class EjbRegistroPlanEstudio {
                     .setParameter("categoria", programaEducativoCategoria)
                     .getResultList();
             
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(programas)"+programas.size());
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(programas)"+programas.size());
             programas.forEach((t) -> {
                 pe.addAll(generarPlanesEstudio(t));
             });
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(pe)"+pe.size());
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(pe)"+pe.size());
             
             pe.forEach((t) -> {
                 pems.addAll(generarPlanEstuidoMaterias(t));
             });
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(pems)"+pems.size());
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(pems)"+pems.size());
             
                        
             return ResultadoEJB.crearCorrecto(pems, "Listado de materias registrados para este Plan de estudios");
@@ -466,8 +466,8 @@ public class EjbRegistroPlanEstudio {
         estudioMateria = em.createQuery("SELECT pem FROM PlanEstudioMateria pem WHERE pem.idPlanMateria = :idPlanMateria", PlanEstudioMateria.class)
                 .setParameter("idPlanMateria", pem.getIdPlanMateria())
                 .getResultList().get(0);
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.generarCompetenciasPorPlanEstuidoMaterias(1)"+estudioMateria);
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.generarCompetenciasPorPlanEstuidoMaterias(1)"+estudioMateria.getCompetenciaList().isEmpty());
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.generarCompetenciasPorPlanEstuidoMaterias(1)"+estudioMateria);
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.generarCompetenciasPorPlanEstuidoMaterias(1)"+estudioMateria.getCompetenciaList().isEmpty());
         if (estudioMateria.getCompetenciaList().isEmpty()) {
             return new ArrayList<>();
         } else {

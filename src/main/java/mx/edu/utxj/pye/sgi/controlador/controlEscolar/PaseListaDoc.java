@@ -2,7 +2,6 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -35,24 +33,25 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.controladores.ch.CvEducacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCasoCritico;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGraficaCronograma;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporte;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporteConsulta;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ImpresionPlaneacionCuatrimestral;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.PaseDeListaDocente;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
-import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CasoCritico;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.CellEditEvent;
@@ -71,6 +70,8 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
 
     @EJB EjbAsistencias ejb;
     @EJB EjbPropiedades ep;
+    @EJB EjbPacker packer;
+    @EJB EjbCasoCritico ecc;
     private Integer hora=0,minutos=0,tasis=0;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
@@ -234,11 +235,9 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     }
     
     public void buscarAsistencias(DtoPaseListaReporteConsulta reporteConsulta) {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.buscarActividadParaEdicion(A)" + reporteConsulta.getListaalumnosca().getMatricula());
         rol.setDplrcVisible(Boolean.FALSE);
         rol.setDplrc(reporteConsulta);
         rol.setDplrcVisible(Boolean.TRUE);
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.buscarActividadParaEdicion(B)" + rol.getDplrc().getListaalumnosca().getMatricula());
     }
     
     public void actualizarPaseLista() {
@@ -254,6 +253,19 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         rol.setDtoPaseListaReporteConsultas(new ArrayList<>());
         rol.setDplsReportesMes(new ArrayList<>());
         rol.setDiasPaseLista(new ArrayList<>());
+        
+        if(rol.getDtoConfUniMat() == null) {
+            mostrarMensaje("No hay unidad de evaluación seleccionada.");
+            rol.setEstudiantesPorGrupo(null);
+            return;
+        }
+        ResultadoEJB<DtoUnidadConfiguracion> ducB=packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
+        ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCarga(), ducB.getValor());
+        if(!resGrupo.getCorrecto()) mostrarMensajeResultadoEJB(resGrupo);
+        else {
+            rol.setEstudiantesPorGrupo(resGrupo.getValor());
+        }
+        
         createDynamicColumns();
     }
     
@@ -263,8 +275,9 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         rol.setDiasPaseLista(new ArrayList<>());
         Date fI=rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio();
         Date fF=rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaFin();
-        rol.getListaalumnoscas().forEach((a) -> {
-            ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getCarga().getCargaAcademica(), a.getMatricula());
+        
+        rol.getEstudiantesPorGrupo().getEstudiantes().forEach((a) -> {
+            ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getCarga().getCargaAcademica(), a.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
             List<Asistenciasacademicas> asFilter = new ArrayList<>();
             asFilter = res.getValor().stream().filter(t -> (t.getAsistencia().getFechaHora().after(fI) || t.getAsistencia().getFechaHora().equals(fI)) && (t.getAsistencia().getFechaHora().before(fF) || t.getAsistencia().getFechaHora().equals(fF))).collect(Collectors.toList());
             tasis = 0;
@@ -280,20 +293,24 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         tasis=tasis+1;
                     }
                 });
-                Double d=(tasis*100.0)/asFilter.size();
+                Double d = (tasis * 100.0) / asFilter.size();
                 Boolean b = (d < 80.0);
-                CasoCritico cc = new CasoCritico();
-                // se buscara el caso critico
-                if (b) {
-                    if (cc == null) {
-                        // crear caso critico
-                    }
-                } else if (cc != null) {
-                    // se elimina caso caritica en caso de existir
+                ResultadoEJB<DtoCasoCritico> rejb=ecc.generarNuevo(a.getDtoEstudiante(), a.getDtoCargaAcademica(), a.getDtoUnidadConfiguracion(), CasoCriticoTipo.SISTEMA_ASISTENCIA_IRREGURLAR);
+                if (rejb.getCorrecto()) {
+                    a.setDtoCasoCritico(rejb.getValor());
                 }
-                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(a, asFilter,asFilter.size(),d,b));
+
+                ResultadoEJB<DtoCasoCritico> registrarPorAsistenciaIrregular = ecc.registrarPorAsistenciaIrregular(a, d);
+                if (registrarPorAsistenciaIrregular.getCorrecto()) {
+                    mostrarMensaje("Se generó un caso crítico automáticamente por Asistencia irregular.");
+                } else if (registrarPorAsistenciaIrregular.getResultado() < 4) {
+                    mostrarMensajeResultadoEJB(registrarPorAsistenciaIrregular);
+                }
+
+                List<Listaalumnosca> ls = rol.getListaalumnoscas().stream().filter(t -> t.getMatricula() == a.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula()).collect(Collectors.toList());
+                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(ls.get(0), asFilter, asFilter.size(), d, b));
             }
-        });        
+        });     
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         ResultadoEJB<List<Asistenciasacademicas>> resF = ejb.buscarAsistenciasacademicasFechasMes(rol.getCarga().getCargaAcademica());
         List<Asistenciasacademicas> asFilter = new ArrayList<>();
@@ -566,6 +583,13 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         try {
             Asistenciasacademicas asistenciasacademicas = (Asistenciasacademicas) event.getObject();
             ejb.actualizarPaseLista(asistenciasacademicas);
+            ResultadoEJB<DtoUnidadConfiguracion> ducB = packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
+            ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCarga(), ducB.getValor());
+            if (!resGrupo.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resGrupo);
+            } else {
+                rol.setEstudiantesPorGrupo(resGrupo.getValor());
+            }
             createDynamicColumns();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -578,6 +602,5 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     }
     
     public void metodoBase() {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.metodoBase()");
     }
 }

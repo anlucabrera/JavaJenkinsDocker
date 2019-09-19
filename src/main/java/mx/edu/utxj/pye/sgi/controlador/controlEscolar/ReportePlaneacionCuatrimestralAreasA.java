@@ -58,7 +58,6 @@ public class ReportePlaneacionCuatrimestralAreasA implements Serializable {
     }
     public void mostrarLista() {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReportePlaneacionCuatrimestralAreasA.mostrarLista()"+au.getArea());
             rs = new ArrayList<>();
             rs.clear();
             rs=eaic.buscarReporteAreaAcademica(au.getArea());            
