@@ -96,7 +96,6 @@ public class EjbTramitarBaja {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosGruposTutorados(PersonalActivo tutor){
-        System.err.println("getPeriodosGruposTutorados - tutor " + tutor.getPersonal().getClave());
         try{
             List<PeriodosEscolares> listaPeriodos = new ArrayList<>();
             

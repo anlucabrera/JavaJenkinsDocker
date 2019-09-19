@@ -89,7 +89,6 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
 //            rol.setSoloLectura(true);
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
             rol.setForzarAperturaDialogo(Boolean.FALSE);
-            System.err.println("init - forzarApertura " + rol.getForzarAperturaDialogo());
             
             rol.getInstrucciones().add("Ingrese nombre o clave del o de la estudiante que dará de baja.");
             rol.getInstrucciones().add("Seleccionar causa de baja.");
@@ -241,7 +240,6 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      * en tipo de evaluacion "Ordinaria"
      */
     public void guardarTramitarBaja(){
-        System.err.println("guardarTramitarBaja - rolGetExiste " + rol.getExisteRegistroBaja());
         if(rol.getExisteRegistroBaja() == null)
         {  
             ResultadoEJB<Baja> res = ejb.guardarTramitarBaja(rol.getPeriodoActivo(), rol.getEstudiante().getDtoEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
@@ -269,7 +267,6 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     public void existeRegistro(Integer clave){
         ResultadoEJB<Boolean> res = ejb.buscarRegistroBajaEstudiante(clave);
         rol.setExisteRegistroBaja(res.getValor());
-        System.err.println("existeRegistro - existe " + rol.getExisteRegistroBaja());
         if (rol.getExisteRegistroBaja() == null) {
             rol.setCausaBaja(rol.getCausasBaja().get(0));
             rol.setTipoBaja(rol.getTiposBaja().get(0));
@@ -327,7 +324,6 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
         Ajax.update("frmModalTramitarBaja");
         Ajax.oncomplete("skin();");
         rol.setForzarAperturaDialogo(Boolean.TRUE);
-        System.err.println("editarBaja - forzarApertura " + rol.getForzarAperturaDialogo());
         forzarAperturaDialogoTramitarBaja();
     }
     
@@ -336,7 +332,6 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
             Ajax.oncomplete("PF('modalTramitarBaja').show();");
             rol.setForzarAperturaDialogo(Boolean.FALSE);
         }
-        System.err.println("forzarAperturaDialogoTramitarBaja - forzarApertura " + rol.getForzarAperturaDialogo());
     }
      
      public void forzarAperturaDialogoMateriasReprobadas(){
