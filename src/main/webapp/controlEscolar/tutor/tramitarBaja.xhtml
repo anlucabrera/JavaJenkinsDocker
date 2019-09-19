@@ -156,7 +156,7 @@
                                                     <p:column>
                                                          <p:cellEditor>
                                                              <f:facet name="output"><h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}"/></f:facet>
-                                                             <f:facet name="input"><h:inputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}" size="500" style="color: #000000;"/></f:facet>
+                                                             <f:facet name="input"><h:inputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}" size="500" style="color: #000000;" disabled="#{!tramitarBajaTutor.rol.existeRegistroBaja}"/></f:facet>
                                                         </p:cellEditor> 
                                                     </p:column>
                                                     <p:column>
@@ -240,6 +240,9 @@
                               maximizable="false">
                         
                         <h:form id="frmModalTramitarBaja" >
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <br/>
+                            </div>
                             <div class="col-sm-12 col-md-12 col-lg-6">
                                 <div class="ui-material">
                                     <p:selectOneMenu id="causaBaja" value="#{tramitarBajaTutor.rol.causaBaja}" converter="entityConverter" valueChangeListener="#{tramitarBajaTutor.cambiarCausaBaja}">
@@ -272,14 +275,21 @@
                                 </div>
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-12">
+                            <br/>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
                                 <div class="ui-material">
-                                    <p:inputText id="accionesTutor" value="#{tramitarBajaTutor.rol.accionesTutor}"/>
+                                    
                                     <p:outputLabel value="Acciones tomadas por el tutor" for="accionesTutor" style="font-weight: bold; font-size: 14px;"/>
+                                    <p:inputTextarea id="accionesTutor" value="#{tramitarBajaTutor.rol.accionesTutor}" maxlength="500" style="width: 650px;"/>
                                     <p:message for="accionesTutor" />
                                 </div>
                                 
                             </div>
-                            <div class="col-sm-12 col-md-12 col-lg-12"></div>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <br/>
+                                <br/>
+                            </div>
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <center>
                                     <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{tramitarBajaTutor.guardarTramitarBaja()}" icon="fa fa-pencil-square-o" class="btn-primary"/>

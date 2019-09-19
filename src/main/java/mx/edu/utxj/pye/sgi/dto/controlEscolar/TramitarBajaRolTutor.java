@@ -67,7 +67,7 @@ public class TramitarBajaRolTutor extends AbstractRol {
      * Lista de tipos de baja
      */
     @Getter @NonNull private List<BajasTipo> tiposBaja;
-    
+  
      /**
      * Tipo de baja seleccionada
      */
@@ -77,7 +77,7 @@ public class TramitarBajaRolTutor extends AbstractRol {
      * Lista de causas baja
      */
     @Getter @NonNull private List<BajasCausa> causasBaja;
-    
+
      /**
      * Causa de baja seleccionada
      */
@@ -134,7 +134,12 @@ public class TramitarBajaRolTutor extends AbstractRol {
     @Getter @NonNull private Date fechaFin;
     
     /**
-     * Descripció de acciones tomadas por el tutor
+     * Existe o no registro de baja del estudiante
+     */
+    @Getter @NonNull private Boolean existeRegistroBaja;
+    
+     /**
+     * Existe o no registro de baja del estudiante
      */
     @Getter @NonNull private String accionesTutor;
    
@@ -229,6 +234,10 @@ public class TramitarBajaRolTutor extends AbstractRol {
 
     public void setFechaFin(Date fechaFin) {
         this.fechaFin = fechaFin;
+    }
+
+    public void setExisteRegistroBaja(Boolean existeRegistroBaja) {
+        this.existeRegistroBaja = existeRegistroBaja;
     }
 
     public void setAccionesTutor(String accionesTutor) {

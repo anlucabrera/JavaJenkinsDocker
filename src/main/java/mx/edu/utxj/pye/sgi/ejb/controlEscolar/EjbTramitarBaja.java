@@ -218,24 +218,6 @@ public class EjbTramitarBaja {
             em.persist(registroBaja);
             em.flush();
             
-//            if (registroBaja.getTipoBaja() == 1) {
-//
-//                TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short)2);
-//
-//                Integer t = em.createQuery("update Estudiante e set e.tipoEstudiante =:tipoEstudiante where e.idEstudiante =:estudiante")
-//                        .setParameter("tipoEstudiante", tipoEstudiante)
-//                        .setParameter("estudiante", registroBaja.getEstudiante().getIdEstudiante())
-//                        .executeUpdate();
-//            } else {
-//
-//               TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short)3);
-//
-//                Integer t = em.createQuery("update Estudiante e set e.tipoEstudiante =:tipoEstudiante where e.idEstudiante =:estudiante")
-//                        .setParameter("tipoEstudiante", tipoEstudiante)
-//                        .setParameter("estudiante", registroBaja.getEstudiante().getIdEstudiante())
-//                        .executeUpdate();
-//            }
-            
             if(registroBaja.getCausaBaja() == 3)
             {
                    List<CargaAcademica> listaCargasAcademicas = em.createQuery("SELECT ca FROM CargaAcademica ca WHERE ca.cveGrupo.idGrupo =:grupo", CargaAcademica.class)
@@ -257,7 +239,29 @@ public class EjbTramitarBaja {
             
             return ResultadoEJB.crearCorrecto(baja, "La baja se ha registrado correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la baja. (EjbRegistroBajas.guardarRegistroBaja)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la baja. (EjbTramitarBaja.guardarRegistroBaja)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la información de la baja registrada
+     * @param claveEstudiante Clave del estudiante para buscar registro
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Boolean> buscarRegistroBajaEstudiante(Integer claveEstudiante) {
+        try{
+            Boolean valor = true;
+            
+            Baja registroBaja = em.createQuery("SELECT b FROM Baja b WHERE b.estudiante.idEstudiante =:estudiante", Baja.class)
+                    .setParameter("estudiante", claveEstudiante)
+                    .getSingleResult();
+            if(registroBaja.getIdBajas() == 0)
+            {
+                valor= false;
+            }
+            return ResultadoEJB.crearCorrecto(valor, "Existe o no registro de baja del estudiante");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar si existe o no registro de baja del estudiante. (EjbTramitarBaja.buscarRegistroBajaEstudiante)", e, null);
         }
     }
     

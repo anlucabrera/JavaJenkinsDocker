@@ -190,7 +190,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
         ResultadoEJB<List<BajasTipo>> res = ejbRegistroBajas.getTiposBaja();
         if(res.getCorrecto()){
             rol.setTiposBaja(res.getValor());
-            rol.setTipoBaja(rol.getTiposBaja().get(0));
+//            rol.setTipoBaja(rol.getTiposBaja().get(0));
         }else mostrarMensajeResultadoEJB(res);
     }
   
@@ -202,7 +202,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
         ResultadoEJB<List<BajasCausa>> res = ejbRegistroBajas.getCausasBaja();
         if(res.getCorrecto()){
             rol.setCausasBaja(res.getValor());
-            rol.setCausaBaja(rol.getCausasBaja().get(0));
+//            rol.setCausaBaja(rol.getCausasBaja().get(0));
         }else mostrarMensajeResultadoEJB(res);
     }
      /**
@@ -298,13 +298,24 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      */
     public void editarBaja(DtoTramitarBajas estudiante){
         rol.setEstudiante(estudiante);
-        rol.setRegistroBajaEstudiante(rol.getEstudiante().getDtoRegistroBaja());
-        rol.setCausaBaja(rol.getRegistroBajaEstudiante().getCausaBaja());
-        rol.setTipoBaja(rol.getRegistroBajaEstudiante().getTipoBaja());
-        rol.setAccionesTutor(rol.getRegistroBajaEstudiante().getRegistroBaja().getAccionesTutor());
         tiposBaja();
         causasBaja();
         rangoFechasPermiso();
+        rol.setExisteRegistroBaja(ejb.buscarRegistroBajaEstudiante(rol.getEstudiante().getDtoEstudiante().getEstudiante().getIdEstudiante()).getValor());
+       
+        if(rol.getExisteRegistroBaja() == null){
+            rol.setCausaBaja(rol.getCausasBaja().get(0));
+            rol.setTipoBaja(rol.getTiposBaja().get(0));
+            rol.setFechaBaja(new Date());
+            rol.setAccionesTutor("");
+        
+        }else{
+            rol.setRegistroBajaEstudiante(ejbRegistroBajas.buscarRegistroBajaEstudiante(rol.getEstudiante().getDtoEstudiante().getEstudiante().getIdEstudiante()).getValor());
+            rol.setCausaBaja(rol.getRegistroBajaEstudiante().getCausaBaja());
+            rol.setTipoBaja(rol.getRegistroBajaEstudiante().getTipoBaja());
+            rol.setFechaBaja(rol.getRegistroBajaEstudiante().getRegistroBaja().getFechaBaja());
+            rol.setAccionesTutor(rol.getRegistroBajaEstudiante().getRegistroBaja().getAccionesTutor());
+        }
         Ajax.update("frmModalTramitarBaja");
         Ajax.oncomplete("skin();");
         rol.setForzarAperturaDialogo(Boolean.TRUE);
