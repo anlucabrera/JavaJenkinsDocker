@@ -89,7 +89,8 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
 //            rol.setSoloLectura(true);
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
             rol.setForzarAperturaDialogo(Boolean.FALSE);
-          
+            System.err.println("init - forzarApertura " + rol.getForzarAperturaDialogo());
+            
             rol.getInstrucciones().add("Ingrese nombre o clave del o de la estudiante que dará de baja.");
             rol.getInstrucciones().add("Seleccionar causa de baja.");
             rol.getInstrucciones().add("Seleccionar tipo de baja.");
@@ -190,7 +191,6 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
         ResultadoEJB<List<BajasTipo>> res = ejbRegistroBajas.getTiposBaja();
         if(res.getCorrecto()){
             rol.setTiposBaja(res.getValor());
-//            rol.setTipoBaja(rol.getTiposBaja().get(0));
         }else mostrarMensajeResultadoEJB(res);
     }
   
@@ -202,7 +202,6 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
         ResultadoEJB<List<BajasCausa>> res = ejbRegistroBajas.getCausasBaja();
         if(res.getCorrecto()){
             rol.setCausasBaja(res.getValor());
-//            rol.setCausaBaja(rol.getCausasBaja().get(0));
         }else mostrarMensajeResultadoEJB(res);
     }
      /**
@@ -242,29 +241,51 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      * en tipo de evaluacion "Ordinaria"
      */
     public void guardarTramitarBaja(){
-        ResultadoEJB<Baja> res = ejb.guardarTramitarBaja(rol.getPeriodoActivo(), rol.getEstudiante().getDtoEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getTutor(), rol.getFechaBaja());
-        if(res.getCorrecto()){
-            rol.setBajaRegistrada(res.getValor());
-            mostrarMensajeResultadoEJB(res);
-            listaEstudiantes();
-            Ajax.update("frm");
-        }else mostrarMensajeResultadoEJB(res);
-        
+        System.err.println("guardarTramitarBaja - rolGetExiste " + rol.getExisteRegistroBaja());
+        if(rol.getExisteRegistroBaja() == null)
+        {  
+            ResultadoEJB<Baja> res = ejb.guardarTramitarBaja(rol.getPeriodoActivo(), rol.getEstudiante().getDtoEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
+            if(res.getCorrecto()){
+                rol.setBajaRegistrada(res.getValor());
+                mostrarMensajeResultadoEJB(res);
+            }else mostrarMensajeResultadoEJB(res);
+             
+        }else{
+            ResultadoEJB<Baja> res = ejb.actualizarTramitarBaja(rol.getPeriodoActivo(), rol.getRegistroBajaEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
+            if(res.getCorrecto()){
+                rol.setBajaRegistrada(res.getValor());
+                mostrarMensajeResultadoEJB(res);
+                
+            }else mostrarMensajeResultadoEJB(res);
+        }
+        listaEstudiantes();
+        Ajax.update("frm");
     }
-//    
-//     /**
-//     * Permite verificar si existe registro de baja del estudiante seleccionado
-//     * @param clave Clave del estudiante para buscar registro
-//     */
-//    public void existeRegistro(Integer clave){
-//       ResultadoEJB<DtoRegistroBajaEstudiante> res = ejb.buscarRegistroBajaEstudiante(clave);
-//       if(res.getCorrecto()){
-//            rol.setRegistroBajaEstudiante(res.getValor());
-//            mostrarMensajeResultadoEJB(res);
-//            Ajax.update("frm");
-//        }
-//     }
-//   
+    
+     /**
+     * Permite verificar si existe registro de baja del estudiante seleccionado
+     * @param clave Clave del estudiante para buscar registro
+     */
+    public void existeRegistro(Integer clave){
+        ResultadoEJB<Boolean> res = ejb.buscarRegistroBajaEstudiante(clave);
+        rol.setExisteRegistroBaja(res.getValor());
+        System.err.println("existeRegistro - existe " + rol.getExisteRegistroBaja());
+        if (rol.getExisteRegistroBaja() == null) {
+            rol.setCausaBaja(rol.getCausasBaja().get(0));
+            rol.setTipoBaja(rol.getTiposBaja().get(0));
+            rol.setFechaBaja(new Date());
+            rol.setAccionesTutor("");
+
+        } else {
+            rol.setRegistroBajaEstudiante(ejbRegistroBajas.buscarRegistroBajaEstudiante(clave).getValor());
+            rol.setCausaBaja(rol.getRegistroBajaEstudiante().getCausaBaja());
+            rol.setTipoBaja(rol.getRegistroBajaEstudiante().getTipoBaja());
+            rol.setFechaBaja(rol.getRegistroBajaEstudiante().getRegistroBaja().getFechaBaja());
+            rol.setAccionesTutor(rol.getRegistroBajaEstudiante().getRegistroBaja().getAccionesTutor());
+        }
+        mostrarMensajeResultadoEJB(res);
+     }
+   
       /**
      * Permite eliminar el registro de baja seleccionado
      * @param registro Registro de baja que se desea eliminar
@@ -272,8 +293,9 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     public void eliminarRegistroBaja(Baja registro){
         ResultadoEJB<Integer> resEliminar = ejbRegistroBajas.eliminarRegistroBaja(registro);
         mostrarMensajeResultadoEJB(resEliminar);
-        rol.setRegistroBajaEstudiante(null);
-        Ajax.update("tbRegBaja");
+        
+        listaEstudiantes();
+        Ajax.update("frm");
     }
     
       /**
@@ -301,24 +323,11 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
         tiposBaja();
         causasBaja();
         rangoFechasPermiso();
-        rol.setExisteRegistroBaja(ejb.buscarRegistroBajaEstudiante(rol.getEstudiante().getDtoEstudiante().getEstudiante().getIdEstudiante()).getValor());
-       
-        if(rol.getExisteRegistroBaja() == null){
-            rol.setCausaBaja(rol.getCausasBaja().get(0));
-            rol.setTipoBaja(rol.getTiposBaja().get(0));
-            rol.setFechaBaja(new Date());
-            rol.setAccionesTutor("");
-        
-        }else{
-            rol.setRegistroBajaEstudiante(ejbRegistroBajas.buscarRegistroBajaEstudiante(rol.getEstudiante().getDtoEstudiante().getEstudiante().getIdEstudiante()).getValor());
-            rol.setCausaBaja(rol.getRegistroBajaEstudiante().getCausaBaja());
-            rol.setTipoBaja(rol.getRegistroBajaEstudiante().getTipoBaja());
-            rol.setFechaBaja(rol.getRegistroBajaEstudiante().getRegistroBaja().getFechaBaja());
-            rol.setAccionesTutor(rol.getRegistroBajaEstudiante().getRegistroBaja().getAccionesTutor());
-        }
+        existeRegistro(rol.getEstudiante().getDtoEstudiante().getEstudiante().getIdEstudiante());
         Ajax.update("frmModalTramitarBaja");
         Ajax.oncomplete("skin();");
         rol.setForzarAperturaDialogo(Boolean.TRUE);
+        System.err.println("editarBaja - forzarApertura " + rol.getForzarAperturaDialogo());
         forzarAperturaDialogoTramitarBaja();
     }
     
@@ -327,6 +336,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
             Ajax.oncomplete("PF('modalTramitarBaja').show();");
             rol.setForzarAperturaDialogo(Boolean.FALSE);
         }
+        System.err.println("forzarAperturaDialogoTramitarBaja - forzarApertura " + rol.getForzarAperturaDialogo());
     }
      
      public void forzarAperturaDialogoMateriasReprobadas(){

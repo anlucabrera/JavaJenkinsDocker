@@ -280,9 +280,9 @@ public class EjbRegistroBajas {
     }
     
      public void actualizarRegistroBaja(DtoRegistroBajaEstudiante dtoRegistroBajaEstudiante) {
-        f.setEntityClass(Baja.class);
-        f.edit(dtoRegistroBajaEstudiante.getRegistroBaja());
-        f.flush();
+            f.setEntityClass(Baja.class);
+            f.edit(dtoRegistroBajaEstudiante.getRegistroBaja());
+            f.flush();
     }
      
       /**

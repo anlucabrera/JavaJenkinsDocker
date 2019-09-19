@@ -195,6 +195,7 @@ public class EjbTramitarBaja {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de los estudiantes seleccionados. (EjbTramitarBaja.obtenerListaEstudiantes)", e, null);
         }
     }
+    
     /**
      * Permite guardar el registro de la baja
      * @param periodoEscolar Clave del periodo escolar activo
@@ -205,7 +206,7 @@ public class EjbTramitarBaja {
      * @param fechaBaja Fecha de la baja
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Baja> guardarTramitarBaja(Integer periodoEscolar, DtoDatosEstudiante estudiante, BajasTipo tipoBaja, BajasCausa causaBaja, PersonalActivo personal, Date fechaBaja){
+    public ResultadoEJB<Baja> guardarTramitarBaja(Integer periodoEscolar, DtoDatosEstudiante estudiante, BajasTipo tipoBaja, BajasCausa causaBaja, String acciones, PersonalActivo personal, Date fechaBaja){
         try{   
             Baja registroBaja = new Baja();
             registroBaja.setPeriodoEscolar(periodoEscolar);
@@ -215,6 +216,7 @@ public class EjbTramitarBaja {
             registroBaja.setCausaBaja(causaBaja.getCveCausa());
             registroBaja.setEmpleado(personal.getPersonal().getClave());
             registroBaja.setFechaBaja(fechaBaja);
+            registroBaja.setAccionesTutor(acciones);
             em.persist(registroBaja);
             em.flush();
             
@@ -240,6 +242,58 @@ public class EjbTramitarBaja {
             return ResultadoEJB.crearCorrecto(baja, "La baja se ha registrado correctamente.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar la baja. (EjbTramitarBaja.guardarRegistroBaja)", e, null);
+        }
+    }
+    
+    /**
+     * Permite guardar el registro de la baja
+     * @param periodoEscolar Clave del periodo escolar activo
+     * @param dtoRegistroBaja Registro de baja del estudiante que se va a actualizar
+     * @param tipoBaja Tipo de baja que se registrará
+     * @param causaBaja Causa de la baja que se registrará
+     * @param personal Personal que registrará la baja
+     * @param fechaBaja Fecha de la baja
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Baja> actualizarTramitarBaja(Integer periodoEscolar, DtoRegistroBajaEstudiante dtoRegistroBaja, BajasTipo tipoBaja, BajasCausa causaBaja, String acciones, PersonalActivo personal, Date fechaBaja){
+        try{
+            
+            Baja registroBaja = em.find(Baja.class, dtoRegistroBaja.getRegistroBaja().getIdBajas());
+            registroBaja.setTipoBaja(tipoBaja.getTipoBaja());
+            registroBaja.setCausaBaja(causaBaja.getCveCausa());
+            registroBaja.setFechaBaja(fechaBaja);
+            registroBaja.setAccionesTutor(acciones);
+            f.edit(registroBaja);
+            em.flush();
+            
+            if(dtoRegistroBaja.getRegistroBaja().getCausaBaja() != registroBaja.getCausaBaja()){
+                Integer delete = em.createQuery("DELETE FROM BajaReprobacion b WHERE b.registroBaja.idBajas =:baja", Baja.class)
+                        .setParameter("baja", registroBaja.getIdBajas())
+                        .executeUpdate();
+            }
+            
+            if(registroBaja.getCausaBaja() == 3)
+            {
+                   List<CargaAcademica> listaCargasAcademicas = em.createQuery("SELECT ca FROM CargaAcademica ca WHERE ca.cveGrupo.idGrupo =:grupo", CargaAcademica.class)
+                           .setParameter("grupo", registroBaja.getEstudiante().getGrupo().getIdGrupo())
+                           .getResultList();
+                   
+                    listaCargasAcademicas.forEach(cargaAcademica -> {
+                            BajaReprobacion bajaReprobacion = new BajaReprobacion();
+                            bajaReprobacion.setRegistroBaja(registroBaja);
+                            bajaReprobacion.setCargaAcademica(cargaAcademica);
+                            em.persist(bajaReprobacion);
+                    });
+            
+            }
+           
+            Baja baja = em.createQuery("SELECT b FROM Baja b WHERE b.estudiante.idEstudiante =:estudiante", Baja.class)
+                    .setParameter("estudiante", registroBaja.getEstudiante().getIdEstudiante())
+                    .getSingleResult();
+            
+            return ResultadoEJB.crearCorrecto(baja, "La baja se ha actualizado correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la baja. (EjbTramitarBaja.actualizarTramitarBaja)", e, null);
         }
     }
     

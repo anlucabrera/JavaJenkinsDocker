@@ -94,6 +94,7 @@
                                     </div>
                                     <div class="row">
                                             <center>
+                                                <p:remoteCommand name="actualizar" update="@form:tbListaEstudiantes" />
                                                 <p:dataTable id="tbListaEstudiantes" var="estudiante" value="#{tramitarBajaTutor.rol.estudiantesGrupo}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
                                                                  tableStyle="vertical-align: middle;" editable="true" editMode="cell">
@@ -124,14 +125,16 @@
                                                             icon="fa fa-edit"
                                                             title="Tramitar baja"/>
                                                             <p:commandButton actionListener="#{tramitarBajaTutor.buscarMateriasReprobadas(registro)}"
-                                                            class="btn btn-sm btn-info" 
+                                                            class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"
-                                                            title="Consultar materias reprobadas" 
-                                                            disabled="#{estudiante.dtoRegistroBaja.causaBaja.causa ne 'Reprobación'}"/>
+                                                            title="Consultar materias reprobadas" disabled="#{estudiante.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
                                                             <p:commandButton actionListener="#{tramitarBajaTutor.generarFormatoBaja(registro)}" action="/controlEscolar/se/formatoBaja?faces-redirect=true" 
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-file-text-o"
-                                                                                  title="Generar Formato de Baja"/>  
+                                                                                  title="Generar Formato de Baja"  disabled="#{estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}"/>  
+                                                            <p:commandButton class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{tramitarBajaTutor.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
                                                         </div>
                                                         </center>
                                                     </p:column>
@@ -156,7 +159,7 @@
                                                     <p:column>
                                                          <p:cellEditor>
                                                              <f:facet name="output"><h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}"/></f:facet>
-                                                             <f:facet name="input"><h:inputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}" size="500" style="color: #000000;" disabled="#{!tramitarBajaTutor.rol.existeRegistroBaja}"/></f:facet>
+                                                             <f:facet name="input"><h:inputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}" size="500" style="color: #000000;"/></f:facet>
                                                         </p:cellEditor> 
                                                     </p:column>
                                                     <p:column>
@@ -279,7 +282,6 @@
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <div class="ui-material">
-                                    
                                     <p:outputLabel value="Acciones tomadas por el tutor" for="accionesTutor" style="font-weight: bold; font-size: 14px;"/>
                                     <p:inputTextarea id="accionesTutor" value="#{tramitarBajaTutor.rol.accionesTutor}" maxlength="500" style="width: 650px;"/>
                                     <p:message for="accionesTutor" />
