@@ -150,7 +150,8 @@
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputPanel autoUpdate="true">
+                                                                                    <p:outputPanel>
+                                                                                        <p:autoUpdate/>
                                                                                         <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia del premio otorgado #{cvPremios.nuevoOBJDistinciones.evidenciaDistincion eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                                                                     </p:outputPanel>
                                                                                     <o:inputFile id="file" value="#{cvPremios.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
@@ -163,7 +164,8 @@
                                                                         </div>
                                                                         <hr/>
                                                                         <div class="row">
-                                                                            <p:outputPanel autoUpdate="true">
+                                                                            <p:outputPanel>
+                                                                                <p:autoUpdate/>
                                                                                 <div class="form-group"> 
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
@@ -204,7 +206,7 @@
                                         <p:outputPanel >
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{cvPremios.metodoBase()}" update="tblDistinciones" />
                                             <p:dataTable id="tblDistinciones" value="#{cvPremios.nuevaListaDistinciones}" var="premiosRegistro" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{premiosRegistro.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">
@@ -292,7 +294,7 @@
                                                     </p:link>
                                                 </p:column>   
                                             </p:dataTable>
-                                                                                             
+
                                         </p:outputPanel>                                 
 
                                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

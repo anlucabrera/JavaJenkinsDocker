@@ -213,7 +213,7 @@
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{cvTecnologia.metodoBase()}" update="tbldesarrollosTec" />
                                             <p:dataTable id="tbldesarrollosTec" value="#{cvTecnologia.nuevaListaDesarrolloTecnologico}" var="desaTec" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{desaTec.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">
@@ -436,7 +436,7 @@
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla2" actionListener="#{cvTecnologia.metodoBase()}" update="tblInnovacion" />
                                             <p:dataTable id="tblInnovacion" value="#{cvTecnologia.nuevaListaInnovaciones}" var="InnovacionesRegistro" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{InnovacionesRegistro.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">
@@ -704,7 +704,7 @@
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla3" actionListener="#{cvTecnologia.metodoBase()}" update="tbldesarrollosSoft" />
                                             <p:dataTable id="tbldesarrollosSoft" value="#{cvTecnologia.nuevaListaDesarrolloSoftware}" var="desaSof" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{desaSof.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">

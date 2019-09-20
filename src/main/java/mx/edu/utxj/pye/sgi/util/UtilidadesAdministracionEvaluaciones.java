@@ -60,7 +60,7 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionDocenteMateriaPye;
 import org.highfaces.component.api.impl.DefaultChartModel;
 import org.highfaces.component.api.impl.DefaultChartSeries;
 import org.omnifaces.util.Messages;
-import org.primefaces.context.RequestContext;
+//import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -597,7 +597,7 @@ try {
         modalChart.put("contentWidth", "100%");
         modalChart.put("contentHeight", "100%");
         modalChart.put("headerElement", "Gráfica de respuesta");
-        RequestContext.getCurrentInstance().openDialog("chartSA", modalChart, null);
+//        RequestContext.getCurrentInstance().openDialog("chartSA", modalChart, null);
     }
     /**
      * gráfica según sea el área seleccionada previamente en los filtros de la

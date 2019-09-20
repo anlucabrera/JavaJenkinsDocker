@@ -122,7 +122,7 @@
                                             <p:outputPanel id="incidenciasReporte">
                                                 <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
                                                 <p:dataTable id="tblEvenAre"  value="#{administracionControl.procesopoas}"  var="procesoPoa" rowStyleClass="#{procesoPoa.validacionJustificacion eq true ?'denegado':'aceptado'}"
-                                                             style="margin-bottom:20px" scrollable="true" emptyMessage="No se encontraron Registros." rendered="true">
+                                                             style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
 
                                                     <p:columnGroup type="header" class="hederTablesTitle">

@@ -153,7 +153,7 @@
                                             <p:outputPanel >
                                                 <p:remoteCommand name="actualizarTabla" actionListener="#{controladorFunciones.metodoBase()}" update="tblDistinciones" />
                                                 <p:dataTable id="tblDistinciones" value="#{controladorFunciones.funcioneses}" var="funciones" rendered="true"
-                                                             emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                             emptyMessage="No premios registrados" paginator="true" rows="10"
                                                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                              rowsPerPageTemplate="5,10,15,20,25,30"
                                                              editable="true" editMode="row">

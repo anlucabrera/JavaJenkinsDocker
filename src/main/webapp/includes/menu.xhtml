@@ -8,7 +8,7 @@
         <p:importEnum type="mx.edu.utxj.pye.sgi.enums.UsuarioTipo" var="usuarioTipo" />
         <c:if test="#{logonMB.usuarioTipo ne 'INVITADO'}">
             <li>
-                <p:link href="/index.xhtml" onclick="clearBreadCrumbs()">
+                <p:link href="#{request.contextPath}/index.xhtml" onclick="clearBreadCrumbs()">
                     <i class="fa fa-home"></i>
                     <span>Inicio</span>
                 </p:link>
@@ -16,13 +16,13 @@
         </c:if>
         <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.ASPIRANTE or logonMB.usuarioTipo eq usuarioTipo.ESTUDIANTE19}">
             <li>
-                <p:link href="/controlEscolar/fichaAdmision.xhtml">
+                <p:link href="#{request.contextPath}/controlEscolar/fichaAdmision.xhtml">
                     <i class="fa fa-graduation-cap"></i>
                     <span>Registro Ficha Admisión</span>
                 </p:link>
             </li>
             <li>
-                <p:link href="/controlEscolar/estatusFicha.xhtml">
+                <p:link href="#{request.contextPath}/controlEscolar/estatusFicha.xhtml">
                     <i class="fa fa-check-circle"></i>
                     <span>Estatus Ficha de Admisión</span>
                 </p:link>
@@ -38,14 +38,14 @@
                         <i class=""></i>
                     </span>
                 </a>
-                <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="/evaluaciones/evaluacion/docentesMateria.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
-                <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
-                <c:if test="#{estudioEgresados.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioEgresados.xhtml"><i class="fa fa-graduation-cap"></i><span>Estudio egresado</span></p:link></li></c:if>
-                <c:if test="#{encuestaSatisfaccionEgresadosIng.dto.cargada}"><li><p:link href="/encuestas/Estudiantes/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción ING.</span></p:link></li></c:if>
-                <c:if test="#{encuestaSatisfaccionEgresadosTsu.dto.cargada}"><li><p:link href="/encuestas/Estudiantes/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
-                <c:if test="#{encuestaServicios.dto.cargada}"><li><p:link href="/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
-                <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
-                <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
+                <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/docentesMateria.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
+                <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
+                <c:if test="#{estudioEgresados.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/estudioEgresados.xhtml"><i class="fa fa-graduation-cap"></i><span>Estudio egresado</span></p:link></li></c:if>
+                <c:if test="#{encuestaSatisfaccionEgresadosIng.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción ING.</span></p:link></li></c:if>
+                <c:if test="#{encuestaSatisfaccionEgresadosTsu.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
+                <c:if test="#{encuestaServicios.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
+                <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
+                <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
             </li>
             <c:if test="#{controladorEstReg.cargada}">
                 <li class="header" style="color: #040404;background: #ffffff">Titulación</li>
@@ -56,7 +56,7 @@
                             <i class=""></i>
                         </span>
                     </a>
-                    <li><p:link href="/expedienteTitulacion/estudiante/registroExpediente.xhtml"><i class="fa fa-pencil-square-o"></i><span>Registro e Integración</span></p:link></li>
+                    <li><p:link href="#{request.contextPath}/expedienteTitulacion/estudiante/registroExpediente.xhtml"><i class="fa fa-pencil-square-o"></i><span>Registro e Integración</span></p:link></li>
                 </li>
             </c:if>
         </c:if>
@@ -74,7 +74,7 @@
                             <c:forEach items="#{logonMB.listaPermisos}" var="permiso">
                                 <c:if test="#{catModulo.modulo eq permiso.modulo.modulo}">
                                     <c:if test="#{permiso.activo}">
-                                        <li><p:link href="#{permiso.ruta}"><i class="#{permiso.iconoPermiso}"></i><span>#{permiso.etiqueta}</span></p:link></li>                                        
+                                        <li><p:link href="#{request.contextPath}#{permiso.ruta}"><i class="#{permiso.iconoPermiso}"></i><span>#{permiso.etiqueta}</span></p:link></li>                                        
                                     </c:if>
                                 </c:if>
                             </c:forEach>
@@ -86,19 +86,19 @@
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Perfil del personal</li>
             <li>
-                <p:link href="/capitalHumano/perfilEmpleado.xhtml">
+                <p:link href="#{request.contextPath}/capitalHumano/perfilEmpleado.xhtml">
                     <i class="fa fa-user"></i>
                     <span>Perfil</span>
                 </p:link>
             </li>
             <c:if test="#{controladorEmpleado.listaDocencias.size() != 0}">
-                <li><p:link href="/capitalHumano/perfilEmpleadoExDoc.xhtml"><i class="fa fa-book"></i>
+                <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoExDoc.xhtml"><i class="fa fa-book"></i>
                         <span>Experiencia docente UTXJ</span>
                     </p:link>
                 </li>
             </c:if>
             <li>
-                <p:link href="/capitalHumano/contactoE.xhtml">
+                <p:link href="#{request.contextPath}/capitalHumano/contactoE.xhtml">
                     <i class="fa fa-book"></i>
                     <span>Contacto de emergencias</span>
                 </p:link>
@@ -106,21 +106,21 @@
 
             <c:if test="#{controlEscolarMenu.tieneElementos()}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Control escolar</li>
-                <c:if test="#{administracionPlanEstudioDirector.mostrarEnDesarrollo(request) and administracionPlanEstudioDirector.tieneAcceso}"><li><p:link href="/controlEscolar/director/plan_estudio.xhtml"><i class="fa fa-users"></i><span>Admin Plan Estudio</span></p:link></li></c:if>
-                <c:if test="#{asignacionAcademicaDirector.mostrarEnDesarrollo(request) and asignacionAcademicaDirector.tieneAcceso}"><li><p:link href="/controlEscolar/director/asignacion_academica.xhtml"><i class="fa fa-tags"></i><span>Asignación académica</span></p:link></li></c:if>
-                <c:if test="#{asignacionTutorAcademico.mostrarEnDesarrollo(request) and asignacionTutorAcademico.tieneAcceso}"><li><p:link href="/controlEscolar/director/asignacion_tutores.xhtml"><i class="fa fa-users"></i><span>Asignación Tutor de Grupo</span></p:link></li></c:if>
-                <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="/controlEscolar/docente/captura_calificaciones.xhtml"><i class="fa fa-users"></i><span>Captura de <br/>calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request) and configuracionUnidadMateriaDocente.tieneAcceso}"><li><p:link href="/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
-                <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
-                <c:if test="#{procesoInscripcion.mostrarEnDesarrollo(request) and procesoInscripcion.tieneAcceso}"><li><p:link href="/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-users"></i><span>Inscripciones</span></p:link></li></c:if>
-                <c:if test="#{reincorporacionServiciosEscolares.mostrarEnDesarrollo(request) and reincorporacionServiciosEscolares.tieneAcceso}"><li><p:link href="/controlEscolar/se/reincorporaciones.xhtml"><i class="fa fa-user-plus"></i><span>Reincorporaciones</span></p:link></li></c:if>
-                <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Indicadores Criterio</span></p:link></li></c:if>
-                <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral</span></p:link></li></c:if>
-                <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}"><li><p:link href="/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-calendar-check"></i><span>Apertura Extemporánea</span></p:link></li></c:if>
-                <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="/controlEscolar/docente/paseLista.xhtml"><i class="fa fa-list"></i><span>Lista de asistencia</span> <span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de <br/>Lista Docente</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{paseListaSegTutor.mostrarEnDesarrollo(request) and paseListaSegTutor.tieneAcceso}"><li><p:link href="/controlEscolar/tutor/seguimientoPaseListaTutor.xhtml"><i class="fa fa-users"></i><span>Seguimiento Pase de <br/>Lista Tutorados</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{credencializacionSE.mostrarEnDesarrollo(request) and credencializacionSE.tieneAcceso}"><li><p:link href="/controlEscolar/se/credencializacion.xhtml"><i class="fa fa-address-card"></i><span>Credencialización</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{administracionPlanEstudioDirector.mostrarEnDesarrollo(request) and administracionPlanEstudioDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/plan_estudio.xhtml"><i class="fa fa-users"></i><span>Admin Plan Estudio</span></p:link></li></c:if>
+                <c:if test="#{asignacionAcademicaDirector.mostrarEnDesarrollo(request) and asignacionAcademicaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacion_academica.xhtml"><i class="fa fa-tags"></i><span>Asignación académica</span></p:link></li></c:if>
+                <c:if test="#{asignacionTutorAcademico.mostrarEnDesarrollo(request) and asignacionTutorAcademico.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacion_tutores.xhtml"><i class="fa fa-users"></i><span>Asignación Tutor de Grupo</span></p:link></li></c:if>
+                <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_calificaciones.xhtml"><i class="fa fa-users"></i><span>Captura de <br/>calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request) and configuracionUnidadMateriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
+                <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
+                <c:if test="#{procesoInscripcion.mostrarEnDesarrollo(request) and procesoInscripcion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-users"></i><span>Inscripciones</span></p:link></li></c:if>
+                <c:if test="#{reincorporacionServiciosEscolares.mostrarEnDesarrollo(request) and reincorporacionServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reincorporaciones.xhtml"><i class="fa fa-user-plus"></i><span>Reincorporaciones</span></p:link></li></c:if>
+                <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Indicadores Criterio</span></p:link></li></c:if>
+                <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral</span></p:link></li></c:if>
+                <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-calendar-check"></i><span>Apertura Extemporánea</span></p:link></li></c:if>
+                <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/paseLista.xhtml"><i class="fa fa-list"></i><span>Lista de asistencia</span> <span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de <br/>Lista Docente</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{paseListaSegTutor.mostrarEnDesarrollo(request) and paseListaSegTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/seguimientoPaseListaTutor.xhtml"><i class="fa fa-users"></i><span>Seguimiento Pase de <br/>Lista Tutorados</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{credencializacionSE.mostrarEnDesarrollo(request) and credencializacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/credencializacion.xhtml"><i class="fa fa-address-card"></i><span>Credencialización</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
             </c:if>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
@@ -133,10 +133,10 @@
                         </span>
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <c:if test="#{evaluacionDesempenioAdmin.cargada}"><li><p:link href="/evaluaciones/evaluacion/desempenio.xhtml"><i class="fa fa-line-chart"></i><span>Desempeño</span></p:link></li></c:if>
-                        <c:if test="#{evaluacion360Admin1.cargada}"><li><p:link href="/evaluaciones/evaluacion/360_1.xhtml"><i class="fa fa-group"></i><span>360 grados</span></p:link></li></c:if>
-                        <c:if test="#{evaluacionControlInterno.cargada}"><li><p:link href="/evaluaciones/evaluacion/evaControlInterno.xhtml"><i class="fa fa-group"></i><span>Evaluación de control interno</span></p:link></li></c:if>
-                        <c:if test="#{climaLaboral.cargada}"><li><p:link href="/evaluaciones/evaluacion/climaLaboral.xhtml"><i class="fa fa-group"></i><span>Clima laboral</span></p:link></li></c:if>
+                        <c:if test="#{evaluacionDesempenioAdmin.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/desempenio.xhtml"><i class="fa fa-line-chart"></i><span>Desempeño</span></p:link></li></c:if>
+                        <c:if test="#{evaluacion360Admin1.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/360_1.xhtml"><i class="fa fa-group"></i><span>360 grados</span></p:link></li></c:if>
+                        <c:if test="#{evaluacionControlInterno.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/evaControlInterno.xhtml"><i class="fa fa-group"></i><span>Evaluación de control interno</span></p:link></li></c:if>
+                        <c:if test="#{climaLaboral.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/climaLaboral.xhtml"><i class="fa fa-group"></i><span>Clima laboral</span></p:link></li></c:if>
                     </ul>
                 </li>
             </c:if>
@@ -149,7 +149,7 @@
                 </a>
                 <ul class="treeview-menu" style="display: none;">
                     <!--secretarÃ­a acadÃ©mica-->
-                    <c:if test="#{utilidadesAdministracionEvaluaciones.secretariaAc}"><li><p:link href="/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Evaluaciones por carrera</span></p:link></li></c:if>
+                    <c:if test="#{utilidadesAdministracionEvaluaciones.secretariaAc}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Evaluaciones por carrera</span></p:link></li></c:if>
 
                     <!-- Seguimiento de Evaluacion y Encuestas por parte de: Dirección de Planeación, Secretaría Académica, Departamento de Información y Estadística,
                            Directores Académicos y Tutores-->
@@ -162,10 +162,10 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <c:if test="#{administracionEncuesta.dto.ESTsuActiva}"><li><p:link href="/encuestas/seguimiento/administracionEncuestaTSU.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li></c:if>
-                                <c:if test="#{administracionEncuesta.dto.ESIngActiva}"><li><p:link href="/encuestas/seguimiento/administracionEncuestaING.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li></c:if>
-                                <c:if test="#{administracionEncuesta.dto.ESActiva}"><li><p:link href="/encuestas/seguimiento/administracionEncuestaServicios.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li></c:if>
-                                <c:if test="#{administracionEncuesta.dto.EEActiva}"><li><p:link href="/encuestas/seguimiento/administracionEvaluacionEstadia.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li></c:if>
+                                <c:if test="#{administracionEncuesta.dto.ESTsuActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaTSU.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li></c:if>
+                                <c:if test="#{administracionEncuesta.dto.ESIngActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaING.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li></c:if>
+                                <c:if test="#{administracionEncuesta.dto.ESActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaServicios.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li></c:if>
+                                <c:if test="#{administracionEncuesta.dto.EEActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEvaluacionEstadia.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li></c:if>
                             </ul>
                         </li>
                     </c:if>
@@ -179,8 +179,8 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <c:if test="#{administracionEncuesta.dto.ETutorActiva }"><li><p:link href="/evaluaciones/administracion/administracionEvaluacionTutor.xhtml"><i class="fa fa-list-ol"></i><span>Evalución a Tutor</span></p:link></li></c:if>
-                                <c:if test="#{administracionEncuesta.dto.EDocenteActiva and !administracionEncuesta.dto.esPsicopedagogia}"><li><p:link href="/evaluaciones/administracion/administracionEvaluacionDocente.xhtml"><i class="fa fa-list-ol"></i><span>Evalución a Docente</span></p:link></li></c:if>
+                                <c:if test="#{administracionEncuesta.dto.ETutorActiva }"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionEvaluacionTutor.xhtml"><i class="fa fa-list-ol"></i><span>Evalución a Tutor</span></p:link></li></c:if>
+                                <c:if test="#{administracionEncuesta.dto.EDocenteActiva and !administracionEncuesta.dto.esPsicopedagogia}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionEvaluacionDocente.xhtml"><i class="fa fa-list-ol"></i><span>Evalución a Docente</span></p:link></li></c:if>
                             </ul>
                         </li>
                     </c:if>
@@ -190,26 +190,26 @@
 
                     <!--Directivos/Directores de carrera-->
 
-                    <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera}"><li><p:link href="/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Administración de evaluaciones</span></p:link></li></c:if>
-                    <c:if test="#{utilidadesAdministracionEvaluaciones.directivo}"><li><p:link href="/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Resultados subordinados</span></p:link></li></c:if>
+                    <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Administración de evaluaciones</span></p:link></li></c:if>
+                    <c:if test="#{utilidadesAdministracionEvaluaciones.directivo}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Resultados subordinados</span></p:link></li></c:if>
 
 
                     <!--************ administradores especiales********-->
                     <!--Jefe de personal-->
-                    <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="/evaluaciones/administracion/admin360.xhtml" ><i class="fa fa-clipboard"></i><span>Genera Evaluaciones</span></p:link></li></c:if>
-                    <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Resultados generales</span></p:link></li></c:if>
+                    <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/admin360.xhtml" ><i class="fa fa-clipboard"></i><span>Genera Evaluaciones</span></p:link></li></c:if>
+                    <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Resultados generales</span></p:link></li></c:if>
 
                     <!--Seguimiento a egresados-->
-                    <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
-                    <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
+                    <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
+                    <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
                     <!--Visible para todos los trabajadores-->
-                    <li><p:link href="/capitalHumano/perfilEmpleadoEvaluaciones.xhtml"><i class="fa fa-exclamation"></i><span>Resultados de evaluaciones</span></p:link></li>
+                    <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoEvaluaciones.xhtml"><i class="fa fa-exclamation"></i><span>Resultados de evaluaciones</span></p:link></li>
                 </ul>
             </li>
             <!-- Seccion de becas para Servicios Estudiantiles -->
             <c:if test="#{administracionEncuesta.dto.esServEst2 or administracionEncuesta.dto.director}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Seguimiento de becas</li>
-                <li><p:link href="/becas/reporteBecas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte Becas</span></p:link></li>
+                <li><p:link href="#{request.contextPath}/becas/reporteBecas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte Becas</span></p:link></li>
             </c:if>
 
 
@@ -226,20 +226,20 @@
                         </a>
                         <ul class="treeview-menu" style="display: none;">
                             <c:if test="#{((controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29) and controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2)}">
-                                <li><p:link href="/docencia/planeacionDirector.xhtml"><i class="fa fa-id-card-o"></i>
+                                <li><p:link href="#{request.contextPath}/docencia/planeacionDirector.xhtml"><i class="fa fa-id-card-o"></i>
                                         <span>Director</span>
                                     </p:link>
                                 </li>
                             </c:if>
                             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
 
-                                <li><p:link href="/docencia/planeacionSecAcademico.xhtml"><i class="fa fa-graduation-cap"></i>
+                                <li><p:link href="#{request.contextPath}/docencia/planeacionSecAcademico.xhtml"><i class="fa fa-graduation-cap"></i>
                                         <span>Sec. Academica</span>
                                     </p:link>
                                 </li>
                             </c:if>
                             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49}">
-                                <li><p:link href="/docencia/planeacionDirPersonal.xhtml"><i class="fa fa-list-ol"></i>
+                                <li><p:link href="#{request.contextPath}/docencia/planeacionDirPersonal.xhtml"><i class="fa fa-list-ol"></i>
                                         <span>Dir. Personal</span>
                                     </p:link>
                                 </li>
@@ -257,27 +257,27 @@
                     </span>
                 </a>
                 <ul class="treeview-menu" style="display: none;">
-                    <li><p:link href="/capitalHumano/perfilEmpleadoDatosPer.xhtml"><i class="fa fa-id-card-o"></i>
+                    <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoDatosPer.xhtml"><i class="fa fa-id-card-o"></i>
                             <span>Datos personales</span>
                         </p:link>
                     </li>        
-                    <li><p:link href="/capitalHumano/perfilEmpleadoEdu.xhtml"><i class="fa fa-graduation-cap"></i>
+                    <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoEdu.xhtml"><i class="fa fa-graduation-cap"></i>
                             <span>Educación</span>
                         </p:link>
                     </li>
-                    <li><p:link href="/capitalHumano/perfilEmpleadoHab.xhtml"><i class="fa fa-list-ol"></i>
+                    <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoHab.xhtml"><i class="fa fa-list-ol"></i>
                             <span>Habilidades</span>
                         </p:link>
                     </li>
-                    <li><p:link href="/capitalHumano/perfilEmpleadoTecno.xhtml"><i class="fa fa-usb"></i>
+                    <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoTecno.xhtml"><i class="fa fa-usb"></i>
                             <span>Tecnología</span>
                         </p:link>
                     </li>
-                    <li><p:link href="/capitalHumano/perfilEmpleadoPremios.xhtml"><i class="fa fa-trophy"></i>
+                    <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoPremios.xhtml"><i class="fa fa-trophy"></i>
                             <span>Premios</span>
                         </p:link>
                     </li>
-                    <li><p:link href="/capitalHumano/perfilEmpleadoProduccion.xhtml"><i class="fa fa-newspaper-o"></i>
+                    <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoProduccion.xhtml"><i class="fa fa-newspaper-o"></i>
                             <span>Producción profesional</span>
                         </p:link>
                     </li>
@@ -285,13 +285,13 @@
             </li>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Registros de información</li>
             <li>
-                <p:link href="/siip/modulosRegistro/menu_general.xhtml">
+                <p:link href="#{request.contextPath}/siip/modulosRegistro/menu_general.xhtml">
                     <i class="fa fa-archive"></i>
                     <span>Módulos Registro</span>
                 </p:link>
             </li>
             <li>
-                <p:link href="/siip/modulosRegistro/repositorio_archivos.xhtml">
+                <p:link href="#{request.contextPath}/siip/modulosRegistro/repositorio_archivos.xhtml">
                     <i class="fa fa-archive"></i>
                     <span>Repositorio de Archivos</span>
                 </p:link>
@@ -311,44 +311,44 @@
                     <ul class="treeview-menu" style="display: none;">
                         <c:if test="#{!controladorEmpleado.procesopoa.validacionRegistroA}">
                             <li>
-                                <p:link href="/poa/areas/registroActividades.xhtml"><i class="fa fa-edit"></i>
+                                <p:link href="#{request.contextPath}/poa/areas/registroActividades.xhtml"><i class="fa fa-edit"></i>
                                     <span>Registro</span>
                                 </p:link>
                             </li>
                         </c:if>
                         <c:if test="#{controladorEmpleado.procesopoa.validacionRegistroA and (controladorEmpleado.procesopoa.validacionRFFinalizado eq false)}">
                             <li>
-                                <p:link href="/poa/areas/recursoActividad.xhtml"><i class="fa fa-usd"></i>
+                                <p:link href="#{request.contextPath}/poa/areas/recursoActividad.xhtml"><i class="fa fa-usd"></i>
                                     <span>Recurso</span>
                                 </p:link>
                             </li>
                         </c:if>
                         <c:if test="#{controladorEmpleado.procesopoa.validacionRFFinalizado and (controladorEmpleado.procesopoa.validacionJustificacion eq false)}">
                             <li>
-                                <p:link href="/poa/areas/justificacion.xhtml"><i class="fa fa-wechat"></i>
+                                <p:link href="#{request.contextPath}/poa/areas/justificacion.xhtml"><i class="fa fa-wechat"></i>
                                     <span>Justificación</span>
                                 </p:link>
                             </li>
                         </c:if>
                         <c:if test="#{controladorEmpleado.evaluable}">
                             <li>
-                                <p:link href="/poa/areas/evaluacion.xhtml"><i class="fa fa-list"></i>
+                                <p:link href="#{request.contextPath}/poa/areas/evaluacion.xhtml"><i class="fa fa-list"></i>
                                     <span>Evaluación</span>
                                 </p:link>
                             </li>
                         </c:if>
                         <li>
-                            <p:link href="/poa/areas/consulta.xhtml"><i class="fa fa-search"></i>
+                            <p:link href="#{request.contextPath}/poa/areas/consulta.xhtml"><i class="fa fa-search"></i>
                                 <span>Consulta</span>
                             </p:link>
                         </li> 
                         <li>
-                            <p:link href="/poa/areas/areaCMI.xhtml"><i class="fa fa-bar-chart"></i>
+                            <p:link href="#{request.contextPath}/poa/areas/areaCMI.xhtml"><i class="fa fa-bar-chart"></i>
                                 <span>CMI Área</span>
                             </p:link>
                         </li> 
                         <li>
-                            <p:link href="/poa/pye/universidadCMI.xhtml"><i class="fa fa-line-chart"></i>
+                            <p:link href="#{request.contextPath}/poa/pye/universidadCMI.xhtml"><i class="fa fa-line-chart"></i>
                                 <span>CMI Institucional</span>
                             </p:link>
                         </li> 
@@ -365,17 +365,17 @@
                 </a>
                 <ul class="treeview-menu" style="display: none;">
                     <li>
-                        <p:link href="/capitalHumano/incidencias.xhtml"><i class="fa fa-clock-o"></i>
+                        <p:link href="#{request.contextPath}/capitalHumano/incidencias.xhtml"><i class="fa fa-clock-o"></i>
                             <span>Incidencias</span>
                         </p:link>
                     </li>      
                     <li>
-                        <p:link href="/capitalHumano/incapacidades.xhtml"><i class="fa fa-ambulance"></i>
+                        <p:link href="#{request.contextPath}/capitalHumano/incapacidades.xhtml"><i class="fa fa-ambulance"></i>
                             <span>Incapacidades</span>
                         </p:link>
                     </li>   
                     <li>
-                        <p:link href="/capitalHumano/cuidados.xhtml"><i class="fa fa-users"></i>
+                        <p:link href="#{request.contextPath}/capitalHumano/cuidados.xhtml"><i class="fa fa-users"></i>
                             <span>Cuidados</span>
                         </p:link>
                     </li>
@@ -383,14 +383,14 @@
             </li>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Funciones y organigrama</li>
             <li>
-                <p:link href="/capitalHumano/organigramaPrototipo.xhtml">
+                <p:link href="#{request.contextPath}/capitalHumano/organigramaPrototipo.xhtml">
                     <i class="fa fa-sitemap"></i>
                     <span>Organigrama operativo</span>
                 </p:link>
             </li>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador'}">
                 <li>
-                    <p:link href="/capitalHumano/directivos/perfilEmpleadoFun.xhtml"><i class="fa fa-list-alt"></i>
+                    <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoFun.xhtml"><i class="fa fa-list-alt"></i>
                         <span>Consulta</span>
                     </p:link>
                 </li>
@@ -405,22 +405,22 @@
 
                     <ul class="treeview-menu" style="display: none;">
                         <li>
-                            <p:link href="/capitalHumano/directivos/perfilEmpleadoSubordinados.xhtml"><i class="fa fa-users"></i>
+                            <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoSubordinados.xhtml"><i class="fa fa-users"></i>
                                 <span>Perfil de subordinados(as)</span>
                             </p:link>
                         </li>   
                         <li>
-                            <p:link href="/capitalHumano/directivos/perfilEmpleadoReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                            <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
                                 <span>Reporte de Registros</span>
                             </p:link>
                         </li>
                         <li>
-                            <p:link href="/capitalHumano/directivos/perfilSubordinadosIn.xhtml"><i class="fa fa-calendar-check-o"></i>
+                            <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilSubordinadosIn.xhtml"><i class="fa fa-calendar-check-o"></i>
                                 <span>Incidencias Subordinados</span>
                             </p:link>
                         </li>
                         <!--li>
-                            <p:link href="/capitalHumano/directivos/perfilEmpleadoNotM.xhtml"><i class="fa fa-users"></i>
+                            <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoNotM.xhtml"><i class="fa fa-users"></i>
                                 <span>Mensajes</span>
                                 <span class="pull-right-container">
                                     <small class="label pull-right bg-green">Nuevo</small>
@@ -805,7 +805,7 @@
                         <c:set var="n2" value="#{n1.nivel2s.get(j)}"/>
                         <c:if test="#{n2.nivel3s.size() eq 0}">
                             <li>
-                                <p:link href="#{n2.enlace}">
+                                <p:link href="#{request.contextPath}#{n2.enlace}">
                                     <i class="#{n2.icono}"></i>
                                     <span>#{n2.titulo}</span>
                                     <c:if test="#{n2.estaus eq 'Nuevo'}">
@@ -829,7 +829,7 @@
                                         <c:set var="n3" value="#{n2.nivel3s.get(k)}"/>
                                         <c:if test="#{n3.nivel4s.size() eq 0}">
                                             <li>
-                                                <p:link href="#{n3.enlace}">
+                                                <p:link href="#{request.contextPath}#{n3.enlace}">
                                                     <i class="#{n3.icono}"></i>
                                                     <span>#{n3.titulo}</span>
                                                     <c:if test="#{n3.estaus eq 'Nuevo'}">
@@ -852,7 +852,7 @@
                                                     <c:forEach var="l" begin="0" end="#{n3.nivel4s.size()-1}">
                                                         <c:set var="n4" value="#{n3.nivel4s.get(l)}"/>
                                                         <li>
-                                                            <p:link href="#{n4.enlace}">
+                                                            <p:link href="#{request.contextPath}#{n4.enlace}">
                                                                 <i class="#{n4.icono}"></i>
                                                                 <span>#{n4.titulo}</span>
                                                                 <c:if test="#{n4.estaus eq 'Nuevo'}">
@@ -875,7 +875,7 @@
             </c:forEach> 
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530}">
                 <li>
-                    <p:link href="/capitalHumano/admin/perfilAdminIncidencias.xhtml"><i class="fa fa-hourglass-half"></i>
+                    <p:link href="#{request.contextPath}/capitalHumano/admin/perfilAdminIncidencias.xhtml"><i class="fa fa-hourglass-half"></i>
                         <span>Incidencias</span>
                     </p:link>
                 </li>
@@ -891,17 +891,17 @@
                     </a>
                     <ul class="treeview-menu" style="display: none;">
                         <li>
-                            <p:link href="/expedienteTitulacion/titulacion/seguimientoExpMatricula.xhtml"><i class="fa fa-user-o"></i>
+                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpMatricula.xhtml"><i class="fa fa-user-o"></i>
                                 <span>Seguimiento por Matricula</span>
                             </p:link>
                         </li>
                         <li>
-                            <p:link href="/expedienteTitulacion/titulacion/seguimientoExpGeneracion.xhtml"><i class="fa fa-group"></i>
+                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpGeneracion.xhtml"><i class="fa fa-group"></i>
                                 <span>Seguimiento por Generación</span>
                             </p:link>
                         </li>
                         <li>
-                            <p:link href="/expedienteTitulacion/titulacion/fechasDocumentos.xhtml"><i class="fa fa-folder-open"></i>
+                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/fechasDocumentos.xhtml"><i class="fa fa-folder-open"></i>
                                 <span>Catálogo Fechas Documentos</span>
                             </p:link>
                         </li>
@@ -922,27 +922,27 @@
                     <ul class="treeview-menu" style="display: none;">
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 501 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                             <li> 
-                                <p:link href="/capitalHumano/personal/perfilPersonal.xhtml"><i class="fa fa-user-circle-o"></i>
+                                <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonal.xhtml"><i class="fa fa-user-circle-o"></i>
                                     <span>Activo</span>
                                 </p:link>
                             </li>
                             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
                                 <li>
-                                    <p:link href="/capitalHumano/personal/perfilPersonalAltaYBajas.xhtml"><i class="fa fa-user-times"></i>
+                                    <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalAltaYBajas.xhtml"><i class="fa fa-user-times"></i>
                                         <span>Altas y bajas</span>
                                     </p:link>
                                 </li>
                             </c:if>
 
                             <li>
-                                <p:link href="/capitalHumano/personal/perfilPersonalconfiguracion.xhtml"><i class="fa fa-cogs"></i>
+                                <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalconfiguracion.xhtml"><i class="fa fa-cogs"></i>
                                     <span>Configuración</span>
                                 </p:link>
                             </li>
                         </c:if>
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                             <li>
-                                <p:link href="/capitalHumano/personal/perfilPersonalIn.xhtml">
+                                <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalIn.xhtml">
                                     <i class="fa fa-folder-open"></i>
                                     <span>Incidencias Personal</span>
                                 </p:link>
@@ -950,14 +950,14 @@
                         </c:if>
                         <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
                             <li>
-                                <p:link href="/capitalHumano/personal/perfilContactosE.xhtml">
+                                <p:link href="#{request.contextPath}/capitalHumano/personal/perfilContactosE.xhtml">
                                     <i class="fa fa-list-alt"></i>
                                     <span>Contactos de emergencia</span>
                                 </p:link>
                             </li>
                         </c:if>
                         <li>
-                            <p:link href="/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                            <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
                                 <span>Reporte de Registros</span>
                             </p:link>
                         </li>
@@ -974,11 +974,11 @@
                         </span>
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="/capitalHumano/estadistica/perfilEstadisticaPersonal.xhtml"><i class="fa fa-book"></i>
+                        <li><p:link href="#{request.contextPath}/capitalHumano/estadistica/perfilEstadisticaPersonal.xhtml"><i class="fa fa-book"></i>
                                 <span>Plantilla Personal</span>
                             </p:link>
                         </li>
-                        <li><p:link href="/capitalHumano/estadistica/perfilEstadisticaHistoricos.xhtml"><i class="fa fa-book"></i>
+                        <li><p:link href="#{request.contextPath}/capitalHumano/estadistica/perfilEstadisticaHistoricos.xhtml"><i class="fa fa-book"></i>
                                 <span>Histórico Plantilla Personal</span>
                             </p:link>
                         </li>
@@ -988,7 +988,7 @@
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Fortalecimiento</li>
                 <li>
-                    <p:link href="/capitalHumano/fda/perfilPersonalDocente.xhtml">
+                    <p:link href="#{request.contextPath}/capitalHumano/fda/perfilPersonalDocente.xhtml">
                         <i class="fa fa-users"></i>
                         <span>Plantilla docente</span>
                     </p:link>
@@ -1005,12 +1005,12 @@
                     </a>
                     <ul class="treeview-menu" style="display: none;">
                         <li>
-                            <p:link href="/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-check"></i>
+                            <p:link href="#{request.contextPath}/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-check"></i>
                                 <span>Inscripción NI</span>
                             </p:link>
                         </li>
                         <li>
-                            <p:link href="/controlEscolar/se/aperturaGrupos.xhtml"><i class="fa fa-users"></i>
+                            <p:link href="#{request.contextPath}/controlEscolar/se/aperturaGrupos.xhtml"><i class="fa fa-users"></i>
                                 <span>Grupos</span>
                             </p:link>
                         </li>
@@ -1022,14 +1022,14 @@
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Tramites de pago</li-->
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Comunicacion interna</li>
             <li>
-                <p:link href="/directorioCorreos.xhtml">
+                <p:link href="#{request.contextPath}/directorioCorreos.xhtml">
                     <i class="fa fa-envelope" />
                     <span>Directorio de Correos</span>
                 </p:link>
             </li>
             <c:if test="#{utilidadesAdministracionEvaluaciones.tutor}">
                 <li>
-                    <p:link href="/directorioCorreosAlumnosporTutor.xhtml">
+                    <p:link href="#{request.contextPath}/directorioCorreosAlumnosporTutor.xhtml">
                         <i class="fa fa-envelope" />
                         <span>Directorio Estudiantes <br/>Tutorados</span>
                     </p:link>
@@ -1037,7 +1037,7 @@
 
             </c:if>
             <li>
-                <p:link href="/siiFaces.xhtml">
+                <p:link href="#{request.contextPath}/siiFaces.xhtml">
                     <i class="fa fa-comments"></i>
                     <span>Mensajería</span>
                 </p:link>
@@ -1068,14 +1068,14 @@
                 </p:link>
             </li>
             <!--li>
-                <p:link href="/soporteTecnico.xhtml">
+                <p:link href="#{request.contextPath}/soporteTecnico.xhtml">
                     <i class="fa fa-wrench"></i>
                     <span>Soporte técnico</span>
                 </p:link>
             </li-->
             <c:if test="#{controladorEmpleado.tienePOA}">
                 <li>
-                    <p:link href="/calendarioActividades.xhtml">
+                    <p:link href="#{request.contextPath}/calendarioActividades.xhtml">
                         <i class="fa fa-calendar"></i>
                         <span>Calendario</span>
                     </p:link>
@@ -1088,7 +1088,7 @@
             <!--li class="treeview">
                 <a href="#"><i class="fa fa-money"></i><span>Finanzas</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
                 <ul class="treeview-menu">
-                    <li><p:link href="/capitalHumano/perfilEmpleadoExDoc.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
+                    <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoExDoc.xhtml"><i class="fa fa-shopping-bag"></i> <span>Seguimiento a trámites</span></p:link></li>
                 </ul>
             </li>
             <li class="treeview">
@@ -1101,14 +1101,14 @@
                 </a>
                 <ul class="treeview-menu">
                     <li>
-                        <p:link href="/capitalHumano/perfilEmpleadoExDoc.xhtml" title="Logon page">
+                        <p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoExDoc.xhtml" title="Logon page">
                             <i class="fa fa-users"></i>
                             <span>Logon</span>
                         </p:link>
                     </li>
     
                     <li>
-                        <p:link href="/soporteTecnico.xhtml" title="Logon page">
+                        <p:link href="#{request.contextPath}/soporteTecnico.xhtml" title="Logon page">
                             <i class="fa fa-user-circle"></i>
                             <span style="font-weight: bold;text-decoration: underline">Material</span> Logon
                         </p:link>

@@ -107,7 +107,8 @@
                             <p:tabView activeIndex="#{cvEducacion.pestaniaActiva}">
                                 <p:tab id="tab1" title="Formación académica">
                                     <o:form id="frmForAc"  enctype="multipart/form-data"> 
-                                        <p:outputPanel id="registro" autoUpdate="#{cvEducacion.claveR eq 0?false:true}" >
+                                        <p:outputPanel id="registro">
+                                            <p:autoUpdate rendered="#{cvEducacion.claveR eq 0?false:true}"/>
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                     <div class="col-md-12">
@@ -235,7 +236,7 @@
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{cvEducacion.metodoBase()}" update="tblFormacion" />
                                             <p:dataTable id="tblFormacion" value="#{cvEducacion.nuevaListaFormacionAcademica}" var="estudios" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{estudios.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">
@@ -339,7 +340,8 @@
                                 </p:tab>                               
                                 <p:tab id="tab2" title="Experiencia laboral">
                                     <o:form id="frmExLab" enctype="multipart/form-data">
-                                        <p:outputPanel id="registro2" autoUpdate="#{cvEducacion.claveREX eq 0?false:true}">
+                                        <p:outputPanel id="registro2">
+                                            <p:autoUpdate rendered="#{cvEducacion.claveREX eq 0?false:true}"/>
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                     <div class="col-md-12">
@@ -436,7 +438,7 @@
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla2" actionListener="#{cvEducacion.metodoBase()}" update="tblEmpleos" />
                                             <p:dataTable id="tblEmpleos" value="#{cvEducacion.nuevaListaExperienciasLaborales}" var="trabajaos" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{trabajaos.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">
@@ -546,7 +548,8 @@
                                 </p:tab>                              
                                 <p:tab id="tab3" title="Actualización profesional">
                                     <o:form id="frmCapacit" enctype="multipart/form-data">
-                                        <p:outputPanel id="registro3" autoUpdate="#{cvEducacion.claveRAP eq 0?false:true}">
+                                        <p:outputPanel id="registro3">
+                                            <p:autoUpdate rendered="#{cvEducacion.claveRAP eq 0?false:true}"/>
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                     <div class="col-md-12">
@@ -722,7 +725,7 @@
                                         <p:outputPanel >
                                             <p:remoteCommand name="actualizarTabla3" actionListener="#{cvEducacion.metodoBase()}" update="tblActualizacionesProfesionalesUTXJ" />
                                             <p:dataTable id="tblActualizacionesProfesionalesUTXJ" value="#{cvEducacion.nuevaListaCapacitaciones}" var="capacitaciones" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          sortBy="#{capacitaciones.tipoCapacitacion}" expandableRowGroups="true" rowStyleClass="#{capacitaciones.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30"

@@ -446,7 +446,9 @@
         <p:dialog widgetVar="modalGrafica" header="Grafica de respuesta de estudiantes">
             <h:form>
                 <p:outputPanel >
-                    <p:growl autoUpdate="true" />
+                    <p:growl>
+                        <p:autoUpdate/>
+                    </p:growl>
                     <hf:chart type="column" model="#{administrativoEvaluacion.utilAdmin.model}"  title="Respuesta de estudiantes por area"/>                
                 </p:outputPanel>
             </h:form>

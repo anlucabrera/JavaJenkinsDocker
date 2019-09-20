@@ -143,7 +143,7 @@
                                     <p:tab title="Opciones Incidencias">
                                         <h:form id="frmModulos"> 
                                             <p:outputPanel id="incidenciasReporte">
-                                                <p:dataTable id="tblReportes"  value="#{administracionControl.modulosregistros}"  var="modulos" scrollable="true"
+                                                <p:dataTable id="tblReportes"  value="#{administracionControl.modulosregistros}"  var="modulos"
                                                              editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
                                                     <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditModulos}" update="tblReportes" process="@this"/>

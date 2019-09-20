@@ -122,7 +122,7 @@
                                     <p:rowExpansion>
                                         <p:dataTable id="dtbPoaEvaluacion" value="#{estrategiasRegistro.actividadesPoas}" var="poa" emptyMessage="No hay actividades a evaluar en este mes"
                                                      editable="true" editMode="row" rowStyleClass="#{poa.actividadesPoa.numeroS eq 0?'actividad':''}" 
-                                                     widgetVar="dtbPoaEvaluacion" rowKey="#{poa.actividadesPoa.actividadPoa}" scrollable="true" 
+                                                     widgetVar="dtbPoaEvaluacion" rowKey="#{poa.actividadesPoa.actividadPoa}" 
                                                      sortBy="#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.lineaAccion}" expandableRowGroups="true">
 
                                             <p:columnGroup type="header" class="hederTablesTitle">
@@ -499,8 +499,7 @@
                     </p:outputPanel>
                     <p:outputPanel>
                         <p:dataTable value="#{areaPoaEvaluacion.evidenciasesDetalles}" var="detalle" 
-                                     sortBy="#{detalle.mes}" expandableRowGroups="true"
-                                     scrollable="true" scrollHeight="300">
+                                     sortBy="#{detalle.mes}" expandableRowGroups="true">
                             <f:facet name="header">
                                 #{areaPoaEvaluacion.evidenciasesDetalles.size()} Evidencias cargadas
                             </f:facet>

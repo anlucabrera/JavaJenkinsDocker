@@ -74,7 +74,7 @@
                                                         <div class="col-sm-4 border-right">
                                                             <p:outputPanel>
                                                                 <p:dataTable id="tblChats" value="#{notificacionesControl.listacontactosChat}" var="contacto" rendered="true" filteredValue="#{notificacionesControl.listaContactosChatFiltrados}"
-                                                                             scrollable="true" scrollHeight="500" rowStyleClass="#{contacto.estatus eq '2'?'mp':contacto.estatus eq '1'?'ci':'nc'}"
+                                                                             rowStyleClass="#{contacto.estatus eq '2'?'mp':contacto.estatus eq '1'?'ci':'nc'}"
                                                                              selectionMode="single" selection="#{notificacionesControl.nuevoOBJcontactosChatSelec}" rowKey="#{contacto.clave}">
 
                                                                     <p:ajax event="rowSelect" listener="#{notificacionesControl.mostrarNotificacionesLogeado()}" process="tblChats" />

@@ -107,7 +107,8 @@
                             <p:tabView activeIndex="#{cvHabilidades.pestaniaActiva}">
                                 <p:tab title="Idiomas">
                                     <o:form id="frmIdiom" enctype="multipart/form-data"> 
-                                        <p:outputPanel id="registro" autoUpdate="#{cvHabilidades.nuevOBJIdiomas.idioma eq null?false:true}">
+                                        <p:outputPanel id="registro">
+                                            <p:autoUpdate rendered="#{cvHabilidades.nuevOBJIdiomas.idioma eq null?false:true}"/>
                                             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                     <div class="col-md-12">
@@ -276,7 +277,7 @@
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{cvHabilidades.metodoBase()}" update="tblIdiomas" />                                                    
                                             <p:dataTable id="tblIdiomas" value="#{cvHabilidades.nuevaListaIdiomas}" var="idiomas" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{idiomas.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">
@@ -573,7 +574,7 @@
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla2" actionListener="#{cvHabilidades.metodoBase()}" update="tblInformaticas" />
                                             <p:dataTable id="tblInformaticas" value="#{cvHabilidades.nuevaListaHabilidadesInformaticas}" var="habilidadInfo" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{habilidadInfo.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">
@@ -761,7 +762,7 @@
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla3" actionListener="#{cvHabilidades.metodoBase()}" update="tblLenguas" />
                                             <p:dataTable id="tblLenguas" value="#{cvHabilidades.nuevaListaLenguas}" var="lenguas" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{lenguas.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">

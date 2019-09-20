@@ -1,8 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import lombok.Getter;
-import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCapturaCalificacion;
@@ -17,14 +15,12 @@ import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.enums.converter.CasoCriticoEstadoConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import sun.font.TrueTypeFont;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;

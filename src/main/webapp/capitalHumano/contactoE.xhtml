@@ -139,7 +139,7 @@
                                         <p:outputPanel >
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{contactoEmergencia.metodoBase()}" update="tblDistinciones" />
                                             <p:dataTable id="tblDistinciones" value="#{contactoEmergencia.ces}" var="contacto" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30"
                                                          editable="true" editMode="row">

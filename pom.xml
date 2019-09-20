@@ -11,14 +11,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <adminfaces.version>1.0.0-RC15</adminfaces.version>
+        <adminfaces.version>1.0.2</adminfaces.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.2</version>
+            <version>3.3</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
+            <version>1.18.10</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -114,13 +114,13 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-            <version>6.2</version>
+            <version>7.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.primefaces.extensions</groupId>
             <artifactId>primefaces-extensions</artifactId>
-            <version>6.2.10</version>
+            <version>7.0.2</version>
             <!-- only for gravatar, adminfaces doesn't depend on extensions-->
         </dependency>
         <dependency>
@@ -160,11 +160,6 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>1.1.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>7.0</version>
         </dependency>
     </dependencies>
     <repositories>

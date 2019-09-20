@@ -306,7 +306,7 @@
                                         <p:outputPanel >
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{cvProduccion.metodoBase()}" update="tblLibros" />
                                             <p:dataTable id="tblLibros" value="#{cvProduccion.nuevaListaLibrosPub}" var="libro" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{libro.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">
@@ -715,7 +715,7 @@
                                         <p:outputPanel >
                                             <p:remoteCommand name="actualizarTabla2" actionListener="#{cvProduccion.metodoBase()}" update="tblArticulos" />
                                             <p:dataTable id="tblArticulos" value="#{cvProduccion.nuevaListaArticulosp}" var="articulos" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{articulos.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">
@@ -1052,7 +1052,7 @@
                                         <p:outputPanel >
                                             <p:remoteCommand name="actualizarTabla3" actionListener="#{cvProduccion.metodoBase()}" update="tblMemorias" />
                                             <p:dataTable id="tblMemorias" value="#{cvProduccion.nuevaListaMemoriaspub}" var="memorias" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{memorias.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">
@@ -1313,7 +1313,7 @@
                                         <p:outputPanel >
                                             <p:remoteCommand name="actualizarTabla4" actionListener="#{cvProduccion.metodoBase()}" update="tblProyecto" />
                                             <p:dataTable id="tblProyecto" value="#{cvProduccion.nuevaListatInvestigaciones}" var="investigaciones" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          sortBy="#{investigaciones.tipo}" expandableRowGroups="true"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="aceptado"
@@ -1548,7 +1548,7 @@
                                         <p:outputPanel >
                                             <p:remoteCommand name="actualizarTabla6" actionListener="#{cvProduccion.metodoBase()}" update="tblCongresos" />
                                             <p:dataTable id="tblCongresos" value="#{cvProduccion.nuevaListaCongresos}" var="congreso" 
-                                                         emptyMessage="No premios registrados" scrollable="true" paginator="true" rows="10"
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{congreso.estatus eq 'Aceptado'?'aceptado':'denegado'}"
                                                          editable="true" editMode="row">

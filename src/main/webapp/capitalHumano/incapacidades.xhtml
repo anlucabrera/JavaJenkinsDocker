@@ -101,7 +101,8 @@
                                                                                     <p:message for="fechaFin" display="tooltip" />   
                                                                                 </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputPanel autoUpdate="true">
+                                                                                    <p:outputPanel>
+                                                                                        <p:autoUpdate/>
                                                                                         <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia de la incapacidad #{controladorIncidenciasPersonal.nuevOBJIncapacidad.evidencia eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                                                                     </p:outputPanel>
                                                                                     <o:inputFile id="file" value="#{controladorIncidenciasPersonal.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
@@ -116,7 +117,8 @@
                                                                             </div>
                                                                         </div>
                                                                         <hr/>
-                                                                        <p:outputPanel autoUpdate="true">
+                                                                        <p:outputPanel>
+                                                                            <p:autoUpdate/>
                                                                             <div class="form-group"> 
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
@@ -210,7 +212,8 @@
                                         <p:outputPanel>            
                                             <p:autoUpdate/>
                                             <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large; color: #dd4b39" value="* En caso de contar con algún documento que compruebe su incidencia puede anexarlo" />
-                                            <p:outputPanel autoUpdate="true">
+                                            <p:outputPanel>
+                                                <p:autoUpdate/>
                                                 <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:#{controladorIncidenciasPersonal.nuevOBJIncidenciasEditada.evidencia eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                             </p:outputPanel>
                                             <o:inputFile id="file" value="#{controladorIncidenciasPersonal.file}" accept="image/png||image/jpeg||image/pjpeg||application/pdf" acceptMessage="Solo se permiten archivos PDF e imagenes JPEG, PJPEG y PNG" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />

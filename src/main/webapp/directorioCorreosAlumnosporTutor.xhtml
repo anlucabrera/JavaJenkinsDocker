@@ -20,7 +20,7 @@
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
-     <ui:define name="title">
+    <ui:define name="title">
         <h2 class="align-center">
             Consulta de Correos Institucionales de los Estudiantes Tutorados 
         </h2>
@@ -39,7 +39,7 @@
                 </f:facet>
                 <f:facet name="left">
                     <p:outputLabel value="¡NOTA IMPORTANTE!: Si algún estudiante, no se encuentra dentro del listado, conoce su matricula y correo institucional, puede registrarlo.
-                                 "/>
+                                   "/>
                     <br/>
                     <h:outputLabel value="Si encuentra algún correo incorrecto, favor de dar aviso a la Coordinación de Desarrollo de Software."/>
                 </f:facet>
@@ -79,22 +79,23 @@
                         </p:column>
                     </p:dataTable>
                 </p:tab>
-                
+
             </p:tabView>
         </h:form>
         <!--seccion de dialogo para agregar un nuevo correo-->
         <p:dialog widgetVar="modalNuevo" modal="true" id="idModalNuevo" showEffect="fade" hideEffect="fade" resizable="false" width="450" height="200">
             <h:form>
-                <p:outputPanel autoUpdate="true">
+                <p:outputPanel>
+                    <p:autoUpdate/>
                     <p:spacer width="40px"/>
                     <p:outputLabel  value="Nuevo Registro de Correo Institucional" style="text-transform: uppercase"/>
                     <p:panelGrid columns="2" style="border: #FFFFFF">
                         <h:outputLabel value="Matricula:"/>
-                        
+
                         <p:inputText value="#{controladorCorreosAlumnosTutores.matricula}" style="width: 80px" />
                         <h:outputLabel value="Correo Institucional:"/>
                         <p:inputText value="#{controladorCorreosAlumnosTutores.correo}" />
-                         
+
                     </p:panelGrid>
                     <br/>
                     <div class="align-center">
@@ -103,12 +104,12 @@
                                          actionListener="#{controladorCorreosAlumnosTutores.saveCorreo()}"
                                          oncomplete="#{controladorCorreosAlumnosTutores.getListaCorreosAlumnos()},PF('modalNuevo').hide()"
                                          >
-                         </p:commandButton>
+                        </p:commandButton>
                     </div>
-                    
+
                 </p:outputPanel>
             </h:form>
-            
+
         </p:dialog>
 
 
