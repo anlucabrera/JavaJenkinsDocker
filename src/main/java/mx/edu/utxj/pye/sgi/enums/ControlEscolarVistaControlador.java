@@ -23,7 +23,8 @@ public enum ControlEscolarVistaControlador {
     PASE_DE_LISTA("/controlEscolar/docente/paseLista.xhtml", PaseListaDoc.class),
     REGISTRAR_BAJAS("/controlEscolar/se/registrarBajas.xhtml", RegistrarBajaServiciosEscolares.class),
     REPORTE_BECAS("/becas/reporteBecas.xhtml", reporteBecas.class),
-    TRAMITAR_BAJAS("/controlEscolar/tutor/tramitarBajas.xhtml", TramitarBajaTutor.class);
+    TRAMITAR_BAJAS("/controlEscolar/tutor/tramitarBajas.xhtml", TramitarBajaTutor.class),
+    DICTAMEN_BAJAS("/controlEscolar/psicopedagogia/dictamenBaja.xhtml",  DictamenBajaPsicopedagogia.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
 }

@@ -78,14 +78,18 @@ public class Baja implements Serializable {
     @ManyToOne(optional = false)
     private Estudiante estudiante;
     @Size(max = 500)
+    @NotNull
     @Column(name = "acciones_tutor")
     private String accionesTutor;
     @Size(max = 500)
+    @NotNull
     @Column(name = "dictamen_psicopedagogia")
     private String dictamenPsicopedagogia;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "valido")
-    private Integer valido;
-
+    private int valido;
+    
     public Baja() {
     }
 
@@ -207,12 +211,12 @@ public class Baja implements Serializable {
     public void setBajaReprobacionList(List<BajaReprobacion> bajaReprobacionList) {
         this.bajaReprobacionList = bajaReprobacionList;
     }
-    
-    public Integer getValido() {
+
+    public int getValido() {
         return valido;
     }
 
-    public void setValido(Integer valido) {
+    public void setValido(int valido) {
         this.valido = valido;
     }
     

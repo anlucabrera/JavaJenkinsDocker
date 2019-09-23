@@ -25,15 +25,12 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoListadoTutores;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaReprobada;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRangoFechasPermiso;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroBajaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.TramitarBajaRolTutor;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbTramitarBaja;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.BajaReprobacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasTipo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -53,9 +50,8 @@ import org.primefaces.event.CellEditEvent;
 @ViewScoped
 public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     @Getter @Setter TramitarBajaRolTutor rol;
-
-    @EJB EjbTramitarBaja ejb;
-    @EJB EjbRegistroBajas ejbRegistroBajas;
+    
+    @EJB EjbRegistroBajas ejb;
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
@@ -187,7 +183,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      */
     public void tiposBaja(){
         if(rol.getGrupo()== null) return;
-        ResultadoEJB<List<BajasTipo>> res = ejbRegistroBajas.getTiposBaja();
+        ResultadoEJB<List<BajasTipo>> res = ejb.getTiposBaja();
         if(res.getCorrecto()){
             rol.setTiposBaja(res.getValor());
         }else mostrarMensajeResultadoEJB(res);
@@ -198,7 +194,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      */
     public void causasBaja(){
         if(rol.getGrupo()== null) return;
-        ResultadoEJB<List<BajasCausa>> res = ejbRegistroBajas.getCausasBaja();
+        ResultadoEJB<List<BajasCausa>> res = ejb.getCausasBaja();
         if(res.getCorrecto()){
             rol.setCausasBaja(res.getValor());
         }else mostrarMensajeResultadoEJB(res);
@@ -224,7 +220,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      * periodo escolar
      */
     public void rangoFechasPermiso(){
-        ResultadoEJB<DtoRangoFechasPermiso> res = ejbRegistroBajas.getRangoFechas(rol.getPeriodoActivo());
+        ResultadoEJB<DtoRangoFechasPermiso> res = ejb.getRangoFechas(rol.getPeriodoActivo());
         if(res.getCorrecto()){
             rol.setFechaBaja(new Date());
             rol.setRangoFechas(res.getValor());
@@ -265,7 +261,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      * @param clave Clave del estudiante para buscar registro
      */
     public void existeRegistro(Integer clave){
-        ResultadoEJB<Boolean> res = ejb.buscarRegistroBajaEstudiante(clave);
+        ResultadoEJB<Boolean> res = ejb.existeRegistroBajaEstudiante(clave);
         rol.setExisteRegistroBaja(res.getValor());
         if (rol.getExisteRegistroBaja() == null) {
             rol.setCausaBaja(rol.getCausasBaja().get(0));
@@ -274,7 +270,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
             rol.setAccionesTutor("");
 
         } else {
-            rol.setRegistroBajaEstudiante(ejbRegistroBajas.buscarRegistroBajaEstudiante(clave).getValor());
+            rol.setRegistroBajaEstudiante(ejb.buscarRegistroBajaEstudiante(clave).getValor());
             rol.setCausaBaja(rol.getRegistroBajaEstudiante().getCausaBaja());
             rol.setTipoBaja(rol.getRegistroBajaEstudiante().getTipoBaja());
             rol.setFechaBaja(rol.getRegistroBajaEstudiante().getRegistroBaja().getFechaBaja());
@@ -288,7 +284,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      * @param registro Registro de baja que se desea eliminar
      */
     public void eliminarRegistroBaja(Baja registro){
-        ResultadoEJB<Integer> resEliminar = ejbRegistroBajas.eliminarRegistroBaja(registro);
+        ResultadoEJB<Integer> resEliminar = ejb.eliminarRegistroBaja(registro);
         mostrarMensajeResultadoEJB(resEliminar);
         
         listaEstudiantes();
@@ -300,7 +296,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      * @param registro Registro de baja del que se realizará búsqueda
      */
     public void buscarMateriasReprobadas(Baja registro){
-        ResultadoEJB<List<DtoMateriaReprobada>> resbusqueda = ejbRegistroBajas.buscarMateriasReprobadas(registro);
+        ResultadoEJB<List<DtoMateriaReprobada>> resbusqueda = ejb.buscarMateriasReprobadas(registro);
         if(resbusqueda.getCorrecto()){
             rol.setListaMateriasReprobadas(resbusqueda.getValor());
             mostrarMensajeResultadoEJB(resbusqueda);
@@ -346,7 +342,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      * @param registro Registro de materia reprobada que se desea eliminar
      */
     public void eliminarRegistroMateriaReprobada(BajaReprobacion registro){
-        ResultadoEJB<Integer> resEliminar = ejbRegistroBajas.eliminarRegistroMateriaReprobada(registro);
+        ResultadoEJB<Integer> resEliminar = ejb.eliminarRegistroMateriaReprobada(registro);
         mostrarMensajeResultadoEJB(resEliminar);
         buscarMateriasReprobadas(registro.getRegistroBaja());
         rol.setRegistroBajaEstudiante(null);
@@ -364,7 +360,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     public void onCellEdit(CellEditEvent event) {
         DataTable dataTable = (DataTable) event.getSource();
         DtoTramitarBajas registroNew = (DtoTramitarBajas) dataTable.getRowData();
-        ejbRegistroBajas.actualizarRegistroBaja(registroNew.getDtoRegistroBaja());
+        ejb.actualizarRegistroBaja(registroNew.getDtoRegistroBaja());
     }
     
 }
