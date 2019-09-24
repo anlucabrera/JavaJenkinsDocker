@@ -26,6 +26,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DictamenBajaRolPsicopedagogia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
@@ -118,10 +119,36 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
         ResultadoEJB<List<DtoTramitarBajas>> res = ejb.obtenerListaBajasPeriodo(rol.getPeriodo());
         if(res.getCorrecto()){
             rol.setBajas(res.getValor());
+            programasEducativosBajasRegistradas();
         }else mostrarMensajeResultadoEJB(res);
     
     }
     
+     /**
+     * Permite obtener la lista de periodo escolares en los que el docente tiene carga académica
+     */
+    public void programasEducativosBajasRegistradas(){
+        ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativos(rol.getBajas());
+        if(res.getCorrecto()){
+            if (res.getValor().size() != 0) {
+                rol.setProgramasEducativos(res.getValor());
+                rol.setProgramaEducativo(rol.getProgramasEducativos().get(0));
+                listaBajasProgramaEducativo();
+            }
+        }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite obtener la lista de cargas académicas del docente y el periodo seleccionado previamente
+     */
+    public void listaBajasProgramaEducativo(){
+        ResultadoEJB<List<DtoTramitarBajas>> res = ejb.obtenerListaBajasProgramaEducativo(rol.getBajas(), rol.getProgramaEducativo());
+        if(res.getCorrecto()){
+            rol.setBajasProgramaEducativo(res.getValor());
+            Ajax.update("tbListaRegistroBajas");
+        }else mostrarMensajeResultadoEJB(res);
+    
+    }
    
     /**
      * Permite que al cambiar o seleccionar un docente se puedan actualizar las materias asignadas a este docente
@@ -132,6 +159,19 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
             PeriodosEscolares periodo = (PeriodosEscolares)e.getNewValue();
             rol.setPeriodo(periodo);
             listaBajasPeriodo();
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+    /**
+     * Permite que al cambiar o seleccionar un docente se puedan actualizar las materias asignadas a este docente
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarProgramaEducativo(ValueChangeEvent e){
+        if(e.getNewValue() instanceof  AreasUniversidad){
+            AreasUniversidad programa = (AreasUniversidad)e.getNewValue();
+            rol.setProgramaEducativo(programa);
+            listaBajasProgramaEducativo();
             Ajax.update("frm");
         }else mostrarMensaje("");
     }

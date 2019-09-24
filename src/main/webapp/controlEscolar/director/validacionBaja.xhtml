@@ -83,7 +83,7 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="programa" value="#{validacionBajaDirector.rol.programaEducativo}" converter="entityConverter" valueChangeListener="#{validacionBajaDirector.cambiarProgramaEducativo}">
                                                     <f:selectItems value="#{validacionBajaDirector.rol.programasEducativos}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
-                                                    <p:ajax update="@this" process="@this" oncomplete="actualizar();" />
+                                                    <p:ajax update="@this" process="@this" />
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Programa" for="programa"/>
@@ -122,7 +122,7 @@
                                                             <c:set var="status" value="#{validacionBajaDirector.consultarStatus(baja)}" />
                                                             <p:commandButton actionListener="#{validacionBajaDirector.validarBaja(registro)}"
                                                                                   class="btn btn-sm #{status eq 1?'btn-info':'btn-danger'}" icon="#{status eq 1?'fa fa-close':'fa fa-check'}"
-                                                                                  title="#{status eq 1?'Invalidar baja.':'Validar baja.'}" />
+                                                                                  title="#{status eq 1?'Invalidar baja.':'Validar baja.'}" update="actualizar();"/>
                                                             <p:commandButton actionListener="#{validacionBajaDirector.buscarMateriasReprobadas(registro)}"
                                                             class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"

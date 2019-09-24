@@ -149,7 +149,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
         if(res.getCorrecto()){
             rol.setEstudiantesGrupo(res.getValor());
         }else mostrarMensajeResultadoEJB(res);
-            
+        Ajax.update("frm");
     }
     
     /**
@@ -252,8 +252,10 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
                 
             }else mostrarMensajeResultadoEJB(res);
         }
+        rol.setForzarAperturaDialogo(Boolean.FALSE);
+        System.err.println("guardarTramitarBaja - valor forzarApertura " + rol.getForzarAperturaDialogo());
+        Ajax.update("frmModalTramitarBaja");
         listaEstudiantes();
-        Ajax.update("frm");
     }
     
      /**
@@ -320,14 +322,17 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
         Ajax.update("frmModalTramitarBaja");
         Ajax.oncomplete("skin();");
         rol.setForzarAperturaDialogo(Boolean.TRUE);
+        System.err.println("editarBaja - valor forzarApertura " + rol.getForzarAperturaDialogo());
         forzarAperturaDialogoTramitarBaja();
     }
     
      public void forzarAperturaDialogoTramitarBaja(){
+        System.err.println("forzarAperturaDialogoTramitarBaja - entra forzarApertura " + rol.getForzarAperturaDialogo());
         if(rol.getForzarAperturaDialogo()){
             Ajax.oncomplete("PF('modalTramitarBaja').show();");
             rol.setForzarAperturaDialogo(Boolean.FALSE);
         }
+        System.err.println("forzarAperturaDialogoTramitarBaja - sale forzarApertura " + rol.getForzarAperturaDialogo());
     }
      
      public void forzarAperturaDialogoMateriasReprobadas(){

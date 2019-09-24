@@ -138,7 +138,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
      * Permite obtener la lista de periodo escolares en los que el docente tiene carga académica
      */
     public void programasEducativosBajasRegistradas(){
-        ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativos(rol.getBajasPeriodo(), rol.getAreaSuperior());
+        ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativosDirector(rol.getBajasPeriodo(), rol.getAreaSuperior());
         if(res.getCorrecto()){
             if (res.getValor().size() != 0) {
                 rol.setProgramasEducativos(res.getValor());
@@ -155,6 +155,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
         ResultadoEJB<List<DtoTramitarBajas>> res = ejb.obtenerListaBajasProgramaEducativo(rol.getBajasPeriodo(), rol.getProgramaEducativo());
         if(res.getCorrecto()){
             rol.setBajasProgramaEducativo(res.getValor());
+            Ajax.update("tbListaRegistroBajas");
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -215,7 +216,6 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
      /**
      * Permite verificar si existe dictamen registrado
      * @param baja Registro de la baja
-     * @return valor boolean según sea el caso
      */
     public void validarBaja(Baja baja){
         ResultadoEJB<Integer> resValidar = ejb.validarBaja(baja);
@@ -249,5 +249,6 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
         mostrarMensajeResultadoEJB(resEliminar);
         listaBajasProgramaEducativo();
         Ajax.update("frm");
+        Ajax.update("tbListaRegistroBajas");
     }
 }

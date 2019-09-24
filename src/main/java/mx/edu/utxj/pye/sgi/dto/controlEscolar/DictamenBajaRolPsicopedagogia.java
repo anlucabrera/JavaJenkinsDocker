@@ -13,6 +13,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 
 import java.util.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 /**
  *
@@ -31,14 +32,29 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
     @Getter @NonNull private List<PeriodosEscolares> periodos;
     
     /**
+     * Lista periodos escolares
+     */
+    @Getter @NonNull private List<AreasUniversidad> programasEducativos;
+    
+    /**
      * Lista bajas registradas del periodo seleccionado
      */
     @Getter @NonNull private List<DtoTramitarBajas> bajas;
+    
+     /**
+     * Lista bajas registradas del periodo seleccionado
+     */
+    @Getter @NonNull private List<DtoTramitarBajas> bajasProgramaEducativo;
     
     /**
      * Periodo escolar seleccionado
      */
     @Getter @NonNull private PeriodosEscolares periodo;
+    
+    /**
+     * Periodo escolar seleccionado
+     */
+    @Getter @NonNull private AreasUniversidad programaEducativo;
     
     /**
      * Baja seleccionado
@@ -88,14 +104,26 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
         this.periodos = periodos;
     }
 
+    public void setProgramasEducativos(List<AreasUniversidad> programasEducativos) {
+        this.programasEducativos = programasEducativos;
+    }
+    
     public void setBajas(List<DtoTramitarBajas> bajas) {
         this.bajas = bajas;
+    }
+
+    public void setBajasProgramaEducativo(List<DtoTramitarBajas> bajasProgramaEducativo) {
+        this.bajasProgramaEducativo = bajasProgramaEducativo;
     }
     
     public void setPeriodo(PeriodosEscolares periodo) {
         this.periodo = periodo;
     }
 
+    public void setProgramaEducativo(AreasUniversidad programaEducativo) {
+        this.programaEducativo = programaEducativo;
+    }
+    
     public void setBaja(DtoTramitarBajas baja) {
         this.baja = baja;
     }

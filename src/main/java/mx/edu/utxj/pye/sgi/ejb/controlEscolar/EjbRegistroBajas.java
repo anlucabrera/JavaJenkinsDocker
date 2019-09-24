@@ -715,6 +715,30 @@ public class EjbRegistroBajas {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos en los que se han registrado bajas. (EjbRegistroBajas.getPeriodosBajas)", e, null);
         }
     }
+    
+    /**
+     * Permite obtener la lista de programas educativos que tienen registradas bajas dependiendo del área superior seleccionada
+     * @param bajas Lista de bajas registradas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativos(List<DtoTramitarBajas> bajas){
+         try{
+            List<AreasUniversidad> listaProgramasEducativos = new ArrayList<>();
+            
+            bajas.forEach(baja -> {
+                AreasUniversidad area = em.find(AreasUniversidad.class, baja.getDtoEstudiante().getProgramaEducativo().getArea());
+                listaProgramasEducativos.add(area);
+            });
+            
+             List<AreasUniversidad> listaProgramasDistintos = listaProgramasEducativos.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+             
+            return ResultadoEJB.crearCorrecto(listaProgramasDistintos, "Lista de programas educativos que tienen registro de baja.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos que tienen registro de baja. (EjbRegistroBajas.getProgramasEducativos)", e, null);
+        }
+    }
    
     
     /**
@@ -850,7 +874,7 @@ public class EjbRegistroBajas {
      * @param areaSuperior Clave del área superior
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativos(List<DtoTramitarBajas> bajas, AreasUniversidad areaSuperior){
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosDirector(List<DtoTramitarBajas> bajas, AreasUniversidad areaSuperior){
          try{
             List<AreasUniversidad> listaProgramasEducativos = new ArrayList<>();
             
@@ -867,7 +891,7 @@ public class EjbRegistroBajas {
              
             return ResultadoEJB.crearCorrecto(listaProgramasDistintos, "Lista de programas educativos del área superior correspondiente.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos del área superior correspondiente. (EjbRegistroBajas.getProgramasEducativos)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos del área superior correspondiente. (EjbRegistroBajas.getProgramasEducativosDirector)", e, null);
         }
     }
     
@@ -926,14 +950,16 @@ public class EjbRegistroBajas {
             if (registro.getValido() == 0) {
                 validar = em.createQuery("update Baja b set b.valido =:valor where b.idBajas =:baja").setParameter("valor", (int)1).setParameter("baja", registro.getIdBajas())
                         .executeUpdate();
+                
+                Integer delete = cambiarStatusEstudiante(registro).getValor();
                 mensaje ="La baja se ha validado correctamente";
             } else {
                 validar = em.createQuery("update Baja b set b.valido =:valor where b.idBajas =:baja").setParameter("valor", (int)0).setParameter("baja", registro.getIdBajas())
                         .executeUpdate();
                 mensaje ="La baja se ha invalidado correctamente";
+                Integer delete = resetearStatusEstudiante(registro).getValor();
             }
             
-            Integer delete = cambiarStatusEstudiante(registro).getValor();
                        
             return ResultadoEJB.crearCorrecto(validar, mensaje);
         }catch (Throwable e){
@@ -963,9 +989,26 @@ public class EjbRegistroBajas {
                        .executeUpdate();
            }
                        
-            return ResultadoEJB.crearCorrecto(delete, "Se ha cambiado la situación académica del estudiante");
+            return ResultadoEJB.crearCorrecto(delete, "Se ha cambiado la situación académica del estudiante (Baja)");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo cambiar la situación académica del estudiante. (EjbRegistroBajas.cambiarStatusEstudiante)", e, null);
+        }
+    
+    }
+    
+    public ResultadoEJB<Integer> resetearStatusEstudiante(Baja registro){
+       try{
+          
+            TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short) 1);
+
+            Integer update = em.createQuery("update Estudiante e set e.tipoEstudiante =:tipoEstudiante where e.idEstudiante =:estudiante")
+                       .setParameter("tipoEstudiante", tipoEstudiante)
+                       .setParameter("estudiante", registro.getEstudiante().getIdEstudiante())
+                       .executeUpdate();
+          
+            return ResultadoEJB.crearCorrecto(update, "Se ha cambiado la situación académica del estudiante (Regular)");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo cambiar la situación académica del estudiante. (EjbRegistroBajas.resetearStatusEstudiante)", e, null);
         }
     
     }
