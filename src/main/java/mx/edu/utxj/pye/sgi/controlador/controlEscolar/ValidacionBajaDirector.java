@@ -20,12 +20,13 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.ValidacionBajaRolDirector;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaReprobada;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DictamenBajaRolPsicopedagogia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
@@ -41,8 +42,8 @@ import org.primefaces.event.CellEditEvent;
  */
 @Named
 @ViewScoped
-public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarrollable{
-    @Getter @Setter DictamenBajaRolPsicopedagogia rol;
+public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollable{
+    @Getter @Setter ValidacionBajaRolDirector rol;
     
     @EJB EjbRegistroBajas ejb;
     @EJB EjbPropiedades ep;
@@ -60,17 +61,25 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
     @PostConstruct
     public void init(){
         try{
-            setVistaControlador(ControlEscolarVistaControlador.DICTAMEN_BAJAS);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarPsicopedagogia(logon.getPersonal().getClave());//validar si es director
-            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
+            setVistaControlador(ControlEscolarVistaControlador.VALIDACION_BAJAS);
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
+
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarEncargadoDireccion(logon.getPersonal().getClave());
+            if(!resValidacion.getCorrecto() && !resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return; }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
-            PersonalActivo personalPsicopedagogia = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-            rol = new DictamenBajaRolPsicopedagogia(filtro, personalPsicopedagogia);
-            tieneAcceso = rol.tieneAcceso(personalPsicopedagogia);
-            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
+            rol = new ValidacionBajaRolDirector(filtro, director);
+            tieneAcceso = rol.tieneAcceso(director);
+//            System.out.println("tieneAcceso1 = " + tieneAcceso);
+            if(!tieneAcceso){
+                rol.setFiltro(resValidacion.getValor());
+                tieneAcceso = rol.tieneAcceso(director);
+            }
+//            System.out.println("tieneAcceso2 = " + tieneAcceso);
+            if(!tieneAcceso){return;} //cortar el flujo si no tiene acceso
 
-            rol.setPersonalPsicopedagogia(personalPsicopedagogia);
+            rol.setDirectorCarrera(director);
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
@@ -84,6 +93,8 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
             rol.getInstrucciones().add("El segundo botón de la columna opciones es para consultar la lista de materias reprobadas en caso de que la baja hay sido por esta razón.");
             rol.getInstrucciones().add("El tercer botón de la columna opciones es para generar el formato de baja.");
            
+            rol.setAreaSuperior(ejb.getAreaSuperior(rol.getDirectorCarrera().getPersonal().getClave()).getValor());
+            
             periodosBajasRegistradas();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -91,7 +102,7 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
-        String valor = "dictamen baja psicopedagogia";
+        String valor = "validación baja director";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
@@ -117,7 +128,33 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
         if(rol.getPeriodo() == null) return;
         ResultadoEJB<List<DtoTramitarBajas>> res = ejb.obtenerListaBajasPeriodo(rol.getPeriodo());
         if(res.getCorrecto()){
-            rol.setBajas(res.getValor());
+            rol.setBajasPeriodo(res.getValor());
+            programasEducativosBajasRegistradas();
+        }else mostrarMensajeResultadoEJB(res);
+    
+    }
+    
+     /**
+     * Permite obtener la lista de periodo escolares en los que el docente tiene carga académica
+     */
+    public void programasEducativosBajasRegistradas(){
+        ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativos(rol.getBajasPeriodo(), rol.getAreaSuperior());
+        if(res.getCorrecto()){
+            if (res.getValor().size() != 0) {
+                rol.setProgramasEducativos(res.getValor());
+                rol.setProgramaEducativo(rol.getProgramasEducativos().get(0));
+                listaBajasProgramaEducativo();
+            }
+        }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite obtener la lista de cargas académicas del docente y el periodo seleccionado previamente
+     */
+    public void listaBajasProgramaEducativo(){
+        ResultadoEJB<List<DtoTramitarBajas>> res = ejb.obtenerListaBajasProgramaEducativo(rol.getBajasPeriodo(), rol.getProgramaEducativo());
+        if(res.getCorrecto()){
+            rol.setBajasProgramaEducativo(res.getValor());
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -132,6 +169,19 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
             PeriodosEscolares periodo = (PeriodosEscolares)e.getNewValue();
             rol.setPeriodo(periodo);
             listaBajasPeriodo();
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+    /**
+     * Permite que al cambiar o seleccionar un docente se puedan actualizar las materias asignadas a este docente
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarProgramaEducativo(ValueChangeEvent e){
+        if(e.getNewValue() instanceof  AreasUniversidad){
+            AreasUniversidad programa = (AreasUniversidad)e.getNewValue();
+            rol.setProgramaEducativo(programa);
+            listaBajasProgramaEducativo();
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
@@ -157,56 +207,30 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
      * @param baja Registro de la baja
      * @return valor boolean según sea el caso
      */
-    public Boolean consultarDictamen(DtoTramitarBajas baja){
-        rol.setDictamenBaja(ejb.buscarDictamenBajaPsicopedagogia(baja.getDtoRegistroBaja().getRegistroBaja()).getValor());
-        if(rol.getDictamenBaja().equals("Sin información")){
-            rol.setExisteDictamen(Boolean.FALSE);
-        }else{
-            rol.setExisteDictamen(Boolean.TRUE);
-        }
-        return rol.getExisteDictamen();
+    public Integer consultarStatus(DtoTramitarBajas baja){
+        rol.setStatusBaja(ejb.buscarValidacionBaja(baja.getDtoRegistroBaja().getRegistroBaja()).getValor());
+        return rol.getStatusBaja();
     }
     
-    /**
-     * Permite tramitar baja del estudiante seleccionado
+     /**
+     * Permite verificar si existe dictamen registrado
      * @param baja Registro de la baja
+     * @return valor boolean según sea el caso
      */
-    public void editarBaja(DtoTramitarBajas baja){
-        rol.setBaja(baja);
-        Ajax.update("frmModalTramitarBaja");
-        Ajax.oncomplete("skin();");
-        rol.setForzarAperturaDialogo(Boolean.TRUE);
-        forzarAperturaDialogoTramitarBaja();
+    public void validarBaja(Baja baja){
+        ResultadoEJB<Integer> resValidar = ejb.validarBaja(baja);
+        mostrarMensajeResultadoEJB(resValidar);
+        listaBajasProgramaEducativo();
+        Ajax.update("frm");
     }
-    
-     public void forzarAperturaDialogoTramitarBaja(){
-        if(rol.getForzarAperturaDialogo()){
-            Ajax.oncomplete("PF('modalTramitarBaja').show();");
-            rol.setForzarAperturaDialogo(Boolean.FALSE);
-        }
-    }
-     
+   
      public void forzarAperturaDialogoMateriasReprobadas(){
         if(rol.getForzarAperturaDialogo()){
             Ajax.oncomplete("PF('modalMateriasReprobadas').show();");
             rol.setForzarAperturaDialogo(Boolean.FALSE);
         }
     }
-     
-     /**
-     * Permite guardar el permiso de captura extemporánea ordinaria, para ello el usuario debió haber llenado todos los datos correspondientes y haber seleccionado
-     * en tipo de evaluacion "Ordinaria"
-     */
-    public void guardarDictamenBaja(){
-        ResultadoEJB<Baja> res = ejb.actualizarDictamenBaja(rol.getBaja().getDtoRegistroBaja().getRegistroBaja(), rol.getDictamenBaja());
-        if(res.getCorrecto()){
-             rol.setBajaRegistrada(res.getValor());
-             mostrarMensajeResultadoEJB(res);
-        }else mostrarMensajeResultadoEJB(res);
-        listaBajasPeriodo();
-        Ajax.update("frm");
-    } 
-     
+   
       /**
      * Permite generar el formato de baja del registro seleccionado
      * @param registro Registro de la baja
@@ -214,12 +238,16 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
     public void generarFormatoBaja(Baja registro){
        generacionFormatoBaja.generarFormatoBaja(registro);
     }
+
     
-    public void onCellEdit(CellEditEvent event) {
-        DataTable dataTable = (DataTable) event.getSource();
-        DtoTramitarBajas registroNew = (DtoTramitarBajas) dataTable.getRowData();
-        ejb.actualizarRegistroBaja(registroNew.getDtoRegistroBaja());
-        
+      /**
+     * Permite eliminar el registro de baja seleccionado
+     * @param registro Registro de baja que se desea eliminar
+     */
+    public void eliminarRegistroBaja(Baja registro){
+        ResultadoEJB<Integer> resEliminar = ejb.eliminarRegistroBaja(registro);
+        mostrarMensajeResultadoEJB(resEliminar);
+        listaBajasProgramaEducativo();
+        Ajax.update("frm");
     }
-    
 }

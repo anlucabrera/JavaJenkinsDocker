@@ -113,8 +113,6 @@ public class EjbRegistroBajas {
             PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
             DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(estudiante, programaEducativo,periodoEscolar);
            
-            System.err.println("buscarDatosEstudiante - status " + dtoDatosEstudiante.getEstudiante().getTipoEstudiante().getDescripcion());
-            
             return ResultadoEJB.crearCorrecto(dtoDatosEstudiante, "Datos del estudiante seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener los datos del estudiante seleccionado. (EjbRegistroBajas.buscarDatosEstudiante)", e, null);
@@ -787,5 +785,188 @@ public class EjbRegistroBajas {
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo guardado o actualizar la baja. (EjbRegistroBajas.actualizarDictamenBaja)", e, null);
         }
+    }
+    
+    /* MÓDULO DE VALIDACIÓN DE BAJAS DIRECTOR DE CARRERA */
+    
+     /**
+     * Permite crear el filtro para validar si el usuario autenticado es un director de área académica
+     * @param clave Número de nómina del usuario autenticado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarDirector(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorCategoriaOperativa").orElse(18)));
+            return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un director.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbAsignacionAcademica.validarDirector)", e, null);
+        }
+    }
+    
+    /**
+     * Permite crear el filtro para validar si el usuario autenticado es un encarcado de dirección de área académica
+     * @param clave Número de nómina del usuario autenticado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDireccion(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorEncargadoCategoriaOperativa").orElse(48)));
+            return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un encargado de dirección.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbAsignacionAcademica.validarDirector)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de áreas académicas de las que se han registrado bajas
+     * @param clave Clave del responsable del área
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<AreasUniversidad> getAreaSuperior(Integer clave){
+         try{
+             
+            AreasUniversidad areaSuperior = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.responsable =:clave",  AreasUniversidad.class)
+                    .setParameter("clave", clave)
+                    .getSingleResult();
+          
+            
+            return ResultadoEJB.crearCorrecto(areaSuperior, "Área Superior de la que es responsable el director.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el área superior de la que es responsable el director. (EjbRegistroBajas.getAreaSuperior)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de programas educativos que tienen registradas bajas dependiendo del área superior seleccionada
+     * @param bajas Lista de bajas registradas
+     * @param areaSuperior Clave del área superior
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativos(List<DtoTramitarBajas> bajas, AreasUniversidad areaSuperior){
+         try{
+            List<AreasUniversidad> listaProgramasEducativos = new ArrayList<>();
+            
+            bajas.forEach(baja -> {
+                AreasUniversidad area = em.find(AreasUniversidad.class, baja.getDtoEstudiante().getProgramaEducativo().getArea());
+                if(area.getAreaSuperior().equals(areaSuperior.getArea())){
+                    listaProgramasEducativos.add(area);
+                }
+            });
+            
+             List<AreasUniversidad> listaProgramasDistintos = listaProgramasEducativos.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+             
+            return ResultadoEJB.crearCorrecto(listaProgramasDistintos, "Lista de programas educativos del área superior correspondiente.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos del área superior correspondiente. (EjbRegistroBajas.getProgramasEducativos)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener lista de bajas registradas del periodo escolar y programa educativo seleccionado
+     * @param bajasPeriodo Lista de bajas registradas
+     * @param programaEducativo Programa Educativo del que se hará al consulta
+     * @return Resultado del proceso ordenado 
+     */
+    public ResultadoEJB<List<DtoTramitarBajas>> obtenerListaBajasProgramaEducativo(List<DtoTramitarBajas> bajasPeriodo, AreasUniversidad programaEducativo){
+        try{
+            
+            List<DtoTramitarBajas> listaDtoTramitarBajas = new ArrayList<>();
+            
+            bajasPeriodo.forEach(baja -> {
+                if (baja.getDtoEstudiante().getProgramaEducativo().getArea().equals(programaEducativo.getArea())) {
+                    listaDtoTramitarBajas.add(baja);
+                }
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaDtoTramitarBajas, "Lista de bajas registradas en el periodo escolar y programa educativo seleccionado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de bajas registradas en el periodo escolar y programa educativo seleccionado. (EjbRegistroBajas.obtenerListaBajasProgramaEducativo)", e, null);
+        }
+    }
+    
+     /**
+     * Permite verificar si la baja esta validada o no por dirección de carrera
+     * @param registro Clave de registro de baja
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> buscarValidacionBaja(Baja registro) {
+        try{
+            Baja baja = em.createQuery("SELECT b FROM Baja b WHERE b.idBajas =:baja", Baja.class)
+                    .setParameter("baja", registro.getIdBajas())
+                    .getSingleResult();
+            
+            Integer status = baja.getValido();
+            
+            return ResultadoEJB.crearCorrecto(status, "Status de la baja.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el status de la baja. (EjbRegistroBajas.buscarValidacionBaja)", e, null);
+        }
+    }
+    
+      /**
+     * Permite eliminar el registro de baja
+     * @param registro Registro de baja
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> validarBaja(Baja registro){
+        try{
+            String mensaje;
+            Integer validar;
+
+            if (registro.getValido() == 0) {
+                validar = em.createQuery("update Baja b set b.valido =:valor where b.idBajas =:baja").setParameter("valor", (int)1).setParameter("baja", registro.getIdBajas())
+                        .executeUpdate();
+                mensaje ="La baja se ha validado correctamente";
+            } else {
+                validar = em.createQuery("update Baja b set b.valido =:valor where b.idBajas =:baja").setParameter("valor", (int)0).setParameter("baja", registro.getIdBajas())
+                        .executeUpdate();
+                mensaje ="La baja se ha invalidado correctamente";
+            }
+            
+            Integer delete = cambiarStatusEstudiante(registro).getValor();
+                       
+            return ResultadoEJB.crearCorrecto(validar, mensaje);
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el registro de la baja. (EjbRegistroBajas.eliminarRegistroBaja)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Integer> cambiarStatusEstudiante(Baja registro){
+       try{
+           Integer delete;
+                   
+           if (registro.getTipoBaja() == 1) {
+
+               TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short) 2);
+
+               delete = em.createQuery("update Estudiante e set e.tipoEstudiante =:tipoEstudiante where e.idEstudiante =:estudiante")
+                       .setParameter("tipoEstudiante", tipoEstudiante)
+                       .setParameter("estudiante", registro.getEstudiante().getIdEstudiante())
+                       .executeUpdate();
+           } else {
+
+               TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short) 3);
+
+               delete = em.createQuery("update Estudiante e set e.tipoEstudiante =:tipoEstudiante where e.idEstudiante =:estudiante")
+                       .setParameter("tipoEstudiante", tipoEstudiante)
+                       .setParameter("estudiante", registro.getEstudiante().getIdEstudiante())
+                       .executeUpdate();
+           }
+                       
+            return ResultadoEJB.crearCorrecto(delete, "Se ha cambiado la situación académica del estudiante");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo cambiar la situación académica del estudiante. (EjbRegistroBajas.cambiarStatusEstudiante)", e, null);
+        }
+    
     }
 }
