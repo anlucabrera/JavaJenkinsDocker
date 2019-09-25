@@ -86,6 +86,7 @@ public class PaseDeListaDocente extends AbstractRol{
     @Getter @Setter private List<String> horasPaseLista;
     @Getter private DtoGrupoEstudiante estudiantesPorGrupo;
     @Getter @Setter private Map<Long, Double> calificacionMap = new HashMap<>();
+    @Getter @Setter private Date fechaClase;
     /**
      * Carga académica seleccionada
      */

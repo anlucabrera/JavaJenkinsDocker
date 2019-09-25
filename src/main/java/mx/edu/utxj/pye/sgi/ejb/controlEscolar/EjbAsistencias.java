@@ -714,8 +714,7 @@ public class EjbAsistencias {
         }
     }
     
-    public ResultadoEJB<List<DtoPaseLista>> agregarPaseLista(List<DtoPaseLista> dpls) {
-        Date d=new Date();
+    public ResultadoEJB<List<DtoPaseLista>> agregarPaseLista(List<DtoPaseLista> dpls,Date d) {
         if (!dpls.isEmpty()) {
             dpls.forEach((t) -> {
                 Asistencias a=new Asistencias();

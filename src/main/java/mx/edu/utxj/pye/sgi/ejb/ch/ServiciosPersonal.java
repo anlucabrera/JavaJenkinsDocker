@@ -16,6 +16,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.shiro.User;
 
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -225,6 +226,39 @@ public class ServiciosPersonal implements EjbPersonal {
         return ce;
     }
 
+    
+////////////////////////////////////////////////////////////////////////////////Datos de Acceso
+     @Override
+    public User getDatosUsuario(String clave) {
+        TypedQuery<User> q = em.createQuery("SELECT u FROM User u WHERE u.claveNomina = :claveNomina", User.class);
+        q.setParameter("claveNomina", clave);
+        List<User> l = q.getResultList();
+
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() l: " + l);
+        if (l.isEmpty()) {
+            return null;
+        } else {
+            return l.get(0);
+        }
+    }
+    
+    @Override
+    public User crearUser(User user){
+        facade.setEntityClass(User.class);
+        facade.create(user);
+        facade.flush();
+        return user;
+    }
+
+    @Override
+    public User actualizarUser(User user){
+        facade.setEntityClass(User.class);
+        facade.edit(user);
+        facade.flush();
+        return user;
+    }
+    
+    
 ////////////////////////////////////////////////////////////////////////////////Catalogos
     @Override
     public List<Docencias> mostrarListaDocencias(Integer claveTrabajador) throws Throwable {

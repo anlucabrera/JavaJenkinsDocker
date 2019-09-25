@@ -59,6 +59,7 @@
                                 <div class="box-body">
                                     <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
                                     <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
                                     <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {paseListaDoc.actualizarCargaAcademica}" update="@form" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
@@ -81,6 +82,15 @@
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Materia - Grupo - Programa Educativo" for="carga"/>
+                                                <p:message for="carga" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                                <p:calendar id="fecha" value="#{paseListaDoc.rol.fechaClase}" pattern="MM/dd/yyyy HH:mm:ss">
+                                                    <p:ajax update="@this" process="@this"/>
+                                                </p:calendar>
+                                                <p:outputLabel value="Fecha y Hora de la clase" for="carga"/>
                                                 <p:message for="carga" />
                                             </div>
                                         </div>

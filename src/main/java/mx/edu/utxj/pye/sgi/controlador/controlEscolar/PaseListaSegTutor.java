@@ -219,20 +219,6 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
     }
-
-    public void guardaPaseLista() {
-        rol.setDpls(new ArrayList<>());
-        rol.getDpls().clear();
-        rol.getListaalumnoscas().forEach((t) -> {
-            ResultadoEJB<Estudiante> resE = ejb.buscaEstudiante(t.getMatricula());
-            ResultadoEJB<CargaAcademica> resC = ejb.buscaCargaAcademica(t.getCarga());
-            if ((resE.getCorrecto()) && (resC.getCorrecto())) {
-                rol.getDpls().add(new DtoPaseLista(t, resE.getValor(), resC.getValor()));
-            }
-        });
-        ejb.agregarPaseLista(rol.getDpls());
-        existeAsignacion();
-    }
     
     public void consultarReporte(ValueChangeEvent event) {
         rol.setDtoConfUniMat((DtoConfiguracionUnidadMateria)event.getNewValue());

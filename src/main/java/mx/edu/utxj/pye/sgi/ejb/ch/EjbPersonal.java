@@ -9,6 +9,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.shiro.User;
 
 @Local
 public interface EjbPersonal {
@@ -21,16 +22,18 @@ public interface EjbPersonal {
     public List<ListaPersonal> mostrarListaPersonalsPorParametros(String nombre, Integer tipo) throws Throwable;
 
     public List<ListaPersonal> mostrarListaPersonalListSubordinados(ListaPersonal perosona);
-    
+
     /**
-     * Método que permite la búsqueda de personal mediante coincidencias de Clave,Nombre ó Área Operativa
+     * Método que permite la búsqueda de personal mediante coincidencias de
+     * Clave,Nombre ó Área Operativa
+     *
      * @param parametro Búsqueda
-     * @return  Devuelve una lista con las coincidencias encontradas
+     * @return Devuelve una lista con las coincidencias encontradas
      */
     public List<ListaPersonal> buscaCoincidenciasListaPersonal(String parametro);
 
     ////////////////////////////////////////////////////////////////////////////////Personal
-    public List<Personal> mostrarListaPersonalSubordinados(Short area,Integer claveTrabajador) throws Throwable;
+    public List<Personal> mostrarListaPersonalSubordinados(Short area, Integer claveTrabajador) throws Throwable;
 
     public List<Personal> mostrarListaPersonalsPorEstatus(Integer estatus) throws Throwable;
 
@@ -58,6 +61,13 @@ public interface EjbPersonal {
 
     public ContactoEmergencias eliminarContactosEmergencias(ContactoEmergencias ce) throws Throwable;
 
+////////////////////////////////////////////////////////////////////////////////Datos de Acceso
+    public User getDatosUsuario(String clave);
+
+    public User crearUser(User user);
+
+    public User actualizarUser(User user);
+    
 ////////////////////////////////////////////////////////////////////////////////Catalogos
     public List<Docencias> mostrarListaDocencias(Integer claveTrabajador) throws Throwable;
 

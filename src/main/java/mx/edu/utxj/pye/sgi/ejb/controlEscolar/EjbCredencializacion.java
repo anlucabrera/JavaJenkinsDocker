@@ -191,8 +191,8 @@ public class EjbCredencializacion {
                 
                 //FIRMA DEL ESTUDIANTE
                 Image imageFirma = Image.getInstance("C://archivos//control_escolar//firmas//" + estudiante.getMatricula()+".png");
-                imageFirma.setAbsolutePosition(47,75);
-                imageFirma.scalePercent(57f,37f);
+                imageFirma.setAbsolutePosition(45,75);
+                imageFirma.scalePercent(62f,53f);
                 PdfContentByte contentFirma = pdfStamper.getOverContent(pdfReader.getNumberOfPages());
                 contentFirma.addImage(imageFirma);
                 //CODIGO DE BARRAS

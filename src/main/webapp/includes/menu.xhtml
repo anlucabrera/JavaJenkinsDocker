@@ -200,8 +200,8 @@
                     <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Resultados generales</span></p:link></li></c:if>
 
                     <!--Seguimiento a egresados-->
-                    <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
-                    <c:if test="#{logonMB.personal.categoriaOperativa.categoria eq 19}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
+                    <c:if test="#{logonMB.personal.clave eq 582 or logonMB.personal.clave eq 394}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
+                    <c:if test="#{logonMB.personal.clave eq 582 or logonMB.personal.clave eq 394}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
                     <!--Visible para todos los trabajadores-->
                     <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoEvaluaciones.xhtml"><i class="fa fa-exclamation"></i><span>Resultados de evaluaciones</span></p:link></li>
                 </ul>
@@ -799,7 +799,7 @@
 
             <c:forEach var="i" begin="0" end="#{controladorEmpleado.menus.size()-1}">
                 <c:set var="n1" value="#{controladorEmpleado.menus.get(i)}"/>
-                <c:if test="#{controladorEmpleado.menus.size() ne 0}">
+                <c:if test="#{controladorEmpleado.menus.size() ne 0 and n1.nivel2s.size() ne 0}">
                     <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">#{n1.titulo}</li>
                     <c:forEach var="j" begin="0" end="#{n1.nivel2s.size()-1}">
                         <c:set var="n2" value="#{n1.nivel2s.get(j)}"/>

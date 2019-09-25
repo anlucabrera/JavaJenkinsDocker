@@ -119,6 +119,8 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             rol.setCarga(resCarga.getValor().get(0));
             existeAsignacion();
             rol.setFechaInpresion(new Date());
+            rol.setFechaClase(new Date());
+            rol.getFechaClase().setSeconds(0);
             List<String> asi=new ArrayList<>();
             asi.add("Asistencia");
             asi.add("Falta");
@@ -230,7 +232,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                 rol.getDpls().add(new DtoPaseLista(t, resE.getValor(), resC.getValor()));
             }
         });
-        ejb.agregarPaseLista(rol.getDpls());
+        ejb.agregarPaseLista(rol.getDpls(),rol.getFechaClase());
         existeAsignacion();
     }
     

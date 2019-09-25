@@ -73,6 +73,7 @@ public class ControladorPersonal implements Serializable {
     @Getter    @Setter    private List<Capacitacionespersonal> listaCapacitacionespersonal = new ArrayList<>();
     @Getter    @Setter    private List<HabilidadesInformaticas> listaHabilidadesInformaticas = new ArrayList<>();
     @Getter    @Setter    private List<DesarrollosTecnologicos> listaDesarrollosTecnologicos = new ArrayList<>();
+    @Getter    @Setter    private List<String> rutasEvidenciasBD = new ArrayList<>();
 ////////////////////////////////////////////////////////////////////////////////Datos Personales
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;
@@ -165,19 +166,23 @@ public class ControladorPersonal implements Serializable {
 
     public void mostrarPerfilSubordinado() {
         try {
-            
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(Inicio)");
             nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
             nuevOBJPersonalSubordinado = ejbPersonal.mostrarPersonalLogeado(contactoDestino);
             nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(contactoDestino);
-            
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(1)");
             informacionCV();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(2)");
             mostrarFuncioneSubordinado();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(3)");
             mostrarLista();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(4)");
             actividad = nuevOBJPersonalSubordinado.getActividad().getActividad();
             categoriaOP = nuevOBJPersonalSubordinado.getCategoriaOperativa().getCategoria();
             categoriaOF = nuevOBJPersonalSubordinado.getCategoriaOficial().getCategoria();
             categoria360 = nuevOBJPersonalSubordinado.getCategoria360().getCategoria();
             grado = nuevOBJPersonalSubordinado.getGrado().getGrado();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(Fin)");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -260,6 +265,7 @@ public class ControladorPersonal implements Serializable {
 
     public void informacionCV() {
         try {
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(1)");
             listaIdiomas.clear();
             listaLenguas.clear();
             listaCongresos.clear();
@@ -268,6 +274,7 @@ public class ControladorPersonal implements Serializable {
             listaMemoriaspub.clear();
             listaInnovaciones.clear();
             listaDistinciones.clear();
+            rutasEvidenciasBD.clear();
             listaInvestigacion.clear();
             listaDesarrolloSoftwar.clear();
             listaFormacionAcademica.clear();
@@ -275,10 +282,10 @@ public class ControladorPersonal implements Serializable {
             listaCapacitacionespersonal.clear();
             listaHabilidadesInformaticas.clear();
             listaDesarrollosTecnologicos.clear();
-
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(2)");
             tv1 = 0;            tv2 = 0;            tv3 = 0;            tv4 = 0;            tv5 = 0;
             tv6 = 0;            tv7 = 0;            tv8 = 0;            tv9 = 0;            total = 0;
-
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(3)");
             listaIdiomas = ejbHabilidades.mostrarIdiomas(contactoDestino);
             listaLenguas = ejbHabilidades.mostrarLenguas(contactoDestino);
             listaDistinciones = ejbPremios.mostrarDistinciones(contactoDestino);
@@ -294,53 +301,112 @@ public class ControladorPersonal implements Serializable {
             listaCapacitacionespersonal = ejbEducacion.mostrarCapacitacionespersonal(contactoDestino);
             listaDesarrollosTecnologicos = ejbTecnologia.mostrarDesarrollosTecnologicos(contactoDestino);
             listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(contactoDestino);
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(4)");
+            if (!listaIdiomas.isEmpty()) {
+                listaIdiomas.forEach((t) -> {
+                    if (t.getEvidenciaDoc() != null){
+                        rutasEvidenciasBD.add(t.getEvidenciaDoc());
+                    }
+                    if (t.getEstatus().equals("Denegado")) {
+                        tv4 = tv4 + 1;
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(A)");
+            if (!listaLibrosPubs.isEmpty()) {
+                listaLibrosPubs.forEach((t) -> {
+                    if (t.getEvidencia() != null){
+                        rutasEvidenciasBD.add(t.getEvidencia());
+                    }
+                    if (t.getEstatus().equals("Denegado")) {
+                        tv7 = tv7 + 1;
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(B)");
+            if (!listaArticulosp.isEmpty()) {
+                listaArticulosp.forEach((t) -> {
+                    if (t.getEvidencia() != null){
+                        rutasEvidenciasBD.add(t.getEvidencia());
+                    }
+                    if (t.getEstatus().equals("Denegado")) {
+                        tv8 = tv8 + 1;
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(C)");
+            if (!listaMemoriaspub.isEmpty()) {
+                listaMemoriaspub.forEach((t) -> {
+                    if (t.getEvidencia() != null){
+                        rutasEvidenciasBD.add(t.getEvidencia());
+                    }
+                    if (t.getEstatus().equals("Denegado")) {
+                        tv9 = tv9 + 1;
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(D)");
+            if (!listaDistinciones.isEmpty()) {
+                listaDistinciones.forEach((t) -> {
+                    if (t.getEvidenciaDistincion() != null){
+                        rutasEvidenciasBD.add(t.getEvidenciaDistincion());
+                    }
+                    if (t.getEstatus().equals("Denegado")) {
+                        tv6 = tv6 + 1;
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(E)");
+            if (!listaFormacionAcademica.isEmpty()) {
+                listaFormacionAcademica.forEach((t) -> {
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(t.getEvidenciaCedula())"+t.getEvidenciaCedula());
+                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(t.getEvidenciaTitulo())"+t.getEvidenciaTitulo());
+                    if (t.getEvidenciaCedula() != null){
+                        rutasEvidenciasBD.add(t.getEvidenciaCedula());
+                    }
+                    if (t.getEvidenciaTitulo() != null){
+                        rutasEvidenciasBD.add(t.getEvidenciaTitulo());
+                    }
+                    if (t.getEstatus().equals("Denegado")) {
+                        tv1 = tv1 + 1;
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(F)");
+            if (!listaExperienciasLaborales.isEmpty()) {
+                listaExperienciasLaborales.forEach((t) -> {
+                    if (t.getEvidenciaNombremiento() != null){
+                        rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                    }
+                    if (t.getEstatus().equals("Denegado")) {
+                        tv2 = tv2 + 1;
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(G)");
+            if (!listaCapacitacionespersonal.isEmpty()) {
+                listaCapacitacionespersonal.forEach((t) -> {
+                    if (t.getEvidenciaCapacitacion() != null){
+                        rutasEvidenciasBD.add(t.getEvidenciaCapacitacion());
+                    }
+                    if (t.getEstatus().equals("Denegado")) {
+                        tv3 = tv3 + 1;
+                    }
+                });
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(H)");
+            if (!listaDesarrollosTecnologicos.isEmpty()) {
+                listaDesarrollosTecnologicos.forEach((t) -> {
+                    if (t.getDocumentoRespaldo() != null){
+                        rutasEvidenciasBD.add(t.getDocumentoRespaldo());
+                    }
+                    if (t.getEstatus().equals("Denegado")) {
+                        tv5 = tv5 + 1;
+                    }
+                });
+            }
 
-            listaIdiomas.forEach((t) -> {
-                if (t.getEstatus().equals("Denegado")) {
-                    tv4 = tv4 + 1;
-                }
-            });
-            listaLibrosPubs.forEach((t) -> {
-                if (t.getEstatus().equals("Denegado")) {
-                    tv7 = tv7 + 1;
-                }
-            });
-            listaArticulosp.forEach((t) -> {
-                if (t.getEstatus().equals("Denegado")) {
-                    tv8 = tv8 + 1;
-                }
-            });
-            listaMemoriaspub.forEach((t) -> {
-                if (t.getEstatus().equals("Denegado")) {
-                    tv9 = tv9 + 1;
-                }
-            });
-            listaDistinciones.forEach((t) -> {
-                if (t.getEstatus().equals("Denegado")) {
-                    tv6 = tv6 + 1;
-                }
-            });
-            listaFormacionAcademica.forEach((t) -> {
-                if (t.getEstatus().equals("Denegado")) {
-                    tv1 = tv1 + 1;
-                }
-            });
-            listaExperienciasLaborales.forEach((t) -> {
-                if (t.getEstatus().equals("Denegado")) {
-                    tv2 = tv2 + 1;
-                }
-            });
-            listaCapacitacionespersonal.forEach((t) -> {
-                if (t.getEstatus().equals("Denegado")) {
-                    tv3 = tv3 + 1;
-                }
-            });
-            listaDesarrollosTecnologicos.forEach((t) -> {
-                if (t.getEstatus().equals("Denegado")) {
-                    tv5 = tv5 + 1;
-                }
-            });
-
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(I)");
             total = tv1 + tv2 + tv3 + tv4 + tv5 + tv6 + tv7 + tv8 + tv9;
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -446,32 +512,37 @@ public class ControladorPersonal implements Serializable {
         }
     }
     
-    public void listaArchivos() {
+    public void descargarEvidenciasCH() {
         try {
-            List<String> rutasEvidencias = new ArrayList<>();
-            rutasEvidencias.clear();
-            File evidencias = new File("C:" + File.separator + "archivos" + File.separator + "evidenciasCapitalHumano" + File.separator + contactoDestino);
-            if (evidencias.exists()) {
-                File[] evidenciaList = evidencias.listFiles();
-                for (int i = 0; i <= evidenciaList.length - 1; i++) {
-                    rutasEvidencias.add(evidenciaList[i].getPath());
+            String nombreArchivo = "";
+            if (nuevoOBJInformacionAdicionalPersonal != null) {
+                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa() != null){
+                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
                 }
-            }
+                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp() != null){
+                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp());
+                }
+                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio() != null){
+                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio());
+                }
+                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne() != null){
+                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
+                }
+                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc() != null){
+                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc());
+                }
+            }                        
+            nombreArchivo = nuevoOBJListaPersonal.getClave() + " CV " + nuevoOBJListaPersonal.getNombre();
 
-//            Files.walk(Paths.get("C:\\archivos\\evidenciasCapitalHumano\\" + contactoDestino)).forEach(ruta -> {
-//                if (Files.isRegularFile(ruta)) {
-//                    rutasEvidencias.add(ruta.toString());
-//                }
-//            });
-            ZipWritter.generar(rutasEvidencias, contactoDestino);
-            Ajax.oncomplete("PF('dlgEvidencias').show();");
-            Ajax.oncomplete("PF('dlgEvidencias').show();");
+            if (!rutasEvidenciasBD.isEmpty()) {
+                File zip = ZipWritter.generarZipPoa(rutasEvidenciasBD, nombreArchivo, Integer.parseInt(String.valueOf(nuevoOBJInformacionAdicionalPersonal.getClave())));
+                Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/" + nombreArchivo + ".zip" + "');");
+            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
  public static class ResultadoEva {
 
         @Getter        @Setter        private int anio;

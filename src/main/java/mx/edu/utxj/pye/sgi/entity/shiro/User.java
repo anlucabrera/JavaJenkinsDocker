@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author PLANEACION
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "user", catalog = "shiro", schema = "")
@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username")
     , @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password")
     , @NamedQuery(name = "User.findByClaveNomina", query = "SELECT u FROM User u WHERE u.claveNomina = :claveNomina")
-    , @NamedQuery(name = "User.findByClaveSaiiut", query = "SELECT u FROM User u WHERE u.claveSaiiut = :claveSaiiut")})
+    , @NamedQuery(name = "User.findByUpdateC", query = "SELECT u FROM User u WHERE u.updateC = :updateC")})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,9 +54,8 @@ public class User implements Serializable {
     @Size(max = 11)
     @Column(name = "claveNomina")
     private String claveNomina;
-    @Size(max = 11)
-    @Column(name = "claveSaiiut")
-    private String claveSaiiut;
+    @Column(name = "updateC")
+    private Boolean updateC;
 
     public User() {
     }
@@ -103,12 +102,12 @@ public class User implements Serializable {
         this.claveNomina = claveNomina;
     }
 
-    public String getClaveSaiiut() {
-        return claveSaiiut;
+    public Boolean getUpdateC() {
+        return updateC;
     }
 
-    public void setClaveSaiiut(String claveSaiiut) {
-        this.claveSaiiut = claveSaiiut;
+    public void setUpdateC(Boolean updateC) {
+        this.updateC = updateC;
     }
 
     @Override
@@ -133,7 +132,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.ch.shiro.User[ id=" + id + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.shiro.User[ id=" + id + " ]";
     }
     
 }
