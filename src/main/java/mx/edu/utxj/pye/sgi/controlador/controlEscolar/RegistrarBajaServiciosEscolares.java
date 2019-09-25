@@ -60,7 +60,7 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
 
     /**
      * Inicializa:<br/>
-     *      El filtro de rol por area superior<br/>
+     *      El filtro de rol por personal de servicios escolares<br/>
      *      El DTO del rol<br/>
      *      El periodo activo<br/>
      *      Las instrucciones de operación de la herramienta<br/>
@@ -69,7 +69,7 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
     public void init(){
         try{
             setVistaControlador(ControlEscolarVistaControlador.REGISTRAR_BAJAS);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logon.getPersonal().getClave());//validar si es director
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logon.getPersonal().getClave());//validar si es personal de servicios escolares
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarServiciosEscolares(logon.getPersonal().getClave());
@@ -95,10 +95,12 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
             rol.getInstrucciones().add("Seleccionar tipo de baja.");
             rol.getInstrucciones().add("Seleccionar fecha de la baja.");
             rol.getInstrucciones().add("Dar clic en el botón de Guardar para registrar la baja del estudiante.");
-            rol.getInstrucciones().add("Seleccionar la justificación por la cual el docente solicitó el permiso.");
-            rol.getInstrucciones().add("Una vez que haya ingresado la información, puede proceder a REGISTRAR el permiso.");
-            rol.getInstrucciones().add("En la tabla inferior podrá VISUALIZAR los permisos de captura extemporanea vigentes del docente seleccionado.");
-            rol.getInstrucciones().add("En caso de existir un error puede ELIMINAR el permiso de captura, al dar clic en el botón ubicado en la columna opciones de la tabla.");
+            rol.getInstrucciones().add("Una vez que se haya registrado la baja en la parte inferior podrá visualizar una tabla con la información registrada.");
+            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Consultar materias reprobadas, Generar formato y Eliminar baja.");
+            rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
+            rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
+            rol.getInstrucciones().add("En caso de que se haya equivocado podrá eliminar el registro dando clic en el botón Eliminar baja y cambiar la situación actual del estudiante.");
+            rol.getInstrucciones().add("Puede modificar las acciones tomadas por el tutor y el dictamen de psicopedagogía.");
            
         }catch (Exception e){mostrarExcepcion(e); }
     }

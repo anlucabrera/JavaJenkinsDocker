@@ -7,7 +7,6 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +38,6 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -59,7 +56,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
 
     /**
      * Inicializa:<br/>
-     *      El filtro de rol por area superior<br/>
+     *      El filtro de rol para el personal docente<br/>
      *      El DTO del rol<br/>
      *      El periodo activo<br/>
      *      Las instrucciones de operación de la herramienta<br/>
@@ -68,7 +65,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     public void init(){
         try{
             setVistaControlador(ControlEscolarVistaControlador.TRAMITAR_BAJAS);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDocente(logon.getPersonal().getClave());//validar si es director
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDocente(logon.getPersonal().getClave());//validar si es personal docente
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
             Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
@@ -86,15 +83,16 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
             rol.setForzarAperturaDialogo(Boolean.FALSE);
             
-            rol.getInstrucciones().add("Ingrese nombre o clave del o de la estudiante que dará de baja.");
-            rol.getInstrucciones().add("Seleccionar causa de baja.");
-            rol.getInstrucciones().add("Seleccionar tipo de baja.");
-            rol.getInstrucciones().add("Seleccionar fecha de la baja.");
-            rol.getInstrucciones().add("Dar clic en el botón de Guardar para registrar la baja del estudiante.");
-            rol.getInstrucciones().add("Seleccionar la justificación por la cual el docente solicitó el permiso.");
-            rol.getInstrucciones().add("Una vez que haya ingresado la información, puede proceder a REGISTRAR el permiso.");
-            rol.getInstrucciones().add("En la tabla inferior podrá VISUALIZAR los permisos de captura extemporanea vigentes del docente seleccionado.");
-            rol.getInstrucciones().add("En caso de existir un error puede ELIMINAR el permiso de captura, al dar clic en el botón ubicado en la columna opciones de la tabla.");
+            rol.getInstrucciones().add("TRAMITAR LA BAJA, no cambiará la situación del alumno en sistema hasta que el director la haya validado se reflejará en sistema.");
+            rol.getInstrucciones().add("Seleccionar el periodo escolar.");
+            rol.getInstrucciones().add("Seleccionar grupo turado.");
+            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Tramitar baja, Consultar materias reprobadas, Generar formato y Eliminar baja.");
+            rol.getInstrucciones().add("Dar clic en el botón de Tramitar baja, visualizará una ventana en la que deberá capturar: causa de la baja, tipo de baja, fecha y las acciones que tomo.");
+            rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
+            rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
+            rol.getInstrucciones().add("En caso de que se haya equivocado podrá eliminar el registro dando clic en el botón Eliminar baja.");
+            rol.getInstrucciones().add("Puede modificar la información de la baja siempre y cuando no haya sido validada por el director de carrera.");
+            rol.getInstrucciones().add("Una vez que haya tramitado la baja podrán visualizarla el director de carrera y el área de psicopedagogía.");
            
             rol.setEsTutor(Boolean.FALSE);
             periodosGruposTutorados();
@@ -110,7 +108,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     }
     
      /**
-     * Permite obtener la lista de periodo escolares en los que el docente tiene carga académica
+     * Permite obtener la lista de periodo escolares en los que el docente tiene grupos tutorados
      */
     public void periodosGruposTutorados(){
         ResultadoEJB<List<PeriodosEscolares>> res = ejb.getPeriodosGruposTutorados(rol.getTutor());
@@ -125,7 +123,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     }
     
     /**
-     * Permite obtener la lista de cargas académicas del docente y el periodo seleccionado previamente
+     * Permite obtener la lista de grupos tutorados del periodo seleccionado
      */
     public void gruposTutorados(){
         if(rol.getPeriodo() == null) return;
@@ -142,7 +140,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     }
     
      /**
-     * Método para proporcionar lista de docentes sugeridos en un autocomplete donde se puede ingresar el número de nómina, nombre o área del docente
+     * Método para proporcionar lista de estudiantes que integran el grupo seleccionado
      */
     public void listaEstudiantes(){
         ResultadoEJB<List<DtoTramitarBajas>> res = ejb.obtenerListaEstudiantes(rol.getGrupo().getGrupo());
@@ -153,7 +151,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     }
     
     /**
-     * Permite que al cambiar o seleccionar un docente se puedan actualizar las materias asignadas a este docente
+     * Permite que al cambiar o seleccionar un periodo escolar se puedan los grupos tutorados
      * @param e Evento del cambio de valor
      */
     public void cambiarPeriodo(ValueChangeEvent e){
@@ -166,7 +164,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     }
     
      /**
-     * Permite que al cambiar o seleccionar un docente se puedan actualizar las materias asignadas a este docente
+     * Permite que al cambiar o seleccionar un grupo se puedan actualice la lista de estudiantes
      * @param e Evento del cambio de valor
      */
     public void cambiarGrupo(ValueChangeEvent e){
@@ -232,8 +230,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     }
     
      /**
-     * Permite guardar el permiso de captura extemporánea ordinaria, para ello el usuario debió haber llenado todos los datos correspondientes y haber seleccionado
-     * en tipo de evaluacion "Ordinaria"
+     * Permite guardar o actualizar el registro de la baja
      */
     public void guardarTramitarBaja(){
         if(rol.getExisteRegistroBaja() == null)
@@ -253,7 +250,6 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
             }else mostrarMensajeResultadoEJB(res);
         }
         rol.setForzarAperturaDialogo(Boolean.FALSE);
-        System.err.println("guardarTramitarBaja - valor forzarApertura " + rol.getForzarAperturaDialogo());
         Ajax.update("frmModalTramitarBaja");
         listaEstudiantes();
     }
@@ -288,7 +284,6 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     public void eliminarRegistroBaja(Baja registro){
         ResultadoEJB<Integer> resEliminar = ejb.eliminarRegistroBaja(registro);
         mostrarMensajeResultadoEJB(resEliminar);
-        
         listaEstudiantes();
         Ajax.update("frm");
     }
@@ -322,7 +317,6 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
         Ajax.update("frmModalTramitarBaja");
         Ajax.oncomplete("skin();");
         rol.setForzarAperturaDialogo(Boolean.TRUE);
-        System.err.println("editarBaja - valor forzarApertura " + rol.getForzarAperturaDialogo());
         forzarAperturaDialogoTramitarBaja();
     }
     
@@ -361,11 +355,15 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     public void generarFormatoBaja(Baja registro){
        generacionFormatoBaja.generarFormatoBaja(registro);
     }
-    
-    public void onCellEdit(CellEditEvent event) {
-        DataTable dataTable = (DataTable) event.getSource();
-        DtoTramitarBajas registroNew = (DtoTramitarBajas) dataTable.getRowData();
-        ejb.actualizarRegistroBaja(registroNew.getDtoRegistroBaja());
+   
+     /**
+     * Permite verificar el status de la baja
+     * @param baja Registro de la baja
+     * @return valor boolean según sea el caso
+     */
+    public Integer consultarStatus(DtoTramitarBajas baja){
+        rol.setStatusBaja(ejb.buscarValidacionBaja(baja.getDtoRegistroBaja().getRegistroBaja()).getValor());
+        return rol.getStatusBaja();
     }
     
 }

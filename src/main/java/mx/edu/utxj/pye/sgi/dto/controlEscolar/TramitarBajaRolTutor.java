@@ -142,6 +142,11 @@ public class TramitarBajaRolTutor extends AbstractRol {
      * Existe o no registro de baja del estudiante
      */
     @Getter @NonNull private String accionesTutor;
+    
+     /**
+     * Valor se encuentra validado o no la baja
+     */
+    @Getter @NonNull private Integer statusBaja;
    
     public TramitarBajaRolTutor(Filter<PersonalActivo> filtro, PersonalActivo tutor) {
         super(filtro);
@@ -242,5 +247,9 @@ public class TramitarBajaRolTutor extends AbstractRol {
 
     public void setAccionesTutor(String accionesTutor) {
         this.accionesTutor = accionesTutor;
+    }
+
+    public void setStatusBaja(Integer statusBaja) {
+        this.statusBaja = statusBaja;
     }
 }

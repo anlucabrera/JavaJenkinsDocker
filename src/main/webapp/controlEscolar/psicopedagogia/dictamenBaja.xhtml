@@ -98,24 +98,24 @@
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
                                                                  tableStyle="vertical-align: middle;" editable="true" editMode="cell">
                                                     <f:facet name="header">
-                                                        Bajas registradas en el Periodo Escolar #{caster.clavePeriodoToString(dictamenBajaPsicopedagogia.rol.periodoActivo)}
+                                                        Bajas registradas de #{dictamenBajaPsicopedagogia.rol.programaEducativo.nombre}
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
                                                             <p:column headerText="Opciones" style="width: 120px;"/>
+                                                            <p:column headerText="Validación" style="width: 80px;"/>
                                                             <p:column headerText="Fecha de Baja" style="width: 100px;"/>
-                                                            <p:column headerText="Programa Educativo" style="width: 300px;"/>
-                                                            <p:column headerText="Grado - Grupo - Sistema" style="width: 150px;"/>
+                                                            <p:column headerText="Grupo" style="width: 150px;"/>
                                                             <p:column headerText="Matricula" style="width: 80px;"/> 
                                                             <p:column headerText="Nombre" style="width: 250px;"/>
                                                             <p:column headerText="Situación" style="width: 80px;"/>
                                                             <p:column headerText="Tipo de Baja" style="width: 100px;"/>
-                                                            <p:column headerText="Causa Baja" style="width: 100px;"/>
+                                                            <p:column headerText="Causa Baja" style="width: 150px;"/>
                                                             <p:column headerText="Acciones tomadas por el tutor" style="width: 300px;"/>
                                                             <p:column headerText="Dictamen Psicopedagogía" style="width: 300px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
-                                                    <p:ajax event="cellEdit" listener="#{dictamenBajaPsicopedagogia.onCellEdit}" onsuccess="actualizar();"/>
+                                                    <c:set var="status" value="#{dictamenBajaPsicopedagogia.consultarStatus(baja)}" />
                                                     <c:set var="baja" value="#{baja}"/>
                                                     <c:set var="registro" value="#{baja.dtoRegistroBaja.registroBaja}"/>
                                                     <p:column>
@@ -124,13 +124,13 @@
                                                             <c:set var="dictamenRegistrado" value="#{dictamenBajaPsicopedagogia.consultarDictamen(baja)}" />
                                                             <p:commandButton actionListener="#{dictamenBajaPsicopedagogia.editarBaja(baja)}"
                                                             class="btn btn-sm #{dictamenRegistrado?'btn-info':'btn-danger'}" 
-                                                            icon="fa fa-edit"
-                                                            title="#{dictamenRegistrado?'Consultar dictamen registrado.':'Debe registrar dictamen.'}"/>
+                                                            icon="fa fa-edit" disabled="#{status eq 1}"
+                                                            title="#{dictamenRegistrado?'Consultar dictamen registrado.':'Registrar dictamen.'}"/>
                                                             <p:commandButton actionListener="#{dictamenBajaPsicopedagogia.buscarMateriasReprobadas(registro)}"
                                                             class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"
-                                                            title="Consultar materias reprobadas" disabled="#{baja.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
-                                                            <p:commandButton actionListener="#{dictamenBajaPsicopedagogia.generarFormatoBaja(registro)}" action="/controlEscolar/se/formatoBaja?faces-redirect=true" 
+                                                            title="#{baja.dtoRegistroBaja.causaBaja.cveCausa ne 3?'Sin materias reprobadas':'Consultar materias reprobadas'}" disabled="#{baja.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
+                                                            <p:commandButton actionListener="#{dictamenBajaPsicopedagogia.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-file-text-o"
                                                                                   title="Generar Formato de Baja"  disabled="#{baja.dtoRegistroBaja.registroBaja.idBajas eq null}"/> 
@@ -138,10 +138,10 @@
                                                         </center>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        <h:outputText value="#{status eq 1?'Realizada':'Pendiente'}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{baja.dtoEstudiante.programaEducativo.nombre}"/>
+                                                        <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                     </p:column>
                                                      <p:column style="text-align: center;">
                                                         <h:outputText value="#{baja.dtoEstudiante.estudiante.grupo.grado}° #{baja.dtoEstudiante.estudiante.grupo.literal} #{baja.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
@@ -165,10 +165,7 @@
                                                          <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.accionesTutor}"/>
                                                     </p:column>
                                                     <p:column>
-                                                        <p:cellEditor>
-                                                             <f:facet name="output"><h:outputText value="#{baja.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}"/></f:facet>
-                                                             <f:facet name="input"><h:inputText value="#{baja.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}" size="500" style="color: #000000;"/></f:facet>
-                                                        </p:cellEditor> 
+                                                        <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}"/>
                                                     </p:column>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

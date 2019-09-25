@@ -33,8 +33,6 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -53,7 +51,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
 
     /**
      * Inicializa:<br/>
-     *      El filtro de rol por area superior<br/>
+     *      El filtro de rol por dirección de carrera<br/>
      *      El DTO del rol<br/>
      *      El periodo activo<br/>
      *      Las instrucciones de operación de la herramienta<br/>
@@ -64,7 +62,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
             setVistaControlador(ControlEscolarVistaControlador.VALIDACION_BAJAS);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
 
-            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarEncargadoDireccion(logon.getPersonal().getClave());
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarEncargadoDireccion(logon.getPersonal().getClave());//validar si es encargado de dirección
             if(!resValidacion.getCorrecto() && !resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return; }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
@@ -89,9 +87,12 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
             rol.setForzarAperturaDialogo(Boolean.FALSE);
             
             rol.getInstrucciones().add("Seleccione periodo escolar para consultar bajas registradas durante ese periodo.");
-            rol.getInstrucciones().add("El primer botón de la columna opciones es para registrar y/o actualizar el dictamen de la baja.");
-            rol.getInstrucciones().add("El segundo botón de la columna opciones es para consultar la lista de materias reprobadas en caso de que la baja hay sido por esta razón.");
-            rol.getInstrucciones().add("El tercer botón de la columna opciones es para generar el formato de baja.");
+            rol.getInstrucciones().add("Seleccione programa educativo.");
+            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Validar o Invalidar baja, Consultar materias reprobadas, Generar formato de baja y Eliminar el registro.");
+            rol.getInstrucciones().add("Dar clic en el botón de Validar/Invalidar baja, para que se cambie la situación académica en sistema.");
+            rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
+            rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
+            rol.getInstrucciones().add("Dar clic en el botón Eliminar baja, para eliminar el registro en caso de que se haya equivocado al realizar el trámite.");
            
             rol.setAreaSuperior(ejb.getAreaSuperior(rol.getDirectorCarrera().getPersonal().getClave()).getValor());
             
@@ -108,7 +109,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
     }
     
      /**
-     * Permite obtener la lista de periodo escolares en los que el docente tiene carga académica
+     * Permite obtener la lista de periodo escolares en los que existen bajas registradas
      */
     public void periodosBajasRegistradas(){
         ResultadoEJB<List<PeriodosEscolares>> res = ejb.getPeriodosBajas();
@@ -122,7 +123,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
     }
     
     /**
-     * Permite obtener la lista de cargas académicas del docente y el periodo seleccionado previamente
+     * Permite obtener la lista de bajas registradas en el periodo seleccionado
      */
     public void listaBajasPeriodo(){
         if(rol.getPeriodo() == null) return;
@@ -135,7 +136,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
     }
     
      /**
-     * Permite obtener la lista de periodo escolares en los que el docente tiene carga académica
+     * Permite obtener la lista de programas educativos que tienen bajas registradas dependiendo del área de la que es el director
      */
     public void programasEducativosBajasRegistradas(){
         ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativosDirector(rol.getBajasPeriodo(), rol.getAreaSuperior());
@@ -149,7 +150,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
     }
     
     /**
-     * Permite obtener la lista de cargas académicas del docente y el periodo seleccionado previamente
+     * Permite obtener la lista de bajas registradas en el periodo y del programa educativo seleccionado
      */
     public void listaBajasProgramaEducativo(){
         ResultadoEJB<List<DtoTramitarBajas>> res = ejb.obtenerListaBajasProgramaEducativo(rol.getBajasPeriodo(), rol.getProgramaEducativo());
@@ -162,7 +163,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
     
    
     /**
-     * Permite que al cambiar o seleccionar un docente se puedan actualizar las materias asignadas a este docente
+     * Permite que al cambiar o seleccionar un periodo escolar se pueda actualizar la lista de bajas del periodo
      * @param e Evento del cambio de valor
      */
     public void cambiarPeriodo(ValueChangeEvent e){
@@ -175,7 +176,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
     }
     
     /**
-     * Permite que al cambiar o seleccionar un docente se puedan actualizar las materias asignadas a este docente
+     * Permite que al cambiar o seleccionar un programa educativo se pueda actualizar la lista de bajas por programa educativo
      * @param e Evento del cambio de valor
      */
     public void cambiarProgramaEducativo(ValueChangeEvent e){
@@ -203,8 +204,8 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
         }
     }
     
-     /**
-     * Permite verificar si existe dictamen registrado
+      /**
+     * Permite verificar el status de la baja
      * @param baja Registro de la baja
      * @return valor boolean según sea el caso
      */
@@ -214,13 +215,14 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
     }
     
      /**
-     * Permite verificar si existe dictamen registrado
+     * Permite modificar la situación de la baja
      * @param baja Registro de la baja
      */
     public void validarBaja(Baja baja){
         ResultadoEJB<Integer> resValidar = ejb.validarBaja(baja);
         mostrarMensajeResultadoEJB(resValidar);
         listaBajasProgramaEducativo();
+        Ajax.update("tbListaRegistroBajas");
         Ajax.update("frm");
     }
    
@@ -247,8 +249,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
     public void eliminarRegistroBaja(Baja registro){
         ResultadoEJB<Integer> resEliminar = ejb.eliminarRegistroBaja(registro);
         mostrarMensajeResultadoEJB(resEliminar);
-        listaBajasProgramaEducativo();
+        periodosBajasRegistradas();
         Ajax.update("frm");
-        Ajax.update("tbListaRegistroBajas");
     }
 }

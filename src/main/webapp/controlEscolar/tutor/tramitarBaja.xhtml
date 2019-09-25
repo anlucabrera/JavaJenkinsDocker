@@ -83,7 +83,7 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="grupo" value="#{tramitarBajaTutor.rol.grupo}" converter="entityConverter" valueChangeListener="#{tramitarBajaTutor.cambiarGrupo}">
                                                     <f:selectItems value="#{tramitarBajaTutor.rol.grupos}" var="grupo"
-                                                                   itemValue="#{grupo}" itemLabel="#{grupo.grupo.grado}° '#{grupo.grupo.literal}' '#{grupo.grupo.idSistema.nombre}' de #{grupo.programaEducativo.nombre}"/>
+                                                                   itemValue="#{grupo}" itemLabel="#{grupo.grupo.grado}° #{grupo.grupo.literal} #{grupo.grupo.idSistema.nombre} de #{grupo.programaEducativo.nombre}"/>
                                                     <p:ajax update="@this" process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
@@ -99,7 +99,6 @@
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
                                                                  tableStyle="vertical-align: middle;" editable="true" editMode="cell">
                                                     <f:facet name="header">
-                                                        #{tramitarBajaTutor.rol.grupo.grupo.grado}° "#{tramitarBajaTutor.rol.grupo.grupo.literal}" #{tramitarBajaTutor.rol.grupo.grupo.idSistema.nombre} de #{tramitarBajaTutor.rol.grupo.programaEducativo.nombre}
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
@@ -107,14 +106,15 @@
                                                             <p:column headerText="Matricula" style="width: 80px;"/> 
                                                             <p:column headerText="Nombre" style="width: 200px;"/>
                                                             <p:column headerText="Situación" style="width: 80px;"/>
+                                                            <p:column headerText="Validación" style="width: 80px;"/>
                                                             <p:column headerText="Fecha de Baja" style="width: 80px;"/>
                                                             <p:column headerText="Tipo de Baja" style="width: 100px;"/>
-                                                            <p:column headerText="Causa Baja" style="width: 100px;"/>
+                                                            <p:column headerText="Causa Baja" style="width: 120px;"/>
                                                             <p:column headerText="Acciones tomadas por el tutor" style="width: 200px;"/>
                                                             <p:column headerText="Dictamen Psicopedagogía" style="width: 200px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
-                                                    <p:ajax event="cellEdit" listener="#{tramitarBajaTutor.onCellEdit}"/>
+                                                    <c:set var="status" value="#{tramitarBajaTutor.consultarStatus(estudiante)}" />
                                                     <c:set var="estudiante" value="#{estudiante}"/>
                                                     <c:set var="registro" value="#{estudiante.dtoRegistroBaja.registroBaja}"/>
                                                     <p:column>
@@ -123,16 +123,16 @@
                                                             <p:commandButton actionListener="#{tramitarBajaTutor.editarBaja(estudiante)}"
                                                             class="btn btn-sm btn-info" 
                                                             icon="fa fa-edit"
-                                                            title="Tramitar baja"/>
+                                                            title="Tramitar baja" disabled="#{status eq 1}"/>
                                                             <p:commandButton actionListener="#{tramitarBajaTutor.buscarMateriasReprobadas(registro)}"
                                                             class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"
-                                                            title="Consultar materias reprobadas" disabled="#{estudiante.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
-                                                            <p:commandButton actionListener="#{tramitarBajaTutor.generarFormatoBaja(registro)}" action="/controlEscolar/se/formatoBaja?faces-redirect=true" 
+                                                            title="#{estudiante.dtoRegistroBaja.causaBaja.cveCausa ne 3?'Sin materias reprobadas':'Consultar materias reprobadas'}" disabled="#{estudiante.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
+                                                            <p:commandButton actionListener="#{tramitarBajaTutor.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-file-text-o"
                                                                                   title="Generar Formato de Baja"  disabled="#{estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}"/>  
-                                                            <p:commandButton class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{tramitarBajaTutor.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}">
+                                                            <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{tramitarBajaTutor.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{status eq 1}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </div>
@@ -148,6 +148,9 @@
                                                         <h:outputText value="#{estudiante.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;">
+                                                        <h:outputText value="#{status eq 1?'Realizada':'Pendiente'}" rendered="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja ne null}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
                                                         <h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
@@ -157,10 +160,7 @@
                                                         <h:outputText value="#{estudiante.dtoRegistroBaja.causaBaja.causa}"/>
                                                     </p:column>
                                                     <p:column>
-                                                         <p:cellEditor>
-                                                             <f:facet name="output"><h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}"/></f:facet>
-                                                             <f:facet name="input"><h:inputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}" size="500" style="color: #000000;"/></f:facet>
-                                                        </p:cellEditor> 
+                                                         <h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.accionesTutor}"/>
                                                     </p:column>
                                                     <p:column>
                                                         <h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}"/>

@@ -6,25 +6,24 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
-
-import java.util.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+
 /**
  *
  * @author UTXJ
  */
-public class DictamenBajaRolPsicopedagogia extends AbstractRol{
-    
+public class ReporteBajasRolServiciosEscolares extends AbstractRol{
     /**
-     * Representa la referencia hacia el personal de psicopedagogía
+     * Representa la referencia hacia el personal de servicios escolares
      */
-    @Getter @NonNull private PersonalActivo personalPsicopedagogia;
+    @Getter @NonNull private PersonalActivo personal;
     
     /**
      * Lista periodos escolares
@@ -66,11 +65,6 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
      */
     @Getter @NonNull private Integer periodoActivo;
   
-    /**
-     * Baja actualizada
-     */
-    @Getter @NonNull private Baja bajaRegistrada;
-    
      /**
      * Lista de materias reprobadas registradas en caso de ser baja por reprobación
      */
@@ -82,29 +76,24 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
     @Getter @NonNull private Boolean forzarAperturaDialogo;
     
      /**
-     * Valor de dictamen de la baja
-     */
-    @Getter @NonNull private String dictamenBaja;
-    
-     /**
-     * Existe o no dictamen registrado
-     */
-    @Getter @NonNull private Boolean existeDictamen;
-   
-     /**
      * Valor se encuentra validado o no la baja
      */
     @Getter @NonNull private Integer statusBaja;
     
-    public DictamenBajaRolPsicopedagogia(Filter<PersonalActivo> filtro, PersonalActivo personalPsicopedagogia) {
+    /**
+     * Información completa de la Baja registrada
+     */
+    @Getter @NonNull private DtoRegistroBajaEstudiante registroBajaEstudiante;
+    
+    public ReporteBajasRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo personal) {
         super(filtro);
-        this.personalPsicopedagogia = personalPsicopedagogia;
+        this.personal = personal;
     }
 
-    public void setPersonalPsicopedagogia(PersonalActivo personalPsicopedagogia) {
-        this.personalPsicopedagogia = personalPsicopedagogia;
+    public void setPersonal(PersonalActivo personal) {
+        this.personal = personal;
     }
-    
+
     public void setPeriodos(List<PeriodosEscolares> periodos) {
         this.periodos = periodos;
     }
@@ -137,10 +126,6 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
         this.periodoActivo = periodoActivo;
     }
 
-    public void setBajaRegistrada(Baja bajaRegistrada) {
-        this.bajaRegistrada = bajaRegistrada;
-    }
-
     public void setListaMateriasReprobadas(List<DtoMateriaReprobada> listaMateriasReprobadas) {
         this.listaMateriasReprobadas = listaMateriasReprobadas;
     }
@@ -149,15 +134,11 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
         this.forzarAperturaDialogo = forzarAperturaDialogo;
     }
 
-    public void setDictamenBaja(String dictamenBaja) {
-        this.dictamenBaja = dictamenBaja;
-    }
-
-    public void setExisteDictamen(Boolean existeDictamen) {
-        this.existeDictamen = existeDictamen;
-    }
-
     public void setStatusBaja(Integer statusBaja) {
         this.statusBaja = statusBaja;
+    }
+
+    public void setRegistroBajaEstudiante(DtoRegistroBajaEstudiante registroBajaEstudiante) {
+        this.registroBajaEstudiante = registroBajaEstudiante;
     }
 }
