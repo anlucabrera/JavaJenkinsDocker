@@ -66,9 +66,9 @@ public class ControladorTitSegGeneracion implements Serializable{
     // Para consulta por Generación y Programa Educativo 
     @Getter @Setter private Generaciones generacion;
     @Getter @Setter private AreasUniversidad programaSeleccionado;
-    @Getter @Setter private List<Generaciones> generaciones;
-    @Getter @Setter private List<AreasUniversidad> programasPorGeneracion;
-    @Getter @Setter private List<dtoExpedienteMatricula> lista;
+    @Getter @Setter private List<Generaciones> generacionesING, generacionesTSU;
+    @Getter @Setter private List<AreasUniversidad> programasPorGeneracionING, programasPorGeneracionTSU;
+    @Getter @Setter private List<dtoExpedienteMatricula> listaING, listaTSU;
     @Getter @Setter private String matricula;
     
     // Para registrar clave del Personal que validó el expediente y/o los documentos
@@ -85,7 +85,8 @@ public class ControladorTitSegGeneracion implements Serializable{
     public void init() {
        
         aperturaDialogo = Boolean.FALSE;
-        initFiltros();
+        initFiltrosING();
+        initFiltrosTSU();
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
     }
   
@@ -127,28 +128,53 @@ public class ControladorTitSegGeneracion implements Serializable{
         return ejbTitulacionSeguimiento.getListaStatusPorDocumento(claveDoc);
     }
     
-    public void initFiltros(){
-        generaciones = ejbTitulacionSeguimiento.getGeneracionesConregistro();
-        programasPorGeneracion = ejbTitulacionSeguimiento.getExpedientesPorGeneraciones(generaciones.get(0));
-        cargarListaPorGenProg();
+    public void initFiltrosING(){
+        generacionesING = ejbTitulacionSeguimiento.getGeneracionesConregistroING();
+        programasPorGeneracionING = ejbTitulacionSeguimiento.getExpedientesPorGeneracionesING(generacionesING.get(0));
+        cargarListaPorGenProgING();
     }
    
-     public void actualizarProgramas(ValueChangeEvent e){
+     public void actualizarProgramasING(ValueChangeEvent e){
         generacion = (Generaciones)e.getNewValue();
-        programasPorGeneracion = ejbTitulacionSeguimiento.getExpedientesPorGeneraciones(generacion);
-        cargarListaPorGenProg();
+        programasPorGeneracionING = ejbTitulacionSeguimiento.getExpedientesPorGeneracionesING(generacion);
+        cargarListaPorGenProgING();
     }
      
-    public void cargarListaPorGenProg(){
+    public void initFiltrosTSU(){
+        generacionesTSU = ejbTitulacionSeguimiento.getGeneracionesConregistroTSU();
+        programasPorGeneracionTSU = ejbTitulacionSeguimiento.getExpedientesPorGeneracionesTSU(generacionesTSU.get(0));
+        cargarListaPorGenProgTSU();
+    }
+   
+     public void actualizarProgramasTSU(ValueChangeEvent e){
+        generacion = (Generaciones)e.getNewValue();
+        programasPorGeneracionTSU = ejbTitulacionSeguimiento.getExpedientesPorGeneracionesTSU(generacion);
+        cargarListaPorGenProgTSU();
+    }
+     
+    public void cargarListaPorGenProgING(){
       
         if(generacion == null && programaSeleccionado == null){
             
-            generacion= generaciones.get(0);
-            programaSeleccionado = programasPorGeneracion.get(0);
+            generacion= generacionesING.get(0);
+            programaSeleccionado = programasPorGeneracionING.get(0);
         
         }
       
-      lista = ejbTitulacionSeguimiento.getListaExpedientesPorProgramaGeneracion(programaSeleccionado, generacion); 
+      listaING = ejbTitulacionSeguimiento.getListaExpedientesPorProgramaGeneracion(programaSeleccionado, generacion); 
+      
+    }
+    
+    public void cargarListaPorGenProgTSU(){
+      
+        if(generacion == null && programaSeleccionado == null){
+            
+            generacion= generacionesTSU.get(0);
+            programaSeleccionado = programasPorGeneracionTSU.get(0);
+        
+        }
+      
+      listaTSU = ejbTitulacionSeguimiento.getListaExpedientesPorProgramaGeneracion(programaSeleccionado, generacion); 
       
     }
     public void guardarDatosTitulacion() {
@@ -203,7 +229,8 @@ public class ControladorTitSegGeneracion implements Serializable{
      
         try {
             ejbTitulacionSeguimiento.validarExpediente(expediente, clavePersonal);
-            cargarListaPorGenProg();
+            cargarListaPorGenProgING();
+            cargarListaPorGenProgTSU();
             Ajax.update("formMuestraDatosActivos");
             consultarExpediente(expediente);
             Ajax.update("formMuestraExpediente");

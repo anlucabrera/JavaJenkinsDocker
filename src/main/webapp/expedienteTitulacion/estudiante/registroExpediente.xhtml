@@ -795,6 +795,7 @@
                                                                             </div>
                                                                         </div>
                                                                         <br/>-->
+                                                            <c:if test="#{controladorArchExp.expediente.nivel ne 1}">
                                                                         <div class="row">
                                                                             <o:form id="frmFotoExp" enctype="multipart/form-data">
                                                                                 <c:set var="expediente" value="#{controladorArchExp.expediente.expediente}"/> <!--Se agregó pero una vez descomentando la parte superior se debe quitar para no repetirse -->
@@ -827,6 +828,41 @@
                                                                             </c:if>
                                                                             </o:form>
                                                                         </div>
+                                                            </c:if>
+                                                            <c:if test="#{controladorArchExp.expediente.nivel eq 1}">
+                                                                        <div class="row">
+                                                                            <o:form id="frmFotoExpTSU" enctype="multipart/form-data">
+                                                                                <c:set var="expediente" value="#{controladorArchExp.expediente.expediente}"/> <!--Se agregó pero una vez descomentando la parte superior se debe quitar para no repetirse -->
+                                                                                <c:set var="existeFI" value="#{controladorArchExp.docExiste(5, expediente)}"/>
+                                                                                <c:if test="#{!existeFI}">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Fotografía T.S.U." />
+                                                                                        <h5 style="text-align: justify;">La fotografía debe ser de estudio, no descolorida y con las características correspondientes:</h5>
+                                                                                        <ul style="text-align: justify;">
+                                                                                            <li>La fotografía debe ser a COLOR con FONDO BLANCO y SIN SOMBRAS.</li>
+                                                                                            <li>Se recomienda un tamaño de 6x9 cm.</li>
+                                                                                            <li>La fotografía deberá ser una en la que el solicitante esté mirando directamente a la cámara</li>
+                                                                                            <li>El solicitante no puede estar mirando hacia abajo o a los lados</li>
+                                                                                            <li>La cabeza del solicitante, incluyendo tanto la cara como el cabello, deben ser mostrados en su totalidad con la frente y las orejas descubiertas</li>
+                                                                                            <li>El solicitante no deberá usar gorras ni ningún otro accesorio que cubra total o parcialmente su cara</li>
+                                                                                            <li>La imagen no debe ser tratada con "filtros" o "retoques"</li>
+                                                                                        </ul>
+                                                                                    </p:outputPanel>
+                                                                                    <br/>
+                                                                                    <center><o:inputFile id="fileFotoTSU" value="#{controladorArchExp.fileFotoTSU}" accept="image/png,image/jpg,image/jpeg" acceptMessage="Sólo se permiten imágenes JPG/PNG." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFileFotoTSU" for="fileFotoIL" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchExp.subirDocumentoFotoTSU}" />
+                                                                                    <br/>
+                                                                                    <br/>
+                                                                                </div>
+                                                                            </c:if>
+                                                                            </o:form>
+                                                                        </div>
+                                                            </c:if>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
                                                                                 <br/>

@@ -51,7 +51,7 @@ public class ControladorArchivosExpediente implements Serializable{
     @Getter @Setter private Alumnos estudiante;
     
     @Getter @Setter private Integer claveDoc;
-    @Getter @Setter private Part fileC, fileAN, fileCB, fileAEE, fileCSS, fileCEIL, fileAE, fileFotoIL, fileCTTSU, fileLibSCLTF; 
+    @Getter @Setter private Part fileC, fileAN, fileCB, fileAEE, fileCSS, fileCEIL, fileAE, fileFotoIL, fileCTTSU, fileLibSCLTF, fileFotoTSU; 
     
     @EJB private EjbEstudianteRegistro ejbEstudianteRegistro;
     
@@ -293,6 +293,52 @@ public class ControladorArchivosExpediente implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
             nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileFotoIL, generacion , nivel, exp.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), matricula));
+            nuevoOBJdocExp.setFechaCarga(new Date());
+            nuevoOBJdocExp.setObservaciones("Sin revisar");
+            nuevoOBJdocExp.setFechaValidacion(null);
+            nuevoOBJdocExp.setValidadoTitulacion(false);
+            nuevoOBJdocExp = ejbEstudianteRegistro.guardarDocumentoExpediente(nuevoOBJdocExp);
+            
+            cargarDocumentosPorExpediente(); 
+            Ajax.update("frmDocsExp");
+            controladorEstudianteRegistro.setPestaniaActiva(3);
+            
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorArchivosExpediente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                 
+    }
+    
+    public void subirDocumentoFotoTSU(){
+            try {
+            claveDoc = 5;
+            nuevoOBJdocExp = new DocumentosExpediente();
+            nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
+
+            ExpedientesTitulacion exp = new ExpedientesTitulacion();
+            exp = ejbEstudianteRegistro.obtenerClaveExpediente(estudiante);
+            Short gen = exp.getGeneracion();
+            String generacion = ejbEstudianteRegistro.obtenerGeneracionProntuario(gen);
+            
+            String nivel = "";
+            if (exp.getNivel() == 2) {
+                nivel = "ING";
+            } else if (exp.getNivel() == 1) {
+                nivel = "TSU";
+            }
+            if (exp.getNivel() == 4) {
+                nivel = "LIC";
+            }
+
+            Documentos doc = new Documentos();
+            doc = ejbEstudianteRegistro.obtenerInformacionDocumento(claveDoc);
+
+            nuevoOBJdocExp.setExpediente(exp);
+            nuevoOBJdocExp.setDocumento(doc);
+
+            String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileFotoTSU, generacion , nivel, exp.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), matricula));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);

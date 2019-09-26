@@ -67,14 +67,27 @@ public interface EjbTitulacionSeguimiento {
      * Obtiene la lista de generaciones con registros en expedientes de titulación
      * @return Lista de entity Generaciones
      */
-    public List<Generaciones> getGeneracionesConregistro();
+    public List<Generaciones> getGeneracionesConregistroING();
+    
+    /**
+     * Obtiene la lista de generaciones con registros en expedientes de titulación
+     * @return Lista de entity Generaciones
+     */
+    public List<Generaciones> getGeneracionesConregistroTSU();
 
     /**
      * Obtiene la lista de programas educativos por generación
      * @param generacion
      * @return Lista de entity AreasUniversidad
      */
-    public List<AreasUniversidad> getExpedientesPorGeneraciones(Generaciones generacion);
+    public List<AreasUniversidad> getExpedientesPorGeneracionesING(Generaciones generacion);
+    
+    /**
+     * Obtiene la lista de programas educativos por generación
+     * @param generacion
+     * @return Lista de entity AreasUniversidad
+     */
+    public List<AreasUniversidad> getExpedientesPorGeneracionesTSU(Generaciones generacion);
     
      /**
      * Obtiene la lista de expedientes correspondiente a la generación y programa educativo seleccionado.
