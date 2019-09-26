@@ -210,6 +210,7 @@ public class EjbRegistroBajas {
             registroBaja.setFechaBaja(fechaBaja);
             registroBaja.setAccionesTutor("Sin información");
             registroBaja.setDictamenPsicopedagogia("Sin información");
+            registroBaja.setValido((int)1);
             em.persist(registroBaja);
             em.flush();
             

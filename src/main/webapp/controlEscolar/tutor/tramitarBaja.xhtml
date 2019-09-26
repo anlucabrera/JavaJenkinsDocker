@@ -105,6 +105,7 @@
                                                             <p:column headerText="Opciones" style="width: 120px;"/>
                                                             <p:column headerText="Matricula" style="width: 80px;"/> 
                                                             <p:column headerText="Nombre" style="width: 200px;"/>
+                                                            <p:column headerText="Género" style="width: 80px;"/>
                                                             <p:column headerText="Situación" style="width: 80px;"/>
                                                             <p:column headerText="Validación" style="width: 80px;"/>
                                                             <p:column headerText="Fecha de Baja" style="width: 80px;"/>
@@ -143,6 +144,9 @@
                                                     </p:column>
                                                     <p:column>
                                                         <h:outputText value="#{estudiante.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{estudiante.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{estudiante.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{estudiante.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
                                                         <h:outputText value="#{estudiante.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />

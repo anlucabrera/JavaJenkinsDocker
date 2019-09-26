@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoFormatoBaja;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaReprobada;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRangoFechasPermiso;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroBajaEstudiante;
@@ -90,7 +89,7 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
             rol.setForzarAperturaDialogo(Boolean.FALSE);
           
-            rol.getInstrucciones().add("Ingrese nombre o clave del o de la estudiante que dará de baja.");
+            rol.getInstrucciones().add("Ingrese nombre o matricula del o de la estudiante que dará de baja.");
             rol.getInstrucciones().add("Seleccionar causa de baja.");
             rol.getInstrucciones().add("Seleccionar tipo de baja.");
             rol.getInstrucciones().add("Seleccionar fecha de la baja.");

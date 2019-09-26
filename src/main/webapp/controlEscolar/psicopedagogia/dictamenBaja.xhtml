@@ -108,6 +108,7 @@
                                                             <p:column headerText="Grupo" style="width: 150px;"/>
                                                             <p:column headerText="Matricula" style="width: 80px;"/> 
                                                             <p:column headerText="Nombre" style="width: 250px;"/>
+                                                            <p:column headerText="Género" style="width: 80px;"/>
                                                             <p:column headerText="Situación" style="width: 80px;"/>
                                                             <p:column headerText="Tipo de Baja" style="width: 100px;"/>
                                                             <p:column headerText="Causa Baja" style="width: 150px;"/>
@@ -151,6 +152,9 @@
                                                     </p:column>
                                                     <p:column>
                                                         <h:outputText value="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
                                                         <h:outputText value="#{baja.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />
@@ -229,7 +233,7 @@
                               hideEffect="fade" 
                               modal="true" 
                               draggable="true" 
-                              header="Tramitar Baja" 
+                              header="Dictamen Baja" 
                               onHide="actualizar();"
                               styleClass="panel panel-primary" 
                               responsive="true" 
@@ -285,9 +289,9 @@
                 </p:dialog>
                 </c:if>
                 <c:if test="#{dictamenBajaPsicopedagogia.rol.periodos eq null}">
-                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
                         <h:panelGrid columns="2" cellpadding="10">
-                            <h:outputText value="No existen registro de bajas."/>
+                            <h:outputText value="Actualmente no hay bajas registradas."/>
                         </h:panelGrid>
                         <f:facet name="footer"></f:facet>
                     </p:panel>

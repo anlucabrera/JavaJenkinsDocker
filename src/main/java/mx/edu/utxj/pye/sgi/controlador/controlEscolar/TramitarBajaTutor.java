@@ -321,12 +321,10 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     }
     
      public void forzarAperturaDialogoTramitarBaja(){
-        System.err.println("forzarAperturaDialogoTramitarBaja - entra forzarApertura " + rol.getForzarAperturaDialogo());
         if(rol.getForzarAperturaDialogo()){
             Ajax.oncomplete("PF('modalTramitarBaja').show();");
             rol.setForzarAperturaDialogo(Boolean.FALSE);
         }
-        System.err.println("forzarAperturaDialogoTramitarBaja - sale forzarApertura " + rol.getForzarAperturaDialogo());
     }
      
      public void forzarAperturaDialogoMateriasReprobadas(){
