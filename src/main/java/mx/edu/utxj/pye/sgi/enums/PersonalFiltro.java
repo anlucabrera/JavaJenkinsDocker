@@ -15,6 +15,7 @@ public enum PersonalFiltro {
     CATEGORIA_OPERATIVA("Categoria_operativa"),
     CATEGORIA_OFICIAL("Categoría_oficial"),
     TIENE_POA("Tiene_POA"),
-    NO_TIENE_POA("No_tiene_POA");
+    NO_TIENE_POA("No_tiene_POA"),
+    TUTOR("Tutor");
     @Getter @Setter @NonNull private String label;
 }

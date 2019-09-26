@@ -38,6 +38,7 @@ public class EjbCapturaCalificaciones {
     @EJB EjbPropiedades ep;
     @EJB Facade f;
     @EJB EjbEventoEscolar ejbEventoEscolar;
+    @EJB EjbValidacionRol ejbValidacionRol;
     private EntityManager em;
 
     @PostConstruct
@@ -54,21 +55,26 @@ public class EjbCapturaCalificaciones {
     }
 
     /**
+     * Permite verificar si el promedio es aprobatorio
+     * @param promedio Promedio calculado
+     * @return Devuelve TRUE si el promedio es aprobatorio, FALSE de lo contrario y código 0 si ocurre un error
+     */
+    public ResultadoEJB<Boolean> validarPromedioAprobatorio(BigDecimal promedio){
+        try{
+            Boolean res = promedio.compareTo(leerCalificacionMínimaAprobatoria()) >= 0;
+            return ResultadoEJB.crearCorrecto(res, "Verificación de promedio");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar validar si el promedio es aprobatorio (EjbCapturaCalificaciones.validarPromedioAprobatorio).", e, Boolean.TYPE);
+        }
+    }
+
+    /**
      * Permite validar si el usuario logueado es un docente
      * @param clave Número de nómina del usuario logueado
      * @return Regresa la instancia del personal si es que cumple con ser docente o codigo de error de lo contrario
      */
     public ResultadoEJB<Filter<PersonalActivo>> validarDocente(Integer clave){
-        try{
-            PersonalActivo p = ejbPersonalBean.pack(clave);
-            Filter<PersonalActivo> filtro = new Filter<>();
-            filtro.setEntity(p);
-            filtro.setEntity(p);
-            filtro.addParam(PersonalFiltro.ACTIIVIDAD.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalDocenteActividad").orElse(3)));
-            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como un docente.");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El docente no se pudo validar. (EjbCapturaCalificaciones.validarDocente)", e, null);
-        }
+        return ejbValidacionRol.validarDocente(clave);
     }
 
     /**

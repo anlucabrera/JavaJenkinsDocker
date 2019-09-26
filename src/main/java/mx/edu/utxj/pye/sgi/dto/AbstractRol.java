@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Rolable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public abstract class AbstractRol implements Rolable {
@@ -46,6 +48,8 @@ public abstract class AbstractRol implements Rolable {
 //        System.out.println("personal.getPersonal().getStatus() = " + personal.getPersonal().getStatus());
         if(personal.getPersonal().getStatus().equals('B')) return false;
 
+        if(comprobar(PersonalFiltro.TUTOR, personal.getPersonal().getClave(), personal.getGruposTutorados())) return false;
+
         return true;
     }
 
@@ -69,6 +73,25 @@ public abstract class AbstractRol implements Rolable {
 
     private boolean comprobar(PersonalFiltro personalFiltro, Integer valor){
         return comprobar(personalFiltro, valor.toString());
+    }
+
+    private boolean comprobar(PersonalFiltro personalFiltro, Integer claveTutor, List<Grupo> cargas){
+        if(filtro.hasParam(personalFiltro.getLabel())){
+            if(cargas == null) cargas = Collections.EMPTY_LIST;
+            /*Integer clave = cargas
+                    .stream()
+                    .map(DtoCargaAcademica::getGrupo)
+                    .map(Grupo::getTutor)
+                    .filter(tutor -> tutor == claveTutor)
+                    .findFirst()
+                    .orElse(null);*/
+
+            if(cargas == null) return true;//cambiar a false sino funciona
+
+            return  cargas.isEmpty();//negar si no funcionar
+        }else return false;
+
+
     }
 
     private boolean comprobar(PersonalFiltro personalFiltro, PersonalActivo personalActivo){

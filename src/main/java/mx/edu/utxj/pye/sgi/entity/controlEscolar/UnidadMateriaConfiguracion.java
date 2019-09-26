@@ -20,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -67,7 +68,13 @@ public class UnidadMateriaConfiguracion implements Serializable {
     private double porcentaje;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
     private List<UnidadMateriaConfiguracionCriterio> unidadMateriaConfiguracionCriterioList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
+    private UnidadMateriaValidacion unidadMateriaValidacion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
+    private List<UnidadMateriaComentario> unidadMateriaComentarioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion")
+    private List<Asesoria> asesoriaList;
+    @OneToMany(mappedBy = "configuracion")
     private List<CasoCritico> casoCriticoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion")
     private List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList;
@@ -139,6 +146,32 @@ public class UnidadMateriaConfiguracion implements Serializable {
 
     public void setUnidadMateriaConfiguracionCriterioList(List<UnidadMateriaConfiguracionCriterio> unidadMateriaConfiguracionCriterioList) {
         this.unidadMateriaConfiguracionCriterioList = unidadMateriaConfiguracionCriterioList;
+    }
+
+    public UnidadMateriaValidacion getUnidadMateriaValidacion() {
+        return unidadMateriaValidacion;
+    }
+
+    public void setUnidadMateriaValidacion(UnidadMateriaValidacion unidadMateriaValidacion) {
+        this.unidadMateriaValidacion = unidadMateriaValidacion;
+    }
+
+    @XmlTransient
+    public List<UnidadMateriaComentario> getUnidadMateriaComentarioList() {
+        return unidadMateriaComentarioList;
+    }
+
+    public void setUnidadMateriaComentarioList(List<UnidadMateriaComentario> unidadMateriaComentarioList) {
+        this.unidadMateriaComentarioList = unidadMateriaComentarioList;
+    }
+
+    @XmlTransient
+    public List<Asesoria> getAsesoriaList() {
+        return asesoriaList;
+    }
+
+    public void setAsesoriaList(List<Asesoria> asesoriaList) {
+        this.asesoriaList = asesoriaList;
     }
 
     @XmlTransient

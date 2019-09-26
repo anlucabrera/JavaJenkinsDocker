@@ -81,9 +81,6 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
     @Column(name = "fecha_graba_permiso")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaGrabaPermiso;
-    @JoinColumn(name = "id_unidad_materia", referencedColumnName = "id_unidad_materia")
-    @ManyToOne
-    private UnidadMateria idUnidadMateria;
     @JoinColumn(name = "id_grupo", referencedColumnName = "id_grupo")
     @ManyToOne(optional = false)
     private Grupo idGrupo;
@@ -93,6 +90,9 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
     @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
     @ManyToOne(optional = false)
     private PlanEstudioMateria idPlanMateria;
+    @JoinColumn(name = "id_unidad_materia", referencedColumnName = "id_unidad_materia")
+    @ManyToOne
+    private UnidadMateria idUnidadMateria;
 
     public PermisosCapturaExtemporaneaGrupal() {
     }
@@ -176,14 +176,6 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
         this.fechaGrabaPermiso = fechaGrabaPermiso;
     }
 
-    public UnidadMateria getIdUnidadMateria() {
-        return idUnidadMateria;
-    }
-
-    public void setIdUnidadMateria(UnidadMateria idUnidadMateria) {
-        this.idUnidadMateria = idUnidadMateria;
-    }
-
     public Grupo getIdGrupo() {
         return idGrupo;
     }
@@ -206,6 +198,14 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
 
     public void setIdPlanMateria(PlanEstudioMateria idPlanMateria) {
         this.idPlanMateria = idPlanMateria;
+    }
+
+    public UnidadMateria getIdUnidadMateria() {
+        return idUnidadMateria;
+    }
+
+    public void setIdUnidadMateria(UnidadMateria idUnidadMateria) {
+        this.idUnidadMateria = idUnidadMateria;
     }
 
     @Override

@@ -217,7 +217,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
             dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
 
             ResultadoEJB<DtoCasoCritico> registrarPorReprobacion = ejbCasoCritico.registrarPorReprobacion(dtoCapturaCalificacion);
-            System.out.println("registrarPorReprobacion = " + registrarPorReprobacion);
+//            System.out.println("registrarPorReprobacion = " + registrarPorReprobacion);
             if(registrarPorReprobacion.getCorrecto()) mostrarMensaje("Se generó un caso crítico automáticamente por promedio reprobatorio.");
             else if(registrarPorReprobacion.getResultado() < 4) mostrarMensajeResultadoEJB(registrarPorReprobacion);
         }

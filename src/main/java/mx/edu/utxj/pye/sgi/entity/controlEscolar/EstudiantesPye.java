@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import javax.persistence.*;
@@ -19,19 +14,19 @@ import java.io.Serializable;
 @Table(name = "estudiantes_pye", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "EstudiantesPye.findAll", query = "SELECT e FROM EstudiantesPye e")
-    , @NamedQuery(name = "EstudiantesPye.findByIdEstudiante", query = "SELECT e FROM EstudiantesPye e WHERE e.idEstudiante = :idEstudiante")
-    , @NamedQuery(name = "EstudiantesPye.findByMatricula", query = "SELECT e FROM EstudiantesPye e WHERE e.matricula = :matricula")
-    , @NamedQuery(name = "EstudiantesPye.findByPeriodo", query = "SELECT e FROM EstudiantesPye e WHERE e.periodo = :periodo")
-    , @NamedQuery(name = "EstudiantesPye.findByNombre", query = "SELECT e FROM EstudiantesPye e WHERE e.nombre = :nombre")
-    , @NamedQuery(name = "EstudiantesPye.findByAPaterno", query = "SELECT e FROM EstudiantesPye e WHERE e.aPaterno = :aPaterno")
-    , @NamedQuery(name = "EstudiantesPye.findByAMaterno", query = "SELECT e FROM EstudiantesPye e WHERE e.aMaterno = :aMaterno")
-    , @NamedQuery(name = "EstudiantesPye.findByCurp", query = "SELECT e FROM EstudiantesPye e WHERE e.curp = :curp")
-    , @NamedQuery(name = "EstudiantesPye.findBySexo", query = "SELECT e FROM EstudiantesPye e WHERE e.sexo = :sexo")
-    , @NamedQuery(name = "EstudiantesPye.findByCarrera", query = "SELECT e FROM EstudiantesPye e WHERE e.carrera = :carrera")
-    , @NamedQuery(name = "EstudiantesPye.findByGrado", query = "SELECT e FROM EstudiantesPye e WHERE e.grado = :grado")
-    , @NamedQuery(name = "EstudiantesPye.findByGrupo", query = "SELECT e FROM EstudiantesPye e WHERE e.grupo = :grupo")
-    , @NamedQuery(name = "EstudiantesPye.findByDescripcion", query = "SELECT e FROM EstudiantesPye e WHERE e.descripcion = :descripcion")})
+        @NamedQuery(name = "EstudiantesPye.findAll", query = "SELECT e FROM EstudiantesPye e")
+        , @NamedQuery(name = "EstudiantesPye.findByIdEstudiante", query = "SELECT e FROM EstudiantesPye e WHERE e.idEstudiante = :idEstudiante")
+        , @NamedQuery(name = "EstudiantesPye.findByMatricula", query = "SELECT e FROM EstudiantesPye e WHERE e.matricula = :matricula")
+        , @NamedQuery(name = "EstudiantesPye.findByPeriodo", query = "SELECT e FROM EstudiantesPye e WHERE e.periodo = :periodo")
+        , @NamedQuery(name = "EstudiantesPye.findByNombre", query = "SELECT e FROM EstudiantesPye e WHERE e.nombre = :nombre")
+        , @NamedQuery(name = "EstudiantesPye.findByAPaterno", query = "SELECT e FROM EstudiantesPye e WHERE e.aPaterno = :aPaterno")
+        , @NamedQuery(name = "EstudiantesPye.findByAMaterno", query = "SELECT e FROM EstudiantesPye e WHERE e.aMaterno = :aMaterno")
+        , @NamedQuery(name = "EstudiantesPye.findByCurp", query = "SELECT e FROM EstudiantesPye e WHERE e.curp = :curp")
+        , @NamedQuery(name = "EstudiantesPye.findBySexo", query = "SELECT e FROM EstudiantesPye e WHERE e.sexo = :sexo")
+        , @NamedQuery(name = "EstudiantesPye.findByCarrera", query = "SELECT e FROM EstudiantesPye e WHERE e.carrera = :carrera")
+        , @NamedQuery(name = "EstudiantesPye.findByGrado", query = "SELECT e FROM EstudiantesPye e WHERE e.grado = :grado")
+        , @NamedQuery(name = "EstudiantesPye.findByGrupo", query = "SELECT e FROM EstudiantesPye e WHERE e.grupo = :grupo")
+        , @NamedQuery(name = "EstudiantesPye.findByDescripcion", query = "SELECT e FROM EstudiantesPye e WHERE e.descripcion = :descripcion")})
 public class EstudiantesPye implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -189,5 +184,6 @@ public class EstudiantesPye implements Serializable {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-    
+
 }
+

@@ -11,6 +11,8 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -36,40 +38,51 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Asesoria.findAll", query = "SELECT a FROM Asesoria a")
     , @NamedQuery(name = "Asesoria.findByIdAsesoria", query = "SELECT a FROM Asesoria a WHERE a.idAsesoria = :idAsesoria")
-    , @NamedQuery(name = "Asesoria.findByAsunto", query = "SELECT a FROM Asesoria a WHERE a.asunto = :asunto")
-    , @NamedQuery(name = "Asesoria.findByFecha", query = "SELECT a FROM Asesoria a WHERE a.fecha = :fecha")
-    , @NamedQuery(name = "Asesoria.findByTipo", query = "SELECT a FROM Asesoria a WHERE a.tipo = :tipo")})
+    , @NamedQuery(name = "Asesoria.findByFechaHora", query = "SELECT a FROM Asesoria a WHERE a.fechaHora = :fechaHora")
+    , @NamedQuery(name = "Asesoria.findByObservacionesCompromisos", query = "SELECT a FROM Asesoria a WHERE a.observacionesCompromisos = :observacionesCompromisos")
+    , @NamedQuery(name = "Asesoria.findByTiempoInvertido", query = "SELECT a FROM Asesoria a WHERE a.tiempoInvertido = :tiempoInvertido")
+    , @NamedQuery(name = "Asesoria.findByTipo", query = "SELECT a FROM Asesoria a WHERE a.tipo = :tipo")
+    , @NamedQuery(name = "Asesoria.findByEventoRegistro", query = "SELECT a FROM Asesoria a WHERE a.eventoRegistro = :eventoRegistro")})
 public class Asesoria implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id_asesoria")
     private Integer idAsesoria;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 450)
-    @Column(name = "asunto")
-    private String asunto;
+    @Column(name = "fecha_hora")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaHora;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "fecha")
-    @Temporal(TemporalType.DATE)
-    private Date fecha;
+    @Size(min = 1, max = 3000)
+    @Column(name = "observaciones_compromisos")
+    private String observacionesCompromisos;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "tiempo_invertido")
+    private String tiempoInvertido;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 11)
     @Column(name = "tipo")
     private String tipo;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "evento_registro")
+    private int eventoRegistro;
     @JoinTable(name = "participantes_asesoria", joinColumns = {
         @JoinColumn(name = "asesoria", referencedColumnName = "id_asesoria")}, inverseJoinColumns = {
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")})
     @ManyToMany
     private List<Estudiante> estudianteList;
-    @JoinColumn(name = "carga", referencedColumnName = "carga")
+    @JoinColumn(name = "configuracion", referencedColumnName = "configuracion")
     @ManyToOne(optional = false)
-    private CargaAcademica carga;
+    private UnidadMateriaConfiguracion configuracion;
 
     public Asesoria() {
     }
@@ -78,11 +91,13 @@ public class Asesoria implements Serializable {
         this.idAsesoria = idAsesoria;
     }
 
-    public Asesoria(Integer idAsesoria, String asunto, Date fecha, String tipo) {
+    public Asesoria(Integer idAsesoria, Date fechaHora, String observacionesCompromisos, String tiempoInvertido, String tipo, int eventoRegistro) {
         this.idAsesoria = idAsesoria;
-        this.asunto = asunto;
-        this.fecha = fecha;
+        this.fechaHora = fechaHora;
+        this.observacionesCompromisos = observacionesCompromisos;
+        this.tiempoInvertido = tiempoInvertido;
         this.tipo = tipo;
+        this.eventoRegistro = eventoRegistro;
     }
 
     public Integer getIdAsesoria() {
@@ -93,20 +108,28 @@ public class Asesoria implements Serializable {
         this.idAsesoria = idAsesoria;
     }
 
-    public String getAsunto() {
-        return asunto;
+    public Date getFechaHora() {
+        return fechaHora;
     }
 
-    public void setAsunto(String asunto) {
-        this.asunto = asunto;
+    public void setFechaHora(Date fechaHora) {
+        this.fechaHora = fechaHora;
     }
 
-    public Date getFecha() {
-        return fecha;
+    public String getObservacionesCompromisos() {
+        return observacionesCompromisos;
     }
 
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
+    public void setObservacionesCompromisos(String observacionesCompromisos) {
+        this.observacionesCompromisos = observacionesCompromisos;
+    }
+
+    public String getTiempoInvertido() {
+        return tiempoInvertido;
+    }
+
+    public void setTiempoInvertido(String tiempoInvertido) {
+        this.tiempoInvertido = tiempoInvertido;
     }
 
     public String getTipo() {
@@ -115,6 +138,14 @@ public class Asesoria implements Serializable {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public int getEventoRegistro() {
+        return eventoRegistro;
+    }
+
+    public void setEventoRegistro(int eventoRegistro) {
+        this.eventoRegistro = eventoRegistro;
     }
 
     @XmlTransient
@@ -126,12 +157,12 @@ public class Asesoria implements Serializable {
         this.estudianteList = estudianteList;
     }
 
-    public CargaAcademica getCarga() {
-        return carga;
+    public UnidadMateriaConfiguracion getConfiguracion() {
+        return configuracion;
     }
 
-    public void setCarga(CargaAcademica carga) {
-        this.carga = carga;
+    public void setConfiguracion(UnidadMateriaConfiguracion configuracion) {
+        this.configuracion = configuracion;
     }
 
     @Override

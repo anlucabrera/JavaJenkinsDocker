@@ -7,7 +7,9 @@ package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,11 +19,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -34,8 +39,13 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Baja.findAll", query = "SELECT b FROM Baja b")
     , @NamedQuery(name = "Baja.findByIdBajas", query = "SELECT b FROM Baja b WHERE b.idBajas = :idBajas")
     , @NamedQuery(name = "Baja.findByPeriodoEscolar", query = "SELECT b FROM Baja b WHERE b.periodoEscolar = :periodoEscolar")
+    , @NamedQuery(name = "Baja.findByTipoBaja", query = "SELECT b FROM Baja b WHERE b.tipoBaja = :tipoBaja")
+    , @NamedQuery(name = "Baja.findByCausaBaja", query = "SELECT b FROM Baja b WHERE b.causaBaja = :causaBaja")
     , @NamedQuery(name = "Baja.findByEmpleado", query = "SELECT b FROM Baja b WHERE b.empleado = :empleado")
-    , @NamedQuery(name = "Baja.findByFechaBaja", query = "SELECT b FROM Baja b WHERE b.fechaBaja = :fechaBaja")})
+    , @NamedQuery(name = "Baja.findByFechaBaja", query = "SELECT b FROM Baja b WHERE b.fechaBaja = :fechaBaja")
+    , @NamedQuery(name = "Baja.findByAccionesTutor", query = "SELECT b FROM Baja b WHERE b.accionesTutor = :accionesTutor")
+    , @NamedQuery(name = "Baja.findByDictamenPsicopedagogia", query = "SELECT b FROM Baja b WHERE b.dictamenPsicopedagogia = :dictamenPsicopedagogia")
+    , @NamedQuery(name = "Baja.findByValido", query = "SELECT b FROM Baja b WHERE b.valido = :valido")})
 public class Baja implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,6 +60,14 @@ public class Baja implements Serializable {
     private int periodoEscolar;
     @Basic(optional = false)
     @NotNull
+    @Column(name = "tipo_baja")
+    private int tipoBaja;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "causa_baja")
+    private int causaBaja;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "empleado")
     private int empleado;
     @Basic(optional = false)
@@ -57,15 +75,19 @@ public class Baja implements Serializable {
     @Column(name = "fecha_baja")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaBaja;
-    @JoinColumn(name = "causa_baja", referencedColumnName = "id_causa_baja")
-    @ManyToOne(optional = false)
-    private CausaBaja causaBaja;
+    @Size(max = 500)
+    @Column(name = "acciones_tutor")
+    private String accionesTutor;
+    @Size(max = 500)
+    @Column(name = "dictamen_psicopedagogia")
+    private String dictamenPsicopedagogia;
+    @Column(name = "valido")
+    private Integer valido;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
     private Estudiante estudiante;
-    @JoinColumn(name = "tipo_baja", referencedColumnName = "id_tipo_baja")
-    @ManyToOne(optional = false)
-    private TipoBaja tipoBaja;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja")
+    private List<BajaReprobacion> bajaReprobacionList;
 
     public Baja() {
     }
@@ -74,9 +96,11 @@ public class Baja implements Serializable {
         this.idBajas = idBajas;
     }
 
-    public Baja(Integer idBajas, int periodoEscolar, int empleado, Date fechaBaja) {
+    public Baja(Integer idBajas, int periodoEscolar, int tipoBaja, int causaBaja, int empleado, Date fechaBaja) {
         this.idBajas = idBajas;
         this.periodoEscolar = periodoEscolar;
+        this.tipoBaja = tipoBaja;
+        this.causaBaja = causaBaja;
         this.empleado = empleado;
         this.fechaBaja = fechaBaja;
     }
@@ -97,6 +121,22 @@ public class Baja implements Serializable {
         this.periodoEscolar = periodoEscolar;
     }
 
+    public int getTipoBaja() {
+        return tipoBaja;
+    }
+
+    public void setTipoBaja(int tipoBaja) {
+        this.tipoBaja = tipoBaja;
+    }
+
+    public int getCausaBaja() {
+        return causaBaja;
+    }
+
+    public void setCausaBaja(int causaBaja) {
+        this.causaBaja = causaBaja;
+    }
+
     public int getEmpleado() {
         return empleado;
     }
@@ -113,12 +153,28 @@ public class Baja implements Serializable {
         this.fechaBaja = fechaBaja;
     }
 
-    public CausaBaja getCausaBaja() {
-        return causaBaja;
+    public String getAccionesTutor() {
+        return accionesTutor;
     }
 
-    public void setCausaBaja(CausaBaja causaBaja) {
-        this.causaBaja = causaBaja;
+    public void setAccionesTutor(String accionesTutor) {
+        this.accionesTutor = accionesTutor;
+    }
+
+    public String getDictamenPsicopedagogia() {
+        return dictamenPsicopedagogia;
+    }
+
+    public void setDictamenPsicopedagogia(String dictamenPsicopedagogia) {
+        this.dictamenPsicopedagogia = dictamenPsicopedagogia;
+    }
+
+    public Integer getValido() {
+        return valido;
+    }
+
+    public void setValido(Integer valido) {
+        this.valido = valido;
     }
 
     public Estudiante getEstudiante() {
@@ -129,12 +185,13 @@ public class Baja implements Serializable {
         this.estudiante = estudiante;
     }
 
-    public TipoBaja getTipoBaja() {
-        return tipoBaja;
+    @XmlTransient
+    public List<BajaReprobacion> getBajaReprobacionList() {
+        return bajaReprobacionList;
     }
 
-    public void setTipoBaja(TipoBaja tipoBaja) {
-        this.tipoBaja = tipoBaja;
+    public void setBajaReprobacionList(List<BajaReprobacion> bajaReprobacionList) {
+        this.bajaReprobacionList = bajaReprobacionList;
     }
 
     @Override

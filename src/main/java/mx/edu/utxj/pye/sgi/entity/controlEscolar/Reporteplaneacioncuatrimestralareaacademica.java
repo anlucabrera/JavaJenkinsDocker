@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
@@ -28,26 +23,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "reporteplaneacioncuatrimestralareaacademica", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findAll", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByConfiguracionDetalle", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.configuracionDetalle = :configuracionDetalle")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByCarga", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.carga = :carga")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByDescripcion", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.descripcion = :descripcion")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByDocente", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.docente = :docente")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByGrado", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.grado = :grado")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByLiteral", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.literal = :literal")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByClaveMateria", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.claveMateria = :claveMateria")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByMateria", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.materia = :materia")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByNoUnidad", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.noUnidad = :noUnidad")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByNombreUnidad", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.nombreUnidad = :nombreUnidad")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByObjetivo", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.objetivo = :objetivo")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByFechaInicio", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.fechaInicio = :fechaInicio")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByFechaFin", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.fechaFin = :fechaFin")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByPorUnidad", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.porUnidad = :porUnidad")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByCriterio", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.criterio = :criterio")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByPorCriterio", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.porCriterio = :porCriterio")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByIndicador", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.indicador = :indicador")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByPorcentajeInd", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.porcentajeInd = :porcentajeInd")
-    , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByAreaSuperior", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.areaSuperior = :areaSuperior")})
+        @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findAll", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByConfiguracionDetalle", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.configuracionDetalle = :configuracionDetalle")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByCarga", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.carga = :carga")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByDescripcion", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.descripcion = :descripcion")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByDocente", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.docente = :docente")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByGrado", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.grado = :grado")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByLiteral", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.literal = :literal")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByClaveMateria", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.claveMateria = :claveMateria")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByMateria", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.materia = :materia")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByNoUnidad", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.noUnidad = :noUnidad")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByNombreUnidad", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.nombreUnidad = :nombreUnidad")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByObjetivo", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.objetivo = :objetivo")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByFechaInicio", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.fechaInicio = :fechaInicio")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByFechaFin", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.fechaFin = :fechaFin")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByPorUnidad", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.porUnidad = :porUnidad")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByCriterio", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.criterio = :criterio")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByPorCriterio", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.porCriterio = :porCriterio")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByIndicador", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.indicador = :indicador")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByPorcentajeInd", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.porcentajeInd = :porcentajeInd")
+        , @NamedQuery(name = "Reporteplaneacioncuatrimestralareaacademica.findByAreaSuperior", query = "SELECT r FROM Reporteplaneacioncuatrimestralareaacademica r WHERE r.areaSuperior = :areaSuperior")})
 public class Reporteplaneacioncuatrimestralareaacademica implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -287,5 +282,6 @@ public class Reporteplaneacioncuatrimestralareaacademica implements Serializable
     public void setAreaSuperior(Short areaSuperior) {
         this.areaSuperior = areaSuperior;
     }
-    
+
 }
+

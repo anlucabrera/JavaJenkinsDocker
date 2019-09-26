@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
@@ -28,22 +23,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "informeplaneacioncuatrimestraldocenteprint", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findAll", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByConfiguracionDetalle", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.configuracionDetalle = :configuracionDetalle")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByCarga", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.carga = :carga")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByConfiguracion", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.configuracion = :configuracion")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByUnidad", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.unidad = :unidad")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByNombreUnidad", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.nombreUnidad = :nombreUnidad")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByObjetivo", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.objetivo = :objetivo")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByFechaInicio", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.fechaInicio = :fechaInicio")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByFechaFin", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.fechaFin = :fechaFin")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByPorUnidad", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.porUnidad = :porUnidad")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByIdCriterio", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.idCriterio = :idCriterio")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByCriterio", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.criterio = :criterio")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByPorCriterio", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.porCriterio = :porCriterio")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByIdIndicador", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.idIndicador = :idIndicador")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByIndicador", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.indicador = :indicador")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByPorcentaje", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.porcentaje = :porcentaje")})
+        @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findAll", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByConfiguracionDetalle", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.configuracionDetalle = :configuracionDetalle")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByCarga", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.carga = :carga")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByConfiguracion", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.configuracion = :configuracion")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByUnidad", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.unidad = :unidad")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByNombreUnidad", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.nombreUnidad = :nombreUnidad")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByObjetivo", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.objetivo = :objetivo")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByFechaInicio", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.fechaInicio = :fechaInicio")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByFechaFin", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.fechaFin = :fechaFin")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByPorUnidad", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.porUnidad = :porUnidad")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByIdCriterio", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.idCriterio = :idCriterio")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByCriterio", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.criterio = :criterio")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByPorCriterio", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.porCriterio = :porCriterio")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByIdIndicador", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.idIndicador = :idIndicador")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByIndicador", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.indicador = :indicador")
+        , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByPorcentaje", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.porcentaje = :porcentaje")})
 public class Informeplaneacioncuatrimestraldocenteprint implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -237,5 +232,6 @@ public class Informeplaneacioncuatrimestraldocenteprint implements Serializable 
     public void setPorcentaje(double porcentaje) {
         this.porcentaje = porcentaje;
     }
-    
+
 }
+

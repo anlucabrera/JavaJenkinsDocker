@@ -64,12 +64,12 @@ public class CargaAcademica implements Serializable {
     @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
     @ManyToOne(optional = false)
     private PlanEstudioMateria idPlanMateria;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
-    private List<Asesoria> asesoriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
+    @OneToMany(mappedBy = "carga")
     private List<CasoCritico> casoCriticoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
     private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica")
+    private List<BajaReprobacion> bajaReprobacionList;
 
     public CargaAcademica() {
     }
@@ -149,15 +149,6 @@ public class CargaAcademica implements Serializable {
     }
 
     @XmlTransient
-    public List<Asesoria> getAsesoriaList() {
-        return asesoriaList;
-    }
-
-    public void setAsesoriaList(List<Asesoria> asesoriaList) {
-        this.asesoriaList = asesoriaList;
-    }
-
-    @XmlTransient
     public List<CasoCritico> getCasoCriticoList() {
         return casoCriticoList;
     }
@@ -173,6 +164,15 @@ public class CargaAcademica implements Serializable {
 
     public void setUnidadMateriaConfiguracionList(List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList) {
         this.unidadMateriaConfiguracionList = unidadMateriaConfiguracionList;
+    }
+
+    @XmlTransient
+    public List<BajaReprobacion> getBajaReprobacionList() {
+        return bajaReprobacionList;
+    }
+
+    public void setBajaReprobacionList(List<BajaReprobacion> bajaReprobacionList) {
+        this.bajaReprobacionList = bajaReprobacionList;
     }
 
     @Override

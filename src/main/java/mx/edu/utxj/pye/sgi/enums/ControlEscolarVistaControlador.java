@@ -22,7 +22,10 @@ public enum ControlEscolarVistaControlador {
     PERMISO_APERTURA_EXTEMPORANEA("/controlEscolar/pye/permisoAperturaExtemporanea.xhtml", PermisoAperturaExtemporaneaAdministrador.class),
     PASE_DE_LISTA("/controlEscolar/docente/paseLista.xhtml", PaseListaDoc.class),
     REPORTE_BECAS("/becas/reporteBecas.xhtml", reporteBecas.class),
-    CREDENCIALIZACION("/controlEscolar/se/credencializacion.xhtml",credencializacionSE.class);
+    CREDENCIALIZACION("/controlEscolar/se/credencializacion.xhtml",credencializacionSE.class),
+    VALIDACION_CAPTURA_CALIFICACIONES("/controlEscolar/director/validacion_captura_calificaciones.xhtml", ValidacionCapturaCalificacionDirector.class),
+    VALIDACION_COMENTARIOS_TUTOR("/controlEscolar/tutor/validacion_comentarios.xhtml", ValidaComentariosTutor.class),
+    CAPTURA_COMENTARIOS_DOCENTE("/controlEscolar/docente/captura_comentarios.xhtml", CapturaComentariosDocente.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
 }

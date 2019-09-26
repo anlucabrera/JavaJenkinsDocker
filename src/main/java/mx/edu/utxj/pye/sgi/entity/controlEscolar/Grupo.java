@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -75,6 +76,8 @@ public class Grupo implements Serializable {
     @NotNull
     @Column(name = "generacion")
     private short generacion;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "grupo")
+    private PlanAccionTutorial planAccionTutorial;
     @JoinColumn(name = "plan", referencedColumnName = "id_plan_estudio")
     @ManyToOne(optional = false)
     private PlanEstudio plan;
@@ -172,6 +175,14 @@ public class Grupo implements Serializable {
 
     public void setGeneracion(short generacion) {
         this.generacion = generacion;
+    }
+
+    public PlanAccionTutorial getPlanAccionTutorial() {
+        return planAccionTutorial;
+    }
+
+    public void setPlanAccionTutorial(PlanAccionTutorial planAccionTutorial) {
+        this.planAccionTutorial = planAccionTutorial;
     }
 
     public PlanEstudio getPlan() {

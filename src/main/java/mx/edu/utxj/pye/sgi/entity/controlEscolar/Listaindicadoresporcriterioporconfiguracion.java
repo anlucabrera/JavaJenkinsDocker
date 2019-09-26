@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
@@ -25,19 +20,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "listaindicadoresporcriterioporconfiguracion", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findAll", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClave", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.clave = :clave")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByConfiguracion", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.configuracion = :configuracion")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPeriodo", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.periodo = :periodo")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByCargaAcademica", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica = :cargaAcademica")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByNombreUnidad", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.nombreUnidad = :nombreUnidad")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByUnidad", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.unidad = :unidad")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClaveCriterio", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.claveCriterio = :claveCriterio")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByCriterio", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.criterio = :criterio")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPorcentaje", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.porcentaje = :porcentaje")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClaveIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.claveIndicador = :claveIndicador")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.indicador = :indicador")
-    , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPorcentajeIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.porcentajeIndicador = :porcentajeIndicador")})
+        @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findAll", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClave", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.clave = :clave")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByConfiguracion", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.configuracion = :configuracion")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPeriodo", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.periodo = :periodo")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByCargaAcademica", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.cargaAcademica = :cargaAcademica")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByNombreUnidad", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.nombreUnidad = :nombreUnidad")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByUnidad", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.unidad = :unidad")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClaveCriterio", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.claveCriterio = :claveCriterio")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByCriterio", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.criterio = :criterio")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPorcentaje", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.porcentaje = :porcentaje")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByClaveIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.claveIndicador = :claveIndicador")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.indicador = :indicador")
+        , @NamedQuery(name = "Listaindicadoresporcriterioporconfiguracion.findByPorcentajeIndicador", query = "SELECT l FROM Listaindicadoresporcriterioporconfiguracion l WHERE l.porcentajeIndicador = :porcentajeIndicador")})
 public class Listaindicadoresporcriterioporconfiguracion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -191,5 +186,5 @@ public class Listaindicadoresporcriterioporconfiguracion implements Serializable
     public void setPorcentajeIndicador(double porcentajeIndicador) {
         this.porcentajeIndicador = porcentajeIndicador;
     }
-    
+
 }

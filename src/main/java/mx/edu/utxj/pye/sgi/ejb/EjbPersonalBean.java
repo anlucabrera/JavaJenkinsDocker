@@ -1,9 +1,12 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.finanzas.NivelServidores;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -12,6 +15,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 
@@ -20,6 +24,7 @@ public class EjbPersonalBean  implements Serializable {
     @EJB Facade f;
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @EJB EjbPropiedades ep;
+    @EJB EjbPacker ejbPacker;
     private EntityManager em;
 
     @PostConstruct
@@ -27,14 +32,15 @@ public class EjbPersonalBean  implements Serializable {
         em = f.getEntityManager();
     }
     public PersonalActivo pack(Personal personal){
-        if(personal == null) return null;
+        /*if(personal == null) return null;
         if(personal.getStatus().equals('B')) return null;
         PersonalActivo activo = new PersonalActivo(personal);
         activo.setAreaOficial(em.find(AreasUniversidad.class, personal.getAreaOficial()));
         activo.setAreaOperativa(em.find(AreasUniversidad.class, personal.getAreaOperativa()));
         activo.setAreaPOA(ejbFiscalizacion.getAreaConPOA(personal.getAreaOperativa()));
         activo.setAreaSuperior(em.find(AreasUniversidad.class, personal.getAreaSuperior()));
-        return activo;
+        return activo;*/
+        return ejbPacker.packPersonalActivo(personal);
     }
 
     public PersonalActivo pack(Integer id){
