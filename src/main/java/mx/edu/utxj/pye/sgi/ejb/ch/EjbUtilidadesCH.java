@@ -16,6 +16,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Permisosadminstracion;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Reporteerrores;
 
 @Local
 public interface EjbUtilidadesCH {
@@ -81,5 +82,14 @@ public interface EjbUtilidadesCH {
 
 ////////////////////////////////////////////////////////////////////////////////Menu
     public List<MenuDinamico> mostrarListaMenu(ListaPersonal personal, Integer nivel, String titulo, String tipoUsuario);
+
+////////////////////////////////////////////////////////////////////////////////Errores
+    public List<Reporteerrores> mostrarListaReporteerroreses();
+
+    public Reporteerrores agregarReporteerroreses(Reporteerrores r);
+
+    public Reporteerrores actualizarReporteerroreses(Reporteerrores r);
+
+    public Reporteerrores eliminarReporteerroreses(Reporteerrores r);
 
 }

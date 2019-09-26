@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Permisosadminstracion;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Reporteerrores;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 @Stateful
@@ -301,5 +302,38 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         } else {
             return pr;
         }
+    }
+    
+////////////////////////////////////////////////////////////////////////////////Errores
+    @Override
+    public List<Reporteerrores> mostrarListaReporteerroreses(){
+        facade.setEntityClass(Reporteerrores.class);
+        List<Reporteerrores> es = facade.findAll();
+        if (es.isEmpty()) {
+            return null;
+        } else {
+            return es;
+        }
+    }
+
+    @Override
+    public Reporteerrores agregarReporteerroreses(Reporteerrores r){
+        facade.setEntityClass(Reporteerrores.class);
+        facade.create(r);
+        return r;
+    }
+
+    @Override
+    public Reporteerrores actualizarReporteerroreses(Reporteerrores r){
+        facade.setEntityClass(Reporteerrores.class);
+        facade.edit(r);
+        return r;
+    }
+
+    @Override
+    public Reporteerrores eliminarReporteerroreses(Reporteerrores r){
+        facade.setEntityClass(Reporteerrores.class);
+        facade.remove(r);
+        return r;
     }
 }

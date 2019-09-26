@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:o="http://omnifaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"   
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
+            <!-- Fin estilos par proceso electoral -->
+        </c:if>
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado{
+                background-color: #00a65a !important;
+            }
+            .pendiente{
+                background-color: #f39c12 !important;
+            }
+            .denegado{
+                background-color: #dd4b39 !important
+            }
+
+        </style>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-10">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link href="/capitalHumano/perfiEmpleado.xhtml">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>
+                            <p:tabView>
+                                <p:tab title="Formulario de Error">
+                                    <h:form id="frmPremDis"> 
+                                        <p:outputPanel id="form1">
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de Error" />
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{adm['label.500.header']}" /> 
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Mensaje" />
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{adm['label.500.title']}" />
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha" />
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{of:formatDate(now, adminConfig.dateFormat)}" />
+                                                                                <hr/>
+                                                                            </div>  
+                                                                            <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="URL" />
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{sessionScope.requestedUri}" />
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo" />
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{sessionScope.exceptionType}" />
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Mensaje Error" />
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{sessionScope.errorMessage}" />
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR' and (controladorEmpleado.nuevoOBJListaPersonal.clave eq 564
+                                                                                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 579
+                                                                                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 511
+                                                                                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 349
+                                                                                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 203
+                                                                                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 617)}">
+                                                                                <div class="row" >
+                                                                                    <div class="ui-g-12"> 
+                                                                                        <div class="box box-solid box-danger">
+                                                                                            <div class="box-header with-border" style="padding-top: 1px">
+                                                                                                <h3>#{adm['label.500.title']}</h3>
+                                                                                            </div>
+                                                                                            <div class="box-body" style="overflow: auto">
+                                                                                                <ul>
+                                                                                                    <li><b>Date/time:</b> #{of:formatDate(now, adminConfig.dateFormat)}</li>
+                                                                                                    <li><b>User agent:</b> #{sessionScope.userAgent}</li>
+                                                                                                    <li>
+                                                                                                        <b>User IP:</b> #{sessionScope.userIp}
+                                                                                                    </li>
+                                                                                                    <li><b>Request URI:</b> <a
+                                                                                                            href="#{sessionScope.requestedUri}">#{sessionScope.requestedUri}</a>
+                                                                                                    </li>
+                                                                                                    <li><b>Ajax request:</b> #{facesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
+                                                                                                    <li><b>Exception type: </b>#{sessionScope.exceptionType}</li>
+                                                                                                    <li><b>Message:</b> #{sessionScope.errorMessage}</li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="box box-solid box-warning">
+                                                                                            <div class="box-header with-border" style="padding-top: 1px">
+                                                                                                <h3>#{adm['label.500.detail']}</h3>
+                                                                                            </div>
+                                                                                            <div class="box-body" style="overflow: auto">
+                                                                                                <pre>
+                                                                                                    #{of:printStackTrace(sessionScope.stacktrace)}
+                                                                                                </pre>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </c:if>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr/>
+                                                                    <div class="row">
+                                                                        <p:outputPanel>
+                                                                            <p:autoUpdate/>
+                                                                            <div class="form-group"> 
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                    <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{reporteDeErrores.obtenerError}" 
+                                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmListaDistinciones')update();"
+                                                                                                     update="@form"  process="@form">
+                                                                                        <f:attribute name="tipoError" value="#{adm['label.500.header']}" />
+                                                                                        <f:attribute name="rutaError" value="#{sessionScope.requestedUri}" />
+                                                                                        <f:attribute name="fechaError" value="#{of:formatDate(now, adminConfig.dateFormat)}" />
+                                                                                        <f:attribute name="tipoExeption" value="#{sessionScope.exceptionType}" />
+                                                                                        <f:attribute name="mensajeError" value="#{sessionScope.errorMessage}" />
+                                                                                    </p:commandButton>
+                                                                                </div>
+                                                                            </div>
+                                                                        </p:outputPanel>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                                               
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </h:form>
+                                </p:tab>
+                            </p:tabView>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>
