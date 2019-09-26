@@ -44,6 +44,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.PaseDeListaDocente;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
@@ -69,6 +70,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     @Getter    @Setter    PaseDeListaDocente rol;
 
     @EJB EjbAsistencias ejb;
+    @EJB EjbValidacionRol evr;
     @EJB EjbPropiedades ep;
     @EJB EjbPacker packer;
     @EJB EjbCasoCritico ecc;
@@ -91,10 +93,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     public void init(){
         try{
             setVistaControlador(ControlEscolarVistaControlador.PASE_DE_LISTA);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDocente(logon.getPersonal().getClave());//validar si es director
-            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
-
-            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarDocente(logon.getPersonal().getClave());
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = evr.validarDocente(logon.getPersonal().getClave());
             if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación

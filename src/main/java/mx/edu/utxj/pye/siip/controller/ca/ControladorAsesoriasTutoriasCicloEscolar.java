@@ -417,6 +417,7 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
         if(ejb.getRegistroAsesoriaTutoriaCicloPeriodo(asesoriaTutoria) != null){
             dto.setMensaje("Los datos que ha ingresado corresponde a una asesoría o tutoría ya existente, favor de verificar su información");
         }else{
+            asesoriaTutoria.setProgramaEducativo(dto.getProgramaEducativoAsesTut().getArea());
             ejb.guardaAsesoriaTutoria(asesoriaTutoria, dto.getRegistroTipo(), dto.getEje(), dto.getAreaPOA().getArea(), controladorModulosRegistro.getEventosRegistros());
             dto.setMensaje("El registro ha sido guardado con exito en la base de datos");
             cargarListaPorEvento();

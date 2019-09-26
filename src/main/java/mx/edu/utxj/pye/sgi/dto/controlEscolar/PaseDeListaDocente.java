@@ -32,7 +32,7 @@ public class PaseDeListaDocente extends AbstractRol{
     /**
      * Representa la referencia hacia el personal docente
     */
-    @Getter @NonNull private PersonalActivo tutor;
+    @Getter @NonNull private PersonalActivo docente;
 
     /**
      * Representa la referencia al evento activo de asignación academica
@@ -169,13 +169,13 @@ public class PaseDeListaDocente extends AbstractRol{
      */
     @Getter @NonNull private List<Listaalumnosca> listaalumnoscas;
     
-    public PaseDeListaDocente(Filter<PersonalActivo> filtro, PersonalActivo tutor) {
+    public PaseDeListaDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
-        this.tutor = tutor;
+        this.docente = docente;
     }
 
     public void setDocente(PersonalActivo tutor) {
-        this.tutor = tutor;
+        this.docente = tutor;
     }
 
     public void setEventoActivo(EventoEscolar eventoActivo) {

@@ -167,9 +167,9 @@ public class PaseDeListaSegTutor extends AbstractRol{
      */
     @Getter @NonNull private List<Listaalumnosca> listaalumnoscas;
     
-    public PaseDeListaSegTutor(Filter<PersonalActivo> filtro, PersonalActivo docente) {
+    public PaseDeListaSegTutor(@NonNull Filter<PersonalActivo> filtro) {
         super(filtro);
-        this.tutor = docente;
+        tutor = filtro.getEntity();
     }
 
     public void setDocente(PersonalActivo docente) {

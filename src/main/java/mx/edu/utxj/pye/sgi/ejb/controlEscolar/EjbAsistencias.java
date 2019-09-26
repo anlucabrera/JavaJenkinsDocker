@@ -133,6 +133,7 @@ public class EjbAsistencias {
                     .map(ResultadoEJB::getValor)
                     .sorted(DtoCargaAcademica::compareTo)
                     .collect(Collectors.toList());
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias.getCargaAcademicasPorTutor()"+cargas.size());
             return ResultadoEJB.crearCorrecto(cargas, "Lista de cargas académicas por docente.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por docente. (EjbAsignacionIndicadoresCriterios.getCargaAcademicaPorDocente)", e, null);

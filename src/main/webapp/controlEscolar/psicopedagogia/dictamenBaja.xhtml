@@ -131,10 +131,10 @@
                                                             class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"
                                                             title="#{baja.dtoRegistroBaja.causaBaja.cveCausa ne 3?'Sin materias reprobadas':'Consultar materias reprobadas'}" disabled="#{baja.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
-                                                            <p:commandButton actionListener="#{dictamenBajaPsicopedagogia.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
+                                                            <!--p:commandButton actionListener="# {dictamenBajaPsicopedagogia.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-file-text-o"
-                                                                                  title="Generar Formato de Baja"  disabled="#{baja.dtoRegistroBaja.registroBaja.idBajas eq null}"/> 
+                                                                                  title="Generar Formato de Baja"  disabled="# {baja.dtoRegistroBaja.registroBaja.idBajas eq null}"/--> 
                                                         </div>
                                                         </center>
                                                     </p:column>

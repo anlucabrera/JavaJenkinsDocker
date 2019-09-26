@@ -129,10 +129,10 @@
                                                             class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"
                                                             title="#{estudiante.dtoRegistroBaja.causaBaja.cveCausa ne 3?'Sin materias reprobadas':'Consultar materias reprobadas'}" disabled="#{estudiante.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
-                                                            <p:commandButton actionListener="#{tramitarBajaTutor.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
+                                                            <!--p:commandButton actionListener="# {tramitarBajaTutor.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-file-text-o"
-                                                                                  title="Generar Formato de Baja"  disabled="#{estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}"/>  
+                                                                                  title="Generar Formato de Baja"  disabled="# {estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}"/-->  
                                                             <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{tramitarBajaTutor.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{status eq 1}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
                                                             </p:commandButton>

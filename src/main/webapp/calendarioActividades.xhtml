@@ -5,7 +5,8 @@
                 xmlns:adm="http://github.com/adminfaces"
                 template="/WEB-INF/templates/template.xhtml"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
@@ -14,6 +15,12 @@
             <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
             <!-- Fin estilos par proceso electoral -->
         </c:if>
+        <script>
+            $(document).ready(function () {
+                pdfHideButton('openFile');
+                pdfHideButton('viewBookmark');
+            });
+        </script>
     </ui:define>
 
     <ui:define name="title"/>
@@ -67,12 +74,13 @@
                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                         <div class="col-md-12">
                                             <div class="box box-widget widget-user-2">
-                                                    <div class="col-sm-12 border-right">
-                                                        <div class="description-block">
-                                                            <object width="100%" height="1000" data="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Calendario de Evaluacion SIIP 2019-Final (1).pdf#toolbar=0"/>
-                                                        </div>
+                                                <div class="col-sm-12 border-right">
+                                                    <div class="description-block">
+                                                        <pe:documentViewer height="500" 
+                                                                           url="https://www.primefaces.org/docs/guide/primefaces_user_guide_6_2.pdf"/>  
                                                     </div>
-                                                </div>                      
+                                                </div>
+                                            </div>                      
                                         </div>
                                     </div>
                                 </p:tab>                                
