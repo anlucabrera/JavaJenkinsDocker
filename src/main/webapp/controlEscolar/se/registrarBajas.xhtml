@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Registrar Bajas
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Registrar Bajas"/>
+
+        <div class="contenedor">
+            <c:if test="#{registrarBajaServiciosEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registrarBajaServiciosEscolares.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                            <div class="ui-material">
+                                                <p:autoComplete id="estudiante" value="#{registrarBajaServiciosEscolares.rol.estudianteSeleccionado}" completeMethod="#{registrarBajaServiciosEscolares.completeEstudiantes}" queryDelay="800"
+                                                                valueChangeListener="#{registrarBajaServiciosEscolares.cambiarEstudiante}"
+                                                                var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.datosComplete}" converter="entityConverter" forceSelection="true" size="70">
+                                                    <p:column>#{estudiante.datosComplete}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Estudiante - Matricula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
+                                                <p:message for="estudiante" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <c:if test="#{registrarBajaServiciosEscolares.rol.estudianteSeleccionado ne null}">
+                                        <div class="row margin-bottom" style="margin-top: 30px;">
+                                            <div class="col-sm-12 col-md-12 col-lg-6">
+                                                <div class="ui-material">
+                                                    <strong>Grado - Grupo - Programa Educativo</strong>
+                                                    <p class="text-muted">
+                                                        #{registrarBajaServiciosEscolares.rol.datosEstudiante.estudiante.grupo.grado}° "#{registrarBajaServiciosEscolares.rol.datosEstudiante.estudiante.grupo.literal}" #{registrarBajaServiciosEscolares.rol.datosEstudiante.estudiante.grupo.idSistema.nombre} de #{registrarBajaServiciosEscolares.rol.datosEstudiante.programaEducativo.nombre}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                <div class="ui-material">
+                                                    <strong>Situación Actual</strong>
+                                                    <p class="text-muted">
+                                                        #{registrarBajaServiciosEscolares.rol.datosEstudiante.estudiante.tipoEstudiante.descripcion}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                <div class="ui-material">
+                                                    <strong>Periodo Escolar</strong>
+                                                    <p class="text-muted">
+                                                        #{registrarBajaServiciosEscolares.rol.datosEstudiante.periodoEscolar.mesInicio.mes} - #{registrarBajaServiciosEscolares.rol.datosEstudiante.periodoEscolar.mesFin.mes} #{registrarBajaServiciosEscolares.rol.datosEstudiante.periodoEscolar.anio}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row margin-bottom" style="margin-top: 30px;">
+
+                                            <div class="col-sm-12 col-md-12 col-lg-6">
+                                                <div class="ui-material">
+                                                     <p:selectOneMenu id="causaBaja" value="#{registrarBajaServiciosEscolares.rol.causaBaja}" converter="entityConverter" valueChangeListener="#{registrarBajaServiciosEscolares.cambiarCausaBaja}">
+                                                        <f:selectItems value="#{registrarBajaServiciosEscolares.rol.causasBaja}" var="causaBaja"
+                                                                       itemValue="#{causaBaja}" itemLabel="#{causaBaja.causa}"/>
+                                                        <p:ajax update="@this" process="@this"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Causa de Baja" for="causaBaja" style="font-weight: bold; font-size: 14px;"/>
+                                                    <p:message for="causaBaja" />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                <div class="ui-material">
+                                                   <p:selectOneMenu id="tipoBaja" value="#{registrarBajaServiciosEscolares.rol.tipoBaja}" converter="entityConverter" valueChangeListener="#{registrarBajaServiciosEscolares.cambiarTipoBaja}">
+                                                        <f:selectItems value="#{registrarBajaServiciosEscolares.rol.tiposBaja}" var="tipoBaja"
+                                                                       itemValue="#{tipoBaja}" itemLabel="#{tipoBaja.descripcion}"/>
+                                                        <p:ajax update="@this" process="@this"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Tipo de Baja" for="tipoBaja" style="font-weight: bold; font-size: 14px;"/>
+                                                    <p:message for="tipoBaja" />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                <div class="ui-material">
+                                                    <p:calendar id="fechaBaja" locale="es" value="#{registrarBajaServiciosEscolares.rol.fechaBaja}" mindate="#{registrarBajaServiciosEscolares.rol.fechaInicio}" maxdate="#{registrarBajaServiciosEscolares.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true"/>
+                                                    <p:outputLabel value="Fecha Baja" for="fechaBaja" style="font-weight: bold; font-size: 14px;"/>
+                                                    <p:message for="fechaBaja" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row margin-bottom" style="margin-top: 30px;">
+                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                <center>
+                                                    <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{registrarBajaServiciosEscolares.guardarRegistroBaja()}" icon="fa fa-pencil-square-o" class="btn-primary" disabled="#{registrarBajaServiciosEscolares.rol.datosEstudiante.estudiante.tipoEstudiante.descripcion ne 'Regular'}"/>
+                                                </center> 
+                                            </div>
+                                        </div> 
+                                     </c:if>
+                                    <c:if test="#{registrarBajaServiciosEscolares.rol.registroBajaEstudiante ne null}">
+                                    <div class="row margin-bottom" style="margin-top: 60px;">
+                                            <center>
+                                                <p:dataTable id="tbRegBaja" var="registroBaja" value="#{registrarBajaServiciosEscolares.rol.registroBajaEstudiante}" 
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" style="width: auto;">
+                                                    <f:facet name="header">
+                                                        <center>Registro de Baja</center>
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Opciones" style="width: 120px;"/>
+                                                            <p:column headerText="No. registro" style="width: 80px;"/> 
+                                                            <p:column headerText="Periodo Escolar" style="width: 150px;"/> 
+                                                            <p:column headerText="Fecha de registro" style="width: 100px;"/>
+                                                            <p:column headerText="Tipo de Baja" style="width: 100px;"/>
+                                                            <p:column headerText="Causa de Baja" style="width: 120px;"/>
+                                                            <p:column headerText="Acciones tomadas por el tutor" style="width: 200px;"/>
+                                                            <p:column headerText="Dictamen de Psicopedagogía" style="width: 200px;"/>
+                                                            <p:column headerText="Personal que registró" style="width: 200px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:ajax event="cellEdit" listener="#{registrarBajaServiciosEscolares.onCellEdit}"/>
+                                                    <c:set var="registro" value="#{registroBaja.registroBaja}"/>
+                                                    <p:column>
+                                                    <center>
+                                                        <div class="btn-group">
+                                                            <p:commandButton actionListener="#{registrarBajaServiciosEscolares.buscarMateriasReprobadas(registro)}"
+                                                            class="btn btn-sm btn-warning" 
+                                                            icon="fa fa-search"
+                                                            title="#{registroBaja.causaBaja.cveCausa ne 3?'Sin materias reprobadas':'Consultar materias reprobadas'}" disabled="#{registroBaja.causaBaja.cveCausa ne 3}"/>
+                                                            <p:commandButton actionListener="#{registrarBajaServiciosEscolares.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
+                                                                                  class="btn btn-sm btn-primary" 
+                                                                                  icon="fa fa-file-text-o"
+                                                                                  title="Generar Formato de Baja"/>  
+                                                            
+                                                            <p:commandButton class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{registrarBajaServiciosEscolares.eliminarRegistroBaja(registro)}" title="Eliminar registro.">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </div>
+                                                    </center>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{registroBaja.registroBaja.idBajas}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{registroBaja.periodoEscolar.mesInicio.mes} - #{registroBaja.periodoEscolar.mesFin.mes} #{registroBaja.periodoEscolar.anio}" style="text-align: center;" />
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                       <h:outputText value="#{registroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{registroBaja.tipoBaja.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{registroBaja.causaBaja.causa}"/>
+                                                    </p:column>
+                                                     <p:column>
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{registroBaja.registroBaja.accionesTutor}"/></f:facet>
+                                                             <f:facet name="input"><h:inputText value="#{registroBaja.registroBaja.accionesTutor}" size="500" style="color: #000000;"/></f:facet>
+                                                        </p:cellEditor> 
+                                                    </p:column>
+                                                     <p:column>
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{registroBaja.registroBaja.dictamenPsicopedagogia}"/></f:facet>
+                                                             <f:facet name="input"><h:inputText value="#{registroBaja.registroBaja.dictamenPsicopedagogia}" size="500" style="color: #000000;"/></f:facet>
+                                                        </p:cellEditor>  
+                                                    </p:column>
+                                                     <p:column style="text-align: center;">
+                                                         <h:outputText value="#{registroBaja.personalRegistro.nombre} - #{registroBaja.personalRegistro.clave}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p></p>
+                                                <p></p>
+                                                <p></p>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </center>
+                                    </div>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                 <!-- Modal Materias Reprobadas -->
+                    <p:dialog id="modalMateriasReprobadas" 
+                              widgetVar="modalMateriasReprobadas" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{registrarBajaServiciosEscolares.rol.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Materias Reprobadas" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                        <h:form id="frmModalMateriasReprobadas" >
+                            <p:remoteCommand name="actualizarModMatRep" update="@form:tblModalMatRep" />
+                            <p:dataTable id="tblModalMatRep" value="#{registrarBajaServiciosEscolares.rol.listaMateriasReprobadas}" var="materiaReprobada"
+                                                 emptyMessage="No se han registrado materias reprobadas" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                 >
+                                       <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones"  width="80" />
+                                                <p:column headerText="Clave Materia"  width="80" />
+                                                <p:column headerText="Materia"  width="100" />
+                                                <p:column headerText="Docente"  width="100" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <c:set var="registroMatRep" value="#{materiaReprobada.bajaReprobacion}"/>
+                                        <p:column style="text-align: center;">
+                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{registrarBajaServiciosEscolares.eliminarRegistroMateriaReprobada(registroMatRep)}" title="Eliminar registro.">
+                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                        </p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{materiaReprobada.bajaReprobacion.cargaAcademica.idPlanMateria.claveMateria}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{materiaReprobada.bajaReprobacion.cargaAcademica.idPlanMateria.idMateria.nombre}" /></p:column>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{materiaReprobada.personal.nombre}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Total de materias reprobadas: #{fn:length(registrarBajaServiciosEscolares.rol.listaMateriasReprobadas)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+                <c:if test="#{!empty registrarBajaServiciosEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{registrarBajaServiciosEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registrar baja</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{registrarBajaServiciosEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!registrarBajaServiciosEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal de servicos escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>

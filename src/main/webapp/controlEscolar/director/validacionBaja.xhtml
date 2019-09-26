@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Validación Baja
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Validación Baja"/>
+        <div class="contenedor">
+            <c:if test="#{validacionBajaDirector.tieneAcceso}">
+                <c:if test="#{validacionBajaDirector.rol.periodos ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(validacionBajaDirector.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{validacionBajaDirector.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{validacionBajaDirector.cambiarPeriodo}">
+                                                    <f:selectItems value="#{validacionBajaDirector.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this, programa"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programa" value="#{validacionBajaDirector.rol.programaEducativo}" converter="entityConverter" valueChangeListener="#{validacionBajaDirector.cambiarProgramaEducativo}">
+                                                    <f:selectItems value="#{validacionBajaDirector.rol.programasEducativos}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa" for="programa"/>
+                                                <p:message for="programa" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                            <center>
+                                                <p:remoteCommand name="actualizar" update="@form:tbListaRegistroBajas" />
+                                                <p:dataTable id="tbListaRegistroBajas" var="baja" value="#{validacionBajaDirector.rol.bajasProgramaEducativo}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                                 tableStyle="vertical-align: middle;" editable="true" editMode="cell">
+                                                    <f:facet name="header">
+                                                        Bajas registradas
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Opciones" style="width: 180px;"/>
+                                                            <p:column headerText="Fecha de Baja" style="width: 120px;"/>
+                                                            <p:column headerText="Grupo" style="width: 150px;"/>
+                                                            <p:column headerText="Matricula" style="width: 80px;"/> 
+                                                            <p:column headerText="Nombre" style="width: 250px;"/>
+                                                            <p:column headerText="Género" style="width: 80px;"/>
+                                                            <p:column headerText="Situación" style="width: 80px;"/>
+                                                            <p:column headerText="Tipo de Baja" style="width: 100px;"/>
+                                                            <p:column headerText="Causa Baja" style="width: 150px;"/>
+                                                            <p:column headerText="Acciones tomadas por el tutor" style="width: 300px;"/>
+                                                            <p:column headerText="Dictamen Psicopedagogía" style="width: 300px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <c:set var="baja" value="#{baja}"/>
+                                                    <c:set var="registro" value="#{baja.dtoRegistroBaja.registroBaja}"/>
+                                                    <p:column>
+                                                        <center>
+                                                        <div class="btn-group">
+                                                            <c:set var="status" value="#{validacionBajaDirector.consultarStatus(baja)}" />
+                                                            <p:commandButton actionListener="#{validacionBajaDirector.validarBaja(registro)}"
+                                                                                  class="btn btn-sm #{status eq 1?'btn-info':'btn-danger'}" icon="#{status eq 1?'fa fa-close':'fa fa-check'}"
+                                                                                  title="#{status eq 1?'Invalidar baja.':'Validar baja.'}"/>
+                                                            <p:commandButton actionListener="#{validacionBajaDirector.buscarMateriasReprobadas(registro)}"
+                                                            class="btn btn-sm btn-warning" 
+                                                            icon="fa fa-search"
+                                                            title="Consultar materias reprobadas" disabled="#{baja.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
+                                                            <p:commandButton actionListener="#{validacionBajaDirector.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
+                                                                                  class="btn btn-sm btn-primary" 
+                                                                                  icon="fa fa-file-text-o"
+                                                                                  title="Generar Formato de Baja"  disabled="#{baja.dtoRegistroBaja.registroBaja.idBajas eq null}"/> 
+                                                            <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{validacionBajaDirector.eliminarRegistroBaja(registro)}" onsuccess="actualizar();">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </div>
+                                                        </center>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.grupo.grado}° #{baja.dtoEstudiante.estudiante.grupo.literal} #{baja.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{baja.dtoRegistroBaja.tipoBaja.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{baja.dtoRegistroBaja.causaBaja.causa}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                         <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.accionesTutor}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                          <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                     <!-- Modal Materias Reprobadas -->
+                    <p:dialog id="modalMateriasReprobadas" 
+                              widgetVar="modalMateriasReprobadas" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{validacionBajaDirector.rol.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              onHide="actualizar();"
+                              header="Materias Reprobadas" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                        <h:form id="frmModalMateriasReprobadas" >
+                            <p:dataTable id="tblModalMatRep" value="#{validacionBajaDirector.rol.listaMateriasReprobadas}" var="materiaReprobada"
+                                                 emptyMessage="No se han registrado materias reprobadas" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                 >
+                                       <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Clave Materia"  width="80" />
+                                                <p:column headerText="Materia"  width="100" />
+                                                <p:column headerText="Docente"  width="100" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;"><h:outputText value="#{materiaReprobada.bajaReprobacion.cargaAcademica.idPlanMateria.claveMateria}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{materiaReprobada.bajaReprobacion.cargaAcademica.idPlanMateria.idMateria.nombre}" /></p:column>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{materiaReprobada.personal.nombre}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Total de materias reprobadas: #{fn:length(validacionBajaDirector.rol.listaMateriasReprobadas)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+                <c:if test="#{!empty validacionBajaDirector.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{validacionBajaDirector.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para validar baja</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{validacionBajaDirector.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{validacionBajaDirector.rol.periodos eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay bajas registradas."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!validacionBajaDirector.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal del área de psicopedagogía."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>
