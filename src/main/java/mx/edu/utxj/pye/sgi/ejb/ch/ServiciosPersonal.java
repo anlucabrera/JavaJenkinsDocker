@@ -137,6 +137,7 @@ public class ServiciosPersonal implements EjbPersonal {
     public Personal mostrarPersonalLogeado(Integer claveTrabajador) throws Throwable {
         facade.setEntityClass(Personal.class);
         Personal pr = facade.getEntityManager().find(Personal.class, claveTrabajador);
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServiciosPersonal.mostrarPersonalLogeado()"+pr);
         if (pr == null) {
             return null;
         } else {

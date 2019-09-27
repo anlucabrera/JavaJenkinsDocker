@@ -22,12 +22,17 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaUnidades;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPlanEstudioMateriaCompetencias;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AreaConocimiento;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Competencia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -38,13 +43,16 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 @Stateless(name = "EjbRegistroPlanEstudio")
 public class EjbRegistroPlanEstudio {
 
-    @EJB    EjbAsignacionAcademica ejbAsignacionAcademica;
-    @EJB    EjbPropiedades ep;
-    @EJB    Facade f;
+    @EJB
+    EjbAsignacionAcademica ejbAsignacionAcademica;
+    @EJB
+    EjbPropiedades ep;
+    @EJB
+    Facade f;
     private EntityManager em;
 
     @PostConstruct
-    public  void init(){
+    public void init() {
         em = f.getEntityManager();
     }
 
@@ -63,7 +71,7 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbRegistroPlanEstudio.validarDirector)", e, null);
         }
     }
-    
+
     public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDirector(Integer clave) {
         try {
             return ejbAsignacionAcademica.validarEncargadoDireccion(clave);
@@ -100,15 +108,13 @@ public class EjbRegistroPlanEstudio {
                     .setParameter("plan", plan.getIdPlanEstudio())
                     .getResultList();
             competenciasPlan.add(new Competencia(0, "Nueva Competencia", "Generica"));
-            
-            
-            
+
             return ResultadoEJB.crearCorrecto(competenciasPlan, "Lista de competenciad activas por plan de estudio");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "Imposible obtener el listado de competenciade del plan de estudio", e, null);
         }
     }
-    
+
     public ResultadoEJB<List<DtoPlanEstudioMateriaCompetencias>> obtenerDtoPEMC(PlanEstudio plan) {
         try {
             final List<DtoPlanEstudioMateriaCompetencias> l = new ArrayList<>();
@@ -168,7 +174,7 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista materias (EjbRegistroPlanEstudio)", e, null);
         }
     }
-    
+
     // Se inicia con el CRUD de un plan de estudios 
     /**
      * Permite registrar un nuevo plan de estudios y poder registrar sus
@@ -296,9 +302,9 @@ public class EjbRegistroPlanEstudio {
      * @param operacion operación a registrar
      * @return Resultado del proceso
      */
-    public ResultadoEJB<PlanEstudioMateria> registrarPlanEstudioMateria(Materia materia, PlanEstudio planEstudio,PlanEstudioMateria estudioMateria, Operacion operacion) {
+    public ResultadoEJB<PlanEstudioMateria> registrarPlanEstudioMateria(Materia materia, PlanEstudio planEstudio, PlanEstudioMateria estudioMateria, Operacion operacion) {
         try {
-                    f.setEntityClass(PlanEstudioMateria.class);
+            f.setEntityClass(PlanEstudioMateria.class);
             switch (operacion) {
                 case PERSISTIR:
                     estudioMateria.setIdMateria(materia);
@@ -397,6 +403,7 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista materias para este plan de estudios (EjbRegistroPlanEstudio)", e, null);
         }
     }
+
     /**
      * Permite mapear el listado de materias con sus unidades registradas de
      * acuerdo al plan de estudios seleccionado
@@ -425,42 +432,41 @@ public class EjbRegistroPlanEstudio {
         }
         return p;
     }
-     
+
     public ResultadoEJB<List<PlanEstudioMateria>> getListaPlanEstudioMaterias(PersonalActivo director) {
         try {
-            final List<PlanEstudio> pe=new ArrayList<>();
-            final List<PlanEstudioMateria> pems=new ArrayList<>();
+            final List<PlanEstudio> pe = new ArrayList<>();
+            final List<PlanEstudioMateria> pems = new ArrayList<>();
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
 
             List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
                     .setParameter("areaPoa", director.getAreaPOA().getArea())
                     .setParameter("categoria", programaEducativoCategoria)
                     .getResultList();
-            
+
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(programas)"+programas.size());
             programas.forEach((t) -> {
                 pe.addAll(generarPlanesEstudio(t));
             });
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(pe)"+pe.size());
-            
+
             pe.forEach((t) -> {
                 pems.addAll(generarPlanEstuidoMaterias(t));
             });
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getListaPlanEstudioMaterias(pems)"+pems.size());
-            
-                       
+
             return ResultadoEJB.crearCorrecto(pems, "Listado de materias registrados para este Plan de estudios");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de Planes de estudio(EjbRegistroPlanEstudio)", e, null);
         }
     }
-    
+
     public List<PlanEstudioMateria> generarPlanEstuidoMaterias(PlanEstudio estudio) {
         return em.createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", PlanEstudioMateria.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                 .getResultList();
     }
-    
+
     public List<Competencia> generarCompetenciasPorPlanEstuidoMaterias(PlanEstudioMateria pem) {
         PlanEstudioMateria estudioMateria = new PlanEstudioMateria();
         estudioMateria = em.createQuery("SELECT pem FROM PlanEstudioMateria pem WHERE pem.idPlanMateria = :idPlanMateria", PlanEstudioMateria.class)
@@ -474,5 +480,47 @@ public class EjbRegistroPlanEstudio {
             return estudioMateria.getCompetenciaList();
         }
     }
-    
+
+    public ResultadoEJB<List<Grupo>> getListaGrupoPlanEstudio(PlanEstudio planEstudio, PeriodosEscolares escolares) {
+        try {
+            List<Grupo> gs = em.createQuery("select g from Grupo g INNER JOIN g.plan p where p.idPlanEstudio=:idPlanEstudio AND g.periodo=:periodo", Grupo.class)
+                    .setParameter("idPlanEstudio", planEstudio.getIdPlanEstudio())
+                    .setParameter("periodo", escolares.getPeriodo())
+                    .getResultList();
+
+            return ResultadoEJB.crearCorrecto(gs, "Listado de materias registrados para este Plan de estudios");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de Planes de estudio(EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<Listaalumnosca>> getListaAlumnosPorGrupo(Grupo grupo) {
+        try {
+            List<Listaalumnosca> listaalumnoscas = new ArrayList<>();
+            List<CargaAcademica> cas = em.createQuery("select c from CargaAcademica c INNER JOIN c.cveGrupo g where g.idGrupo=:idGrupo", CargaAcademica.class)
+                    .setParameter("idGrupo", grupo.getIdGrupo())
+                    .getResultList();
+            if (!cas.isEmpty()) {
+                CargaAcademica ca=cas.get(0);
+                listaalumnoscas = em.createQuery("select a from Listaalumnosca a WHERE a.carga=:carga", Listaalumnosca.class)
+                        .setParameter("carga", ca.getCarga())
+                        .getResultList();
+            }
+            return ResultadoEJB.crearCorrecto(listaalumnoscas, "Listado de Alumnos registrados para este grupo");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de Planes de estudio(EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosDescendentes() {
+        try {
+            final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
+                    .getResultList();
+
+            return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionIndicadoresCriterios.getPeriodosDescendentes)", e, null);
+        }
+    }
+
 }

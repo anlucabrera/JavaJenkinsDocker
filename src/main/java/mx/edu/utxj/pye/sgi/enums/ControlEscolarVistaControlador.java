@@ -31,6 +31,7 @@ public enum ControlEscolarVistaControlador {
     TRAMITAR_BAJAS("/controlEscolar/tutor/tramitarBajas.xhtml", TramitarBajaTutor.class),
     DICTAMEN_BAJAS("/controlEscolar/psicopedagogia/dictamenBaja.xhtml",  DictamenBajaPsicopedagogia.class),
     VALIDACION_BAJAS("/controlEscolar/director/validacionBaja.xhtml",  ValidacionBajaDirector.class),
+    LISTAS_ASISTENCIA("/controlEscolar/director/ListasAsistencias.xhtml",  ValidacionBajaDirector.class),
     REPORTE_BAJAS("/controlEscolar/se/reporteBajas.xhtml",  ReporteBajasServiciosEscolares.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
