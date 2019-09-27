@@ -90,7 +90,7 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
     @PostConstruct
     public void init(){
         try{
-            setVistaControlador(ControlEscolarVistaControlador.PASE_DE_LISTA);
+            setVistaControlador(ControlEscolarVistaControlador.PASE_DE_LISTA_TUTOR);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = evr.validarTutor(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
@@ -105,9 +105,7 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
-           
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaSegTutor.init()"+rol.getTutor());
-            
+                       
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicasPorTutor(rol.getTutor(), rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
             rol.setCargas(resCarga.getValor());
@@ -275,7 +273,11 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
 
                 List<Listaalumnosca> ls = rol.getListaalumnoscas().stream().filter(t -> t.getMatricula() == a.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula()).collect(Collectors.toList());
                 rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(ls.get(0), asFilter, asFilter.size(), d, b));
+            }else{                
+                List<Listaalumnosca> ls = rol.getListaalumnoscas().stream().filter(t -> t.getMatricula() == a.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula()).collect(Collectors.toList());
+                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(ls.get(0), asFilter, asFilter.size(), 100D, Boolean.FALSE));
             }
+            
         });     
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         ResultadoEJB<List<Asistenciasacademicas>> resF = ejb.buscarAsistenciasacademicasFechasMes(rol.getCarga().getCargaAcademica());

@@ -37,6 +37,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGraficaCronograma;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ImpresionPlaneacionCuatrimestral;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -61,6 +62,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
     @Getter    @Setter    ImpresionPlaneacionCuatrimestral rol;
 
     @EJB EjbAsignacionIndicadoresCriterios ejb;
+    @EJB EjbValidacionRol evr;
     @EJB EjbPropiedades ep;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
@@ -80,10 +82,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
     public void init(){
         try{
             setVistaControlador(ControlEscolarVistaControlador.REPORTE_PLANEACION_CUATRIMESTRAL);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDocente(logon.getPersonal().getClave());//validar si es director
-            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
-
-            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarDocente(logon.getPersonal().getClave());
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = evr.validarDocente(logon.getPersonal().getClave());
             if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
@@ -105,6 +104,8 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
+            if(resCarga.getValor().isEmpty()) tieneAcceso = Boolean.FALSE;
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             rol.setCargas(resCarga.getValor());
             rol.setCarga(resCarga.getValor().get(0));
             existeAsignacion();

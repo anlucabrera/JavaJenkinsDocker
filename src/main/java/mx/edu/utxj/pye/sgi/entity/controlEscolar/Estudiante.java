@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "estudiante", catalog = "control_escolar", schema = "")
@@ -84,6 +84,10 @@ public class Estudiante implements Serializable {
     private List<Asistenciasacademicas> asistenciasacademicasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<Baja> bajaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante1")
+    private List<ParticipantesTutoriaGrupal> participantesTutoriaGrupalList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<UnidadMateriaComentario> unidadMateriaComentarioList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
     private Documentosentregadosestudiante documentosentregadosestudiante;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
@@ -97,8 +101,14 @@ public class Estudiante implements Serializable {
     private Grupo grupo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<DocumentoEstudiante> documentoEstudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
     private List<CasoCritico> casoCriticoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<TutoriasIndividuales> tutoriasIndividualesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jefeGrupo")
+    private List<TutoriasGrupales> tutoriasGrupalesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<ParticipantesTutoria> participantesTutoriaList;
 
@@ -210,6 +220,24 @@ public class Estudiante implements Serializable {
         this.bajaList = bajaList;
     }
 
+    @XmlTransient
+    public List<ParticipantesTutoriaGrupal> getParticipantesTutoriaGrupalList() {
+        return participantesTutoriaGrupalList;
+    }
+
+    public void setParticipantesTutoriaGrupalList(List<ParticipantesTutoriaGrupal> participantesTutoriaGrupalList) {
+        this.participantesTutoriaGrupalList = participantesTutoriaGrupalList;
+    }
+
+    @XmlTransient
+    public List<UnidadMateriaComentario> getUnidadMateriaComentarioList() {
+        return unidadMateriaComentarioList;
+    }
+
+    public void setUnidadMateriaComentarioList(List<UnidadMateriaComentario> unidadMateriaComentarioList) {
+        this.unidadMateriaComentarioList = unidadMateriaComentarioList;
+    }
+
     public Documentosentregadosestudiante getDocumentosentregadosestudiante() {
         return documentosentregadosestudiante;
     }
@@ -252,12 +280,39 @@ public class Estudiante implements Serializable {
     }
 
     @XmlTransient
+    public List<TareaIntegradoraPromedio> getTareaIntegradoraPromedioList() {
+        return tareaIntegradoraPromedioList;
+    }
+
+    public void setTareaIntegradoraPromedioList(List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList) {
+        this.tareaIntegradoraPromedioList = tareaIntegradoraPromedioList;
+    }
+
+    @XmlTransient
     public List<CasoCritico> getCasoCriticoList() {
         return casoCriticoList;
     }
 
     public void setCasoCriticoList(List<CasoCritico> casoCriticoList) {
         this.casoCriticoList = casoCriticoList;
+    }
+
+    @XmlTransient
+    public List<TutoriasIndividuales> getTutoriasIndividualesList() {
+        return tutoriasIndividualesList;
+    }
+
+    public void setTutoriasIndividualesList(List<TutoriasIndividuales> tutoriasIndividualesList) {
+        this.tutoriasIndividualesList = tutoriasIndividualesList;
+    }
+
+    @XmlTransient
+    public List<TutoriasGrupales> getTutoriasGrupalesList() {
+        return tutoriasGrupalesList;
+    }
+
+    public void setTutoriasGrupalesList(List<TutoriasGrupales> tutoriasGrupalesList) {
+        this.tutoriasGrupalesList = tutoriasGrupalesList;
     }
 
     @XmlTransient

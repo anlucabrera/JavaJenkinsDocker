@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,16 +18,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "caso_critico", catalog = "control_escolar", schema = "")
@@ -58,8 +61,7 @@ public class CasoCritico implements Serializable {
     @Size(min = 1, max = 72)
     @Column(name = "tipo")
     private String tipo;
-    @Basic(optional = false)
-    @Size(min = 1, max = 1500)
+    @Size(max = 1500)
     @Column(name = "descripcion")
     private String descripcion;
     @Size(max = 31)
@@ -89,15 +91,17 @@ public class CasoCritico implements Serializable {
     @Column(name = "fecha_cierre")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCierre;
-    @JoinColumn(name = "configuracion", referencedColumnName = "configuracion")
-    @ManyToOne(optional = false)
-    private UnidadMateriaConfiguracion configuracion;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private CargaAcademica carga;
     @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
     private Estudiante idEstudiante;
+    @JoinColumn(name = "configuracion", referencedColumnName = "configuracion")
+    @ManyToOne
+    private UnidadMateriaConfiguracion configuracion;
+    @OneToMany(mappedBy = "casoCritico")
+    private List<TutoriasIndividuales> tutoriasIndividualesList;
 
     public CasoCritico() {
     }
@@ -106,10 +110,9 @@ public class CasoCritico implements Serializable {
         this.caso = caso;
     }
 
-    public CasoCritico(Integer caso, String tipo, String descripcion, Date fechaRegistro) {
+    public CasoCritico(Integer caso, String tipo, Date fechaRegistro) {
         this.caso = caso;
         this.tipo = tipo;
-        this.descripcion = descripcion;
         this.fechaRegistro = fechaRegistro;
     }
 
@@ -209,14 +212,6 @@ public class CasoCritico implements Serializable {
         this.fechaCierre = fechaCierre;
     }
 
-    public UnidadMateriaConfiguracion getConfiguracion() {
-        return configuracion;
-    }
-
-    public void setConfiguracion(UnidadMateriaConfiguracion configuracion) {
-        this.configuracion = configuracion;
-    }
-
     public CargaAcademica getCarga() {
         return carga;
     }
@@ -231,6 +226,23 @@ public class CasoCritico implements Serializable {
 
     public void setIdEstudiante(Estudiante idEstudiante) {
         this.idEstudiante = idEstudiante;
+    }
+
+    public UnidadMateriaConfiguracion getConfiguracion() {
+        return configuracion;
+    }
+
+    public void setConfiguracion(UnidadMateriaConfiguracion configuracion) {
+        this.configuracion = configuracion;
+    }
+
+    @XmlTransient
+    public List<TutoriasIndividuales> getTutoriasIndividualesList() {
+        return tutoriasIndividualesList;
+    }
+
+    public void setTutoriasIndividualesList(List<TutoriasIndividuales> tutoriasIndividualesList) {
+        this.tutoriasIndividualesList = tutoriasIndividualesList;
     }
 
     @Override

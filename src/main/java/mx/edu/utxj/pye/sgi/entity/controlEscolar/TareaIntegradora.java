@@ -7,7 +7,9 @@ package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -23,10 +26,11 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "tarea_integradora", catalog = "control_escolar", schema = "")
@@ -62,6 +66,8 @@ public class TareaIntegradora implements Serializable {
     @JoinColumn(name = "carga", referencedColumnName = "carga")
     @OneToOne(optional = false)
     private CargaAcademica carga;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tareaIntegradora")
+    private List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList;
 
     public TareaIntegradora() {
     }
@@ -115,6 +121,15 @@ public class TareaIntegradora implements Serializable {
 
     public void setCarga(CargaAcademica carga) {
         this.carga = carga;
+    }
+
+    @XmlTransient
+    public List<TareaIntegradoraPromedio> getTareaIntegradoraPromedioList() {
+        return tareaIntegradoraPromedioList;
+    }
+
+    public void setTareaIntegradoraPromedioList(List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList) {
+        this.tareaIntegradoraPromedioList = tareaIntegradoraPromedioList;
     }
 
     @Override

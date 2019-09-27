@@ -5,7 +5,6 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 import java.io.Serializable;

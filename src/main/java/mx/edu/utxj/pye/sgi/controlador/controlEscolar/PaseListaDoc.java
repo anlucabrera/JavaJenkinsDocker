@@ -114,6 +114,9 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
+            if(resCarga.getValor().isEmpty()) tieneAcceso = Boolean.FALSE;
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            
             rol.setCargas(resCarga.getValor());
             rol.setCarga(resCarga.getValor().get(0));
             existeAsignacion();

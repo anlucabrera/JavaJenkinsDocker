@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Embeddable
 public class CriterioIndicadorPeriodoPK implements Serializable {

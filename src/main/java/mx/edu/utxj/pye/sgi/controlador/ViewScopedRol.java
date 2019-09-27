@@ -107,7 +107,7 @@ public class ViewScopedRol implements Controlable {
     public boolean estaIdentificado(){
         return vistaControlador != null;
     }
-    
+
     public boolean cortarFlujo(){
         if(verificarInvocacionMenu() || !validarIdentificacion()) return true;
 

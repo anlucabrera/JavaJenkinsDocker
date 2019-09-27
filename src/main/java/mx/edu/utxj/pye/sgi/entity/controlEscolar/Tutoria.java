@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "tutoria", catalog = "control_escolar", schema = "")
@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Tutoria.findByIdTutoria", query = "SELECT t FROM Tutoria t WHERE t.idTutoria = :idTutoria")
     , @NamedQuery(name = "Tutoria.findByAsunto", query = "SELECT t FROM Tutoria t WHERE t.asunto = :asunto")
     , @NamedQuery(name = "Tutoria.findByFecha", query = "SELECT t FROM Tutoria t WHERE t.fecha = :fecha")
-    , @NamedQuery(name = "Tutoria.findByTipo", query = "SELECT t FROM Tutoria t WHERE t.tipo = :tipo")})
+    , @NamedQuery(name = "Tutoria.findByTipo", query = "SELECT t FROM Tutoria t WHERE t.tipo = :tipo")
+    , @NamedQuery(name = "Tutoria.findByEventoRegistro", query = "SELECT t FROM Tutoria t WHERE t.eventoRegistro = :eventoRegistro")})
 public class Tutoria implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,6 +63,10 @@ public class Tutoria implements Serializable {
     @Size(min = 1, max = 10)
     @Column(name = "tipo")
     private String tipo;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "evento_registro")
+    private int eventoRegistro;
     @JoinColumn(name = "grupo", referencedColumnName = "id_grupo")
     @ManyToOne(optional = false)
     private Grupo grupo;
@@ -75,11 +80,12 @@ public class Tutoria implements Serializable {
         this.idTutoria = idTutoria;
     }
 
-    public Tutoria(Integer idTutoria, String asunto, Date fecha, String tipo) {
+    public Tutoria(Integer idTutoria, String asunto, Date fecha, String tipo, int eventoRegistro) {
         this.idTutoria = idTutoria;
         this.asunto = asunto;
         this.fecha = fecha;
         this.tipo = tipo;
+        this.eventoRegistro = eventoRegistro;
     }
 
     public Integer getIdTutoria() {
@@ -112,6 +118,14 @@ public class Tutoria implements Serializable {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public int getEventoRegistro() {
+        return eventoRegistro;
+    }
+
+    public void setEventoRegistro(int eventoRegistro) {
+        this.eventoRegistro = eventoRegistro;
     }
 
     public Grupo getGrupo() {

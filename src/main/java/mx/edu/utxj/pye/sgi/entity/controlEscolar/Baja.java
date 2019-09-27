@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "baja", catalog = "control_escolar", schema = "")
@@ -42,7 +42,10 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Baja.findByTipoBaja", query = "SELECT b FROM Baja b WHERE b.tipoBaja = :tipoBaja")
     , @NamedQuery(name = "Baja.findByCausaBaja", query = "SELECT b FROM Baja b WHERE b.causaBaja = :causaBaja")
     , @NamedQuery(name = "Baja.findByEmpleado", query = "SELECT b FROM Baja b WHERE b.empleado = :empleado")
-    , @NamedQuery(name = "Baja.findByFechaBaja", query = "SELECT b FROM Baja b WHERE b.fechaBaja = :fechaBaja")})
+    , @NamedQuery(name = "Baja.findByFechaBaja", query = "SELECT b FROM Baja b WHERE b.fechaBaja = :fechaBaja")
+    , @NamedQuery(name = "Baja.findByAccionesTutor", query = "SELECT b FROM Baja b WHERE b.accionesTutor = :accionesTutor")
+    , @NamedQuery(name = "Baja.findByDictamenPsicopedagogia", query = "SELECT b FROM Baja b WHERE b.dictamenPsicopedagogia = :dictamenPsicopedagogia")
+    , @NamedQuery(name = "Baja.findByValido", query = "SELECT b FROM Baja b WHERE b.valido = :valido")})
 public class Baja implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,24 +75,26 @@ public class Baja implements Serializable {
     @Column(name = "fecha_baja")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaBaja;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja")
-    private List<BajaReprobacion> bajaReprobacionList;
-    @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false)
-    private Estudiante estudiante;
-    @Size(max = 500)
+    @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 500)
     @Column(name = "acciones_tutor")
     private String accionesTutor;
-    @Size(max = 500)
+    @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 500)
     @Column(name = "dictamen_psicopedagogia")
     private String dictamenPsicopedagogia;
     @Basic(optional = false)
     @NotNull
     @Column(name = "valido")
     private int valido;
-    
+    @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
+    @ManyToOne(optional = false)
+    private Estudiante estudiante;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja")
+    private List<BajaReprobacion> bajaReprobacionList;
+
     public Baja() {
     }
 
@@ -97,13 +102,16 @@ public class Baja implements Serializable {
         this.idBajas = idBajas;
     }
 
-    public Baja(Integer idBajas, int periodoEscolar, int tipoBaja, int causaBaja, int empleado, Date fechaBaja) {
+    public Baja(Integer idBajas, int periodoEscolar, int tipoBaja, int causaBaja, int empleado, Date fechaBaja, String accionesTutor, String dictamenPsicopedagogia, int valido) {
         this.idBajas = idBajas;
         this.periodoEscolar = periodoEscolar;
         this.tipoBaja = tipoBaja;
         this.causaBaja = causaBaja;
         this.empleado = empleado;
         this.fechaBaja = fechaBaja;
+        this.accionesTutor = accionesTutor;
+        this.dictamenPsicopedagogia = dictamenPsicopedagogia;
+        this.valido = valido;
     }
 
     public Integer getIdBajas() {
@@ -153,15 +161,7 @@ public class Baja implements Serializable {
     public void setFechaBaja(Date fechaBaja) {
         this.fechaBaja = fechaBaja;
     }
-    
-     public Estudiante getEstudiante() {
-        return estudiante;
-    }
 
-    public void setEstudiante(Estudiante estudiante) {
-        this.estudiante = estudiante;
-    }
-    
     public String getAccionesTutor() {
         return accionesTutor;
     }
@@ -176,6 +176,31 @@ public class Baja implements Serializable {
 
     public void setDictamenPsicopedagogia(String dictamenPsicopedagogia) {
         this.dictamenPsicopedagogia = dictamenPsicopedagogia;
+    }
+
+    public int getValido() {
+        return valido;
+    }
+
+    public void setValido(int valido) {
+        this.valido = valido;
+    }
+
+    public Estudiante getEstudiante() {
+        return estudiante;
+    }
+
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
+    }
+
+    @XmlTransient
+    public List<BajaReprobacion> getBajaReprobacionList() {
+        return bajaReprobacionList;
+    }
+
+    public void setBajaReprobacionList(List<BajaReprobacion> bajaReprobacionList) {
+        this.bajaReprobacionList = bajaReprobacionList;
     }
 
     @Override
@@ -201,23 +226,6 @@ public class Baja implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja[ idBajas=" + idBajas + " ]";
-    }
-
-    @XmlTransient
-    public List<BajaReprobacion> getBajaReprobacionList() {
-        return bajaReprobacionList;
-    }
-
-    public void setBajaReprobacionList(List<BajaReprobacion> bajaReprobacionList) {
-        this.bajaReprobacionList = bajaReprobacionList;
-    }
-
-    public int getValido() {
-        return valido;
-    }
-
-    public void setValido(int valido) {
-        this.valido = valido;
     }
     
 }

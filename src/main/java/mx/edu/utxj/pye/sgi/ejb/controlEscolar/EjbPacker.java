@@ -34,6 +34,7 @@ public class EjbPacker {
     @EJB EjbAsignacionAcademica ejbAsignacionAcademica;
     @EJB EjbCapturaCalificaciones ejbCapturaCalificaciones;
     @EJB EjbCasoCritico ejbCasoCritico;
+    @EJB EjbValidacionComentarios ejbValidacionComentarios;
     @EJB EjbPropiedades ep;
     private EntityManager em;
 
@@ -50,6 +51,14 @@ public class EjbPacker {
         activo.setAreaOperativa(em.find(AreasUniversidad.class, personal.getAreaOperativa()));
         activo.setAreaPOA(ejbFiscalizacion.getAreaConPOA(personal.getAreaOperativa()));
         activo.setAreaSuperior(em.find(AreasUniversidad.class, personal.getAreaSuperior()));
+        List<Grupo> grupos = em.createQuery("select g from Grupo g  where g.tutor=:tutor order by g.periodo desc", Grupo.class)
+                .setParameter("tutor", personal.getClave())
+                .getResultStream()
+//                .map(cargaAcademica -> packCargaAcademica(cargaAcademica))
+//                .filter(ResultadoEJB::getCorrecto)
+//                .map(ResultadoEJB::getValor)
+                .collect(Collectors.toList());
+        activo.setGruposTutorados(grupos);
         return activo;
     }
 
@@ -332,7 +341,26 @@ public class EjbPacker {
                     .collect(Collectors.toList());
             DtoCapturaCalificacion dtoCapturaCalificacion = new DtoCapturaCalificacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, capturas);
             ResultadoEJB<BigDecimal> resPromedio = ejbCapturaCalificaciones.promediarUnidad(dtoCapturaCalificacion);
-            if(resPromedio.getCorrecto()) dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
+            if(resPromedio.getCorrecto()) {
+                dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
+                ResultadoEJB<Boolean> validarPromedioAprobatorio = ejbCapturaCalificaciones.validarPromedioAprobatorio(dtoCapturaCalificacion.getPromedio());
+                if(validarPromedioAprobatorio.getCorrecto()){
+                    dtoCapturaCalificacion.setEstaAprobado(validarPromedioAprobatorio.getValor());
+
+                    UnidadMateriaComentario unidadMateriaComentario = em.createQuery("select c from UnidadMateriaComentario c where c.estudiante=:estudiante and c.unidadMateriaConfiguracion=:configuracion", UnidadMateriaComentario.class)
+                            .setParameter("estudiante", dtoEstudiante.getInscripcionActiva().getInscripcion())
+                            .setParameter("configuracion", dtoUnidadConfiguracion.getUnidadMateriaConfiguracion())
+                            .getResultStream()
+                            .findFirst()
+                            .orElse(null);
+
+                    dtoCapturaCalificacion.setTieneComentarioReprobatorio(unidadMateriaComentario != null);
+                    if(dtoCapturaCalificacion.getTieneComentarioReprobatorio()) dtoCapturaCalificacion.setComentarioReprobatorio(unidadMateriaComentario);
+
+                    ResultadoEJB<Boolean> eliminarComentarioReprobatorio = ejbValidacionComentarios.eliminarComentarioReprobatorio(dtoCapturaCalificacion);//intenta eliminar el comentario si es que no es necesario
+                    System.out.println("eliminarComentarioReprobatorio = " + eliminarComentarioReprobatorio);
+                }else validarPromedioAprobatorio.getException().printStackTrace();
+            }else resPromedio.getException().printStackTrace();
 
             //identificar caso crítico abierto mas reciente registrado por el usuario
             ResultadoEJB<DtoCasoCritico> generarNuevo = ejbCasoCritico.generarNuevo(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, CasoCriticoTipo.ASISTENCIA_IRREGURLAR);

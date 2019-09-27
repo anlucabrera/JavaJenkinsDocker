@@ -94,6 +94,25 @@ public abstract class AbstractRol implements Rolable {
 
     }
 
+    private boolean comprobar(PersonalFiltro personalFiltro, Integer claveTutor, List<Grupo> cargas){
+        if(filtro.hasParam(personalFiltro.getLabel())){
+            if(cargas == null) cargas = Collections.EMPTY_LIST;
+            /*Integer clave = cargas
+                    .stream()
+                    .map(DtoCargaAcademica::getGrupo)
+                    .map(Grupo::getTutor)
+                    .filter(tutor -> tutor == claveTutor)
+                    .findFirst()
+                    .orElse(null);*/
+
+            if(cargas == null) return true;//cambiar a false sino funciona
+
+            return  cargas.isEmpty();//negar si no funcionar
+        }else return false;
+
+
+    }
+
     private boolean comprobar(PersonalFiltro personalFiltro, PersonalActivo personalActivo){
         if(filtro.hasParam(personalFiltro.getLabel())) {
             if (personalActivo == null) return false;

@@ -39,6 +39,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Asistencias.findByTipoAsistencia", query = "SELECT a FROM Asistencias a WHERE a.tipoAsistencia = :tipoAsistencia")})
 public class Asistencias implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "asistencia")
+    private Long asistencia;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fechaHora")
@@ -49,13 +55,6 @@ public class Asistencias implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "tipoAsistencia")
     private String tipoAsistencia;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "asistencia")
-    private Long asistencia;
     @OneToMany(mappedBy = "asistencia")
     private List<Asistenciasacademicas> asistenciasacademicasList;
 
@@ -80,6 +79,21 @@ public class Asistencias implements Serializable {
         this.asistencia = asistencia;
     }
 
+    public Date getFechaHora() {
+        return fechaHora;
+    }
+
+    public void setFechaHora(Date fechaHora) {
+        this.fechaHora = fechaHora;
+    }
+
+    public String getTipoAsistencia() {
+        return tipoAsistencia;
+    }
+
+    public void setTipoAsistencia(String tipoAsistencia) {
+        this.tipoAsistencia = tipoAsistencia;
+    }
 
     @XmlTransient
     public List<Asistenciasacademicas> getAsistenciasacademicasList() {
@@ -113,22 +127,6 @@ public class Asistencias implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistencias[ asistencia=" + asistencia + " ]";
-    }
-
-    public Date getFechaHora() {
-        return fechaHora;
-    }
-
-    public void setFechaHora(Date fechaHora) {
-        this.fechaHora = fechaHora;
-    }
-
-    public String getTipoAsistencia() {
-        return tipoAsistencia;
-    }
-
-    public void setTipoAsistencia(String tipoAsistencia) {
-        this.tipoAsistencia = tipoAsistencia;
     }
     
 }

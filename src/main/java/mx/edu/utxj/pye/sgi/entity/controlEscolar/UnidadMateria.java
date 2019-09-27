@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "unidad_materia", catalog = "control_escolar", schema = "")
@@ -80,6 +80,8 @@ public class UnidadMateria implements Serializable {
     private Materia idMateria;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUnidadMateria")
     private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
+    @OneToMany(mappedBy = "idUnidadMateria")
+    private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
 
     public UnidadMateria() {
     }
@@ -169,6 +171,15 @@ public class UnidadMateria implements Serializable {
 
     public void setUnidadMateriaConfiguracionList(List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList) {
         this.unidadMateriaConfiguracionList = unidadMateriaConfiguracionList;
+    }
+
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaGrupal> getPermisosCapturaExtemporaneaGrupalList() {
+        return permisosCapturaExtemporaneaGrupalList;
+    }
+
+    public void setPermisosCapturaExtemporaneaGrupalList(List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList) {
+        this.permisosCapturaExtemporaneaGrupalList = permisosCapturaExtemporaneaGrupalList;
     }
 
     @Override
