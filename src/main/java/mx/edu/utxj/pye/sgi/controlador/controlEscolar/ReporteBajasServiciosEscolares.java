@@ -23,6 +23,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReporteBajasRolServiciosEscolares;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaReprobada;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
@@ -213,9 +214,9 @@ public class ReporteBajasServiciosEscolares extends ViewScopedRol implements Des
      * @param baja Registro de la baja
      * @return valor boolean según sea el caso
      */
-    public Integer consultarStatus(DtoTramitarBajas baja){
-        rol.setStatusBaja(ejb.buscarValidacionBaja(baja.getDtoRegistroBaja().getRegistroBaja()).getValor());
-        return rol.getStatusBaja();
+    public DtoValidacionesBaja consultarStatus(DtoTramitarBajas baja){
+        rol.setDtoValidacionesBaja(ejb.buscarValidacionesBaja(baja.getDtoRegistroBaja().getRegistroBaja()).getValor());
+        return rol.getDtoValidacionesBaja();
     }
     
      /**

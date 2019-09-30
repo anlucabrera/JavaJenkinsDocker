@@ -76,9 +76,9 @@ public class ReporteBajasRolServiciosEscolares extends AbstractRol{
     @Getter @NonNull private Boolean forzarAperturaDialogo;
     
      /**
-     * Valor se encuentra validado o no la baja
+     * Valor del status de la baja y área que valida
      */
-    @Getter @NonNull private Integer statusBaja;
+    @Getter @NonNull private DtoValidacionesBaja dtoValidacionesBaja;
     
     /**
      * Información completa de la Baja registrada
@@ -134,10 +134,10 @@ public class ReporteBajasRolServiciosEscolares extends AbstractRol{
         this.forzarAperturaDialogo = forzarAperturaDialogo;
     }
 
-    public void setStatusBaja(Integer statusBaja) {
-        this.statusBaja = statusBaja;
+    public void setDtoValidacionesBaja(DtoValidacionesBaja dtoValidacionesBaja) {
+        this.dtoValidacionesBaja = dtoValidacionesBaja;
     }
-
+   
     public void setRegistroBajaEstudiante(DtoRegistroBajaEstudiante registroBajaEstudiante) {
         this.registroBajaEstudiante = registroBajaEstudiante;
     }

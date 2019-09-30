@@ -86,9 +86,9 @@ public class ValidacionBajaRolDirector extends AbstractRol{
     @Getter @NonNull private Boolean forzarAperturaDialogo;
     
      /**
-     * Valor se encuentra validado o no la baja
+     * Valor del status de la baja y área que valida
      */
-    @Getter @NonNull private Integer statusBaja;
+    @Getter @NonNull private DtoValidacionesBaja dtoValidacionesBaja;
    
      public ValidacionBajaRolDirector(Filter<PersonalActivo> filtro, PersonalActivo directorCarrera) {
         super(filtro);
@@ -147,7 +147,7 @@ public class ValidacionBajaRolDirector extends AbstractRol{
         this.forzarAperturaDialogo = forzarAperturaDialogo;
     }
 
-    public void setStatusBaja(Integer statusBaja) {
-        this.statusBaja = statusBaja;
+    public void setDtoValidacionesBaja(DtoValidacionesBaja dtoValidacionesBaja) {
+        this.dtoValidacionesBaja = dtoValidacionesBaja;
     }
 }

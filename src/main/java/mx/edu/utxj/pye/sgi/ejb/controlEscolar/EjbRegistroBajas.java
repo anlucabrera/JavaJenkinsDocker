@@ -35,6 +35,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoListadoTutores;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRangoFechasPermiso;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroBajaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
 /**
  *
@@ -150,6 +151,23 @@ public class EjbRegistroBajas {
         }
     }
     
+    /**
+     * Permite obtener la lista de tipos de baja activas para registrar la baja
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<BajasTipo>> getTiposBajaTutor(){
+        try{
+            List<BajasTipo> bajasTipos = em.createQuery("SELECT bt FROM BajasTipo bt WHERE bt.tipoBaja =:tipo  ORDER BY bt.descripcion ASC", BajasTipo.class)
+                    .setParameter("tipo", (int) 1)
+                    .getResultList();
+            
+            return ResultadoEJB.crearCorrecto(bajasTipos, "Lista de tipos de baja para realizar el registro de baja.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de tipos de bajas para el registro de baja. (EjbRegistroBajas.getTiposBaja)", e, null);
+        }
+    }
+    
+    
       /**
      * Permite obtener la lista de causas de baja para registrar la baja
      * @return Resultado del proceso
@@ -206,11 +224,12 @@ public class EjbRegistroBajas {
             registroBaja.setEstudiante(estudianteBaja);
             registroBaja.setTipoBaja(tipoBaja.getTipoBaja());
             registroBaja.setCausaBaja(causaBaja.getCveCausa());
-            registroBaja.setEmpleado(personal.getPersonal().getClave());
+            registroBaja.setEmpleadoRegistro(personal.getPersonal().getClave());
             registroBaja.setFechaBaja(fechaBaja);
             registroBaja.setAccionesTutor("Sin información");
             registroBaja.setDictamenPsicopedagogia("Sin información");
-            registroBaja.setValido((int)1);
+            registroBaja.setFechaValidacion(new Date());
+            registroBaja.setValidada((int)1);
             em.persist(registroBaja);
             em.flush();
             
@@ -273,7 +292,7 @@ public class EjbRegistroBajas {
             
                 BajasTipo tipoBaja = em.find(BajasTipo.class, registroBaja.getTipoBaja());
                 BajasCausa causaBaja = em.find(BajasCausa.class, registroBaja.getCausaBaja());
-                Personal personal = em.find(Personal.class, registroBaja.getEmpleado());
+                Personal personal = em.find(Personal.class, registroBaja.getEmpleadoRegistro());
                 AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
                 PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
             
@@ -568,7 +587,7 @@ public class EjbRegistroBajas {
             registroBaja.setEstudiante(estudianteBaja);
             registroBaja.setTipoBaja(tipoBaja.getTipoBaja());
             registroBaja.setCausaBaja(causaBaja.getCveCausa());
-            registroBaja.setEmpleado(personal.getPersonal().getClave());
+            registroBaja.setEmpleadoRegistro(personal.getPersonal().getClave());
             registroBaja.setFechaBaja(fechaBaja);
             registroBaja.setAccionesTutor(acciones);
             registroBaja.setDictamenPsicopedagogia("Sin información");
@@ -800,9 +819,10 @@ public class EjbRegistroBajas {
      */
     public ResultadoEJB<Baja> actualizarDictamenBaja(Baja baja, String dictamen){
         try{
-            
+            Integer valido =1;
             Baja registroBaja = em.find(Baja.class, baja.getIdBajas());
             registroBaja.setDictamenPsicopedagogia(dictamen);
+            registroBaja.setValidoPsicopedagogia(valido);
             f.edit(registroBaja);
             em.flush();
            
@@ -919,24 +939,114 @@ public class EjbRegistroBajas {
         }
     }
     
-     /**
-     * Permite verificar si la baja esta validada o no por dirección de carrera
+    /**
+     * Permite obtener la información de validaciones de la baja por el área correspondiente (Servicios Escolares o Dirección de Carrera) y Psicopedagogía
      * @param registro Clave de registro de baja
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Integer> buscarValidacionBaja(Baja registro) {
+    public ResultadoEJB<DtoValidacionesBaja> buscarValidacionesBaja(Baja registro) {
         try{
             Baja baja = em.createQuery("SELECT b FROM Baja b WHERE b.idBajas =:baja", Baja.class)
                     .setParameter("baja", registro.getIdBajas())
                     .getSingleResult();
             
-            Integer status = baja.getValido();
+            String areaValidacion ="", validacionBaja = "", validacionPsic ="";
             
-            return ResultadoEJB.crearCorrecto(status, "Status de la baja.");
+            Personal personal = em.find(Personal.class, baja.getEmpleadoRegistro());
+            
+            if(personal.getAreaSuperior() == 10)
+            {
+                areaValidacion ="Servicios Escolares";
+            }else{
+                areaValidacion ="Dirección de Carrera";
+            }
+            
+             if(baja.getValidada() == 0)
+            {
+                validacionBaja ="Pendiente";
+            }else{
+                validacionBaja ="Hecha";
+            }
+             
+              if(baja.getValidoPsicopedagogia()== 0)
+            {
+                validacionPsic ="Pendiente";
+            }else{
+                validacionPsic ="Hecha";
+            }
+            
+            DtoValidacionesBaja dtoValidacionesBaja = new  DtoValidacionesBaja(areaValidacion, baja.getFechaValidacion(), validacionBaja, validacionPsic);
+            
+            return ResultadoEJB.crearCorrecto(dtoValidacionesBaja, "Status de la baja.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener el status de la baja. (EjbRegistroBajas.buscarValidacionBaja)", e, null);
         }
     }
+    
+//     /**
+//     * Permite verificar si la baja esta validada o no por dirección de carrera
+//     * @param registro Clave de registro de baja
+//     * @return Resultado del proceso
+//     */
+//    public ResultadoEJB<String> buscarValidacionBaja(Baja registro) {
+//        try{
+//            Baja baja = em.createQuery("SELECT b FROM Baja b WHERE b.idBajas =:baja", Baja.class)
+//                    .setParameter("baja", registro.getIdBajas())
+//                    .getSingleResult();
+//            
+//            String validacionArea = "";
+//            
+//            Personal personal = em.find(Personal.class, baja.getEmpleadoRegistro());
+//            
+//            if(personal.getAreaOperativa() == 10 && baja.getValidada() == 1) 
+//                { 
+//
+//			validacionArea = "Hecha - Servicios Escolares";
+//                } 
+//                else 
+//                { 
+//                    if(personal.getAreaOperativa() == 10 && baja.getValidada() == 0) 
+//		    {
+//			validacionArea = "Pendiente - Servicios Escolares";
+//						
+//		    }
+//					
+//		    if(personal.getAreaOperativa() != 10 && baja.getValidada() == 1) 
+//		    {
+//		        validacionArea = "Hecha - Dirección de Carrera";
+//						
+//		    }
+//		    if(personal.getAreaOperativa() != 10 && baja.getValidada() == 0) 
+//		    {
+//                        validacionArea = "Pendiente - Dirección de Carrera";
+//						
+//		    }
+//                }
+//            
+//            return ResultadoEJB.crearCorrecto(validacionArea, "Status de la baja.");
+//        }catch (Exception e){
+//            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el status de la baja. (EjbRegistroBajas.buscarValidacionBaja)", e, null);
+//        }
+//    }
+//    
+//     /**
+//     * Permite verificar si la baja esta validada o no por psicopedagogía
+//     * @param registro Clave de registro de baja
+//     * @return Resultado del proceso
+//     */
+//    public ResultadoEJB<Integer> buscarValidacionPsicopedagogia(Baja registro) {
+//        try{
+//            Baja baja = em.createQuery("SELECT b FROM Baja b WHERE b.idBajas =:baja", Baja.class)
+//                    .setParameter("baja", registro.getIdBajas())
+//                    .getSingleResult();
+//           
+//            Integer status = baja.getValidoPsicopedagogia();
+//            
+//            return ResultadoEJB.crearCorrecto(status, "Status de la baja por psicopedagogía.");
+//        }catch (Exception e){
+//            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el status de la baja por psicopedagogía. (EjbRegistroBajas.buscarValidacionPsicopedagogia)", e, null);
+//        }
+//    }
     
       /**
      * Permite eliminar el registro de baja
@@ -948,17 +1058,17 @@ public class EjbRegistroBajas {
             String mensaje;
             Integer validar;
 
-            if (registro.getValido() == 0) {
-                validar = em.createQuery("update Baja b set b.valido =:valor where b.idBajas =:baja").setParameter("valor", (int)1).setParameter("baja", registro.getIdBajas())
+            if (registro.getValidada()== 0) {
+                validar = em.createQuery("update Baja b set b.validada =:valor, b.fechaValidacion =:fecha where b.idBajas =:baja").setParameter("valor", (int)1).setParameter("baja", registro.getIdBajas()).setParameter("fecha", new Date())
                         .executeUpdate();
                 
-                Integer delete = cambiarStatusEstudiante(registro).getValor();
+                Integer actualizarStatus = cambiarStatusEstudiante(registro).getValor();
                 mensaje ="La baja se ha validado correctamente";
             } else {
-                validar = em.createQuery("update Baja b set b.valido =:valor where b.idBajas =:baja").setParameter("valor", (int)0).setParameter("baja", registro.getIdBajas())
+                validar = em.createQuery("update Baja b set b.validada =:valor, b.fechaValidacion =:fecha where b.idBajas =:baja").setParameter("valor", (int)0).setParameter("baja", registro.getIdBajas()).setParameter("fecha", null)
                         .executeUpdate();
                 mensaje ="La baja se ha invalidado correctamente";
-                Integer delete = resetearStatusEstudiante(registro).getValor();
+                Integer actualizarStatus = resetearStatusEstudiante(registro).getValor();
             }
             
                        

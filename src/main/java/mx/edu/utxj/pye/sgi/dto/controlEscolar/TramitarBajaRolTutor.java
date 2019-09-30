@@ -59,7 +59,7 @@ public class TramitarBajaRolTutor extends AbstractRol {
     @Getter @NonNull private List<DtoTramitarBajas> estudiantesGrupo;
     
      /**
-     * Lista de estudiantes
+     * Estudiante seleccionado
      */
     @Getter @NonNull private DtoTramitarBajas estudiante;
     
@@ -144,9 +144,15 @@ public class TramitarBajaRolTutor extends AbstractRol {
     @Getter @NonNull private String accionesTutor;
     
      /**
-     * Valor se encuentra validado o no la baja
+     * Valor del status de la baja y área que valida
      */
-    @Getter @NonNull private Integer statusBaja;
+    @Getter @NonNull private DtoValidacionesBaja dtoValidacionesBaja;
+     
+    /**
+     * Estudiante seleccionado
+     */
+    @Getter @NonNull private DtoTramitarBajas modificarEstudiante;
+    
    
     public TramitarBajaRolTutor(Filter<PersonalActivo> filtro, PersonalActivo tutor) {
         super(filtro);
@@ -249,7 +255,12 @@ public class TramitarBajaRolTutor extends AbstractRol {
         this.accionesTutor = accionesTutor;
     }
 
-    public void setStatusBaja(Integer statusBaja) {
-        this.statusBaja = statusBaja;
+    public void setDtoValidacionesBaja(DtoValidacionesBaja dtoValidacionesBaja) {
+        this.dtoValidacionesBaja = dtoValidacionesBaja;
     }
+
+    public void setModificarEstudiante(DtoTramitarBajas modificarEstudiante) {
+        this.modificarEstudiante = modificarEstudiante;
+    }
+    
 }
