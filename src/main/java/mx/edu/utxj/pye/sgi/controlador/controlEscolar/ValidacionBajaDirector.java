@@ -222,8 +222,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
     public void validarBaja(Baja baja){
         ResultadoEJB<Integer> resValidar = ejb.validarBaja(baja);
         mostrarMensajeResultadoEJB(resValidar);
-        listaBajasProgramaEducativo();
-        Ajax.update("tbListaRegistroBajas");
+        periodosBajasRegistradas();
         Ajax.update("frm");
     }
    

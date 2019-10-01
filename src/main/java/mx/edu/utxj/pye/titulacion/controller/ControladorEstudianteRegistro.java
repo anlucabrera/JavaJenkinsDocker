@@ -108,6 +108,29 @@ public class ControladorEstudianteRegistro implements Serializable{
         try {
             matricula = logonMB.getCurrentUser();
             estudiante = ejbEstudianteRegistro.obtenerInformacionAlumno(matricula);
+//            if (estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11) {
+//                procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
+//
+//                if (procesosIntexp == null) {
+//                    cargada = false;
+//                } else {
+//                    cargada = true;
+//
+//                    progresoExpediente = 0;
+//                    datosPerVal();
+//                    datosContVal();
+//                    datosAntAcad();
+//                    consultarStatusExpediente();
+//                    listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+//                    listaEstadosIEMS = eJBSelectItems.itemEstados();
+//                   
+//                }
+//
+//            } else {
+//                cargada = false;
+//            }
+            
+            
             if (estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11) {
                 procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
 
@@ -125,10 +148,29 @@ public class ControladorEstudianteRegistro implements Serializable{
                     listaEstadosIEMS = eJBSelectItems.itemEstados();
                    
                 }
+            } else if (estudiante.getGradoActual() == 7) {
+                estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
+                procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
 
+                if (procesosIntexp == null) {
+                    cargada = false;
+                } else {
+                    cargada = true;
+
+                    progresoExpediente = 0;
+                    datosPerVal();
+                    datosContVal();
+                    datosAntAcad();
+                    consultarStatusExpediente();
+                    listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+                    listaEstadosIEMS = eJBSelectItems.itemEstados();
+                   
+                }
+                
             } else {
-                cargada = false;
+                 cargada = false;
             }
+        
 
         } catch (Exception e) {
             cargada = false;

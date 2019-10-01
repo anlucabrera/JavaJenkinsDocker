@@ -285,4 +285,11 @@ public interface EjbEstudianteRegistro {
      * @return entity DocumentosExpediente
      */
     public DocumentosExpediente docExisteEnExpediente(Integer tipoDocumento, Integer expediente);
+    
+     /**
+     * Obtiene datos de nivel TSU del estudiante inscrito en Ingeniería 
+     * @param matricula
+     * @return entity Alumnos
+     */
+    public Alumnos obtenerInformacionTSUAlumno(String matricula);
 }
