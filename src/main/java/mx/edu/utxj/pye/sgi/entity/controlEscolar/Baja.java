@@ -45,6 +45,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Baja.findByFechaBaja", query = "SELECT b FROM Baja b WHERE b.fechaBaja = :fechaBaja")
     , @NamedQuery(name = "Baja.findByAccionesTutor", query = "SELECT b FROM Baja b WHERE b.accionesTutor = :accionesTutor")
     , @NamedQuery(name = "Baja.findByDictamenPsicopedagogia", query = "SELECT b FROM Baja b WHERE b.dictamenPsicopedagogia = :dictamenPsicopedagogia")
+    , @NamedQuery(name = "Baja.findByFechaValpsicopedagogia", query = "SELECT b FROM Baja b WHERE b.fechaValpsicopedagogia = :fechaValpsicopedagogia")
     , @NamedQuery(name = "Baja.findByValidoPsicopedagogia", query = "SELECT b FROM Baja b WHERE b.validoPsicopedagogia = :validoPsicopedagogia")
     , @NamedQuery(name = "Baja.findByFechaValidacion", query = "SELECT b FROM Baja b WHERE b.fechaValidacion = :fechaValidacion")
     , @NamedQuery(name = "Baja.findByValidada", query = "SELECT b FROM Baja b WHERE b.validada = :validada")})
@@ -87,6 +88,9 @@ public class Baja implements Serializable {
     @Size(min = 1, max = 500)
     @Column(name = "dictamen_psicopedagogia")
     private String dictamenPsicopedagogia;
+    @Column(name = "fecha_valpsicopedagogia")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaValpsicopedagogia;
     @Basic(optional = false)
     @NotNull
     @Column(name = "valido_psicopedagogia")
@@ -112,7 +116,7 @@ public class Baja implements Serializable {
         this.idBajas = idBajas;
     }
 
-    public Baja(Integer idBajas, int periodoEscolar, int tipoBaja, int causaBaja, int empleadoRegistro, Date fechaBaja, String accionesTutor, String dictamenPsicopedagogia, int validoPsicopedagogia, int validada) {
+    public Baja(Integer idBajas, int periodoEscolar, int tipoBaja, int causaBaja, int empleadoRegistro, Date fechaBaja, String accionesTutor, String dictamenPsicopedagogia, Date fechaValpsicopedagogia, int validoPsicopedagogia, Date fechaValidacion, int validada, List<BajaReprobacion> bajaReprobacionList, Estudiante estudiante) {
         this.idBajas = idBajas;
         this.periodoEscolar = periodoEscolar;
         this.tipoBaja = tipoBaja;
@@ -121,10 +125,15 @@ public class Baja implements Serializable {
         this.fechaBaja = fechaBaja;
         this.accionesTutor = accionesTutor;
         this.dictamenPsicopedagogia = dictamenPsicopedagogia;
+        this.fechaValpsicopedagogia = fechaValpsicopedagogia;
         this.validoPsicopedagogia = validoPsicopedagogia;
+        this.fechaValidacion = fechaValidacion;
         this.validada = validada;
+        this.bajaReprobacionList = bajaReprobacionList;
+        this.estudiante = estudiante;
     }
 
+    
     public Integer getIdBajas() {
         return idBajas;
     }
@@ -189,6 +198,14 @@ public class Baja implements Serializable {
         this.dictamenPsicopedagogia = dictamenPsicopedagogia;
     }
 
+    public Date getFechaValpsicopedagogia() {
+        return fechaValpsicopedagogia;
+    }
+
+    public void setFechaValpsicopedagogia(Date fechaValpsicopedagogia) {
+        this.fechaValpsicopedagogia = fechaValpsicopedagogia;
+    }
+    
     public int getValidoPsicopedagogia() {
         return validoPsicopedagogia;
     }

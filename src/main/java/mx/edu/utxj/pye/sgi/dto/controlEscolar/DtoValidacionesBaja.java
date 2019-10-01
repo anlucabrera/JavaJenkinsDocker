@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import java.io.Serializable;
-import java.util.Date;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +19,16 @@ import lombok.ToString;
 @RequiredArgsConstructor @ToString
 public class DtoValidacionesBaja implements Serializable{
     @Getter @Setter @NonNull String areaValidacionBaja;
-    @Getter @Setter Date fechaValidacionBaja;
+    @Getter @Setter String fechaValidacionBaja;
     @Getter @Setter @NonNull String validacionBaja;
+    @Getter @Setter String fechaValidacionPsic;
     @Getter @Setter @NonNull String validacionPsic;
 
-    public DtoValidacionesBaja(String areaValidacionBaja, Date fechaValidacionBaja, String validacionBaja, String validacionPsic) {
+    public DtoValidacionesBaja(String areaValidacionBaja, String fechaValidacionBaja, String validacionBaja, String fechaValidacionPsic, String validacionPsic) {
         this.areaValidacionBaja = areaValidacionBaja;
         this.fechaValidacionBaja = fechaValidacionBaja;
         this.validacionBaja = validacionBaja;
+        this.fechaValidacionPsic =  fechaValidacionPsic;
         this.validacionPsic = validacionPsic;
     }
     

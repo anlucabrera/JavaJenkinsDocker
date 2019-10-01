@@ -133,10 +133,10 @@
                                                             class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"
                                                             title="#{estudiante.dtoRegistroBaja.causaBaja.cveCausa ne 3?'Sin materias reprobadas':'Consultar materias reprobadas'}" disabled="#{estudiante.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
-                                                            <p:commandButton actionListener="#{tramitarBajaTutor.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
+<!--                                                            <p:commandButton actionListener="# {tramitarBajaTutor.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-file-text-o"
-                                                                                  title="Generar Formato de Baja"  disabled="#{estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}"/>  
+                                                                                  title="Generar Formato de Baja"  disabled="# {estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}"/>  -->
                                                             <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{tramitarBajaTutor.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{statusBaja.validacionBaja eq 'Hecha'}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
                                                             </p:commandButton>
@@ -156,10 +156,10 @@
                                                         <h:outputText value="#{estudiante.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{statusBaja.validacionBaja} - #{statusBaja.areaValidacionBaja}" rendered="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja ne null}"/>
+                                                        <h:outputText value="#{statusBaja.fechaValidacionBaja} - #{statusBaja.areaValidacionBaja}" rendered="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja ne null}"/>
                                                     </p:column>
                                                      <p:column style="text-align: center;">
-                                                        <h:outputText value="#{statusBaja.validacionPsic}"  rendered="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja ne null}"/>
+                                                        <h:outputText value="#{statusBaja.fechaValidacionPsic}"  rendered="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja ne null}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>

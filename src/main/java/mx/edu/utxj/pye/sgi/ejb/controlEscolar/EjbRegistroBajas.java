@@ -6,6 +6,9 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
@@ -625,6 +628,7 @@ public class EjbRegistroBajas {
      * @param dtoRegistroBaja Registro de baja del estudiante que se va a actualizar
      * @param tipoBaja Tipo de baja que se registrará
      * @param causaBaja Causa de la baja que se registrará
+     * @param acciones Acciones tomadas por el tutor
      * @param personal Personal que registrará la baja
      * @param fechaBaja Fecha de la baja
      * @return Resultado del proceso
@@ -822,6 +826,7 @@ public class EjbRegistroBajas {
             Integer valido =1;
             Baja registroBaja = em.find(Baja.class, baja.getIdBajas());
             registroBaja.setDictamenPsicopedagogia(dictamen);
+            registroBaja.setFechaValpsicopedagogia(new Date());
             registroBaja.setValidoPsicopedagogia(valido);
             f.edit(registroBaja);
             em.flush();
@@ -939,6 +944,12 @@ public class EjbRegistroBajas {
         }
     }
     
+    public LocalDate convertirDateALocalDate(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+    
     /**
      * Permite obtener la información de validaciones de la baja por el área correspondiente (Servicios Escolares o Dirección de Carrera) y Psicopedagogía
      * @param registro Clave de registro de baja
@@ -950,9 +961,12 @@ public class EjbRegistroBajas {
                     .setParameter("baja", registro.getIdBajas())
                     .getSingleResult();
             
-            String areaValidacion ="", validacionBaja = "", validacionPsic ="";
+            String areaValidacion ="", validacionBaja = "", validacionPsic ="", fechaVal ="", fechaValPsic ="";
             
             Personal personal = em.find(Personal.class, baja.getEmpleadoRegistro());
+            
+              
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             
             if(personal.getAreaSuperior() == 10)
             {
@@ -964,18 +978,24 @@ public class EjbRegistroBajas {
              if(baja.getValidada() == 0)
             {
                 validacionBaja ="Pendiente";
+                fechaVal = "Pendiente";
             }else{
                 validacionBaja ="Hecha";
+                LocalDate fecVal = convertirDateALocalDate(baja.getFechaValidacion());
+                fechaVal = fecVal.format(formatter);
             }
              
               if(baja.getValidoPsicopedagogia()== 0)
             {
                 validacionPsic ="Pendiente";
+                fechaValPsic = "Pendiente";
             }else{
                 validacionPsic ="Hecha";
+                LocalDate fecValPsic = convertirDateALocalDate(baja.getFechaValpsicopedagogia());
+                fechaValPsic = fecValPsic.format(formatter);
             }
-            
-            DtoValidacionesBaja dtoValidacionesBaja = new  DtoValidacionesBaja(areaValidacion, baja.getFechaValidacion(), validacionBaja, validacionPsic);
+          
+            DtoValidacionesBaja dtoValidacionesBaja = new  DtoValidacionesBaja(areaValidacion, fechaVal, validacionBaja, fechaValPsic, validacionPsic);
             
             return ResultadoEJB.crearCorrecto(dtoValidacionesBaja, "Status de la baja.");
         }catch (Exception e){

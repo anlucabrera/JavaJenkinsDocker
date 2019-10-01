@@ -102,21 +102,25 @@
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column headerText="Opciones" style="width: 120px;"/>
-                                                            <p:column headerText="Validación" style="width: 80px;"/>
-                                                            <p:column headerText="Fecha de Baja" style="width: 100px;"/>
-                                                            <p:column headerText="Grupo" style="width: 150px;"/>
-                                                            <p:column headerText="Matricula" style="width: 80px;"/> 
-                                                            <p:column headerText="Nombre" style="width: 250px;"/>
-                                                            <p:column headerText="Género" style="width: 80px;"/>
-                                                            <p:column headerText="Situación" style="width: 120px;"/>
-                                                            <p:column headerText="Tipo de Baja" style="width: 120px;"/>
-                                                            <p:column headerText="Causa Baja" style="width: 150px;"/>
-                                                            <p:column headerText="Acciones tomadas por el tutor" style="width: 300px;"/>
-                                                            <p:column headerText="Dictamen Psicopedagogía" style="width: 300px;"/>
+                                                            <p:column rowspan="2" headerText="Opciones" style="width: 120px;"/>
+                                                            <p:column colspan="2" headerText="Validación" style="width: 400px;"/>
+                                                            <p:column rowspan="2" headerText="Fecha de Baja" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Grupo" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Matricula" style="width: 80px;"/> 
+                                                            <p:column rowspan="2" headerText="Nombre" style="width: 250px;"/>
+                                                            <p:column rowspan="2" headerText="Género" style="width: 80px;"/>
+                                                            <p:column rowspan="2" headerText="Situación" style="width: 120px;"/>
+                                                            <p:column rowspan="2" headerText="Tipo de Baja" style="width: 120px;"/>
+                                                            <p:column rowspan="2" headerText="Causa Baja" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Acciones tomadas por el tutor" style="width: 300px;"/>
+                                                            <p:column rowspan="2" headerText="Dictamen Psicopedagogía" style="width: 300px;"/>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column headerText="Baja" style="width: 300px;"/>
+                                                            <p:column headerText="Psicopedagogía" style="width: 100px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
-                                                    <c:set var="status" value="#{reporteBajasServiciosEscolares.consultarStatus(baja)}" />
+                                                    <c:set var="statusBaja" value="#{reporteBajasServiciosEscolares.consultarStatus(baja)}" />
                                                     <c:set var="baja" value="#{baja}"/>
                                                     <c:set var="registro" value="#{baja.dtoRegistroBaja.registroBaja}"/>
                                                     <p:column>
@@ -137,7 +141,10 @@
                                                         </center>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{status eq 1?'Realizada':'Pendiente'}"/>
+                                                        <h:outputText value="#{statusBaja.fechaValidacionBaja} - #{statusBaja.areaValidacionBaja}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{statusBaja.fechaValidacionPsic}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
@@ -206,11 +213,18 @@
                                                  >
                                        <p:columnGroup type="header">
                                             <p:row>
+                                                <p:column headerText="Opciones"  width="80" />
                                                 <p:column headerText="Clave Materia"  width="80" />
                                                 <p:column headerText="Materia"  width="100" />
                                                 <p:column headerText="Docente"  width="100" />
                                             </p:row>
                                         </p:columnGroup>
+                                        <c:set var="registroMatRep" value="#{materiaReprobada.bajaReprobacion}"/>
+                                        <p:column style="text-align: center;">
+                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{reporteBajasServiciosEscolares.eliminarRegistroMateriaReprobada(registroMatRep)}" title="Eliminar registro.">
+                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                        </p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{materiaReprobada.bajaReprobacion.cargaAcademica.idPlanMateria.claveMateria}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{materiaReprobada.bajaReprobacion.cargaAcademica.idPlanMateria.idMateria.nombre}" /></p:column>
                                         <p:column style="text-align: justify;"><h:outputText value="#{materiaReprobada.personal.nombre}" /></p:column>
