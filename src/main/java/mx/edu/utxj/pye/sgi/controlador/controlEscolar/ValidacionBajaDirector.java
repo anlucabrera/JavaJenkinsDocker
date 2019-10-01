@@ -242,7 +242,6 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
        generacionFormatoBaja.generarFormatoBaja(registro);
     }
 
-    
       /**
      * Permite eliminar el registro de baja seleccionado
      * @param registro Registro de baja que se desea eliminar
