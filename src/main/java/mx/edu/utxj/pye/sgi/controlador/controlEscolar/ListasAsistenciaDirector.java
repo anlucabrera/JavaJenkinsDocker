@@ -104,8 +104,12 @@ public class ListasAsistenciaDirector extends ViewScopedRol implements Desarroll
             
             ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
-            rol.setGrupos(resgrupos.getValor());           
-        
+            rol.setGrupos(resgrupos.getValor()); 
+            
+            rol.setGrupoSelec(rol.getGrupos().get(0));
+            ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
+            if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+            rol.setListaalumnoscas(rejb.getValor());  
             rol.setFechaInpresion(new Date());
             rol.setNewCompetencia(false);
         } catch (Exception e) {

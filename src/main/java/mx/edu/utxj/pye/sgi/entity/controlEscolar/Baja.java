@@ -41,11 +41,14 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Baja.findByPeriodoEscolar", query = "SELECT b FROM Baja b WHERE b.periodoEscolar = :periodoEscolar")
     , @NamedQuery(name = "Baja.findByTipoBaja", query = "SELECT b FROM Baja b WHERE b.tipoBaja = :tipoBaja")
     , @NamedQuery(name = "Baja.findByCausaBaja", query = "SELECT b FROM Baja b WHERE b.causaBaja = :causaBaja")
-    , @NamedQuery(name = "Baja.findByEmpleado", query = "SELECT b FROM Baja b WHERE b.empleado = :empleado")
+    , @NamedQuery(name = "Baja.findByEmpleadoRegistro", query = "SELECT b FROM Baja b WHERE b.empleadoRegistro = :empleadoRegistro")
     , @NamedQuery(name = "Baja.findByFechaBaja", query = "SELECT b FROM Baja b WHERE b.fechaBaja = :fechaBaja")
     , @NamedQuery(name = "Baja.findByAccionesTutor", query = "SELECT b FROM Baja b WHERE b.accionesTutor = :accionesTutor")
     , @NamedQuery(name = "Baja.findByDictamenPsicopedagogia", query = "SELECT b FROM Baja b WHERE b.dictamenPsicopedagogia = :dictamenPsicopedagogia")
-    , @NamedQuery(name = "Baja.findByValido", query = "SELECT b FROM Baja b WHERE b.valido = :valido")})
+    , @NamedQuery(name = "Baja.findByFechaValpsicopedagogia", query = "SELECT b FROM Baja b WHERE b.fechaValpsicopedagogia = :fechaValpsicopedagogia")
+    , @NamedQuery(name = "Baja.findByValidoPsicopedagogia", query = "SELECT b FROM Baja b WHERE b.validoPsicopedagogia = :validoPsicopedagogia")
+    , @NamedQuery(name = "Baja.findByFechaValidacion", query = "SELECT b FROM Baja b WHERE b.fechaValidacion = :fechaValidacion")
+    , @NamedQuery(name = "Baja.findByValidada", query = "SELECT b FROM Baja b WHERE b.validada = :validada")})
 public class Baja implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -68,8 +71,8 @@ public class Baja implements Serializable {
     private int causaBaja;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "empleado")
-    private int empleado;
+    @Column(name = "empleado_registro")
+    private int empleadoRegistro;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha_baja")
@@ -85,15 +88,26 @@ public class Baja implements Serializable {
     @Size(min = 1, max = 500)
     @Column(name = "dictamen_psicopedagogia")
     private String dictamenPsicopedagogia;
+    @Column(name = "fecha_valpsicopedagogia")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaValpsicopedagogia;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "valido")
-    private int valido;
+    @Column(name = "valido_psicopedagogia")
+    private int validoPsicopedagogia;
+    @Column(name = "fecha_validacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaValidacion;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "validada")
+    private int validada;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja")
+    private List<BajaReprobacion> bajaReprobacionList;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
     private Estudiante estudiante;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja")
-    private List<BajaReprobacion> bajaReprobacionList;
+    @Size(max = 500)
 
     public Baja() {
     }
@@ -102,18 +116,24 @@ public class Baja implements Serializable {
         this.idBajas = idBajas;
     }
 
-    public Baja(Integer idBajas, int periodoEscolar, int tipoBaja, int causaBaja, int empleado, Date fechaBaja, String accionesTutor, String dictamenPsicopedagogia, int valido) {
+    public Baja(Integer idBajas, int periodoEscolar, int tipoBaja, int causaBaja, int empleadoRegistro, Date fechaBaja, String accionesTutor, String dictamenPsicopedagogia, Date fechaValpsicopedagogia, int validoPsicopedagogia, Date fechaValidacion, int validada, List<BajaReprobacion> bajaReprobacionList, Estudiante estudiante) {
         this.idBajas = idBajas;
         this.periodoEscolar = periodoEscolar;
         this.tipoBaja = tipoBaja;
         this.causaBaja = causaBaja;
-        this.empleado = empleado;
+        this.empleadoRegistro = empleadoRegistro;
         this.fechaBaja = fechaBaja;
         this.accionesTutor = accionesTutor;
         this.dictamenPsicopedagogia = dictamenPsicopedagogia;
-        this.valido = valido;
+        this.fechaValpsicopedagogia = fechaValpsicopedagogia;
+        this.validoPsicopedagogia = validoPsicopedagogia;
+        this.fechaValidacion = fechaValidacion;
+        this.validada = validada;
+        this.bajaReprobacionList = bajaReprobacionList;
+        this.estudiante = estudiante;
     }
 
+    
     public Integer getIdBajas() {
         return idBajas;
     }
@@ -146,12 +166,12 @@ public class Baja implements Serializable {
         this.causaBaja = causaBaja;
     }
 
-    public int getEmpleado() {
-        return empleado;
+    public int getEmpleadoRegistro() {
+        return empleadoRegistro;
     }
 
-    public void setEmpleado(int empleado) {
-        this.empleado = empleado;
+    public void setEmpleadoRegistro(int empleadoRegistro) {
+        this.empleadoRegistro = empleadoRegistro;
     }
 
     public Date getFechaBaja() {
@@ -178,12 +198,36 @@ public class Baja implements Serializable {
         this.dictamenPsicopedagogia = dictamenPsicopedagogia;
     }
 
-    public int getValido() {
-        return valido;
+    public Date getFechaValpsicopedagogia() {
+        return fechaValpsicopedagogia;
     }
 
-    public void setValido(int valido) {
-        this.valido = valido;
+    public void setFechaValpsicopedagogia(Date fechaValpsicopedagogia) {
+        this.fechaValpsicopedagogia = fechaValpsicopedagogia;
+    }
+    
+    public int getValidoPsicopedagogia() {
+        return validoPsicopedagogia;
+    }
+
+    public void setValidoPsicopedagogia(int validoPsicopedagogia) {
+        this.validoPsicopedagogia = validoPsicopedagogia;
+    }
+
+    public Date getFechaValidacion() {
+        return fechaValidacion;
+    }
+
+    public void setFechaValidacion(Date fechaValidacion) {
+        this.fechaValidacion = fechaValidacion;
+    }
+
+    public int getValidada() {
+        return validada;
+    }
+
+    public void setValidada(int validada) {
+        this.validada = validada;
     }
 
     public Estudiante getEstudiante() {
@@ -192,15 +236,6 @@ public class Baja implements Serializable {
 
     public void setEstudiante(Estudiante estudiante) {
         this.estudiante = estudiante;
-    }
-
-    @XmlTransient
-    public List<BajaReprobacion> getBajaReprobacionList() {
-        return bajaReprobacionList;
-    }
-
-    public void setBajaReprobacionList(List<BajaReprobacion> bajaReprobacionList) {
-        this.bajaReprobacionList = bajaReprobacionList;
     }
 
     @Override
@@ -228,4 +263,12 @@ public class Baja implements Serializable {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja[ idBajas=" + idBajas + " ]";
     }
     
+    @XmlTransient
+    public List<BajaReprobacion> getBajaReprobacionList() {
+        return bajaReprobacionList;
+    }
+
+    public void setBajaReprobacionList(List<BajaReprobacion> bajaReprobacionList) {
+        this.bajaReprobacionList = bajaReprobacionList;
+    }
 }

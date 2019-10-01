@@ -58,17 +58,17 @@
                                                         <p:outputLabel value="Generación " for="generacion" />
                                                         <p:spacer width="3" />
                                                         <p:selectOneMenu id="generacion" converter="entityConverter"
-                                                                         value="#{controladorTitSegGen.generacion}" valueChangeListener="#{controladorTitSegGen.actualizarProgramas}"
+                                                                         value="#{controladorTitSegGen.generacion}" valueChangeListener="#{controladorTitSegGen.actualizarProgramasTSU}"
                                                                          class="form-control" style="padding-top: 0px;">
-                                                            <f:selectItems value="#{controladorTitSegGen.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" itemDescription="#{caster.generacionToString(generacion)}" />
+                                                            <f:selectItems value="#{controladorTitSegGen.generacionesTSU}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" itemDescription="#{caster.generacionToString(generacion)}" />
                                                             <p:ajax process="@this" update="@(form)" />
                                                         </p:selectOneMenu>
                                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                         <p:outputLabel value="Programa Educativo: " for="programa" />
                                                         <p:spacer width="3" />
                                                         <p:selectOneMenu id="programa" value="#{controladorTitSegGen.programaSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
-                                                            <f:selectItems value="#{controladorTitSegGen.programasPorGeneracion}" var="progGen" itemValue="#{progGen}" itemLabel="#{progGen.nombre}" itemDescription="#{progGen.nombre}"  />
-                                                            <p:ajax process="@this" listener="#{controladorTitSegGen.cargarListaPorGenProg()}" update="@(form)" />
+                                                            <f:selectItems value="#{controladorTitSegGen.programasPorGeneracionTSU}" var="progGen" itemValue="#{progGen}" itemLabel="#{progGen.nombre}" itemDescription="#{progGen.nombre}"  />
+                                                            <p:ajax process="@this" listener="#{controladorTitSegGen.cargarListaPorGenProgTSU()}" update="@(form)" />
                                                         </p:selectOneMenu>
                                                     </f:facet>
                                                     <f:facet name="right">
@@ -86,7 +86,7 @@
                                                  <center>
                                                      <h:form id="formMuestraDatosActivos">
                                                          <p:remoteCommand name="actualizar" update="@form:dtbExpTitGenPE" />
-                                                         <p:dataTable id="dtbExpTitGenPE" emptyMessage="Sin datos en la generación seleccionada." value="#{controladorTitSegGen.lista}" var="ExpTit"
+                                                         <p:dataTable id="dtbExpTitGenPE" emptyMessage="Sin datos en la generación seleccionada." value="#{controladorTitSegGen.listaTSU}" var="ExpTit"
                                                                       paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                                       resizeMode="expand"
                                                                       tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
@@ -94,7 +94,7 @@
                                                              <c:set var="expTitEgre" value="#{ExpTit.egresados.matricula}"/>
 
                                                              <p:column headerText="Opciones" style="width: 200px; text-align: center;">
-                                                                 <p:commandButton actionListener="#{controladorTitSegGen.consultarExpediente(expTitExp)}" action="/expedienteTitulacion/titulacion/seguimientoExpGeneracionInd?faces-redirect=true" 
+                                                                 <p:commandButton actionListener="#{controladorTitSegGen.consultarExpediente(expTitExp)}" action="/expedienteTitulacion/titulacion/seguimientoExpGeneracionIndTSU?faces-redirect=true" 
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-search"
                                                                                   title="#{ExpTit.expedientesTitulacion.expediente}"/>  

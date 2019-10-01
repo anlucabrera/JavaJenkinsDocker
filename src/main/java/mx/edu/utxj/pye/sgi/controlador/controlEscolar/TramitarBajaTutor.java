@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoListadoTutores;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaReprobada;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRangoFechasPermiso;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.TramitarBajaRolTutor;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -181,7 +182,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      */
     public void tiposBaja(){
         if(rol.getGrupo()== null) return;
-        ResultadoEJB<List<BajasTipo>> res = ejb.getTiposBaja();
+        ResultadoEJB<List<BajasTipo>> res = ejb.getTiposBajaTutor();
         if(res.getCorrecto()){
             rol.setTiposBaja(res.getValor());
         }else mostrarMensajeResultadoEJB(res);
@@ -310,6 +311,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      */
     public void editarBaja(DtoTramitarBajas estudiante){
         rol.setEstudiante(estudiante);
+        rol.setDtoValidacionesBaja(consultarStatus(estudiante));
         tiposBaja();
         causasBaja();
         rangoFechasPermiso();
@@ -359,9 +361,9 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      * @param baja Registro de la baja
      * @return valor boolean según sea el caso
      */
-    public Integer consultarStatus(DtoTramitarBajas baja){
-        rol.setStatusBaja(ejb.buscarValidacionBaja(baja.getDtoRegistroBaja().getRegistroBaja()).getValor());
-        return rol.getStatusBaja();
+    public DtoValidacionesBaja consultarStatus(DtoTramitarBajas baja){
+        rol.setDtoValidacionesBaja(ejb.buscarValidacionesBaja(baja.getDtoRegistroBaja().getRegistroBaja()).getValor());
+        return rol.getDtoValidacionesBaja();
     }
     
 }

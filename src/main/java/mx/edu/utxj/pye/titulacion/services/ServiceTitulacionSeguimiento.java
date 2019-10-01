@@ -265,8 +265,20 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
 
     @Override
-    public List<Generaciones> getGeneracionesConregistro() {
-            List<Short> claves = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e", ExpedientesTitulacion.class)
+    public List<Generaciones> getGeneracionesConregistroING() {
+            List<Short> claves = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.nivel != 1", ExpedientesTitulacion.class)
+                    .getResultStream()
+                    .map(e -> e.getGeneracion())
+                    .collect(Collectors.toList());
+
+            return facade.getEntityManager().createQuery("SELECT g FROM Generaciones g WHERE g.generacion IN :claves ORDER BY g.generacion desc", Generaciones.class)
+                    .setParameter("claves", claves)
+                    .getResultList();
+    }
+    
+    @Override
+    public List<Generaciones> getGeneracionesConregistroTSU() {
+            List<Short> claves = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.nivel = 1", ExpedientesTitulacion.class)
                     .getResultStream()
                     .map(e -> e.getGeneracion())
                     .collect(Collectors.toList());
@@ -277,7 +289,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
 
     @Override
-    public List<AreasUniversidad> getExpedientesPorGeneraciones(Generaciones generacion) {
+    public List<AreasUniversidad> getExpedientesPorGeneracionesING(Generaciones generacion) {
          if(generacion == null){
             return null;
         }
@@ -289,8 +301,28 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
                 .map(p -> p.getProgramaEducativo())
                 .collect(Collectors.toList());
 
-        return facade.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.siglas IN :siglas", AreasUniversidad.class)
+        return facade.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.siglas IN :siglas AND a.nivelEducativo.nivel NOT LIKE CONCAT('%',:nivel,'%' ) ", AreasUniversidad.class)
                 .setParameter("siglas", programas)
+                .setParameter("nivel", "TSU")
+                .getResultList();
+    }
+    
+    @Override
+    public List<AreasUniversidad> getExpedientesPorGeneracionesTSU(Generaciones generacion) {
+         if(generacion == null){
+            return null;
+        }
+
+        List<String> programas = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.generacion =:generacion", ExpedientesTitulacion.class)
+                .setParameter("generacion", generacion.getGeneracion())
+                .getResultList()
+                .stream()
+                .map(p -> p.getProgramaEducativo())
+                .collect(Collectors.toList());
+
+        return facade.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.siglas IN :siglas AND a.nivelEducativo.nivel LIKE CONCAT('%',:nivel,'%' ) ", AreasUniversidad.class)
+                .setParameter("siglas", programas)
+                .setParameter("nivel", "TSU")
                 .getResultList();
     }
 

@@ -117,7 +117,14 @@ public class ReporteAsistenciasDirector extends ViewScopedRol implements Desarro
             ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
             System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReporteAsistenciasDirector.init()"+resgrupos.getValor().size());
-            rol.setGrupos(resgrupos.getValor());           
+            rol.setGrupos(resgrupos.getValor());  
+            
+            rol.setGrupoSelec(rol.getGrupos().get(0));
+        
+            ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
+            if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+            rol.setListaalumnoscas(rejb.getValor());  
+            creareporte();
         
             rol.setFechaInpresion(new Date());
             

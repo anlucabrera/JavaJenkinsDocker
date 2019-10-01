@@ -451,9 +451,10 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
 //        List<DocumentosExpediente> l = facade.getEntityManager().createQuery("SELECT d FROM DocumentosExpediente d WHERE d.expediente.expediente =:expediente ORDER BY d.documento.documento", DocumentosExpediente.class)
 //                .setParameter("expediente", exp.getExpediente())
 //                .getResultList();   
-           List<DocumentosExpediente> l = facade.getEntityManager().createQuery("SELECT d FROM DocumentosExpediente d WHERE d.expediente.expediente =:expediente AND d.documento.documento =:documento", DocumentosExpediente.class)
+           List<DocumentosExpediente> l = facade.getEntityManager().createQuery("SELECT d FROM DocumentosExpediente d WHERE d.expediente.expediente =:expediente AND (d.documento.documento =:documentoIng OR d.documento.documento =:documentoTSU)", DocumentosExpediente.class)
                 .setParameter("expediente", exp.getExpediente())
-                .setParameter("documento", 12)
+                .setParameter("documentoIng", 12)
+                .setParameter("documentoTSU", 5)
                 .getResultList();
         return l;
     }

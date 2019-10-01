@@ -92,9 +92,9 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
     @Getter @NonNull private Boolean existeDictamen;
    
      /**
-     * Valor se encuentra validado o no la baja
+     * Valor de validación de la baja
      */
-    @Getter @NonNull private Integer statusBaja;
+    @Getter @NonNull private DtoValidacionesBaja dtoValidacionesBaja;
     
     public DictamenBajaRolPsicopedagogia(Filter<PersonalActivo> filtro, PersonalActivo personalPsicopedagogia) {
         super(filtro);
@@ -157,7 +157,7 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
         this.existeDictamen = existeDictamen;
     }
 
-    public void setStatusBaja(Integer statusBaja) {
-        this.statusBaja = statusBaja;
-    }
+    public void setDtoValidacionesBaja(DtoValidacionesBaja dtoValidacionesBaja) {
+        this.dtoValidacionesBaja = dtoValidacionesBaja;
+    }   
 }

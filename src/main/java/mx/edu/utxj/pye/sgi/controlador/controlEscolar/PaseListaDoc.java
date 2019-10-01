@@ -42,6 +42,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporteConsulta;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.PaseDeListaDocente;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
@@ -54,6 +55,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
+import mx.edu.utxj.pye.sgi.util.DateUtils;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.CellEditEvent;
@@ -72,6 +74,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
 
     @EJB EjbAsistencias ejb;
     @EJB EjbValidacionRol evr;
+    @EJB EjbCapturaCalificaciones calificaciones;
     @EJB EjbPropiedades ep;
     @EJB EjbPacker packer;
     @EJB EjbCasoCritico ecc;
@@ -602,14 +605,19 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
 
     public void updatePaseDeLista(RowEditEvent event) {
         try {
-            Asistenciasacademicas asistenciasacademicas = (Asistenciasacademicas) event.getObject();
-            ejb.actualizarPaseLista(asistenciasacademicas);
-            ResultadoEJB<DtoUnidadConfiguracion> ducB = packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
-            ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCarga(), ducB.getValor());
-            if (!resGrupo.getCorrecto()) {
-                mostrarMensajeResultadoEJB(resGrupo);
-            } else {
-                rol.setEstudiantesPorGrupo(resGrupo.getValor());
+            Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio(), rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaFin(), calificaciones.leerDiasRangoParaCapturarUnidad());
+            if (activaPorFecha) {
+                Asistenciasacademicas asistenciasacademicas = (Asistenciasacademicas) event.getObject();
+                ejb.actualizarPaseLista(asistenciasacademicas);
+                ResultadoEJB<DtoUnidadConfiguracion> ducB = packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
+                ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCarga(), ducB.getValor());
+                if (!resGrupo.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGrupo);
+                } else {
+                    rol.setEstudiantesPorGrupo(resGrupo.getValor());
+                }
+            }else{
+                Messages.addGlobalWarn("¡La fecha para justificar asistencias ya ha expirado!");
             }
             createDynamicColumns();
         } catch (Throwable ex) {

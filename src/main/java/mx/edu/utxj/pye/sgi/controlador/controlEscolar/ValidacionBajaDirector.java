@@ -23,6 +23,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ValidacionBajaRolDirector;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaReprobada;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
@@ -209,9 +210,9 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
      * @param baja Registro de la baja
      * @return valor boolean según sea el caso
      */
-    public Integer consultarStatus(DtoTramitarBajas baja){
-        rol.setStatusBaja(ejb.buscarValidacionBaja(baja.getDtoRegistroBaja().getRegistroBaja()).getValor());
-        return rol.getStatusBaja();
+    public DtoValidacionesBaja consultarStatus(DtoTramitarBajas baja){
+        rol.setDtoValidacionesBaja(ejb.buscarValidacionesBaja(baja.getDtoRegistroBaja().getRegistroBaja()).getValor());
+        return rol.getDtoValidacionesBaja();
     }
     
      /**
@@ -221,8 +222,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
     public void validarBaja(Baja baja){
         ResultadoEJB<Integer> resValidar = ejb.validarBaja(baja);
         mostrarMensajeResultadoEJB(resValidar);
-        listaBajasProgramaEducativo();
-        Ajax.update("tbListaRegistroBajas");
+        periodosBajasRegistradas();
         Ajax.update("frm");
     }
    
@@ -241,7 +241,6 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
        generacionFormatoBaja.generarFormatoBaja(registro);
     }
 
-    
       /**
      * Permite eliminar el registro de baja seleccionado
      * @param registro Registro de baja que se desea eliminar

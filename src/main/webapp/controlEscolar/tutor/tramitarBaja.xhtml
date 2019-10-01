@@ -102,20 +102,24 @@
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column headerText="Opciones" style="width: 120px;"/>
-                                                            <p:column headerText="Matricula" style="width: 80px;"/> 
-                                                            <p:column headerText="Nombre" style="width: 200px;"/>
-                                                            <p:column headerText="Género" style="width: 80px;"/>
-                                                            <p:column headerText="Situación" style="width: 80px;"/>
-                                                            <p:column headerText="Validación" style="width: 80px;"/>
-                                                            <p:column headerText="Fecha de Baja" style="width: 80px;"/>
-                                                            <p:column headerText="Tipo de Baja" style="width: 100px;"/>
-                                                            <p:column headerText="Causa Baja" style="width: 120px;"/>
-                                                            <p:column headerText="Acciones tomadas por el tutor" style="width: 200px;"/>
-                                                            <p:column headerText="Dictamen Psicopedagogía" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Opciones" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Matricula" style="width: 80px;"/> 
+                                                            <p:column rowspan="2" headerText="Nombre" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Género" style="width: 80px;"/>
+                                                            <p:column rowspan="2" headerText="Situación" style="width: 80px;"/>
+                                                            <p:column colspan="2" headerText="Validación" style="width: 400px;"/>
+                                                            <p:column rowspan="2" headerText="Fecha de Baja" style="width: 120px;"/>
+                                                            <p:column rowspan="2" headerText="Tipo de Baja" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Causa Baja" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Acciones tomadas por el tutor" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Dictamen Psicopedagogía" style="width: 200px;"/>
+                                                        </p:row>
+                                                         <p:row>
+                                                            <p:column headerText="Baja" style="width: 300px;"/>
+                                                            <p:column headerText="Psicopedagogía" style="width: 100px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
-                                                    <c:set var="status" value="#{tramitarBajaTutor.consultarStatus(estudiante)}" />
+                                                    <c:set var="statusBaja" value="#{tramitarBajaTutor.consultarStatus(estudiante)}" />
                                                     <c:set var="estudiante" value="#{estudiante}"/>
                                                     <c:set var="registro" value="#{estudiante.dtoRegistroBaja.registroBaja}"/>
                                                     <p:column>
@@ -124,16 +128,16 @@
                                                             <p:commandButton actionListener="#{tramitarBajaTutor.editarBaja(estudiante)}"
                                                             class="btn btn-sm btn-info" 
                                                             icon="fa fa-edit"
-                                                            title="Tramitar baja" disabled="#{status eq 1}"/>
+                                                            title="Tramitar baja" disabled="#{statusBaja.validacionBaja eq 'Hecha' and statusBaja.areaValidacionBaja ne 'Servicios Escolares'}"/>
                                                             <p:commandButton actionListener="#{tramitarBajaTutor.buscarMateriasReprobadas(registro)}"
                                                             class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"
                                                             title="#{estudiante.dtoRegistroBaja.causaBaja.cveCausa ne 3?'Sin materias reprobadas':'Consultar materias reprobadas'}" disabled="#{estudiante.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
-                                                            <!--p:commandButton actionListener="# {tramitarBajaTutor.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
+<!--                                                            <p:commandButton actionListener="# {tramitarBajaTutor.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-file-text-o"
-                                                                                  title="Generar Formato de Baja"  disabled="# {estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}"/-->  
-                                                            <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{tramitarBajaTutor.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{status eq 1}">
+                                                                                  title="Generar Formato de Baja"  disabled="# {estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}"/>  -->
+                                                            <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{tramitarBajaTutor.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{statusBaja.validacionBaja eq 'Hecha'}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </div>
@@ -152,7 +156,10 @@
                                                         <h:outputText value="#{estudiante.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{status eq 1?'Realizada':'Pendiente'}" rendered="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja ne null}"/>
+                                                        <h:outputText value="#{statusBaja.fechaValidacionBaja} - #{statusBaja.areaValidacionBaja}" rendered="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja ne null}"/>
+                                                    </p:column>
+                                                     <p:column style="text-align: center;">
+                                                        <h:outputText value="#{statusBaja.fechaValidacionPsic}"  rendered="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja ne null}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{estudiante.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
@@ -245,14 +252,13 @@
                               responsive="true" 
                               resizable="false" 
                               maximizable="false">
-                        
                         <h:form id="frmModalTramitarBaja" >
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <br/>
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-6">
                                 <div class="ui-material">
-                                    <p:selectOneMenu id="causaBaja" value="#{tramitarBajaTutor.rol.causaBaja}" converter="entityConverter" valueChangeListener="#{tramitarBajaTutor.cambiarCausaBaja}">
+                                    <p:selectOneMenu id="causaBaja" value="#{tramitarBajaTutor.rol.causaBaja}" converter="entityConverter" valueChangeListener="#{tramitarBajaTutor.cambiarCausaBaja}" disabled="#{tramitarBajaTutor.rol.dtoValidacionesBaja.validacionBaja eq 'Hecha' and tramitarBajaTutor.rol.dtoValidacionesBaja.areaValidacionBaja eq 'Servicios Escolares'}">
                                         <f:selectItems value="#{tramitarBajaTutor.rol.causasBaja}" var="causaBaja"
                                                        itemValue="#{causaBaja}" itemLabel="#{causaBaja.causa}"/>
                                         <p:ajax update="@this" process="@this"/>
@@ -264,7 +270,7 @@
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-3">
                                 <div class="ui-material">
-                                    <p:selectOneMenu id="tipoBaja" value="#{tramitarBajaTutor.rol.tipoBaja}" converter="entityConverter" valueChangeListener="#{tramitarBajaTutor.cambiarTipoBaja}">
+                                    <p:selectOneMenu id="tipoBaja" value="#{tramitarBajaTutor.rol.tipoBaja}" converter="entityConverter" valueChangeListener="#{tramitarBajaTutor.cambiarTipoBaja}" disabled="#{tramitarBajaTutor.rol.dtoValidacionesBaja.validacionBaja eq 'Hecha' and tramitarBajaTutor.rol.dtoValidacionesBaja.areaValidacionBaja eq 'Servicios Escolares'}">
                                         <f:selectItems value="#{tramitarBajaTutor.rol.tiposBaja}" var="tipoBaja"
                                                        itemValue="#{tipoBaja}" itemLabel="#{tipoBaja.descripcion}"/>
                                         <p:ajax update="@this" process="@this"/>
@@ -276,7 +282,7 @@
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-3">
                                 <div class="ui-material">
-                                    <p:calendar id="fechaBaja" locale="es" value="#{tramitarBajaTutor.rol.fechaBaja}" mindate="#{tramitarBajaTutor.rol.fechaInicio}" maxdate="#{tramitarBajaTutor.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true"/>
+                                    <p:calendar id="fechaBaja" locale="es" value="#{tramitarBajaTutor.rol.fechaBaja}" mindate="#{tramitarBajaTutor.rol.fechaInicio}" maxdate="#{tramitarBajaTutor.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true" disabled="#{tramitarBajaTutor.rol.dtoValidacionesBaja.validacionBaja eq 'Hecha' and tramitarBajaTutor.rol.dtoValidacionesBaja.areaValidacionBaja eq 'Servicios Escolares'}"/>
                                     <p:outputLabel value="Fecha Baja" for="fechaBaja" style="font-weight: bold; font-size: 14px;"/>
                                     <p:message for="fechaBaja" />
                                 </div>
