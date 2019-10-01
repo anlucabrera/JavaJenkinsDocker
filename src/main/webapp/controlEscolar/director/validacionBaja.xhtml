@@ -128,7 +128,8 @@
                                                             <c:set var="statusBaja" value="#{validacionBajaDirector.consultarStatus(baja)}" />
                                                             <p:commandButton actionListener="#{validacionBajaDirector.validarBaja(registro)}"
                                                                                   class="btn btn-sm #{statusBaja.validacionBaja eq 'Hecha'?'btn-info':'btn-danger'}" icon="#{statusBaja.validacionBaja eq 'Hecha'?'fa fa-close':'fa fa-check'}"
-                                                                                  title="#{statusBaja.validacionBaja eq 'Hecha'?'Invalidar baja.':'Validar baja.'}" disabled="#{statusBaja.areaValidacionBaja eq 'Servicios Escolares'}"/>
+                                                                                  title="#{statusBaja.validacionBaja eq 'Hecha'?'Invalidar baja.':'Validar baja.'}" disabled="#{statusBaja.areaValidacionBaja eq 'Servicios Escolares'}"
+                                                                                  onsuccess="actualizar();" />
                                                             <p:commandButton actionListener="#{validacionBajaDirector.buscarMateriasReprobadas(registro)}"
                                                             class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"

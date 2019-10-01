@@ -611,4 +611,25 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         }
         return  docExp;
     }
+
+    @Override
+    public Alumnos obtenerInformacionTSUAlumno(String matricula) {
+        int[] status = { 1, 6};
+        Short grado = 6;
+
+        List<Integer> listaStatus = Arrays.stream(status).boxed().collect(Collectors.toList());
+
+        TypedQuery<Alumnos> q = facadeSAIIUT.getEntityManager()
+                .createQuery("SELECT a FROM Alumnos a WHERE a.matricula=:matricula AND a.cveStatus IN :status AND a.gradoActual=:grado ORDER BY a.gradoActual DESC", Alumnos.class);
+        q.setParameter("status", listaStatus);
+        q.setParameter("matricula", matricula);
+        q.setParameter("grado", grado);
+        
+        List<Alumnos> l = q.getResultList();
+        if(!l.isEmpty()){
+            return l.get(0);
+        }else{
+            return null;
+        }
+    }
 }
