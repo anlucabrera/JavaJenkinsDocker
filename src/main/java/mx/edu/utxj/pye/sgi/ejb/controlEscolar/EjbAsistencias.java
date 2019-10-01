@@ -27,6 +27,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
@@ -44,6 +46,8 @@ public class EjbAsistencias {
     @EJB Facade f;
     @EJB EjbEventoEscolar ejbEventoEscolar;
     private EntityManager em;
+    final List<DtoCargaAcademica> cargas = new ArrayList<>();
+    @Getter @Setter Integer grupos = 0;
 
     @PostConstruct
     public void init(){
@@ -62,7 +66,7 @@ public class EjbAsistencias {
             filtro.addParam(PersonalFiltro.ACTIIVIDAD.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalDocenteActividad").orElse(3)));
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal docente.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar. (EjbAsignacionIndicadoresCriterios.validarDocente)", e, null);
+            return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar. (EjbAsistencias.validarDocente)", e, null);
         }
     }
     
@@ -76,7 +80,7 @@ public class EjbAsistencias {
 //                return ResultadoEJB.crearCorrecto(p, "El usuario ha sido comprobado como personal tutor.");
 //            }
 //        } catch (Exception e) {
-//            return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar. (EjbAsignacionIndicadoresCriterios.validarDocente)", e, null);
+//            return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar. (EjbAsistencias.validarDocente)", e, null);
 //        }
 //    }
 
@@ -91,7 +95,7 @@ public class EjbAsistencias {
             
             return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionIndicadoresCriterios.getPeriodosDescendentes)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsistencias.getPeriodosDescendentes)", e, null);
         }
     }
     
@@ -116,15 +120,15 @@ public class EjbAsistencias {
                     .collect(Collectors.toList());
             return ResultadoEJB.crearCorrecto(cargas, "Lista de cargas académicas por docente.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por docente. (EjbAsignacionIndicadoresCriterios.getCargaAcademicaPorDocente)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por docente. (EjbAsistencias.getCargaAcademicaPorDocente)", e, null);
         }
     }
     
-    public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicasPorTutor(PersonalActivo docente, PeriodosEscolares periodo){
-        try{
+    public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicasPorTutor(Integer docente, PeriodosEscolares periodo) {
+        try {
             //buscar carga académica del personal docente logeado del periodo seleccionado
             List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c INNER JOIN c.cveGrupo g WHERE g.tutor =:tutor AND c.evento.periodo =:periodo", CargaAcademica.class)
-                    .setParameter("tutor", docente.getPersonal().getClave())
+                    .setParameter("tutor", docente)
                     .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream()
                     .distinct()
@@ -134,8 +138,8 @@ public class EjbAsistencias {
                     .sorted(DtoCargaAcademica::compareTo)
                     .collect(Collectors.toList());
             return ResultadoEJB.crearCorrecto(cargas, "Lista de cargas académicas por docente.");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por docente. (EjbAsignacionIndicadoresCriterios.getCargaAcademicaPorDocente)", e, null);
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por Tutor. (EjbAsignacionIndicadoresCriterios.getCargaAcademicaPorDocente)", e, null);
         }
     }
     
@@ -162,7 +166,7 @@ public class EjbAsistencias {
             DtoCargaAcademica dto = new DtoCargaAcademica(cargaAcademicaBD, periodo, docente, grupo, materia, programa, planEstudio, planEstudioMateria);
             return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica (EjbAsignacionIndicadoresCriterios.pack).", e, DtoCargaAcademica.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica (EjbAsistencias.pack).", e, DtoCargaAcademica.class);
         }
     }
     
@@ -178,12 +182,23 @@ public class EjbAsistencias {
                     .getResultList();
             return ResultadoEJB.crearCorrecto(listaUnidMatConf, "Lista de configuración de la unidad materia seleccionada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbAsignacionIndicadoresCriterios.buscarConfiguracionUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbAsistencias.buscarConfiguracionUnidadMateria)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<UnidadMateriaConfiguracion>> buscarConfiguracionUnidadesMateriasGrupoT(DtoCargaAcademica dtoCargaAcademica){
+        try{
+            List<UnidadMateriaConfiguracion> listaUnidMatConf = em.createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.cveGrupo.idGrupo =:idGrupo", UnidadMateriaConfiguracion.class)
+                    .setParameter("idGrupo", dtoCargaAcademica.getGrupo().getIdGrupo())
+                    .getResultList();
+            return ResultadoEJB.crearCorrecto(listaUnidMatConf, "Lista de configuración de la unidad materia seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbAsistencias.buscarConfiguracionUnidadMateria)", e, null);
         }
     }
     
      /**
-     * Permite verificar si existe asignación de indicadores por criterio de la carga académica seleccionada
+     * Permite verificar si existe Pase de lista y seguimiento por docente y tutor
      * @param dtoCargaAcademica Materia de la que se buscará asignación de indicadores por criterio
      * @return Resultado del proceso
      */
@@ -194,7 +209,7 @@ public class EjbAsistencias {
                     .getSingleResult();
             return ResultadoEJB.crearCorrecto(unidadMatConfDet, "Existe asignación de indicadores por criterio para la materia seleccionada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la materia del docente. (EjbAsignacionIndicadoresCriterios.getConfiguracionUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la materia del docente. (EjbAsistencias.getConfiguracionUnidadMateria)", e, null);
         }
     }
        
@@ -222,7 +237,7 @@ public class EjbAsistencias {
 //                    .getResultList();
             return ResultadoEJB.crearCorrecto(listaIndicadores, "Lista de indicadores por criterio.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores por criterio. (EjbAsignacionIndicadoresCriterios.getIndicadoresCriterioParaAsignar)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores por criterio. (EjbAsistencias.getIndicadoresCriterioParaAsignar)", e, null);
         }
     }
     
@@ -291,7 +306,7 @@ public class EjbAsistencias {
             }
             return ResultadoEJB.crearCorrecto(listaIndicadores, "Lista de indicadores del criterio SER se obtuvo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SER. (EjbAsignacionIndicadoresCriterios.getIndicadoresCriterioSer)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SER. (EjbAsistencias.getIndicadoresCriterioSer)", e, null);
         }
     }
     
@@ -331,7 +346,7 @@ public class EjbAsistencias {
             }
             return ResultadoEJB.crearCorrecto(listaIndicadores, "Lista de indicadores del criterio SABER se obtuvo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SABER. (EjbAsignacionIndicadoresCriterios.getIndicadoresCriterioSaber)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SABER. (EjbAsistencias.getIndicadoresCriterioSaber)", e, null);
         }
     }
     
@@ -371,7 +386,7 @@ public class EjbAsistencias {
             }
             return ResultadoEJB.crearCorrecto(listaIndicadores, "Lista de indicadores del criterio SABER - HACER se obtuvo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SABER - HACER. (EjbAsignacionIndicadoresCriterios.getIndicadoresCriterioSaberHacer)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores del criterio SABER - HACER. (EjbAsistencias.getIndicadoresCriterioSaberHacer)", e, null);
         }
     }
 
@@ -472,7 +487,7 @@ public class EjbAsistencias {
             });
             return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SER se guardo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSer)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SER. (EjbAsistencias.guardarIndicadoresSer)", e, null);
         }
     }
     
@@ -511,7 +526,7 @@ public class EjbAsistencias {
             });
             return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SABER se guardo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaber)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER. (EjbAsistencias.guardarIndicadoresSaber)", e, null);
         }
     }
     
@@ -550,7 +565,7 @@ public class EjbAsistencias {
             });
             return ResultadoEJB.crearCorrecto(l, "La asignación de indicadores del criterio SABER - HACER se guardo correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER - HACER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaberHacer)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER - HACER. (EjbAsistencias.guardarIndicadoresSaberHacer)", e, null);
         }
     }
     
@@ -569,7 +584,7 @@ public class EjbAsistencias {
                     .collect(Collectors.toList());
             return ResultadoEJB.crearCorrecto(unidadMatConfDto, "Lista de configuración de la unidad materia seleccionada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbAsignacionIndicadoresCriterios.getConfiguracionUnidadMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbAsistencias.getConfiguracionUnidadMateria)", e, null);
         }
     }
     
@@ -588,7 +603,7 @@ public class EjbAsistencias {
          
             return ResultadoEJB.crearCorrecto(dto, "Configuración de la unidad materia empaquetada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la configuración de la unidad materia (EjbAsignacionIndicadoresCriterios.pack).", e, DtoConfiguracionUnidadMateria.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la configuración de la unidad materia (EjbAsistencias.pack).", e, DtoConfiguracionUnidadMateria.class);
         }
     }
     
@@ -604,7 +619,7 @@ public class EjbAsistencias {
                     .getResultList();
             return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Existe asignación de indicadores por criterio para la unidad seleccionada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la unidad seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresUnidad)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la unidad seleccionada. (EjbAsistencias.buscarAsignacionIndicadoresUnidad)", e, null);
         }
     }
     
@@ -638,13 +653,13 @@ public class EjbAsistencias {
                     listaUnidadMatConfDet.add(dto);
 
                 });
-                return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+                return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Pase de lista y seguimiento por docente y tutor.");
             }
             else{
-                return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "No existe asignación de indicadores por criterio de la carga académica seleccionada.");
+                return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "No existe Pase de lista y seguimiento por docente y tutor.");
             }
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo Pase de lista y seguimiento por docente y tutor. (EjbAsistencias.buscarAsignacionIndicadoresCargaAcademica)", e, null);
         }
     }
     
@@ -689,7 +704,7 @@ public class EjbAsistencias {
 
             return ResultadoEJB.crearCorrecto(delete, "La asignación de indicadores por criterio se eliminó correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la asignación de indicadores por criterio. (EjbAsignacionIndicadoresCriterios.eliminarAsignacionIndicadores)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la asignación de indicadores por criterio. (EjbAsistencias.eliminarAsignacionIndicadores)", e, null);
         }
     }
     // Consulta para la generacion del formato de Planeacion Cuatrimestral
@@ -708,20 +723,20 @@ public class EjbAsistencias {
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaConsulta " + listaUnidadMatConfDet.size());
 
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaFinal " + listaUnidadMatConfDet.size());
-            return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+            return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Pase de lista y seguimiento por docente y tutor.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo Pase de lista y seguimiento por docente y tutor. (EjbAsistencias.buscarListaGrupos)", e, null);
         }
     }
     
     public ResultadoEJB<List<DtoPaseLista>> agregarPaseLista(List<DtoPaseLista> dpls,Date d) {
         if (!dpls.isEmpty()) {
+            Asistencias a = new Asistencias();
+            a.setFechaHora(d);
+            a.setTipoAsistencia("Calses");
+            em.persist(a);
             dpls.forEach((t) -> {
-                Asistencias a=new Asistencias();
-                a.setFechaHora(d);
-                a.setTipoAsistencia("Calses");
-                em.persist(a);
-                Asistenciasacademicas ac=new Asistenciasacademicas();
+                Asistenciasacademicas ac = new Asistenciasacademicas();
                 ac.setAsistencia(a);
                 ac.setEstudiante(t.getPorcInicio());
                 ac.setCargaAcademica(t.getCargaAcademica());
@@ -729,23 +744,47 @@ public class EjbAsistencias {
                 em.persist(ac);
             });
         }
-        return ResultadoEJB.crearCorrecto(dpls, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+        return ResultadoEJB.crearCorrecto(dpls, "Pase de lista y seguimiento por docente y tutor.");
     }
     
     public ResultadoEJB<Asistenciasacademicas> actualizarPaseLista(Asistenciasacademicas asistenciasacademicas) {
         em.merge(asistenciasacademicas);
-        return ResultadoEJB.crearCorrecto(asistenciasacademicas, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+        return ResultadoEJB.crearCorrecto(asistenciasacademicas, "Pase de lista y seguimiento por docente y tutor.");
     }
     
+    public ResultadoEJB<Asistencias> actualizarSesionesPaseLista(Asistencias asistencias) {
+        em.merge(asistencias);
+        return ResultadoEJB.crearCorrecto(asistencias, "Pase de lista y seguimiento por docente y tutor.");
+    }
+
+    public void eliminarPaseDeListaSesion(Asistencias asistencias) {
+        List<Asistenciasacademicas> asistenciasacademicases = em.createQuery("SELECT u FROM Asistenciasacademicas u INNER JOIN u.asistencia asi WHERE asi.asistencia =:asistencia", Asistenciasacademicas.class)
+                .setParameter("asistencia", asistencias.getAsistencia())
+                .getResultList();
+        if (!asistenciasacademicases.isEmpty()) {
+            asistenciasacademicases.forEach((t) -> {
+                Asistenciasacademicas a = em.find(Asistenciasacademicas.class, t.getAcademica());
+                em.remove(a);
+                em.flush();
+            });
+        }
+        if (!em.contains(asistencias)) {
+            asistencias = em.merge(asistencias);
+        }
+
+        em.remove(asistencias);
+        em.flush();
+    }
+
     public ResultadoEJB<Estudiante> buscaEstudiante(Integer matricula) {
         try {
             Estudiante e = new Estudiante();
             e = em.createQuery("SELECT es FROM Estudiante es WHERE es.matricula =:matricula", Estudiante.class)
                     .setParameter("matricula", matricula)
                     .getResultList().get(0);
-            return ResultadoEJB.crearCorrecto(e, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+            return ResultadoEJB.crearCorrecto(e, "Pase de lista y seguimiento por docente y tutor.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo Pase de lista y seguimiento por docente y tutor. (EjbAsistencias.buscaEstudiante)", e, null);
         }
     }
     
@@ -755,9 +794,9 @@ public class EjbAsistencias {
             c = em.createQuery("SELECT ca FROM CargaAcademica ca WHERE ca.carga =:carga", CargaAcademica.class)
                     .setParameter("carga", carga)
                     .getResultList().get(0);
-            return ResultadoEJB.crearCorrecto(c, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+            return ResultadoEJB.crearCorrecto(c, "Pase de lista y seguimiento por docente y tutor.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo Pase de lista y seguimiento por docente y tutor. (EjbAsistencias.buscaCargaAcademica)", e, null);
         }
     }
     
@@ -768,9 +807,9 @@ public class EjbAsistencias {
                     .setParameter("carga", ca.getCarga())
                     .setParameter("matricula", matricula)
                     .getResultList();
-            return ResultadoEJB.crearCorrecto(as, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+            return ResultadoEJB.crearCorrecto(as, "Pase de lista y seguimiento por docente y tutor.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo Pase de lista y seguimiento por docente y tutor. (EjbAsistencias.buscarAsistenciasacademicas)", e, null);
         }
     }
     
@@ -780,9 +819,9 @@ public class EjbAsistencias {
             as = em.createQuery("SELECT ca FROM Asistenciasacademicas ca INNER JOIN ca.asistencia asis INNER JOIN ca.cargaAcademica cg WHERE cg.carga=:carga GROUP BY asis.fechaHora", Asistenciasacademicas.class)
                     .setParameter("carga", ca.getCarga())
                     .getResultList();
-            return ResultadoEJB.crearCorrecto(as, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+            return ResultadoEJB.crearCorrecto(as, "Pase de lista y seguimiento por docente y tutor.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo Pase de lista y seguimiento por docente y tutor. (EjbAsistencias.buscarAsistenciasacademicasFechasMes)", e, null);
         }
     }
 }

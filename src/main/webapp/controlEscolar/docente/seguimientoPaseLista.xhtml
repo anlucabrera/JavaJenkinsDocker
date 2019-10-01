@@ -51,7 +51,8 @@
                                     <f:facet name="left">
                                     </f:facet>
                                     <f:facet name="right">
-
+                                        <p:commandButton icon="fa fa-clock-o" title="Ver sesiones de pase de lista" styleClass="btn-primary" oncomplete="PF('dlgSesiones').show()" process="@this" update=":frmSesiones"
+                                                         actionListener="#{paseListaDoc.metodoBase()}"/>
                                     </f:facet>
                                 </p:toolbar>
                             </div>
@@ -84,11 +85,11 @@
                                                 <p:message for="carga" />
                                             </div>
                                         </div>
-                                                <br/>
-                                                <br/>
+                                        <br/>
+                                        <br/>
                                         <div class="row">
                                             <center>
-                                                
+
                                                 <p:outputLabel value="Seleccione Unidad para visualizar Asistencias" />
                                                 <p></p>
                                                 <p:selectOneRadio id="unidad" value="#{paseListaDoc.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{paseListaDoc.consultarReporte}" >
@@ -202,7 +203,7 @@
                                                                                 <c:set var="n" value="#{q.asistenciasacademicases.get(m)}"/>
                                                                                 <p:column >#{n.tipoAsistenciaA}</p:column>
                                                                             </c:forEach>
-                                                                             <p:column>#{q.totalPasesLista}</p:column>
+                                                                            <p:column>#{q.totalPasesLista}</p:column>
                                                                             <p:column>#{q.porAsis}%</p:column>
                                                                             <p:column>                                                                                                                                                                
                                                                                 <p:commandButton icon="fa fa-edit" title="Editar actividad" styleClass="btn-primary" oncomplete="PF('dlgActualizacionActividad').show()" process="@this" update=":frmActualizaActividad"
@@ -277,10 +278,75 @@
                                     </div>
                                 </div> 
                             </div>
-                            
+
                         </p:dialog>
                     </p:outputPanel>
                 </h:form>
+
+                <h:form id="frmSesiones" >
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:dialog id="dlgSesiones"  header="Sesiones de pase de lista" widgetVar="dlgSesiones" minimizable="true" width="500px"
+                                  maximizable="true" position="center" visible="#{paseListaDoc.rol.dplrcVisible}">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <div class="col-sm-12">
+                                        <div class="description-block" style="text-align: left">
+                                            <h:outputLabel value="#{paseListaDoc.rol.carga.cargaAcademica.cveGrupo.grado}° #{paseListaDoc.rol.carga.cargaAcademica.cveGrupo.literal}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                            <h:outputLabel value="NOMBRE DE LA ASIGNATURA:"/> <p:spacer width="10px"/> <h:outputLabel value="(#{paseListaDoc.rol.carga.planEstudioMateria.claveMateria}) #{paseListaDoc.rol.carga.materia.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>    
+                                        </div>
+                                    </div>                          
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                        <p:dataTable id="cars1" var="car" value="#{paseListaDoc.rol.asistenciases}" editable="true" style="margin-bottom:20px">
+                                            <f:facet name="header">
+                                                Asistencias
+                                            </f:facet>
+
+                                            <p:ajax event="rowEdit" listener="#{paseListaDoc.updateSesiones}" update="@form"/>
+                                            <p:ajax event="rowEditCancel" listener="#{paseListaDoc.onRowCancel}" update="@form"/>
+
+                                            <p:column>
+                                                <p:commandButton actionListener="#{paseListaDoc.eliminarSesion(car)}" process="@this" update="@form" icon="fa fa-trash" 
+                                                                 styleClass="btn-primary" title="Eliminar Sesion">
+                                                    <p:confirm header="Confirmación" message="¿Confirma la eliminación del pase de lista de la sesion #{car.fechaHora}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                            </p:column>
+                                            <p:column headerText="Mes">
+                                                <h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="MMMMM" locale="es"/></h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Fecha">
+                                                <h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="dd, yyyy" locale="es"/></h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Hora"><h:outputText value="#{car.fechaHora.hours ge 10?'':'0'}#{car.fechaHora.hours}:#{car.fechaHora.minutes}#{car.fechaHora.minutes ge 10?'':'0'}"/>
+                                            </p:column>
+
+                                            <!--p:column headerText="Valor">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="# {car.tipoAsistenciaA}" /></f:facet>
+                                                    <f:facet name="input">
+                                                        <p:selectOneMenu value="# {car.tipoAsistenciaA}" style="width:100%">
+                                                            <f:selectItems value="# {paseListaDoc.rol.asistencias}" var="man" itemLabel="#{man}" itemValue="#{man}" />
+                                                        </p:selectOneMenu>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column-->
+
+                                            <!--p:column style="width:35px">
+                                                <p:rowEditor />
+                                            </p:column-->
+                                        </p:dataTable>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+                                    </div>
+                                </div> 
+                            </div>
+                        </p:dialog>
+                    </p:outputPanel>
+                </h:form>
+
             </c:if>
             <c:if test="#{!paseListaDoc.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">

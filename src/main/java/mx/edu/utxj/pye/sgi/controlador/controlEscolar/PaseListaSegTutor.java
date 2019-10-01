@@ -45,6 +45,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistencias;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
@@ -106,7 +107,7 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
                        
-            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicasPorTutor(rol.getTutor(), rol.getPeriodo());
+            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicasPorTutor(rol.getTutor().getPersonal().getClave(), rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
             rol.setCargas(resCarga.getValor());
             rol.setCarga(resCarga.getValor().get(0));

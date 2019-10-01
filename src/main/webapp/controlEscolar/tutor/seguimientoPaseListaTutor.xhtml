@@ -50,7 +50,11 @@
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
                                     </f:facet>
-                                    <f:facet name="right">
+                                    <f:facet name="right">                                        
+                                        <p:link outcome="reporteAsistenciasTutor">
+                                            <i class="fa fa-search"></i>
+                                            <span>Volver a reporte General</span>
+                                        </p:link>
                                     </f:facet>
                                 </p:toolbar>
                             </div>
@@ -219,7 +223,7 @@
             <c:if test="#{!paseListaSegTutor.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a personal docente."/>
+                        <h:outputText value="El acceso solo está autorizado a personal tutor."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

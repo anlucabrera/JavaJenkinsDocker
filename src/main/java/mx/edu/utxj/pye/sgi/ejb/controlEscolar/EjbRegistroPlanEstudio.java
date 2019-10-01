@@ -493,6 +493,19 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de Planes de estudio(EjbRegistroPlanEstudio)", e, null);
         }
     }
+    
+    public ResultadoEJB<List<Grupo>> getListaGrupoPorTutor(PersonalActivo tutor, PeriodosEscolares escolares) {
+        try {
+            List<Grupo> gs = em.createQuery("select g from Grupo g where g.tutor=:tutor AND g.periodo=:periodo", Grupo.class)
+                    .setParameter("tutor", tutor.getPersonal().getClave())
+                    .setParameter("periodo", escolares.getPeriodo())
+                    .getResultList();
+
+            return ResultadoEJB.crearCorrecto(gs, "Listado de grupos por tutor");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de Planes de estudio(EjbRegistroPlanEstudio)", e, null);
+        }
+    }
 
     public ResultadoEJB<List<Listaalumnosca>> getListaAlumnosPorGrupo(Grupo grupo) {
         try {
@@ -502,7 +515,7 @@ public class EjbRegistroPlanEstudio {
                     .getResultList();
             if (!cas.isEmpty()) {
                 CargaAcademica ca=cas.get(0);
-                listaalumnoscas = em.createQuery("select a from Listaalumnosca a WHERE a.carga=:carga", Listaalumnosca.class)
+                listaalumnoscas = em.createQuery("select a from Listaalumnosca a WHERE a.carga=:carga ORDER BY a.esApePat,a.esApeMat,a.esNombre", Listaalumnosca.class)
                         .setParameter("carga", ca.getCarga())
                         .getResultList();
             }

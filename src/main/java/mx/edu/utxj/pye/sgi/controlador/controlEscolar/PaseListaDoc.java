@@ -46,6 +46,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistencias;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
@@ -126,6 +127,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             List<String> asi=new ArrayList<>();
             asi.add("Asistencia");
             asi.add("Falta");
+            asi.add("Retardo");
             asi.add("Permiso");
             asi.add("Justificado");
             rol.setAsistencias(asi);
@@ -200,11 +202,15 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         }
     }
     
-    public String buscarPersonal(Integer clave){
+    public String buscarPersonal(Integer clave) {
         try {
             Personal p = new Personal();
-            p = ejbPersonal.mostrarPersonalLogeado(clave);
-            return p.getNombre();
+            if (clave != null) {
+                p = ejbPersonal.mostrarPersonalLogeado(clave);
+                return p.getNombre();
+            } else {
+                return "Nombre del Personal";
+            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
@@ -235,6 +241,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             }
         });
         ejb.agregarPaseLista(rol.getDpls(),rol.getFechaClase());
+        Messages.addGlobalInfo("¡El pase de lista se ha guardado!");
         existeAsignacion();
     }
     
@@ -283,6 +290,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         rol.getEstudiantesPorGrupo().getEstudiantes().forEach((a) -> {
             ResultadoEJB<List<Asistenciasacademicas>> res = ejb.buscarAsistenciasacademicas(rol.getCarga().getCargaAcademica(), a.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
             List<Asistenciasacademicas> asFilter = new ArrayList<>();
+            rol.setAsistenciases(new ArrayList<>());
             asFilter = res.getValor().stream().filter(t -> (t.getAsistencia().getFechaHora().after(fI) || t.getAsistencia().getFechaHora().equals(fI)) && (t.getAsistencia().getFechaHora().before(fF) || t.getAsistencia().getFechaHora().equals(fF))).collect(Collectors.toList());
             tasis = 0;
             if (asFilter.size() > 0 && !asFilter.isEmpty()) {
@@ -292,10 +300,12 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         case "Falta":                            t.setTipoAsistenciaA("F");                            break;
                         case "Permiso":                            t.setTipoAsistenciaA("P");                            break;
                         case "Justificado":                            t.setTipoAsistenciaA("J");                            break;
+                        case "Retardo":                            t.setTipoAsistenciaA("R");                            break;
                     }
                     if(!t.getTipoAsistenciaA().equals("F")){
                         tasis=tasis+1;
                     }
+                    rol.getAsistenciases().add(t.getAsistencia());
                 });
                 Double d = (tasis * 100.0) / asFilter.size();
                 Boolean b = (d < 80.0);
@@ -313,8 +323,15 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
 
                 List<Listaalumnosca> ls = rol.getListaalumnoscas().stream().filter(t -> t.getMatricula() == a.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula()).collect(Collectors.toList());
                 rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(ls.get(0), asFilter, asFilter.size(), d, b));
+            }else{                
+                List<Listaalumnosca> ls = rol.getListaalumnoscas().stream().filter(t -> t.getMatricula() == a.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula()).collect(Collectors.toList());
+                rol.getDtoPaseListaReporteConsultas().add(new DtoPaseListaReporteConsulta(ls.get(0), asFilter, asFilter.size(), 100D, Boolean.FALSE));
             }
-        });     
+        });   
+        if(!rol.getDtoPaseListaReporteConsultas().isEmpty()){
+            rol.setDplrc(rol.getDtoPaseListaReporteConsultas().get(0));
+        }
+        
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         ResultadoEJB<List<Asistenciasacademicas>> resF = ejb.buscarAsistenciasacademicasFechasMes(rol.getCarga().getCargaAcademica());
         List<Asistenciasacademicas> asFilter = new ArrayList<>();
@@ -604,6 +621,37 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalInfo("¡Operación cancelada!");
     }
+    
+    public void updateSesiones(RowEditEvent event) {
+        try {
+            Asistencias asistencias = (Asistencias) event.getObject();
+            ejb.actualizarSesionesPaseLista(asistencias);
+            ResultadoEJB<DtoUnidadConfiguracion> ducB = packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
+            ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCarga(), ducB.getValor());
+            if (!resGrupo.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resGrupo);
+            } else {
+                rol.setEstudiantesPorGrupo(resGrupo.getValor());
+            }
+            createDynamicColumns();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void eliminarSesion(Asistencias asistencias) {
+        try {
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.eliminarSesion(A)"+asistencias);
+            ejb.eliminarPaseDeListaSesion(asistencias);
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.eliminarSesion(B)");
+            createDynamicColumns();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionPlanEstudioDirector.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     
     public void metodoBase() {
     }
