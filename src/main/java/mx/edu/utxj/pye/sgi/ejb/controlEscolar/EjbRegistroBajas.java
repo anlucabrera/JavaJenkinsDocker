@@ -982,72 +982,7 @@ public class EjbRegistroBajas {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener el status de la baja. (EjbRegistroBajas.buscarValidacionBaja)", e, null);
         }
     }
-    
-//     /**
-//     * Permite verificar si la baja esta validada o no por dirección de carrera
-//     * @param registro Clave de registro de baja
-//     * @return Resultado del proceso
-//     */
-//    public ResultadoEJB<String> buscarValidacionBaja(Baja registro) {
-//        try{
-//            Baja baja = em.createQuery("SELECT b FROM Baja b WHERE b.idBajas =:baja", Baja.class)
-//                    .setParameter("baja", registro.getIdBajas())
-//                    .getSingleResult();
-//            
-//            String validacionArea = "";
-//            
-//            Personal personal = em.find(Personal.class, baja.getEmpleadoRegistro());
-//            
-//            if(personal.getAreaOperativa() == 10 && baja.getValidada() == 1) 
-//                { 
-//
-//			validacionArea = "Hecha - Servicios Escolares";
-//                } 
-//                else 
-//                { 
-//                    if(personal.getAreaOperativa() == 10 && baja.getValidada() == 0) 
-//		    {
-//			validacionArea = "Pendiente - Servicios Escolares";
-//						
-//		    }
-//					
-//		    if(personal.getAreaOperativa() != 10 && baja.getValidada() == 1) 
-//		    {
-//		        validacionArea = "Hecha - Dirección de Carrera";
-//						
-//		    }
-//		    if(personal.getAreaOperativa() != 10 && baja.getValidada() == 0) 
-//		    {
-//                        validacionArea = "Pendiente - Dirección de Carrera";
-//						
-//		    }
-//                }
-//            
-//            return ResultadoEJB.crearCorrecto(validacionArea, "Status de la baja.");
-//        }catch (Exception e){
-//            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el status de la baja. (EjbRegistroBajas.buscarValidacionBaja)", e, null);
-//        }
-//    }
-//    
-//     /**
-//     * Permite verificar si la baja esta validada o no por psicopedagogía
-//     * @param registro Clave de registro de baja
-//     * @return Resultado del proceso
-//     */
-//    public ResultadoEJB<Integer> buscarValidacionPsicopedagogia(Baja registro) {
-//        try{
-//            Baja baja = em.createQuery("SELECT b FROM Baja b WHERE b.idBajas =:baja", Baja.class)
-//                    .setParameter("baja", registro.getIdBajas())
-//                    .getSingleResult();
-//           
-//            Integer status = baja.getValidoPsicopedagogia();
-//            
-//            return ResultadoEJB.crearCorrecto(status, "Status de la baja por psicopedagogía.");
-//        }catch (Exception e){
-//            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el status de la baja por psicopedagogía. (EjbRegistroBajas.buscarValidacionPsicopedagogia)", e, null);
-//        }
-//    }
-    
+   
       /**
      * Permite eliminar el registro de baja
      * @param registro Registro de baja
