@@ -92,7 +92,7 @@
 
                                                 <p:outputLabel value="Seleccione Unidad para visualizar Asistencias" />
                                                 <p></p>
-                                                <p:selectOneRadio id="unidad" value="#{paseListaDoc.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{paseListaDoc.consultarReporte}" >
+                                                <p:selectOneRadio id="unidad" value="#{paseListaDoc.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{paseListaDoc.consultarReporteEvent}" >
                                                     <f:selectItems value="#{paseListaDoc.rol.listaDtoConfUniMat}" var="c" itemLabel="#{c.unidadMateria.noUnidad}. #{c.unidadMateria.nombre}" itemValue="#{c}"/>
                                                     <p:ajax update="@this" process="@this"/>
                                                     <p:autoUpdate />
@@ -204,7 +204,7 @@
                                                                                 <p:column >#{n.tipoAsistenciaA}</p:column>
                                                                             </c:forEach>
                                                                             <p:column>#{q.totalPasesLista}</p:column>
-                                                                            <p:column>#{q.porAsis}%</p:column>
+                                                                            <p:column>#{planeacionCuatrimestral.df.format(q.porAsis)}%</p:column>
                                                                             <p:column>                                                                                                                                                                
                                                                                 <p:commandButton icon="fa fa-edit" title="Editar actividad" styleClass="btn-primary" oncomplete="PF('dlgActualizacionActividad').show()" process="@this" update=":frmActualizaActividad"
                                                                                                  actionListener="#{paseListaDoc.metodoBase()}">

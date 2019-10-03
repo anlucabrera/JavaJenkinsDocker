@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mx.edu.utxj.pye.sgi.entity.controlEscolar;
+package mx.edu.utxj.pye.sgi.entity.controlEscolar.view;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Listaalumnosca.findByEsNombre", query = "SELECT l FROM Listaalumnosca l WHERE l.esNombre = :esNombre")
     , @NamedQuery(name = "Listaalumnosca.findByEsApePat", query = "SELECT l FROM Listaalumnosca l WHERE l.esApePat = :esApePat")
     , @NamedQuery(name = "Listaalumnosca.findByEsApeMat", query = "SELECT l FROM Listaalumnosca l WHERE l.esApeMat = :esApeMat")
-    , @NamedQuery(name = "Listaalumnosca.findByAsistenciaT", query = "SELECT l FROM Listaalumnosca l WHERE l.asistenciaT = :asistenciaT")})
+    , @NamedQuery(name = "Listaalumnosca.findByAsistenciaT", query = "SELECT l FROM Listaalumnosca l WHERE l.asistenciaT = :asistenciaT")
+    , @NamedQuery(name = "Listaalumnosca.findByTipoEstudiante", query = "SELECT l FROM Listaalumnosca l WHERE l.tipoEstudiante = :tipoEstudiante")})
 public class Listaalumnosca implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -71,9 +72,13 @@ public class Listaalumnosca implements Serializable {
     private String esApeMat;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 11)
+    @Size(min = 1, max = 10)
     @Column(name = "AsistenciaT")
     private String asistenciaT;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tipo_estudiante")
+    private short tipoEstudiante;
 
     public Listaalumnosca() {
     }
@@ -140,6 +145,14 @@ public class Listaalumnosca implements Serializable {
 
     public void setAsistenciaT(String asistenciaT) {
         this.asistenciaT = asistenciaT;
+    }
+
+    public short getTipoEstudiante() {
+        return tipoEstudiante;
+    }
+
+    public void setTipoEstudiante(short tipoEstudiante) {
+        this.tipoEstudiante = tipoEstudiante;
     }
     
 }

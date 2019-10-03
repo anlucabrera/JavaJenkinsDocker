@@ -96,13 +96,15 @@
                                                 <p:remoteCommand name="actualizar" update="@form:tbListaRegistroBajas" />
                                                 <p:dataTable id="tbListaRegistroBajas" var="baja" value="#{dictamenBajaPsicopedagogia.rol.bajasProgramaEducativo}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
-                                                                 tableStyle="vertical-align: middle;" editable="true" editMode="cell">
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                     <f:facet name="header">
                                                         Bajas registradas de #{dictamenBajaPsicopedagogia.rol.programaEducativo.nombre}
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
                                                             <p:column rowspan="2" headerText="Opciones" style="width: 120px;"/>
+                                                            <p:column rowspan="2" headerText="Clave" style="width: 80px;"/>
                                                             <p:column colspan="2" headerText="Validación" style="width: 400px;"/>
                                                             <p:column rowspan="2" headerText="Fecha de Baja" style="width: 100px;"/>
                                                             <p:column rowspan="2" headerText="Grupo" style="width: 150px;"/>
@@ -141,6 +143,9 @@
                                                                                   title="Generar Formato de Baja"  disabled="# {baja.dtoRegistroBaja.registroBaja.idBajas eq null}"/> -->
                                                         </div>
                                                         </center>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.idBajas}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{statusBaja.fechaValidacionBaja} - #{statusBaja.areaValidacionBaja}"/>

@@ -293,7 +293,7 @@ public class EjbPacker {
     public ResultadoEJB<DtoGrupoEstudiante> packGrupoEstudiante(DtoCargaAcademica dtoCargaAcademica, DtoUnidadConfiguracion dtoUnidadConfiguracion){
         try{
             Grupo grupo = em.find(Grupo.class, dtoCargaAcademica.getGrupo().getIdGrupo());
-            List<DtoCapturaCalificacion> dtoCapturaCalificaciones = em.createQuery("select e from Estudiante e where e.grupo=:grupo order by e.aspirante.idPersona.apellidoPaterno, e.aspirante.idPersona.apellidoMaterno, e.aspirante.idPersona.nombre", Estudiante.class)
+            List<DtoCapturaCalificacion> dtoCapturaCalificaciones = em.createQuery("select e from Estudiante e where e.grupo=:grupo and e.tipoEstudiante.idTipoEstudiante=1 order by e.aspirante.idPersona.apellidoPaterno, e.aspirante.idPersona.apellidoMaterno, e.aspirante.idPersona.nombre", Estudiante.class)
                     .setParameter("grupo", grupo)
                     .getResultStream()
                     .distinct()

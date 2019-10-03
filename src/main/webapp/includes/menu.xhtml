@@ -116,7 +116,8 @@
                 <c:if test="#{reincorporacionServiciosEscolares.mostrarEnDesarrollo(request) and reincorporacionServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reincorporaciones.xhtml"><i class="fa fa-user-plus"></i><span>Reincorporaciones</span></p:link></li></c:if>
                 <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Indicadores Criterio</span></p:link></li></c:if>
                 <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral</span></p:link></li></c:if>
-                <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-calendar-check"></i><span>Apertura Extemporánea</span></p:link></li></c:if>
+                <c:if test="#{planeacionCuatrimestralValidacion.mostrarEnDesarrollo(request) and planeacionCuatrimestralValidacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/planeacionCuatrimestralValidacion.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral Validacion</span></p:link></li></c:if>
+                <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-calendar"></i><span>Apertura Extemporánea</span></p:link></li></c:if>
                 <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/paseLista.xhtml"><i class="fa fa-list"></i><span>Lista de asistencia</span> <span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de <br/>Lista Docente</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{reporteAsistenciasTutor.mostrarEnDesarrollo(request) and reporteAsistenciasTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/reporteAsistenciasTutor.xhtml"><i class="fa fa-file-text-o"></i><span>Concentrado Asistencias</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
@@ -903,12 +904,12 @@
                             </p:link>
                         </li>
                         <li>
-                            <p:link href="/expedienteTitulacion/titulacion/seguimientoExpGeneracionING.xhtml"><i class="fa fa-group"></i>
+                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpGeneracionING.xhtml"><i class="fa fa-group"></i>
                                 <span>Seguimiento Nivel ING/LIC</span>
                             </p:link>
                         </li>
                         <li>
-                            <p:link href="/expedienteTitulacion/titulacion/seguimientoExpGeneracionTSU.xhtml"><i class="fa fa-group"></i>
+                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpGeneracionTSU.xhtml"><i class="fa fa-group"></i>
                                 <span>Seguimiento Nivel TSU</span>
                             </p:link>
                         </li>

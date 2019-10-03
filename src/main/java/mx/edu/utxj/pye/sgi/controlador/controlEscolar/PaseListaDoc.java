@@ -51,7 +51,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistencias;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
@@ -168,6 +168,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         }
         Ajax.update("frm");
     }
+    
     public void existeConfiguracion(){
         if (rol.getCarga() == null) {            return;        }
         ResultadoEJB<List<UnidadMateriaConfiguracion>> res = ejb.buscarConfiguracionUnidadMateria(rol.getCarga());
@@ -184,12 +185,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     public void crearDtoConfiguracionUnidadMateria() {
         if (rol.getCarga() == null) {            return;        }
         ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionUnidadMateria(rol.getCarga());
-        if (res.getCorrecto()) {
+        if (res.getCorrecto()) {  
+            Date d=new Date();
+            List<DtoConfiguracionUnidadMateria> dcums=res.getValor().stream().filter(t -> (d.after(t.getUnidadMateriaConfiguracion().getFechaInicio()) || d.equals(t.getUnidadMateriaConfiguracion().getFechaInicio())) && (d.before(t.getUnidadMateriaConfiguracion().getFechaFin()) || d.equals(t.getUnidadMateriaConfiguracion().getFechaFin()))).collect(Collectors.toList());
             rol.setListaDtoConfUniMat(res.getValor());
+            if(!dcums.isEmpty()){
+                rol.setDtoConfUniMat(dcums.get(0));
+                consultarReporte();
+            }
         } else {
             mostrarMensajeResultadoEJB(res);
         }
-
     }
 
     public String buscarDirector(Short clave){
@@ -262,24 +268,28 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         rol.setDpls(new ArrayList<>());
     }
     
-    public void consultarReporte(ValueChangeEvent event) {
+    public void consultarReporteEvent(ValueChangeEvent event) {
         rol.setDtoConfUniMat((DtoConfiguracionUnidadMateria)event.getNewValue());
+        consultarReporte();
+    }
+    
+    public void consultarReporte() {
         rol.setDtoPaseListaReporteConsultas(new ArrayList<>());
         rol.setDplsReportesMes(new ArrayList<>());
         rol.setDiasPaseLista(new ArrayList<>());
-        
-        if(rol.getDtoConfUniMat() == null) {
+
+        if (rol.getDtoConfUniMat() == null) {
             mostrarMensaje("No hay unidad de evaluación seleccionada.");
             rol.setEstudiantesPorGrupo(null);
             return;
         }
-        ResultadoEJB<DtoUnidadConfiguracion> ducB=packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
+        ResultadoEJB<DtoUnidadConfiguracion> ducB = packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
         ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCarga(), ducB.getValor());
         if(!resGrupo.getCorrecto()) mostrarMensajeResultadoEJB(resGrupo);
         else {
             rol.setEstudiantesPorGrupo(resGrupo.getValor());
         }
-        
+
         createDynamicColumns();
     }
     
@@ -604,8 +614,8 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     }
 
     public void updatePaseDeLista(RowEditEvent event) {
-        try {
-            Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio(), rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaFin(), calificaciones.leerDiasRangoParaCapturarUnidad());
+        try {                                    
+            Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaInicio(), rol.getDtoConfUniMat().getUnidadMateriaConfiguracion().getFechaFin(), calificaciones.leerDiasRangoParaCapturarUnidad());            
             if (activaPorFecha) {
                 Asistenciasacademicas asistenciasacademicas = (Asistenciasacademicas) event.getObject();
                 ejb.actualizarPaseLista(asistenciasacademicas);
@@ -649,10 +659,8 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     }
     
     public void eliminarSesion(Asistencias asistencias) {
-        try {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.eliminarSesion(A)"+asistencias);
-            ejb.eliminarPaseDeListaSesion(asistencias);
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.eliminarSesion(B)");
+        try {            
+            ejb.eliminarPaseDeListaSesion(asistencias);            
             createDynamicColumns();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

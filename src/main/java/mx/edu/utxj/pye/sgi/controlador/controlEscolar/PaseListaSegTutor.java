@@ -49,7 +49,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistencias;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
@@ -169,7 +169,13 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
         if (rol.getCarga() == null) {            return;        }
         ResultadoEJB<List<DtoConfiguracionUnidadMateria>> res = ejb.getConfiguracionUnidadMateria(rol.getCarga());
         if (res.getCorrecto()) {
+            Date d = new Date();
+            List<DtoConfiguracionUnidadMateria> dcums = res.getValor().stream().filter(t -> (d.after(t.getUnidadMateriaConfiguracion().getFechaInicio()) || d.equals(t.getUnidadMateriaConfiguracion().getFechaInicio())) && (d.before(t.getUnidadMateriaConfiguracion().getFechaFin()) || d.equals(t.getUnidadMateriaConfiguracion().getFechaFin()))).collect(Collectors.toList());
             rol.setListaDtoConfUniMat(res.getValor());
+            if (!dcums.isEmpty()) {
+                rol.setDtoConfUniMat(dcums.get(0));
+                consultarReporte();
+            }
         } else {
             mostrarMensajeResultadoEJB(res);
         }
@@ -215,22 +221,26 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
     
     public void consultarReporte(ValueChangeEvent event) {
         rol.setDtoConfUniMat((DtoConfiguracionUnidadMateria)event.getNewValue());
+        consultarReporte();
+    }
+    
+    public void consultarReporte() {
         rol.setDtoPaseListaReporteConsultas(new ArrayList<>());
         rol.setDplsReportesMes(new ArrayList<>());
         rol.setDiasPaseLista(new ArrayList<>());
-        
-        if(rol.getDtoConfUniMat() == null) {
+
+        if (rol.getDtoConfUniMat() == null) {
             mostrarMensaje("No hay unidad de evaluación seleccionada.");
             rol.setEstudiantesPorGrupo(null);
             return;
         }
-        ResultadoEJB<DtoUnidadConfiguracion> ducB=packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
+        ResultadoEJB<DtoUnidadConfiguracion> ducB = packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
         ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCarga(), ducB.getValor());
         if(!resGrupo.getCorrecto()) mostrarMensajeResultadoEJB(resGrupo);
         else {
             rol.setEstudiantesPorGrupo(resGrupo.getValor());
         }
-        
+
         createDynamicColumns();
     }
     

@@ -6,34 +6,42 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaindicadoresporcriterioporconfiguracion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Informeplaneacioncuatrimestraldocenteprint;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.timeline.TimelineModel;
 
 /**
  *
  * @author UTXJ
  */
-public class PaseDeListaSegTutor extends AbstractRol{
+public class ValidacionPlaneacionCuatrimestral extends AbstractRol{
     
-    /**
-     * Representa la referencia hacia el personal docente
-    */
-    @Getter @NonNull private PersonalActivo tutor;
-
+    
+    //Representa la referencia hacia personal director
+    @Getter    @NonNull    private PersonalActivo director;
+    // Representa la referencia del programa educativo seleccionado
+    @Getter    @NonNull    private AreasUniversidad programa;
+    // Representa la referencia al plan de estudios seleccionado
+    @Getter    @NonNull    private PlanEstudio planEstudio;
     /**
      * Representa la referencia al evento activo de asignación academica
      */
@@ -75,15 +83,17 @@ public class PaseDeListaSegTutor extends AbstractRol{
      /**
      * Representa la clave
      */
-    @Getter @Setter private List<DtoPaseLista> dpls;
-    @Getter @Setter private List<DtoPaseListaReporteConsulta> dtoPaseListaReporteConsultas;
-    @Getter @Setter private List<DtoPaseListaReporte> dplsReportesMes;
-    @Getter @Setter private List<Asistenciasacademicas> asistenciasacademicases;
-    @Getter @Setter private List<String> asistencias;
-    @Getter @Setter private List<Integer> diasPaseLista;
-    @Getter @Setter private List<String> horasPaseLista;
-    @Getter private DtoGrupoEstudiante estudiantesPorGrupo;
-    @Getter @Setter private Map<Long, Double> calificacionMap = new HashMap<>();
+    @Getter @Setter private List<DtoGraficaCronograma> cronograma;
+    @Getter @Setter private Integer cuatrimestre;
+    @Getter @Setter private Double porcIni;
+    @Getter @Setter private Integer numDtotales;
+    @Getter    @NonNull    private Map<AreasUniversidad, List<PlanEstudio>> areaPlanEstudioMap;
+    // Representa el listado de programas educativos vigentes
+    @Getter    @NonNull    private List<AreasUniversidad> programas;
+    // Representa el listado de las áreas de conocimiento
+    @Getter    @NonNull    private List<PlanEstudio> planesEstudios;
+    @Getter    @Setter    private Grupo grupoSelec;
+    @Getter    @Setter    private List<Grupo> grupos;
     
     /**
      * Carga académica seleccionada
@@ -165,15 +175,16 @@ public class PaseDeListaSegTutor extends AbstractRol{
      /**
      * Lista de asignación de indicadores por carga académica
      */
-    @Getter @NonNull private List<Listaalumnosca> listaalumnoscas;
+    @Getter @NonNull private List<Informeplaneacioncuatrimestraldocenteprint> informeplaneacioncuatrimestraldocenteprints;
     
-    public PaseDeListaSegTutor(@NonNull Filter<PersonalActivo> filtro) {
+    public ValidacionPlaneacionCuatrimestral(Filter<PersonalActivo> filtro, PersonalActivo director, AreasUniversidad programa) {
         super(filtro);
-        tutor = filtro.getEntity();
+        this.director = director;
+        this.programa = programa;
     }
 
-    public void setDocente(PersonalActivo docente) {
-        this.tutor = docente;
+    public void setDirector(PersonalActivo director) {
+        this.director = director;
     }
 
     public void setEventoActivo(EventoEscolar eventoActivo) {
@@ -192,7 +203,10 @@ public class PaseDeListaSegTutor extends AbstractRol{
     public void setAsignarIndicadoresCriterios(Listaindicadoresporcriterioporconfiguracion asignarIndicadoresCriterios) {
         this.asignarIndicadoresCriterios = asignarIndicadoresCriterios;
     }
-    
+        
+    public void setPlanEstudio(PlanEstudio planEstudio) {
+        this.planEstudio = planEstudio;
+    }
     /**
      * Sincroniza el periodo seleccionado al primer periodo en la lista
      * @param periodos
@@ -275,25 +289,24 @@ public class PaseDeListaSegTutor extends AbstractRol{
         this.existeAsignacionIndicadores = existeAsignacionIndicadores;
     }
 
-    public void setListaalumnoscas(List<Listaalumnosca> listaalumnoscas) {
-        this.listaalumnoscas = listaalumnoscas;
+    public void setInformeplaneacioncuatrimestraldocenteprints(List<Informeplaneacioncuatrimestraldocenteprint> informeplaneacioncuatrimestraldocenteprints) {
+        this.informeplaneacioncuatrimestraldocenteprints = informeplaneacioncuatrimestraldocenteprints;
+    }    
+
+    public void setAreaPlanEstudioMap(Map<AreasUniversidad, List<PlanEstudio>> areaPlanEstudioMap) {
+        this.areaPlanEstudioMap = areaPlanEstudioMap;
+        this.planesEstudios = new ArrayList<>();
+        if (areaPlanEstudioMap != null) {
+            this.programas = areaPlanEstudioMap.keySet().stream().sorted(Comparator.comparing(AreasUniversidad::getNombre)).collect(Collectors.toList());
+            areaPlanEstudioMap.forEach((t, u) -> {
+                this.planesEstudios.addAll(u);
+            });
+        }
+        if (areaPlanEstudioMap != null && programa != null && areaPlanEstudioMap.containsKey(programa)) {
+            this.planesEstudios = areaPlanEstudioMap.get(programa);
+            if (planesEstudios != null) {
+                planesEstudios.get(0);
+            }
+        }
     }
-    
- public void setEstudiantesPorGrupo(DtoGrupoEstudiante estudiantesPorGrupo) {
-        this.estudiantesPorGrupo = estudiantesPorGrupo;
-        if(estudiantesPorGrupo == null) return;
-        calificacionMap.clear();
-        estudiantesPorGrupo.getEstudiantes()
-                .stream()
-                .map(dtoCapturaCalificacion -> dtoCapturaCalificacion.getCapturas())
-                .flatMap(capturas -> capturas.stream())
-                .map(captura -> captura.getCalificacion())
-                .forEach(calificacion -> {
-                    Long clave = calificacion.getCalificacion();
-                    Double valor = calificacion.getValor();
-                    calificacionMap.put(clave, valor);
-                });
-//        System.out.println("calificacionMap = " + calificacionMap);
-    }
-    
 }

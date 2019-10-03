@@ -32,6 +32,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 
@@ -717,8 +718,9 @@ public class EjbAsistencias {
         try {
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - valor " + asigInd);
             List<Listaalumnosca> listaUnidadMatConfDet = new ArrayList<>();
-            listaUnidadMatConfDet = em.createQuery("SELECT lac FROM Listaalumnosca lac WHERE lac.carga =:cargaAcademica", Listaalumnosca.class)
+            listaUnidadMatConfDet = em.createQuery("SELECT lac FROM Listaalumnosca lac WHERE lac.carga =:cargaAcademica AND lac.tipoEstudiante=:tipoEstudiante", Listaalumnosca.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .setParameter("tipoEstudiante", 1)
                     .getResultList();
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaConsulta " + listaUnidadMatConfDet.size());
 

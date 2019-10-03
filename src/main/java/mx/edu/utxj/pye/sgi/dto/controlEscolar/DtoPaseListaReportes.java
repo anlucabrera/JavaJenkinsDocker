@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Listaalumnosca;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 
 /**
  * Wrapper que representa a una materia y posiblemente a su carga academica si se cumple la relacion de materia-grupo-docente

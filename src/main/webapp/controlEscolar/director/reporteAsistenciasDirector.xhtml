@@ -227,7 +227,7 @@
                                                                             <c:forEach var="m" begin="0" end="#{q.drpls.size()-1}">
                                                                                 <c:set var="n" value="#{q.drpls.get(m)}"/>
                                                                                 <p:column style="#{n.casoC eq true?'background: #FF4848':''}">#{n.totalAsis}<hr/>#{n.totalPlista}</p:column>
-                                                                                <p:column style="#{n.casoC eq true?'background: #FF4848':''}">#{n.porAsis}%</p:column>
+                                                                                <p:column style="#{n.casoC eq true?'background: #FF4848':''}">#{planeacionCuatrimestral.df.format(n.porAsis)}%</p:column>
                                                                             </c:forEach>
                                                                         </p:row>
                                                                     </c:forEach>

@@ -135,6 +135,10 @@ public class ControladorEmpleado implements Serializable {
 
             nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(empleadoLogeado);
             nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(empleadoLogeado);
+            if (nuevoOBJListaPersonal == null) {
+                Messages.addGlobalFatal("El usuario para la clave "+empleadoLogeado+" no Existe o ha sido dado de baja, si cree que es un error favor de Comunicarse con el área de personal");
+                return;
+            }
 
             if (nuevoOBJInformacionAdicionalPersonal == null) {
                 nuevoOBJInformacionAdicionalPersonal = new InformacionAdicionalPersonal();

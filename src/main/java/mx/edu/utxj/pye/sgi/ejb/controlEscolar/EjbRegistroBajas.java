@@ -968,7 +968,7 @@ public class EjbRegistroBajas {
               
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             
-            if(personal.getAreaSuperior() == 10)
+            if(personal.getAreaOperativa()== 10)
             {
                 areaValidacion ="Servicios Escolares";
             }else{

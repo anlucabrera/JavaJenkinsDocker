@@ -190,6 +190,8 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         }
         
         dtoNivelyPE dto = new dtoNivelyPE();
+        
+        String siglas ="";
 
         TypedQuery<Grupos> g = facadeSAIIUT.getEntityManager().createNamedQuery("Grupos.findByCveGrupo", Grupos.class);
         g.setParameter("cveGrupo", estudiante.getGrupos().getGruposPK().getCveGrupo());
@@ -198,9 +200,24 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         TypedQuery<CarrerasCgut> c = facadeSAIIUT.getEntityManager().createNamedQuery("CarrerasCgut.findByCveCarrera", CarrerasCgut.class);
         c.setParameter("cveCarrera", carrera);
         
+        if (c.getSingleResult().getAbreviatura().equals("PAL")) {
+            siglas = "PA";
+        } else if (c.getSingleResult().getAbreviatura().equals("GASTRO")) {
+            siglas = "GAS";            
+        } else if (c.getSingleResult().getAbreviatura().equals("MAP")) {
+            siglas = "MIAP";        
+        } else if (c.getSingleResult().getAbreviatura().equals("MAA")) {
+            siglas = "MECAA";        
+        } else if (c.getSingleResult().getAbreviatura().equals("LTF")) {
+            siglas = "LTEFI";
+        } else {
+            siglas = c.getSingleResult().getAbreviatura();
+        }
+        
+        
         try {
             dto.setNivel(c.getSingleResult().getCveNivel());
-            dto.setPrograma(c.getSingleResult().getAbreviatura());
+            dto.setPrograma(siglas);
         } catch (NoResultException | NonUniqueResultException ex) {
             dto.setNivel(null);
             dto.setPrograma(null);

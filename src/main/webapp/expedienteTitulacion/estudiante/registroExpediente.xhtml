@@ -115,9 +115,8 @@
                                                                                 <p:message for="genero" display="tooltip" />
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                                <p:outputLabel for="fechaNac" style="font-size: medium" value="Fecha de Nacimiento*"/>
-                                                                                <p:inputText id="fechaNac" class="form-control" value="#{controladorEstReg.nuevoOBJpersona.fechaNacimiento}" required="true" requiredMessage="Es necesario que ingrese su fecha de nacimiento">
-                                                                                    <f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText>
+                                                                                <p:outputLabel for="fechaNac" style="height: 100%; width: 100%; object-fit: contain; font-size: medium" value="Fecha de Nacimiento*"/>
+                                                                                <p:calendar style="object-fit: contain; font-size: medium" locale="es" id="fechaNac" value="#{controladorEstReg.nuevoOBJpersona.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese su fecha de nacimiento"/>
                                                                                 <p:message for="fechaNac" display="tooltip" />
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-3">

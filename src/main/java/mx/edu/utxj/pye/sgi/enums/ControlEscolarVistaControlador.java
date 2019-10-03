@@ -34,6 +34,7 @@ public enum ControlEscolarVistaControlador {
     LISTAS_ASISTENCIA("/controlEscolar/director/ListasAsistencias.xhtml",  ValidacionBajaDirector.class),
     REPORTE_BAJAS("/controlEscolar/se/reporteBajas.xhtml",  ReporteBajasServiciosEscolares.class),
     REPORTE_ASISTENCIA_TUTOR("/controlEscolar/tutor/reporteAsistenciasTutor.xhtml",  ReporteAsistenciasTutor.class),
+    VALIDACION_PLANEACION_CUATRIMESTRAL("/controlEscolar/docente/planeacionCuatrimestralValidacion.xhtml", PlaneacionCuatrimestralValidacion.class),
     REPORTE_ASISTENCIA_DIRECTOR("/controlEscolar/director/reporteAsistenciasDirector.xhtml",  ReporteAsistenciasDirector.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;

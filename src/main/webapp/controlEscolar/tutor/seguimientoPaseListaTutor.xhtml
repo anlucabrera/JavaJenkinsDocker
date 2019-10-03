@@ -203,7 +203,7 @@
                                                                                 <p:column >#{n.tipoAsistenciaA}</p:column>
                                                                             </c:forEach>
                                                                             <p:column>#{q.totalPasesLista}</p:column>
-                                                                            <p:column>#{q.porAsis}%</p:column>
+                                                                            <p:column>#{planeacionCuatrimestral.df.format(q.porAsis)}%</p:column>
                                                                         </p:row>
                                                                     </c:forEach>
                                                                 </p:panelGrid>
