@@ -35,8 +35,9 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Informeplaneacioncuatrimestraldocenteprint;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Ajax;
@@ -90,7 +91,10 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
                 rol.setFiltro(resValidaEnc.getValor());                
                 tieneAcceso = rol.tieneAcceso(director);                
             }            
-            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso            
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso   
+            ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDirector());
+            if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
+            
             ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = erpe.getProgramasEducativos(director);
             if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
             rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());
@@ -240,4 +244,16 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         });
     }
 
+    public void actualizarAP(ValueChangeEvent e) {
+        try {
+            String id = e.getComponent().getClientId();
+            Informeplaneacioncuatrimestraldocenteprint ag = rol.getInformeplaneacioncuatrimestraldocenteprints().get(Integer.parseInt(id.split("tbAsigInd1:")[1].split(":validar")[0]));
+            ag.setValidadoD((Boolean) e.getNewValue());
+            ejb.validadConfigunracionUnidad(ag.getConfiguracion(), ag.getValidadoD(), rol.getDirector().getPersonal().getClave());
+            existeAsignacion();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PlaneacionCuatrimestralValidacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

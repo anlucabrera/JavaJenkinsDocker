@@ -67,9 +67,9 @@
                             </div>
                             <div class="box box-solid">
                                 <div class="box-body">
-                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
                                     <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
-                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
                                     <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {planeacionCuatrimestralValidacion.actualizarCargaAcademica}" update="@form" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
@@ -82,6 +82,7 @@
                                                 <p:outputLabel value="Periodo" for="periodo"/>
                                                 <p:message for="periodo" />
                                             </div>
+                                            <br/>
                                         </div>
                                         <div class="#{casilla2}">
                                             <div class="ui-material">
@@ -93,6 +94,7 @@
                                                 <p:outputLabel value="Programa Educativo" for="planEstudio"/>
                                                 <p:message for="planEstudio" />
                                             </div>
+                                            <br/>
                                         </div>
                                         <div class="#{casilla3}">
                                             <div class="ui-material">
@@ -106,11 +108,7 @@
                                                 <p:message for="grupo" />
                                             </div>
                                         </div>
-                                        <br/>
-                                        <br/>
-                                        <br/>
-                                        <br/>
-                                        <div class="#{casilla3}">
+                                        <div class="#{casilla2}">
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="carga" value="#{planeacionCuatrimestralValidacion.rol.carga}" converter="entityConverter" valueChangeListener="#{planeacionCuatrimestralValidacion.cambiarCarga}">
                                                     <f:selectItems value="#{planeacionCuatrimestralValidacion.rol.cargas}" var="carga"
@@ -126,9 +124,6 @@
                                     <div class="row">
                                         <c:if test="#{planeacionCuatrimestralValidacion.rol.existeAsignacionIndicadores}">
                                             <center>
-                                                <p:commandButton value="Imprimir Configuración" icon="fa fa-print" class="btn-success">                                        
-                                                    <p:printer target="CV" />
-                                                </p:commandButton>
                                                 <p:panel id="CV" >
                                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                         <div class="col-md-12">
@@ -176,7 +171,7 @@
                                                                             <h:outputLabel value="NOMBRE DE LA ASIGNATURA:"/> <p:spacer width="10px"/> <h:outputLabel value="(#{planeacionCuatrimestralValidacion.rol.carga.planEstudioMateria.claveMateria}) #{planeacionCuatrimestralValidacion.rol.carga.materia.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>    
                                                                             <h:outputLabel value="NOMBRE DEL DOCENTE:"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralValidacion.rol.carga.docente.personal.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>  
                                                                             <h:outputLabel value="NOMBRE DEL TUTOR"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralValidacion.buscarPersonal(planeacionCuatrimestralValidacion.rol.grupoSelec.tutor)}" style="font-weight: bold;"/><p:spacer width="10px"/>
-                                                                    </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -192,6 +187,7 @@
                                                                     </f:facet>
                                                                     <p:columnGroup type="header">
                                                                         <p:row class="success">
+                                                                            <p:column headerText="Validado." style="width: 5%;font-size: small;"/> 
                                                                             <p:column headerText="No. de Evaluación" style="width: 20%;font-size: small;"  /> 
                                                                             <p:column headerText="Periodo" style="width: 10%;font-size: small;"/> 
                                                                             <p:column headerText="% Eval." style="width: 10%;font-size: small;"/>
@@ -205,14 +201,21 @@
                                                                         <p:column colspan="3" style="border: #000000  !important;font-size: small;" >
                                                                             <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.unidad} #{asignacionIndCA.nombreUnidad eq 'T.I.'?'':'-'} #{asignacionIndCA.nombreUnidad eq 'T.I.'?asignacionIndCA.objetivo:asignacionIndCA.nombreUnidad}" style="text-align: center;"/>
                                                                         </p:column>
-                                                                        <p:column colspan="4" style="border: #000000  !important;font-size: small;">
+                                                                        <p:column colspan="5" style="border: #000000  !important;font-size: small;">
                                                                             <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.objetivo}" />
                                                                         </p:column>
                                                                     </p:headerRow>
+                                                                    <p:column groupRow="true" style="border: #000000  !important;font-size: small;">
+                                                                        <p:selectBooleanCheckbox id="validar" value="#{asignacionIndCA.validadoD}" rendered="#{asignacionIndCA.nombreUnidad eq 'T.I.'? false:true}"
+                                                                                                 valueChangeListener="#{planeacionCuatrimestralValidacion.actualizarAP}"
+                                                                                                 title="Activa la casilla para indicar al secretario académico que has validado los valores." >
+                                                                            <p:ajax update="tbAsigInd1" />
+                                                                        </p:selectBooleanCheckbox>
+                                                                    </p:column>  
                                                                     <p:column colspan="#{asignacionIndCA.nombreUnidad eq 'T.I.'?3:0}" groupRow="true" style="border: #000000  !important;font-size: small;">
                                                                         <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.unidad}#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':'.-'} #{asignacionIndCA.nombreUnidad eq 'T.I.'?'Tarea Integradora':asignacionIndCA.nombreUnidad}" style="text-align: center;"/>
                                                                     </p:column>
-                                                                    <p:column colspan="#{asignacionIndCA.nombreUnidad eq 'T.I.'?2:0}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                    <p:column colspan="#{asignacionIndCA.nombreUnidad eq 'T.I.'?3:0}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
                                                                         <h:outputText value="#{asignacionIndCA.fechaInicio}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
                                                                         <h:outputText value=" al " style="text-align: center;" />
                                                                         <h:outputText value="#{asignacionIndCA.fechaFin}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
@@ -232,7 +235,7 @@
                                                                     </p:column>
                                                                     <p:column style="border: #000000  !important;text-align: center;font-size: small;#{asignacionIndCA.nombreUnidad eq 'T.I.'?'background: #000000':''}" rendered="#{asignacionIndCA.nombreUnidad eq 'T.I.'?false:true}">
                                                                         <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
-                                                                    </p:column>
+                                                                    </p:column>                                                                    
                                                                 </p:dataTable>       
                                                             </div>
                                                         </div>
@@ -323,62 +326,6 @@
                                                                 </p:dataTable>  
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <br/>
-                                                    <br/>
-
-                                                    <div class="row" style="align-content:  center">
-                                                        <div class="col-sm-3 pull-left">
-                                                            <div class="description-block" style="text-align: center">
-                                                                <p:spacer width="100px"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-3 pull-left" >
-                                                            <div class="row">
-                                                                <div class="row">
-                                                                    <div id="tituloCV" class="col-sm-12">
-                                                                        <div class="description-block" style="text-align: center">
-                                                                            <h:outputLabel value="Elaboró"/>
-                                                                            <br/>
-                                                                            <br/>
-                                                                            <br/>
-                                                                            <br/>
-                                                                            <h:outputLabel value="#{planeacionCuatrimestralValidacion.rol.carga.docente.personal.nombre}" style="font-weight: bold;"/>
-                                                                            <br/>
-                                                                            <h:outputLabel value="_____________________________" style="font-weight: bold;"/>
-                                                                            <br/>
-                                                                            <h:outputLabel value="Docente" style="font-weight: bold;"/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-3 pull-left">
-                                                            <div class="description-block" style="text-align: center">
-                                                                <p:spacer width="100px"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-3 pull-left" >
-                                                            <div class="row">
-                                                                <div class="row">
-                                                                    <div id="tituloCV" class="col-sm-12">
-                                                                        <div class="description-block" style="text-align: center">
-                                                                            <h:outputLabel value="Validó"/>
-                                                                            <br/>
-                                                                            <br/>
-                                                                            <br/>
-                                                                            <br/>
-                                                                            <h:outputLabel value="#{planeacionCuatrimestralValidacion.buscarDirector(planeacionCuatrimestralValidacion.rol.carga.programa.areaSuperior)}" style="font-weight: bold;"/>
-                                                                            <br/>
-                                                                            <h:outputLabel value="_____________________________" style="font-weight: bold;"/>
-                                                                            <br/>
-                                                                            <h:outputLabel value="Director" style="font-weight: bold;"/>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
                                                     </div>
                                                 </p:panel>
                                             </center>

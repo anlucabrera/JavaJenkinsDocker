@@ -269,10 +269,13 @@
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <center>
-                                    <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{dictamenBajaPsicopedagogia.guardarDictamenBaja()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                    <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{dictamenBajaPsicopedagogia.guardarDictamenBaja()}" icon="fa fa-pencil-square-o" class="btn-primary" onclick="PF('bloqueoCargaFile').show();PF('modalTramitarBaja').hide()"/>
                                 </center> 
                             </div>
                         </h:form>
+                        <p:blockUI block="frmModalTramitarBaja" widgetVar="bloqueoCargaFile">
+                            Cargando espere por favor.<br />
+                        </p:blockUI>
                     </p:dialog>
                 <c:if test="#{!empty dictamenBajaPsicopedagogia.alertas || true}">
                     <div class="box box-info">

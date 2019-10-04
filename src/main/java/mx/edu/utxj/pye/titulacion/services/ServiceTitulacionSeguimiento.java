@@ -243,7 +243,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
 
     @Override
-    public String buscarFotografia(Integer expediente) throws Throwable {
+    public String buscarFotografiaING(Integer expediente) throws Throwable {
         //verificar que el parametro no sea nulo
         if (expediente == null) {
             return null;
@@ -253,6 +253,28 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
 
         try {
             docExp = facade.getEntityManager().createQuery("SELECT d FROM DocumentosExpediente d WHERE d.documento.documento =12 AND d.expediente.expediente =:expediente", DocumentosExpediente.class)
+                    .setParameter("expediente", expediente)
+                    .getSingleResult();
+
+        } catch (Throwable ex) {
+            docExp.setRuta("C:\\archivos\\formatosTitulacion\\sinFotografia.png");
+        }
+       
+        return docExp.getRuta();
+        
+    }
+    
+    @Override
+    public String buscarFotografiaTSU(Integer expediente) throws Throwable {
+        //verificar que el parametro no sea nulo
+        if (expediente == null) {
+            return null;
+        }
+
+        DocumentosExpediente docExp = new DocumentosExpediente();
+
+        try {
+            docExp = facade.getEntityManager().createQuery("SELECT d FROM DocumentosExpediente d WHERE d.documento.documento =5 AND d.expediente.expediente =:expediente", DocumentosExpediente.class)
                     .setParameter("expediente", expediente)
                     .getSingleResult();
 

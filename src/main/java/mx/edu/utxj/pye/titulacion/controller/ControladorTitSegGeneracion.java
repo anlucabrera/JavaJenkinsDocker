@@ -208,7 +208,21 @@ public class ControladorTitSegGeneracion implements Serializable{
             nuevoDtoExpMat = ejbTitulacionSeguimiento.mostrarExpediente(expediente);
             listaDocsExp = ejbTitulacionSeguimiento.mostrarExpediente(expediente).getDocumentosExpediente();
             consultaTotalDocsExp(expediente);
-            controladorFotoExpediente.mostrarFotografia(expediente);
+            Integer valor = nuevoDtoExpMat.getExpedientesTitulacion().getNivel();
+            switch (valor) {
+               case 1:
+                   controladorFotoExpediente.mostrarFotografiaTSU(expediente);
+                   break;
+               case 2:
+                   controladorFotoExpediente.mostrarFotografiaING(expediente);
+                   break;
+               case 4:
+                   controladorFotoExpediente.mostrarFotografiaING(expediente);
+                   break;
+               default:
+                   System.err.println("No existe nivel para buscar la fotografía");
+                   break;
+           }
             Ajax.update("frmDocsExp");
             Ajax.update("frmDocExp");
             Ajax.update("frmFotoExp");
@@ -217,7 +231,7 @@ public class ControladorTitSegGeneracion implements Serializable{
             Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+   
     public List<ExpedientesTitulacion> consultarStatus(Integer expediente) throws Throwable{
         consultaTotalDocsExp(expediente);
         numDocs = ejbTitulacionSeguimiento.mostrarExpediente(expediente).getDocumentosExpediente().size();

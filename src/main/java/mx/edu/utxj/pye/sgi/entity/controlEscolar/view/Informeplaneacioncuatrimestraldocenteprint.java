@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mx.edu.utxj.pye.sgi.entity.controlEscolar;
+package mx.edu.utxj.pye.sgi.entity.controlEscolar.view;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -43,7 +43,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByPorCriterio", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.porCriterio = :porCriterio")
     , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByIdIndicador", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.idIndicador = :idIndicador")
     , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByIndicador", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.indicador = :indicador")
-    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByPorcentaje", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.porcentaje = :porcentaje")})
+    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByPorcentaje", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.porcentaje = :porcentaje")
+    , @NamedQuery(name = "Informeplaneacioncuatrimestraldocenteprint.findByValidadoD", query = "SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.validadoD = :validadoD")})
 public class Informeplaneacioncuatrimestraldocenteprint implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -114,6 +115,10 @@ public class Informeplaneacioncuatrimestraldocenteprint implements Serializable 
     @NotNull
     @Column(name = "porcentaje")
     private double porcentaje;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "validadoD")
+    private boolean validadoD;
 
     public Informeplaneacioncuatrimestraldocenteprint() {
     }
@@ -236,6 +241,14 @@ public class Informeplaneacioncuatrimestraldocenteprint implements Serializable 
 
     public void setPorcentaje(double porcentaje) {
         this.porcentaje = porcentaje;
+    }
+
+    public boolean getValidadoD() {
+        return validadoD;
+    }
+
+    public void setValidadoD(boolean validadoD) {
+        this.validadoD = validadoD;
     }
     
 }

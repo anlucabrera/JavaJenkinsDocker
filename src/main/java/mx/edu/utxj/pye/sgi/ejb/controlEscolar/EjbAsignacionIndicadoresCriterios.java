@@ -32,6 +32,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 
@@ -947,5 +948,27 @@ public class EjbAsignacionIndicadoresCriterios {
         } catch (Throwable e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar la asignación del criterio SABER - HACER. (EjbAsignacionIndicadoresCriterios.guardarIndicadoresSaberHacerMasiva)", e, null);
         }
+    }
+    
+    public ResultadoEJB<EventoEscolar> verificarEventoValidacion(PersonalActivo director){
+        try{
+            return ejbEventoEscolar.verificarEventoEnCascada(EventoEscolarTipo.VALIDACION_ASIGNACION_INDICADORES_CRITERIOS, director);
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para asignación de indicadores por criterio del personal docente (EjbAsignacionIndicadoresCriterios.verificarEvento)", e, EventoEscolar.class);
+        }
+    }
+    
+    public void validadConfigunracionUnidad(Integer confiInteger, Boolean validado, Integer personaV) {
+
+        UnidadMateriaConfiguracion configuracion = em.createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.configuracion =:configuracion", UnidadMateriaConfiguracion.class)
+                .setParameter("configuracion", confiInteger)
+                .getResultList().get(0);
+        if (!validado) {
+            configuracion.setDirector(null);
+        } else {
+            configuracion.setDirector(personaV);
+        }
+        em.merge(configuracion);
+        f.flush();
     }
 }
