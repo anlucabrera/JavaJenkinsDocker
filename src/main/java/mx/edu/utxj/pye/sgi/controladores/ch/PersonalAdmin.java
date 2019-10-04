@@ -11,7 +11,6 @@ import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
 import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,9 +18,14 @@ import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.shiro.User;
 import mx.edu.utxj.pye.sgi.saiiut.ejb.EjbLogin;
-import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
+import mx.edu.utxj.pye.sgi.util.Encrypted;
 import org.omnifaces.util.Messages;
 
 @Named
@@ -31,17 +35,25 @@ public class PersonalAdmin implements Serializable {
 
     private static final long serialVersionUID = 1736039029781733869L;
 ////////////////////////////////////////////////////////////////////////////////Datos Personales
+    @Getter    @Setter    private List<Funciones> listaFuncioneSubordinado = new ArrayList<>();
+    @Getter    @Setter    private List<Personal> listaPersonal = new ArrayList<>();
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;
     @Getter    @Setter    private Personal nuevOBJPersonalSubordinado;
-    @Getter    @Setter    private List<Funciones> listaFuncioneSubordinado = new ArrayList<>();
-    @Getter    @Setter    private List<Personal> listaPersonal = new ArrayList<>();
+    @Getter    @Setter    private List<Estudiante> estudiantes = new ArrayList<>();
+    @Getter    @Setter    private Aspirante aspirante;
+    @Getter    @Setter    private Estudiante estudiante;
+    @Getter    @Setter    private Persona persona;
+    
     @Getter    @Setter    private User user = new User();
-    @Getter    @Setter    private Integer contactoDestino=0;
+    @Getter    @Setter    private Login login = new Login();
+    @Getter    @Setter    private Integer contactoDestino=0,matricula=0;
     @Getter    @Setter    private String newPwd="";
 
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbDatosEstudianteAdmin edea;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ep;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ef;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo areasLogeo;
 
     @EJB private EjbLogin el;
     
@@ -56,6 +68,10 @@ public class PersonalAdmin implements Serializable {
         try {
             listaPersonal.clear();
             listaPersonal = ep.mostrarListaPersonalsPorEstatus(1);
+            
+            estudiantes.clear();
+            estudiantes = edea.buscaEstudiantes();
+            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(PersonalAdmin.class.getName()).log(Level.SEVERE, null, ex);
@@ -66,7 +82,30 @@ public class PersonalAdmin implements Serializable {
         contactoDestino = (Integer) event.getNewValue();    
         mostrarPerfilSubordinado();
     }
+    
+    public void asignarEstudiante(ValueChangeEvent event){
+        matricula = (Integer) event.getNewValue();  
+        mostrarPerfilEstudiante();
+    }
 
+    public String buscaArea(Short area) {
+        try {
+            if (area != null) {
+                AreasUniversidad areaU = new AreasUniversidad();
+                AreasUniversidad areaS = new AreasUniversidad();
+                areaU = areasLogeo.mostrarAreasUniversidad(area);
+                areaS = areasLogeo.mostrarAreasUniversidad(areaU.getAreaSuperior());
+                return areaS.getNombre();
+            } else {
+                return "Nombre Área";
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+    
     public void mostrarPerfilSubordinado() {
         try {                  
             nuevoOBJInformacionAdicionalPersonal = ep.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
@@ -94,6 +133,19 @@ public class PersonalAdmin implements Serializable {
             } else {
                 listaFuncioneSubordinado = ef.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
             }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PersonalAdmin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void mostrarPerfilEstudiante() {
+        try {
+            estudiante = edea.buscaEstudiante(matricula);
+            aspirante = estudiante.getAspirante();
+            persona = aspirante.getIdPersona();
+            login=persona.getLogin();
+            login.setPassword(Encrypted.decrypt(Encrypted.KEY,Encrypted.IV,login.getPassword()));       
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(PersonalAdmin.class.getName()).log(Level.SEVERE, null, ex);
@@ -139,6 +191,17 @@ public class PersonalAdmin implements Serializable {
         user.setUpdateC(Boolean.FALSE);
         user=ep.actualizarUser(user);
         mostrarPerfilSubordinado();
+    }
+    
+    public void cambiarPwdestudiante(){
+        try{
+        login.setPassword(Encrypted.encrypt(Encrypted.KEY,Encrypted.IV,newPwd));
+        login.setModificado(Boolean.FALSE);
+        login=edea.actualizarUser(login);
+        mostrarPerfilEstudiante();
+        }catch (Exception e){
+            return;
+        }
     }
  
     public void imprimirValores() {}

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+        <!-- inicio de estilos para campañas electorales-->
+        <style>
+            .bg-aqua-active{
+                background:#374850 !important;
+            }
+            box-primary{
+                background:#374850 !important;
+            }
+        </style>
+        <!-- Fin de estilos para campañas electorales-->
+    </c:if>
+
+    <div class="col-md-3">
+        <p:outputPanel id="panelDatos">
+            <p:autoUpdate/>
+            <div class="box box-widget widget-user-2">
+                <div class="widget-user-header bg-aqua-active">
+                    <div class="widget-user-image">
+                        <img src="http://siip.utxicotepec.edu.mx/sgot-images/evidencias/control_escolar/fotos/#{personalAdmin.estudiante.matricula}.jpg" class="img-circle" alt="#{personalAdmin.estudiante.matricula}" title="Alumno #{personalAdmin.estudiante.matricula}" style="width: 100px; height: 100px;"/>
+                    </div>
+                    <h3 class="widget-user-username">#{personalAdmin.persona.apellidoPaterno} #{personalAdmin.persona.apellidoMaterno} #{personalAdmin.persona.nombre}</h3>
+                    <h5 class="widget-user-desc">#{personalAdmin.estudiante.grupo.grado}° #{personalAdmin.estudiante.grupo.literal}</h5>
+                </div>
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-sm-12 border-right">
+                            <div class="description-block">
+                                <h5 class="description-header">Fecha de registro:</h5>
+                                <span class="description-text"><p style="text-align: center"><h:outputLabel value="#{personalAdmin.aspirante.fechaRegistro}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 border-right">
+                            <div class="description-block">
+                                <h5 class="description-header">Carrera</h5>
+                                <span class="description-text"><p style="text-align: center">#{personalAdmin.estudiante.grupo.plan.descripcion}</p></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="description-block">
+                                <h5 class="description-header">Área de adscripción:</h5>
+                                <span class="description-text"><p style="text-align: center">#{personalAdmin.buscaArea(personalAdmin.estudiante.grupo.plan.idPe)}</p></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </p:outputPanel>
+    </div>
+
+</ui:composition>

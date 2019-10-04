@@ -37,6 +37,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCasoCritico;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaAcademica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporte;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporteConsulta;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
@@ -60,6 +61,7 @@ import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.event.timeline.TimelineSelectEvent;
 import org.primefaces.model.timeline.TimelineEvent;
 
@@ -127,6 +129,8 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             rol.setFechaInpresion(new Date());
             rol.setFechaClase(new Date());
             rol.getFechaClase().setSeconds(0);
+            rol.setHora(rol.getFechaClase().getHours());
+            rol.setMin(rol.getFechaClase().getMinutes());
             List<String> asi=new ArrayList<>();
             asi.add("Asistencia");
             asi.add("Falta");
@@ -135,6 +139,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             asi.add("Justificado");
             rol.setAsistencias(asi);
             rol.setDplrcVisible(Boolean.FALSE);
+            rol.setDpla(new DtoPaseListaAcademica(rol.getDpls(), new Date()));
         }catch (Exception e){mostrarExcepcion(e); }
     }
 
@@ -239,6 +244,23 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         Object newValue = event.getNewValue();
     }
 
+    public void seleccionarFecha(SelectEvent event){
+        Date date = (Date) event.getObject();
+        rol.setFechaClase(date);
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.seleccionarFecha()"+rol.getFechaClase());
+    }
+    public void seleccionarHora(SelectEvent event){
+        Date date = (Date) event.getObject();
+        rol.getFechaClase().setHours(date.getHours());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.seleccionarHora()"+rol.getFechaClase());
+    }
+    
+    public void seleccionarMinutos(SelectEvent event){
+        Date date = (Date) event.getObject();
+        rol.getFechaClase().setMinutes(date.getMinutes());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.seleccionarMinutos()"+rol.getFechaClase());
+    }
+    
     public void guardaPaseLista() {
         rol.setDpls(new ArrayList<>());
         rol.getDpls().clear();
