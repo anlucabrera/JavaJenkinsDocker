@@ -107,48 +107,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
     }
 
     public void actualizar(){
-//        System.out.println("CapturaCalificacionesDocente.actualizar");
-        /*if(rol.getPeriodoSeleccionado() == null) {
-            mostrarMensaje("No hay periodo escolar seleccionado.");
-            rol.setCargasDocente(Collections.EMPTY_LIST);
-            rol.setDtoUnidadConfiguraciones(Collections.EMPTY_LIST);
-            rol.setEstudiantesPorGrupo(null);
-            return;
-        }//detener flujo si no hay periodo seleccionado
-
-        //actualizar cargas
-
-//        System.out.println("rol.getCargaAcademicaSeleccionada() = " + rol.getCargaAcademicaSeleccionada());
-
-        //actualizar configuracion de unidades
-        if(rol.getCargaAcademicaSeleccionada() == null){ mostrarMensaje("No hay carga académica seleccionada");return;}//verificar si se seleccionó una carga académica
-        ResultadoEJB<List<DtoUnidadConfiguracion>> resConfiguraciones = ejb.getConfiguraciones(rol.getCargaAcademicaSeleccionada());//obtener las configuraciones de la carga académica seleccionada
-        if(!resConfiguraciones.getCorrecto()){
-            mostrarMensajeResultadoEJB(resConfiguraciones);
-            rol.setDtoUnidadConfiguraciones(Collections.EMPTY_LIST);
-            rol.setEstudiantesPorGrupo(null);
-            return;
-        } //verificar si se obtuvo resultado
-//        if(!resConfiguraciones.getValor().isEmpty()) rol.setDtoUnidadConfiguracionSeleccionada(null);
-        rol.setDtoUnidadConfiguraciones(resConfiguraciones.getValor());//almacenar el valor en la capa SET
-        rol.getDtoUnidadConfiguracionSeleccionada().getUnidadMateriaConfiguracionDetalles().forEach((criterio, detalles) -> {
-            System.out.println("criterio = " + criterio);
-            System.out.println("detalles.size() = " + detalles.size());
-            System.out.println("detalles = " + detalles);
-        });
-//        System.out.println("rol.getDtoUnidadConfiguracionSeleccionada() = " + rol.getDtoUnidadConfiguracionSeleccionada().getUnidadMateria().getNombre());
-
-        //actualizar estudiantes del grupo correspondientes a la carga académica seleccionada
-        if(rol.getDtoUnidadConfiguracionSeleccionada() == null) {
-            mostrarMensaje("No hay unidad de evaluación seleccionada.");
-            rol.setEstudiantesPorGrupo(null);
-            return;
-        }
-        ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCargaAcademicaSeleccionada(), rol.getDtoUnidadConfiguracionSeleccionada());
-//        System.out.println("resGrupo = " + resGrupo.getValor().getEstudiantes().size());
-        rol.setEstudiantesPorGrupo(resGrupo.getValor());
-//        System.out.println("rol.getDtoUnidadConfiguracionSeleccionada() = " + rol.getDtoUnidadConfiguracionSeleccionada());
-        //TODO: agregar al grupo la alineacion con la materia de la unidad seleccionada*/
+        repetirUltimoMensaje();
     }
 
     public void cambiarPeriodo(){
