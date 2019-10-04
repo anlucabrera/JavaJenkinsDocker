@@ -154,7 +154,7 @@
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
                                                                                        valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}"
                                                                                        inputStyle="text-align: center;" minValue="1" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
-                                                                            <p:ajax process="@this" update="@this @(.promedio)" oncomplete="actualizar();"/>
+                                                                            <p:ajax process="@this" update="@this @(.promedio)" />
                                                                             <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas)}" />
                                                                             <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
                                                                         </p:inputNumber>

@@ -358,11 +358,11 @@ public class EjbPacker {
                     if(dtoCapturaCalificacion.getTieneComentarioReprobatorio()) dtoCapturaCalificacion.setComentarioReprobatorio(unidadMateriaComentario);
 
                     ResultadoEJB<Boolean> eliminarComentarioReprobatorio = ejbValidacionComentarios.eliminarComentarioReprobatorio(dtoCapturaCalificacion);//intenta eliminar el comentario si es que no es necesario
-                    System.out.println("eliminarComentarioReprobatorio = " + eliminarComentarioReprobatorio);
+//                    System.out.println("eliminarComentarioReprobatorio = " + eliminarComentarioReprobatorio);
                 }else validarPromedioAprobatorio.getException().printStackTrace();
             }else resPromedio.getException().printStackTrace();
 
-            //identificar caso crítico abierto mas reciente registrado por el usuario
+            /*//identificar caso crítico abierto mas reciente registrado por el usuario
             ResultadoEJB<DtoCasoCritico> generarNuevo = ejbCasoCritico.generarNuevo(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, CasoCriticoTipo.ASISTENCIA_IRREGURLAR);
             if(generarNuevo.getCorrecto() && !Objects.equals(CasoCriticoEstado.SIN_REGISTRO, generarNuevo.getValor().getEstado())) {
                 dtoCapturaCalificacion.setDtoCasoCritico(generarNuevo.getValor());
@@ -376,7 +376,9 @@ public class EjbPacker {
                     dtoCapturaCalificacion.getCasosCriticosSistema().put(casoCriticoTipo, generarNuevo1.getValor());
                     dtoCapturaCalificacion.setTieneCasoCriticoSistema(true);
                 }
-            });
+            });*/
+            ResultadoEJB<Boolean> cargarCasosCriticos = ejbCasoCritico.cargarCasosCriticos(dtoCapturaCalificacion);
+            if(!cargarCasosCriticos.getCorrecto()) cargarCasosCriticos.getException().printStackTrace();
 
             return ResultadoEJB.crearCorrecto(dtoCapturaCalificacion, "Captura de calificación empaquetada");
         }catch (Exception e){

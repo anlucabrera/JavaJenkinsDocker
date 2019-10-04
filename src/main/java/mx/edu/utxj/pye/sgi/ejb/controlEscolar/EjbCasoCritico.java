@@ -18,10 +18,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -184,10 +181,16 @@ public class EjbCasoCritico implements Serializable {
      * @return Regresa TRUE si se elimina correctamente, código de error 2 cuando el caso crítico ya se encuentra en seguimiento y código 1 para error inesperado
      */
     public ResultadoEJB<Boolean> eliminar(DtoCasoCritico dtoCasoCritico){
+//        System.out.println("EjbCasoCritico.eliminar");
+//        System.out.println("dtoCasoCritico = [" + dtoCasoCritico + "]");
         try{
             if(dtoCasoCritico.getEstado().getNivel() < CasoCriticoEstado.EN_SEGUMIENTO_TUTOR.getNivel()) {
                 CasoCritico casoCritico = em.find(CasoCritico.class, dtoCasoCritico.getCasoCritico().getCaso());
+//                System.out.println("casoCritico = " + casoCritico);
                 em.remove(casoCritico);
+                em.flush();
+                casoCritico = em.find(CasoCritico.class, dtoCasoCritico.getCasoCritico().getCaso());
+//                System.out.println("casoCritico = " + casoCritico);
                 return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Caso crítico eliminado.");
             }
             else return ResultadoEJB.crearErroneo(2, "El caso crítico ya no se puede eliminar debido a que ya se encuentra en seguimiento por el tutor o por un especialista", Boolean.TYPE);
@@ -208,7 +211,9 @@ public class EjbCasoCritico implements Serializable {
      */
     public ResultadoEJB<DtoCasoCritico> registrarPorReprobacion(DtoCapturaCalificacion dtoCapturaCalificacion){
         try{
+//            System.out.println("EjbCasoCritico.registrarPorReprobacion");
             if(dtoCapturaCalificacion.getPromedio().compareTo(ejbCapturaCalificaciones.leerCalificacionMínimaAprobatoria()) < 0){
+//                System.out.println("Es reprobatorio");
                 ResultadoEJB<Boolean> verificarCapturaCompleta = ejbCapturaCalificaciones.verificarCapturaCompleta(dtoCapturaCalificacion);
                 if(!verificarCapturaCompleta.getCorrecto()){
                     return ResultadoEJB.crearErroneo(5, "La captura de la calificaciones de la unidad aún no está completa.", DtoCasoCritico.class);
@@ -223,21 +228,89 @@ public class EjbCasoCritico implements Serializable {
                     dtoCasoCritico.getCasoCritico().setDescripcion(String.format("Sistema: unidad -%s- de la materia -%s- con la calificación reprobatoria -%s-", unidad, materia, calificacion));
                     dtoCasoCritico.getCasoCritico().setTipo(CasoCriticoTipo.SISTEMA_UNIDAD_REPROBADA.getLabel());
                     ResultadoEJB<DtoCasoCritico> registrar = registrar(dtoCasoCritico);
+                    if(registrar.getCorrecto()) cargarCasosCriticos(dtoCapturaCalificacion);
+//                        System.out.println("dtoCapturaCalificacion.getTieneCasoCriticoSistema() = " + dtoCapturaCalificacion.getTieneCasoCriticoSistema());
+//                        System.out.println("dtoCapturaCalificacion.getCasosCriticosSistema() = " + dtoCapturaCalificacion.getCasosCriticosSistema());
                     return registrar;
                 }else return ResultadoEJB.crearErroneo(2, "No se pudo registrar de forma automática el caso crítico correspondiente a una calificación reprobatoria por unidad.", DtoCasoCritico.class);
             }else {
+//                System.out.println("No es reprobatorio");
                 if(dtoCapturaCalificacion.getTieneCasoCriticoSistema()){
+                    /*System.out.println("dtoCapturaCalificacion.getCasosCriticosSistema() = " + dtoCapturaCalificacion.getCasosCriticosSistema());
                     DtoCasoCritico dtoCasoCritico = dtoCapturaCalificacion.getCasosCriticosSistema().get(CasoCriticoTipo.SISTEMA_UNIDAD_REPROBADA);
+                    System.out.println("dtoCasoCritico = " + dtoCasoCritico);
                     if(dtoCasoCritico != null){
                         ResultadoEJB<Boolean> eliminar = eliminar(dtoCasoCritico);
                         if(!eliminar.getCorrecto()) return ResultadoEJB.crearErroneo(3, eliminar.getMensaje(), DtoCasoCritico.class);
-                    }
+                    }*/
+                    ResultadoEJB<List<DtoCasoCritico>> identificar = identificar(dtoCapturaCalificacion.getDtoEstudiante(), dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoUnidadConfiguracion());
+                    if(identificar.getCorrecto()){
+                        List<DtoCasoCritico> dtoCasoCriticos = identificar.getValor()
+                                .stream()
+                                .filter(dtoCasoCritico1 -> dtoCasoCritico1.getDtoUnidadConfiguracion().getUnidadMateriaConfiguracion().equals(dtoCapturaCalificacion.getDtoUnidadConfiguracion().getUnidadMateriaConfiguracion()))
+                                .filter(dtoCasoCritico1 -> dtoCasoCritico1.getTipo().equals(CasoCriticoTipo.SISTEMA_UNIDAD_REPROBADA))
+                                .collect(Collectors.toList());
+
+                        dtoCasoCriticos
+                                .forEach(dtoCasoCritico1 -> {
+                                    ResultadoEJB<Boolean> eliminar = eliminar(dtoCasoCritico1);
+                                    if(eliminar.getValor()){
+                                        cargarCasosCriticos(dtoCapturaCalificacion);
+                                    }
+                                });
+//                        System.out.println("dtoCapturaCalificacion.getTieneCasoCriticoSistema() = " + dtoCapturaCalificacion.getTieneCasoCriticoSistema());
+//                        System.out.println("dtoCapturaCalificacion.getCasosCriticosSistema() = " + dtoCapturaCalificacion.getCasosCriticosSistema());
+                    }else return ResultadoEJB.crearErroneo(5, "No se encontró caso crítico por reprobación a eliminar.", DtoCasoCritico.class);
                 }
                 return ResultadoEJB.crearErroneo(4, "No se puede registrar caso crítico por reprobación ya que el promedio es aprobatorio.", DtoCasoCritico.class);
             }
         }catch (Exception e){
             e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar de forma automática el caso crítico correspondiente a una calificación reprobatoria por unidad (EjbCasoCritico.registrarPorReprobacion).", e, DtoCasoCritico.class);
+        }
+    }
+
+    public ResultadoEJB<Boolean> cargarCasosCriticos(DtoCapturaCalificacion dtoCapturaCalificacion){
+//        System.out.println("EjbCasoCritico.cargarCasosCriticos");
+        try{
+            //limpiar casos críticos
+            dtoCapturaCalificacion.setTieneCasoCritico(false);
+            dtoCapturaCalificacion.setDtoCasoCritico(null);
+            dtoCapturaCalificacion.setTieneCasoCriticoSistema(false);
+            dtoCapturaCalificacion.setCasosCriticosSistema(new HashMap<>());
+
+            //identificar caso crítico abierto mas reciente registrado por el usuario
+            ResultadoEJB<DtoCasoCritico> generarNuevo = generarNuevo(dtoCapturaCalificacion.getDtoEstudiante(), dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoUnidadConfiguracion(), CasoCriticoTipo.ASISTENCIA_IRREGURLAR);
+//            System.out.println("generarNuevo = " + generarNuevo);
+            if(generarNuevo.getCorrecto()) {
+                DtoCasoCritico dtoCasoCritico = generarNuevo.getValor();
+                if(dtoCasoCritico.getEstado().getNivel() > 0){
+                    dtoCapturaCalificacion.setDtoCasoCritico(generarNuevo.getValor());
+                    dtoCapturaCalificacion.setTieneCasoCritico(true);
+                }
+            }
+
+            //identificar casos críticos  generados por sistema
+            CasoCriticoTipo.ListaSistema().forEach(casoCriticoTipo -> {
+//                System.out.println("casoCriticoTipo = " + casoCriticoTipo);
+                ResultadoEJB<DtoCasoCritico> generarNuevo1 = generarNuevo(dtoCapturaCalificacion.getDtoEstudiante(), dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoUnidadConfiguracion(), casoCriticoTipo);
+//                System.out.println("generarNuevo1 = " + generarNuevo1);
+                if(generarNuevo1.getCorrecto() && !Objects.equals(0, generarNuevo1.getValor().getCasoCritico().getCaso())){
+                    DtoCasoCritico dtoCasoCritico = generarNuevo1.getValor();
+//                    System.out.println("dtoCasoCritico = " + dtoCasoCritico);
+                    if(dtoCasoCritico.getEstado().getNivel() > 0){
+//                        System.out.println("dtoCasoCritico.getCasoCritico() = " + dtoCasoCritico.getCasoCritico());
+                        dtoCapturaCalificacion.getCasosCriticosSistema().put(casoCriticoTipo, generarNuevo1.getValor());
+                        dtoCapturaCalificacion.setTieneCasoCriticoSistema(true);
+                    }
+                }
+            });
+//            System.out.println("dtoCapturaCalificacion.getTieneCasoCriticoSistema() = " + dtoCapturaCalificacion.getTieneCasoCriticoSistema());
+//            System.out.println("dtoCapturaCalificacion.getCasosCriticosSistema() = " + dtoCapturaCalificacion.getCasosCriticosSistema());
+            return ResultadoEJB.crearCorrecto(true, "Casos críticos cargados.");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
         }
     }
     
