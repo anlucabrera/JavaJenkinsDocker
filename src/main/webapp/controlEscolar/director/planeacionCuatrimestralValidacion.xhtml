@@ -50,7 +50,7 @@
     <ui:define name="body">
         <adm:breadcrumb title="Planeación Cuatrimestral"/>
         <div class="contenedor">
-            <c:if test="#{planeacionCuatrimestralImpresion.tieneAcceso}">
+            <c:if test="#{planeacionCuatrimestralValidacion.tieneAcceso}">
                 <!-- zona de importación de enums -->
                 <h:form id="frm" prependId="false" class="form-inline">
                     <div class="box box-primary">
@@ -69,13 +69,13 @@
                                 <div class="box-body">
                                     <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
                                     <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
-                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
-                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {planeacionCuatrimestralImpresion.actualizarCargaAcademica}" update="@form" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {planeacionCuatrimestralValidacion.actualizarCargaAcademica}" update="@form" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="periodo" value="#{planeacionCuatrimestralImpresion.rol.periodo}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{planeacionCuatrimestralImpresion.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                <p:selectOneMenu id="periodo" value="#{planeacionCuatrimestralValidacion.rol.periodo}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{planeacionCuatrimestralValidacion.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
                                                     <p:ajax process="@this, carga"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
@@ -85,11 +85,9 @@
                                         </div>
                                         <div class="#{casilla2}">
                                             <div class="ui-material">
-
-
-                                                <p:selectOneMenu id="planEstudio" value="#{listasAsistenciaDirector.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{listasAsistenciaDirector.cambiarPlanestudio}">
+                                                <p:selectOneMenu id="planEstudio" value="#{planeacionCuatrimestralValidacion.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{planeacionCuatrimestralValidacion.cambiarPlanestudio}">
                                                     <f:selectItem itemValue="#{null}"/>
-                                                    <f:selectItems value="#{listasAsistenciaDirector.rol.planesEstudios}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                    <f:selectItems value="#{planeacionCuatrimestralValidacion.rol.planesEstudios}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
                                                     <p:ajax update="@this, :CV" process="@this"/>
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Programa Educativo" for="planEstudio"/>
@@ -98,8 +96,24 @@
                                         </div>
                                         <div class="#{casilla3}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="carga" value="#{planeacionCuatrimestralImpresion.rol.carga}" converter="entityConverter" valueChangeListener="#{planeacionCuatrimestralImpresion.cambiarCarga}">
-                                                    <f:selectItems value="#{planeacionCuatrimestralImpresion.rol.cargas}" var="carga"
+                                                <p:selectOneMenu id="grupo" value="#{planeacionCuatrimestralValidacion.rol.grupoSelec}" converter="entityConverter" valueChangeListener="#{planeacionCuatrimestralValidacion.cambiarGrupo}">
+                                                    <f:selectItems value="#{planeacionCuatrimestralValidacion.rol.grupos}" var="grupo"
+                                                                   itemValue="#{grupo}" itemLabel="#{grupo.grado}° #{grupo.literal} #{grupo.idSistema.nombre}"/>
+                                                    <p:ajax update="@this" process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Grupo - Programa Educativo" for="grupo"/>
+                                                <p:message for="grupo" />
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="carga" value="#{planeacionCuatrimestralValidacion.rol.carga}" converter="entityConverter" valueChangeListener="#{planeacionCuatrimestralValidacion.cambiarCarga}">
+                                                    <f:selectItems value="#{planeacionCuatrimestralValidacion.rol.cargas}" var="carga"
                                                                    itemValue="#{carga}" itemLabel="#{carga.materia.nombre} (#{carga.planEstudioMateria.claveMateria}) #{carga.grupo.grado}° #{carga.grupo.literal} de #{carga.programa.nombre}"/>
                                                     <p:ajax update="@this" process="@this"/>
                                                     <p:autoUpdate />
@@ -110,7 +124,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <c:if test="#{planeacionCuatrimestralImpresion.rol.existeAsignacionIndicadores}">
+                                        <c:if test="#{planeacionCuatrimestralValidacion.rol.existeAsignacionIndicadores}">
                                             <center>
                                                 <p:commandButton value="Imprimir Configuración" icon="fa fa-print" class="btn-success">                                        
                                                     <p:printer target="CV" />
@@ -149,19 +163,20 @@
                                                                 <div class="row">
                                                                     <div class="col-sm-12">
                                                                         <div class="description-block" style="text-align: right">
-                                                                            <h:outputLabel value="Fecha de Impresión:" style="font-weight: bold;"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralImpresion.rol.fechaInpresion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel><p:spacer width="10px"/>
+                                                                            <h:outputLabel value="Fecha de Impresión:" style="font-weight: bold;"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralValidacion.rol.fechaInpresion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel><p:spacer width="10px"/>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="row">
                                                                     <div class="col-sm-12">
                                                                         <div class="description-block" style="text-align: left">
-                                                                            <h:outputLabel value="CARRERA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralImpresion.rol.carga.programa.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
-                                                                            <h:outputLabel value="PERIODO:"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralImpresion.rol.carga.periodo.mesInicio.mes} - #{planeacionCuatrimestralImpresion.rol.carga.periodo.mesFin.mes} #{planeacionCuatrimestralImpresion.rol.carga.periodo.anio}" style="font-weight: bold;"/><p:spacer width="10px"/> <h:outputLabel value="GRUPO:"/> <p:spacer width="10px"/> 
-                                                                            <h:outputLabel value="#{planeacionCuatrimestralImpresion.rol.carga.cargaAcademica.cveGrupo.grado}° #{planeacionCuatrimestralImpresion.rol.carga.cargaAcademica.cveGrupo.literal}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
-                                                                            <h:outputLabel value="NOMBRE DE LA ASIGNATURA:"/> <p:spacer width="10px"/> <h:outputLabel value="(#{planeacionCuatrimestralImpresion.rol.carga.planEstudioMateria.claveMateria}) #{planeacionCuatrimestralImpresion.rol.carga.materia.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>    
-                                                                            <h:outputLabel value="NOMBRE DEL DOCENTE:"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralImpresion.rol.carga.docente.personal.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/>
-                                                                        </div>
+                                                                            <h:outputLabel value="CARRERA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralValidacion.rol.carga.programa.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                            <h:outputLabel value="PERIODO:"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralValidacion.rol.carga.periodo.mesInicio.mes} - #{planeacionCuatrimestralValidacion.rol.carga.periodo.mesFin.mes} #{planeacionCuatrimestralValidacion.rol.carga.periodo.anio}" style="font-weight: bold;"/><p:spacer width="10px"/> <h:outputLabel value="GRUPO:"/> <p:spacer width="10px"/> 
+                                                                            <h:outputLabel value="#{planeacionCuatrimestralValidacion.rol.carga.cargaAcademica.cveGrupo.grado}° #{planeacionCuatrimestralValidacion.rol.carga.cargaAcademica.cveGrupo.literal}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                            <h:outputLabel value="NOMBRE DE LA ASIGNATURA:"/> <p:spacer width="10px"/> <h:outputLabel value="(#{planeacionCuatrimestralValidacion.rol.carga.planEstudioMateria.claveMateria}) #{planeacionCuatrimestralValidacion.rol.carga.materia.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>    
+                                                                            <h:outputLabel value="NOMBRE DEL DOCENTE:"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralValidacion.rol.carga.docente.personal.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>  
+                                                                            <h:outputLabel value="NOMBRE DEL TUTOR"/> <p:spacer width="10px"/> <h:outputLabel value="#{planeacionCuatrimestralValidacion.buscarPersonal(planeacionCuatrimestralValidacion.rol.grupoSelec.tutor)}" style="font-weight: bold;"/><p:spacer width="10px"/>
+                                                                    </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -170,7 +185,7 @@
                                                     <div class="row">
                                                         <div class="col-sm-12">
                                                             <div class="description-block">
-                                                                <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{planeacionCuatrimestralImpresion.rol.informeplaneacioncuatrimestraldocenteprints}" 
+                                                                <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{planeacionCuatrimestralValidacion.rol.informeplaneacioncuatrimestraldocenteprints}" 
                                                                              sortBy="#{asignacionIndCA.unidad}" rowStyleClass="subactiviades"
                                                                              styleClass="saltoDePagina">
                                                                     <f:facet name="header">
@@ -248,24 +263,24 @@
                                                     <div class="row saltodepagina">
                                                         <div class="col-sm-12">
                                                             <div class="description-block">
-                                                                <p:dataTable id="tbCronograma" var="crono" value="#{planeacionCuatrimestralImpresion.rol.cronograma}">
+                                                                <p:dataTable id="tbCronograma" var="crono" value="#{planeacionCuatrimestralValidacion.rol.cronograma}">
                                                                     <f:facet name="header">
                                                                     </f:facet>
                                                                     <p:columnGroup type="header">
                                                                         <p:row class="success">
                                                                             <p:column rowspan="2" headerText="Unidad Temática" style="width: 400px;"/> 
-                                                                            <p:column colspan="4" headerText="Enero" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Febrero" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Marzo" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Abril" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 1?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Mayo" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Junio" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Julio" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Agosto" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 2?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Septiembre" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/>  
-                                                                            <p:column colspan="4" headerText="Octubre" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/> 
-                                                                            <p:column colspan="4" headerText="Noviembre" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/>  
-                                                                            <p:column colspan="4" headerText="Diciembre" rendered="#{planeacionCuatrimestralImpresion.rol.cuatrimestre eq 3?true:false}"/>  
+                                                                            <p:column colspan="4" headerText="Enero" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 1?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Febrero" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 1?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Marzo" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 1?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Abril" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 1?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Mayo" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 2?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Junio" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 2?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Julio" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 2?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Agosto" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 2?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Septiembre" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 3?true:false}"/>  
+                                                                            <p:column colspan="4" headerText="Octubre" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 3?true:false}"/> 
+                                                                            <p:column colspan="4" headerText="Noviembre" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 3?true:false}"/>  
+                                                                            <p:column colspan="4" headerText="Diciembre" rendered="#{planeacionCuatrimestralValidacion.rol.cuatrimestre eq 3?true:false}"/>  
                                                                         </p:row>
                                                                         <p:row class="success">
                                                                             <p:column headerText="1" /> 
@@ -291,20 +306,20 @@
                                                                         <h:outputText value="#{crono.unidatTematica}" />
                                                                     </p:column>
 
-                                                                 <p:column colspan="16">
+                                                                    <p:column colspan="16">
                                                                         <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:#{crono.porcInicio}%;background: #FFFFFF !important;color: #FFFFFF !important">
-                                                                            Deficiente
+                                                                            .
                                                                         </div>
                                                                         <div class="progress-bar progress-bar-info progress-bar-striped active pgW" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:#{crono.porcUtili}%;background: #cccccc !important;color: #cccccc !important">
-                                                                            Regular
+                                                                            .
                                                                         </div>
                                                                         <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:#{crono.porcRes}%;background: #FFFFFF !important;color: #FFFFFF !important">
-                                                                            Bueno
+                                                                            .
                                                                         </div>
                                                                     </p:column>                 
 
 
-                                                                    
+
                                                                 </p:dataTable>  
                                                             </div>
                                                         </div>
@@ -328,7 +343,7 @@
                                                                             <br/>
                                                                             <br/>
                                                                             <br/>
-                                                                            <h:outputLabel value="#{planeacionCuatrimestralImpresion.rol.carga.docente.personal.nombre}" style="font-weight: bold;"/>
+                                                                            <h:outputLabel value="#{planeacionCuatrimestralValidacion.rol.carga.docente.personal.nombre}" style="font-weight: bold;"/>
                                                                             <br/>
                                                                             <h:outputLabel value="_____________________________" style="font-weight: bold;"/>
                                                                             <br/>
@@ -353,7 +368,7 @@
                                                                             <br/>
                                                                             <br/>
                                                                             <br/>
-                                                                            <h:outputLabel value="#{planeacionCuatrimestralImpresion.buscarDirector(planeacionCuatrimestralImpresion.rol.carga.programa.areaSuperior)}" style="font-weight: bold;"/>
+                                                                            <h:outputLabel value="#{planeacionCuatrimestralValidacion.buscarDirector(planeacionCuatrimestralValidacion.rol.carga.programa.areaSuperior)}" style="font-weight: bold;"/>
                                                                             <br/>
                                                                             <h:outputLabel value="_____________________________" style="font-weight: bold;"/>
                                                                             <br/>
@@ -375,7 +390,7 @@
                     </div>
                 </h:form>
             </c:if>
-            <c:if test="#{!planeacionCuatrimestralImpresion.tieneAcceso}">
+            <c:if test="#{!planeacionCuatrimestralValidacion.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
                         <h:outputText value="El acceso solo está autorizado a personal docente."/>

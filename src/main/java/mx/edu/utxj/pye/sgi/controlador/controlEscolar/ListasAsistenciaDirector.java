@@ -119,7 +119,7 @@ public class ListasAsistenciaDirector extends ViewScopedRol implements Desarroll
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
-        String valor = "Admin Plan Estudio";
+        String valor = "Reporte Asistencias";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }

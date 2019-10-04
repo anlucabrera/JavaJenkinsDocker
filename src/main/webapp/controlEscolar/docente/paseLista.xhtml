@@ -72,15 +72,19 @@
                                                 <p:outputLabel value="Periodo" for="periodo"/>
                                                 <p:message for="periodo" />
                                             </div>
+                                            <br/>
+                                            <br/>
                                         </div>
                                         <div class="#{casilla3}">
                                             <div class="ui-material">
-                                                <p:calendar id="fecha" value="#{paseListaDoc.rol.fechaClase}" pattern="MM/dd/yyyy HH:mm:ss">
+                                                <p:calendar id="fecha" value="#{paseListaDoc.rol.fechaClase}" pattern="MM/dd/yyyy HH:mm:ss">    
                                                     <p:ajax update="@this" process="@this"/>
                                                 </p:calendar>
                                                 <p:outputLabel value="Fecha y Hora de la clase" for="carga"/>
                                                 <p:message for="carga" />
                                             </div>
+                                            <br/>
+                                            <br/>
                                         </div>
                                         <div class="#{casilla2}">
                                             <div class="ui-material">
@@ -219,7 +223,7 @@
                                                     <br/>
                                                     <p:outputPanel>            
                                                         <p:autoUpdate/>
-                                                        <p:commandButton value="Guardar Pase de Lista" id="btnSiguiente" 
+                                                        <p:commandButton value="Guardar Nuevo Pase de Lista" id="btnSiguiente" 
                                                                          actionListener="#{paseListaDoc.guardaPaseLista()}"  
                                                                          process="@this" icon="fa fa-plus" onclick="PF('bloqueoCargaFile').show()"
                                                                          styleClass="btn-primary" update="@this" 
@@ -237,6 +241,32 @@
                 <p:blockUI block="frm" widgetVar="bloqueoCargaFile">
                     Cargando espere por favor.<br />
                 </p:blockUI>
+
+                <h:form id="frmSesiones" >
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:dialog id="dlgSesiones"  header="Pase de lista Guardado" widgetVar="dlgSesiones" minimizable="true" width="300px"
+                                  maximizable="true" position="center">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <div class="col-sm-12">
+                                        <div class="description-block" style="text-align: center">       
+                                            <h:outputLabel value="FECHA DE PASE DE LISTA:"/> <p:spacer width="10px"/> <br/> <h:outputLabel value="#{paseListaDoc.rol.fechaInpresion}" style="font-weight: bold;"><f:convertDateTime pattern="dd/MM/yyyy HH:mm"/></h:outputLabel><p:spacer width="10px"/><br/> 
+                                            <h:outputLabel value="NOMBRE DE LA ASIGNATURA:"/> <p:spacer width="10px"/> <br/> <h:outputLabel value="(#{paseListaDoc.rol.carga.planEstudioMateria.claveMateria}) #{paseListaDoc.rol.carga.materia.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>    
+                                            <h:outputLabel value="Grado y Grupo:"/> <p:spacer width="10px"/> <br/> <h:outputLabel value="#{paseListaDoc.rol.carga.cargaAcademica.cveGrupo.grado}° #{paseListaDoc.rol.carga.cargaAcademica.cveGrupo.literal}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>                                                
+                                            <br/>
+                                            <p:link outcome="seguimientoPaseLista">
+                                                <i class="fa fa-search"></i>
+                                                <span>Ver Seguimiento Pase de Lista</span>
+                                            </p:link>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+                        </p:dialog>
+                    </p:outputPanel>
+                </h:form>
+
             </c:if>
             <c:if test="#{!paseListaDoc.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">

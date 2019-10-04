@@ -82,6 +82,7 @@ public class PaseDeListaDocente extends AbstractRol{
     @Getter @Setter private List<Asistenciasacademicas> asistenciasacademicases;
     @Getter @Setter private DtoPaseListaReporteConsulta dplrc;
     @Getter @Setter private Boolean dplrcVisible= Boolean.FALSE;
+    @Getter @Setter private Integer activa= 0;
     @Getter @Setter private List<String> asistencias;
     @Getter @Setter private List<Asistencias> asistenciases;
     @Getter @Setter private List<Integer> diasPaseLista;

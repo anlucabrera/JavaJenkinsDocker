@@ -251,7 +251,8 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         });
         ejb.agregarPaseLista(rol.getDpls(),rol.getFechaClase());
         Messages.addGlobalInfo("¡El pase de lista se ha guardado!");
-        existeAsignacion();
+        existeAsignacion();        
+        Ajax.oncomplete("PF('dlgSesiones').show();");
     }
     
     public void buscarAsistencias(DtoPaseListaReporteConsulta reporteConsulta) {
