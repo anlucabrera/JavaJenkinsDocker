@@ -994,7 +994,7 @@ public class EjbRegistroBajas {
                 LocalDate fecValPsic = convertirDateALocalDate(baja.getFechaValpsicopedagogia());
                 fechaValPsic = fecValPsic.format(formatter);
             }
-          
+           
             DtoValidacionesBaja dtoValidacionesBaja = new  DtoValidacionesBaja(areaValidacion, fechaVal, validacionBaja, fechaValPsic, validacionPsic);
             
             return ResultadoEJB.crearCorrecto(dtoValidacionesBaja, "Status de la baja.");

@@ -61,7 +61,15 @@ public interface EjbTitulacionSeguimiento {
      * @return Ruta de la fotografía
      * @throws java.lang.Throwable
      */
-    public String buscarFotografia(Integer expediente) throws Throwable;
+    public String buscarFotografiaING(Integer expediente) throws Throwable;
+    
+     /**
+     * Buscar si el expediente contiene fotografía
+     * @param expediente
+     * @return Ruta de la fotografía
+     * @throws java.lang.Throwable
+     */
+    public String buscarFotografiaTSU(Integer expediente) throws Throwable;
 
     /**
      * Obtiene la lista de generaciones con registros en expedientes de titulación

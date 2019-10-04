@@ -200,10 +200,30 @@
                                                        <h:outputText value="#{registroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{registroBaja.tipoBaja.descripcion}"/>
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{registroBaja.tipoBaja.descripcion}"/></f:facet>
+                                                             <f:facet name="input">
+                                                                 <p:selectOneMenu id="tipoBaja" value="#{registroBaja.registroBaja.tipoBaja}" converter="entityConverter">
+                                                                     <f:selectItems value="#{registrarBajaServiciosEscolares.rol.tiposBaja}" var="tipoBaja"
+                                                                                    itemValue="#{tipoBaja.tipoBaja}" itemLabel="#{tipoBaja.descripcion}"/>
+                                                                      <p:ajax update="@this" process="@this"/>
+                                                                      <p:autoUpdate />
+                                                                 </p:selectOneMenu>
+                                                             </f:facet>
+                                                         </p:cellEditor>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{registroBaja.causaBaja.causa}"/>
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{registroBaja.causaBaja.causa}"/></f:facet>
+                                                             <f:facet name="input">
+                                                                 <p:selectOneMenu id="causaBaja" value="#{registroBaja.registroBaja.causaBaja}" converter="entityConverter">
+                                                                     <f:selectItems value="#{registrarBajaServiciosEscolares.rol.causasBaja}" var="causaBaja"
+                                                                                    itemValue="#{causaBaja.cveCausa}" itemLabel="#{causaBaja.causa}"/>
+                                                                    <p:ajax update="@this" process="@this"/>
+                                                                    <p:autoUpdate />
+                                                                 </p:selectOneMenu>
+                                                             </f:facet>
+                                                         </p:cellEditor>
                                                     </p:column>
                                                      <p:column>
                                                         <p:cellEditor>

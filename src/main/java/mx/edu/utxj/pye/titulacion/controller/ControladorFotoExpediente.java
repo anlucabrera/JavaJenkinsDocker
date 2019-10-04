@@ -42,9 +42,22 @@ public class ControladorFotoExpediente implements Serializable{
     @EJB private EjbEstudianteRegistro ejbEstudianteRegistro;
     @Inject ControladorTitSegGeneracion controladorTitSegGeneracion;
     
-     public void mostrarFotografia(Integer expediente) {
+     public void mostrarFotografiaING(Integer expediente) {
         try {
-            rutaFotografia = ejbTitulacionSeguimiento.buscarFotografia(expediente);
+            rutaFotografia = ejbTitulacionSeguimiento.buscarFotografiaING(expediente);
+            if (rutaFotografia == null) {
+                rutaFotografia = "C:\\archivos\\formatosTitulacion\\sinFotografia.png";
+            }
+            graphicImage = new DefaultStreamedContent(new FileInputStream(rutaFotografia), "image/jpg");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorFotoExpediente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+     
+     public void mostrarFotografiaTSU(Integer expediente) {
+        try {
+            rutaFotografia = ejbTitulacionSeguimiento.buscarFotografiaTSU(expediente);
             if (rutaFotografia == null) {
                 rutaFotografia = "C:\\archivos\\formatosTitulacion\\sinFotografia.png";
             }

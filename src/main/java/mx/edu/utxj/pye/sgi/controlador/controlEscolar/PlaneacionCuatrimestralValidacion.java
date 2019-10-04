@@ -86,29 +86,24 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
      *      EL mapa de programas con grupos por medio de operación segura antierror ordenando programas por areas, niveles y nombre del programa y los grupos por grado y letra
      */
     @PostConstruct
-    public void init(){
-        try{
+    public void init() {
+        try {
             setVistaControlador(ControlEscolarVistaControlador.VALIDACION_PLANEACION_CUATRIMESTRAL);
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = evr.validarDirector(logon.getPersonal().getClave());
-            ResultadoEJB<Filter<PersonalActivo>> resValidaEnc = evr.validarEncargadoDireccion(logon.getPersonal().getClave());//validar si es director
-
+            ResultadoEJB<Filter<PersonalActivo>> resValidaEnc = evr.validarEncargadoDireccion(logon.getPersonal().getClave());//validar si es director                        
             if (!resValidaEnc.getCorrecto() && !resValidacion.getCorrecto()) {
                 mostrarMensajeResultadoEJB(resValidacion);
                 return;
-            }//cortar el flujo si no se pudo validar
-
-            Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
-            PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-            rol = new ValidacionPlaneacionCuatrimestral(filtro, director, director.getAreaOficial());
-            tieneAcceso = rol.tieneAcceso(director);
-
-            if (!tieneAcceso) {
-                rol.setFiltro(resValidaEnc.getValor());
-                tieneAcceso = rol.tieneAcceso(director);
-            }
-
-            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-
+            }//cortar el flujo si no se pudo validar            
+            Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación            
+            PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());            
+            rol = new ValidacionPlaneacionCuatrimestral(filtro, director, director.getAreaOficial());            
+            tieneAcceso = rol.tieneAcceso(director);            
+            if (!tieneAcceso) {                
+                rol.setFiltro(resValidaEnc.getValor());                
+                tieneAcceso = rol.tieneAcceso(director);                
+            }            
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso            
             ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = erpe.getProgramasEducativos(director);
             if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
             rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());
@@ -124,16 +119,8 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             rol.setGrupos(resgrupos.getValor());             
             rol.setGrupoSelec(rol.getGrupos().get(0));
             
-            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());
-            
-            
-            
-            
-            
-            
+            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());            
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
-            if(resCarga.getValor().isEmpty()) tieneAcceso = Boolean.FALSE;
-            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             rol.setCargas(resCarga.getValor());
             rol.setCarga(resCarga.getValor().get(0));
             existeAsignacion();
@@ -149,14 +136,57 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
-
+    
+    public void cambiarPlanestudio(ValueChangeEvent event) {
+        rol.setGrupos(new ArrayList<>());
+        rol.setCargas(new ArrayList<>());
+        rol.setGrupoSelec(new Grupo());
+        rol.setPlanEstudio((PlanEstudio) event.getNewValue());
+        ResultadoEJB<List<Grupo>> resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
+        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
+        rol.setGrupos(resgrupos.getValor()); 
+        rol.setGrupoSelec(rol.getGrupos().get(0));
+        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());            
+        if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
+        rol.setCargas(resCarga.getValor());
+        rol.setCarga(resCarga.getValor().get(0));  
+        existeAsignacion();
+        crearCronograma(rol.getCarga());
+    }    
+    
+   public void cambiarGrupo(ValueChangeEvent event) {
+        rol.setCargas(new ArrayList<>());
+        rol.setGrupoSelec((Grupo) event.getNewValue());
+        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());            
+        if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
+        rol.setCargas(resCarga.getValor());
+        rol.setCarga(resCarga.getValor().get(0));  
+        existeAsignacion();
+        crearCronograma(rol.getCarga());
+    }
     public void cambiarCarga(ValueChangeEvent event) {
         rol.setExisteConfiguracion(false);
         rol.setCarga((DtoCargaAcademica) event.getNewValue());
         existeAsignacion();
         crearCronograma(rol.getCarga());
     }
-
+    
+    public String buscarPersonal(Integer clave) {
+        try {            
+            Personal p = new Personal();
+            if (clave != null) {
+                p = ejbPersonal.mostrarPersonalLogeado(clave);
+                return p.getNombre();
+            } else {
+                return "Nombre del tutor";
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+    
     public void existeAsignacion() {
         if (rol.getCarga() == null) {
             return;
@@ -184,8 +214,6 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             return "";
         }
     }
-    
-   
     
     public void onSelect(TimelineSelectEvent e) {  
         TimelineEvent timelineEvent = e.getTimelineEvent();  

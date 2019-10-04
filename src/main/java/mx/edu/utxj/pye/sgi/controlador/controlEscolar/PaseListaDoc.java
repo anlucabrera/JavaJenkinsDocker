@@ -26,6 +26,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -122,7 +123,12 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             
             rol.setCargas(resCarga.getValor());
-            rol.setCarga(resCarga.getValor().get(0));
+            List<DtoCargaAcademica> dcas = resCarga.getValor().stream().filter(t -> Objects.equals(t.getCargaAcademica().getCarga(), rol.getActiva())).collect(Collectors.toList());
+            if (dcas.isEmpty()) {
+                dcas=new ArrayList<>();
+                dcas=resCarga.getValor();
+            }
+            rol.setCarga(dcas.get(0));
             existeAsignacion();
             rol.setFechaInpresion(new Date());
             rol.setFechaClase(new Date());
@@ -251,7 +257,8 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
         });
         ejb.agregarPaseLista(rol.getDpls(),rol.getFechaClase());
         Messages.addGlobalInfo("¡El pase de lista se ha guardado!");
-        existeAsignacion();
+        existeAsignacion();        
+        Ajax.oncomplete("PF('dlgSesiones').show();");
     }
     
     public void buscarAsistencias(DtoPaseListaReporteConsulta reporteConsulta) {
@@ -670,5 +677,6 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
 
     
     public void metodoBase() {
+        Ajax.oncomplete("PF('dlgSesiones').show();");
     }
 }
