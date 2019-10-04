@@ -5,11 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.util;
 
-import java.time.DayOfWeek;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
@@ -83,5 +79,23 @@ public class DateUtils {
         LocalDate hoy = LocalDate.now();
         LocalDate diezDias = DateUtils.agregarDiasHabiles(hoy, 10);
         System.out.println("mx.edu.utxj.pye.sgi.util.DateUtils.main() 10: " + diezDias);
+
+        Date ahora = asDate(LocalDate.of(2019, Month.OCTOBER, 2));
+        Date ayer = asDate(LocalDate.of(2019, Month.OCTOBER, 1));
+        Date mañana = asDate(LocalDate.of(2019, Month.OCTOBER, 3));
+        Date inicio = asDate(LocalDate.of(2019, Month.SEPTEMBER, 18));
+        System.out.println("inicio = " + inicio);
+        Date fin = asDate(LocalDate.of(2019, Month.SEPTEMBER, 25));
+        System.out.println("fin = " + fin);
+
+        Boolean activo = isBetweenWithRange(ahora, inicio, fin, 7l);
+        System.out.println("ahora = " + ahora);
+        System.out.println("activo = " + activo);
+        activo = isBetweenWithRange(ayer, inicio, fin, 7l);
+        System.out.println("ayer = " + ayer);
+        System.out.println("activo = " + activo);
+        activo = isBetweenWithRange(mañana, inicio, fin, 7l);
+        System.out.println("mañana = " + mañana);
+        System.out.println("activo = " + activo);
     }
 }
