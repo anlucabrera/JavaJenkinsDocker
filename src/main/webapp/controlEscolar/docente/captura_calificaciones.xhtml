@@ -116,6 +116,7 @@
                                                                  value="#{capturaCalificacionesDocente.rol.estudiantesPorGrupo.estudiantes}"
                                                                  rowIndexVar="rowIndex"
                                                                  tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                                 rowStyleClass="#{estudiante.tieneCasoCritico or estudiante.tieneCasoCriticoSistema?'danger':''}"
                                                                  tableStyle="vertical-align: middle;">
                                                         <p:columnGroup type="header">
                                                             <p:row>
@@ -134,7 +135,7 @@
                                                         <p:column><h:outputText value="#{estudiante.dtoEstudiante.inscripcionActiva.inscripcion.matricula}" /></p:column>
                                                         <p:column style="text-align: left; white-space: nowrap; width: auto;"><h:outputText value="#{estudiante.dtoEstudiante.persona.apellidoPaterno} #{estudiante.dtoEstudiante.persona.apellidoMaterno} #{estudiante.dtoEstudiante.persona.nombre}" title="#{estudiante.dtoEstudiante.persona.apellidoPaterno} #{estudiante.dtoEstudiante.persona.apellidoMaterno} #{estudiante.dtoEstudiante.persona.nombre}"/></p:column>
                                                         <p:column>
-                                                            <p:commandLink class="#{estudiante.tieneCasoCritico or estudiante.tieneCasoCriticoSistema?'promedio btn btn-sm btn-info':'promedio btn btn-sm btn-default'}"
+                                                            <p:commandLink class="#{estudiante.tieneCasoCritico or estudiante.tieneCasoCriticoSistema?'promedio btn btn-sm btn-danger':'promedio btn btn-sm btn-default'}"
                                                                             process="@this"
                                                                             actionListener="#{capturaCalificacionesDocente.iniciarRegistroCasoCritico(estudiante)}"
                                                                             oncomplete="PF('modalCasoCritico').show();"
@@ -154,7 +155,7 @@
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
                                                                                        valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}"
                                                                                        inputStyle="text-align: center;" minValue="1" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
-                                                                            <p:ajax process="@this" update="@this @(.promedio)" />
+                                                                            <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
                                                                             <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas)}" />
                                                                             <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
                                                                         </p:inputNumber>
