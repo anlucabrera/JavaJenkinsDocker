@@ -27,6 +27,10 @@
                     <span>Estatus Ficha de Admisión</span>
                 </p:link>
             </li>
+            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Control escolar</li>
+            <c:if test="#{consultaCalificacionesEstudiante.mostrarEnDesarrollo(request) and consultaCalificacionesEstudiante.tieneAcceso}"><li>
+                <p:link href="#{request.contextPath}/controlEscolar/estudiante/consultarCalificaciones.xhtml"><i class="fa fa-list-alt"></i><span>Consultar mis calificaciones</span>
+                </p:link></li></c:if>
         </c:if>
         <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
             <li class="header" style="color: #040404;background: #ffffff">Encuestas</li>
