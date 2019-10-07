@@ -12,19 +12,17 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 
 /**
  *
  * @author UTXJ
  */
 @RequiredArgsConstructor @ToString
-public class DtoHistorialEstudiante implements Serializable{
-    @Getter @Setter @NonNull Estudiante estudiante;
+public class DtoMovimientoEstudiante implements Serializable{
     @Getter @Setter @NonNull Date fecha;
     @Getter @Setter @NonNull String periodoEscolar;
-    @Getter @Setter @NonNull String programaEducativo;
     @Getter @Setter @NonNull String tipoMovimiento;
     @Getter @Setter @NonNull String informacionMovimiento;
     @Getter @Setter @NonNull String personaRealizo;
+    
 }
