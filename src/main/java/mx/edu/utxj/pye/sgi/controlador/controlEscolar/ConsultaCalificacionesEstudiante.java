@@ -78,8 +78,6 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
                 obtenerPromediosFinales();
                 obtenerPromedioCuatrimestral();
                 obtenerPromedioAcumulado();
-            }else{
-                System.out.println("No hay acceso pa ti");
             }
         }catch (Exception e){
             mostrarExcepcion(e);
