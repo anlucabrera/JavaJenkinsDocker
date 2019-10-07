@@ -298,6 +298,8 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
         DataTable dataTable = (DataTable) event.getSource();
         DtoRegistroBajaEstudiante registroNew = (DtoRegistroBajaEstudiante) dataTable.getRowData();
         ejb.actualizarRegistroBaja(registroNew);
-        existeRegistro(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante());
+        ejb.actualizarStatusEstudiante(registroNew);
+        rol.setDatosEstudiante(ejb.buscarDatosEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
+        rol.setRegistroBajaEstudiante(ejb.buscarRegistroBajaEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
     }
 }

@@ -1078,4 +1078,24 @@ public class EjbRegistroBajas {
         }
     
     }
+    
+    public void actualizarStatusEstudiante(DtoRegistroBajaEstudiante dtoRegistroBajaEstudiante) {
+        if (dtoRegistroBajaEstudiante.getRegistroBaja().getTipoBaja()== 1) {
+
+                TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short)2);
+
+                Integer t = em.createQuery("update Estudiante e set e.tipoEstudiante =:tipoEstudiante where e.idEstudiante =:estudiante")
+                        .setParameter("tipoEstudiante", tipoEstudiante)
+                        .setParameter("estudiante", dtoRegistroBajaEstudiante.getRegistroBaja().getEstudiante().getIdEstudiante())
+                        .executeUpdate();
+        } else {
+
+               TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short)3);
+
+                Integer t = em.createQuery("update Estudiante e set e.tipoEstudiante =:tipoEstudiante where e.idEstudiante =:estudiante")
+                        .setParameter("tipoEstudiante", tipoEstudiante)
+                        .setParameter("estudiante", dtoRegistroBajaEstudiante.getRegistroBaja().getEstudiante().getIdEstudiante())
+                        .executeUpdate();
+        }
+    }
 }
