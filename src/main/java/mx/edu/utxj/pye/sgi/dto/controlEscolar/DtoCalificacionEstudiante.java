@@ -144,6 +144,15 @@ public class DtoCalificacionEstudiante {
     }
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class TareaIntegradoraPresentacion{
+        @Getter @Setter @NonNull Grupo grupo;
+        @Getter @Setter @NonNull CargaAcademica cargaAcademica;
+        @Getter @Setter @NonNull TareaIntegradoraPromedio tareaIntegradora;
+        @Getter @Setter @NonNull String promedio;
+        @Getter @Setter @NonNull String porcentaje;
+    }
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class PromediosNivelacionesPorMateria{
         @Getter @Setter @NonNull Integer idMateria;
         @Getter @Setter @NonNull Materia materia;

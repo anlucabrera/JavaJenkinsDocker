@@ -6,6 +6,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 
 import java.math.BigDecimal;
@@ -24,7 +25,7 @@ public class ConsultaCalificacionesRolEstudiante{
     @Getter @NonNull private List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas;
     @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad;
     @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionePorMateria, calificacionesFinalesPorMateria;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.TareaIntegradoraPorMateria> tareaIntegradoraPorMateria;
+    @Getter @NonNull private List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion;
     @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria;
     @Getter @NonNull private List<Calificacion> calificacion;
     @Getter @NonNull private List<BigDecimal> promediosAcumulados;
@@ -33,8 +34,9 @@ public class ConsultaCalificacionesRolEstudiante{
     @Getter @NonNull private BigDecimal promedioAcumluado = BigDecimal.ZERO;
     @Getter @NonNull private DtoCapturaCalificacion captura;
 
-    public Boolean tieneAcceso(Estudiante estudiante){
+    public Boolean tieneAcceso(Estudiante estudiante, UsuarioTipo usuarioTipo){
         if(estudiante == null) return false;
+        if(!usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) return false;
         return true;
     }
 
@@ -106,10 +108,6 @@ public class ConsultaCalificacionesRolEstudiante{
         this.promedioAcumluado = promedioAcumluado;
     }
 
-    public void setTareaIntegradoraPorMateria(List<DtoCalificacionEstudiante.TareaIntegradoraPorMateria> tareaIntegradoraPorMateria) {
-        this.tareaIntegradoraPorMateria = tareaIntegradoraPorMateria;
-    }
-
     public void setCalificacionesNivelacionPorMateria(List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria) {
         this.calificacionesNivelacionPorMateria = calificacionesNivelacionPorMateria;
     }
@@ -120,5 +118,9 @@ public class ConsultaCalificacionesRolEstudiante{
 
     public void setInstrucciones(List<String> instrucciones) {
         this.instrucciones = instrucciones;
+    }
+
+    public void setTareaIntegradoraPresentacion(List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion) {
+        this.tareaIntegradoraPresentacion = tareaIntegradoraPresentacion;
     }
 }

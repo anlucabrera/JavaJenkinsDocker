@@ -181,13 +181,9 @@
                                                         <p:column style="text-align: left"><h:outputText value="#{calificaciones.docente.nombre}" /></p:column>
 
                                                         <p:columns style="text-align: center" var="unidadesFantasmas" value="#{consultaCalificacionesEstudiante.rol.mapUnidadesTematicas}" colspan="2">
-                                                            <c:forEach var="unidades" items="#{consultaCalificacionesEstudiante.rol.unidadesPorMateria}">
                                                                 <c:forEach var="calificacion" items="#{consultaCalificacionesEstudiante.rol.calificacionePorUnidad}">
-                                                                        <p:column style="text-align: center" rendered="#{calificaciones.materia.idMateria eq unidades.materia.idMateria
-                                                                           and unidadesFantasmas.noUnidad eq unidades.noUnidad
-                                                                           and calificacion.materia.idMateria eq calificaciones.materia.idMateria
-                                                                           and unidades.materia.idMateria eq calificacion.materia.idMateria
-                                                                           and calificacion.unidadMateria.noUnidad eq unidades.noUnidad}">
+                                                                        <p:column style="text-align: center" rendered="#{calificacion.materia.idMateria eq calificaciones.materia.idMateria
+                                                                           and calificacion.unidadMateria.noUnidad eq unidadesFantasmas.noUnidad}">
                                                                             <p:panelGrid columns="2" style="height: 20px">
                                                                                 <h:outputText style="font-weight: bold; font-size: x-small; #{calificacion.promedioUnidad > 8 ? 'color: #000000':'color: #E53935' or calificacion.promedioUnidad > 0 ? 'color: #E53935':'color: #000000'}"
                                                                                               value="#{calificacion.escala}"/>
@@ -196,16 +192,15 @@
                                                                                               value="#{calificacion.promedioUnidad}">
                                                                                     <f:convertNumber pattern="#.##"/>
                                                                                 </h:outputText>
-                                                                                <h:outputText style="font-weight: bold; font-size: small" value="#{unidades.porcentaje}" >
+                                                                                <h:outputText style="font-weight: bold; font-size: small" value="#{calificacion.porcentaje.divide(100)}" >
                                                                                     <f:convertNumber pattern="#.###" currencySymbol="%"/>
                                                                                 </h:outputText>
                                                                             </p:panelGrid>
                                                                         </p:column>
                                                                     </c:forEach>
-                                                            </c:forEach>
                                                         </p:columns>
 
-                                                        <c:if test="#{consultaCalificacionesEstudiante.rol.tareaIntegradoraPorMateria.size() eq 0}">
+                                                        <c:if test="#{consultaCalificacionesEstudiante.rol.tareaIntegradoraPresentacion.size() eq 0}">
                                                             <p:column colspan="2">
                                                                     <h:outputText style="font-weight: bold; font-size: small;" value=""/>
                                                                     <h:outputText style="font-weight: bold; font-size: small" value=""/>
@@ -213,20 +208,14 @@
                                                                     <h:outputText style="font-weight: bold; font-size: small" value=""/>
                                                             </p:column>
                                                         </c:if>
-                                                        <c:forEach var="promedioIntegradora" items="#{consultaCalificacionesEstudiante.rol.tareaIntegradoraPorMateria}">
-                                                            <p:column rendered="#{promedioIntegradora.cargaAcademica.carga ne calificaciones.cargaAcademica.carga}" colspan="2">
-                                                                    <h:outputText style="font-weight: bold; font-size: small;" value=""/>
-                                                                    <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                                    <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                                    <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                            </p:column>
+                                                        <c:forEach var="promedioIntegradora" items="#{consultaCalificacionesEstudiante.rol.tareaIntegradoraPresentacion}">
                                                             <p:column rendered="#{promedioIntegradora.cargaAcademica.carga eq calificaciones.cargaAcademica.carga}" colspan="2">
                                                                 <p:panelGrid columns="2">
                                                                     <h:outputText style="font-weight: bold; font-size: small;" value=""/>
                                                                     <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                                    <h:outputText style="font-weight: bold; font-size: small; #{promedioIntegradora.tareaIntegradoraPromedio.valor > 8 ? 'color: #000000':'color: #E53935' or promedioIntegradora.tareaIntegradoraPromedio.valor > 0 ? 'color: #E53935':'color: #000000'}"
-                                                                                  value="#{promedioIntegradora.tareaIntegradoraPromedio.valor}"/>
-                                                                    <h:outputText style="font-weight: bold; font-size: small" value="#{promedioIntegradora.tareaIntegradora.porcentaje}"/>
+                                                                    <h:outputText style="font-weight: bold; font-size: small; #{promedioIntegradora.tareaIntegradora.valor > 8 ? 'color: #000000':'color: #E53935' or promedioIntegradora.tareaIntegradora.valor > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                  value="#{promedioIntegradora.promedio}"/>
+                                                                    <h:outputText style="font-weight: bold; font-size: small" value="#{promedioIntegradora.porcentaje}"/>
                                                                 </p:panelGrid>
                                                             </p:column>
                                                         </c:forEach>
