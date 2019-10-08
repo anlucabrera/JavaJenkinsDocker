@@ -97,9 +97,6 @@ public class ControladorIncidenciasGeneral implements Serializable {
             } else {
                 pr = new PieReportes(controladorEmpleado.getNuevoOBJListaPersonal().getCategoriaOperativaNombre(), controladorEmpleado.getNuevoOBJListaPersonal().getNombre(), controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre());
             }
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.crearPieDeReporte(pr)"+pr.getPuesto());
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.crearPieDeReporte(pr)"+pr.getNombre());
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.crearPieDeReporte(pr)"+pr.getArea());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
@@ -245,9 +242,6 @@ public class ControladorIncidenciasGeneral implements Serializable {
                 areaNombre = areaU.getNombre();
                 pr = new PieReportes(buscarPerosnal(areaU.getResponsable()).getCategoriaOperativaNombre(), buscarPerosnal(areaU.getResponsable()).getNombre(), areaNombre);
             }
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.numeroAreaAsiganado(pr)"+pr.getPuesto());
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.numeroAreaAsiganado(pr)"+pr.getNombre());
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorIncidenciasGeneral.numeroAreaAsiganado(pr)"+pr.getArea());
             mostrarIncidencias(mes);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

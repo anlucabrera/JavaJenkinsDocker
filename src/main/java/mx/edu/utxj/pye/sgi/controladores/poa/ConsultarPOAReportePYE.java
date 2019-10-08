@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
@@ -53,13 +54,10 @@ public class ConsultarPOAReportePYE implements Serializable {
     
     @PostConstruct
     public void init() {
-//        System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();;
-//        System.out.println("ControladorHabilidadesIIL Inicio: " + ejercicioFiscal);
         ejeses=new ArrayList<>();
         ejeses.clear();
         mostrarAreasTienenPOA();
-//        System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
     }
 
     public void mostrarAreasTienenPOA() {
@@ -72,7 +70,6 @@ public class ConsultarPOAReportePYE implements Serializable {
                     areasUniversidads.add(t);
                 }
             });
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ConsultarPOAReportePYE.mostrarAreasTienenPOA()" + areasUniversidads.size());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ConsultarPOAReportePYE.class.getName()).log(Level.SEVERE, null, ex);
@@ -103,7 +100,6 @@ public class ConsultarPOAReportePYE implements Serializable {
 
         List<EjesRegistro> ejesRegistros = new ArrayList<>();
         ejesRegistros = ejbCatalogosPoa.mostrarEjesRegistrosAreas(areasUniversidad.getArea(), ejercicioFiscal);
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ConsultarPOAReportePYE.consultarListasValidacionFinal()"+ejesRegistros.size());
         if (!ejesRegistros.isEmpty()) {
             ejesRegistros.forEach((ej) -> {
                 List<Estrategias> listEstrategias = new ArrayList<>();
@@ -121,7 +117,7 @@ public class ConsultarPOAReportePYE implements Serializable {
                                 CuadroMandoIntegral cmi = ejbCatalogosPoa.mostrarCuadroMandoIntegralRegistrpo(ejercicioFiscal, ej, es, li).get(0);
                                 List<ActividadesPoa> listActividadesPoas = new ArrayList<>();
                                 listActividadesPoas = ejbRegistroActividades.mostrarActividadesPoaCuadroDeMandoRecurso(areasUniversidad.getArea(), ejercicioFiscal, cmi);
-                                lineasAccions.add(new ListaLineasAccion(li, listActividadesPoas));
+                                    lineasAccions.add(new ListaLineasAccion(li, listActividadesPoas));
                             });
                         }
                         estrategiases.add(new ListaEstrategias(es, lineasAccions));
@@ -134,7 +130,6 @@ public class ConsultarPOAReportePYE implements Serializable {
     }
 
     public void imprimirValores() {
-//        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.imprimirValores()");
     }
 
     public static class ListaEjes {

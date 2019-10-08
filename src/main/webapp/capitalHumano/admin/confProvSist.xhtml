@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="informacion">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 49}">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>
+                                    <p:tab title="Eventos Generales">
+                                        <h:form id="frmEventos"> 
+                                            <p:outputPanel id="incidenciasReporte">
+
+                                                <p:dataTable id="tblActividades" value="#{administracionControl.cps}" var="cp" 
+                                                             emptyMessage="No premios registrados" paginator="true" rows="15"
+                                                             sortBy="#{cp.modulo}" expandableRowGroups="true" 
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30"
+                                                             editable="true" editMode="row">
+
+                                                    <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditConfProp}" update="tblActividades" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblActividades" />
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Calve" style="width: 300px;" sortBy="#{cp.clave}" 
+                                                                      filterBy="#{cp.clave}" 
+                                                                      filterMatchMode="contains"/>
+                                                            <p:column headerText="Tipo" style="width: 50px;"/>
+                                                            <p:column headerText="Cadena" style="width: 300px;"/>
+                                                            <p:column headerText="Entero" style="width: 50px;"/>
+                                                            <p:column headerText="Decimal" style="width: 50px;"/>
+                                                            <p:column headerText="Fecha" style="width: 100px;"/>
+                                                            <p:column headerText="Ejb" style="width: 250px;" sortBy="#{cp.ejbs}" 
+                                                                      filterBy="#{cp.ejbs}" 
+                                                                      filterMatchMode="contains"/>
+                                                            <p:column headerText="Valor" style="width:32px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+                                                    <p:headerRow>
+                                                        <p:column colspan="7">
+                                                            <h:outputText value="#{cp.modulo}" />
+                                                        </p:column>
+                                                    </p:headerRow>
+
+                                                    <p:column headerText="Clave" style="text-align: justify;">
+                                                        <h:outputText value="#{cp.clave}" />
+                                                    </p:column>    
+
+                                                    <p:column headerText="Tipo" style="text-align: justify;">
+                                                        <h:outputText value="#{cp.tipo}" />
+                                                    </p:column>                                                     
+
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputText value="#{cp.valorCadena}" /></f:facet>
+                                                            <f:facet name="input">  <p:inputText value="#{cp.valorCadena}"/>  </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>   
+
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputText value="#{cp.valorEntero}" /></f:facet>
+                                                            <f:facet name="input">  <p:inputText value="#{cp.valorEntero}"/>  </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputText value="#{cp.valorDecimal}" /></f:facet>
+                                                            <f:facet name="input">  <p:inputText value="#{cp.valorDecimal}"/>  </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{cp.valorFecha}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss"/></h:outputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{cp.valorFecha}" pattern="dd-MM-yyyy HH:mm:ss" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+
+                                                    <p:column headerText="Tipo" style="text-align: justify;">
+                                                        <h:outputText value="#{cp.ejbs}" />
+                                                    </p:column>  
+
+                                                    <p:column >
+                                                        <p:rowEditor />
+                                                    </p:column>
+                                                </p:dataTable>  
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+</ui:composition>

@@ -51,7 +51,6 @@ public class AreaPoaJustificacion implements Serializable {
 
     @PostConstruct
     public void init() {
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.init()");
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();;
         alineacionActiva = false; 
         consultarListasInit();
@@ -136,7 +135,6 @@ public class AreaPoaJustificacion implements Serializable {
     }
 
     public void asignarParametrosRegistro(ValueChangeEvent event) {
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.asignarParametrosRegistro()" + Short.parseShort(event.getNewValue().toString()));
         if (Short.parseShort(event.getNewValue().toString()) != Short.parseShort("0")) {
             switch (event.getComponent().getId()) {
                 case "eje":

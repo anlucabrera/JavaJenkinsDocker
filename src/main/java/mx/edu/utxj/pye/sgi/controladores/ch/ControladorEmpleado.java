@@ -276,43 +276,35 @@ public class ControladorEmpleado implements Serializable {
 //            List<MenuDinamico> msN1 = new ArrayList<>();
 //            msN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, "Administrador","Trabajador");
 //            if (!msN1.isEmpty()) {
-//                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(msN1)" + msN1.size());
 //                msN1.forEach((n1) -> {
                     List<MenuDinamico> msN2 = new ArrayList<>();
 //                    msN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, n1.getTituloNivel1(),"Trabajador");
                     msN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, "Administrador","Trabajador");
                     List<Nivel2> nivel2s = new ArrayList<>();
                     if (!msN2.isEmpty()) {
-//                        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(n1)" + n1.getTituloNivel1() + "-msN2-" + msN2.size());
                         msN2.forEach((n2) -> {
                             List<MenuDinamico> msN3 = new ArrayList<>();
                             msN3 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 3, n2.getTituloNivel2(),"Trabajador");
                             List<Nivel3> nivel3s = new ArrayList<>();
                             if (!msN3.isEmpty()) {
-//                                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(n2)" + n2.getTituloNivel2() + "-msN3-" + msN3.size());
                                 msN3.forEach((n3) -> {
-//                                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(n3)" + n3.getTitulonivel3());
                                     List<MenuDinamico> msN4 = new ArrayList<>();
                                     msN4 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 4, n3.getTitulonivel3(),"Trabajador");
                                     List<Nivel4> nivel4s = new ArrayList<>();
                                     if (!msN4.isEmpty()) {
-//                                        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(n3)" + n3.getTitulonivel3() + "-msN4-" + msN4.size());
                                         msN4.forEach((n4) -> {
                                             nivel4s.add(new Nivel4(n4.getTitulonivel4(), n4.getIconoNivel4(), n4.getEnlacenivel4(),n4.getEstatus()));
                                         });
                                     }
                                     nivel3s.add(new Nivel3(n3.getTitulonivel3(), n3.getIconoNivel3(), n3.getEnlacenivel3(),n3.getEstatus(), nivel4s));
                                 });
-//                                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(nivel3s)" + nivel3s.size());
                             }
                             nivel2s.add(new Nivel2(n2.getTituloNivel2(), n2.getIconoNivel2(), n2.getEnlaceNivel2(),n2.getEstatus(), nivel3s));
                         });
-//                        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(nivel2s)" + nivel2s.size());
                     }
                     menus.add(new Menu("Administrador", nivel2s));
 //                    menus.add(new Menu(n1.getTituloNivel1(), nivel2s));
 //                });
-//                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.crearMenuAdministrador(menus)" + menus.size());
 //            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());

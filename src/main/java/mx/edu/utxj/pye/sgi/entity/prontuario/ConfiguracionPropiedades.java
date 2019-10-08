@@ -48,7 +48,7 @@ public class ConfiguracionPropiedades implements Serializable {
     private String clave;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 11)
+    @Size(min = 1, max = 20)
     @Column(name = "modulo")
     private String modulo;
     @Size(max = 7)

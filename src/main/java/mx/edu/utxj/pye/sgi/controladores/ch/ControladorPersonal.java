@@ -92,7 +92,7 @@ public class ControladorPersonal implements Serializable {
     @Getter    @Setter    private List<PersonalCategorias> listaPersonalCategorias = new ArrayList<>(), listaPersonalCategorias360 = new ArrayList<>();
 ////////////////////////////////////////////////////////////////////////////////Variables de apoyo
     @Getter    @Setter    private Short actividad = 0, categoriaOP = 0, categoriaOF = 0, categoria360 = 0, grado = 0;
-    @Getter    @Setter    private Integer contactoDestino, total = 0, tv1 = 0, tv2 = 0, tv3 = 0, tv4 = 0, tv5 = 0, tv6 = 0, tv7 = 0, tv8 = 0, tv9 = 0;
+    @Getter    @Setter    private Integer contactoDestino=0, total = 0, tv1 = 0, tv2 = 0, tv3 = 0, tv4 = 0, tv5 = 0, tv6 = 0, tv7 = 0, tv8 = 0, tv9 = 0;
     @Getter    @Setter    private String clase = "", nombreTabla;
     @Getter    @Setter    DecimalFormat df = new DecimalFormat("#.00");
 
@@ -166,23 +166,25 @@ public class ControladorPersonal implements Serializable {
 
     public void mostrarPerfilSubordinado() {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(Inicio)");
-            nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
+            if (contactoDestino == 0) {
+                Messages.addGlobalWarn("¡Sin datos!!");
+                return;
+            }
             nuevOBJPersonalSubordinado = ejbPersonal.mostrarPersonalLogeado(contactoDestino);
+            if (nuevOBJPersonalSubordinado == null) {
+                Messages.addGlobalWarn("¡Sin datos parala clave "+contactoDestino+"!!");
+                return;
+            }
+            nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
             nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(contactoDestino);
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(1)");
             informacionCV();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(2)");
             mostrarFuncioneSubordinado();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(3)");
             mostrarLista();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(4)");
             actividad = nuevOBJPersonalSubordinado.getActividad().getActividad();
             categoriaOP = nuevOBJPersonalSubordinado.getCategoriaOperativa().getCategoria();
             categoriaOF = nuevOBJPersonalSubordinado.getCategoriaOficial().getCategoria();
             categoria360 = nuevOBJPersonalSubordinado.getCategoria360().getCategoria();
             grado = nuevOBJPersonalSubordinado.getGrado().getGrado();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.mostrarPerfilSubordinado(Fin)");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -264,8 +266,7 @@ public class ControladorPersonal implements Serializable {
     }
 
     public void informacionCV() {
-        try {
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(1)");
+        try {            
             listaIdiomas.clear();
             listaLenguas.clear();
             listaCongresos.clear();
@@ -281,11 +282,9 @@ public class ControladorPersonal implements Serializable {
             listaExperienciasLaborales.clear();
             listaCapacitacionespersonal.clear();
             listaHabilidadesInformaticas.clear();
-            listaDesarrollosTecnologicos.clear();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(2)");
+            listaDesarrollosTecnologicos.clear();            
             tv1 = 0;            tv2 = 0;            tv3 = 0;            tv4 = 0;            tv5 = 0;
-            tv6 = 0;            tv7 = 0;            tv8 = 0;            tv9 = 0;            total = 0;
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(3)");
+            tv6 = 0;            tv7 = 0;            tv8 = 0;            tv9 = 0;            total = 0;            
             listaIdiomas = ejbHabilidades.mostrarIdiomas(contactoDestino);
             listaLenguas = ejbHabilidades.mostrarLenguas(contactoDestino);
             listaDistinciones = ejbPremios.mostrarDistinciones(contactoDestino);
@@ -300,8 +299,7 @@ public class ControladorPersonal implements Serializable {
             listaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(contactoDestino);
             listaCapacitacionespersonal = ejbEducacion.mostrarCapacitacionespersonal(contactoDestino);
             listaDesarrollosTecnologicos = ejbTecnologia.mostrarDesarrollosTecnologicos(contactoDestino);
-            listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(contactoDestino);
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(4)");
+            listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(contactoDestino);            
             if (!listaIdiomas.isEmpty()) {
                 listaIdiomas.forEach((t) -> {
                     if (t.getEvidenciaDoc() != null){
@@ -311,8 +309,7 @@ public class ControladorPersonal implements Serializable {
                         tv4 = tv4 + 1;
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(A)");
+            }            
             if (!listaLibrosPubs.isEmpty()) {
                 listaLibrosPubs.forEach((t) -> {
                     if (t.getEvidencia() != null){
@@ -322,8 +319,7 @@ public class ControladorPersonal implements Serializable {
                         tv7 = tv7 + 1;
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(B)");
+            }            
             if (!listaArticulosp.isEmpty()) {
                 listaArticulosp.forEach((t) -> {
                     if (t.getEvidencia() != null){
@@ -333,8 +329,7 @@ public class ControladorPersonal implements Serializable {
                         tv8 = tv8 + 1;
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(C)");
+            }            
             if (!listaMemoriaspub.isEmpty()) {
                 listaMemoriaspub.forEach((t) -> {
                     if (t.getEvidencia() != null){
@@ -344,8 +339,7 @@ public class ControladorPersonal implements Serializable {
                         tv9 = tv9 + 1;
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(D)");
+            }            
             if (!listaDistinciones.isEmpty()) {
                 listaDistinciones.forEach((t) -> {
                     if (t.getEvidenciaDistincion() != null){
@@ -355,12 +349,9 @@ public class ControladorPersonal implements Serializable {
                         tv6 = tv6 + 1;
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(E)");
+            }            
             if (!listaFormacionAcademica.isEmpty()) {
-                listaFormacionAcademica.forEach((t) -> {
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(t.getEvidenciaCedula())"+t.getEvidenciaCedula());
-                    System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(t.getEvidenciaTitulo())"+t.getEvidenciaTitulo());
+                listaFormacionAcademica.forEach((t) -> {                                        
                     if (t.getEvidenciaCedula() != null){
                         rutasEvidenciasBD.add(t.getEvidenciaCedula());
                     }
@@ -371,8 +362,7 @@ public class ControladorPersonal implements Serializable {
                         tv1 = tv1 + 1;
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(F)");
+            }            
             if (!listaExperienciasLaborales.isEmpty()) {
                 listaExperienciasLaborales.forEach((t) -> {
                     if (t.getEvidenciaNombremiento() != null){
@@ -382,8 +372,7 @@ public class ControladorPersonal implements Serializable {
                         tv2 = tv2 + 1;
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(G)");
+            }            
             if (!listaCapacitacionespersonal.isEmpty()) {
                 listaCapacitacionespersonal.forEach((t) -> {
                     if (t.getEvidenciaCapacitacion() != null){
@@ -393,8 +382,7 @@ public class ControladorPersonal implements Serializable {
                         tv3 = tv3 + 1;
                     }
                 });
-            }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(H)");
+            }            
             if (!listaDesarrollosTecnologicos.isEmpty()) {
                 listaDesarrollosTecnologicos.forEach((t) -> {
                     if (t.getDocumentoRespaldo() != null){
@@ -405,8 +393,7 @@ public class ControladorPersonal implements Serializable {
                     }
                 });
             }
-
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonal.informacionCV(I)");
+            
             total = tv1 + tv2 + tv3 + tv4 + tv5 + tv6 + tv7 + tv8 + tv9;
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -447,11 +434,10 @@ public class ControladorPersonal implements Serializable {
             listaResultadoEva.clear();
             listaEvaluaciones.clear();
             
-            Personal personal = ejbPersonalEvaluaciones.getPersonal(contactoDestino);
-            List<PeriodosEscolares> periodos = ejbPersonalEvaluaciones.getPeriodos(personal);
-            Map<PeriodosEscolares, List<Evaluaciones360Resultados>> resultados360 = ejbPersonalEvaluaciones.getEvaluaciones360PorPeriodo(personal, periodos);
-            Map<PeriodosEscolares, DesempenioEvaluacionResultados> resultadosDesempenio = ejbPersonalEvaluaciones.getEvaluacionesDesempenioPorPeriodo(personal, periodos);
-            listaEvaluaciones = ejbPersonalEvaluaciones.empaquetar(personal, periodos, resultados360, resultadosDesempenio);
+            List<PeriodosEscolares> periodos = ejbPersonalEvaluaciones.getPeriodos(nuevOBJPersonalSubordinado);
+            Map<PeriodosEscolares, List<Evaluaciones360Resultados>> resultados360 = ejbPersonalEvaluaciones.getEvaluaciones360PorPeriodo(nuevOBJPersonalSubordinado, periodos);
+            Map<PeriodosEscolares, DesempenioEvaluacionResultados> resultadosDesempenio = ejbPersonalEvaluaciones.getEvaluacionesDesempenioPorPeriodo(nuevOBJPersonalSubordinado, periodos);
+            listaEvaluaciones = ejbPersonalEvaluaciones.empaquetar(nuevOBJPersonalSubordinado, periodos, resultados360, resultadosDesempenio);
 
             for (int i = 0; i <= listaEvaluaciones.size() - 1; i++) {
                 nOBRE = listaEvaluaciones.get(i);
@@ -543,7 +529,8 @@ public class ControladorPersonal implements Serializable {
             Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
- public static class ResultadoEva {
+    
+    public static class ResultadoEva {
 
         @Getter        @Setter        private int anio;
         @Getter        @Setter        private int periodo;
@@ -556,13 +543,11 @@ public class ControladorPersonal implements Serializable {
         private ResultadoEva(int _anio, int _periodo, String _fin, String _inicio, Double _promedio, String _tipoEvaluacion, String _tipoClas) {
             anio = _anio;
             periodo = _periodo;
-
             fin = _fin;
             inicio = _inicio;
             promedio = _promedio;
             tipoEvaluacion = _tipoEvaluacion;
             tipoClas = _tipoClas;
         }
-
     }
 }

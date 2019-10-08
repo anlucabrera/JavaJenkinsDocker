@@ -42,7 +42,6 @@ private Image imagen;
         this.path = path;
         try {
             String pathImagen = path + File.separator + RESOURCE, pathImagen1 = path + File.separator + RESOURCE1, pathFont = path + File.separator + FONT;
-            //System.out.println("jasg.utxj.edu.mx.reportes.FormatoDocumento.<init>() pathFont:" + pathFont);
             //URL fontNew = new URL(sc.getRealPath(path + FONT)); //this.getClass().getResource(FONT);
             FontFactory.register(pathFont, "Verdana");// FontFactory.register(String.valueOf(fontNew), "Verdana");
             Font myBoldFont = FontFactory.getFont("Verdana", 7, Font.BOLD, BaseColor.WHITE);
@@ -60,7 +59,6 @@ private Image imagen;
             celda3.setBackgroundColor(coloEje);
             celda3.setBorder(Rectangle.NO_BORDER);
             //URL resUrl = new URL(path + imagen); //this.getClass().getResource(RESOURCE);
-            //System.out.println("jasg.utxj.edu.mx.reportes.FormatoDocumento.<init>() url:" + resUrl);
             imagen = Image.getInstance(pathImagen);//imagen = Image.getInstance(resUrl);
             imagen.setAbsolutePosition(15, 745f);
             imagen.scaleToFit(70, 60);
@@ -93,7 +91,6 @@ private Image imagen;
         FontFactory.register(String.valueOf(fontNew), "Verdana");
         Font myBoldFont = FontFactory.getFont("Verdana", 5, Font.NORMAL);
         try {
-//            System.out.println("jasg.utxj.edu.mx.reportes.FormatoDocumento.onEndPage() document-imagen:" + document + "-" + imagen);
             document.add(imagen);
             document.add(imagen1);
             table.writeSelectedRows(0, -1, 315f, 763f, writer.getDirectContent());

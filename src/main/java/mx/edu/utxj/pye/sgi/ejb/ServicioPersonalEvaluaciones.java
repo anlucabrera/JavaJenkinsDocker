@@ -26,7 +26,12 @@ public class ServicioPersonalEvaluaciones implements EjbPersonalEvaluaciones {
     @Override
     public Personal getPersonal(Integer clave) {
         f.setEntityClass(Personal.class);
-        return (Personal) f.find(clave);
+        Personal p = f.getEntityManager().find(Personal.class, clave);
+        if (p == null) {
+            return null;
+        } else {
+            return p;
+        }
     }
 
     @Override

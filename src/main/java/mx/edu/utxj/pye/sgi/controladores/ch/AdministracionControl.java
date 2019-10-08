@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
@@ -41,6 +42,7 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private List<EventosAreas> eventosesAreases = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>();
     @Getter    @Setter    private List<Procesopoa> procesopoas = new ArrayList<>();
+    @Getter    @Setter    private List<ConfiguracionPropiedades> cps = new ArrayList<>();
 
     @Getter    @Setter    private Integer eventoC = 0;
     @Getter    @Setter    private Short areaC = 0;
@@ -50,6 +52,7 @@ public class AdministracionControl implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo areasLogeo;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.administrador.EjbAdministrador administrador;
 
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesCH utilidadesCH;
@@ -64,21 +67,36 @@ public class AdministracionControl implements Serializable {
         mostrarIncidencias();
         mostrarModulos();
         mostrarEventos();
+        mostrarConfiguracionProp();
     }
-    
-     public void mostrarProcesoPOA() {
+
+
+// -----------------------------------------------------------------------------Busqueda    
+    public void mostrarProcesoPOA() {
         try {
-            procesopoas = new ArrayList<>();            
+            procesopoas = new ArrayList<>();
             procesopoas.clear();
 
             procesopoas = ejbUtilidadesCH.mostrarProcesopoa();
-            
+
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public void mostrarConfiguracionProp() {
+        try {
+            cps = new ArrayList<>();
+            cps.clear();
+
+            cps = administrador.buscarConfiguracionPropiedadeses();
+
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void mostrarEventos() {
         try {
@@ -155,6 +173,63 @@ public class AdministracionControl implements Serializable {
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+     
+    public String buscarArea(Short area) {
+        try {
+            AreasUniversidad areaU = new AreasUniversidad();
+            areaU = areasLogeo.mostrarAreasUniversidad(area);
+            return areaU.getNombre();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+
+    public String buscarAreaEventosA(Integer area) {
+        try {
+
+            AreasUniversidad areaU = new AreasUniversidad();
+            areaU = areasLogeo.mostrarAreasUniversidad(Short.parseShort(area.toString()));
+            return areaU.getNombre();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+    
+// -----------------------------------------------------------------------------Creacion   
+    public void agreggarEventoArea() {
+        try {
+            eventosAreas = new EventosAreas();
+            eventosAreas.setEventos(new Eventos());
+            eventosAreas.setEventosAreasPK(new EventosAreasPK());
+
+            eventosAreas.setEventos(new Eventos(eventoC));
+            eventosAreas.setEventosAreasPK(new EventosAreasPK(eventoC, areaC));
+            ejbUtilidadesCH.agregarEventosesAreases(eventosAreas);
+            Messages.addGlobalInfo("¡Evento Agregado!");
+            mostrarEventos();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+// -----------------------------------------------------------------------------Edicion    
+    public void onRowEditEventos(RowEditEvent event) {
+        try {
+            Eventos e = (Eventos) event.getObject();
+            ejbUtilidadesCH.actualizarEventoses(e);
+            Messages.addGlobalInfo("¡Operación exitosa!");
+            mostrarEventos();
+            Ajax.update("frmEventos");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void onRowEdit(RowEditEvent event) {
         try {
@@ -210,6 +285,24 @@ public class AdministracionControl implements Serializable {
         }
     }
 
+    public void onRowEditConfProp(RowEditEvent event) {
+        try {
+            ConfiguracionPropiedades cp = (ConfiguracionPropiedades) event.getObject();
+            cp=administrador.actualizarConfiguracionPropiedades(cp);
+            Messages.addGlobalInfo("¡Operación exitosa! "+cp.getClave());
+            mostrarConfiguracionProp();
+            Ajax.update("frmEventos");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void onRowCancel(RowEditEvent event) {
+        Messages.addGlobalInfo("¡Operación cancelada!");
+    }
+    
+// -----------------------------------------------------------------------------Eliminacion
     public void eliminarEventoArea(EventosAreas ea) {
         try {
             ejbUtilidadesCH.eliminarEventosesEventosAreas(ea);
@@ -220,61 +313,18 @@ public class AdministracionControl implements Serializable {
         }
     }
 
-    public void onRowEditEventos(RowEditEvent event) {
+    public void eliminarConfiguracionProp(ConfiguracionPropiedades cp) {
         try {
-            Eventos e = (Eventos) event.getObject();
-            ejbUtilidadesCH.actualizarEventoses(e);
-            Messages.addGlobalInfo("¡Operación exitosa!");
-            mostrarEventos();
-            Ajax.update("frmEventos");
+            administrador.eliminarConfiguracionPropiedades(cp);
+            mostrarConfiguracionProp();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public String buscarArea(Short area) {
-        try {
-            AreasUniversidad areaU = new AreasUniversidad();
-            areaU = areasLogeo.mostrarAreasUniversidad(area);
-            return areaU.getNombre();
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
-            return "";
-        }
-    }
 
-    public String buscarAreaEventosA(Integer area) {
-        try {
-
-            AreasUniversidad areaU = new AreasUniversidad();
-            areaU = areasLogeo.mostrarAreasUniversidad(Short.parseShort(area.toString()));
-            return areaU.getNombre();
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
-            return "";
-        }
-    }
-
-    public void agreggarEventoArea() {
-        try {
-            eventosAreas = new EventosAreas();
-            eventosAreas.setEventos(new Eventos());
-            eventosAreas.setEventosAreasPK(new EventosAreasPK());
-
-            eventosAreas.setEventos(new Eventos(eventoC));
-            eventosAreas.setEventosAreasPK(new EventosAreasPK(eventoC, areaC));
-            ejbUtilidadesCH.agregarEventosesAreases(eventosAreas);
-            Messages.addGlobalInfo("¡Evento Agregado!");
-            mostrarEventos();
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
+// -----------------------------------------------------------------------------Utilidades
     public void imprimirValores() {
     }
 }

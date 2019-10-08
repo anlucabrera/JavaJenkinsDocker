@@ -96,7 +96,6 @@ public class AreaPoaEvaluacion implements Serializable {
     
     @PostConstruct
     public void init() {
-//        System.out.println("ControladorHabilidadesIIL Inicio: " + System.currentTimeMillis());
         ejeses.clear();
         ejesesFiltrado.clear();
         actividadesPoasAreas.clear();
@@ -108,7 +107,6 @@ public class AreaPoaEvaluacion implements Serializable {
         datosArea(controladorEmpleado.getProcesopoa().getArea());
 
         consultarListas();
-//        System.out.println(" ControladorHabilidadesIIL Fin: " + System.currentTimeMillis());
     }
 
     public void datosArea(Short clave) {
@@ -153,7 +151,6 @@ public class AreaPoaEvaluacion implements Serializable {
 
     public void asignarParametrosRegistro(ValueChangeEvent event) {
         archivoSC = false;
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOARegistro.asignarParametrosRegistro()" + Short.parseShort(event.getNewValue().toString()));
         if (Short.parseShort(event.getNewValue().toString()) != Short.parseShort("0")) {
             switch (event.getComponent().getId()) {
                 case "eje":
@@ -292,7 +289,6 @@ public class AreaPoaEvaluacion implements Serializable {
             totalPCuatrimestre = 0D;
             porcentejeAlCorte = 0D;
             porcentajeCuatrimestre = 0D;
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AreaPoaEvaluacion.aconsultarTotales(1)"+cuatrimestre);
             switch (cuatrimestre) {
                 case 1:
                     totalACuatrimestre = 0D + t.getNAEnero() + t.getNAFebrero() + t.getNAMarzo() + t.getNAAbril();
@@ -339,30 +335,22 @@ public class AreaPoaEvaluacion implements Serializable {
         mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
         actividads=new ArrayList<>();
         actividads.clear();
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(1)" + event.getObject());
         actividad nuevaactividad = (actividad) event.getObject();
         ActividadesPoa modificada = nuevaactividad.getActividadesPoa();
         ultimaEstrategiaExpandida = modificada.getCuadroMandoInt().getEstrategia();
         ejbRegistroActividades.actualizaActividadesPoa(modificada);
 
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(2)" + ultimaEstrategiaExpandida.getEstrategia());
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(3)" + modificada.getCuadroMandoInt().getCuadroMandoInt());
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(4)"+modificada.getNumeroP());
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(5)"+modificada.getNumeroS());
         if (modificada.getNumeroS() != 0) {
             actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),controladorEmpleado.getProcesopoa().getArea());
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(6)"+actividads.size());
             if (!actividads.isEmpty()) {
                 actividads.forEach((t) -> {
                     if (t.getNumeroS() == 0) {
-//                        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(7)"+t.getActividadPoa());
                         actividadMadre = t;
                     }
                 });
 
                 actividads.forEach((t) -> {
                     if (t.getNumeroS() != 0) {
-//                        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowEdit(8)");
                         mes1 = mes1 + t.getNAEnero();
                         mes2 = mes2 + t.getNAFebrero();
                         mes3 = mes3 + t.getNAMarzo();
@@ -403,8 +391,6 @@ public class AreaPoaEvaluacion implements Serializable {
 
     public void onRowCancel(RowEditEvent event) {
         archivoSC = false;
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowCancel(1)"+event.getObject());
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.onRowCancel(2)" + event.getObject().getClass());
         actividad nuevaactividad = (actividad) event.getObject();
         ultimaEstrategiaExpandida = new Estrategias();
         ActividadesPoa modificada = nuevaactividad.getActividadesPoa();
@@ -436,7 +422,6 @@ public class AreaPoaEvaluacion implements Serializable {
                 case 10: mn="noviembre"; break;
                 case 11: mn="diciembre"; break;
             }
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.convertirRutaMP()"+file.toURI());
             return "".concat(file.toURI().toString().split("2019")[1]);
         }
     }
@@ -459,11 +444,8 @@ public class AreaPoaEvaluacion implements Serializable {
         ultimaEstrategiaExpandida = actividadesPoaEvidencias.getCuadroMandoInt().getEstrategia();
         List<Registros> rs = new ArrayList<>();
         rs = ejbCatalogosPoa.mostrarRegistrosActividad(actividadesPoaEvidencias);
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(1)" + actividadesPoaEvidencias.getActividadPoa());
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(2)" + rs.size());
 
         evidenciases = ejbEvidenciasPoa.mostrarEvidenciasesRegistros(actividadesPoaEvidencias, rs);
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(3)" + evidenciases.size());
         if (!evidenciases.isEmpty()) {
             evidenciases.forEach((t) -> {
                 evidenciasesDe = new ArrayList<>();
@@ -478,20 +460,16 @@ public class AreaPoaEvaluacion implements Serializable {
                 }
             });
         }
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.consultarEvidencias(4)" + evidenciasesDetalles.size());
     }
 
     public void subirEvidenciaPOA() {
         try {
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(1)");
             ultimaEstrategiaExpandida = new Estrategias();
             ultimaEstrategiaExpandida = actividadesPoaEditando.getCuadroMandoInt().getEstrategia();
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorPOAEvaluacionAreas.subirEvidenciaPOA()"+ultimaEstrategiaExpandida);
             archivoSC = true;
             evidencias = new Evidencias();
 
             if (files != null) {
-//                System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(2)"+files.size());
                 if (files.size() == 1) {
                     evidencias.setCategoria("Única");
                 } else {
@@ -501,7 +479,6 @@ public class AreaPoaEvaluacion implements Serializable {
                 ejbEvidenciasPoa.agregarEvidenciases(evidencias, actividadesPoaEditando);
                 for (Part file : files) {
 
-//                    System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(3)");
                     ruta = carga.subir(file, new File("2019".concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
 
                     if (!"Error: No se pudo leer el archivo".equals(ruta)) {
@@ -516,7 +493,6 @@ public class AreaPoaEvaluacion implements Serializable {
                         evidenciasDetalle.setMes(mesNombre);
                         ejbEvidenciasPoa.agregarEvidenciasesEvidenciasDetalle(evidenciasDetalle);
                     } else {
-//                        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.subirEvidenciaPOA(4.1)");
                     }
                 }
                 consultarEvidencias(actividadesPoaEditando);
@@ -533,7 +509,6 @@ public class AreaPoaEvaluacion implements Serializable {
     
     public void eliminarEvidencia(EvidenciasDetalle evidenciasDetalle) {
         archivoSC = true;
-//        System.out.println("eliminacion" + System.currentTimeMillis());
         ultimaEstrategiaExpandida = new Estrategias();
         ultimaEstrategiaExpandida = actividadesPoaEditando.getCuadroMandoInt().getEstrategia();
         Evidencias evidencias = new Evidencias();
@@ -550,11 +525,9 @@ public class AreaPoaEvaluacion implements Serializable {
         }
 
         consultarEvidencias(actividadesPoaEditando);
-//        System.out.println("eliminiacion" + System.currentTimeMillis());
     }
 
     public void imprimirValores() {
-//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.ControladorEvaluacionActividadesPOA.imprimirValores()");       
     }
      
     public static class listaEjeEstrategia {

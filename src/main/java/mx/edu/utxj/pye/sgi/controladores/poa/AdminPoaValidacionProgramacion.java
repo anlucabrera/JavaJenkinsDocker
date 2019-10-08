@@ -143,7 +143,6 @@ public class AdminPoaValidacionProgramacion implements Serializable {
     }
 
     public void imprimirValores() {
-//        System.out.println("mx.edu.utxj.pye.sgi.poa.controladores.imprimirValores()");
     }
 
   
