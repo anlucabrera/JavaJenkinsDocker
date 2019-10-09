@@ -78,22 +78,14 @@ public class EjbHistorialMovEstudiante {
      * @param pista Contenido que la vista que puede incluir parte del nombre, apellidos o matricula del estudiante
      * @return Resultado del proceso con docentes ordenador por nombre
      */
-    public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(String pista){
+    public ResultadoEJB<List<Persona>> buscarEstudiante(String pista){
         try{
              //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
-            List<EstudiantesPye> estudiantes = em.createQuery("select e from EstudiantesPye e where concat(e.aPaterno, e.aMaterno, e.nombre, e.curp) like concat('%',:pista,'%')  ", EstudiantesPye.class)
+            List<Persona> listaPersonas = em.createQuery("select p from Persona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, p.curp) like concat('%',:pista,'%')", Persona.class)
                     .setParameter("pista", pista)
                     .getResultList();
-            
-            List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
-            
-            estudiantes.forEach(estudiante -> {
-                String datosComplete = estudiante.getAPaterno() +" "+ estudiante.getAMaterno() +" "+ estudiante.getNombre();
-                DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete);
-                listaDtoEstudiantes.add(dtoEstudianteComplete);
-            });
-            
-            return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Lista para mostrar en autocomplete");
+           
+            return ResultadoEJB.crearCorrecto(listaPersonas, "Lista para mostrar en autocomplete");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo localizar la lista de estudiantes activos. (EjbHistorialMovEstudiante.buscarEstudiante)", e, null);
         }
@@ -140,7 +132,6 @@ public class EjbHistorialMovEstudiante {
      */
     public ResultadoEJB<List<DtoHistorialMovEstudiante>> buscarHistorialMovEstudiante(Persona persona){
         try{
-            
               List<DtoHistorialMovEstudiante> registrosAspirante = em.createQuery("SELECT a FROM Aspirante a WHERE a.idPersona.idpersona =:persona", Aspirante.class)
                     .setParameter("persona", persona.getIdpersona())
                     .getResultStream()
@@ -183,8 +174,9 @@ public class EjbHistorialMovEstudiante {
             DtoMovimientoEstudiante datosInscripcion= getDatosInscripcion(aspirante).getValor();
             listaMovimientos.add(datosInscripcion);
             DtoMovimientoEstudiante datosBaja= getDatosBaja(estudiante).getValor();
-            listaMovimientos.add(datosBaja);
-            
+            if (datosBaja != null) {
+                listaMovimientos.add(datosBaja);
+            }
             DtoHistorialMovEstudiante dto = new DtoHistorialMovEstudiante(aspirante, estudiante, programaEducativo, listaMovimientos);
            
             return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
@@ -198,7 +190,7 @@ public class EjbHistorialMovEstudiante {
         try{
            
             PeriodosEscolares periodo = em.find(PeriodosEscolares.class, aspirante.getIdProcesoInscripcion().getIdPeriodo());
-            String periodoEscolar = periodo.getMesInicio().getMes()+ " " + periodo.getMesFin().getMes()+ " " + periodo.getAnio();
+            String periodoEscolar = periodo.getMesInicio().getMes()+ " - " + periodo.getMesFin().getMes()+ " " + periodo.getAnio();
             String tipoMovimiento = "Admisión";
             Persona persona = em.find(Persona.class, aspirante.getIdPersona().getIdpersona());
             String personalRealizo = persona.getApellidoPaterno()+ " " + persona.getApellidoMaterno()+ " " + persona.getNombre();
@@ -220,7 +212,7 @@ public class EjbHistorialMovEstudiante {
                     .getSingleResult();
             
             PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
-            String periodoEscolar = periodo.getMesInicio().getMes()+ " " + periodo.getMesFin().getMes()+ " " + periodo.getAnio();
+            String periodoEscolar = periodo.getMesInicio().getMes()+ " - " + periodo.getMesFin().getMes()+ " " + periodo.getAnio();
             String tipoMovimiento = "Inscripción";
             Personal personal = em.find(Personal.class, estudiante.getTrabajadorInscribe());
             AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
@@ -242,7 +234,7 @@ public class EjbHistorialMovEstudiante {
                     .getSingleResult();
             
             PeriodosEscolares periodo = em.find(PeriodosEscolares.class, baja.getPeriodoEscolar());
-            String periodoEscolar = periodo.getMesInicio().getMes()+ " " + periodo.getMesFin().getMes()+ " " + periodo.getAnio();
+            String periodoEscolar = periodo.getMesInicio().getMes()+ " - " + periodo.getMesFin().getMes()+ " " + periodo.getAnio();
             String tipoMovimiento = "Baja";
             Personal personal = em.find(Personal.class, baja.getEmpleadoRegistro());
             BajasTipo bajaTipo = em.find(BajasTipo.class, baja.getTipoBaja());

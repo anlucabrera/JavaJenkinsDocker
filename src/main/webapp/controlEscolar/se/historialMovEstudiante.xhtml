@@ -14,11 +14,11 @@
 
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
-        <!-- Inicio estilos par proceso electoral -->
+         Inicio estilos par proceso electoral 
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
         </c:if>
-        <!-- Fin estilos par proceso electoral -->
+         Fin estilos par proceso electoral 
     </ui:define>
 
     <ui:define name="title">
@@ -68,20 +68,20 @@
                                     <div class="row margin-bottom" style="margin-top: 30px;">
                                         <div class="col-sm-12 col-md-12 col-lg-12">
                                             <div class="ui-material">
-                                                <p:autoComplete id="estudiante" value="#{historialMovEstServiciosEscolares.rol.estudianteSeleccionado}" completeMethod="#{historialMovEstServiciosEscolares.completeEstudiantes}" queryDelay="800"
-                                                                valueChangeListener="#{historialMovEstServiciosEscolares.cambiarEstudiante}"
-                                                                var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.datosComplete}" converter="entityConverter" forceSelection="true" size="70">
-                                                    <p:column>#{estudiante.datosComplete}</p:column>
-                                                    <p:column>#{estudiante.estudiantesPye.curp}</p:column>
+                                                <p:autoComplete id="persona" value="#{historialMovEstServiciosEscolares.rol.persona}" completeMethod="#{historialMovEstServiciosEscolares.completePersonas}" queryDelay="800"
+                                                                valueChangeListener="#{historialMovEstServiciosEscolares.cambiarPersona}"
+                                                                var="persona" itemValue="#{persona}" itemLabel="#{persona.apellidoPaterno} #{persona.apellidoMaterno} #{persona.nombre} #{persona.curp}" converter="entityConverter" forceSelection="true" size="70">
+                                                    <p:column>#{persona.apellidoPaterno} #{persona.apellidoMaterno} #{persona.nombre}</p:column>
+                                                    <p:column>#{persona.curp}</p:column>
                                                     <p:ajax event="itemSelect" update="@this" process="@this"/>
                                                 </p:autoComplete>
-                                                <p:outputLabel value="Nombre del Estudiante - CURP" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
-                                                <p:message for="estudiante" />
+                                                <p:outputLabel value="Nombre de la Persona - CURP" for="persona" style="font-weight: bold; font-size: 14px;"/>
+                                                <p:message for="persona" />
                                             </div>
                                         </div>
                                     </div>
                                      <hr/>
-                                     <c:if test="#{historialMovEstServiciosEscolares.rol.estudianteSeleccionado ne null}">
+                                     <c:if test="#{historialMovEstServiciosEscolares.rol.persona ne null}">
                                          <div class="row">
                                              <div class="col-sm-12 border-right">
                                                  <div class="description-block" style="text-align: center">
@@ -89,14 +89,11 @@
                                                  </div>
                                              </div>
                                          </div>
-                                         <hr/>
                                          <div class="row">
-                                             <div class="col-sm-12 border-right">
-                                                 <div class="description-block">
-                                                     <div class="box box-primary">
-                                                         <div class="box-header with-border">                                                                    
+                                                     <div class="box box-primary">                                                                   
                                                              <div class="col-sm-12">
                                                                  <div class="row">
+                                                                     <center>
                                                                      <div class="col-sm-12 col-md-12 col-lg-4">
                                                                          <strong>Nombre</strong>
                                                                          <p class="text-muted">
@@ -135,19 +132,23 @@
                                                                      </div>
                                                                      <div class="col-sm-12 col-md-12 col-lg-4">
                                                                          <strong>Género</strong>
+                                                                         <c:if test="#{historialMovEstServiciosEscolares.rol.persona.genero eq 2}">
                                                                          <p class="text-muted">
-                                                                         #{historialMovEstServiciosEscolares.rol.persona.genero}
+                                                                         Masculino
                                                                          </p>
+                                                                         </c:if>
+                                                                         <c:if test="#{historialMovEstServiciosEscolares.rol.persona.genero eq 1}">
+                                                                         <p class="text-muted">
+                                                                         Femenino
+                                                                         </p>
+                                                                         </c:if>
                                                                          <hr/>
                                                                      </div>
+                                                                     </center>
                                                                  </div>
                                                              </div>
-                                                         </div>
                                                      </div>
-                                                 </div>
-                                             </div>
                                          </div>
-                                         <hr/>
                                          <div class="row">
                                              <div class="col-sm-12 border-right">
                                                  <div class="description-block" style="text-align: center">
@@ -156,77 +157,85 @@
                                              </div>
                                          </div>
                                          <div class="row">
-                                             <div class="col-sm-12 border-right">
-                                                 <div class="description-block">
-                                                     <ui:repeat var="table" value="#{historialMovEstServiciosEscolares.rol.listaHistorialMovEst}">
-                                                         <div class="row">
-                                                             <div class="col-sm-12 border-right">
-                                                                 <div class="description-block">
-                                                                     <div class="box box-primary">
-                                                                         <div class="box-header with-border">                                                                    
-                                                                             <div class="col-sm-12">
-                                                                                 <div class="row">
-                                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                         <strong>Periodo Proceso:</strong>
-                                                                                         <p class="text-muted">
+                                             <ui:repeat var="table" value="#{historialMovEstServiciosEscolares.rol.listaHistorialMovEst}" varStatus="status">
+                                                 <div class="row">
+                                                     <div class="col-sm-12 border-right">
+                                                         <div class="description-block">
+                                                             <div class="box box-primary">
+                                                                 <div class="box-header with-border">                                                                    
+                                                                     <div class="col-sm-12">
+                                                                         <div class="row">
+                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                 <strong>No:</strong>
+                                                                                 <p class="text-muted" style="color:red; font-weight: bold;">
+                                                                                        #{status.index + 1}
+                                                                                 </p>
+                                                                                 <hr/>
+                                                                             </div>
+                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                 <strong>Periodo Proceso:</strong>
+                                                                                 <p class="text-muted">
                                                                                          #{caster.clavePeriodoToString(table.aspirante.idProcesoInscripcion.idPeriodo)}
-                                                                                         </p>
-                                                                                         <hr/>
-                                                                                     </div>
-                                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                         <strong>Matricula:</strong>
-                                                                                         <p class="text-muted">
+                                                                                 </p>
+                                                                                 <hr/>
+                                                                             </div>
+                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                 <strong>Situación:</strong>
+                                                                                 <p class="text-muted">
+                                                                                         #{table.estudiante.tipoEstudiante.descripcion}
+                                                                                 </p>
+                                                                                 <hr/>
+                                                                             </div>
+                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                 <strong>Matricula:</strong>
+                                                                                 <p class="text-muted">
                                                                                          #{table.estudiante.matricula}
-                                                                                         </p>
-                                                                                         <hr/>
-                                                                                     </div>
-                                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                         <strong>Programa Educativo:</strong>
-                                                                                         <p class="text-muted">
+                                                                                 </p>
+                                                                                 <hr/>
+                                                                             </div>
+                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                 <strong>Programa Educativo:</strong>
+                                                                                 <p class="text-muted">
                                                                                          #{table.programaEducativo.nombre}
-                                                                                         </p>
-                                                                                         <hr/>
-                                                                                     </div>
-                                                                                 </div>
+                                                                                 </p>
+                                                                                 <hr/>
                                                                              </div>
                                                                          </div>
                                                                      </div>
                                                                  </div>
+                                                                 <p:dataTable id="tbHistorial" var="historialMov" value="#{table.listaDatosMovimiento}" 
+                                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" style="width: auto;">
+                                                                     <p:columnGroup type="header">
+                                                                         <p:row class="success">
+                                                                             <p:column headerText="Fecha" style="width: 80px;"/>
+                                                                             <p:column headerText="Periodo Escolar" style="width: 100px;"/> 
+                                                                             <p:column headerText="Tipo de Movimiento" style="width: 100px;"/>
+                                                                             <p:column headerText="Información del Movimiento" style="width: 200px;"/>
+                                                                             <p:column headerText="Realizó" style="width: 150px;"/>
+                                                                         </p:row>
+                                                                     </p:columnGroup>
+                                                                     <p:column style="text-align: center;">
+                                                                         <h:outputText value="#{historialMov.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                     </p:column>
+                                                                     <p:column style="text-align: center;">
+                                                                         <h:outputText value="#{historialMov.periodoEscolar}" style="text-align: center;" />
+                                                                     </p:column>
+                                                                     <p:column style="text-align: center;">
+                                                                         <h:outputText value="#{historialMov.tipoMovimiento}"/>
+                                                                     </p:column>
+                                                                     <p:column style="text-align: justify;">
+                                                                         <h:outputText value="#{historialMov.informacionMovimiento}"/>
+                                                                     </p:column>
+                                                                     <p:column style="text-align: justify;">
+                                                                         <h:outputText value="#{historialMov.personaRealizo}"/>
+                                                                     </p:column>
+                                                                 </p:dataTable>
+
                                                              </div>
                                                          </div>
-                                                         <p:dataTable id="tbHistorial" var="historialMov" value="#{table.listaDatosMovimiento}" 
-                                                                  tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" style="width: auto;">
-                                                         <f:facet name="header">
-                                                             <center>Historial de Movimientos</center>
-                                                         </f:facet>
-                                                         <p:columnGroup type="header">
-                                                             <p:row class="success">
-                                                                 <p:column headerText="Fecha" style="width: 100px;"/>
-                                                                 <p:column headerText="Periodo Escolar" style="width: 150px;"/> 
-                                                                 <p:column headerText="Tipo de Movimiento" style="width: 100px;"/>
-                                                                 <p:column headerText="Información del Movimiento" style="width: 120px;"/>
-                                                                 <p:column headerText="Realizó" style="width: 200px;"/>
-                                                             </p:row>
-                                                         </p:columnGroup>
-                                                         <p:column style="text-align: center;">
-                                                             <h:outputText value="#{historialMov.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                         </p:column>
-                                                         <p:column style="text-align: center;">
-                                                             <h:outputText value="#{historialMov.periodoEscolar}" style="text-align: center;" />
-                                                         </p:column>
-                                                         <p:column style="text-align: center;">
-                                                             <h:outputText value="#{historialMov.tipoMovimiento}"/>
-                                                         </p:column>
-                                                         <p:column style="text-align: center;">
-                                                             <h:outputText value="#{historialMov.informacionMovimiento}"/>
-                                                         </p:column>
-                                                         <p:column style="text-align: center;">
-                                                             <h:outputText value="#{historialMov.personaRealizo}"/>
-                                                         </p:column>
-                                                     </p:dataTable>
-                                                </ui:repeat>
+                                                     </div>     
                                                  </div>
-                                             </div>
+                                             </ui:repeat>
                                          </div>
                                      </c:if>
                                 </div>

@@ -136,7 +136,7 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
             DtoEstudianteComplete estudiante = (DtoEstudianteComplete)e.getNewValue();
             rol.setEstudianteSeleccionado(estudiante);
             rol.setRegistroBajaEstudiante(null);
-            buscarDatosEstudiante(rol.getEstudianteSeleccionado().getEstudiantesPye().getIdEstudiante());
+            buscarDatosEstudiante(rol.getEstudianteSeleccionado().getEstudiantes().getIdEstudiante());
             Ajax.update("tbRegBaja");
         }else mostrarMensaje("El valor seleccionado como estudiante no es del tipo necesario.");
     }

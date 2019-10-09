@@ -72,6 +72,7 @@
                                                                 valueChangeListener="#{registrarBajaServiciosEscolares.cambiarEstudiante}"
                                                                 var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.datosComplete}" converter="entityConverter" forceSelection="true" size="70">
                                                     <p:column>#{estudiante.datosComplete}</p:column>
+                                                    <p:column>#{estudiante.periodoEscolar}</p:column>
                                                     <p:ajax event="itemSelect" update="@this" process="@this"/>
                                                 </p:autoComplete>
                                                 <p:outputLabel value="Estudiante - Matricula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>

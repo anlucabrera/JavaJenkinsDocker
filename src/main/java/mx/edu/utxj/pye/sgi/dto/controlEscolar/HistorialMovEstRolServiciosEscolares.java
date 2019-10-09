@@ -30,11 +30,6 @@ public class HistorialMovEstRolServiciosEscolares extends AbstractRol {
     @Getter @NonNull private String pistaEstudiante;
    
     /**
-     * Estudiante seleccionado
-     */
-    @Getter @NonNull private DtoEstudianteComplete estudianteSeleccionado;
-    
-    /**
      * Datos Persona
      */
     @Getter @NonNull private Persona persona;
@@ -61,10 +56,6 @@ public class HistorialMovEstRolServiciosEscolares extends AbstractRol {
 
     public void setPistaEstudiante(String pistaEstudiante) {
         this.pistaEstudiante = pistaEstudiante;
-    }
-
-    public void setEstudianteSeleccionado(DtoEstudianteComplete estudianteSeleccionado) {
-        this.estudianteSeleccionado = estudianteSeleccionado;
     }
 
     public void setPersona(Persona persona) {

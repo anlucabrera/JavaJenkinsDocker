@@ -83,15 +83,17 @@ public class EjbRegistroBajas {
     public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(String pista){
         try{
              //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
-            List<EstudiantesPye> estudiantes = em.createQuery("select e from EstudiantesPye e where concat(e.aPaterno, e.aMaterno, e.nombre, e.matricula) like concat('%',:pista,'%')  ", EstudiantesPye.class)
+            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY e.periodo DESC", Estudiante.class)
                     .setParameter("pista", pista)
                     .getResultList();
             
             List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
             
             estudiantes.forEach(estudiante -> {
-                String datosComplete = estudiante.getAPaterno() +" "+ estudiante.getAMaterno() +" "+ estudiante.getNombre() + " - " + estudiante.getMatricula();
-                DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete);
+                String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre()+ " - " + estudiante.getMatricula();
+                PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+                String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
+                DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar);
                 listaDtoEstudiantes.add(dtoEstudianteComplete);
             });
             

@@ -21,7 +21,6 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoHistorialMovEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.HistorialMovEstRolServiciosEscolares;
@@ -106,8 +105,8 @@ public class HistorialMovEstServiciosEscolares extends ViewScopedRol implements 
      * @param pista
      * @return Lista de sugerencias
      */
-    public List<DtoEstudianteComplete> completeEstudiantes(String pista){
-        ResultadoEJB<List<DtoEstudianteComplete>> res = ejb.buscarEstudiante(pista);
+    public List<Persona> completePersonas(String pista){
+        ResultadoEJB<List<Persona>> res = ejb.buscarEstudiante(pista);
         if(res.getCorrecto()){
             return res.getValor();
         }else{
@@ -120,31 +119,22 @@ public class HistorialMovEstServiciosEscolares extends ViewScopedRol implements 
      * Permite que al cambiar o seleccionar un estudiante se pueda actualizar la información
      * @param e Evento del cambio de valor
      */
-    public void cambiarEstudiante(ValueChangeEvent e){
-        if(e.getNewValue() instanceof DtoEstudianteComplete){
-            DtoEstudianteComplete estudiante = (DtoEstudianteComplete)e.getNewValue();
-            rol.setEstudianteSeleccionado(estudiante);
-            buscarRegistroPersona(rol.getEstudianteSeleccionado().getEstudiantesPye().getCurp());
+    public void cambiarPersona(ValueChangeEvent e){
+        if(e.getNewValue() instanceof Persona){
+            Persona persona = (Persona)e.getNewValue();
+            rol.setPersona(persona);
+            buscarHistorialMovimientos(rol.getPersona());
             Ajax.update("tbRegBaja");
         }else mostrarMensaje("El valor seleccionado como estudiante no es del tipo necesario.");
     }
-    
-    
-    public void buscarRegistroPersona(String curp){
-        ResultadoEJB<Persona> res = ejb.buscarRegistroPersona(curp);
-        if(res.getCorrecto()){
-        rol.setPersona(res.getValor());
-        buscarHistorialMovimientos(rol.getPersona());
-        Ajax.update("frm");
-        }else mostrarMensajeResultadoEJB(res);
-    }
-    
+
     public void buscarHistorialMovimientos(Persona persona){
         ResultadoEJB<List<DtoHistorialMovEstudiante>> res = ejb.buscarHistorialMovEstudiante(persona);
         if(res.getCorrecto()){
         rol.setListaHistorialMovEst(res.getValor());
         Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
+         Ajax.update("frm");
     }
     
 }
