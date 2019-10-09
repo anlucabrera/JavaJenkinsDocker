@@ -35,12 +35,9 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
 
     @Getter @Setter private ConsultaCalificacionesRolEstudiante rol = new ConsultaCalificacionesRolEstudiante();
     @Getter @Setter Boolean tieneAcceso = false;
-    @EJB
-    EjbPropiedades ep;
-    @EJB
-    EjbConsultaCalificacion ejb;
-    @Inject
-    LogonMB logonMB;
+    @EJB EjbPropiedades ep;
+    @EJB EjbConsultaCalificacion ejb;
+    @Inject LogonMB logonMB;
 
     @PostConstruct
     public void init(){
@@ -62,8 +59,8 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
 
                 rol.setNivelRol(NivelRol.OPERATIVO);
 
-                ResultadoEJB<PeriodosEscolares> resPeriodoAcitvo = ejb.periodoActivo();
-                rol.setPeriodoActivo(resPeriodoAcitvo.getValor());
+                PeriodosEscolares resPeriodoAcitvo = ejb.getPeriodoActual();
+                rol.setPeriodoActivo(resPeriodoAcitvo);
                 rol.setPeriodoSeleccionado(rol.getPeriodoActivo().getPeriodo());
 
                 ResultadoEJB<List<PeriodosEscolares>> resPeriodosEscolares = ejb.obtenerListaPeriodosEscolares();
