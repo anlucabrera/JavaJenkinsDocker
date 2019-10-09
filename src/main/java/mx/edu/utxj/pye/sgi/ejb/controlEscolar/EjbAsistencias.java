@@ -93,13 +93,25 @@ public class EjbAsistencias {
         try{
             final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
                     .getResultList();
-            
+    
             return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsistencias.getPeriodosDescendentes)", e, null);
         }
     }
     
+    public PeriodosEscolares getPeriodoActual() {
+
+        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+        List<PeriodosEscolares> l = spq.getResultList();
+
+        if (l == null || l.isEmpty()) {
+            return new PeriodosEscolares();
+        } else {
+            return l.get(0);
+        }
+    
+    }
     /**
      * Permite obtener la lista de cargas académicas de un docente, en todos los programas educativos que participe
      * @param docente Docente de quien se quiere obtener la lista

@@ -93,6 +93,7 @@ public class ReporteAsistenciasTutor extends ViewScopedRol implements Desarrolla
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
+            rol.setPeriodo(ea.getPeriodoActual());
             
             ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);

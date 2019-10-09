@@ -205,9 +205,6 @@ public class PaseDeListaDocente extends AbstractRol{
      */
     public void setPeriodos(List<PeriodosEscolares> periodos) {
         this.periodos = periodos;
-        if(periodos != null && !periodos.isEmpty()){
-            this.setPeriodo(periodos.get(0));
-        }
     }
 
     /**

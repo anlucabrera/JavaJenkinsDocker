@@ -153,6 +153,12 @@ public class LogonMB extends AdminSession implements Serializable {
                         f.setEntityClass(Personal.class);
 //                        personal = (Personal) f.find(Integer.parseInt(usuarioAutenticadoShiro.getClaveNomina()));
                         personal = (Personal) f.find(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
+                        if (personal.getStatus().equals('B')) {
+                            addDetailMessage("El usuario ingresado no existe.");
+                            Faces.getExternalContext().getFlash().setKeepMessages(true);
+                            Faces.redirect("login.xhtml");
+                            return;
+                        }
                         listaUsuarioClaveNomina.getNumeroNomina();
 //                    agregaBitacora();
 //                    getPermisosAcceso();
