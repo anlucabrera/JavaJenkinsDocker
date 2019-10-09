@@ -58,6 +58,7 @@ public class LogonMB extends AdminSession implements Serializable {
     @Getter @Setter private String currentUser;
     @Getter @Setter private String email;
     @Getter @Setter private String password;
+    @Getter @Setter private Boolean acceso;
     @Getter @Setter private boolean remember;
       
     @Getter    @Setter    private Bitacoraacceso nuevaBitacoraacceso;
@@ -149,25 +150,35 @@ public class LogonMB extends AdminSession implements Serializable {
 //                    usuarioTipo = UsuarioTipo.TRABAJADOR;
                     listaUsuarioClaveNomina = ejbLogin.getListaUsuarioClaveNomina(currentUser);
 //                    listaUsuarioClaveNominaShiro = usuarioAutenticadoShiro;
+                    acceso = true;
                     if (usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) {
                         f.setEntityClass(Personal.class);
 //                        personal = (Personal) f.find(Integer.parseInt(usuarioAutenticadoShiro.getClaveNomina()));
                         personal = (Personal) f.find(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
+                        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+personal.getStatus());
                         if (personal.getStatus().equals('B')) {
-                            addDetailMessage("El usuario ingresado no existe.");
-                            Faces.getExternalContext().getFlash().setKeepMessages(true);
-                            Faces.redirect("login.xhtml");
-                            return;
+                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(True)");
+                            acceso = false;
                         }
+                        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(acceso"+acceso);
                         listaUsuarioClaveNomina.getNumeroNomina();
 //                    agregaBitacora();
 //                    getPermisosAcceso();
                     }
 //                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login() tipo: " + usuarioTipo);
 //                    addDetailMessage("Bienvenido <b>" + usuario.getPersonas().getNombre() + "</b>");
-                    addDetailMessage("Bienvenido");
-                    Faces.getExternalContext().getFlash().setKeepMessages(true);
-                    Faces.redirect("index.xhtml");
+                    if (acceso) {
+                        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(A)"+acceso);
+                        addDetailMessage("Bienvenido");
+                        Faces.getExternalContext().getFlash().setKeepMessages(true);
+                        Faces.redirect("index.xhtml");
+                    } else {
+                        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(B)"+acceso);
+                        addDetailMessage("El usuario ingresado no existe.");
+                        Faces.getExternalContext().getFlash().setKeepMessages(true);
+                        Faces.redirect("login.xhtml");
+                        return;
+                    }
                 } else {
                     addDetailMessage("La contraseña ingresada es incorrecta.");
                     Faces.getExternalContext().getFlash().setKeepMessages(true);

@@ -90,6 +90,11 @@ public class ControladorEmpleado implements Serializable {
     @PostConstruct
     public void init() {
         // Comentar la siguiente asignación cuando saiiut falle//
+        if (logonMB.getPersonal().getStatus().equals('B')) {
+            nuevoOBJListaPersonal=null;
+            Messages.addGlobalFatal("El usuario para la clave " + empleadoLogeado + " no Existe o ha sido dado de baja, si cree que es un error favor de Comunicarse con el área de personal");
+            return;
+        }
         empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
 //      empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNominaShiro().getClaveNomina());
         // fin de asignación
@@ -106,28 +111,6 @@ public class ControladorEmpleado implements Serializable {
         informacionComplementariaAEmpleadoLogeado();
         areaPoa();
         crearMenuAdministrador();
-    }
-
-    public void informacionComplementariaAEmpleadoLogeado() {
-        try {
-            incidenciases.clear();
-            listaDocencias.clear();
-            listaNotificaciones.clear();
-
-            fechaI = LocalDate.now();
-            fechaF = LocalDate.now();
-
-            fechaI = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 01);
-            fechaF = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 01).lengthOfMonth());
-
-
-            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReportePendientes(uch.castearLDaD(fechaI), uch.castearLDaD(fechaF), nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getClave());
-            listaDocencias = ejbPersonal.mostrarListaDocencias(empleadoLogeado);
-            listaNotificaciones = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuarios(empleadoLogeado, 0);
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public void mostrarPerfilLogeado() {
@@ -155,6 +138,28 @@ public class ControladorEmpleado implements Serializable {
 
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void informacionComplementariaAEmpleadoLogeado() {
+        try {
+            incidenciases.clear();
+            listaDocencias.clear();
+            listaNotificaciones.clear();
+
+            fechaI = LocalDate.now();
+            fechaF = LocalDate.now();
+
+            fechaI = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 01);
+            fechaF = LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), LocalDate.of(fechaActual.getYear(), fechaActual.getMonthValue(), 01).lengthOfMonth());
+
+
+            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReportePendientes(uch.castearLDaD(fechaI), uch.castearLDaD(fechaF), nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getClave());
+            listaDocencias = ejbPersonal.mostrarListaDocencias(empleadoLogeado);
+            listaNotificaciones = ejbNotificacionesIncidencias.mostrarListaDenotificacionesPorUsuarios(empleadoLogeado, 0);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

@@ -34,6 +34,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
 
     @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>();
     @Getter    @Setter    private List<Grafica> graf = new ArrayList<>();
+    @Getter    @Setter    private List<ReporteCumAn> cumAns = new ArrayList<>();    
 
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
     @Getter    @Setter    private ResultadosCMI cmiGeneral;
@@ -49,7 +50,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     @Getter    @Setter    private List<EjesRegistro> ejesRegistros = new ArrayList<>();
     @Getter    @Setter    private List<String> resultados = new ArrayList<>();
 
-    @Getter    @Setter    private Integer programadas = 0, realizadas = 0, incremento = 0;
+    @Getter    @Setter    private Integer programadas = 0, realizadas = 0, incremento = 0,prograRepo = 0, realRepo = 0;
     @Getter    @Setter    private Integer alca = 0, progra = 0, numeroMes = 0, numeroEje = 0;
     @Getter    @Setter    private Short ejercicioFiscal = 0;
     @Getter    @Setter    private Double avance = 0D;
@@ -130,6 +131,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     }
 
     public void cmiPorEje() {
+        cumAns=new ArrayList<>();
         ejesRegistros = new ArrayList<>();
         ejesRegistros.clear();
         if (au.getArea() != 0) {
@@ -169,7 +171,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         grafRA.setShowTickLabels(true);
         grafRA.setLabelHeightAdjust(10);
         grafRA.setIntervalOuterRadius(100);
-        grafRA.setGaugeLabel(avance + " % avance");
+        grafRA.setGaugeLabel(df.format(avance) + " % avance");
         return new ResultadosCMI(er.getNombre(), programadas, realizadas, avance, graf, grafRA, true);
     }
 
@@ -177,6 +179,8 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         programadas = 0;
         realizadas = 0;
         avance = 0D;
+        prograRepo = 0;
+        realRepo = 0;
         graf = new ArrayList<>();
         graf.clear();
 
@@ -253,6 +257,14 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         } else {
             avance = 0D;
         }
+        for (Integer i= 1; 1 <= 3; incremento++) {
+            switch (i){
+                case 1: break;
+                case 2: break;
+                case 3: break;
+            }
+        }
+        
     }
 
     public List<ActividadesPoa> actividadesFiltradas(List<ActividadesPoa> actividadesPoas) {
@@ -344,6 +356,25 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
 
     }
 
+    public static class ReporteCumAn {
+
+        @Getter        @Setter        private String ejesRegistro;
+        @Getter        @Setter        private String cuatrimestre;
+        @Getter        @Setter        private Integer programadas;
+        @Getter        @Setter        private Integer realizadas;
+        @Getter        @Setter        private Double cumSp;
+        @Getter        @Setter        private Double cumCp;
+
+        public ReporteCumAn(String ejesRegistro, String cuatrimestre, Integer programadas, Integer realizadas, Double cumSp, Double cumCp) {
+            this.ejesRegistro = ejesRegistro;
+            this.cuatrimestre = cuatrimestre;
+            this.programadas = programadas;
+            this.realizadas = realizadas;
+            this.cumSp = cumSp;
+            this.cumCp = cumCp;
+        }
+    }
+    
     public void imprimirValores() {
     }
 }

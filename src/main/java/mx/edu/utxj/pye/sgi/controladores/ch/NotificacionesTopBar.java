@@ -59,6 +59,10 @@ public class NotificacionesTopBar implements Serializable {
 
     @PostConstruct
     public void init() {
+        if (controladorEmpleado.getNuevoOBJListaPersonal() == null) {
+            Messages.addGlobalFatal("El usuario para no Existe o ha sido dado de baja, si cree que es un error favor de Comunicarse con el área de personal");
+            return;
+        }
         nuevoOBJListaPersonal = controladorEmpleado.getNuevoOBJListaPersonal();
         buscarMensajesPendientes();
         listaNotifiaciones();
