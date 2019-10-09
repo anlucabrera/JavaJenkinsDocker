@@ -211,13 +211,7 @@ public class EjbCredencializacion {
                 fields.setField("txtGrupoS",estudiante.getEstudiante().getAspirante().getIdPersona().getDatosMedicos().getCveTipoSangre().getNombre());
                 fields.setField("txtMatricula", String.valueOf(estudiante.getMatricula()));
                 fields.setField("txtCarrera", String.valueOf(estudiante.getCarrera().getNombre()));
-                
-                
                 pdfStamper.close();
-                
-                
-                
-
                 Object response = facesContext.getExternalContext().getResponse();
                 if (response instanceof HttpServletResponse) {
                     HttpServletResponse hsr = (HttpServletResponse) response;
