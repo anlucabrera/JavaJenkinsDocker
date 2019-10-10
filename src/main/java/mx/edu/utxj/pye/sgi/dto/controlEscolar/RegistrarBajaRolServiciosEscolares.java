@@ -13,6 +13,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 
 import java.util.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasTipo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausa;
 /**
@@ -116,6 +117,11 @@ public class RegistrarBajaRolServiciosEscolares extends AbstractRol {
      */
     @Getter @NonNull private Date fechaImpresion;
    
+     /**
+     * Estudiante actualizado
+     */
+    @Getter @NonNull private Estudiante estudianteActualizado;
+    
     public RegistrarBajaRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo personal) {
         super(filtro);
         this.personal = personal;
@@ -197,4 +203,9 @@ public class RegistrarBajaRolServiciosEscolares extends AbstractRol {
     public void setFechaImpresion(Date fechaImpresion) {
         this.fechaImpresion = fechaImpresion;
     }
+
+    public void setEstudianteActualizado(Estudiante estudianteActualizado) {
+        this.estudianteActualizado = estudianteActualizado;
+    }
+    
 }

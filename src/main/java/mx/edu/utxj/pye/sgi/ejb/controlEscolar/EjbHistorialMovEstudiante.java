@@ -166,14 +166,14 @@ public class EjbHistorialMovEstudiante {
                     .getSingleResult();
             
             AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
-            
+
             List<DtoMovimientoEstudiante> listaMovimientos = new ArrayList<>();
-            
-            DtoMovimientoEstudiante datosAdmision= getDatosAdmision(aspiranteBD).getValor();
+
+            DtoMovimientoEstudiante datosAdmision = getDatosAdmision(aspiranteBD).getValor();
             listaMovimientos.add(datosAdmision);
-            DtoMovimientoEstudiante datosInscripcion= getDatosInscripcion(aspirante).getValor();
+            DtoMovimientoEstudiante datosInscripcion = getDatosInscripcion(aspirante).getValor();
             listaMovimientos.add(datosInscripcion);
-            DtoMovimientoEstudiante datosBaja= getDatosBaja(estudiante).getValor();
+            DtoMovimientoEstudiante datosBaja = getDatosBaja(estudiante).getValor();
             if (datosBaja != null) {
                 listaMovimientos.add(datosBaja);
             }
@@ -224,6 +224,35 @@ public class EjbHistorialMovEstudiante {
             return ResultadoEJB.crearCorrecto(dto, "Datos inscripción empaquetado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar datos de inscripción (EjbHistorialMovEstudiante. getDatosInscripcion).", e, DtoMovimientoEstudiante.class);
+        }
+    }
+    
+    public ResultadoEJB<List<DtoMovimientoEstudiante>> getDatosReinscripcion(Estudiante estudiante){
+        try{
+            List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.idEstudiante =:estudiante AND e.grupo.grado >:grado", Estudiante.class)
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .setParameter("grado", (int) 1)
+                    .getResultList();
+            
+            List<DtoMovimientoEstudiante> listaDtoEstudiantes = new ArrayList<>();
+            
+            listaEstudiante.forEach(est -> {
+                PeriodosEscolares periodo = em.find(PeriodosEscolares.class, est.getPeriodo());
+                String periodoEscolar = periodo.getMesInicio().getMes() + " - " + periodo.getMesFin().getMes() + " " + periodo.getAnio();
+                String tipoMovimiento = "Reinscripción";
+                Personal personal = em.find(Personal.class, est.getTrabajadorInscribe());
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, est.getCarrera());
+                Grupo grupo = em.find(Grupo.class, est.getGrupo().getIdGrupo());
+                String informacionMovimiento = "Grupo: " + grupo.getGrado() + "° " + grupo.getLiteral() + " " + grupo.getIdSistema().getNombre() + " de " + programaEducativo.getNombre();
+
+                DtoMovimientoEstudiante dto = new DtoMovimientoEstudiante(est.getFechaAlta(), periodoEscolar, tipoMovimiento, informacionMovimiento, personal.getNombre());
+                listaDtoEstudiantes.add(dto);
+            });
+            
+            System.err.println("getDatosReinscripcion3 - listaDto " + listaDtoEstudiantes);
+            return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Datos reinscripción empaquetado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar datos de inscripción (EjbHistorialMovEstudiante. getDatosReinscripcion).", e, null);
         }
     }
     
