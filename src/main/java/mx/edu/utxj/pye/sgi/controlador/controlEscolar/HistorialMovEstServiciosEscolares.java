@@ -78,17 +78,12 @@ public class HistorialMovEstServiciosEscolares extends ViewScopedRol implements 
 //            rol.setSoloLectura(true);
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
           
-            rol.getInstrucciones().add("Ingrese nombre o matricula del o de la estudiante que dará de baja.");
-            rol.getInstrucciones().add("Seleccionar causa de baja.");
-            rol.getInstrucciones().add("Seleccionar tipo de baja.");
-            rol.getInstrucciones().add("Seleccionar fecha de la baja.");
-            rol.getInstrucciones().add("Dar clic en el botón de Guardar para registrar la baja del estudiante.");
-            rol.getInstrucciones().add("Una vez que se haya registrado la baja en la parte inferior podrá visualizar una tabla con la información registrada.");
-            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Consultar materias reprobadas, Generar formato y Eliminar baja.");
-            rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
-            rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
-            rol.getInstrucciones().add("En caso de que se haya equivocado podrá eliminar el registro dando clic en el botón Eliminar baja y cambiar la situación actual del estudiante.");
-            rol.getInstrucciones().add("Puede modificar las acciones tomadas por el tutor y el dictamen de psicopedagogía.");
+            rol.getInstrucciones().add("Ingrese nombre o curp del o de la estudiante del que desea consultar el historial de movimientos.");
+            rol.getInstrucciones().add("Seleccione el nombre o curp que corresponda.");
+            rol.getInstrucciones().add("A continuación podrá visualizar el historial de movimientos separado de la siguiente forma:");
+            rol.getInstrucciones().add("Datos personales.");
+            rol.getInstrucciones().add("Historial de movimientos agrupados por Proceso de Admisión.");
+            rol.getInstrucciones().add("Cada historial contiene información de admisión, inscripción, reinscripciones y baja.");
            
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -101,7 +96,7 @@ public class HistorialMovEstServiciosEscolares extends ViewScopedRol implements 
     }
     
      /**
-     * Método para proporcionar lista de docentes sugeridos en un autocomplete donde se puede ingresar el número de nómina, nombre o área del docente
+     * Método para proporcionar lista de estudiantes sugeridos en un autocomplete donde se puede ingresar la curp o nombre del estudiante
      * @param pista
      * @return Lista de sugerencias
      */
@@ -127,7 +122,11 @@ public class HistorialMovEstServiciosEscolares extends ViewScopedRol implements 
             Ajax.update("tbRegBaja");
         }else mostrarMensaje("El valor seleccionado como estudiante no es del tipo necesario.");
     }
-
+    
+     /**
+     * Permite que buscar el historial de movimientos del estudiante seleccionado
+     * @param persona Registro de persona del estudiante
+     */
     public void buscarHistorialMovimientos(Persona persona){
         ResultadoEJB<List<DtoHistorialMovEstudiante>> res = ejb.buscarHistorialMovEstudiante(persona);
         if(res.getCorrecto()){
