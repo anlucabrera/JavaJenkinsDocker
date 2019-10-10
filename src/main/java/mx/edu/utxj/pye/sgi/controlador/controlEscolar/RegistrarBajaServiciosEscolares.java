@@ -299,11 +299,8 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
         DtoRegistroBajaEstudiante registroNew = (DtoRegistroBajaEstudiante) dataTable.getRowData();
         ejb.actualizarRegistroBaja(registroNew);
         ejb.actualizarStatusEstudiante(registroNew);
-//        rol.setDatosEstudiante(ejb.buscarDatosEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
-//        rol.setRegistroBajaEstudiante(ejb.buscarRegistroBajaEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
-        
-        rol.setRegistroBajaEstudiante(null);
-        buscarDatosEstudiante(rol.getEstudianteSeleccionado().getEstudiantes().getIdEstudiante());
-        Ajax.update("tbRegBaja");
+        rol.setDatosEstudiante(ejb.buscarDatosEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
+        rol.setRegistroBajaEstudiante(ejb.buscarRegistroBajaEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
+
     }
 }

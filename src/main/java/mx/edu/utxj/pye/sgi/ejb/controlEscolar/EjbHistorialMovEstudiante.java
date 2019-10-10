@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -127,7 +128,7 @@ public class EjbHistorialMovEstudiante {
      */
     public ResultadoEJB<List<DtoHistorialMovEstudiante>> buscarHistorialMovEstudiante(Persona persona){
         try{
-              List<DtoHistorialMovEstudiante> registrosAspirante = em.createQuery("SELECT a FROM Aspirante a WHERE a.idPersona.idpersona =:persona", Aspirante.class)
+              List<DtoHistorialMovEstudiante> registrosAspirante = em.createQuery("SELECT a FROM Aspirante a WHERE a.idPersona.idpersona =:persona ORDER BY a.idProcesoInscripcion.idPeriodo ASC", Aspirante.class)
                     .setParameter("persona", persona.getIdpersona())
                     .getResultStream()
                     .distinct()
@@ -179,11 +180,16 @@ public class EjbHistorialMovEstudiante {
             if (datosBaja != null) {
                 listaMovimientos.add(datosBaja);
             } 
-            DtoHistorialMovEstudiante dto = new DtoHistorialMovEstudiante(aspirante, estudiante, programaEducativo, listaMovimientos);
+            
+            List<DtoMovimientoEstudiante> listaOrdenada = listaMovimientos.stream()
+                    .sorted(Comparator.comparing(DtoMovimientoEstudiante::getFecha))
+                    .collect(Collectors.toList());
+
+            DtoHistorialMovEstudiante dto = new DtoHistorialMovEstudiante(aspirante, estudiante, programaEducativo, listaOrdenada);
            
-            return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
+            return ResultadoEJB.crearCorrecto(dto, "Información de historial de movimiento del estudiante empaquetado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica (EjbHistorialMovEstudiante. pack).", e,  DtoHistorialMovEstudiante.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la información de historial de movimiento del estudiante (EjbHistorialMovEstudiante. pack).", e,  DtoHistorialMovEstudiante.class);
         }
     }
     
@@ -267,7 +273,7 @@ public class EjbHistorialMovEstudiante {
             
             return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Datos reinscripción empaquetado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar datos de inscripción (EjbHistorialMovEstudiante. getDatosReinscripcion).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar datos de reinscripción (EjbHistorialMovEstudiante. getDatosReinscripcion).", e, null);
         }
     }
     
@@ -293,9 +299,9 @@ public class EjbHistorialMovEstudiante {
             
             DtoMovimientoEstudiante dto = new DtoMovimientoEstudiante(baja.getFechaBaja(), periodoEscolar, tipoMovimiento, informacionMovimiento, personal.getNombre());
             
-            return ResultadoEJB.crearCorrecto(dto, "Datos admisión empaquetado.");
+            return ResultadoEJB.crearCorrecto(dto, "Datos de baja empaquetado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar datos de admisión (EjbHistorialMovEstudiante. getDatosBaja).", e, DtoMovimientoEstudiante.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar datos de baja (EjbHistorialMovEstudiante. getDatosBaja).", e, DtoMovimientoEstudiante.class);
         }
     }
     

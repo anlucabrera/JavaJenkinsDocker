@@ -119,7 +119,7 @@ public class HistorialMovEstServiciosEscolares extends ViewScopedRol implements 
             Persona persona = (Persona)e.getNewValue();
             rol.setPersona(persona);
             buscarHistorialMovimientos(rol.getPersona());
-            Ajax.update("tbRegBaja");
+            Ajax.update("frm");
         }else mostrarMensaje("El valor seleccionado como estudiante no es del tipo necesario.");
     }
     
