@@ -323,6 +323,8 @@ public class EjbPermisoAperturaExtemporanea {
      */
     public ResultadoEJB<PermisosCapturaExtemporaneaGrupal> guardarPermisoCapturaOrdinaria(DtoCargaAcademica cargaAcademica, UnidadMateria unidadMateria, String tipoEvaluacion, Date fechaInicio, Date fechaFin, JustificacionPermisosExtemporaneos justificacion, PersonalActivo administrador){
         try{   
+            Date fechaFinCompleta = obtenerFechaFin(fechaFin);
+            
             PermisosCapturaExtemporaneaGrupal permisosCapturaExtemporaneaGrupal = new PermisosCapturaExtemporaneaGrupal();
             permisosCapturaExtemporaneaGrupal.setPeriodo(cargaAcademica.getCargaAcademica().getEvento().getPeriodo());
             permisosCapturaExtemporaneaGrupal.setIdGrupo(cargaAcademica.getGrupo());
@@ -331,7 +333,7 @@ public class EjbPermisoAperturaExtemporanea {
             permisosCapturaExtemporaneaGrupal.setTipoEvaluacion(tipoEvaluacion);
             permisosCapturaExtemporaneaGrupal.setIdUnidadMateria(unidadMateria);
             permisosCapturaExtemporaneaGrupal.setFechaInicio(fechaInicio);
-            permisosCapturaExtemporaneaGrupal.setFechaFin(fechaFin);
+            permisosCapturaExtemporaneaGrupal.setFechaFin(fechaFinCompleta);
             permisosCapturaExtemporaneaGrupal.setJustificacionPermiso(justificacion);
             permisosCapturaExtemporaneaGrupal.setPersonalGrabaPermiso(administrador.getPersonal().getClave());
             permisosCapturaExtemporaneaGrupal.setFechaGrabaPermiso(new Date());
@@ -356,6 +358,9 @@ public class EjbPermisoAperturaExtemporanea {
      */
     public ResultadoEJB<PermisosCapturaExtemporaneaGrupal> guardarPermisoCapturaNivFinal(DtoCargaAcademica cargaAcademica, String tipoEvaluacion, Date fechaInicio, Date fechaFin, JustificacionPermisosExtemporaneos justificacion, PersonalActivo administrador){
         try{   
+            
+            Date fechaFinCompleta = obtenerFechaFin(fechaFin);
+            
             PermisosCapturaExtemporaneaGrupal permisosCapturaExtemporaneaGrupal = new PermisosCapturaExtemporaneaGrupal();
             permisosCapturaExtemporaneaGrupal.setPeriodo(cargaAcademica.getCargaAcademica().getEvento().getPeriodo());
             permisosCapturaExtemporaneaGrupal.setIdGrupo(cargaAcademica.getGrupo());
@@ -364,7 +369,7 @@ public class EjbPermisoAperturaExtemporanea {
             permisosCapturaExtemporaneaGrupal.setTipoEvaluacion(tipoEvaluacion);
             permisosCapturaExtemporaneaGrupal.setIdUnidadMateria(null);
             permisosCapturaExtemporaneaGrupal.setFechaInicio(fechaInicio);
-            permisosCapturaExtemporaneaGrupal.setFechaFin(fechaFin);
+            permisosCapturaExtemporaneaGrupal.setFechaFin(fechaFinCompleta);
             permisosCapturaExtemporaneaGrupal.setJustificacionPermiso(justificacion);
             permisosCapturaExtemporaneaGrupal.setPersonalGrabaPermiso(administrador.getPersonal().getClave());
             permisosCapturaExtemporaneaGrupal.setFechaGrabaPermiso(new Date());
@@ -394,7 +399,8 @@ public class EjbPermisoAperturaExtemporanea {
             
             permisosCapturaExtemporaneaGrupal.forEach(permiso -> {
                 AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, permiso.getIdGrupo().getIdPe());
-                DtoPermisoCapturaExtemporanea dtoPermisoCapturaExtemporanea = new DtoPermisoCapturaExtemporanea(permiso, programaEducativo);
+                Personal personal = em.find(Personal.class, permiso.getDocente());
+                DtoPermisoCapturaExtemporanea dtoPermisoCapturaExtemporanea = new DtoPermisoCapturaExtemporanea(permiso, programaEducativo, personal);
                 listaDtoPermisoCapturaExtemporanea.add(dtoPermisoCapturaExtemporanea);
             });
             
@@ -428,4 +434,14 @@ public class EjbPermisoAperturaExtemporanea {
         f.edit(dtoPermisoCapturaExtemporanea.getPermisosCapturaExtemporaneaGrupal());
         f.flush();
     }
+    
+    public Date obtenerFechaFin(Date fecha) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fecha); 
+        calendar.add(Calendar.HOUR, 23); 
+        calendar.add(Calendar.MINUTE, 59); 
+        calendar.add(Calendar.SECOND, 59);
+        return calendar.getTime(); 
+    }
+    
 }

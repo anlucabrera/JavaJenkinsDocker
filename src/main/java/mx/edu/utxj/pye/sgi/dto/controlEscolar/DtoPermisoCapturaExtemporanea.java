@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PermisosCapturaExtemporaneaGrupal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 /**
@@ -21,4 +22,5 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 public class DtoPermisoCapturaExtemporanea implements Serializable{
     @Getter @Setter @NonNull PermisosCapturaExtemporaneaGrupal permisosCapturaExtemporaneaGrupal;
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
+    @Getter @Setter @NonNull Personal personal;
 }
