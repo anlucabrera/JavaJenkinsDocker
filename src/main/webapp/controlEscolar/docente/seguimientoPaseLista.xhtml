@@ -16,6 +16,10 @@
             ;
 
         </script>
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <f:metadata>
+            <f:viewParam name="activa" value="#{paseListaDoc.rol.activa}"/>
+        </f:metadata>
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">

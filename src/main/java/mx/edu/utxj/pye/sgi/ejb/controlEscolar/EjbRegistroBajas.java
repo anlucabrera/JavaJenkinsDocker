@@ -83,15 +83,17 @@ public class EjbRegistroBajas {
     public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(String pista){
         try{
              //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
-            List<EstudiantesPye> estudiantes = em.createQuery("select e from EstudiantesPye e where concat(e.aPaterno, e.aMaterno, e.nombre, e.matricula) like concat('%',:pista,'%')  ", EstudiantesPye.class)
+            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY e.periodo DESC", Estudiante.class)
                     .setParameter("pista", pista)
                     .getResultList();
             
             List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
             
             estudiantes.forEach(estudiante -> {
-                String datosComplete = estudiante.getAPaterno() +" "+ estudiante.getAMaterno() +" "+ estudiante.getNombre() + " - " + estudiante.getMatricula();
-                DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete);
+                String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre()+ " - " + estudiante.getMatricula();
+                PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+                String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
+                DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar);
                 listaDtoEstudiantes.add(dtoEstudianteComplete);
             });
             
@@ -994,7 +996,7 @@ public class EjbRegistroBajas {
                 LocalDate fecValPsic = convertirDateALocalDate(baja.getFechaValpsicopedagogia());
                 fechaValPsic = fecValPsic.format(formatter);
             }
-          
+           
             DtoValidacionesBaja dtoValidacionesBaja = new  DtoValidacionesBaja(areaValidacion, fechaVal, validacionBaja, fechaValPsic, validacionPsic);
             
             return ResultadoEJB.crearCorrecto(dtoValidacionesBaja, "Status de la baja.");
@@ -1077,5 +1079,25 @@ public class EjbRegistroBajas {
             return ResultadoEJB.crearErroneo(1, "No se pudo cambiar la situación académica del estudiante. (EjbRegistroBajas.resetearStatusEstudiante)", e, null);
         }
     
+    }
+    
+    public void actualizarStatusEstudiante(DtoRegistroBajaEstudiante dtoRegistroBajaEstudiante) {
+        if (dtoRegistroBajaEstudiante.getRegistroBaja().getTipoBaja()== 1) {
+
+                TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short)2);
+
+                Integer t = em.createQuery("update Estudiante e set e.tipoEstudiante =:tipoEstudiante where e.idEstudiante =:estudiante")
+                        .setParameter("tipoEstudiante", tipoEstudiante)
+                        .setParameter("estudiante", dtoRegistroBajaEstudiante.getRegistroBaja().getEstudiante().getIdEstudiante())
+                        .executeUpdate();
+        } else {
+
+               TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short)3);
+
+                Integer t = em.createQuery("update Estudiante e set e.tipoEstudiante =:tipoEstudiante where e.idEstudiante =:estudiante")
+                        .setParameter("tipoEstudiante", tipoEstudiante)
+                        .setParameter("estudiante", dtoRegistroBajaEstudiante.getRegistroBaja().getEstudiante().getIdEstudiante())
+                        .executeUpdate();
+        }
     }
 }

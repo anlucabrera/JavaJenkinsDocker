@@ -72,19 +72,36 @@
                                     </div>      
                                 </div>
                                 <p:tabView>
-                                    <p:tab title="Reporte Incidencias">
+                                    <p:tab title="Reporte Incidencias">        
                                         <h:form id="frmInciGeneral"> 
-                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasGeneral.imprimirValores()}" update="tblActividades" /> 
-                                            <p:dataTable id="tblActividades"  value="#{administracionControl.listaIncidencias}"  var="incidencias"
-                                                         sortBy="#{incidencias.clavePersonal.areaSuperior}" expandableRowGroups="true"
+                                            <div class="box box-primary">
+                                                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                                        <div class="row">
+                                                            <div class="col-sm-12 col-md-3 col-lg-3">            
+                                                                <p:autoUpdate/>
+                                                                <p:outputLabel value="Área:" />
+
+                                                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" value="#{controladorIncidenciasAdministrador.au}" converter="entityConverter">
+                                                                    <f:selectItems value="#{controladorIncidenciasAdministrador.listaAreasUniversidads}" var="area" itemValue="#{area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                                                    <p:ajax process="@this" update="@form" listener="#{controladorIncidenciasAdministrador.mostrarIncidencias()}"/>
+                                                                </p:selectOneMenu> 
+                                                                <p:message for="eje" display="tooltip" />
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasAdministrador.imprimirValores()}" update="tblActividades" /> 
+                                            <p:dataTable id="tblActividades"  value="#{controladorIncidenciasAdministrador.listaIncidencias}"  var="incidencias"
+                                                         sortBy="#{incidencias.fecha.year}" expandableRowGroups="true"
                                                          editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
-                                                <p:ajax event="rowEdit" listener="#{administracionControl.onRowEdit}"  process="@this" update="@this" oncomplete="actualizarTabla()"/>
+                                                <p:ajax event="rowEdit" listener="#{controladorIncidenciasAdministrador.onRowEdit}"  process="@this" update="@this" oncomplete="actualizarTabla()"/>
                                                 <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblActividades" />
 
                                                 <p:headerRow>
                                                     <p:column colspan="8" style="background: #2796cb; color: #FFFFFF;">
-                                                        <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(incidencias.clavePersonal.actividad.actividad eq 1?incidencias.clavePersonal.areaOperativa:incidencias.clavePersonal.areaSuperior)}" />
+                                                        <h:outputLabel value="#{incidencias.fecha}"><f:convertDateTime pattern="yyyy"/></h:outputLabel>
                                                     </p:column>
                                                 </p:headerRow>
 

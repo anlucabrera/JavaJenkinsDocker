@@ -34,7 +34,6 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
 
     @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>();
     @Getter    @Setter    private List<Grafica> graf = new ArrayList<>();
-    @Getter    @Setter    private List<ReporteCumAn> cumAns = new ArrayList<>();    
 
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
     @Getter    @Setter    private ResultadosCMI cmiGeneral;
@@ -50,11 +49,11 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     @Getter    @Setter    private List<EjesRegistro> ejesRegistros = new ArrayList<>();
     @Getter    @Setter    private List<String> resultados = new ArrayList<>();
 
-    @Getter    @Setter    private Integer programadas = 0, realizadas = 0, incremento = 0,prograRepo = 0, realRepo = 0;
+    @Getter    @Setter    private Integer programadas = 0, realizadas = 0, incremento = 0,prograRepo = 0, realRepo = 0,increRepo = 0;
     @Getter    @Setter    private Integer alca = 0, progra = 0, numeroMes = 0, numeroEje = 0;
     @Getter    @Setter    private Short ejercicioFiscal = 0;
-    @Getter    @Setter    private Double avance = 0D;
-    @Getter    @Setter    private String mes = "", valores = "";
+    @Getter    @Setter    private Double avance = 0D,avanceSp = 0D;
+    @Getter    @Setter    private String mes = "", valores = "",cuatri="";
     @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
 
     @EJB    EjbRegistroActividades ejbRegistroActividades;
@@ -88,12 +87,35 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         cmiPorEje();
     }
 
+    public void obtnerMEs(String actual) {
+        numeroMes = 0;
+        numeroMes = Integer.parseInt(actual);
+        switch (numeroMes) {
+             case 0:                mes = "Avance al mes de: Enero";                break;
+            case 1:                mes = "Avance al mes de: Febrero";                break;
+            case 2:                mes = "Avance al mes de: Marzo";                break;
+            case 3:                mes = "Avance al mes de: Abril";                break;
+            case 4:                mes = "Avance al mes de: Mayo";                break;
+            case 5:                mes = "Avance al mes de: Junio";                break;
+            case 6:                mes = "Avance al mes de: Julio";                break;
+            case 7:                mes = "Avance al mes de: Agosto";                break;
+            case 8:                mes = "Avance al mes de: Septiembre";                break;
+            case 9:                mes = "Avance al mes de: Octubre";                break;
+            case 10:                mes = "Avance al mes de: Noviembre";                break;
+            case 11:                mes = "Avance al mes de: Diciembre del 20" + (fechaActual.getYear() - 101);                break;
+        }
+        reseteador();
+        cmiEnGeneral();
+        cmiPorEje();        
+        Faces.refresh();
+    }
+
     public void reseteador() {
-        cmiGeneral = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe1 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe2 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe3 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe4 = new ResultadosCMI("", 0, 0, 0.0, new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiGeneral = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe1 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe2 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe3 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe4 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(), new MeterGaugeChartModel(), false);
     }
 
     public void buscarAreasPOA() {
@@ -110,7 +132,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         } else {
             actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasUniversidadaEjercicioFiscal(ejercicioFiscal);
         }
-        cmiGeneral = new ResultadosCMI(au.getNombre(), 0, 0, 0.0, graf, new MeterGaugeChartModel(), false);
+        cmiGeneral = new ResultadosCMI(au.getNombre(), 0, 0, 0D,0D, graf, new MeterGaugeChartModel(), false);
         if (!actividadesPoas.isEmpty()) {
             List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
             actividadesPoasFiltradas.clear();
@@ -125,13 +147,12 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                 grafRA.setShowTickLabels(true);
                 grafRA.setLabelHeightAdjust(10);
                 grafRA.setIntervalOuterRadius(100);
-                cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), programadas, realizadas, avance, graf, grafRA, true);
+                cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), programadas, realizadas, avance,avanceSp, graf, grafRA, true);
             }
         }
     }
 
     public void cmiPorEje() {
-        cumAns=new ArrayList<>();
         ejesRegistros = new ArrayList<>();
         ejesRegistros.clear();
         if (au.getArea() != 0) {
@@ -172,7 +193,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         grafRA.setLabelHeightAdjust(10);
         grafRA.setIntervalOuterRadius(100);
         grafRA.setGaugeLabel(df.format(avance) + " % avance");
-        return new ResultadosCMI(er.getNombre(), programadas, realizadas, avance, graf, grafRA, true);
+        return new ResultadosCMI(er.getNombre(), programadas, realizadas, avance,avanceSp, graf, grafRA, true);        
     }
 
     public void calculosCMI(List<ActividadesPoa> actividadesPoa) {
@@ -182,8 +203,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         prograRepo = 0;
         realRepo = 0;
         graf = new ArrayList<>();
-        graf.clear();
-
+        graf.clear();    
         if (actividadesPoa.isEmpty()) {
             for (incremento = 0; incremento <= numeroMes; incremento++) {
                 graf.add(new Grafica(poau.obtenerMesNombre(incremento), 0D));
@@ -209,9 +229,13 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                     }
                     if (tP != 0) {
                         programadas = programadas + 1;
+                        prograRepo = prograRepo + 1;
                     }
-                    if (tR != 0 && Objects.equals(tR, tP)) {
+                    if (tR != 0) {
                         realizadas = realizadas + 1;
+                    }
+                    if (tR != 0 && Objects.equals(tR, tP)) {                        
+                        realRepo = realRepo + 1;
                     }
                 }
             });
@@ -252,19 +276,19 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                 }
             }
         }
-        if (programadas != 0) {
-            avance = (Double.parseDouble(realizadas.toString()) / Double.parseDouble(programadas.toString()) * 100D);
+        if (prograRepo != 0) {
+            avance = (Double.parseDouble(realRepo.toString()) / Double.parseDouble(prograRepo.toString()) * 100D);
         } else {
             avance = 0D;
         }
-        for (Integer i= 1; 1 <= 3; incremento++) {
-            switch (i){
-                case 1: break;
-                case 2: break;
-                case 3: break;
-            }
-        }
         
+        if (programadas != 0 && realizadas != 0) {
+            avanceSp = (Double.parseDouble(realizadas.toString()) / Double.parseDouble(programadas.toString()) * 100D);
+        } else if (programadas == 0 && realizadas != 0) {
+            avanceSp = realizadas * 100D;
+        } else if (programadas == 0 && realizadas == 0) {
+            avanceSp = 0D;
+        }
     }
 
     public List<ActividadesPoa> actividadesFiltradas(List<ActividadesPoa> actividadesPoas) {
@@ -320,15 +344,17 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         @Getter        @Setter        private Integer programadas;
         @Getter        @Setter        private Integer realizadas;
         @Getter        @Setter        private Double avance;
+        @Getter        @Setter        private Double avanceSP;
         @Getter        @Setter        private List<Grafica> avanceGraf;
         @Getter        @Setter        private MeterGaugeChartModel gaugeChartModel;
         @Getter        @Setter        private Boolean renderizar;
 
-        public ResultadosCMI(String ejesRegistro, Integer programadas, Integer realizadas, Double avance, List<Grafica> avanceGraf, MeterGaugeChartModel gaugeChartModel, Boolean renderizar) {
+        public ResultadosCMI(String ejesRegistro, Integer programadas, Integer realizadas, Double avance, Double avanceSP, List<Grafica> avanceGraf, MeterGaugeChartModel gaugeChartModel, Boolean renderizar) {
             this.ejesRegistro = ejesRegistro;
             this.programadas = programadas;
             this.realizadas = realizadas;
             this.avance = avance;
+            this.avanceSP = avanceSP;
             this.avanceGraf = avanceGraf;
             this.gaugeChartModel = gaugeChartModel;
             this.renderizar = renderizar;
@@ -354,25 +380,6 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
             return mes + "" + avance;
         }
 
-    }
-
-    public static class ReporteCumAn {
-
-        @Getter        @Setter        private String ejesRegistro;
-        @Getter        @Setter        private String cuatrimestre;
-        @Getter        @Setter        private Integer programadas;
-        @Getter        @Setter        private Integer realizadas;
-        @Getter        @Setter        private Double cumSp;
-        @Getter        @Setter        private Double cumCp;
-
-        public ReporteCumAn(String ejesRegistro, String cuatrimestre, Integer programadas, Integer realizadas, Double cumSp, Double cumCp) {
-            this.ejesRegistro = ejesRegistro;
-            this.cuatrimestre = cuatrimestre;
-            this.programadas = programadas;
-            this.realizadas = realizadas;
-            this.cumSp = cumSp;
-            this.cumCp = cumCp;
-        }
     }
     
     public void imprimirValores() {

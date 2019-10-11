@@ -5,23 +5,24 @@
  */
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
+import java.io.Serializable;
+import java.util.Date;
+import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+
 /**
  *
  * @author UTXJ
  */
-import java.io.Serializable;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-
-
 @RequiredArgsConstructor @ToString
-public class DtoEstudianteComplete implements Serializable{
-    @Getter @Setter @NonNull Estudiante estudiantes;
-    @Getter @Setter @NonNull String datosComplete;
+public class DtoMovimientoEstudiante implements Serializable{
+    @Getter @Setter @NonNull Date fecha;
     @Getter @Setter @NonNull String periodoEscolar;
-
+    @Getter @Setter @NonNull String tipoMovimiento;
+    @Getter @Setter @NonNull String informacionMovimiento;
+    @Getter @Setter @NonNull String personaRealizo;
+    
 }

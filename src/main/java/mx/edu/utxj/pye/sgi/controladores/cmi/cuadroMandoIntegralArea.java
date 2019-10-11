@@ -160,7 +160,7 @@ public void reseteador() {
         grafRA.setShowTickLabels(true);
         grafRA.setLabelHeightAdjust(10);
         grafRA.setIntervalOuterRadius(100);
-        grafRA.setGaugeLabel(avance + " % avance");
+        grafRA.setGaugeLabel(df.format(avance) + " % avance");
         return new ResultadosCMI(er.getNombre(), programadas, realizadas, avance, graf, grafRA, true);
     }
 

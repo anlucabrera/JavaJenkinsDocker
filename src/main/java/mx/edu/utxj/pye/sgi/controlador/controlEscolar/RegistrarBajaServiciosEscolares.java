@@ -38,6 +38,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaReprobada;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRangoFechasPermiso;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroBajaEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.BajaReprobacion;
 import org.omnifaces.util.Ajax;
 import org.primefaces.component.datatable.DataTable;
@@ -127,7 +128,7 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
     }
     
     /**
-     * Permite que al cambiar o seleccionar un docente se puedan actualizar las materias asignadas a este docente
+     * Permite que al cambiar o seleccionar un estudiante se pueda actualizar la información
      * @param e Evento del cambio de valor
      */
     public void cambiarEstudiante(ValueChangeEvent e){
@@ -135,7 +136,7 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
             DtoEstudianteComplete estudiante = (DtoEstudianteComplete)e.getNewValue();
             rol.setEstudianteSeleccionado(estudiante);
             rol.setRegistroBajaEstudiante(null);
-            buscarDatosEstudiante(rol.getEstudianteSeleccionado().getEstudiantesPye().getIdEstudiante());
+            buscarDatosEstudiante(rol.getEstudianteSeleccionado().getEstudiantes().getIdEstudiante());
             Ajax.update("tbRegBaja");
         }else mostrarMensaje("El valor seleccionado como estudiante no es del tipo necesario.");
     }
@@ -297,5 +298,8 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
         DataTable dataTable = (DataTable) event.getSource();
         DtoRegistroBajaEstudiante registroNew = (DtoRegistroBajaEstudiante) dataTable.getRowData();
         ejb.actualizarRegistroBaja(registroNew);
+        ejb.actualizarStatusEstudiante(registroNew);
+        rol.setDatosEstudiante(ejb.buscarDatosEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
+        rol.setRegistroBajaEstudiante(ejb.buscarRegistroBajaEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
     }
 }
