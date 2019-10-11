@@ -758,6 +758,7 @@ public class EjbRegistroBajas {
             
              List<AreasUniversidad> listaProgramasDistintos = listaProgramasEducativos.stream()
                     .distinct()
+                    .sorted(Comparator.comparing(AreasUniversidad::getNombre))
                     .collect(Collectors.toList());
              
             return ResultadoEJB.crearCorrecto(listaProgramasDistintos, "Lista de programas educativos que tienen registro de baja.");
@@ -915,6 +916,7 @@ public class EjbRegistroBajas {
             
              List<AreasUniversidad> listaProgramasDistintos = listaProgramasEducativos.stream()
                     .distinct()
+                    .sorted(Comparator.comparing(AreasUniversidad::getNombre))
                     .collect(Collectors.toList());
              
             return ResultadoEJB.crearCorrecto(listaProgramasDistintos, "Lista de programas educativos del área superior correspondiente.");

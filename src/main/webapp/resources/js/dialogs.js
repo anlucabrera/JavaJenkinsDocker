@@ -14,3 +14,11 @@ function soloNumeros(e){
 	var key = window.Event ? e.which : e.keyCode
 	return (key ==46 || key >= 48 && key <= 57)
 }
+
+function contarCaracteresDictamen(){
+	document.getElementById('frmModalTramitarBaja:txtCaracteresRestantes').value = 500 - document.getElementById('frmModalTramitarBaja:dictamenPsicopedagogia').value.length;
+}
+
+function contarCaracteresAcciones(){
+        document.getElementById('frmModalTramitarBaja:txtCaracteresRestantes').value = 500 - document.getElementById('frmModalTramitarBaja:accionesTutor').value.length;
+}
