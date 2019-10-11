@@ -293,10 +293,12 @@
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <div class="ui-material">
                                     <p:outputLabel value="Acciones tomadas por el tutor" for="accionesTutor" style="font-weight: bold; font-size: 14px;"/>
-                                    <p:inputTextarea id="accionesTutor" value="#{tramitarBajaTutor.rol.accionesTutor}" maxlength="500" style="width: 650px;"/>
+                                    <p:inputTextarea id="accionesTutor" onkeyup="contarCaracteresAcciones()" value="#{tramitarBajaTutor.rol.accionesTutor}" maxlength="500" style="width: 650px;"/>
                                     <p:message for="accionesTutor" />
                                 </div>
-                                
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <center><p:outputLabel value="Caracteres restantes:" style="font-weight: normal;"/><p:inputText id="txtCaracteresRestantes" value="500" disabled="true" style="background-color: white; border-color: white; color:red;"/></center>
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <br/>

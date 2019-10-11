@@ -301,5 +301,6 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
         ejb.actualizarStatusEstudiante(registroNew);
         rol.setDatosEstudiante(ejb.buscarDatosEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
         rol.setRegistroBajaEstudiante(ejb.buscarRegistroBajaEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
+
     }
 }

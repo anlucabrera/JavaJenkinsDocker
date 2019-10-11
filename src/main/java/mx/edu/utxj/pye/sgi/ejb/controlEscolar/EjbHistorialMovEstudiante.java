@@ -6,8 +6,8 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -17,8 +17,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.StoredProcedureQuery;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoHistorialMovEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMovimientoEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -27,10 +25,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EstudiantesPye;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasTipo;
@@ -74,20 +70,20 @@ public class EjbHistorialMovEstudiante {
         }
     }
     /**
-     * Permite identificar a una lista de posibles estudiante para registrar la baja
-     * @param pista Contenido que la vista que puede incluir parte del nombre, apellidos o matricula del estudiante
+     * Permite identificar a una lista de posibles estudiantes para consultar el historial de movimientos
+     * @param pista Contenido que la pista que puede incluir parte del nombre, apellidos o curp del estudiante
      * @return Resultado del proceso con docentes ordenador por nombre
      */
     public ResultadoEJB<List<Persona>> buscarEstudiante(String pista){
         try{
-             //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
-            List<Persona> listaPersonas = em.createQuery("select p from Persona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, p.curp) like concat('%',:pista,'%')", Persona.class)
+             //buscar lista de personas por nombre o por curp, según la pista y ordenado por nombre
+            List<Persona> listaPersonas = em.createQuery("select p from Persona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, p.curp) like concat('%',:pista,'%') ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre", Persona.class)
                     .setParameter("pista", pista)
                     .getResultList();
            
             return ResultadoEJB.crearCorrecto(listaPersonas, "Lista para mostrar en autocomplete");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo localizar la lista de estudiantes activos. (EjbHistorialMovEstudiante.buscarEstudiante)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo localizar la lista de estudiantes registrados. (EjbHistorialMovEstudiante.buscarEstudiante)", e, null);
         }
     }
    
@@ -132,7 +128,7 @@ public class EjbHistorialMovEstudiante {
      */
     public ResultadoEJB<List<DtoHistorialMovEstudiante>> buscarHistorialMovEstudiante(Persona persona){
         try{
-              List<DtoHistorialMovEstudiante> registrosAspirante = em.createQuery("SELECT a FROM Aspirante a WHERE a.idPersona.idpersona =:persona", Aspirante.class)
+              List<DtoHistorialMovEstudiante> registrosAspirante = em.createQuery("SELECT a FROM Aspirante a WHERE a.idPersona.idpersona =:persona ORDER BY a.idProcesoInscripcion.idPeriodo ASC", Aspirante.class)
                     .setParameter("persona", persona.getIdpersona())
                     .getResultStream()
                     .distinct()
@@ -161,31 +157,47 @@ public class EjbHistorialMovEstudiante {
             Aspirante aspiranteBD = em.find(Aspirante.class, aspirante.getIdAspirante());
             if(aspiranteBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar un registro de aspirante no registrado previamente en base de datos.", DtoHistorialMovEstudiante.class);
            
-            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante =:aspirante", Estudiante.class)
+            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante =:aspirante AND e.grupo.grado=:grado", Estudiante.class)
                     .setParameter("aspirante", aspiranteBD.getIdAspirante())
+                    .setParameter("grado", (int)1)
                     .getSingleResult();
-            
-            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
             
             List<DtoMovimientoEstudiante> listaMovimientos = new ArrayList<>();
             
-            DtoMovimientoEstudiante datosAdmision= getDatosAdmision(aspiranteBD).getValor();
+            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
+
+            DtoMovimientoEstudiante datosAdmision = getDatosAdmision(aspiranteBD).getValor();
             listaMovimientos.add(datosAdmision);
-            DtoMovimientoEstudiante datosInscripcion= getDatosInscripcion(aspirante).getValor();
+            DtoMovimientoEstudiante datosInscripcion = getDatosInscripcion(aspirante).getValor();
             listaMovimientos.add(datosInscripcion);
-            DtoMovimientoEstudiante datosBaja= getDatosBaja(estudiante).getValor();
+            List<DtoMovimientoEstudiante> datosReinscripciones = getDatosReinscripcion(estudiante.getMatricula()).getValor();
+            if (!datosReinscripciones.isEmpty()) {
+                datosReinscripciones.forEach(reinscripcion -> {
+                listaMovimientos.add(reinscripcion);
+                });
+            } 
+            DtoMovimientoEstudiante datosBaja = getDatosBaja(estudiante.getMatricula()).getValor();
             if (datosBaja != null) {
                 listaMovimientos.add(datosBaja);
-            }
-            DtoHistorialMovEstudiante dto = new DtoHistorialMovEstudiante(aspirante, estudiante, programaEducativo, listaMovimientos);
+            } 
+            
+            List<DtoMovimientoEstudiante> listaOrdenada = listaMovimientos.stream()
+                    .sorted(Comparator.comparing(DtoMovimientoEstudiante::getFecha))
+                    .collect(Collectors.toList());
+
+            DtoHistorialMovEstudiante dto = new DtoHistorialMovEstudiante(aspirante, estudiante, programaEducativo, listaOrdenada);
            
-            return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
+            return ResultadoEJB.crearCorrecto(dto, "Información de historial de movimiento del estudiante empaquetado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica (EjbHistorialMovEstudiante. pack).", e,  DtoHistorialMovEstudiante.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la información de historial de movimiento del estudiante (EjbHistorialMovEstudiante. pack).", e,  DtoHistorialMovEstudiante.class);
         }
     }
     
-   
+     /**
+     * Permite obtener los datos de admisión del estudiante seleccionado
+     * @param aspirante Registro de aspirante
+     * @return Resultado del proceso
+     */
     public ResultadoEJB<DtoMovimientoEstudiante> getDatosAdmision(Aspirante aspirante){
         try{
            
@@ -204,6 +216,11 @@ public class EjbHistorialMovEstudiante {
         }
     }
     
+    /**
+     * Permite obtener los datos de inscripción del estudiante seleccionado
+     * @param aspirante Registro de aspirante
+     * @return Resultado del proceso
+     */
     public ResultadoEJB<DtoMovimientoEstudiante> getDatosInscripcion(Aspirante aspirante){
         try{
             Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante =:aspirante AND e.grupo.grado=:grado", Estudiante.class)
@@ -227,10 +244,48 @@ public class EjbHistorialMovEstudiante {
         }
     }
     
-    public ResultadoEJB<DtoMovimientoEstudiante> getDatosBaja(Estudiante estudiante){
+    /**
+     * Permite obtener los datos de reinscripción del estudiante seleccionado
+     * @param matricula Matricula del estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoMovimientoEstudiante>> getDatosReinscripcion(Integer matricula){
         try{
-            Baja baja = em.createQuery("SELECT b FROM Baja b WHERE b.estudiante.idEstudiante =:estudiante", Baja.class)
-                    .setParameter("estudiante", estudiante.getIdEstudiante())
+            List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula AND e.grupo.grado >:grado", Estudiante.class)
+                    .setParameter("matricula", matricula)
+                    .setParameter("grado", (int) 1)
+                    .getResultList();
+           
+            List<DtoMovimientoEstudiante> listaDtoEstudiantes = new ArrayList<>();
+            
+            listaEstudiante.forEach(est -> {
+                PeriodosEscolares periodo = em.find(PeriodosEscolares.class, est.getPeriodo());
+                String periodoEscolar = periodo.getMesInicio().getMes() + " - " + periodo.getMesFin().getMes() + " " + periodo.getAnio();
+                String tipoMovimiento = "Reinscripción";
+                Personal personal = em.find(Personal.class, est.getTrabajadorInscribe());
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, est.getCarrera());
+                Grupo grupo = em.find(Grupo.class, est.getGrupo().getIdGrupo());
+                String informacionMovimiento = "Grupo: " + grupo.getGrado() + "° " + grupo.getLiteral() + " " + grupo.getIdSistema().getNombre() + " de " + programaEducativo.getNombre();
+
+                DtoMovimientoEstudiante dto = new DtoMovimientoEstudiante(est.getFechaAlta(), periodoEscolar, tipoMovimiento, informacionMovimiento, personal.getNombre());
+                listaDtoEstudiantes.add(dto);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Datos reinscripción empaquetado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar datos de reinscripción (EjbHistorialMovEstudiante. getDatosReinscripcion).", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener los datos de baja del estudiante seleccionado
+     * @param matricula Matricula del estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoMovimientoEstudiante> getDatosBaja(Integer matricula){
+        try{
+            Baja baja = em.createQuery("SELECT b FROM Baja b INNER JOIN b.estudiante e WHERE e.matricula =:matricula", Baja.class)
+                    .setParameter("matricula", matricula)
                     .getSingleResult();
             
             PeriodosEscolares periodo = em.find(PeriodosEscolares.class, baja.getPeriodoEscolar());
@@ -244,9 +299,9 @@ public class EjbHistorialMovEstudiante {
             
             DtoMovimientoEstudiante dto = new DtoMovimientoEstudiante(baja.getFechaBaja(), periodoEscolar, tipoMovimiento, informacionMovimiento, personal.getNombre());
             
-            return ResultadoEJB.crearCorrecto(dto, "Datos admisión empaquetado.");
+            return ResultadoEJB.crearCorrecto(dto, "Datos de baja empaquetado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar datos de admisión (EjbHistorialMovEstudiante. getDatosBaja).", e, DtoMovimientoEstudiante.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar datos de baja (EjbHistorialMovEstudiante. getDatosBaja).", e, DtoMovimientoEstudiante.class);
         }
     }
     

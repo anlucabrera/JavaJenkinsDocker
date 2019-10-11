@@ -83,7 +83,7 @@ public class EjbRegistroBajas {
     public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(String pista){
         try{
              //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
-            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY e.periodo DESC", Estudiante.class)
+            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo", Estudiante.class)
                     .setParameter("pista", pista)
                     .getResultList();
             
@@ -758,6 +758,7 @@ public class EjbRegistroBajas {
             
              List<AreasUniversidad> listaProgramasDistintos = listaProgramasEducativos.stream()
                     .distinct()
+                    .sorted(Comparator.comparing(AreasUniversidad::getNombre))
                     .collect(Collectors.toList());
              
             return ResultadoEJB.crearCorrecto(listaProgramasDistintos, "Lista de programas educativos que tienen registro de baja.");
@@ -915,6 +916,7 @@ public class EjbRegistroBajas {
             
              List<AreasUniversidad> listaProgramasDistintos = listaProgramasEducativos.stream()
                     .distinct()
+                    .sorted(Comparator.comparing(AreasUniversidad::getNombre))
                     .collect(Collectors.toList());
              
             return ResultadoEJB.crearCorrecto(listaProgramasDistintos, "Lista de programas educativos del área superior correspondiente.");

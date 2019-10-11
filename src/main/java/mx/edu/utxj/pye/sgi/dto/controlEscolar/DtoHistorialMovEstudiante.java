@@ -33,4 +33,8 @@ public class DtoHistorialMovEstudiante implements Serializable{
         this.programaEducativo = programaEducativo;
         this.listaDatosMovimiento = listaDatosMovimiento;
     }
+
+    public DtoHistorialMovEstudiante() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

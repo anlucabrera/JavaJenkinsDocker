@@ -14,11 +14,11 @@
 
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
-         Inicio estilos par proceso electoral 
+<!--         Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
         </c:if>
-         Fin estilos par proceso electoral 
+<!--         Fin estilos par proceso electoral -->
     </ui:define>
 
     <ui:define name="title">
@@ -39,7 +39,7 @@
         <adm:breadcrumb title="Historial Movimientos Estudiante"/>
 
         <div class="contenedor">
-            <c:if test="#{registrarBajaServiciosEscolares.tieneAcceso}">
+            <c:if test="#{historialMovEstServiciosEscolares.tieneAcceso}">
                 <!-- zona de importación de enums -->
                 <h:form id="frm" prependId="false" class="form-inline">
                     <div class="box box-primary">
@@ -47,7 +47,7 @@
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
-                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registrarBajaServiciosEscolares.rol.periodoActivo)}" />
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(historialMovEstServiciosEscolares.rol.periodoActivo)}" />
                                         <p:spacer width="5" />
 
                                     </f:facet>

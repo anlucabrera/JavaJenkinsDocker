@@ -68,7 +68,19 @@ public class ControladorIncidenciasAdministrador implements Serializable {
         try {
             listaIncidencias = new ArrayList<>();
             listaIncidencias.clear();
-            listaIncidencias = ejbNotificacionesIncidencias.mostrarIncidenciasArea(au.getArea());
+            List<Incidencias> is = ejbNotificacionesIncidencias.mostrarIncidenciasArea(au.getArea());
+            if(!is.isEmpty()){
+                is.forEach((t) -> {
+                    if(!au.getNombre().equals("Rectoría")){
+                        if(!au.getResponsable().equals(t.getClavePersonal().getClave())){
+                            listaIncidencias.add(t);
+                        }
+                    }else{
+                        listaIncidencias.add(t);
+                    }
+                });
+            }
+            listaIncidencias.stream().forEachOrdered(t-> t.getClavePersonal().getClave());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
