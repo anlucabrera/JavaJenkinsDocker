@@ -181,6 +181,7 @@
                                                             <p:column headerText="Opciones" />
                                                             <p:column headerText="Grupo" /> 
                                                             <p:column headerText="Materia" /> 
+                                                            <p:column headerText="Docente" /> 
                                                             <p:column headerText="Unidad" />
                                                             <p:column headerText="Tipo Evaluacion" />
                                                             <p:column headerText="Fecha Inicio" />
@@ -206,6 +207,9 @@
                                                         <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idPlanMateria.idMateria.nombre}" style="text-align: center;" />
                                                     </p:column>
                                                     <p:column groupRow="true">
+                                                        <h:outputText value="#{aperturasExt.personal.nombre}"/>
+                                                    </p:column>
+                                                    <p:column groupRow="true">
                                                         <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.nombre}" style="text-align: center;"/>
                                                     </p:column>
                                                     <p:column>
@@ -219,8 +223,8 @@
                                                     </p:column>
                                                     <p:column>
                                                         <p:cellEditor>
-                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
-                                                             <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" pattern="dd-MM-yyyy" mask="true"/></f:facet>
+                                                            <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                             <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" pattern="dd-MM-yyyy HH:mm" mask="true"/></f:facet>
                                                          </p:cellEditor>
                                                     </p:column>
                                                      <p:column>
