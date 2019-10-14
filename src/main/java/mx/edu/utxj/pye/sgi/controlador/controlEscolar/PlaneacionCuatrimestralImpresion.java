@@ -101,6 +101,8 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
+            rol.setPeriodo(ejb.getPeriodoActual());
+            rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
             
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);

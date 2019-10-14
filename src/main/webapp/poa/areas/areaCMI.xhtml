@@ -110,25 +110,25 @@
                                         <p:row>
                                             <p:column style="font-weight: bold;">Grafica Lineal</p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe1.renderizar}">
-                                                <hf:chart type="line" height="400px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe1.ejesRegistro}"
+                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe1.ejesRegistro}"
                                                           xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
                                                     <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiEJe1.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe2.renderizar}">
-                                                <hf:chart type="line" height="400px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe2.ejesRegistro}"
+                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe2.ejesRegistro}"
                                                           xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
                                                     <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiEJe2.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe3.renderizar}">
-                                                <hf:chart type="line" height="400px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe3.ejesRegistro}" 
+                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe3.ejesRegistro}" 
                                                           xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
                                                     <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiEJe3.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe4.renderizar}">
-                                                <hf:chart type="line" height="400px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe4.ejesRegistro}" 
+                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe4.ejesRegistro}" 
                                                           xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
                                                     <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiEJe4.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
                                                 </hf:chart>
@@ -136,10 +136,10 @@
                                         </p:row>
                                         <p:row>
                                             <p:column style="font-weight: bold;">Grafica 2</p:column>
-                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe1.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiEJe1.gaugeChartModel}" responsive="true" style="width: 400px"/> </p:column>
-                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe2.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiEJe2.gaugeChartModel}" responsive="true" style="width: 400px"/> </p:column>
-                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe3.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiEJe3.gaugeChartModel}" responsive="true" style="width: 400px"/> </p:column>
-                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe4.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiEJe4.gaugeChartModel}" responsive="true" style="width: 400px"/> </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe1.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiEJe1.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe2.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiEJe2.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe3.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiEJe3.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe4.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiEJe4.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
                                         </p:row>
                                         <p:row>
                                             <p:column style="font-weight: bold;">Actividades Programadas</p:column>

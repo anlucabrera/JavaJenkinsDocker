@@ -100,6 +100,19 @@ public class EjbAsignacionIndicadoresCriterios {
         }
     }
     
+    public PeriodosEscolares getPeriodoActual() {
+
+        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+        List<PeriodosEscolares> l = spq.getResultList();
+
+        if (l == null || l.isEmpty()) {
+            return new PeriodosEscolares();
+        } else {
+            return l.get(0);
+        }
+    
+    }
+    
     /**
      * Permite obtener la lista de cargas académicas de un docente, en todos los programas educativos que participe
      * @param docente Docente de quien se quiere obtener la lista

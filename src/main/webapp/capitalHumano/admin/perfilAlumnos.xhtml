@@ -145,117 +145,115 @@
                                 <p:tabView>
                                     <p:tab title="Datos">
                                         <h:form>
-                                            <p:panel id="CV" >
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <h1><strong>Perfil Estudiante</strong></h1>
-                                                                    </div>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h1><strong>Perfil Estudiante</strong></h1>
                                                                 </div>
                                                             </div>
-                                                            <div class="row">
-                                                                <div id="tituloCV" class="col-sm-12">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
-                                                                        <h3>Contenido de currículum para expedientes</h3>
-                                                                        <h4>Control de acceso Alumnos</h4>
-                                                                    </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div id="tituloCV" class="col-sm-12">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                    <h3>Contenido de currículum para expedientes</h3>
+                                                                    <h4>Control de acceso Alumnos</h4>
                                                                 </div>
                                                             </div>
-                                                            <hr/>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <h3><strong>Datos personales</strong></h3>
-                                                                    </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Datos personales</strong></h3>
                                                                 </div>
                                                             </div>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="box box-primary">
-                                                                            <div class="box-header with-border">                                                                    
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="row">
-                                                                                        <div  id="dstoasPerosonalesPersonal1" class="col-sm-4">        
-                                                                                            <div class="description-block" style="text-align: justify">
-                                                                                                <strong>Nombre completo</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{personalAdmin.persona.apellidoPaterno} #{personalAdmin.persona.apellidoMaterno} #{personalAdmin.persona.nombre}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="box box-primary">
+                                                                        <div class="box-header with-border">                                                                    
+                                                                            <div class="col-sm-12">
+                                                                                <div class="row">
+                                                                                    <div  id="dstoasPerosonalesPersonal1" class="col-sm-4">        
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Nombre completo</strong>
+                                                                                            <p class="text-muted">
+                                                                                                #{personalAdmin.persona.apellidoPaterno} #{personalAdmin.persona.apellidoMaterno} #{personalAdmin.persona.nombre}
+                                                                                            </p>
+                                                                                            <hr/>
                                                                                         </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal2" class="col-sm-4"> 
-                                                                                            <div class="description-block" style="text-align: justify">
-                                                                                                <strong>CURP</strong>
-                                                                                                <p class="text-muted" style="text-transform: uppercase">
-                                                                                                    #{personalAdmin.persona.curp}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                            </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal2" class="col-sm-4"> 
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>CURP</strong>
+                                                                                            <p class="text-muted" style="text-transform: uppercase">
+                                                                                                #{personalAdmin.persona.curp}
+                                                                                            </p>
+                                                                                            <hr/>
                                                                                         </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal2" class="col-sm-4"> 
-                                                                                            <div class="description-block" style="text-align: justify">
-                                                                                                <strong>tipo Sangre</strong>
-                                                                                                <p class="text-muted" style="text-transform: uppercase">
-                                                                                                    #{personalAdmin.persona.datosMedicos.cveTipoSangre.nombre}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                            </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal2" class="col-sm-4"> 
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>tipo Sangre</strong>
+                                                                                            <p class="text-muted" style="text-transform: uppercase">
+                                                                                                #{personalAdmin.persona.datosMedicos.cveTipoSangre.nombre}
+                                                                                            </p>
+                                                                                            <hr/>
                                                                                         </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal4" class="col-sm-4" > 
-                                                                                            <div class="description-block" style="text-align: justify">
-                                                                                                <strong>Estado civil</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{personalAdmin.persona.estadoCivil}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                            </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal4" class="col-sm-4" > 
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Estado civil</strong>
+                                                                                            <p class="text-muted">
+                                                                                                #{personalAdmin.persona.estadoCivil}
+                                                                                            </p>
+                                                                                            <hr/>
                                                                                         </div>
+                                                                                    </div>
 
-                                                                                        <div  id="dstoasPerosonalesPersonal3" class="col-sm-4" > 
-                                                                                            <div class="description-block" style="text-align: justify">
-                                                                                                <strong>Genero</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{personalAdmin.persona.genero eq 1?'Mujer':'Hombre'}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                            </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal3" class="col-sm-4" > 
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Genero</strong>
+                                                                                            <p class="text-muted">
+                                                                                                #{personalAdmin.persona.genero eq 1?'Mujer':'Hombre'}
+                                                                                            </p>
+                                                                                            <hr/>
                                                                                         </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal4" class="col-sm-4" > 
-                                                                                            <div class="description-block" style="text-align: justify">
-                                                                                                <strong>Fecha de nacimiento</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    <h:outputLabel value="#{personalAdmin.persona.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
-                                                                                                </p>                                                                
-                                                                                                <hr/>
-                                                                                            </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal4" class="col-sm-4" > 
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Fecha de nacimiento</strong>
+                                                                                            <p class="text-muted">
+                                                                                                <h:outputLabel value="#{personalAdmin.persona.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                            </p>                                                                
+                                                                                            <hr/>
                                                                                         </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal6" class="col-sm-6">        
-                                                                                            <div class="description-block" style="text-align: justify">
-                                                                                                <strong>Correo electrónico</strong>
-                                                                                                <ul style="list-style-type: square">
-                                                                                                    <li>
-                                                                                                        #{personalAdmin.persona.medioComunicacion.email}
-                                                                                                    </li>
-                                                                                                </ul>
-                                                                                            </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal6" class="col-sm-6">        
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Correo electrónico</strong>
+                                                                                            <ul style="list-style-type: square">
+                                                                                                <li>
+                                                                                                    #{personalAdmin.persona.medioComunicacion.email}
+                                                                                                </li>
+                                                                                            </ul>
                                                                                         </div>
-                                                                                        <div  id="dstoasPerosonalesPersonal7" class="col-sm-6">        
-                                                                                            <div class="description-block" style="text-align: justify">
-                                                                                                <strong>Número de teléfono</strong>
-                                                                                                <ul style="list-style-type: square">
-                                                                                                    <li>
-                                                                                                        Casa: #{personalAdmin.persona.medioComunicacion.telefonoFijo}
-                                                                                                    </li>
-                                                                                                    <li>
-                                                                                                        Cel.: #{personalAdmin.persona.medioComunicacion.telefonoMovil}                                                                                            </li>
-                                                                                                </ul>
-                                                                                            </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal7" class="col-sm-6">        
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Número de teléfono</strong>
+                                                                                            <ul style="list-style-type: square">
+                                                                                                <li>
+                                                                                                    Casa: #{personalAdmin.persona.medioComunicacion.telefonoFijo}
+                                                                                                </li>
+                                                                                                <li>
+                                                                                                    Cel.: #{personalAdmin.persona.medioComunicacion.telefonoMovil}                                                                                            </li>
+                                                                                            </ul>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -267,7 +265,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </p:panel>
+                                            </div>
                                         </h:form>
                                     </p:tab>                                                             
                                 </p:tabView>

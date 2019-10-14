@@ -16,8 +16,10 @@ import javax.ejb.Stateless;
 import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.StoredProcedureQuery;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -37,10 +39,24 @@ public class EjbDatosEstudianteAdmin {
     public void init(){
         em = f.getEntityManager();
     }
-    public List<Estudiante> buscaEstudiantes() {
+    
+    public PeriodosEscolares getPeriodoActual() {
+
+        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+        List<PeriodosEscolares> l = spq.getResultList();
+
+        if (l == null || l.isEmpty()) {
+            return new PeriodosEscolares();
+        } else {
+            return l.get(0);
+        }
+    
+    }
+    
+    public List<Estudiante> buscaEstudiantes(Integer periodo) {
         List<Estudiante> es = new ArrayList<>();
-        es = em.createQuery("SELECT es FROM Estudiante es INNER JOIN es.tipoEstudiante t WHERE t.descripcion =:descripcion", Estudiante.class)
-                .setParameter("descripcion", "Regular")
+        es = em.createQuery("SELECT es FROM Estudiante es WHERE es.periodo =:periodo", Estudiante.class)
+                .setParameter("periodo", periodo)
                 .getResultList();
         return es;
     }

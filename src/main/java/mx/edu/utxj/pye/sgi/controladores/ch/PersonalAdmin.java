@@ -14,6 +14,7 @@ import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
@@ -23,6 +24,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.shiro.User;
 import mx.edu.utxj.pye.sgi.saiiut.ejb.EjbLogin;
 import mx.edu.utxj.pye.sgi.util.Encrypted;
@@ -44,6 +46,7 @@ public class PersonalAdmin implements Serializable {
     @Getter    @Setter    private Aspirante aspirante;
     @Getter    @Setter    private Estudiante estudiante;
     @Getter    @Setter    private Persona persona;
+    @Getter    @Setter    private PeriodosEscolares periodo;
     
     @Getter    @Setter    private User user = new User();
     @Getter    @Setter    private Login login = new Login();
@@ -54,7 +57,6 @@ public class PersonalAdmin implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ep;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ef;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo areasLogeo;
-
     @EJB private EjbLogin el;
     
     @PostConstruct
@@ -69,8 +71,10 @@ public class PersonalAdmin implements Serializable {
             listaPersonal.clear();
             listaPersonal = ep.mostrarListaPersonalsPorEstatus(1);
             
+            periodo=edea.getPeriodoActual();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.PersonalAdmin.mostrarSubordinados()"+periodo);
             estudiantes.clear();
-            estudiantes = edea.buscaEstudiantes();
+            estudiantes = edea.buscaEstudiantes(periodo.getPeriodo());
             
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
