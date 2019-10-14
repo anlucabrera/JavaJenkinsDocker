@@ -80,4 +80,32 @@ public class EjbValidacionRol {
             return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbAsignacionAcademica.validarDirector)", e, null);
         }
     }
+
+    public ResultadoEJB<Filter<PersonalActivo>> validarJefeDepartamento(Integer clave, Integer areaOperativa){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalAreaOperativa").orElse(areaOperativa)));
+            filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("jefePersonalCategoria").orElse(24)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal de servicios escolares.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbValidacionRol.validarServiciosEscolares)", e, null);
+        }
+    }
+
+    public ResultadoEJB<Filter<PersonalActivo>> validarencargadoDepartamento(Integer clave, Integer areaOperativa){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalAreaOperativa").orElse(areaOperativa)));
+            filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("encargadoPersonalCategoria").orElse(20)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal de servicios escolares.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbValidacionRol.validarencargadoDepartamento)", e, null);
+        }
+    }
 }

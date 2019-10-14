@@ -14,6 +14,7 @@ import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesCuatrimestrales;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionOficios;
 import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
@@ -36,6 +37,7 @@ import javax.persistence.EntityManager;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -232,5 +234,100 @@ public class Caster {
                 .concat(dtoEstudiante.getPersona().getApellidoMaterno()).concat(" ")
                 .concat(dtoEstudiante.getPersona().getNombre()).concat(" (")
                 .concat(String.valueOf(dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula())).concat(")");
+    }
+
+    public String fechaEventoEscolarToString(Date fechaInicio, Date fechaFin) {
+        SimpleDateFormat dia = new SimpleDateFormat("dd");
+        SimpleDateFormat anio = new SimpleDateFormat("yyyy");
+        return dia.format(fechaInicio)
+                +" de "+
+                convertirMes(fechaInicio)
+                +" de "+
+                anio.format(fechaInicio)
+                +" al "+
+                dia.format(fechaFin)+
+                " de "+
+                convertirMes(fechaFin)
+                +" de "+
+                anio.format(fechaFin);
+    }
+
+    public static String convertirMes(Date date){
+        String result="";
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        int month=0;
+
+        try{
+            month=calendar.get(Calendar.MONTH);
+        }catch(Exception ex){}
+        switch(month){
+            case 0:
+            {
+                result="Enero";
+                break;
+            }
+            case 1:
+            {
+                result="Febrero";
+                break;
+            }
+            case 2:
+            {
+                result="Marzo";
+                break;
+            }
+            case 3:
+            {
+                result="Abril";
+                break;
+            }
+            case 4:
+            {
+                result="Mayo";
+                break;
+            }
+            case 5:
+            {
+                result="Junio";
+                break;
+            }
+            case 6:
+            {
+                result="Julio";
+                break;
+            }
+            case 7:
+            {
+                result="Agosto";
+                break;
+            }
+            case 8:
+            {
+                result="Septiembre";
+                break;
+            }
+            case 9:
+            {
+                result="Octubre";
+                break;
+            }
+            case 10:
+            {
+                result="Noviembre";
+                break;
+            }
+            case 11:
+            {
+                result="Diciembre";
+                break;
+            }
+            default:
+            {
+                result="Error";
+                break;
+            }
+        }
+        return result;
     }
 }
