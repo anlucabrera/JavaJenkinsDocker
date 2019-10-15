@@ -38,7 +38,8 @@ public enum ControlEscolarVistaControlador {
     VALIDACION_PLANEACION_CUATRIMESTRAL("/controlEscolar/docente/planeacionCuatrimestralValidacion.xhtml", PlaneacionCuatrimestralValidacion.class),
     REPORTE_ASISTENCIA_DIRECTOR("/controlEscolar/director/reporteAsistenciasDirector.xhtml",  ReporteAsistenciasDirector.class),
     CEDULA_IDENTIFICACION("/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml",cedulaIdentificacionPsicopedagogia.class),
-    HISTORIAL_MOVEST("/controlEscolar/se/historialMovEstudiante.xhtml",  HistorialMovEstServiciosEscolares.class);
+    HISTORIAL_MOVEST("/controlEscolar/se/historialMovEstudiante.xhtml",  HistorialMovEstServiciosEscolares.class),
+    CONCENTRADO_CALIFICACIONES_TUTOR("/controlEscolar/tutor/concentradoCal.xhtml",  ConcentradoCalificaciones.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
 }
