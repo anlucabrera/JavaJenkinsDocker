@@ -36,6 +36,7 @@ public class EjbGeneracionGrupos {
     @EJB EjbPersonalBean ejbPersonalBean;
     @EJB EjbPropiedades ep;
     @EJB EjbEventoEscolar ejbEventoEscolar;
+    @EJB EjbValidacionRol ejbValidacionRol;
     @Getter @Setter private SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
     @Getter @Setter private Integer grupo;
     @Getter @Setter private Boolean activo;
@@ -50,14 +51,14 @@ public class EjbGeneracionGrupos {
      * @param clave Número de nómina del usuario autenticado
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Filter<PersonalActivo>> validarServiciosEscolares(Integer clave){
-        try{
+    public ResultadoEJB<Filter<PersonalActivo>> validarServiciosEscolares(Integer clave) {
+        try {
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
             filtro.setEntity(p);
             filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalAreaOperativa").orElse(10)));
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal de servicios escolares.");
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbReincorporacion.validarServiciosEscolares)", e, null);
         }
     }

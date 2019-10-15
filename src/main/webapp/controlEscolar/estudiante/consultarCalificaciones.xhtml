@@ -180,15 +180,16 @@
                                                         </p:column>
                                                         <p:column style="text-align: left"><h:outputText value="#{calificaciones.docente.nombre}" /></p:column>
 
-                                                        <p:columns style="text-align: center" var="unidadesFantasmas" value="#{consultaCalificacionesEstudiante.rol.mapUnidadesTematicas}" colspan="2">
+                                                        <p:columns style="text-align: center" var="unidadesFantasmas" value="#{consultaCalificacionesEstudiante.rol.mapUnidadesTematicas}"
+                                                                   colspan="2">
                                                                 <c:forEach var="calificacion" items="#{consultaCalificacionesEstudiante.rol.calificacionePorUnidad}">
                                                                         <p:column style="text-align: center" rendered="#{calificacion.materia.idMateria eq calificaciones.materia.idMateria
                                                                            and calificacion.unidadMateria.noUnidad eq unidadesFantasmas.noUnidad}">
                                                                             <p:panelGrid columns="2" style="height: 20px">
-                                                                                <h:outputText style="font-weight: bold; font-size: x-small; #{calificacion.promedioUnidad > 8 ? 'color: #000000':'color: #E53935' or calificacion.promedioUnidad > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                <h:outputText style="font-weight: bold; font-size: x-small; #{calificacion.promedioUnidad >= 8 ? 'color: #000000':'color: #E53935' or calificacion.promedioUnidad > 0 ? 'color: #E53935':'color: #000000'}"
                                                                                               value="#{calificacion.escala}"/>
                                                                                 <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                                                <h:outputText style="font-weight: bold; font-size: small; #{calificacion.promedioUnidad > 8 ? 'color: #000000':'color: #E53935' or calificacion.promedioUnidad > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                <h:outputText style="font-weight: bold; font-size: small; #{calificacion.promedioUnidad >= 8 ? 'color: #000000':'color: #E53935' or calificacion.promedioUnidad > 0 ? 'color: #E53935':'color: #000000'}"
                                                                                               value="#{calificacion.promedioUnidad}">
                                                                                     <f:convertNumber pattern="#.##"/>
                                                                                 </h:outputText>
@@ -310,8 +311,5 @@
                 </p:panel>
             </c:if>
         </div>
-        <script>
-            //collapseSidebar(); activar para colapsar barra lateral
-        </script>
     </ui:define>
 </ui:composition>
