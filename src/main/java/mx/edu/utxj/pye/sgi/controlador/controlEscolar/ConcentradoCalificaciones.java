@@ -29,15 +29,12 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaReporteAsistenciaTutor;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaReporteCalificacionesTutor;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalificacionEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalificacionesTutor;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReportes;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPresentacionCalificacionesReporte;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePaseLista;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoVistaCalificaciones;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoVistaCalificacionestitulosTabla;
@@ -48,7 +45,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
@@ -80,6 +77,7 @@ public class ConcentradoCalificaciones extends ViewScopedRol implements Desarrol
     private List<UnidadMateriaConfiguracion> umcs = new ArrayList<>();
     private List<DtoCargaAcademica> academicas = new ArrayList<>();
     private List<BigDecimal> proUni = new ArrayList<>();
+    private CargaAcademica academica = new CargaAcademica();
     private List<DtoVistaCalificaciones> dvcs = new ArrayList<>();
     private Integer tasis=0;
     private UnidadMateriaConfiguracion umc = new UnidadMateriaConfiguracion();
@@ -109,7 +107,7 @@ public class ConcentradoCalificaciones extends ViewScopedRol implements Desarrol
             
             ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
-            rol.setGrupos(resgrupos.getValor());                       
+            rol.setGrupos(resgrupos.getValor());   
             rol.setGrupoSelec(rol.getGrupos().get(0));
         
             ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
@@ -211,22 +209,34 @@ public class ConcentradoCalificaciones extends ViewScopedRol implements Desarrol
                     t.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getNombre(), 
                     dvcs,
                     t.getPromedioF()));
-        });    
+        });
         rol.setTitulos(new ArrayList<>());
         rol.getTitulos().clear();
         DtoPresentacionCalificacionesReporte dpcr=rol.getDvcs().get(0);
         dpcr.getMaterias().forEach((t) -> {
             List<DtoCargaAcademica> dcas = academicas.stream().filter(c -> Objects.equals(c.getMateria().getIdMateria(), t.getMateria().getIdMateria())).collect(Collectors.toList());
-            DtoCargaAcademica dc = dcas.get(0);
-            Integer i=dc.getMateria().getUnidadMateriaList().size();
-            Boolean b=Boolean.FALSE;
-            if(dc.getCargaAcademica().getTareaIntegradora()!=null){
-                b=Boolean.TRUE;
+            if (!dcas.isEmpty()) {
+                DtoCargaAcademica dc = dcas.get(0);
+                Boolean b = Boolean.FALSE;
+                if (dc.getCargaAcademica().getTareaIntegradora() != null) {
+                    b = Boolean.TRUE;
+                }                
+                rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(dc.getDocente().getPersonal().getNombre(), dc.getMateria().getNombre(), dc.getMateria().getUnidadMateriaList().size(), b));
+                rol.setPrograma(dc.getPrograma());
+                rol.setPlanEstudio(dc.getPlanEstudio());
+            }else{
+                t.getMateria().getPlanEstudioMateriaList().forEach((pem) -> {
+                    pem.getCargaAcademicaList().forEach((ca) -> {
+                        academica=ca;
+                    });
+                });
+                Boolean b = Boolean.FALSE;
+                if (academica.getTareaIntegradora() != null) {
+                    b = Boolean.TRUE;
+                }
+                rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(buscarPersonal(academica.getDocente()), t.getMateria().getNombre(), t.getMateria().getUnidadMateriaList().size(),b));
             }
-            rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(dc.getDocente().getPersonal().getNombre(), dc.getMateria().getNombre(), i,b));
-            rol.setPrograma(dc.getPrograma());
-            rol.setPlanEstudio(dc.getPlanEstudio());
-        });                
+        });
     }
 
     public List<DtoCalificacionEstudiante.CalificacionePorUnidad> obtenerCalificaciones(Estudiante e) {
