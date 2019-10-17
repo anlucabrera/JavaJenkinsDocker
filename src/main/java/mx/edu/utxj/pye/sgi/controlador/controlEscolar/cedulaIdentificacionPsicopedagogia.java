@@ -67,7 +67,7 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
             rol.getInstrucciones().add("En el campo 'matricula', ingrese la matricula del estudiante que desea buscar.");
             rol.getInstrucciones().add("Dé clic fuera del campo, se cargarán los datos del estudiante.");
             rol.getInstrucciones().add("NOTA IMPORTANTE: La coordinación de desarollo de software sigue trabajando en algunos datos que son necesarios en la cédula de identificación, los cuales se estarán liberando en las próximos días.");
-            rol.getInstrucciones().add("NOTA IMPORNTATE: La mayoría de los datos recabados forman parte del proceso de inscrupción del estudiante y se tienen almacenadas en nuestras bases de datos, si existen campos vacios, es porque no tenemos dicha información.");
+            rol.getInstrucciones().add("NOTA IMPORNTATE: La mayoría de los datos recabados forman parte del proceso de inscripción del estudiante y se tienen almacenados en nuestras bases de datos, si existen campos vacios, es porque no tenemos dicha información.");
 
 
 

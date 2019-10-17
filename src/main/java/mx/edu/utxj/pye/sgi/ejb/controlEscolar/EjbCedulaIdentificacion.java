@@ -201,7 +201,7 @@ public class EjbCedulaIdentificacion {
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 83f, "Primera opción de Educación Superior:",""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 84f, "Otra opción de Educación Superior:",""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 85f, "Examen de admisión en otras IES:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 86f, "Primera opcion de carrera:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 86f, "Primera opción de carrera:",""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 87f, "Segunda opción de carrera:",""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 88f, "Medio de impacto para su inscripción:",""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 89f, "Razón por la que eligió la Universidad:",""));
@@ -215,7 +215,7 @@ public class EjbCedulaIdentificacion {
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 97f, "Promedio de bachillerato:",""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 98f, "Optativa del bachillerato:",""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 99f, "Estudiante de modalidad 2x3:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 100f, "Estatus (Ativo o baja):",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 100f, "Estatus (Activo o baja):",""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 101f, "Tipo de baja:",""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 102f, "Causa de baja:",""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 103f, "Reingreso:",""));

@@ -50,6 +50,7 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{reporteAsistenciasDirector.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{consultaCalificacionesEstudiante.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{cedulaIdentificacionPsicopedagogia.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{cuestionarioPsicopedagogicoEstudiante.tieneAcceso}"); if(get) return true;
         return false;
     }
 }

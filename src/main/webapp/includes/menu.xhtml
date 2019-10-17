@@ -31,6 +31,7 @@
             <c:if test="#{consultaCalificacionesEstudiante.mostrarEnDesarrollo(request) and consultaCalificacionesEstudiante.tieneAcceso}"><li>
                 <p:link href="#{request.contextPath}/controlEscolar/estudiante/consultarCalificaciones.xhtml"><i class="fa fa-list-alt"></i><span>Consultar mis calificaciones</span>
                 </p:link></li></c:if>
+            <c:if test="#{cuestionarioPsicopedagogicoEstudiante.mostrarEnDesarrollo(request) and cuestionarioPsicopedagogicoEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/cuestionarioPsicopedagogico.xhtml"><i class="fa fa-id-badge"></i><span>Cuestionario Psicopedagógico</span><span class="pull-right-container"></span></p:link></li></c:if>
         </c:if>
         <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
             <li class="header" style="color: #040404;background: #ffffff">Encuestas</li>
@@ -134,7 +135,6 @@
                 <c:if test="#{validacionBajaDirector.mostrarEnDesarrollo(request) and validacionBajaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacionBaja.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Baja</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{reporteBajasServiciosEscolares.mostrarEnDesarrollo(request) and reporteBajasServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reporteBajas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte Bajas</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{cedulaIdentificacionPsicopedagogia.mostrarEnDesarrollo(request) and cedulaIdentificacionPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-
             </c:if>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
             <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">

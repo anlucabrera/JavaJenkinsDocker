@@ -291,6 +291,44 @@
                 </div>
             </div> 
         </c:if>
+        <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE19'}">
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Evaluaciones / Cuestionarios por estudiantes:</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <c:if test="#{cuestionarioPsicopedagogicoEstudiante.tieneAcceso}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-yellow">
+                                        <div class="inner" style="cursor: pointer;" onclick="cuestionario();">
+                                            <h3>
+                                                <h:outputLabel value="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="cuestionario();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Cuestionario Psicopedagógico<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-id-badge"></i>
+                                        </div>
+                                        <p:link  outcome="controlEscolar/estudiante/cuestionarioPsicopedagogico" class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                    </div>
+                                </div>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </c:if>
 
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">              
 

@@ -37,7 +37,8 @@ public enum ControlEscolarVistaControlador {
     CONSULTA_CALIFICACION_ESTUDIANTE("/controlEscolar/estudiante/consultarCalificaciones.xhtml",  ConsultaCalificacionesEstudiante.class),
     VALIDACION_PLANEACION_CUATRIMESTRAL("/controlEscolar/docente/planeacionCuatrimestralValidacion.xhtml", PlaneacionCuatrimestralValidacion.class),
     REPORTE_ASISTENCIA_DIRECTOR("/controlEscolar/director/reporteAsistenciasDirector.xhtml",  ReporteAsistenciasDirector.class),
-    CEDULA_IDENTIFICACION("/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml",cedulaIdentificacionPsicopedagogia.class);
+    CEDULA_IDENTIFICACION("/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml",cedulaIdentificacionPsicopedagogia.class),
+    CUESTIONARIO_PSICOPEDAGOGICO("/controlEscolar/estudiante/cuestionarioPsicopedagogico.xhtml",CuestionarioPsicopedagogicoEstudiante.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
 }
