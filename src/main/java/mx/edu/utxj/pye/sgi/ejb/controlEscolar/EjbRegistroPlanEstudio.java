@@ -158,6 +158,23 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "No fue posible obtener el listado de programas educativos. (EjbRegistroPlanEstudio)", e, null);
         }
     }
+    
+    public ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> getProgramasEducativostotal() {
+        try {
+            Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
+
+            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
+                    .setParameter("categoria", programaEducativoCategoria)
+                    .getResultList();
+
+            Map<AreasUniversidad, List<PlanEstudio>> programasPlanMap = programas.stream()
+                    .collect(Collectors.toMap(programa -> programa, programa -> generarPlanesEstudio(programa)));
+
+            return ResultadoEJB.crearCorrecto(programasPlanMap, "Listado de Programas Educativos");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No fue posible obtener el listado de programas educativos. (EjbRegistroPlanEstudio)", e, null);
+        }
+    }
 
     /**
      * Permite listar las materias registradas

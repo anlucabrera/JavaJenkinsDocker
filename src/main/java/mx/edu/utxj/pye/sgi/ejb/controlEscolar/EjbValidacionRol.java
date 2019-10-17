@@ -28,7 +28,7 @@ public class EjbValidacionRol {
             filtro.addParam(PersonalFiltro.ACTIIVIDAD.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalDocenteActividad").orElse(3)));
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como un docente.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El docente no se pudo validar. (EjbCapturaCalificaciones.validarDocente)", e, null);
+            return ResultadoEJB.crearErroneo(1, "El docente no se pudo validar. (EjbValidacionRol.validarDocente)", e, null);
         }
     }
 
@@ -46,10 +46,29 @@ public class EjbValidacionRol {
             filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorCategoriaOperativa").orElse(18)));
             return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un director.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbAsignacionAcademica.validarDirector)", e, null);
+            return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbValidacionRol.validarDirector)", e, null);
         }
     }
 
+    /**
+     * Permite crear el filtro para validar si el usuario autenticado es un director de área académica
+     * @param clave Número de nómina del usuario autenticado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarSecretariaAcademica(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("secretarioAcademicoAreaOperativa").orElse(2)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("secretarioAcademicoCategoriaOperativa").orElse(18)));
+            return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como Secretario/a Academico/a.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbValidacionRol.validarSecretariaAcademica)", e, null);
+        }
+    }
+    
+    
     /**
      * Permite crear el filtro para validar si el usuario autenticado es un encarcado de dirección de área académica
      * @param clave Número de nómina del usuario autenticado
@@ -64,7 +83,7 @@ public class EjbValidacionRol {
             filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorEncargadoCategoriaOperativa").orElse(48)));
             return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un encargado de dirección.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbAsignacionAcademica.validarDirector)", e, null);
+            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbValidacionRol.validarDirector)", e, null);
         }
     }
 
@@ -77,7 +96,7 @@ public class EjbValidacionRol {
 
             return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un encargado de dirección.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbAsignacionAcademica.validarDirector)", e, null);
+            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbValidacionRol.validarDirector)", e, null);
         }
     }
 

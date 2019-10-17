@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,7 +30,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaReporteCalificacionesTutor;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaReporteCalificacionesSecAca;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalificacionEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalificacionesTutor;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
@@ -48,13 +49,16 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
 /**
@@ -64,8 +68,8 @@ import org.omnifaces.util.Messages;
 
 @Named
 @ViewScoped
-public class ConcentradoCalificaciones extends ViewScopedRol implements Desarrollable{
-    @Getter @Setter ConsultaReporteCalificacionesTutor rol;
+public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements Desarrollable{
+    @Getter @Setter ConsultaReporteCalificacionesSecAca rol;
     
     @EJB EjbPropiedades ep;
     @EJB EjbValidacionRol evr;
@@ -88,12 +92,12 @@ public class ConcentradoCalificaciones extends ViewScopedRol implements Desarrol
     @PostConstruct
     public void init(){
         try {
-            setVistaControlador(ControlEscolarVistaControlador.CONCENTRADO_CALIFICACIONES_TUTOR);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = evr.validarTutor(logon.getPersonal().getClave());//validar si es director
+            setVistaControlador(ControlEscolarVistaControlador.CONCENTRADO_CALIFICACIONES_SECACA);
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = evr.validarSecretariaAcademica(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
-            rol = new ConsultaReporteCalificacionesTutor(resAcceso.getValor());
-            tieneAcceso = rol.tieneAcceso(rol.getTutor());
+            rol = new ConsultaReporteCalificacionesSecAca(resAcceso.getValor());
+            tieneAcceso = rol.tieneAcceso(rol.getSecAca());
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
            
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -104,16 +108,22 @@ public class ConcentradoCalificaciones extends ViewScopedRol implements Desarrol
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
             rol.setPeriodo(ea.getPeriodoActual());
-            
-            ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
-            if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
-            rol.setGrupos(resgrupos.getValor());   
-            rol.setGrupoSelec(rol.getGrupos().get(0));
-        
-            ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
-            if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
-            rol.setListaalumnoscas(rejb.getValor());  
-            
+                        
+                ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = ejb.getProgramasEducativostotal();
+                if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
+                rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());           
+
+                rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
+
+                ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
+                if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
+                rol.setGrupos(resgrupos.getValor()); 
+
+                rol.setGrupoSelec(rol.getGrupos().get(0));
+
+                ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
+                if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+                rol.setListaalumnoscas(rejb.getValor());  
             creareporte();
             rol.setFechaInpresion(new Date());
         } catch (Exception e) {
@@ -123,7 +133,7 @@ public class ConcentradoCalificaciones extends ViewScopedRol implements Desarrol
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
-        String valor = "concentrado calificaciones tutor";
+        String valor = "concentrado calificaciones secAca";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
@@ -143,21 +153,36 @@ public class ConcentradoCalificaciones extends ViewScopedRol implements Desarrol
             return "";
         }
     }
+    public void cambiarPlanestudio(ValueChangeEvent event) {
+        rol.setGrupos(new ArrayList<>());
+        rol.setListaalumnoscas(new ArrayList<>()); 
+        rol.setGrupoSelec(new Grupo());
+        rol.setTitulos(new ArrayList<>());
+        rol.setDvcs(new ArrayList<>());
+        rol.setPlanEstudio((PlanEstudio) event.getNewValue());
+        ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
+        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
+        rol.setGrupos(resgrupos.getValor());          
+//        rol.setGrupoSelec(rol.getGrupos().get(0));
+//        creareporte();     
+    }
     
     public void consultarAlumnos(ValueChangeEvent event) {
         rol.setListaalumnoscas(new ArrayList<>());
+        rol.setTitulos(new ArrayList<>());
+        rol.setDvcs(new ArrayList<>());
         rol.setGrupoSelec((Grupo) event.getNewValue());
         ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
         if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
         rol.setListaalumnoscas(rejb.getValor());  
-        creareporte();
+        creareporte();    
     }
     
     public void creareporte() {
         rol.setDrpls(new ArrayList<>());
         rol.setDplrs(new ArrayList<>());
         rol.setEstudiantes(new ArrayList<>());
-        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getTutor().getPersonal().getClave(), rol.getPeriodo());
+        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());
         academicas = new ArrayList<>();
         academicas = rejb.getValor().stream().filter(a -> Objects.equals(a.getGrupo().getIdGrupo(), rol.getGrupoSelec().getIdGrupo())).collect(Collectors.toList());
         DtoCargaAcademica dca = academicas.get(0);
@@ -199,9 +224,21 @@ public class ConcentradoCalificaciones extends ViewScopedRol implements Desarrol
                 DtoCalificacionEstudiante.TareaIntegradoraPresentacion tip=tips.get(0);
                 DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria cnpm=cnpms.get(0);
                 
-                cpus.forEach((p) -> {
-                    proUni.add(p.getPromedioUnidad());
-                });
+                if (cpus.size() == cm.getMateria().getUnidadMateriaList().size()) {
+                    cpus.forEach((p) -> {
+                        proUni.add(p.getPromedioUnidad());
+                    });                    
+                } else {
+                    cm.getMateria().getUnidadMateriaList().forEach((p) -> {
+                        List<DtoCalificacionEstudiante.CalificacionePorUnidad> l = cpus.stream().filter(u -> Objects.equals(u.getUnidadMateria().getIdUnidadMateria(), p.getIdUnidadMateria())).collect(Collectors.toList());
+                        if (l.isEmpty()) {
+                            proUni.add(BigDecimal.ZERO);
+                        } else {
+                            DtoCalificacionEstudiante.CalificacionePorUnidad cpu=l.get(0);
+                            proUni.add(cpu.getPromedioUnidad());
+                        }
+                    });
+                }
                 dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni,tip.getPromedio(),cnpm.getPromedio(), cm.getPromedio()));
             });   
             rol.getDvcs().add(new DtoPresentacionCalificacionesReporte(
@@ -236,7 +273,7 @@ public class ConcentradoCalificaciones extends ViewScopedRol implements Desarrol
                 }
                 rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(buscarPersonal(academica.getDocente()), t.getMateria().getNombre(), t.getMateria().getUnidadMateriaList().size(),b));
             }
-        });
+        });           
     }
 
     public List<DtoCalificacionEstudiante.CalificacionePorUnidad> obtenerCalificaciones(Estudiante e) {

@@ -19,8 +19,8 @@ public class UtilidadesCorreosElectronicos implements Serializable {
 
     public void enviarConfirmacionCorreoElectronico(String correoDestino, String titulo, String asunto, String mensaje, Integer tipo) {
         // El correo gmail de envío
-        String correoEnvia = "zabdiel.perez@utxicotepec.edu.mx";//correo del arrea de desarrollo
-        String claveCorreo = "fp6inrls3";//contraseña del correo del arrea de desarrollo
+        String correoEnvia = "sistemas@utxicotepec.edu.mx";//correo del arrea de desarrollo
+        String claveCorreo = "piccoto2018";//contraseña del correo del arrea de desarrollo
         Properties properties = new Properties();
 
         properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -44,8 +44,8 @@ public class UtilidadesCorreosElectronicos implements Serializable {
                     case 2:
                         InternetAddress[] internetAddresses = {
                             new InternetAddress(correoDestino),//correo del área en proceso de POA
-                            new InternetAddress("zabimg@gmail.com"),//correo del recuros financieros
-                            new InternetAddress("marcelino.lopez@utxicotepec.edu.mx")};//correo de planeacion
+                            new InternetAddress("recursos.financieros@utxicotepec.edu.mx"),//correo del recuros financieros
+                            new InternetAddress("planeacion.evaluacion@utxicotepec.edu.mx")};//correo de planeacion
                         // Agregar los destinatarios al mensaje
                         mimeMessage.setRecipients(Message.RecipientType.TO, internetAddresses);
                         break;

@@ -337,10 +337,10 @@ public class UtilidadesPOA implements Serializable {
 
         correosElectronicos.enviarConfirmacionCorreoElectronico(areaDestino.getCorreoInstitucional(), titulo, asunto, mensajeArea, tipoDcorreo);
         if (refi) {
-            correosElectronicos.enviarConfirmacionCorreoElectronico("zabdi_end@hotmail.com", titulo, asunto, mensajeRefi, tipoDcorreo);
+            correosElectronicos.enviarConfirmacionCorreoElectronico("recursos.financieros@utxicotepec.edu.mx", titulo, asunto, mensajeRefi, tipoDcorreo);
         }
         if (pye) {
-            correosElectronicos.enviarConfirmacionCorreoElectronico("zabimg@gmail.com", titulo, asunto, mensajePye, tipoDcorreo);
+            correosElectronicos.enviarConfirmacionCorreoElectronico("planeacion.evaluacion@utxicotepec.edu.mx", titulo, asunto, mensajePye, tipoDcorreo);
         }
         actualizarProcesopoa();
         recargarPag();
