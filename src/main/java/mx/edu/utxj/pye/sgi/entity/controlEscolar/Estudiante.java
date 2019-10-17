@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "estudiante", catalog = "control_escolar", schema = "")
@@ -99,6 +99,8 @@ public class Estudiante implements Serializable {
     @JoinColumn(name = "grupo", referencedColumnName = "id_grupo")
     @ManyToOne(optional = false)
     private Grupo grupo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<CuestionarioPsicopedagogicoResultados> cuestionarioPsicopedagogicoResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<DocumentoEstudiante> documentoEstudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
@@ -268,6 +270,15 @@ public class Estudiante implements Serializable {
 
     public void setGrupo(Grupo grupo) {
         this.grupo = grupo;
+    }
+
+    @XmlTransient
+    public List<CuestionarioPsicopedagogicoResultados> getCuestionarioPsicopedagogicoResultadosList() {
+        return cuestionarioPsicopedagogicoResultadosList;
+    }
+
+    public void setCuestionarioPsicopedagogicoResultadosList(List<CuestionarioPsicopedagogicoResultados> cuestionarioPsicopedagogicoResultadosList) {
+        this.cuestionarioPsicopedagogicoResultadosList = cuestionarioPsicopedagogicoResultadosList;
     }
 
     @XmlTransient

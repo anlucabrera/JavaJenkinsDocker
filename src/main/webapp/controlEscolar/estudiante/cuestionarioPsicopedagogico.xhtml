@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Cuestionario Psicopedagógico
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+    <ui:define name="description">
+        
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Cuestionario Psicopedagógico"/>
+            <div class="contenedor">
+                <c:if test="#{cuestionarioPsicopedagogicoEstudiante.tieneAcceso}">
+                    <h:form id="frm" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb" style="size: 250px">
+                                        <f:facet  name="right">
+                                            <p:commandLink
+                                                    class="btn btn-info"
+                                                    rendered="#{true}"
+                                                    disabled="#{false}"
+                                                    onclick="PF('modalAyuda').show();"
+                                                    title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                    class="fa fa-question"/>
+                                            </p:commandLink>
+                                            <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}">
+                                                <h4><span class="label label-success"><i class="fa fa-check" />Finalizado.</span></h4>
+                                            </c:if>
+                                            <c:if test="#{!cuestionarioPsicopedagogicoEstudiante.rol.finalizado}">
+                                                <h4><span class="label label-danger"><i class="fa fa-close" />Pendiente</span></h4>
+                                            </c:if>
+                                        </f:facet>
+
+                                    </p:toolbar>
+                                    <p:sticky target="tb" />
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                    <h:form id="frmCuestionario" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                </div>
+                                <p:separator/>
+                                <div class="box box-solid">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title">
+                                            <c:if test="#{!cuestionarioPsicopedagogicoEstudiante.rol.cargada}">
+                                                El cuestionario no se encuentra activo
+                                            </c:if>
+                                            <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.cargada}">
+                                                <div class="col-md-12">
+                                                    <p>
+                                                        <b>Estimada(o) estudiante:</b> de nuevo ingreso, con el objetivo de reunir la información necesaria para poder proporcionarte orientación
+                                                        psicopedagógica, en caso de ser necesario, se solicita nos apoyes en responder el siguiente cuestionario, bajo los criterios de confidencialidad y profesionalismo.
+                                                    </p>
+                                                </div>
+                                            </c:if>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.cargada}">
+                                    <div jsf:id="filaHeader" class="row hidden-sm hidden-md hidden-sm hidden-xs" style="background-color: white;margin: auto">
+                                        <div class="col-lg-4 col-md-6 col-lg-offset-2 text-center text-info" style="height: 230px; vertical-align: middle;">
+                                            <p:outputPanel >
+                                                <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}">
+                                                    <div>
+                                                        <h2 style="background-color: aliceblue;">Cuestionario terminado</h2>
+                                                        <p:graphicImage library="img" name="ok_azul.png" height="150" />
+                                                    </div>
+                                                </c:if>
+                                            </p:outputPanel>
+                                        </div>
+                                        <div class="col-lg-4 text-center" style="padding-left: 2px; padding-right: 2px; background-color: aliceblue;">
+                                            <c:set var="nombreEstudiante" value="#{cuestionarioPsicopedagogicoEstudiante.rol.estudiante.matricula}" />
+                                            <p:outputPanel >
+                                                <h4 class="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado?'text-info':'text-warn'} " style="margin: 0px;">#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado?'Finalizado':'Pendiente'}</h4>
+                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{cuestionarioPsicopedagogicoEstudiante.rol.estudiante.matricula}.jpg" width="150"
+                                                     alt="#{matricula}" title="Estudiante #{matricula}"
+                                                     style="border-color: black; border-style: solid; border-width: 2px;" />
+                                            </p:outputPanel>
+                                            <p:outputLabel value="#{cuestionarioPsicopedagogicoEstudiante.rol.estudiante.aspirante.idPersona.nombre}
+                                                       #{cuestionarioPsicopedagogicoEstudiante.rol.estudiante.aspirante.idPersona.apellidoPaterno}
+                                                       #{cuestionarioPsicopedagogicoEstudiante.rol.estudiante.aspirante.idPersona.apellidoMaterno}" />
+                                            <br/>
+                                            <p:outputLabel value="#{evaluacionEstadia.asesor.nombrePE}" />
+                                        </div>
+                                    </div>
+                                    <c:set var="index" value="#{0}" />
+                                        <div class="row">
+                                            <div class="panel panel-primary" style="max-width: 1200px;margin: auto; font-size: large;">
+                                                <div class="panel-heading aceptado">
+                                                    <h3 class="panel-title" style="text-align: justify;">
+                                                        #{apartado.contenido}
+                                                    </h3>
+                                                </div>
+                                                <table class="table table-striped table-responsive">
+                                                    <thead>
+                                                    <tr class="denegado">
+                                                        <th>#</th>
+                                                        <th>Pregunta</th>
+                                                        <th style="text-align: center; width: 200px;">Respuesta</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <!-- 1 -->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                            <td class="text-center" style="min-width: 500px;">
+                                                                <f:ajax execute="r#{1}">
+                                                                    <p:selectOneButton  id="r#{1}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r1}"
+                                                                                        valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                        <p:ajax process="@this" update="@form, :frm"/>
+                                                                        <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                                <c:set var="index" value="#{index+1}" />
+                                                            </td>
+                                                        </tr>
+                                                    <!-- 2 -->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta.titulo} <strong style="color : red; font-size: small">(25 caracteres mínimo)</strong></td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax execute="r#{2}">
+                                                                    <p:inputTextarea  id="r#{2}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r2}"
+                                                                                        valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}"
+                                                                    style="margin-top: 0">
+                                                                        <p:ajax process="@this" update="@form, :frm"/>
+                                                                    </p:inputTextarea>
+                                                                </f:ajax>
+                                                                <c:set var="index" value="#{index+1}" />
+                                                            </td>
+                                                        </tr>
+                                                    <!-- 3 -->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo} <strong style="color : red; font-size: small">(25 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{3}">
+                                                                <p:inputTextarea  id="r#{3}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r3}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!-- 4 -->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(25 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{4}">
+                                                                <p:inputTextarea  id="r#{4}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r4}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--5-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(15 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{5}">
+                                                                <p:inputTextarea  id="r#{5}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r5}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--6-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(25 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{6}">
+                                                                <p:inputTextarea  id="r#{6}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r6}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--7-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(15 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{7}">
+                                                                <p:inputTextarea  id="r#{7}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r7}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--8-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{8}">
+                                                                <p:selectOneButton  id="r#{8}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r8}"
+                                                                                    valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:selectOneButton>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--9-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{9}">
+                                                                <p:selectOneButton  id="r#{9}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r9}"
+                                                                                    valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:selectOneButton>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--10-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(20 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{10}">
+                                                                <p:inputTextarea  id="r#{10}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r10}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--11-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(20 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{11}">
+                                                                <p:inputTextarea  id="r#{11}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r11}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--12-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(20 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{12}">
+                                                                <p:inputTextarea  id="r#{12}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r12}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--13-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(20 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{13}">
+                                                                <p:inputTextarea  id="r#{13}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r13}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--14-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(20 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{14}">
+                                                                <p:inputTextarea  id="r#{14}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r14}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--15-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(20 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{15}">
+                                                                <p:inputTextarea  id="r#{15}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r15}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--16-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{16}">
+                                                                <p:selectOneButton  id="r#{16}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r16}"
+                                                                                    valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.estadoCivilPadres}" />
+                                                                </p:selectOneButton>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--17-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r16.equals('Finados') and not empty cuestionarioPsicopedagogicoEstudiante.rol.resultados.r16}">
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax execute="r#{17}">
+                                                                    <p:selectOneButton  id="r#{17}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r17}"
+                                                                                        valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                        <p:ajax process="@this" update="@form, :frm"/>
+                                                                        <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.famFinado}" />
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                                <c:set var="index" value="#{17}" />
+                                                            </td>
+                                                        </tr>
+
+                                                    </c:if>
+                                                    <c:set var="index" value="#{17}" />
+                                                    <!--18-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(20 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{18}">
+                                                                <p:inputTextarea  id="r#{18}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r18}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--19-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{19}">
+                                                                <p:selectOneButton  id="r#{19}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r19}"
+                                                                                    valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:selectOneButton>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+
+                                                    <!--20-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r19.equals('Si') and not empty cuestionarioPsicopedagogicoEstudiante.rol.resultados.r19}">
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax execute="r#{20}">
+                                                                    <p:selectOneButton  id="r#{20}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r20}"
+                                                                                        valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                        <p:ajax process="@this" update="@form, :frm"/>
+                                                                        <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tipoProblemaFam}" />
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                                <c:set var="index" value="#{index+1}" />
+                                                            </td>
+                                                        </tr>
+                                                        <!--21-->
+                                                        <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax execute="r#{21}">
+                                                                    <p:selectOneButton  id="r#{21}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r21}"
+                                                                                        valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                        <p:ajax process="@this" update="@form, :frm"/>
+                                                                        <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                                <c:set var="index" value="#{index+1}" />
+                                                            </td>
+                                                        </tr>
+                                                    </c:if>
+                                                    <c:set var="index" value="#{21}" />
+
+                                                    <!--22-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(10 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{22}">
+                                                                <p:inputTextarea  id="r#{22}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r22}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <!--23-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{23}">
+                                                                <p:selectOneButton  id="r#{23}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r23}"
+                                                                                    valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:selectOneButton>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[index]}" />
+                                                    <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r23.equals('Si') and not empty cuestionarioPsicopedagogicoEstudiante.rol.resultados.r23}">
+                                                        <!--24-->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(10 caracteres mínimo)</strong></td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax execute="r#{24}">
+                                                                    <p:inputTextarea  id="r#{24}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r24}"
+                                                                                      valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                        <p:ajax process="@this" update="@form, :frm"/>
+                                                                        <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                    </p:inputTextarea>
+                                                                </f:ajax>
+                                                                <c:set var="index" value="#{index+1}" />
+                                                            </td>
+                                                        </tr>
+                                                    </c:if>
+                                                    <!--25-->
+                                                    <c:set var="pregunta" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[0].preguntas[24]}" />
+                                                    <tr>
+                                                        <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                        <td class="text-center" style="min-width: 120px;">
+                                                            <f:ajax execute="r#{25}">
+                                                                <p:selectOneButton  id="r#{25}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r25}"
+                                                                                    valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:selectOneButton>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </div>
+
+                                    <!--APARTADO DE TECNICAS DE ESTUDIO-->
+                                    <c:set var="index" value="#{26}" />
+                                    <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r25.equals('Si') and not empty cuestionarioPsicopedagogicoEstudiante.rol.resultados.r25}">
+                                        <div class="row">
+                                            <div class="panel panel-primary" style="max-width: 1200px;margin: auto; font-size: large;">
+                                                <div class="panel-heading aceptado">
+                                                    <h3 class="panel-title" style="text-align: justify;">
+                                                        #{cuestionarioPsicopedagogicoEstudiante.rol.apartados[1].contenido}
+                                                    </h3>
+                                                </div>
+                                                <table class="table table-striped table-responsive">
+                                                    <tbody>
+                                                    <c:set var="apartado" value="#{cuestionarioPsicopedagogicoEstudiante.rol.apartados[1]}" />
+                                                    <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                            <td class="text-center" style="min-width: 200px;">
+                                                                <f:ajax execute="r#{index}">
+                                                                    <c:set var="pos" value="#{'r'.concat(index)}" />
+                                                                    <p:selectOneButton  id="p#{index}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados[pos]}"
+                                                                                        valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                        <p:ajax process="@this" update="@form, :frm"/>
+                                                                        <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                                <c:set var="index" value="#{index+1}" />
+                                                            </td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </c:if>
+
+
+
+                                    <div class="row">
+                                        <div class="panel panel-primary" style="max-width: 1200px;margin: auto; font-size: large;">
+                                            <div class="panel-heading aceptado">
+                                                <h3 class="panel-title" style="text-align: justify;">
+
+                                                </h3>
+                                            </div>
+                                            <table class="table table-striped table-responsive">
+                                                <tbody>
+                                                <!--43-->
+                                                    <tr>
+                                                        <td><h:outputLabel value="43"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">¿Cuentas en casa con algunos libros que apoyan tus estudios?</td>
+                                                        <td class="text-center" style="min-width: 200px;">
+                                                            <f:ajax execute="r#{43}">
+                                                                <p:selectOneButton  id="r#{43}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r43}"
+                                                                                    valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:selectOneButton>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r43.equals('Si') and not empty cuestionarioPsicopedagogicoEstudiante.rol.resultados.r43}">
+                                                    <!--44-->
+                                                    <tr>
+                                                        <td><h:outputLabel value="44"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                        <td style="text-align: justify;">¿Cuáles?<strong style="color : red; font-size: small">(10 caracteres mínimo)</strong></td>
+                                                        <td class="text-center" style="min-width: 200px;">
+                                                            <f:ajax execute="r#{44}">
+                                                                <p:inputTextarea  id="r#{44}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r44}"
+                                                                                  valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax process="@this" update="@form, :frm"/>
+                                                                    <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                </p:inputTextarea>
+                                                            </f:ajax>
+                                                            <c:set var="index" value="#{index+1}" />
+                                                        </td>
+                                                    </tr>
+                                                </c:if>
+
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+
+                                    </div>
+
+
+                                </c:if>
+                            </div>
+                        </div>
+                    </h:form>
+        
+        </c:if>
+        <c:if test="#{cuestionarioPsicopedagogicoEstudiante.tieneAcceso}">
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para Cuestionario Psicopedagógico</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{cuestionarioPsicopedagogicoEstudiante.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+       </c:if>
+        <c:if test="#{!cuestionarioPsicopedagogicoEstudiante.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a estudiantes de nuevo ingreso."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+        </c:if>
+            
+        </div>
+        
+        
+        
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>

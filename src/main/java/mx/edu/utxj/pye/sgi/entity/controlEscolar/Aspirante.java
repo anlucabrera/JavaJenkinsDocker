@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "aspirante", catalog = "control_escolar", schema = "")
@@ -76,7 +76,7 @@ public class Aspirante implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private Domicilio domicilio;
     @JoinColumn(name = "id_persona", referencedColumnName = "idpersona")
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private Persona idPersona;
     @JoinColumn(name = "id_proceso_inscripcion", referencedColumnName = "id_procesos_inscripcion")
     @ManyToOne(optional = false)

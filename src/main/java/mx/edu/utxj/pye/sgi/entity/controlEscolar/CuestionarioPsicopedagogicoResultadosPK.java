@@ -16,31 +16,31 @@ import javax.validation.constraints.NotNull;
  * @author UTXJ
  */
 @Embeddable
-public class UnidadMateriaComentarioPK implements Serializable {
+public class CuestionarioPsicopedagogicoResultadosPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Column(name = "configuracion")
-    private int configuracion;
+    @Column(name = "evaluacion")
+    private int evaluacion;
     @Basic(optional = false)
     @NotNull
     @Column(name = "id_estudiante")
     private int idEstudiante;
 
-    public UnidadMateriaComentarioPK() {
+    public CuestionarioPsicopedagogicoResultadosPK() {
     }
 
-    public UnidadMateriaComentarioPK(int configuracion, int idEstudiante) {
-        this.configuracion = configuracion;
+    public CuestionarioPsicopedagogicoResultadosPK(int evaluacion, int idEstudiante) {
+        this.evaluacion = evaluacion;
         this.idEstudiante = idEstudiante;
     }
 
-    public int getConfiguracion() {
-        return configuracion;
+    public int getEvaluacion() {
+        return evaluacion;
     }
 
-    public void setConfiguracion(int configuracion) {
-        this.configuracion = configuracion;
+    public void setEvaluacion(int evaluacion) {
+        this.evaluacion = evaluacion;
     }
 
     public int getIdEstudiante() {
@@ -54,7 +54,7 @@ public class UnidadMateriaComentarioPK implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (int) configuracion;
+        hash += (int) evaluacion;
         hash += (int) idEstudiante;
         return hash;
     }
@@ -62,11 +62,11 @@ public class UnidadMateriaComentarioPK implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UnidadMateriaComentarioPK)) {
+        if (!(object instanceof CuestionarioPsicopedagogicoResultadosPK)) {
             return false;
         }
-        UnidadMateriaComentarioPK other = (UnidadMateriaComentarioPK) object;
-        if (this.configuracion != other.configuracion) {
+        CuestionarioPsicopedagogicoResultadosPK other = (CuestionarioPsicopedagogicoResultadosPK) object;
+        if (this.evaluacion != other.evaluacion) {
             return false;
         }
         if (this.idEstudiante != other.idEstudiante) {
@@ -77,7 +77,7 @@ public class UnidadMateriaComentarioPK implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaComentarioPK[ configuracion=" + configuracion + ", idEstudiante=" + idEstudiante + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CuestionarioPsicopedagogicoResultadosPK[ evaluacion=" + evaluacion + ", idEstudiante=" + idEstudiante + " ]";
     }
     
 }

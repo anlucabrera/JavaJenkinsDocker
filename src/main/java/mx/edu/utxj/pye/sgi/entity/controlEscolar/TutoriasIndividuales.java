@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "tutorias_individuales", catalog = "control_escolar", schema = "")
@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "TutoriasIndividuales.findByFechaHora", query = "SELECT t FROM TutoriasIndividuales t WHERE t.fechaHora = :fechaHora")
     , @NamedQuery(name = "TutoriasIndividuales.findByMotivo", query = "SELECT t FROM TutoriasIndividuales t WHERE t.motivo = :motivo")
     , @NamedQuery(name = "TutoriasIndividuales.findByAccionesObservaciones", query = "SELECT t FROM TutoriasIndividuales t WHERE t.accionesObservaciones = :accionesObservaciones")
-    , @NamedQuery(name = "TutoriasIndividuales.findByTiempoSesion", query = "SELECT t FROM TutoriasIndividuales t WHERE t.tiempoSesion = :tiempoSesion")})
+    , @NamedQuery(name = "TutoriasIndividuales.findByTiempoSesion", query = "SELECT t FROM TutoriasIndividuales t WHERE t.tiempoSesion = :tiempoSesion")
+    , @NamedQuery(name = "TutoriasIndividuales.findByEventoRegistro", query = "SELECT t FROM TutoriasIndividuales t WHERE t.eventoRegistro = :eventoRegistro")})
 public class TutoriasIndividuales implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,6 +66,10 @@ public class TutoriasIndividuales implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "tiempo_sesion")
     private String tiempoSesion;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "evento_registro")
+    private int eventoRegistro;
     @JoinColumn(name = "caso_critico", referencedColumnName = "caso")
     @ManyToOne
     private CasoCritico casoCritico;
@@ -79,12 +84,13 @@ public class TutoriasIndividuales implements Serializable {
         this.tutoriaIndividual = tutoriaIndividual;
     }
 
-    public TutoriasIndividuales(String tutoriaIndividual, Date fechaHora, String motivo, String accionesObservaciones, String tiempoSesion) {
+    public TutoriasIndividuales(String tutoriaIndividual, Date fechaHora, String motivo, String accionesObservaciones, String tiempoSesion, int eventoRegistro) {
         this.tutoriaIndividual = tutoriaIndividual;
         this.fechaHora = fechaHora;
         this.motivo = motivo;
         this.accionesObservaciones = accionesObservaciones;
         this.tiempoSesion = tiempoSesion;
+        this.eventoRegistro = eventoRegistro;
     }
 
     public String getTutoriaIndividual() {
@@ -125,6 +131,14 @@ public class TutoriasIndividuales implements Serializable {
 
     public void setTiempoSesion(String tiempoSesion) {
         this.tiempoSesion = tiempoSesion;
+    }
+
+    public int getEventoRegistro() {
+        return eventoRegistro;
+    }
+
+    public void setEventoRegistro(int eventoRegistro) {
+        this.eventoRegistro = eventoRegistro;
     }
 
     public CasoCritico getCasoCritico() {
