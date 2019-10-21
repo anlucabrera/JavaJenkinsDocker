@@ -1,12 +1,9 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
-import com.github.adminfaces.starter.infra.model.Filter;
-import com.sun.org.apache.regexp.internal.RE;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.EstudianteDto;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CuestionarioPsicopedagogicoResultados;
@@ -15,20 +12,15 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
-import mx.edu.utxj.pye.sgi.funcional.Comparador;
-import mx.edu.utxj.pye.sgi.funcional.ComparadorCuestionarioPsicopedagogicoEstudiante;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
-import javax.security.enterprise.identitystore.LdapIdentityStoreDefinition;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Stateless (name = "EjbCuestionarioPsicopedagogico")
 public class EjbCuestionarioPsicopedagogico {

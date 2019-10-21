@@ -55,7 +55,11 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{fusionGruposDirector.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{fusionGruposServiciosEscolares.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{concentradoCalificacionesSecAca.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{concentradoCalificacionesDirector.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{cuestionarioPsicopedagogicoEstudiante.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{avanceProgramaticoDirector.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{avanceProgramaticoDocente.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{avanceProgramaticoSecAca.tieneAcceso}"); if(get) return true;
         return false;
     }
 }

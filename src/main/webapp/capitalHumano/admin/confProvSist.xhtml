@@ -136,10 +136,10 @@
                                                     <p:column>
                                                         <p:cellEditor>
                                                             <f:facet name="output">
-                                                                <h:outputText value="#{cp.valorFecha}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss"/></h:outputText>
+                                                                <h:outputText value="#{cp.valorFecha}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText>
                                                             </f:facet>
                                                             <f:facet name="input">
-                                                                <p:calendar locale="es" value="#{cp.valorFecha}" pattern="dd-MM-yyyy HH:mm:ss" mask="true" />
+                                                                <p:calendar locale="es" value="#{cp.valorFecha}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/> mask="true" />
                                                             </f:facet>
                                                         </p:cellEditor>
                                                     </p:column>  

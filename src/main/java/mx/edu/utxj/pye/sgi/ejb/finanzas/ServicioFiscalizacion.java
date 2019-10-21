@@ -458,7 +458,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, AreasUniversidad areaPOA) {
         try {
             return em
-                    .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area = :area AND la.lineaAccion=:lineaAccion ORDER BY ac.denominacion", ActividadesPoa.class)
+                    .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area = :area AND la.lineaAccion=:lineaAccion AND cmi.ejercicioFiscal.anio=2019  ORDER BY ac.denominacion", ActividadesPoa.class)
                     .setParameter("area", areaPOA.getArea())
                     .setParameter("lineaAccion", lineaaccion.getLineaAccion())
                     .getResultList()
