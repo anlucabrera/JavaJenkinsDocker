@@ -65,13 +65,13 @@ public class EvaluacionTutor2 extends ViewScopedRol{
     public void init(){
         //Busca la Evaluación activa
         evaluacion = ejbEvaluacionTutor2.evaluacionActiva();
-        System.out.println("evaluacion = " + evaluacion);
+       // System.out.println("evaluacion = " + evaluacion);
         getTutor();
-        System.out.println("EJECUTO TUTOR");
+        //System.out.println("EJECUTO TUTOR");
 
         if(evaluacion != null){
             //TODO:Busca estudiantes en bases de SAUIIT Y Control Escolar
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2.init()-->Entro al initi evaluacion no nula -- Periodo de la evaluacion" + evaluacion.getPeriodo());
+            //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2.init()-->Entro al initi evaluacion no nula -- Periodo de la evaluacion" + evaluacion.getPeriodo());
             ResultadoEJB<EstudiantesClaves> resEstudiante = ejbEstudianteBase.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
             if(resEstudiante.getCorrecto()==true){
                 //TODO: El estudiante se encuentra en alguna de las dos bases (Sauiit o Control escolar)
@@ -81,12 +81,12 @@ public class EvaluacionTutor2 extends ViewScopedRol{
                 if(resResultados.getCorrecto()){
                     mostrarMensajeResultadoEJB(resResultados);
                     resultados= resResultados.getValor();
-                    System.out.println("resultados = " + resultados);
+                    //System.out.println("resultados = " + resultados);
                     apartados = ejbEvaluacionTutor2.getApartados();
 
-                    System.out.println("apartados = " + apartados);
+                    //System.out.println("apartados = " + apartados);
                     respuestasPosibles = ejbEvaluacionTutor2.getRespuestasPosibles();
-                    System.out.println("respuestasPosibles = " + respuestasPosibles);
+                    //System.out.println("respuestasPosibles = " + respuestasPosibles);
                     //TODO: Se activa la evaluacion
                     cargada = true;
                     comprobar();

@@ -92,14 +92,14 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
     public EvaluacionEstudioEgresadosResultados getResultados(Evaluaciones evaluacion, Integer evaluador) {
         try {
             EvaluacionEstudioEgresadosResultadosPK pk = new EvaluacionEstudioEgresadosResultadosPK(evaluacion.getEvaluacion(), evaluador);
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultados() EJB llave primaria : " + pk);
+           // System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultados() EJB llave primaria : " + pk);
             f.setEntityClass(EvaluacionEstudioEgresadosResultados.class);
             EvaluacionEstudioEgresadosResultados r = (EvaluacionEstudioEgresadosResultados) f.find(pk);
             if (r == null) {
                 r = new EvaluacionEstudioEgresadosResultados(pk);
                 em.persist(r);
             }
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultados() EJB resultados : =  " + r);
+           // System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultados() EJB resultados : =  " + r);
             return r;
         } catch (NullPointerException ne) {
             return null;
@@ -537,7 +537,7 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
 
     @Override
     public List<EvaluacionEstudioEgresadosResultados> getResultadosPorGeneracionING(String generacion) {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultadosPorGeneracionTSU() la generacion que entra ; " + generacion);
+        //System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultadosPorGeneracionTSU() la generacion que entra ; " + generacion);
         List<EvaluacionEstudioEgresadosResultados> e = new ArrayList<>();
          e = em.createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r3 = :generacion", EvaluacionEstudioEgresadosResultados.class)
                 .setParameter("generacion", generacion)
@@ -551,7 +551,7 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
 
     @Override
     public List<EvaluacionEstudioEgresadosResultados> getResultadosPorSilgas(String siglas) {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultadosPorSilgas() las siglas que entran son : " + siglas);
+       // System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEstudioEgresados.getResultadosPorSilgas() las siglas que entran son : " + siglas);
         List<EvaluacionEstudioEgresadosResultados> r = new ArrayList<>();
         r= em.createQuery("SELECT e FROM EvaluacionEstudioEgresadosResultados e WHERE e.r4 = :siglas", EvaluacionEstudioEgresadosResultados.class)
                 .setParameter("siglas", siglas)
@@ -571,7 +571,7 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
                 .setParameter("evaluacion", evaluacion)
                 .getResultList();
 
-        System.out.println("Tamaño de la lista en ejb de resultados de la evaluacion activa"+e.size());
+        //System.out.println("Tamaño de la lista en ejb de resultados de la evaluacion activa"+e.size());
         if (e.isEmpty() || e == null) {
             return new ArrayList<>();
         } else {
@@ -593,7 +593,7 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
                 .setParameter("matricula", matricula)
                 .setParameter("grado", grado)
                 .getResultStream().collect(Collectors.toList());
-        a.forEach(x -> System.out.println(x.getMatricula() + "-" + x.getGrupos().getGruposPK().getCvePeriodo()));
+       // a.forEach(x -> System.out.println(x.getMatricula() + "-" + x.getGrupos().getGruposPK().getCvePeriodo()));
         if (!a.isEmpty()) {
             return a.get(0);
         } else {

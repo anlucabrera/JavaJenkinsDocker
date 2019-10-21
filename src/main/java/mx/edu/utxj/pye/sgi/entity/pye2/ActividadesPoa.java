@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "actividades_poa", catalog = "pye2", schema = "")
@@ -71,12 +71,10 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "ActividadesPoa.findByDescripcion", query = "SELECT a FROM ActividadesPoa a WHERE a.descripcion = :descripcion")
     , @NamedQuery(name = "ActividadesPoa.findByArea", query = "SELECT a FROM ActividadesPoa a WHERE a.area = :area")
     , @NamedQuery(name = "ActividadesPoa.findByBandera", query = "SELECT a FROM ActividadesPoa a WHERE a.bandera = :bandera")
-    , @NamedQuery(name = "ActividadesPoa.findByValidadoPyE", query = "SELECT a FROM ActividadesPoa a WHERE a.validadoPyE = :validadoPyE")
-    , @NamedQuery(name = "ActividadesPoa.findByValidadoFinanzas", query = "SELECT a FROM ActividadesPoa a WHERE a.validadoFinanzas = :validadoFinanzas")
-    , @NamedQuery(name = "ActividadesPoa.findByValidadpPyeFinal", query = "SELECT a FROM ActividadesPoa a WHERE a.validadpPyeFinal = :validadpPyeFinal")
     , @NamedQuery(name = "ActividadesPoa.findByActividadPadre", query = "SELECT a FROM ActividadesPoa a WHERE a.actividadPadre = :actividadPadre")
     , @NamedQuery(name = "ActividadesPoa.findByEsPIDE", query = "SELECT a FROM ActividadesPoa a WHERE a.esPIDE = :esPIDE")
-    , @NamedQuery(name = "ActividadesPoa.findByActividadPasada", query = "SELECT a FROM ActividadesPoa a WHERE a.actividadPasada = :actividadPasada")})
+    , @NamedQuery(name = "ActividadesPoa.findByActividadPasada", query = "SELECT a FROM ActividadesPoa a WHERE a.actividadPasada = :actividadPasada")
+    , @NamedQuery(name = "ActividadesPoa.findByEstratejica", query = "SELECT a FROM ActividadesPoa a WHERE a.estratejica = :estratejica")})
 public class ActividadesPoa implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -219,18 +217,6 @@ public class ActividadesPoa implements Serializable {
     @Size(min = 1, max = 2)
     @Column(name = "bandera")
     private String bandera;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "validadoPyE")
-    private boolean validadoPyE;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "validadoFinanzas")
-    private boolean validadoFinanzas;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "validadpPyeFinal")
-    private boolean validadpPyeFinal;
     @Column(name = "actividadPadre")
     private Integer actividadPadre;
     @Size(max = 7)
@@ -240,6 +226,10 @@ public class ActividadesPoa implements Serializable {
     @NotNull
     @Column(name = "actividadPasada")
     private boolean actividadPasada;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estratejica")
+    private boolean estratejica;
     @JoinTable(name = "pye2.actividades_registros", joinColumns = {
         @JoinColumn(name = "actividad", referencedColumnName = "actividad_poa")}, inverseJoinColumns = {
         @JoinColumn(name = "registro", referencedColumnName = "registro")})
@@ -266,7 +256,7 @@ public class ActividadesPoa implements Serializable {
         this.actividadPoa = actividadPoa;
     }
 
-    public ActividadesPoa(Integer actividadPoa, short numeroP, short numeroS, String denominacion, short nPEnero, short nAEnero, short nPFebrero, short nAFebrero, short nPMarzo, short nAMarzo, short nPAbril, short nAAbril, short nPMayo, short nAMayo, short nPJunio, short nAJunio, short nPJulio, short nAJulio, short nPAgosto, short nAAgosto, short nPSeptiembre, short nASeptiembre, short nPOctubre, short nAOctubre, short nPNoviembre, short nANoviembre, short nPDiciembre, short nADiciembre, short total, short area, String bandera, boolean validadoPyE, boolean validadoFinanzas, boolean validadpPyeFinal, boolean actividadPasada) {
+    public ActividadesPoa(Integer actividadPoa, short numeroP, short numeroS, String denominacion, short nPEnero, short nAEnero, short nPFebrero, short nAFebrero, short nPMarzo, short nAMarzo, short nPAbril, short nAAbril, short nPMayo, short nAMayo, short nPJunio, short nAJunio, short nPJulio, short nAJulio, short nPAgosto, short nAAgosto, short nPSeptiembre, short nASeptiembre, short nPOctubre, short nAOctubre, short nPNoviembre, short nANoviembre, short nPDiciembre, short nADiciembre, short total, short area, String bandera, boolean actividadPasada, boolean estratejica) {
         this.actividadPoa = actividadPoa;
         this.numeroP = numeroP;
         this.numeroS = numeroS;
@@ -298,10 +288,8 @@ public class ActividadesPoa implements Serializable {
         this.total = total;
         this.area = area;
         this.bandera = bandera;
-        this.validadoPyE = validadoPyE;
-        this.validadoFinanzas = validadoFinanzas;
-        this.validadpPyeFinal = validadpPyeFinal;
         this.actividadPasada = actividadPasada;
+        this.estratejica = estratejica;
     }
 
     public Integer getActividadPoa() {
@@ -584,30 +572,6 @@ public class ActividadesPoa implements Serializable {
         this.bandera = bandera;
     }
 
-    public boolean getValidadoPyE() {
-        return validadoPyE;
-    }
-
-    public void setValidadoPyE(boolean validadoPyE) {
-        this.validadoPyE = validadoPyE;
-    }
-
-    public boolean getValidadoFinanzas() {
-        return validadoFinanzas;
-    }
-
-    public void setValidadoFinanzas(boolean validadoFinanzas) {
-        this.validadoFinanzas = validadoFinanzas;
-    }
-
-    public boolean getValidadpPyeFinal() {
-        return validadpPyeFinal;
-    }
-
-    public void setValidadpPyeFinal(boolean validadpPyeFinal) {
-        this.validadpPyeFinal = validadpPyeFinal;
-    }
-
     public Integer getActividadPadre() {
         return actividadPadre;
     }
@@ -630,6 +594,14 @@ public class ActividadesPoa implements Serializable {
 
     public void setActividadPasada(boolean actividadPasada) {
         this.actividadPasada = actividadPasada;
+    }
+
+    public boolean getEstratejica() {
+        return estratejica;
+    }
+
+    public void setEstratejica(boolean estratejica) {
+        this.estratejica = estratejica;
     }
 
     @XmlTransient

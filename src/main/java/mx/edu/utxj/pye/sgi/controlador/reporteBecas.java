@@ -91,7 +91,7 @@ public class reporteBecas extends ViewScopedRol{
                 }else {mostrarMensajeResultadoEJB(resTipoBeca);}
                 reporteBecas.add(estudiante);  
             });
-            System.err.println("Total de registros " + reporteBecas.size());
+            //System.err.println("Total de registros " + reporteBecas.size());
         }else {
             
             mostrarMensajeResultadoEJB(resRegistroBecas);}
@@ -124,7 +124,7 @@ public class reporteBecas extends ViewScopedRol{
             ResultadoEJB<AreasUniversidad> resArea= ejbReporteBecas.getAreabySiglas(estudianteSauiit.getAbreviatura());
             if(resArea.getCorrecto()==true){
                 dto.setCarrera(resArea.getValor());
-                System.err.println("Area " + resArea.getValor());
+               // System.err.println("Area " + resArea.getValor());
             }else{mostrarMensajeResultadoEJB(resArea);}
             //TODO: Se obtiene al director
             /*ResultadoEJB<Personal> resDirector = ejbReporteBecas.getDirectorArea(resArea.getValor());

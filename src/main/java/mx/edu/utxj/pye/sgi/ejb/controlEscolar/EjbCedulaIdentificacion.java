@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.*;
@@ -35,6 +36,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.StoredProcedureQuery;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ import java.util.List;
 @Stateless (name = "EjbCedulaIdentificacion")
 public class EjbCedulaIdentificacion {
     @EJB EjbPersonalBean ejbPersonalBean;
+    @EJB EjbValidacionRol ejbValidacionRol;
     @EJB EjbPropiedades ep;
     @EJB Facade f;
     @Inject Caster caster;
@@ -77,6 +80,46 @@ public class EjbCedulaIdentificacion {
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbCedulaIdentificacion.validarPsicopedagogia)", e, null);
         }
 
+    }
+
+    /**
+     * Valida que el usuario logueado sea director
+     * @param clave
+     * @return
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarDirector(Integer clave){
+        return ejbValidacionRol.validarDirector(clave);
+    }
+
+    /**
+     * Permite crear el filtro para validar si el usuario autenticado es un encarcado de dirección de área académica
+     * @param clave Número de nómina del usuario autenticado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDireccion(Integer clave){
+        return ejbValidacionRol.validarEncargadoDireccion(clave);
+    }
+    /**
+     * Busca el periodo actual activo
+     * @return
+     */
+    public ResultadoEJB<PeriodosEscolares> getPeriodoActual(){
+        try{
+            PeriodosEscolares p = new PeriodosEscolares();
+            StoredProcedureQuery spq =em.createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+            List<PeriodosEscolares> l = spq.getResultList();
+
+            if (l == null || l.isEmpty()) {
+               return ResultadoEJB.crearErroneo(2,p,"No hay periodo activo");
+            } else {
+                p=l.get(0);
+                return ResultadoEJB.crearCorrecto(p,"Periodo activo ");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el periodo escolar activo(EjbCedulaIdentificacion.getPeriodoActual))", e, null);
+
+
+        }
     }
     /**
      * Genera toda la informacion que se necesita para la cedula de Identificación para el estudiante
@@ -771,20 +814,26 @@ public class EjbCedulaIdentificacion {
             datosEscolares.setP99(datosEncuesta.getR16segundaCarrera());//Estudiante de modalidad 2x3
             datosEscolares.setP100(estudiante.getTipoEstudiante().getDescripcion());//Estatus
             //TODO: Baja
-           /* Baja baja = new Baja();
+           Baja baja = new Baja();
             ResultadoEJB<Baja> resBaja = buscarBaja(estudiante);
 
             if(resBaja.getCorrecto()==true){
                 baja = resBaja.getValor();
-                datosEscolares.setP101(baja.getTipoBaja().getDescripcion()); //Tipo de baja
-                datosEscolares.setP102(baja.getCausaBaja().getDescripcion());// Causa de baja
-                System.out.println("Baja:" + baja );
+                //TODO:Verifica que tipo de baja es
+                if(baja.getTipoBaja()==1){datosEscolares.setP101("Temporal"); }//Tipo de baja (Temporal)
+                else if(baja.getTipoBaja()==2){datosEscolares.setP101("Definitiva");}//Tipo de baja (Definitiva)
+                else { datosEscolares.setP101("N/A");} //Tipo de baja
+                //TODO: Buca la causa de la baja
+                ResultadoEJB<BajasCausa> resCausa= getCausaBaja(baja);
+                if(resCausa.getCorrecto()==true){
+                    datosEscolares.setP102(resCausa.getValor().getCausa());//Causa de la baja
+                }else { datosEscolares.setP102("N/A");}// Causa de baja
             }
             else {
                 datosEscolares.setP101("N/A"); //Tipo de baja (N/A, no se encontro registro del estudiante)
                 datosEscolares.setP102("N/A");// Causa de baja (n/a no existe registro)
             }
-            */
+
             datosEscolares.setP103(estudiante.getAspirante().getTipoAspirante().getDescripcion());//Nuevo ingreso - Reingreso
             datosEscolares.setP104("Matutino");//Turno
             //TODO:TUTOR
@@ -801,6 +850,23 @@ public class EjbCedulaIdentificacion {
             return ResultadoEJB.crearErroneo(1, "Error al obtener los datos escolares(EjbCedulaIdentificacion.getDatosEscolares)", e, null);
         }
 
+    }
+    public ResultadoEJB<BajasCausa> getCausaBaja(Baja baja){
+        try{
+            BajasCausa causaBaja = new BajasCausa();
+            if(baja==null){return  ResultadoEJB.crearErroneo(2,causaBaja,"La baja no debe ser nula");}
+            causaBaja = em.createQuery("select b from BajasCausa b where b.cveCausa=:baja",BajasCausa.class)
+                    .setParameter("baja", baja.getCausaBaja())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+                ;
+            if(causaBaja==null){return  ResultadoEJB.crearErroneo(3,causaBaja,"No se encontro la causa de la baja");}
+            else {return  ResultadoEJB.crearCorrecto(causaBaja,"Causa de la baja encotrada");}
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener la causa de la bja(EjbCedulaIdentificacion.getCausaBaja)", e, null);
+        }
     }
 
     /**
@@ -903,7 +969,7 @@ public class EjbCedulaIdentificacion {
                    if (resDomicilioP.getCorrecto()==true){domicilioResidencia = resDomicilioP.getValor();}
                    else {return ResultadoEJB.crearErroneo(6,cedulaIdentificacion,"No se pudo obtener el domicilio de residencia del estudiante");}
                    datosPersonales.setP18(domicilioResidencia.getAsentamiento().getNombreAsentamiento());//Colonia
-                   //datosPersonales.setP19();//Localidad
+                   datosPersonales.setP19(domicilioResidencia.getAsentamiento().getNombreAsentamiento());//Localidad
                    datosPersonales.setP20(domicilioResidencia.getMunicipio().getNombre());//Municipio
                    datosPersonales.setP21(domicilioResidencia.getEstado().getNombre());//Estado
                    datosPersonales.setP22(domicilioResidencia.getAsentamiento().getCodigoPostal());//Código Postal
@@ -917,7 +983,7 @@ public class EjbCedulaIdentificacion {
                    datosPersonales.setP25(estudiante.getAspirante().getDomicilio().getCalleProcedencia());//Calle Procedencia
                    datosPersonales.setP26(estudiante.getAspirante().getDomicilio().getNumeroProcedencia());//Número Procedencia
                    datosPersonales.setP27(domicilioProcedencia.getAsentamiento().getNombreAsentamiento());//Colonia Procedencia
-                   //datosPersonales.setP28();//Localidad
+                   datosPersonales.setP28(domicilioProcedencia.getAsentamiento().getNombreAsentamiento());//Localidad
                    datosPersonales.setP29(domicilioProcedencia.getMunicipio().getNombre());//Municipio Procedencia
                    datosPersonales.setP30(domicilioProcedencia.getEstado().getNombre()); //Estado Procedencia
                    datosPersonales.setP31(domicilioProcedencia.getAsentamiento().getCodigoPostal());//Código Postal Procedencia
