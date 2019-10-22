@@ -58,7 +58,7 @@
                                                  actionListener="#{areaPoaProgramacion.imprimirValores()}"  
                                                  oncomplete="PF('dlgRdVPC').show()" process="@this" 
                                                  icon="fa fa-info-circle" styleClass="btn-primary"/>
-                                
+
                                 <p:commandButton value="Finalizar registro de actividades" id="btnEnviaCorreo" 
                                                  actionListener="#{utilidadesPOA.enviarCorreo('A', 'Us',true,'',controladorEmpleado.nuevaAreasUniversidad)}"
                                                  process="@this" disabled="#{controladorEmpleado.procesopoa.registroAFinalizado}"
@@ -451,6 +451,11 @@
                                     <hr/>
                                 </div>
                             </p:outputPanel>
+                            <c:if test="#{areaPoaProgramacion.actividadPoaEditando.numeroS eq 0}">
+                                <p:outputLabel value="Actividad Estratégica" />
+                                <br/>
+                                <p:selectBooleanCheckbox id="validar" value="#{areaPoaProgramacion.actividadPoaEditando.estratejica}"/>
+                            </c:if>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <p:outputPanel>            
@@ -519,7 +524,7 @@
                     </p:tab>                    
                 </p:tabView>
             </p:dialog>
-           
+
             <!-- cuadro de dialogo para mensajes de validacion -->
             <p:dialog id="validacion" header="Error" widgetVar="validacion" modal="true" 
                       showEffect="fade" hideEffect="fade" resizable="false" width="300" closeOnEscape="true">
@@ -530,7 +535,7 @@
                     </p:outputPanel>
                 </h:form>
             </p:dialog>
-            
+
             <!-- Cuadro de dialogo extra -->
             <p:dialog id="dlgParametrosRegistrados" header="Parámetros de registro que ya cuentan con registros" widgetVar="dlgParametrosRegistrados" modal="true" 
                       showEffect="fade" hideEffect="fade" resizable="false" width="800" closeOnEscape="true">
@@ -540,7 +545,7 @@
                     </p:outputPanel>
                 </h:form>
             </p:dialog>
-            
+
             <p:blockUI block="frmAlineacionEstratejica" widgetVar="buiRegistro1" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}"/>
             <p:blockUI block="frm2" widgetVar="buiRegistro2" blocked="#{controladorEmpleado.procesopoa.registroAFinalizado}">
                 Ha confirmado la culminación de este proceso, espere la respuesta por parte de la Dirección de Planeación y Evaluación, que indique si se realizaran, modificaciones o podrá pasar a la siguiente fase.

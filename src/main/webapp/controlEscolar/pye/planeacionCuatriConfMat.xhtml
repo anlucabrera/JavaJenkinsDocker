@@ -8,6 +8,15 @@
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
     <ui:define name="head-end">
+        <style type="text/css">
+            @media print{
+                /* indicamos el salto de pagina */
+                .saltoDePagina{
+                    display:block;
+                    page-break-inside:auto  !important;
+                }
+            }
+        </style>
         <ui:param name="renderBreadCrumb" value="false"/>
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">

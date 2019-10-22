@@ -317,7 +317,7 @@ public class AreaPoaProgramacion implements Serializable {
             tipo = "Subactividad";
         }
         if ("Actividad".equals(tipo)) {
-            if (tamaño == 1) {
+            if (tamaño == 0 && actividadesPoa.getBandera().equals("y")) {
                 esActividadPrincipal = false;
             } else {
                 esActividadPrincipal = true;

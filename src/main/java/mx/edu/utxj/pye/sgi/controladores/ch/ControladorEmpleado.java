@@ -211,6 +211,7 @@ public class ControladorEmpleado implements Serializable {
                 }
             }
             if (procesopoa != null) {
+                nuevaAreasUniversidad=ejbAreasLogeo.mostrarAreasUniversidad(procesopoa.getArea());
                 if (procesopoa.getEvaluacion() == null) {
                     procesopoa.setEvaluacion(new Calendarioevaluacionpoa());
                     Calendarioevaluacionpoa periodoEvaluacion = new Calendarioevaluacionpoa();

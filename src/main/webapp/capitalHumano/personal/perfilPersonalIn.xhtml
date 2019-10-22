@@ -176,7 +176,7 @@
                                                                 <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(incidencia.clavePersonal.actividad.actividad eq 1?incidencia.clavePersonal.areaOperativa:incidencia.clavePersonal.areaSuperior)}" />
                                                             </p:column>
                                                         </p:headerRow>
-                                                        <p:column style="width: 50px;">
+                                                        <p:column style="width: 50px;" class="noprint">
                                                             <p:commandButton actionListener="#{controladorIncidenciasGeneral.eliminarIncidencia(incidencia)}" process="@this" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
                                                                              onsuccess="PF('frmInci').update();" styleClass="btn-primary" title="Eliminar Incidencias">
                                                                 <p:confirm header="Confirmación" message="¿Confirma la eliminación de la incidencia de #{incidencia.tipo} del dia #{incidencia.fecha}?" icon="ui-icon-alert" />

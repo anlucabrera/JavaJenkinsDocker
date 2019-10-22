@@ -134,15 +134,23 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
                 .setParameter("municipio", dom.getMunicipio())
                 .setParameter("asentamiento", dom.getLocalidad())
                 .getSingleResult();
-               
-        Iems iems = facade.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.iems = :iems", Iems.class)
-                .setParameter("iems", ant.getIems())
-                .getSingleResult();
-       
-        Estado edoIems = facade.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idestado = :idestado", Estado.class)
-                .setParameter("idestado", iems.getLocalidad().getMunicipio().getEstado().getIdestado())
-                .getSingleResult();
-       
+      
+        Iems iems = new Iems();
+        if (ant == null) {
+        } else {
+            iems = facade.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.iems = :iems", Iems.class)
+                    .setParameter("iems", ant.getIems())
+                    .getSingleResult();
+        }
+
+        Estado edoIems = new Estado();
+
+        if (iems == null) {
+        } else {
+            edoIems = facade.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idestado = :idestado", Estado.class)
+                    .setParameter("idestado", iems.getLocalidad().getMunicipio().getEstado().getIdestado())
+                    .getSingleResult();
+        }
         DatosTitulacion datTit = buscarDatosTitulacion(expediente);
         
         AreasUniversidad prog = facade.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.siglas = :siglas", AreasUniversidad.class)

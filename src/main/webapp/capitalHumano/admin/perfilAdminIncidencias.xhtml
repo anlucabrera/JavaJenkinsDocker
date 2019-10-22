@@ -71,90 +71,128 @@
                                         </p:link>
                                     </div>      
                                 </div>
-                                <p:tabView>
-                                    <p:tab title="Reporte Incidencias">        
-                                        <h:form id="frmInciGeneral"> 
-                                            <div class="box box-primary">
-                                                <div id="main-buttons" class="hidden-sm hidden-xs" >
-                                                        <div class="row">
-                                                            <div class="col-sm-12 col-md-3 col-lg-3">            
-                                                                <p:autoUpdate/>
-                                                                <p:outputLabel value="Área:" />
+                                <h:form id="Parametros">
+                                    <div class="box box-primary">
+                                        <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                            <div class="row">
+                                                <div class="col-sm-2 border-right">
+                                                    <p:outputLabel for="anio" value="Año" />
+                                                    <p:selectOneMenu  id="anio" value="#{controladorIncidenciasAdministrador.anioNumero}" valueChangeListener="#{controladorIncidenciasAdministrador.numeroAnioAsiganado}">
+                                                        <f:selectItem itemValue="2017" itemLabel="2017" />
+                                                        <f:selectItem itemValue="2018" itemLabel="2018" />
+                                                        <f:selectItem itemValue="2019" itemLabel="2019" />
+                                                        <p:ajax listener="#{controladorIncidenciasAdministrador.imprimirValores()}" process="anio" update="reportes"/>
+                                                    </p:selectOneMenu >
+                                                </div>
+                                                <div class="col-sm-12 col-md-10 col-lg-10">            
+                                                    <p:autoUpdate/>
+                                                    <p:outputLabel value="Área:" />
 
-                                                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" value="#{controladorIncidenciasAdministrador.au}" converter="entityConverter">
-                                                                    <f:selectItems value="#{controladorIncidenciasAdministrador.listaAreasUniversidads}" var="area" itemValue="#{area}" itemLabel="#{area.area} -- #{area.nombre}" />
-                                                                    <p:ajax process="@this" update="@form" listener="#{controladorIncidenciasAdministrador.mostrarIncidencias()}"/>
-                                                                </p:selectOneMenu> 
-                                                                <p:message for="eje" display="tooltip" />
-                                                            </div>
-                                                        </div>
+                                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" value="#{controladorIncidenciasAdministrador.au}" converter="entityConverter">
+                                                        <f:selectItems value="#{controladorIncidenciasAdministrador.listaAreasUniversidads}" var="area" itemValue="#{area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                                        <p:ajax process="@this" update="reportes" listener="#{controladorIncidenciasAdministrador.mostrarIncidencias()}"/>
+                                                    </p:selectOneMenu> 
+                                                    <p:message for="eje" display="tooltip" />
                                                 </div>
                                             </div>
-                                            
-                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasAdministrador.imprimirValores()}" update="tblActividades" /> 
-                                            <p:dataTable id="tblActividades"  value="#{controladorIncidenciasAdministrador.listaIncidencias}"  var="incidencias"
-                                                         sortBy="#{incidencias.fecha.year}" expandableRowGroups="true"
-                                                         editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+                                        </div>
+                                    </div>
+                                </h:form>
 
-                                                <p:ajax event="rowEdit" listener="#{controladorIncidenciasAdministrador.onRowEdit}"  process="@this" update="@this" oncomplete="actualizarTabla()"/>
-                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblActividades" />
+                                <p:tabView id="reportes">
+                                    <p:tab title="Reporte Incidencias">       
+                                        <h:form id="frmInciGeneral"> 
 
-                                                <p:headerRow>
-                                                    <p:column colspan="8" style="background: #2796cb; color: #FFFFFF;">
-                                                        <h:outputLabel value="#{incidencias.fecha}"><f:convertDateTime pattern="yyyy"/></h:outputLabel>
-                                                    </p:column>
-                                                </p:headerRow>
+                                            <p:outputPanel>
+                                                <div class="col-sm-2 border-right">
+                                                    <p:commandButton value="Imprimir reporte" icon="fa fa-print" class="btn-success">                                        
+                                                        <p:printer target="incidenciasReporteIncidencias" />
+                                                    </p:commandButton>
+                                                </div>
+                                                <p:outputPanel id="incidenciasReporteIncidencias">
+                                                    <p:outputPanel>            
+                                                        <p:autoUpdate/>
+                                                        <div class="row">
+                                                            <div id="tituloCV" class="col-sm-12">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                    <h3>#{controladorIncidenciasAdministrador.au.nombre}</h3>
+                                                                    <h:outputLabel value="Consulta:" style="font-weight: bold"/> <p:spacer width="10px"/> <h:outputLabel value="#{controladorIncidenciasGeneral.fechaActual}"/><p:spacer width="30px"/>
+                                                                    <h:outputLabel value="Periodo:" style="font-weight: bold"/> <p:spacer width="10px"/> <h:outputLabel value="#{controladorIncidenciasGeneral.fechaI}"/><p:spacer width="10px"/><h:outputLabel value="a" style="font-weight: bold"/> <p:spacer width="10px"/><h:outputLabel value="#{controladorIncidenciasGeneral.fechaF}"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Incidencias</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel>  
 
-                                                <p:column headerText="Nomina" style="width: 5%;text-align: center;"
-                                                          sortBy="#{incidencias.clavePersonal.clave}" 
-                                                          filterBy="#{incidencias.clavePersonal.clave}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{incidencias.clavePersonal.clave}" />
-                                                </p:column>
-                                                <p:column headerText="Nombre" style="width: 15%;text-align: justify;"
-                                                          sortBy="#{incidencias.clavePersonal.nombre}" 
-                                                          filterBy="#{incidencias.clavePersonal.nombre}" 
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{incidencias.clavePersonal.nombre}" />
-                                                </p:column>        
-                                                <p:column headerText="Tipo"  style="width: 20%;text-align: center;"
-                                                          sortBy="#{incidencias.tipo}"
-                                                          filterBy="#{incidencias.tipo}"
-                                                          filterMatchMode="contains">
-                                                    <h:outputText value="#{incidencias.tipo}" />
-                                                </p:column>  
-                                                <p:column headerText="Justificación" style="text-align: justify; width: 30%">
-                                                    <h:outputText value="#{incidencias.justificacion}" />
-                                                </p:column> 
-                                                <p:column headerText="Fecha" style="width: 10%">
-                                                    <p:cellEditor>
-                                                        <f:facet name="output"> <h:outputLabel value="#{incidencias.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
-                                                        <f:facet name="input">
-                                                            <p:calendar locale="es" value="#{incidencias.fecha}" pattern="dd-MM-yyyy" mask="true" />
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>                                                
-                                                <p:column headerText="Estado" style="width: 10%;text-align: center;" 
-                                                          sortBy="#{incidencias.estatus}" 
-                                                          filterBy="#{incidencias.estatus}" 
-                                                          filterMatchMode="contains">
-                                                    <p:cellEditor>
-                                                        <f:facet name="output"><h:outputText value="#{incidencias.estatus}" /></f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{incidencias.estatus}" style="width:100%">
-                                                                <f:selectItems value="#{administracionControl.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>     
-                                                <p:column headerText="Tiempo" style="width: 5%;text-align: center;">
-                                                    <h:outputLabel value="0#{incidencias.tiempo.hours}:#{incidencias.tiempo.minutes}" />
-                                                </p:column>  
-                                                <p:column style="width:5%;" class="noprint" >
-                                                    <p:rowEditor />
-                                                </p:column>
-                                            </p:dataTable>  
 
+                                                    <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasAdministrador.imprimirValores()}" update="tblActividades" /> 
+                                                    <p:dataTable id="tblActividades"  value="#{controladorIncidenciasAdministrador.listaIncidencias}"  var="incidencias"
+                                                                 sortBy="#{incidencias.clavePersonal.clave}" expandableRowGroups="true"
+                                                                 editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                        <p:ajax event="rowEdit" listener="#{controladorIncidenciasAdministrador.onRowEdit}"  process="@this" update="@this" oncomplete="actualizarTabla()"/>
+                                                        <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblActividades" />
+
+
+                                                        <p:column headerText="Nomina" style="width: 5%;text-align: center;"
+                                                                  sortBy="#{incidencias.clavePersonal.clave}" 
+                                                                  filterBy="#{incidencias.clavePersonal.clave}" 
+                                                                  filterMatchMode="contains">
+                                                            <h:outputText value="#{incidencias.clavePersonal.clave}" />
+                                                        </p:column>
+                                                        <p:column headerText="Nombre" style="width: 15%;text-align: justify;"
+                                                                  sortBy="#{incidencias.clavePersonal.nombre}" 
+                                                                  filterBy="#{incidencias.clavePersonal.nombre}" 
+                                                                  filterMatchMode="contains">
+                                                            <h:outputText value="#{incidencias.clavePersonal.nombre}" />
+                                                        </p:column>        
+                                                        <p:column headerText="Tipo"  style="width: 20%;text-align: center;"
+                                                                  sortBy="#{incidencias.tipo}"
+                                                                  filterBy="#{incidencias.tipo}"
+                                                                  filterMatchMode="contains">
+                                                            <h:outputText value="#{incidencias.tipo}" />
+                                                        </p:column>  
+                                                        <p:column headerText="Justificación" style="text-align: justify; width: 30%">
+                                                            <h:outputText value="#{incidencias.justificacion}" />
+                                                        </p:column> 
+                                                        <p:column headerText="Fecha" style="width: 10%">
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"> <h:outputLabel value="#{incidencias.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                                <f:facet name="input">
+                                                                    <p:calendar locale="es" value="#{incidencias.fecha}" pattern="dd-MM-yyyy" mask="true" />
+                                                                </f:facet>
+                                                            </p:cellEditor>
+                                                        </p:column>                                                
+                                                        <p:column headerText="Estado" style="width: 10%;text-align: center;" 
+                                                                  sortBy="#{incidencias.estatus}" 
+                                                                  filterBy="#{incidencias.estatus}" 
+                                                                  filterMatchMode="contains">
+                                                            <p:cellEditor>
+                                                                <f:facet name="output"><h:outputText value="#{incidencias.estatus}" /></f:facet>
+                                                                <f:facet name="input">
+                                                                    <h:selectOneMenu value="#{incidencias.estatus}" style="width:100%">
+                                                                        <f:selectItems value="#{administracionControl.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                    </h:selectOneMenu>
+                                                                </f:facet>
+                                                            </p:cellEditor>
+                                                        </p:column>     
+                                                        <p:column headerText="Tiempo" style="width: 5%;text-align: center;">
+                                                            <h:outputLabel value="0#{incidencias.tiempo.hours}:#{incidencias.tiempo.minutes}" />
+                                                        </p:column>  
+                                                        <p:column style="width:5%;" class="noprint" >
+                                                            <p:rowEditor />
+                                                        </p:column>
+                                                    </p:dataTable>  
+                                                </p:outputPanel>    
+                                            </p:outputPanel>
                                         </h:form>
                                     </p:tab>
                                     <p:tab title="Opciones Incidencias">

@@ -9,12 +9,6 @@
                 xmlns:pe="http://primefaces.org/ui/extensions">
 
     <ui:define name="head-end">
-        <style type="text/css">
-            .ui-datatable .ui-datatable-header {
-                text-align: right !important;
-            }
-
-        </style>
         <script>
             function descargar(ruta) {
                 var win = window.open(ruta, '_blank');
@@ -23,6 +17,18 @@
                 }
             }
         </script>
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            @media print{
+                /* indicamos el salto de pagina */
+                .saltoDePagina{
+                    display:block;
+                    page-break-inside:auto  !important;
+                }
+            }
+        </style>
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
@@ -128,7 +134,7 @@
                                                                                 <div class="row">
                                                                                     <div class="col-sm-12">
                                                                                         <div class="description-block">
-                                                                                            <p:dataTable value="#{linea.actividadesPoas}" var="poa" style="page-break-inside:always !important;" expandedRow="true" 
+                                                                                            <p:dataTable value="#{linea.actividadesPoas}" var="poa" style="page-break-inside:always !important;" expandedRow="true" styleClass="saltoDePagina"
                                                                                                          expandableRowGroups="true" rowStyleClass="#{poa.numeroS eq 0?'actividad':'subactiviades'}" emptyMessage="No hay actividades registradas">
 
                                                                                                 <p:columnGroup type="header">
@@ -205,7 +211,7 @@
                                                                                                 </p:column>
                                                                                                 <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}" class="hrclas">
                                                                                                     <p:dataTable id="dtbBajas" var="recurso"
-                                                                                                                 style="page-break-inside:always !important;" class="hrclas"
+                                                                                                                 style="page-break-inside:always !important;" class="hrclas" styleClass="saltoDePagina"
                                                                                                                  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{poa.recursosActividadList}">
 
                                                                                                         <f:facet name="header"></f:facet>

@@ -190,17 +190,21 @@ public class ReporteAsistenciasDirector extends ViewScopedRol implements Desarro
         ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());
         academicas = new ArrayList<>();
         academicas = rejb.getValor().stream().filter(a -> Objects.equals(a.getGrupo().getIdGrupo(), rol.getGrupoSelec().getIdGrupo())).collect(Collectors.toList());
-        academicas.forEach((t) -> {            
-                rol.getDocentes().add(t.getDocente());
-                rol.setPrograma(t.getPrograma());
-                rol.setPlanEstudio(t.getPlanEstudio());
-                ResultadoEJB<List<UnidadMateriaConfiguracion>> resultadoEJB = ea.buscarConfiguracionUnidadMateria(t);
-                List<UnidadMateriaConfiguracion> configuracions = new ArrayList<>();
-                Date d = new Date();
-                configuracions = resultadoEJB.getValor().stream().filter(um -> (d.after(um.getFechaInicio()) || d.equals(um.getFechaInicio())) && (d.before(um.getFechaFin()) || d.equals(um.getFechaFin()))).collect(Collectors.toList());
-                UnidadMateriaConfiguracion configuracion = new UnidadMateriaConfiguracion();
+        academicas.forEach((t) -> {
+            rol.getDocentes().add(t.getDocente());
+            rol.setPrograma(t.getPrograma());
+            rol.setPlanEstudio(t.getPlanEstudio());
+            ResultadoEJB<List<UnidadMateriaConfiguracion>> resultadoEJB = ea.buscarConfiguracionUnidadMateria(t);
+            List<UnidadMateriaConfiguracion> configuracions = new ArrayList<>();
+            Date d = new Date();
+            configuracions = resultadoEJB.getValor().stream().filter(um -> (d.after(um.getFechaInicio()) || d.equals(um.getFechaInicio())) && (d.before(um.getFechaFin()) || d.equals(um.getFechaFin()))).collect(Collectors.toList());
+            UnidadMateriaConfiguracion configuracion = new UnidadMateriaConfiguracion();
+            if (!configuracions.isEmpty()) {
                 configuracion = configuracions.get(0);
                 rol.getUms().add(configuracion.getIdUnidadMateria());
+            } else {
+                rol.getUms().add(new UnidadMateria(0, "Nombre Unidad", "", 0, 0, 0, false));
+            }
         });
         rol.getListaalumnoscas().forEach((e) -> {
             rol.setDrpls(new ArrayList<>());
@@ -210,26 +214,31 @@ public class ReporteAsistenciasDirector extends ViewScopedRol implements Desarro
                 Date d = new Date();
                 umcs = resultadoEJB.getValor().stream().filter(um -> (d.after(um.getFechaInicio()) || d.equals(um.getFechaInicio())) && (d.before(um.getFechaFin()) || d.equals(um.getFechaFin()))).collect(Collectors.toList());
                 umc = new UnidadMateriaConfiguracion();
-                umc = umcs.get(0);
-                Date fI = umc.getFechaInicio();
-                Date fF = umc.getFechaFin();
-                ResultadoEJB<List<Asistenciasacademicas>> res = ea.buscarAsistenciasacademicas(a.getCargaAcademica(), e.getMatricula());
-                List<Asistenciasacademicas> asFilter = new ArrayList<>();
-                if (!res.getValor().isEmpty()) {
-                    asFilter = res.getValor().stream().filter(t -> (t.getAsistencia().getFechaHora().after(fI) || t.getAsistencia().getFechaHora().equals(fI)) && (t.getAsistencia().getFechaHora().before(fF) || t.getAsistencia().getFechaHora().equals(fF))).collect(Collectors.toList());
-                }
-                tasis = 0;
-                if (asFilter.size() > 0 && !asFilter.isEmpty()) {
-                    asFilter.forEach((t) -> {
-                        if (!t.getTipoAsistenciaA().equals("Falta")) {
-                            tasis = tasis + 1;
-                        }
-                    });
-                    Double porC = (tasis * 100.0) / asFilter.size();
-                    Boolean b = (porC < 80.0);
-                    rol.getDrpls().add(new DtoReportePaseLista(umc.getIdUnidadMateria(), asFilter.size(), tasis, porC, b));
-                } else {
-                    rol.getDrpls().add(new DtoReportePaseLista(umc.getIdUnidadMateria(), asFilter.size(), tasis, 100D, Boolean.FALSE));
+                if (!umcs.isEmpty()) {
+                    umc = umcs.get(0);
+                    Date fI = umc.getFechaInicio();
+                    Date fF = umc.getFechaFin();
+
+                    ResultadoEJB<List<Asistenciasacademicas>> res = ea.buscarAsistenciasacademicas(a.getCargaAcademica(), e.getMatricula());
+                    List<Asistenciasacademicas> asFilter = new ArrayList<>();
+                    if (!res.getValor().isEmpty()) {
+                        asFilter = res.getValor().stream().filter(t -> (t.getAsistencia().getFechaHora().after(fI) || t.getAsistencia().getFechaHora().equals(fI)) && (t.getAsistencia().getFechaHora().before(fF) || t.getAsistencia().getFechaHora().equals(fF))).collect(Collectors.toList());
+                    }
+                    tasis = 0;
+                    if (asFilter.size() > 0 && !asFilter.isEmpty()) {
+                        asFilter.forEach((t) -> {
+                            if (!t.getTipoAsistenciaA().equals("Falta")) {
+                                tasis = tasis + 1;
+                            }
+                        });
+                        Double porC = (tasis * 100.0) / asFilter.size();
+                        Boolean b = (porC < 80.0);
+                        rol.getDrpls().add(new DtoReportePaseLista(umc.getIdUnidadMateria(), asFilter.size(), tasis, porC, b));
+                    } else {
+                        rol.getDrpls().add(new DtoReportePaseLista(umc.getIdUnidadMateria(), asFilter.size(), tasis, 100D, Boolean.FALSE));
+                    }
+                }else{
+                    rol.getDrpls().add(new DtoReportePaseLista(new UnidadMateria(0, "Nombre Unidad", "", 0, 0, 0, false), 0, tasis, 100D, Boolean.FALSE));
                 }
             });
             rol.getDplrs().add(new DtoPaseListaReportes(e, rol.getDrpls()));

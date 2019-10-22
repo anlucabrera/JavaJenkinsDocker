@@ -56,7 +56,7 @@ public class Bitacoraacceso implements Serializable {
     private String tabla;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 7)
+    @Size(min = 1, max = 12)
     @Column(name = "accion")
     private String accion;
     @Size(max = 255)

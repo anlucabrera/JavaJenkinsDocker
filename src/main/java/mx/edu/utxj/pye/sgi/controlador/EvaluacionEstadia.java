@@ -77,7 +77,7 @@ public class EvaluacionEstadia implements Serializable{
                 periodoEsc=ejbS.getPeriodo(evaluacion);
                 if (alumno != null) {
                     resultado = ejb.getResultado(evaluacion, alumno.getMatricula(), evaluado, respuestas);
-                    System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionEstadia.init() Resultado:"+ resultado);
+                    //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionEstadia.init() Resultado:"+ resultado);
                     if (resultado != null) {
                         apartados = ejb.getApartados();
                         apartados1 = ejb.getApartados1();

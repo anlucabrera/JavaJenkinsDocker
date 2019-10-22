@@ -243,6 +243,15 @@ body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable 
 @media print {
     .noprint,.noprint *{
         display: none !important;
+        visibility: collapse !important;
+    }
+
+}
+
+@media print {
+    .yesprint,.yesprint *{
+        display: inline !important;
+        visibility: visible !important;
     }
 
 }
