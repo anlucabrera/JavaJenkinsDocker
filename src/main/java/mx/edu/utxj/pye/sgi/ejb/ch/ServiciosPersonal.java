@@ -3,8 +3,9 @@ package mx.edu.utxj.pye.sgi.ejb.ch;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -20,14 +21,17 @@ import mx.edu.utxj.pye.sgi.entity.shiro.User;
 
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
-@Stateful
+@Stateless
 public class ServiciosPersonal implements EjbPersonal {
 
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
 
-    @EJB
-    Facade facade;
+    @EJB    Facade facade;
+    @PostConstruct
+    public void init(){
+        em = facade.getEntityManager();
+    }
 
 ////////////////////////////////////////////////////////////////////////////////Lista Personal
     @Override
@@ -83,7 +87,7 @@ public class ServiciosPersonal implements EjbPersonal {
     @Override
     public List<ListaPersonal> buscaCoincidenciasListaPersonal(String parametro) {
         try {
-            return facade.getEntityManager().createQuery("SELECT l FROM ListaPersonal l WHERE l.nombre LIKE CONCAT('%',:parametro,'%' ) OR l.clave LIKE CONCAT('%',:parametro,'%' ) OR l.areaOperativaNombre LIKE CONCAT('%',:parametro,'%' )", ListaPersonal.class)
+            return em.createQuery("SELECT l FROM ListaPersonal l WHERE l.nombre LIKE CONCAT('%',:parametro,'%' ) OR l.clave LIKE CONCAT('%',:parametro,'%' ) OR l.areaOperativaNombre LIKE CONCAT('%',:parametro,'%' )", ListaPersonal.class)
                     .setParameter("parametro", parametro)
                     .getResultList();
         } catch (NoResultException e) {
@@ -95,8 +99,7 @@ public class ServiciosPersonal implements EjbPersonal {
 
     @Override
     public ListaPersonal mostrarListaPersonal(Integer claveTrabajador) throws Throwable {
-        facade.setEntityClass(ListaPersonal.class);
-        ListaPersonal pr = facade.getEntityManager().find(ListaPersonal.class, claveTrabajador);
+        ListaPersonal pr = em.find(ListaPersonal.class, claveTrabajador);
         if (pr == null) {
             return null;
         } else {
@@ -135,8 +138,7 @@ public class ServiciosPersonal implements EjbPersonal {
 
     @Override
     public Personal mostrarPersonalLogeado(Integer claveTrabajador) throws Throwable {
-        facade.setEntityClass(Personal.class);
-        Personal pr = facade.getEntityManager().find(Personal.class, claveTrabajador);
+        Personal pr = em.find(Personal.class, claveTrabajador);
         if (pr == null) {
             return null;
         } else {
@@ -146,24 +148,21 @@ public class ServiciosPersonal implements EjbPersonal {
 
     @Override
     public Personal crearNuevoPersonal(Personal nuevoPersonal) throws Throwable {
-        facade.setEntityClass(Personal.class);
-        facade.create(nuevoPersonal);
-        facade.flush();
+        em.persist(nuevoPersonal);
+        em.flush();
         return nuevoPersonal;
     }
 
     @Override
     public Personal actualizarPersonal(Personal nuevoPersonal) throws Throwable {
-        facade.setEntityClass(Personal.class);
-        facade.edit(nuevoPersonal);
+        em.merge(nuevoPersonal);
         return nuevoPersonal;
     }
 
 ////////////////////////////////////////////////////////////////////////////////Informacion Adicional Personal
     @Override
     public InformacionAdicionalPersonal mostrarInformacionAdicionalPersonalLogeado(Integer claveTrabajador) throws Throwable {
-        facade.setEntityClass(InformacionAdicionalPersonal.class);
-        InformacionAdicionalPersonal pr = facade.getEntityManager().find(InformacionAdicionalPersonal.class, claveTrabajador);
+        InformacionAdicionalPersonal pr = em.find(InformacionAdicionalPersonal.class, claveTrabajador);
         if (pr == null) {
             return null;
         } else {
@@ -173,17 +172,15 @@ public class ServiciosPersonal implements EjbPersonal {
 
     @Override
     public InformacionAdicionalPersonal crearNuevoInformacionAdicionalPersonal(InformacionAdicionalPersonal nuevoInformacionAdicionalPersonal) throws Throwable {
-        facade.setEntityClass(Personal.class);
-        facade.create(nuevoInformacionAdicionalPersonal);
-        facade.flush();
+        em.persist(nuevoInformacionAdicionalPersonal);
+        em.flush();
         return nuevoInformacionAdicionalPersonal;
     }
 
     @Override
     public InformacionAdicionalPersonal actualizarInformacionAdicionalPersonal(InformacionAdicionalPersonal nuevoInformacionAdicionalPersonal) throws Throwable {
-        facade.setEntityClass(InformacionAdicionalPersonal.class);
-        facade.edit(nuevoInformacionAdicionalPersonal);
-        facade.flush();
+        em.merge(nuevoInformacionAdicionalPersonal);
+        em.flush();
         return nuevoInformacionAdicionalPersonal;
     }
 
@@ -198,31 +195,29 @@ public class ServiciosPersonal implements EjbPersonal {
 
     @Override
     public List<ContactoEmergencias> mostrarAllContactosEmergencias() throws Throwable {
-        facade.setEntityClass(ContactoEmergencias.class);
-        return facade.findAll();
+        TypedQuery<ContactoEmergencias> q = em.createQuery("SELECT c FROM ContactoEmergencias ", ContactoEmergencias.class);
+        List<ContactoEmergencias> pr = q.getResultList();
+        return pr;
     }
 
     @Override
     public ContactoEmergencias crearContactosEmergencias(ContactoEmergencias ce) throws Throwable {
-        facade.setEntityClass(ContactoEmergencias.class);
-        facade.create(ce);
-        facade.flush();
+        em.persist(ce);
+        em.flush();
         return ce;
     }
 
     @Override
     public ContactoEmergencias actualizarContactosEmergencias(ContactoEmergencias ce) throws Throwable {
-        facade.setEntityClass(ContactoEmergencias.class);
-        facade.edit(ce);
-        facade.flush();
+        em.merge(ce);
+        em.flush();
         return ce;
     }
 
     @Override
     public ContactoEmergencias eliminarContactosEmergencias(ContactoEmergencias ce) throws Throwable {
-        facade.setEntityClass(ContactoEmergencias.class);
-        facade.remove(ce);
-        facade.flush();
+        em.remove(ce);
+        em.flush();
         return ce;
     }
 
@@ -244,17 +239,15 @@ public class ServiciosPersonal implements EjbPersonal {
     
     @Override
     public User crearUser(User user){
-        facade.setEntityClass(User.class);
-        facade.create(user);
-        facade.flush();
+        em.persist(user);
+        em.flush();
         return user;
     }
 
     @Override
     public User actualizarUser(User user){
-        facade.setEntityClass(User.class);
-        facade.edit(user);
-        facade.flush();
+        em.merge(user);
+        em.flush();
         return user;
     }
     

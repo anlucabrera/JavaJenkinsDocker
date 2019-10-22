@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -44,10 +45,9 @@ import mx.edu.utxj.pye.sgi.funcional.ValidadorPlaneacionCuatrimestralPTC;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaTotalAlumnosCarreraPye;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
-@Stateful
-public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestral, Serializable {
+@Stateless
+public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestral {
 
-    private static final long serialVersionUID = -8560915921611638551L;
 
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;

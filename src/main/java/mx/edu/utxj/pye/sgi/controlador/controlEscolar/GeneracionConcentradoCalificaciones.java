@@ -43,7 +43,7 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
     @Getter @Setter SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     @Getter @Setter StreamedContent contenioArchivo;
     @EJB EjbConsultaCalificacion ejb;
-    @Inject ConcentradoCalificaciones con;
+    @Inject ConcentradoCalificacionesTutor con;
 
     public void generPdf(Grupo grupo, List<DtoVistaCalificacionestitulosTabla> titulos, PeriodosEscolares periodoSelect, List<DtoPresentacionCalificacionesReporte> calificaciones, AreasUniversidad areasUniversidad) throws IOException, DocumentException {
         //Se crean las variables a utilizar para la creación del pdf
