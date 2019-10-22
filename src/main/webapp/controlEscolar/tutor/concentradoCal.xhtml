@@ -52,6 +52,12 @@
                                     <f:facet name="left">
                                     </f:facet>
                                     <f:facet name="right">
+                                        <p:commandButton value="Generar pdf" icon="fa fa-download" styleClass="btn btn-primary"
+                                                         actionListener="#{generacionConcentradoCalificaciones
+                                                         .generPdf(concentradoCalificaciones.rol.grupoSelec,
+                                                         concentradoCalificaciones.rol.titulos, concentradoCalificaciones.rol.periodo,
+                                                         concentradoCalificaciones.rol.dvcs, concentradoCalificaciones.rol.programa)}"/>
+
                                         <!--p:link outcome="seguimientoPaseListaTutor">
                                             <i class="fa fa-search"></i>
                                             <span>Ver Reporte por materia</span>

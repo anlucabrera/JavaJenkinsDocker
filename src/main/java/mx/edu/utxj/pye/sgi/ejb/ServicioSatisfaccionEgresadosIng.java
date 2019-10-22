@@ -187,7 +187,6 @@ public class ServicioSatisfaccionEgresadosIng implements EjbSatisfaccionEgresado
             Boolean acv = x.getActivo().equals(true);
             if (activo.equals(acv)) {
                 periodo = x.getPeriodosPK().getCvePeriodo();
-                System.out.println("Periodo:"+ periodo);
             }
         });
 
