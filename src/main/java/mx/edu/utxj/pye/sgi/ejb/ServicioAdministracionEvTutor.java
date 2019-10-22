@@ -41,7 +41,7 @@ public class ServicioAdministracionEvTutor  implements EjbAdministracionEvTutor 
         try {
             //TODO: Obtene la evaluacion activa del ejb de evaluacion tutor
             Evaluaciones evalucionTutor= ejbTutor.evaluacionActiva();
-            System.out.println("Evaluacion activa encontrada -->" + evalucionTutor.getEvaluacion());
+            //System.out.println("Evaluacion activa encontrada -->" + evalucionTutor.getEvaluacion());
             if(evalucionTutor == null){return ResultadoEJB.crearErroneo(3, evalucionTutor, "La evaluacion es nula");}
             else{return ResultadoEJB.crearCorrecto(evalucionTutor, "La evaluacion a tutor se encontro");}
         } catch (Exception e) {
@@ -115,7 +115,7 @@ public class ServicioAdministracionEvTutor  implements EjbAdministracionEvTutor 
                     .setParameter("evaluacion", evaluacion.getEvaluacion())
                     .getResultList()
                     ;
-            System.out.println("Total de resultados de la evalaucion Encontrados!  "+ listResultados.size());
+            //System.out.println("Total de resultados de la evalaucion Encontrados!  "+ listResultados.size());
             if(listResultados.isEmpty() || listResultados==null){return ResultadoEJB.crearErroneo(3, listResultados, "La lista de resultados de la evaluacion a tutor es nula");}
             else{return ResultadoEJB.crearCorrecto(listResultados, "Resultados de la evaluacion a tutor encontrados!");}
         } catch (Exception e) {

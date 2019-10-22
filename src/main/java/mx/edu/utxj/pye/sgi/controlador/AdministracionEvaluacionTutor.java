@@ -122,7 +122,7 @@ public void generalListas(List<dtoEstudiantesEvalauciones> estudiantes){
             if(res.getCorrecto()==true){
                 EvaluacionTutoresResultados resultado = new EvaluacionTutoresResultados();
                 resultado = res.getValor();
-                System.out.println("Resultados" + resultado);
+               // System.out.println("Resultados" + resultado);
                 Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
                 boolean finalizado = comparador.isCompleto(resultado);
                 if(resultado!=null){

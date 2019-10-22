@@ -129,6 +129,7 @@
                 <c:if test="#{concentradoCalificacionesDirector.mostrarEnDesarrollo(request) and concentradoCalificacionesDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{fusionGruposDirector.mostrarEnDesarrollo(request) and fusionGruposDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{avanceProgramaticoDirector.mostrarEnDesarrollo(request) and avanceProgramaticoDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{cedulaIdentificacionDirector.mostrarEnDesarrollo(request) and cedulaIdentificacionDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cedulaIdentificacionDirector.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                 <!-- Servicios Escolares -->
                 <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
@@ -163,8 +164,7 @@
                 <c:if test="#{reporteAsistenciasTutor.mostrarEnDesarrollo(request) and reporteAsistenciasTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/reporteAsistenciasTutor.xhtml"><i class="fa fa-file-text-o"></i><span>Concentrado Asistencias</span></p:link></li></c:if>
                 <c:if test="#{tramitarBajaTutor.mostrarEnDesarrollo(request) and tramitarBajaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/tramitarBaja.xhtml"><i class="fa fa-user-times"></i><span>Tramitar Baja</span></p:link></li></c:if>
                 <c:if test="#{concentradoCalificacionesTutor.mostrarEnDesarrollo(request) and concentradoCalificacionesTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-
-
+                <c:if test="#{cedulaIdentificacionTutor.mostrarEnDesarrollo(request) and cedulaIdentificacionTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/cedulaIdentificacionTutor.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
 
             </c:if>

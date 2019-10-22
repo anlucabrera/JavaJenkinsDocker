@@ -78,7 +78,7 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
         q.setParameter("tipo", "Tutor");
         q.setParameter("fecha", new Date());
         List<Evaluaciones> l = q.getResultList();
-        System.out.println("Lista en Ejb"+ l.size());
+        //System.out.println("Lista en Ejb"+ l.size());
         if(l.isEmpty()){
             return null;
         }else{
@@ -162,9 +162,9 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
     public List<VistaEvaluacionesTutores> getListaTutores() {
         TypedQuery<Listaperiodosescolares> periodo = f.getEntityManager().createQuery("SELECT p from Listaperiodosescolares p ORDER BY p.periodo DESC", Listaperiodosescolares.class);
         if (periodo.getResultList().isEmpty() || periodo.getResultList() == null) {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionTutor2.getListaTutores() no se encontro ninguna lista de periodos");
+           // System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionTutor2.getListaTutores() no se encontro ninguna lista de periodos");
         } else {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionTutor2.getListaTutores() el periodo es  --> : " + periodo);
+           // System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionTutor2.getListaTutores() el periodo es  --> : " + periodo);
         }
         TypedQuery<VistaEvaluacionesTutores> q = f2.getEntityManager().createQuery("SELECT v from VistaEvaluacionesTutores v WHERE v.pk.periodo = :periodo", VistaEvaluacionesTutores.class);
         q.setParameter("periodo", periodo.getSingleResult().getPeriodo());
@@ -209,21 +209,21 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
-            System.out.println("Resultados de consultas--> Eva Ttor--"+resultados);
+           // System.out.println("Resultados de consultas--> Eva Ttor--"+resultados);
             if(resultados!=null){return ResultadoEJB.crearCorrecto(resultados, "Se cargaron los resultados.");}
             //TODO:Si no encuentra regustro de resultados del estudiante, lo crea.
             else if (resultados== null){
                 //TODO: Obtiene datos del estudiante 
                 PeriodosEscolares periodo = getPeriodo(evaluacion);
                 ResultadoEJB<MatriculaPeriodosEscolares> estudianteSauitt = ejbAdminAlumno.getEstudianteSauittClave(estudiante, periodo);
-                System.out.println("EJBSERVICIO---> GETESTUDIANTEsAUIT --->" + estudianteSauitt.getValor().getMatricula());
+               // System.out.println("EJBSERVICIO---> GETESTUDIANTEsAUIT --->" + estudianteSauitt.getValor().getMatricula());
                 //Aqui tendría que haber una condicional en cuanro entren en vigor los estduantes en a base de control escolar
                 //TODO:BUSCA EN SAUITT AL TUTOR DEL ESTUDIANTE
                 ResultadoEJB<AlumnosEncuestas> estudianteTutor = getEstudianteTutorSauiit(estudianteSauitt.getValor().getMatricula());
-                System.out.println("aLUMNO ENCONTRADO EN VISTA --->"+ estudianteTutor.getValor().getMatricula());
+                //System.out.println("aLUMNO ENCONTRADO EN VISTA --->"+ estudianteTutor.getValor().getMatricula());
                 //TODO:Busca al tutor en la Base de Capital Humano
                 ResultadoEJB<Personal> tutorPersonal = getTutor(estudianteTutor.getValor());
-                System.err.println("Tutor Encontrado en Capital Humano"+ tutorPersonal.getValor().getClave());
+                //System.err.println("Tutor Encontrado en Capital Humano"+ tutorPersonal.getValor().getClave());
                 //TODO: Llena entidad para crear los nuevos resultados
                 f.setEntityClass(EvaluacionTutoresResultados.class);
                 resultados = new EvaluacionTutoresResultados(evaluacion.getEvaluacion(), estudiante.getClave(), tutorPersonal.getValor().getClave());
