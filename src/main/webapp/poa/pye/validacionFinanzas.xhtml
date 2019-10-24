@@ -329,6 +329,7 @@
                                                                 <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;" styleClass="hederTablesTitle"/>  
                                                                 <p:column rowspan="2" headerText="Total" style="width: 50px;" styleClass="hederTablesTitle"/>
                                                                 <p:column rowspan="2" headerText="Justificacion" styleClass="hederTablesTitle"/>
+                                                                <p:column rowspan="2" headerText="Es" style="width: 50px;" styleClass="hederTablesTitle"/>
                                                             </p:row>
                                                             <p:row class="success">
                                                                 <p:column headerText="Ene" styleClass="hederTablesTitle"/>
@@ -347,7 +348,7 @@
                                                         </p:columnGroup>
 
                                                         <p:headerRow>
-                                                            <p:column colspan="18" styleClass="lac" style="text-align: left; color: #000000;">
+                                                            <p:column colspan="19" styleClass="lac" style="text-align: left; color: #000000;">
                                                                 <h:outputText value="#{poa.cuadroMandoInt.lineaAccion.nombre}"/>
                                                             </p:column>
                                                         </p:headerRow>  
@@ -406,6 +407,10 @@
                                                         </p:column>
                                                         <p:column style="text-align: justify" >
                                                             <h:outputText value="#{poa.descripcion}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <img src="../../resources/img/semaforoVerde.png" alt="Actividad Estratégica" style="visibility:#{poa.estratejica?'visible':'hidden'}"/>
+
                                                         </p:column>
 
                                                         <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
@@ -516,7 +521,7 @@
                     <p:message for="txtComentario" />
                     <h:outputText id="display" />
                     <p:commandButton id="btnAceptarComentario" value="Aceptar"
-                                      actionListener="#{adminPoaValidacionPresupuestacion.enviarmensajes('R')}"
+                                     actionListener="#{adminPoaValidacionPresupuestacion.enviarmensajes('R')}"
                                      icon="fa fa-chek" styleClass="btn-primary"  update=":frm:dtbBajas" onsuccess="actualizarTabla2()"
                                      oncomplete="PF('dlgComentario').hide()" />
                 </p:panelGrid>

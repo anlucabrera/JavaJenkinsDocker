@@ -15,11 +15,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
@@ -53,6 +55,7 @@ public class AdministracionControl implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo areasLogeo;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.administrador.EjbAdministrador administrador;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
 
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesCH utilidadesCH;
@@ -85,6 +88,26 @@ public class AdministracionControl implements Serializable {
         }
     }
 
+    public String buscarPersonal(Integer clave) {
+        try {
+            Personal p = new Personal();
+            if (clave != null) {
+                p = ejbPersonal.mostrarPersonalLogeado(clave);
+                if (p == null) {
+                    return "Nombre del Responsable";
+                } else {
+                    return p.getNombre();
+                }
+            } else {
+                return "Nombre del Responsable";
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+    
     public void mostrarConfiguracionProp() {
         try {
             cps = new ArrayList<>();

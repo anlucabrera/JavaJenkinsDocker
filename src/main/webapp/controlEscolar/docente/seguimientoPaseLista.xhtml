@@ -261,7 +261,8 @@
                                             <p:column headerText="Fecha">
                                                 <h:outputText value="#{car.asistencia.fechaHora}"><f:convertDateTime pattern="dd, yyyy" locale="es"/></h:outputText>
                                             </p:column>
-                                            <p:column headerText="Hora"><h:outputText value="#{car.asistencia.fechaHora.hours ge 10?'':'0'}#{car.asistencia.fechaHora.hours}:#{car.asistencia.fechaHora.minutes}#{car.asistencia.fechaHora.minutes ge 10?'':'0'}"/>
+                                            <p:column headerText="Hora">
+                                                <h:outputText value="#{car.asistencia.fechaHora}"><f:convertDateTime pattern="HH:mm" locale="es"  timeZone="America/Mexico_City"/></h:outputText>
                                             </p:column>
 
                                             <p:column headerText="Valor">
@@ -316,13 +317,25 @@
                                                     <p:confirm header="Confirmación" message="¿Confirma la eliminación del pase de lista de la sesion #{car.fechaHora}?" icon="ui-icon-alert" />
                                                 </p:commandButton>
                                             </p:column>
+                                            <p:column>
+                                                <p:rowEditor />
+                                            </p:column>
                                             <p:column headerText="Mes">
-                                                <h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="MMMMM" locale="es"/></h:outputText>
+                                                <h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="MMMMM" locale="es"  timeZone="America/Mexico_City"/></h:outputText>
                                             </p:column>
                                             <p:column headerText="Fecha">
-                                                <h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="dd, yyyy" locale="es"/></h:outputText>
+                                                <h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="dd, yyyy" locale="es"  timeZone="America/Mexico_City"/></h:outputText>
                                             </p:column>
-                                            <p:column headerText="Hora"><h:outputText value="#{car.fechaHora.hours ge 10?'':'0'}#{car.fechaHora.hours}:#{car.fechaHora.minutes}#{car.fechaHora.minutes ge 10?'':'0'}"/>
+                                            <p:column headerText="Hora">
+                                                <h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="HH:mm" locale="es"  timeZone="America/Mexico_City"/></h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Fecha completa">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm" locale="es" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                    <f:facet name="input">
+                                                        <p:calendar locale="es" value="#{car.fechaHora}" pattern="MM/dd/yyyy HH:mm"/>
+                                                    </f:facet>
+                                                </p:cellEditor>
                                             </p:column>
 
                                             <!--p:column headerText="Valor">

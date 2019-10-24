@@ -673,6 +673,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     public void updateSesiones(RowEditEvent event) {
         try {
             Asistencias asistencias = (Asistencias) event.getObject();
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.updateSesiones()"+asistencias.getAsistencia()+"--"+asistencias.getFechaHora());
             ejb.actualizarSesionesPaseLista(asistencias);
             ResultadoEJB<DtoUnidadConfiguracion> ducB = packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
             ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCarga(), ducB.getValor());

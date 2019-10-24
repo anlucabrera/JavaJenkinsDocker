@@ -51,158 +51,149 @@
             };
         </h:outputScript>
         <p:panel id="informacion">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 49}">
-                <section class="content">
-                    <div class="row">
-                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                        <div class="col-md-10">
-                            <div class="nav-tabs-custom">
-                                <div class="row">
-                                    <div class="col-lg-10 col-xs-10"/>
-                                    <div class="col-lg-2 col-xs-2">
-                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
-                                            <i class="fa fa-reply"></i>
-                                            <span>Regresar a mi perfil</span>
-                                        </p:link>
-                                    </div>      
-                                </div>
-                                <p:tabView>
-                                    <p:tab title="Eventos Generales">
-                                        <h:form id="frmEventos"> 
-                                            <p:outputPanel id="incidenciasReporte">
-                                                <p:dataTable id="tblActividades"  value="#{administracionControl.eventoses}"  var="eventosR"
-                                                             editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
-
-                                                    <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditEventos}" update="tblActividades" process="@this"/>
-                                                    <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblActividades" />
-
-
-
-                                                    <p:column headerText="Nombre" style="width: 20%;text-align: justify;"
-                                                              sortBy="#{eventosR.nombre}" 
-                                                              filterBy="#{eventosR.nombre}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{eventosR.nombre}" />
-                                                    </p:column>    
-
-                                                    <p:column headerText="Tipo" style="width: 20%;text-align: justify;"
-                                                              sortBy="#{eventosR.tipo}" 
-                                                              filterBy="#{eventosR.tipo}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{eventosR.tipo}" />
-                                                    </p:column>                                                     
-
-
-                                                    <p:column headerText="Fecha Inicio" style="width: 10%">
-                                                        <p:cellEditor>
-                                                            <f:facet name="output"> <h:outputLabel value="#{eventosR.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
-                                                            <f:facet name="input">
-                                                                <p:calendar locale="es" value="#{eventosR.fechaInicio}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/> mask="true" />
-                                                            </f:facet>
-                                                        </p:cellEditor>
-                                                    </p:column>      
-                                                    <p:column headerText="Fecha Fin" style="width: 10%">
-                                                        <p:cellEditor>
-                                                            <f:facet name="output"> <h:outputLabel value="#{eventosR.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
-                                                            <f:facet name="input">
-                                                                <p:calendar locale="es" value="#{eventosR.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/> mask="true" />
-                                                            </f:facet>
-                                                        </p:cellEditor>
-                                                    </p:column>      
-                                                    <p:column style="width:32px;" class="noprint">
-                                                        <p:rowEditor />
-                                                    </p:column>
-                                                </p:dataTable>  
-                                            </p:outputPanel>    
-                                        </h:form>
-                                    </p:tab>
-                                    <p:tab title="Proceso POA">
-
-                                        <h:form id="frmEventosAreas"> 
-                                            <p:outputPanel id="incidenciasReporte">
-                                                <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
-                                                <p:dataTable id="tblEvenAre"  value="#{administracionControl.procesopoas}"  var="procesoPoa" rowStyleClass="#{procesoPoa.validacionJustificacion eq true ?'denegado':'aceptado'}"
-                                                             style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
-
-
-                                                    <p:columnGroup type="header" class="hederTablesTitle">
-                                                        <p:row class="success">
-                                                            <p:column rowspan="2" headerText="Área" style="width: 50%;" styleClass="hederTablesTitle"/>
-                                                            <p:column colspan="3" headerText="Registros" style="width: 25%;" styleClass="hederTablesTitle"/>
-                                                            <p:column colspan="3" headerText="Validaciones" style="width: 25%;" styleClass="hederTablesTitle"/>
-                                                        </p:row>
-                                                        <p:row class="success">
-                                                            <p:column headerText="Actividades"  styleClass="hederTablesTitle"/>
-                                                            <p:column headerText="Recurso"  styleClass="hederTablesTitle"/>
-                                                            <p:column headerText="Justificaciones"   styleClass="hederTablesTitle"/>
-                                                            <p:column headerText="Programacion"  styleClass="hederTablesTitle"/>
-                                                            <p:column headerText="Presupuesto"  styleClass="hederTablesTitle"/>
-                                                            <p:column headerText="Justificacion"   styleClass="hederTablesTitle"/>
-                                                        </p:row>
-                                                    </p:columnGroup>
-
-
-                                                    <p:column headerText="Área" 
-                                                              style="text-align: justify;"
-                                                              sortBy="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" 
-                                                              filterBy="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" />
-                                                    </p:column>   
-
-                                                    <p:column headerText="Registro de Actividades" style="text-align: justify;"
-                                                              sortBy="#{procesoPoa.registroAFinalizado}" 
-                                                              filterBy="#{procesoPoa.registroAFinalizado}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{procesoPoa.registroAFinalizado eq true ?'Finalizado':'Pendiente'}" />
-                                                    </p:column>   
-                                                    <p:column headerText="Validación de Registro de Actividades" style="text-align: justify;"
-                                                              sortBy="#{procesoPoa.validacionRegistroA}" 
-                                                              filterBy="#{procesoPoa.validacionRegistroA}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{procesoPoa.validacionRegistroA eq true ?'Aprobado':'Pendiente'}" />
-                                                    </p:column>   
-                                                    <p:column headerText="Asignación de Recurso" style="text-align: justify;"
-                                                              sortBy="#{procesoPoa.asiganacionRFinalizado}" 
-                                                              filterBy="#{procesoPoa.asiganacionRFinalizado}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{procesoPoa.asiganacionRFinalizado eq true ?'Finalizado':'Pendiente'}" />
-                                                    </p:column>   
-                                                    <p:column headerText="Validación de Asignación de Recurso" style="text-align: justify;"
-                                                              sortBy="#{procesoPoa.validacionRFFinalizado}" 
-                                                              filterBy="#{procesoPoa.validacionRFFinalizado}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{procesoPoa.validacionRFFinalizado eq true ?'Aprobado':'Pendiente'}" />
-                                                    </p:column>   
-                                                    <p:column headerText="Registro de Justificaciones" style="text-align: justify;"
-                                                              sortBy="#{procesoPoa.registroJustificacionFinalizado}" 
-                                                              filterBy="#{procesoPoa.registroJustificacionFinalizado}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{procesoPoa.registroJustificacionFinalizado eq true ?'Finalizado':'Pendiente'}" />
-                                                    </p:column>   
-                                                    <p:column headerText="Validación de Registro de Justificaciones" style="text-align: justify;"
-                                                              sortBy="#{procesoPoa.validacionJustificacion}" 
-                                                              filterBy="#{procesoPoa.validacionJustificacion}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{procesoPoa.validacionJustificacion eq true ?'Aprobado':'Pendiente'}" />
-                                                    </p:column>   
-
-
-                                                </p:dataTable>  
-                                            </p:outputPanel> 
-
-                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                            </p:confirmDialog>   
-                                        </h:form>
-                                    </p:tab>
-                                </p:tabView>
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-10">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
                             </div>
+                            <p:tabView>
+                                <p:tab title="Eventos Generales" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                                    <h:form id="frmEventos"> 
+                                        <p:outputPanel id="incidenciasReporte">
+                                            <p:dataTable id="tblActividades"  value="#{administracionControl.eventoses}"  var="eventosR"
+                                                         editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditEventos}" update="tblActividades" process="@this"/>
+                                                <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblActividades" />
+
+
+
+                                                <p:column headerText="Nombre" style="width: 20%;text-align: justify;"
+                                                          sortBy="#{eventosR.nombre}" 
+                                                          filterBy="#{eventosR.nombre}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{eventosR.nombre}" />
+                                                </p:column>    
+
+                                                <p:column headerText="Tipo" style="width: 20%;text-align: justify;"
+                                                          sortBy="#{eventosR.tipo}" 
+                                                          filterBy="#{eventosR.tipo}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{eventosR.tipo}" />
+                                                </p:column>                                                     
+
+
+                                                <p:column headerText="Fecha Inicio" style="width: 10%">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputLabel value="#{eventosR.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{eventosR.fechaInicio}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/> mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>      
+                                                <p:column headerText="Fecha Fin" style="width: 10%">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputLabel value="#{eventosR.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{eventosR.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/> mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>      
+                                                <p:column style="width:32px;" class="noprint">
+                                                    <p:rowEditor />
+                                                </p:column>
+                                            </p:dataTable>  
+                                        </p:outputPanel>    
+                                    </h:form>
+                                </p:tab>
+                                <p:tab title="Proceso POA">
+
+                                    <h:form id="frmEventosAreas"> 
+                                        <p:outputPanel id="incidenciasReporte">
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
+                                            <p:dataTable id="tblEvenAre"  value="#{administracionControl.procesopoas}"  var="procesoPoa" 
+                                                         style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+
+
+                                                <p:columnGroup type="header" class="hederTablesTitle">
+                                                    <p:row class="success">
+                                                        <p:column rowspan="2" headerText="Área" style="width: 30%;" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Responsable" style="width: 20%;" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="3" headerText="Registros" style="width: 25%;" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="3" headerText="Validaciones" style="width: 25%;" styleClass="hederTablesTitle"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Actividades"  styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Recurso"  styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Justificaciones"   styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Programacion"  styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Presupuesto"  styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Justificacion"   styleClass="hederTablesTitle"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+
+
+                                                <p:column >
+
+                                                    <h:outputText value="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" />
+                                                </p:column>   
+                                                <p:column >
+                                                    <h:outputText value="#{administracionControl.buscarPersonal(procesoPoa.responsable)}" />
+                                                </p:column> 
+
+                                                <p:column rendered="#{procesoPoa.responsable eq null}" colspan="6" >
+                                                    <h:outputText value="Sin POA para el ejercicio Fiscal 20#{procesoPoa.ejercicioFiscalEtapa1+1}" />
+                                                </p:column> 
+
+                                                <p:column style="text-align: justify;"
+                                                          class="#{procesoPoa.registroAFinalizado eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.registroAFinalizado eq true ?'Finalizado':'Pendiente'}" />
+                                                </p:column>   
+                                                <p:column style="text-align: justify;"
+                                                          class="#{procesoPoa.validacionRegistroA eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.validacionRegistroA eq true ?'Aprobado':'Pendiente'}" />
+                                                </p:column>   
+                                                <p:column style="text-align: justify;"
+                                                          class="#{procesoPoa.asiganacionRFinalizado eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.asiganacionRFinalizado eq true ?'Finalizado':'Pendiente'}" />
+                                                </p:column>   
+                                                <p:column style="text-align: justify;"
+                                                          class="#{procesoPoa.validacionRFFinalizado eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.validacionRFFinalizado eq true ?'Aprobado':'Pendiente'}" />
+                                                </p:column>   
+                                                <p:column style="text-align: justify;"
+                                                          class="#{procesoPoa.registroJustificacionFinalizado eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.registroJustificacionFinalizado eq true ?'Finalizado':'Pendiente'}" />
+                                                </p:column>   
+                                                <p:column style="text-align: justify;"
+                                                          class="#{procesoPoa.validacionJustificacion eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.validacionJustificacion eq true ?'Aprobado':'Pendiente'}" />
+                                                </p:column>   
+
+
+                                            </p:dataTable>  
+                                        </p:outputPanel> 
+
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+                                    </h:form>
+                                </p:tab>
+                            </p:tabView>
                         </div>
                     </div>
-                </section>
-            </c:if>
+                </div>
+            </section>
         </p:panel>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />

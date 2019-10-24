@@ -137,6 +137,20 @@ public class AdminPoaValidacionProgramacion implements Serializable {
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public void actualizarestrategica(ValueChangeEvent e) {
+        try {
+            String id = e.getComponent().getClientId();
+            ListaEjesEsLaAp eje=ejesEsLaAp.get(Integer.parseInt(id.split("dtbBajas:")[1].split(":dtbEstra")[0]));
+            ListaEstrategiaActividades estratea=eje.getListalistaEstrategiaLaAp().get(Integer.parseInt(id.split("dtbEstra:")[1].split(":dtbActividades")[0]));
+            ActividadesPoa ap=estratea.getActividadesPoas().get(Integer.parseInt(id.split("dtbActividades:")[1].split(":validar")[0]));
+            ap.setEstratejica((Boolean) e.getNewValue());
+            ejbRegistroActividades.actualizaActividadesPoa(ap);
+            consultarListasValidacionFinal();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalInfo("¡Operación cancelada!");
