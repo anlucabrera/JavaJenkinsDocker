@@ -16,6 +16,14 @@
             ;
 
         </script>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
@@ -52,12 +60,13 @@
                                     <f:facet name="left">
                                     </f:facet>
                                     <f:facet name="right">
-                                        <p:commandButton value="Generar pdf" icon="fa fa-download" styleClass="btn btn-primary"
+                                        <p:commandButton value="Generar pdf" icon="fa fa-download" styleClass="btn btn-primary" ajax="false"
                                                          actionListener="#{generacionConcentradoCalificaciones
-                                                         .generPdf(concentradoCalificacionesTutor.rol.grupoSelec,
+                                                         .generarPdf(concentradoCalificacionesTutor.rol.grupoSelec,
                                                          concentradoCalificacionesTutor.rol.titulos, concentradoCalificacionesTutor.rol.periodo,
-                                                         concentradoCalificacionesTutor.rol.dvcs, concentradoCalificacionesTutor.rol.programa)}"/>
-
+                                                         concentradoCalificacionesTutor.rol.dvcs, concentradoCalificacionesTutor.rol.programa)}">
+                                            <p:fileDownload value="#{generacionConcentradoCalificaciones.download}" />
+                                        </p:commandButton>
                                         <!--p:link outcome="seguimientoPaseListaTutor">
                                             <i class="fa fa-search"></i>
                                             <span>Ver Reporte por materia</span>

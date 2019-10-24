@@ -16,13 +16,18 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,6 +35,9 @@ import java.awt.*;
 import java.io.*;
 import java.math.RoundingMode;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -42,13 +50,13 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
     @Getter @Setter PdfTemplate total;
     @Getter @Setter SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     @Getter @Setter StreamedContent contenioArchivo;
+    @Getter @Setter DefaultStreamedContent download;
     @EJB EjbConsultaCalificacion ejb;
     @Inject ConcentradoCalificacionesTutor con;
 
-    public void generPdf(Grupo grupo, List<DtoVistaCalificacionestitulosTabla> titulos, PeriodosEscolares periodoSelect, List<DtoPresentacionCalificacionesReporte> calificaciones, AreasUniversidad areasUniversidad) throws IOException, DocumentException {
+    public void generarPdf(Grupo grupo, List<DtoVistaCalificacionestitulosTabla> titulos, PeriodosEscolares periodoSelect, List<DtoPresentacionCalificacionesReporte> calificaciones, AreasUniversidad areasUniversidad) throws IOException, DocumentException {
         //Se crean las variables a utilizar para la creación del pdf
         Personal director = ejb.obtenerDirector(grupo.getPlan()).getValor();
-        String usuario = System.getProperty("user.name");
         Document document;
         /*if(calificaciones.size() > 25){
             document = new Document(PageSize.LETTER, 15, 15, 15, 15);
@@ -59,14 +67,24 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         Paragraph parrafo, parrafo2, parrafo3, fechaImpresion, fecha, periodo, periodoEscolar, gradoGrupo, grado, carrera,
                 programaEducativo;
         Integer celdas = 2 + titulos.size();
-        Image logoSep = Image.getInstance("C:\\archivos\\temporales\\logoSep.jpg");
-        Image logoUT = Image.getInstance("C:\\archivos\\temporales\\logoUT.png");
+        String nombrePdf = "acta_final"+grupo.getLiteral()+"_"+grupo.getTutor()+".pdf";
+        //String ruta = ServicioArchivos.carpetaRaiz.concat(File.separator).concat("acta_final").concat(File.separator).concat(nombrePdf);
+        Image logoSep = Image.getInstance("C:\\archivos\\acta_final\\logoSep.jpg");
+        Image logoUT = Image.getInstance("C:\\archivos\\acta_final\\logoUT.png");
         Font fontBold = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
         Font fontNormal = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL);
         Font fontMateria = new Font(Font.FontFamily.HELVETICA, 7, Font.NORMAL);
         Font fontBolder = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8, Font.UNDERLINE);
         Font fontCursive = new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC);
-        PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\"+usuario+"\\Downloads\\acta_final_"+grupo.getLiteral()+"_"+grupo.getTutor()+".pdf"));
+        String base = ServicioArchivos.carpetaRaiz.concat("acta_final").concat(File.separator);
+
+        ServicioArchivos.addCarpetaRelativa(base);
+        ServicioArchivos.eliminarArchivo(base.concat(nombrePdf));
+        OutputStream out = new FileOutputStream(new File(base.concat(nombrePdf)));
+
+        PdfWriter.getInstance(document, out);
+        //PdfWriter.getInstance(document, new FileOutputStream("C:\\archivos\\acta_final\\acta_final_"+grupo.getLiteral()+"_"+grupo.getTutor()+".pdf"));
+        //PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\"+usuario+"\\Downloads\\acta_final_"+grupo.getLiteral()+"_"+grupo.getTutor()+".pdf"));
         PdfPTable table = new PdfPTable(2 + titulos.size());
         PdfPTable tableFirma = new PdfPTable(3);
         Caster caster = new Caster();
@@ -230,7 +248,21 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
                 .addMessage(null, new
                         FacesMessage(FacesMessage.SEVERITY_INFO,
                         "Su documento se ha generado correctamente",
-                        "Puede encontrarlo en la carpeta de 'Descargas'."));
+                        ""));
+        File file = new File(base.concat(nombrePdf));
+
+        try {
+            InputStream input = new FileInputStream(file);
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            setDownload(new DefaultStreamedContent(input, externalContext.getMimeType(file.getName()), file.getName()));
+            //String ruta = "/sii2/media".concat(file.toURI().toString().split("archivos")[1]);
+            //Ajax.oncomplete("descargar('" + ruta + "');");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //Path path = Paths.get(base.concat(nombrePdf));
+        //Files.delete(path);
+
         //Llama a aplicacion de PDF reader
     }
 }

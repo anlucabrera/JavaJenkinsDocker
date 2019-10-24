@@ -88,7 +88,7 @@
                 </c:if>
             </c:forEach>
         </c:if>-->
-        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR' and controladorEmpleado.personal.status ne 'B'}">
+        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Perfil del personal</li>
             <li>
                 <p:link href="#{request.contextPath}/capitalHumano/perfilEmpleado.xhtml">
