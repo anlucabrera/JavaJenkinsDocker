@@ -17,6 +17,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
 
@@ -28,14 +29,18 @@ public class UtilidadesAcceso implements Serializable {
     private static final long serialVersionUID = 1736039029781733869L;
 
     @Getter    @Setter    private List<String> listaPaises = new ArrayList<>(), listaIdiomas = new ArrayList<>(), listaLenguas = new ArrayList<>();
- @Getter    @Setter    private Boolean procesoElectoralActivo;
+    @Getter    @Setter    private Boolean procesoElectoralActivo;
     @Getter    @Setter    private LocalDate fechaActual = LocalDate.now();
+    @Getter    @Setter    private List<EjerciciosFiscales> aniosReportes = new ArrayList();
 //////////////////////////////////////////////////////////////////
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
-    
-    @Inject    LogonMB logonMB;
-    @Inject    UtilidadesCH uch;
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa ecp;
+
+    @Inject
+    LogonMB logonMB;
+    @Inject
+    UtilidadesCH uch;
 
     @PostConstruct
     public void init() {
@@ -43,6 +48,7 @@ public class UtilidadesAcceso implements Serializable {
         listaIdiomas.clear();
         procesoElectoral();
         llenaListaPaises();
+        aniosConsultaLlenado();
     }
 
     public void procesoElectoral() {
@@ -60,6 +66,16 @@ public class UtilidadesAcceso implements Serializable {
                     procesoElectoralActivo = false;
                 }
             }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(UtilidadesAcceso.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void aniosConsultaLlenado() {
+        try {
+            aniosReportes.clear();
+            aniosReportes = ecp.mostrarEjercicioFiscalesesTotales();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(UtilidadesAcceso.class.getName()).log(Level.SEVERE, null, ex);
@@ -128,7 +144,7 @@ public class UtilidadesAcceso implements Serializable {
         listaIdiomas.add("Hungaro");        listaIdiomas.add("Kazajo");        listaIdiomas.add("Letón");        listaIdiomas.add("Lituano");
         listaIdiomas.add("Luxemburgués");        listaIdiomas.add("Maltés");        listaIdiomas.add("Rumano");        listaIdiomas.add("Noruego");
         listaIdiomas.add("Polaco");        listaIdiomas.add("Macedonio");
-        
+
         listaLenguas.clear();
         listaLenguas.add("Akateko");        listaLenguas.add("Cucapá");        listaLenguas.add("Chocholteco");        listaLenguas.add("Guarijío");
         listaLenguas.add("Ixil");        listaLenguas.add("Kumiai");        listaLenguas.add("Matlatzinca");        listaLenguas.add("Mixe");

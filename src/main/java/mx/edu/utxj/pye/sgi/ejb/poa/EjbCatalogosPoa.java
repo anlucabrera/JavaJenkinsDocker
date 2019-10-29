@@ -61,8 +61,10 @@ public interface EjbCatalogosPoa {
 
 //  ------------------------------------------Registros -----------------------------------------------
     public List<Registros> mostrarRegistrosActividad(ActividadesPoa actividadesPoa);
-    
+
 //  ------------------------------------------EjerciciosFiscales -----------------------------------------------
     public EjerciciosFiscales mostrarEjercicioFiscaleses(Short idE);
+
+    public List<EjerciciosFiscales> mostrarEjercicioFiscalesesTotales();
 
 }

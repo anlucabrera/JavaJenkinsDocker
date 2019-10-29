@@ -41,6 +41,22 @@
 
     <ui:define name="body">
 
+        <h:form id="Parametros">
+            <div class="box box-primary">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <div class="row">
+                        <div class="col-sm-2 border-right">
+                            <p:outputLabel for="anio" value="Año" />
+                            <p:selectOneMenu  id="anio" value="#{areaPoaReporte.ejercicioFiscal}" valueChangeListener="#{areaPoaReporte.numeroAnioAsiganado}">
+                                <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.ejercicioFiscal}" itemLabel="#{anio.anio}" />
+                                <p:ajax listener="#{areaPoaReporte.imprimirValores()}" process="anio" update="frm"/>
+                            </p:selectOneMenu >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">

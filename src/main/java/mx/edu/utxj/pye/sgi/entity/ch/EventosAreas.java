@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.entity.ch;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -27,6 +28,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EventosAreas.findByEvento", query = "SELECT e FROM EventosAreas e WHERE e.eventosAreasPK.evento = :evento")
     , @NamedQuery(name = "EventosAreas.findByAreaOperativa", query = "SELECT e FROM EventosAreas e WHERE e.eventosAreasPK.areaOperativa = :areaOperativa")})
 public class EventosAreas implements Serializable {
+
+    @Column(name = "diasExtra")
+    private Integer diasExtra;
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -85,6 +89,14 @@ public class EventosAreas implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.EventosAreas[ eventosAreasPK=" + eventosAreasPK + " ]";
+    }
+
+    public Integer getDiasExtra() {
+        return diasExtra;
+    }
+
+    public void setDiasExtra(Integer diasExtra) {
+        this.diasExtra = diasExtra;
     }
     
 }

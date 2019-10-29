@@ -99,9 +99,8 @@ public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements De
             rol = new ConsultaReporteCalificacionesSecAca(resAcceso.getValor());
             tieneAcceso = rol.tieneAcceso(rol.getSecAca());
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-           
-            // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
             rol.setNivelRol(NivelRol.CONSULTA);
             
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();

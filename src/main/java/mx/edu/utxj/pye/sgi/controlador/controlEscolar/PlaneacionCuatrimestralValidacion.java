@@ -91,7 +91,9 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
                 rol.setFiltro(resValidaEnc.getValor());                
                 tieneAcceso = rol.tieneAcceso(director);                
             }            
-            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso   
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
             ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDirector());
             if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
             

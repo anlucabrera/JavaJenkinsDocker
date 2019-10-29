@@ -115,6 +115,8 @@ public class AvanceProgramaticoDirector extends ViewScopedRol implements Desarro
             }
 
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
             
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);

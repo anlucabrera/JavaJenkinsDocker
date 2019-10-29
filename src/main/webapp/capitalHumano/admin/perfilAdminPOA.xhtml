@@ -154,32 +154,30 @@
                                                     <h:outputText value="Sin POA para el ejercicio Fiscal 20#{procesoPoa.ejercicioFiscalEtapa1+1}" />
                                                 </p:column> 
 
-                                                <p:column style="text-align: justify;"
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
                                                           class="#{procesoPoa.registroAFinalizado eq false ?'denegado':'aceptado'}">
                                                     <h:outputText value="#{procesoPoa.registroAFinalizado eq true ?'Finalizado':'Pendiente'}" />
                                                 </p:column>   
-                                                <p:column style="text-align: justify;"
-                                                          class="#{procesoPoa.validacionRegistroA eq false ?'denegado':'aceptado'}">
-                                                    <h:outputText value="#{procesoPoa.validacionRegistroA eq true ?'Aprobado':'Pendiente'}" />
-                                                </p:column>   
-                                                <p:column style="text-align: justify;"
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
                                                           class="#{procesoPoa.asiganacionRFinalizado eq false ?'denegado':'aceptado'}">
                                                     <h:outputText value="#{procesoPoa.asiganacionRFinalizado eq true ?'Finalizado':'Pendiente'}" />
-                                                </p:column>   
-                                                <p:column style="text-align: justify;"
-                                                          class="#{procesoPoa.validacionRFFinalizado eq false ?'denegado':'aceptado'}">
-                                                    <h:outputText value="#{procesoPoa.validacionRFFinalizado eq true ?'Aprobado':'Pendiente'}" />
-                                                </p:column>   
-                                                <p:column style="text-align: justify;"
+                                                </p:column>
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
                                                           class="#{procesoPoa.registroJustificacionFinalizado eq false ?'denegado':'aceptado'}">
                                                     <h:outputText value="#{procesoPoa.registroJustificacionFinalizado eq true ?'Finalizado':'Pendiente'}" />
-                                                </p:column>   
-                                                <p:column style="text-align: justify;"
+                                                </p:column>                                                                                                                                                                                                                                                  
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
+                                                          class="#{procesoPoa.validacionRegistroA eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.validacionRegistroA eq true ?'Aprobado':'Pendiente'}" />
+                                                </p:column>     
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
+                                                          class="#{procesoPoa.validacionRFFinalizado eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.validacionRFFinalizado eq true ?'Aprobado':'Pendiente'}" />
+                                                </p:column>    
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
                                                           class="#{procesoPoa.validacionJustificacion eq false ?'denegado':'aceptado'}">
                                                     <h:outputText value="#{procesoPoa.validacionJustificacion eq true ?'Aprobado':'Pendiente'}" />
                                                 </p:column>   
-
-
                                             </p:dataTable>  
                                         </p:outputPanel> 
 

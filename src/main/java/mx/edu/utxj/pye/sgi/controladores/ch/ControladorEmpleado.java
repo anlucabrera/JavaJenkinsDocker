@@ -58,6 +58,7 @@ public class ControladorEmpleado implements Serializable {
 
     @Getter    @Setter    private Integer empleadoLogeado;
     @Getter    @Setter    private List<Integer> administradores = new ArrayList();
+    @Getter    @Setter    private List<Boolean> poaProces = new ArrayList();
     @Getter    @Setter    private String clavePersonalLogeado, mandos = "", fechaCVBencimiento, fechaFuncionesBencimiento, fechaLimiteCurriculumVitae = "", fechaLimiteRegistroFunciones = "",
             mensajeIndex1 = "", mensajeIndex2 = "";
 
@@ -228,6 +229,9 @@ public class ControladorEmpleado implements Serializable {
                 }
                 tienePOA = true;
                 eventosRegistro();
+                if(!procesopoa.getValidacionRegistroA() && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Registro").get(0))){poaProces.add(true);} else {poaProces.add(false);}
+                if(procesopoa.getValidacionRegistroA() && (procesopoa.getValidacionRFFinalizado() == false) && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Recurso").get(0))){poaProces.add(true);} else {poaProces.add(false);}
+                if(procesopoa.getValidacionRFFinalizado() && (procesopoa.getValidacionJustificacion() == false) && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Justificacion").get(0))){poaProces.add(true);} else {poaProces.add(false);}
             } else {
                 tienePOA = false;
                 evaluable = false;
@@ -263,18 +267,27 @@ public class ControladorEmpleado implements Serializable {
     }
 
     public Boolean periodoActivoPOA(Eventos t) {
-        if ((fechaActual.isBefore(uch.castearDaLD(t.getFechaFin())) || (fechaActual.getDayOfMonth() == uch.castearDaLD(t.getFechaFin()).getDayOfMonth() && fechaActual.getMonthValue() == uch.castearDaLD(t.getFechaFin()).getMonthValue() && fechaActual.getYear() == uch.castearDaLD(t.getFechaFin()).getYear())) && (fechaActual.isAfter(uch.castearDaLD(t.getFechaInicio())) || fechaActual.equals(uch.castearDaLD(t.getFechaInicio())))) {
+        LocalDateTime fechai = uch.castearDaLDT(t.getFechaInicio());
+        LocalDateTime fechaf = uch.castearDaLDT(t.getFechaFin()).plusHours(23).plusMinutes(59).plusSeconds(59);
+        
+        if ((fechaActualHora.isAfter(fechai) || fechaActualHora.equals(fechai)) && (fechaActualHora.isBefore(fechaf) || fechaActualHora.equals(fechaf))) {
             return true;
         } else {
             nuevaEventosAreas = new EventosAreas();
-             nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-             if(nuevaEventosAreas != null) {
-                 return true;
-             }else{
-                 return false;
-             }
-         }
-     }
+            nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+            if (nuevaEventosAreas != null) {
+                fechaF.plusDays(nuevaEventosAreas.getDiasExtra());
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.periodoActivoPOA(fechaf)" + fechaf);
+                if ((fechaActualHora.isAfter(fechai) || fechaActualHora.equals(fechai)) && (fechaActualHora.isBefore(fechaf) || fechaActualHora.equals(fechaf))) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+    }
 
 //////////////////////////////////////////////////////////////////////////////// Menú dinamico
     public void crearMenuAdministrador() {

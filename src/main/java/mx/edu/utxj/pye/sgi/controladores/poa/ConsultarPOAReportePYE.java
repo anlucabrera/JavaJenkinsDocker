@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
@@ -27,11 +28,12 @@ import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
 @Named
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class ConsultarPOAReportePYE implements Serializable {
     
     @Getter    @Setter    private Short ejercicioFiscal = 0;
@@ -54,14 +56,16 @@ public class ConsultarPOAReportePYE implements Serializable {
     
     @PostConstruct
     public void init() {
-        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();;
+        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         ejeses=new ArrayList<>();
         ejeses.clear();
         mostrarAreasTienenPOA();
     }
 
     public void mostrarAreasTienenPOA() {
-        try {
+        try {            
+            areasUniversidad = new AreasUniversidad();
+            listaPersonal = new ListaPersonal();
             areasUniversidads = new ArrayList<>();
             areasUniversidads.clear();
             areasUniversidads.add(new AreasUniversidad(Short.parseShort("0"), "Seleccione uno", "Seleccione uno", "1", false));
@@ -70,14 +74,40 @@ public class ConsultarPOAReportePYE implements Serializable {
                     areasUniversidads.add(t);
                 }
             });
+            areasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(controladorEmpleado.getProcesopoa().getArea());
+            listaPersonal = ejbPersonal.mostrarListaPersonal(areasUniversidad.getResponsable());
+            consultarListasValidacionFinal();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ConsultarPOAReportePYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void numeroAnioAsiganado(ValueChangeEvent event) {
+        ejeses = new ArrayList<>();
+        estrategiases = new ArrayList<>();
+        lineasAccions = new ArrayList<>();
+
+        ejeses.clear();
+        estrategiases.clear();
+        lineasAccions.clear();
+        ejercicioFiscal = 0;
+        ejercicioFiscal = Short.parseShort(event.getNewValue().toString());
+        consultarListasValidacionFinal();
+    }
 
     public void areaSeleccionada(ValueChangeEvent event) {
         try {
+            ejeses = new ArrayList<>();
+            estrategiases = new ArrayList<>();
+            lineasAccions = new ArrayList<>();
+
+            ejeses.clear();
+            estrategiases.clear();
+            lineasAccions.clear();
+            if (event.getNewValue().toString().equals("0")) {
+                return;
+            }
             areasUniversidad = new AreasUniversidad();
             listaPersonal = new ListaPersonal();
             areasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(Short.parseShort(event.getNewValue().toString()));
@@ -126,7 +156,7 @@ public class ConsultarPOAReportePYE implements Serializable {
                 ejeses.add(new ListaEjes(ej, estrategiases));
             });
         }
-        Ajax.oncomplete("PF('@frm').update();");
+        Faces.refresh();
     }
 
     public void imprimirValores() {

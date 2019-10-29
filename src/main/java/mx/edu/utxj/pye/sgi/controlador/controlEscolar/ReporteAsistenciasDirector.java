@@ -26,8 +26,6 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaListasAsistenciaDirector;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaReporteAsistenciaTutor;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaReporteAsistenciasDirector;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReportes;
@@ -38,10 +36,8 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
@@ -99,7 +95,9 @@ public class ReporteAsistenciasDirector extends ViewScopedRol implements Desarro
             }
 
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-           
+            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
+            
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             rol.setNivelRol(NivelRol.CONSULTA);

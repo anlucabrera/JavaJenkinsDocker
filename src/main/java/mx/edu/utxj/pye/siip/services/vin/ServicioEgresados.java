@@ -780,12 +780,10 @@ public class ServicioEgresados implements EjbEgresados {
                 registroAlmacenado = true;
             }
             if (registroAlmacenado) {
-                if (ejbModulos.getEventoRegistro().equals(actividadEGEncontrado.getRegistros().getEventoRegistro())) {
+                
                     actividadEG.getActividadEgresadoGeneracion().setRegistro(actividadEGEncontrado.getRegistro());
                     facadeVinculacion.edit(actividadEG.getActividadEgresadoGeneracion());
-                } else {
-                    listaCondicional.remove(actividadEG.getActividadEgresadoGeneracion().getFecha() + " " + actividadEG.getGeneracion() + " " + actividadEG.getProgramaEducativo().getNombre());
-                }
+                
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 actividadEG.getActividadEgresadoGeneracion().setRegistro(registro.getRegistro());
@@ -810,12 +808,10 @@ public class ServicioEgresados implements EjbEgresados {
                 registroAlmacenado = true;
             }
             if (registroAlmacenado) {
-                if (ejbModulos.getEventoRegistro().equals(actividadEEGEncontrado.getRegistros().getEventoRegistro())) {
+                
                     actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().setRegistro(actividadEEGEncontrado.getRegistro());
                     facadeVinculacion.edit(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion());
-                } else {
-                    listaCondicional.remove(actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().getFecha() + " " + actividadEconomicaEG.getProgramaEducativo().getNombre());
-                }
+                
             } else {
                 Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                 actividadEconomicaEG.getActividadEconomicaEgresadoGeneracion().setRegistro(registro.getRegistro());
@@ -841,12 +837,10 @@ public class ServicioEgresados implements EjbEgresados {
                     registroAlmacenado = true;
                 }
                 if (registroAlmacenado) {
-                    if (ejbModulos.getEventoRegistro().equals(nivelOEGEncontrado.getRegistros().getEventoRegistro())) {
+                   
                         nivelOcupacionEG.getNivelOcupacionEgresadosGeneracion().setRegistro(nivelOEGEncontrado.getRegistro());
                         facadeVinculacion.edit(nivelOcupacionEG.getNivelOcupacionEgresadosGeneracion());
-                    } else {
-                        listaCondicional.remove(nivelOcupacionEG.getNivelOcupacionEgresadosGeneracion().getFecha() + " " + nivelOcupacionEG.getProgramaEducativo().getNombre());
-                    }
+                    
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     nivelOcupacionEG.getNivelOcupacionEgresadosGeneracion().setRegistro(registro.getRegistro());
@@ -875,12 +869,10 @@ public class ServicioEgresados implements EjbEgresados {
                     registroAlmacenado = true;
                 }
                 if (registroAlmacenado) {
-                    if (ejbModulos.getEventoRegistro().equals(nivelIEGEncontrado.getRegistros().getEventoRegistro())) {
+                    
                         nivelIngresoEG.getNivelIngresosEgresadosGeneracion().setRegistro(nivelIEGEncontrado.getRegistro());
                         facadeVinculacion.edit(nivelIngresoEG.getNivelIngresosEgresadosGeneracion());
-                    } else {
-                        listaCondicional.remove(nivelIngresoEG.getNivelIngresosEgresadosGeneracion().getFecha() + " " + nivelIngresoEG.getProgramaEducativo().getNombre());
-                    }
+                    
                 } else {
                     Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
                     nivelIngresoEG.getNivelIngresosEgresadosGeneracion().setRegistro(registro.getRegistro());

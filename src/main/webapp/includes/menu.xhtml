@@ -354,44 +354,50 @@
                         </span-->
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <c:if test="#{!controladorEmpleado.procesopoa.validacionRegistroA}">
-                            <li>
-                                <p:link href="#{request.contextPath}/poa/areas/registroActividades.xhtml"><i class="fa fa-edit"></i>
-                                    <span>Registro</span>
-                                </p:link>
-                            </li>
-                        </c:if>
-                        <c:if test="#{controladorEmpleado.procesopoa.validacionRegistroA and (controladorEmpleado.procesopoa.validacionRFFinalizado eq false)}">
-                            <li>
-                                <p:link href="#{request.contextPath}/poa/areas/recursoActividad.xhtml"><i class="fa fa-usd"></i>
-                                    <span>Recurso</span>
-                                </p:link>
-                            </li>
-                        </c:if>
-                        <c:if test="#{controladorEmpleado.procesopoa.validacionRFFinalizado and (controladorEmpleado.procesopoa.validacionJustificacion eq false)}">
-                            <li>
-                                <p:link href="#{request.contextPath}/poa/areas/justificacion.xhtml"><i class="fa fa-wechat"></i>
-                                    <span>Justificación</span>
-                                </p:link>
-                            </li>
-                        </c:if>
-                        <c:if test="#{controladorEmpleado.evaluable}">
-                            <li>
-                                <p:link href="#{request.contextPath}/poa/areas/evaluacion.xhtml"><i class="fa fa-list"></i>
-                                    <span>Evaluación</span>
-                                </p:link>
-                            </li>
+                        <c:if test="#{controladorEmpleado.procesopoa.activaEtapa1}">
+                            <c:if test="#{controladorEmpleado.poaProces.get(0)}">
+                                <li>
+                                    <p:link href="#{request.contextPath}/poa/areas/registroActividades.xhtml"><i class="fa fa-edit"></i>
+                                        <span>Registro</span>
+                                    </p:link>
+                                </li>
+                            </c:if>
+                            <c:if test="#{controladorEmpleado.poaProces.get(1)}">
+                                <li>
+                                    <p:link href="#{request.contextPath}/poa/areas/recursoActividad.xhtml"><i class="fa fa-usd"></i>
+                                        <span>Recurso</span>
+                                    </p:link>
+                                </li>
+                            </c:if>
+                            <c:if test="#{controladorEmpleado.poaProces.get(2)}">
+                                <li>
+                                    <p:link href="#{request.contextPath}/poa/areas/justificacion.xhtml"><i class="fa fa-wechat"></i>
+                                        <span>Justificación</span>
+                                    </p:link>
+                                </li>
+                            </c:if>
+                        </c:if>                        
+                        <c:if test="#{controladorEmpleado.procesopoa.activaEtapa2}">
+                            <c:if test="#{controladorEmpleado.evaluable}">
+                                <li>
+                                    <p:link href="#{request.contextPath}/poa/areas/evaluacion.xhtml"><i class="fa fa-list"></i>
+                                        <span>Evaluación</span>
+                                    </p:link>
+                                </li>
+                            </c:if>
                         </c:if>
                         <li>
                             <p:link href="#{request.contextPath}/poa/areas/consulta.xhtml"><i class="fa fa-search"></i>
                                 <span>Consulta</span>
                             </p:link>
                         </li> 
-                        <li>
-                            <p:link href="#{request.contextPath}/poa/areas/areaCMI.xhtml"><i class="fa fa-bar-chart"></i>
-                                <span>CMI Área</span>
-                            </p:link>
-                        </li> 
+                        <c:if test="#{controladorEmpleado.procesopoa.activaEtapa2}">
+                            <li>
+                                <p:link href="#{request.contextPath}/poa/areas/areaCMI.xhtml"><i class="fa fa-bar-chart"></i>
+                                    <span>CMI Área</span>
+                                </p:link>
+                            </li> 
+                        </c:if>
                         <li>
                             <p:link href="#{request.contextPath}/poa/pye/universidadCMI.xhtml"><i class="fa fa-line-chart"></i>
                                 <span>CMI Institucional</span>
@@ -1117,8 +1123,8 @@
                 </p:link>
             </li>
             <c:if test="#{controladorEmpleado.tienePOA}">
-                <li>
-                    <p:link href="#{request.contextPath}/calendarioActividades.xhtml">
+                <li>                    
+                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Calendario de Evaluacion SIIP 2019-Final (1).pdf#toolbar=0"  target="_blank">
                         <i class="fa fa-calendar"></i>
                         <span>Calendario</span>
                     </p:link>

@@ -35,7 +35,6 @@ import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCasoCritico;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseLista;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporte;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPaseListaReporteConsulta;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
@@ -45,10 +44,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistencias;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -98,9 +94,8 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
             rol = new PaseDeListaSegTutor(resAcceso.getValor());
             tieneAcceso = rol.tieneAcceso(rol.getTutor());
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-           
-            // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
             rol.setNivelRol(NivelRol.OPERATIVO);
             
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();

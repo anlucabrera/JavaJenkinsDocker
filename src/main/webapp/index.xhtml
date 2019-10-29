@@ -333,49 +333,51 @@
         <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">              
 
             <c:if test="#{controladorEmpleado.tienePOA}">
-                <div class="box box-primary">
-                    <div class="box box-solid">
-                        <div class="box-header with-border">
-                            <h2 class="box-title">Resumen CMI #{controladorEmpleado.nuevoOBJListaPersonal.areaOperativaNombre}</h2>
-                            <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                </button>
-                            </div>
-                        </div>       
-                        <div class="box-body">  
-                            <div class="row">                                
-                                <div class="col-lg-12 col-md-12 col-xs-12">
-                                    <p:panelGrid style="margin-top:20px">
-                                        <p:row>
-                                            <p:column style="font-weight: bold;">Actividades Programadas</p:column>
-                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.programadas}</p:column>
-                                            <p:column rowspan="3" style="font-weight: bold;">
-                                                <!--# {cuadroMandoIntegralArea.datosGraica(cuadroMandoIntegralArea.cmiEJe1.avanceGraf)}-->
-                                                <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
-                                                </hf:chart>
-                                            </p:column>
-                                            <p:column rowspan="3" style="font-weight: bold;">
-                                                <p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiGeneral.gaugeChartModel}" responsive="true" />                                            
-                                            </p:column>
-                                        </p:row>
+                <c:if test="#{controladorEmpleado.procesopoa.activaEtapa2}">
+                    <div class="box box-primary">
+                        <div class="box box-solid">
+                            <div class="box-header with-border">
+                                <h2 class="box-title">Resumen CMI #{controladorEmpleado.nuevoOBJListaPersonal.areaOperativaNombre}</h2>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>       
+                            <div class="box-body">  
+                                <div class="row">                                
+                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                        <p:panelGrid style="margin-top:20px">
+                                            <p:row>
+                                                <p:column style="font-weight: bold;">Actividades Programadas</p:column>
+                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.programadas}</p:column>
+                                                <p:column rowspan="3" style="font-weight: bold;">
+                                                    <!--# {cuadroMandoIntegralArea.datosGraica(cuadroMandoIntegralArea.cmiEJe1.avanceGraf)}-->
+                                                    <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
+                                                              xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
+                                                        <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                    </hf:chart>
+                                                </p:column>
+                                                <p:column rowspan="3" style="font-weight: bold;">
+                                                    <p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiGeneral.gaugeChartModel}" responsive="true" />                                            
+                                                </p:column>
+                                            </p:row>
 
-                                        <p:row>
-                                            <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
-                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.realizadas}</p:column>
-                                        </p:row>
-                                        <p:row>
-                                            <p:column style="font-weight: bold;">Porcentaje Avance</p:column>
-                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiGeneral.avance)}%</p:column>
-                                        </p:row>
-                                    </p:panelGrid>
-                                    <a href="poa/areas/areaCMI.xhtml" class="small-box-footer" style="font-size: x-large">Ver más</a>
-                                </div>       
+                                            <p:row>
+                                                <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
+                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.realizadas}</p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="font-weight: bold;">Porcentaje Avance</p:column>
+                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiGeneral.avance)}%</p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                        <a href="poa/areas/areaCMI.xhtml" class="small-box-footer" style="font-size: x-large">Ver más</a>
+                                    </div>       
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div> 
+                    </div> 
+                </c:if>
             </c:if>
 
             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
@@ -464,18 +466,20 @@
                                     <a href="http://siip.utxicotepec.edu.mx/prontuario-service2" target="_blank" class="small-box-footer">Consultar</a>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-6 col-xs-12">
-                                <div class="small-box bg-yellow">
-                                    <div class="inner">
-                                        <h3>Datos Personales</h3>
-                                        <p>Se debe actualizar el Tipo de sangre</p>
+                            <c:if test="#{controladorEmpleado.nuevoOBJInformacionAdicionalPersonal.tipoSangre eq null}">
+                                <div class="col-lg-3 col-md-6 col-xs-12">
+                                    <div class="small-box bg-yellow">
+                                        <div class="inner">
+                                            <h3>Datos Personales</h3>
+                                            <p>Se debe actualizar el Tipo de sangre</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-id-card-o"/>
+                                        </div>
+                                        <a href="capitalHumano/perfilEmpleadoDatosPer.xhtml" class="small-box-footer">Actualizar Informacion</a>
                                     </div>
-                                    <div class="icon">
-                                        <i class="fa fa-id-card-o"/>
-                                    </div>
-                                    <a href="capitalHumano/perfilEmpleadoDatosPer.xhtml" class="small-box-footer">Actualizar Informacion</a>
-                                </div>
-                            </div> 
+                                </div> 
+                            </c:if>
                             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2 || controladorEmpleado.nuevoOBJListaPersonal.actividad eq 4}"> 
                                 <c:if test="#{controladorEmpleado.incidenciases.size() eq 0? false:true}">
                                     <div class="col-lg-3 col-md-6 col-xs-12">
@@ -759,14 +763,14 @@
                 </div>
             </c:if-->
         </c:if>
-<script>
-                var cookie = '#{cookie["JSESSIONID"].value}';
-                var session = '#{session.id}';
-                var coincide = cookie === session;
-                if(!coincide){
-                    $.removeCookie('JSESSIONID', { path: '/' });
-                    location.reload();
-                }
-            </script>
+        <script>
+            var cookie = '#{cookie["JSESSIONID"].value}';
+            var session = '#{session.id}';
+            var coincide = cookie === session;
+            if (!coincide){
+            $.removeCookie('JSESSIONID', { path: '/' });
+            location.reload();
+            }
+        </script>
     </ui:define>
 </ui:composition>

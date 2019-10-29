@@ -48,7 +48,6 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -96,9 +95,8 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
             rol = new ConsultaReporteCalificacionesTutor(resAcceso.getValor());
             tieneAcceso = rol.tieneAcceso(rol.getTutor());
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-           
-            // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
             rol.setNivelRol(NivelRol.CONSULTA);
             
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();

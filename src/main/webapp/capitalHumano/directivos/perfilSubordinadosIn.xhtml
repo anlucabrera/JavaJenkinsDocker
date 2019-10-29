@@ -237,8 +237,7 @@
                                                 <div class="col-sm-2 border-right">
                                                     <p:outputLabel for="anio" value="Año" />
                                                     <p:selectOneMenu  id="anio" value="#{controladorSubordinados.anioNumero}" valueChangeListener="#{controladorSubordinados.numeroAnioAsiganado}">
-                                                        <f:selectItem itemValue="2018" itemLabel="2018" />
-                                                        <f:selectItem itemValue="2019" itemLabel="2019" />
+                                                        <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.anio}" itemLabel="#{anio.anio}" />
                                                         <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="anio" update="tblActividades"/>
                                                     </p:selectOneMenu >
                                                 </div>

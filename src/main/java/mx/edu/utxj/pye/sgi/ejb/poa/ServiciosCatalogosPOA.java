@@ -234,5 +234,12 @@ public class ServiciosCatalogosPOA implements EjbCatalogosPoa {
             return pr.get(0);
         }
     }
+    
+    @Override
+    public List<EjerciciosFiscales> mostrarEjercicioFiscalesesTotales() {
+        TypedQuery<EjerciciosFiscales> q = em.createQuery("SELECT e FROM EjerciciosFiscales e", EjerciciosFiscales.class);
+        List<EjerciciosFiscales> pr = q.getResultList();
+        return pr;
+    }
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
@@ -44,6 +45,12 @@ public class AreaPoaReporte implements Serializable {
         consultarListasValidacionFinal();
     }
 
+    public void numeroAnioAsiganado(ValueChangeEvent event) {
+        ejercicioFiscal = 0;
+        ejercicioFiscal = Short.parseShort(event.getNewValue().toString());
+        consultarListasValidacionFinal();
+    }
+    
     public void consultarListasValidacionFinal() {
         ejeses = new ArrayList<>();
         estrategiases = new ArrayList<>();

@@ -25,7 +25,8 @@
                 /* indicamos el salto de pagina */
                 .saltoDePagina{
                     display:block;
-                    page-break-inside:auto  !important;
+                    page-break-inside:auto !important;
+                    font-size: xx-small !important;
                 }
             }
         </style>
@@ -51,15 +52,22 @@
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
                     <p:panel header="Alineación estratégica">
                         <div class="row">
-                            <div class="col-sm-12 col-md-3 col-lg-3">
+                            <div class="col-sm-10 col-md-3 col-lg-3">
                                 <p:autoUpdate/>
                                 <p:outputLabel value="Área:" />
 
-                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{consultarPOAReportePYE.areaSeleccionada}">
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" value="#{consultarPOAReportePYE.areasUniversidad.area}" valueChangeListener="#{consultarPOAReportePYE.areaSeleccionada}">
                                     <f:selectItems value="#{consultarPOAReportePYE.areasUniversidads}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
                                     <p:ajax update="@(form)" listener="#{consultarPOAReportePYE.imprimirValores()}"/>
                                 </p:selectOneMenu>
                                 <p:message for="eje" display="tooltip" />
+                            </div>
+                            <div class="col-sm-2 border-right">
+                                <p:outputLabel for="anio" value="Año" />
+                                <p:selectOneMenu  id="anio" value="#{consultarPOAReportePYE.ejercicioFiscal}" valueChangeListener="#{consultarPOAReportePYE.numeroAnioAsiganado}">
+                                    <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.ejercicioFiscal}" itemLabel="#{anio.anio}" />
+                                    <p:ajax listener="#{consultarPOAReportePYE.imprimirValores()}" process="anio" update="frm"/>
+                                </p:selectOneMenu >
                             </div>
                         </div>
                     </p:panel>
@@ -142,6 +150,7 @@
                                                                                                         <p:column rowspan="2" headerText="No." style="width: 5%;font-size: xx-small;"/>
                                                                                                         <p:column rowspan="2" headerText="Actividad" style="width: 30%;font-size: xx-small;"/>
                                                                                                         <p:column rowspan="2" headerText="Unidad de medida" style="width:10%;font-size: xx-small;"/>
+                                                                                                        <!--p:column rowspan="2" headerText="Meta" style="width:10%;font-size: xx-small;"/-->
                                                                                                         <p:column colspan="12" headerText="Calendarización de Metas" style="width: 50%;font-size: xx-small;"/>
                                                                                                         <p:column rowspan="2" headerText="Total" style="width: 5%;font-size: xx-small;"/>
                                                                                                     </p:row>
@@ -170,48 +179,80 @@
                                                                                                 <p:column>
                                                                                                     <h:outputText value="#{poa.unidadMedida.nombre}" style="font-size: xx-small"/>
                                                                                                 </p:column>
+                                                                                                <p:column>
+                                                                                                    <!--h:outputText value="Planeada" style="font-size: xx-small"/>
+                                                                                                    <hr/>
+                                                                                                    <h:outputText value="Alcanzada" style="font-size: xx-small"/-->
+                                                                                                </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPEnero}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NAEnero}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPFebrero}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NAFebrero}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPMarzo}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NAMarzo}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPAbril}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NAAbril}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPMayo}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NAMayo}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPJunio}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NAJunio}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPJulio}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NAJulio}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPAgosto}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NAAgosto}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPSeptiembre}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NASeptiembre}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPOctubre}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NAOctubre}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPNoviembre}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NANoviembre}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.NPDiciembre}" style="font-size: xx-small"/>
+                                                                                                    <!--hr/>
+                                                                                                    <h:outputText value="# {poa.NADiciembre}" style="font-size: xx-small"/-->
                                                                                                 </p:column>
                                                                                                 <p:column style="text-align: center!important;">
                                                                                                     <h:outputText value="#{poa.total}" style="font-size: xx-small"/>
+                                                                                                    <!--h:outputText value="# {poa.NPEnero+poa.NPFebrero+poa.NPMarzo+poa.NPAbril+poa.NPMayo+poa.NPJunio+poa.NPJulio+poa.NPAgosto+poa.NPSeptiembre+poa.NPOctubre+poa.NPNoviembre+poa.NPDiciembre}" style="font-size: xx-small"/> 
+                                                                                                    <hr/>
+                                                                                                    <h:outputText value="# {poa.NAEnero+poa.NAFebrero+poa.NAMarzo+poa.NAAbril+poa.NAMayo+poa.NAJunio+poa.NAJulio+poa.NAAgosto+poa.NASeptiembre+poa.NAOctubre+poa.NANoviembre+poa.NADiciembre}" style="font-size: xx-small"/--> 
                                                                                                 </p:column>
-                                                                                                <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}" class="hrclas">
+                                                                                                <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
                                                                                                     <p:dataTable id="dtbBajas" var="recurso"
-                                                                                                                 style="page-break-inside:always !important;" class="hrclas" styleClass="saltoDePagina"
+                                                                                                                 style="page-break-inside:always !important;" styleClass="saltoDePagina"
                                                                                                                  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{poa.recursosActividadList}">
 
                                                                                                         <f:facet name="header"></f:facet>

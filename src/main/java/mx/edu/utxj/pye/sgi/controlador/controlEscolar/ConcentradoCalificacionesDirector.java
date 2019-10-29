@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,7 +30,6 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaReporteCalificacionesDirector;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaReporteCalificacionesSecAca;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalificacionEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalificacionesTutor;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
@@ -56,10 +54,8 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
-import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
-import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
 /**
@@ -113,6 +109,8 @@ public class ConcentradoCalificacionesDirector extends ViewScopedRol implements 
             }
 
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
             
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
