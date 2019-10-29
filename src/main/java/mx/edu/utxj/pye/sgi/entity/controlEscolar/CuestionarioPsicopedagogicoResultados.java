@@ -14,7 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -76,6 +75,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR45", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r45 = :r45")
     , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR46", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r46 = :r46")
     , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR47", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r47 = :r47")
+    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR48", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r48 = :r48")
+    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR49", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r49 = :r49")
+    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR50", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r50 = :r50")
+    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR51", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r51 = :r51")
+    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR52", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r52 = :r52")
+    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR53", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r53 = :r53")
     , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByCompleto", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.completo = :completo")
     , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByReviso", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.reviso = :reviso")})
 public class CuestionarioPsicopedagogicoResultados implements Serializable {
@@ -85,147 +90,112 @@ public class CuestionarioPsicopedagogicoResultados implements Serializable {
     protected CuestionarioPsicopedagogicoResultadosPK cuestionarioPsicopedagogicoResultadosPK;
     @Column(name = "clave")
     private Integer clave;
-    @Size(max = 5)
     @Column(name = "r1")
     private String r1;
-    @Size(max = 1000)
     @Column(name = "r2")
     private String r2;
-    @Size(max = 1000)
     @Column(name = "r3")
     private String r3;
-    @Size(max = 1000)
     @Column(name = "r4")
     private String r4;
-    @Size(max = 1000)
     @Column(name = "r5")
     private String r5;
-    @Size(max = 1000)
     @Column(name = "r6")
     private String r6;
-    @Size(max = 1000)
     @Column(name = "r7")
     private String r7;
-    @Size(max = 5)
     @Column(name = "r8")
     private String r8;
-    @Size(max = 5)
     @Column(name = "r9")
     private String r9;
-    @Size(max = 1000)
     @Column(name = "r10")
     private String r10;
-    @Size(max = 1000)
     @Column(name = "r11")
     private String r11;
-    @Size(max = 1000)
     @Column(name = "r12")
     private String r12;
-    @Size(max = 1000)
     @Column(name = "r13")
     private String r13;
-    @Size(max = 1000)
     @Column(name = "r14")
     private String r14;
-    @Size(max = 1000)
     @Column(name = "r15")
     private String r15;
-    @Size(max = 50)
     @Column(name = "r16")
     private String r16;
-    @Size(max = 50)
     @Column(name = "r17")
     private String r17;
-    @Size(max = 1000)
     @Column(name = "r18")
     private String r18;
-    @Size(max = 5)
     @Column(name = "r19")
     private String r19;
-    @Size(max = 50)
     @Column(name = "r20")
     private String r20;
-    @Size(max = 5)
     @Column(name = "r21")
     private String r21;
-    @Size(max = 1000)
     @Column(name = "r22")
     private String r22;
-    @Size(max = 5)
     @Column(name = "r23")
     private String r23;
-    @Size(max = 500)
     @Column(name = "r24")
     private String r24;
-    @Size(max = 5)
     @Column(name = "r25")
     private String r25;
-    @Size(max = 50)
     @Column(name = "r26")
     private String r26;
-    @Size(max = 50)
     @Column(name = "r27")
     private String r27;
-    @Size(max = 50)
     @Column(name = "r28")
     private String r28;
-    @Size(max = 50)
     @Column(name = "r29")
     private String r29;
-    @Size(max = 50)
     @Column(name = "r30")
     private String r30;
-    @Size(max = 50)
     @Column(name = "r31")
     private String r31;
-    @Size(max = 50)
     @Column(name = "r32")
     private String r32;
-    @Size(max = 50)
     @Column(name = "r33")
     private String r33;
-    @Size(max = 50)
     @Column(name = "r34")
     private String r34;
-    @Size(max = 50)
     @Column(name = "r35")
     private String r35;
-    @Size(max = 50)
     @Column(name = "r36")
     private String r36;
-    @Size(max = 50)
     @Column(name = "r37")
     private String r37;
-    @Size(max = 50)
     @Column(name = "r38")
     private String r38;
-    @Size(max = 50)
     @Column(name = "r39")
     private String r39;
-    @Size(max = 50)
     @Column(name = "r40")
     private String r40;
-    @Size(max = 50)
     @Column(name = "r41")
     private String r41;
-    @Size(max = 50)
     @Column(name = "r42")
     private String r42;
-    @Size(max = 5)
     @Column(name = "r43")
     private String r43;
-    @Size(max = 500)
     @Column(name = "r44")
     private String r44;
-    @Size(max = 5)
     @Column(name = "r45")
     private String r45;
-    @Size(max = 100)
     @Column(name = "r46")
     private String r46;
-    @Size(max = 1000)
     @Column(name = "r47")
     private String r47;
+    @Column(name = "r48")
+    private String r48;
+    @Column(name = "r49")
+    private String r49;
+    @Column(name = "r50")
+    private String r50;
+    @Column(name = "r51")
+    private String r51;
+    @Column(name = "r52")
+    private String r52;
+    @Column(name = "r53")
+    private String r53;
     @Column(name = "completo")
     private Boolean completo;
     @Column(name = "reviso")
@@ -635,6 +605,54 @@ public class CuestionarioPsicopedagogicoResultados implements Serializable {
 
     public void setR47(String r47) {
         this.r47 = r47;
+    }
+
+    public String getR48() {
+        return r48;
+    }
+
+    public void setR48(String r48) {
+        this.r48 = r48;
+    }
+
+    public String getR49() {
+        return r49;
+    }
+
+    public void setR49(String r49) {
+        this.r49 = r49;
+    }
+
+    public String getR50() {
+        return r50;
+    }
+
+    public void setR50(String r50) {
+        this.r50 = r50;
+    }
+
+    public String getR51() {
+        return r51;
+    }
+
+    public void setR51(String r51) {
+        this.r51 = r51;
+    }
+
+    public String getR52() {
+        return r52;
+    }
+
+    public void setR52(String r52) {
+        this.r52 = r52;
+    }
+
+    public String getR53() {
+        return r53;
+    }
+
+    public void setR53(String r53) {
+        this.r53 = r53;
     }
 
     public Boolean getCompleto() {

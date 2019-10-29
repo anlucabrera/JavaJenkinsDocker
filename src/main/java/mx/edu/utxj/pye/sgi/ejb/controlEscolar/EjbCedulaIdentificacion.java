@@ -121,6 +121,27 @@ public class EjbCedulaIdentificacion {
 
         }
     }
+
+    /**
+     * Obtiene la lista de estudiantes (No se filtra por estudiantes activos, ya que psicopedagogia debe tener historico de sus expedientes)
+     * @return Resultado del proceso (Lista de estudiantes)
+     */
+    public ResultadoEJB<List<Estudiante>> getEstudiantes (){
+        try{
+            //TODO: Obtiene la lista de estudiantes general
+            List<Estudiante> estudiantes = new ArrayList<>();
+            estudiantes =em.createQuery("select e from Estudiante e",Estudiante.class)
+            .getResultList()
+            ;
+            if(estudiantes ==null ){return  ResultadoEJB.crearErroneo(2,estudiantes,"No existen estudiantes");}
+            if(estudiantes.isEmpty()){return ResultadoEJB.crearErroneo(3,estudiantes,"No existen estudiantes");}
+            else {
+                return ResultadoEJB.crearCorrecto(estudiantes,"Lista de estudiantes");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes (EjbCedulaIdentificacion.getEstudiantes))", e, null);
+        }
+    }
     /**
      * Genera toda la informacion que se necesita para la cedula de Identificación para el estudiante
      * @return Lista de apartados de la cedula de idetificacion
@@ -933,6 +954,7 @@ public class EjbCedulaIdentificacion {
                ResultadoEJB<Estudiante> resEstudiante = validaEstudiante(matricula);
                if(resEstudiante.getCorrecto()==true){
                    //Se empiezan a buscar el resto de los datos y a llenar el
+
                    estudiante = resEstudiante.getValor();
                    //TODO:Llenado de dto
                    //TODO:DATOS GENERALES DEL ESTUDIANTE
