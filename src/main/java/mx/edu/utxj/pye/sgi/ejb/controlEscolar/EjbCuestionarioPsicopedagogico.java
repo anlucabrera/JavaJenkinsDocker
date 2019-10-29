@@ -4,14 +4,17 @@ import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.CedulaIdentificacionRolPsicopedagogia;
+import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CuestionarioPsicopedagogicoResultados;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CuestionarioPsicopedagogicoResultadosPK;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.enums.AlertaTipo;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.funcional.Comparador;
+import mx.edu.utxj.pye.sgi.funcional.ComparadorCuestionarioPsicopedagogicoEstudiante;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -19,6 +22,7 @@ import javax.ejb.Stateless;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -105,39 +109,113 @@ public class EjbCuestionarioPsicopedagogico {
     }
 
     /**
-     * Busca resultados por estudiante y matricula
+     * Busca resultados por estudiante y matricula (No se filtra por evaluacion, porque se debe vizualizar los datos del cuestionario por historico a pesar de que el cuestionario ya esté cerrado)
+     *
      * @param estudiante Estudiante a buscar
-     * @param evaluacion cuestionario activo
-     * @param personal Personal de psicopedagogia encargado de examinar los resultados del cuestionario
      * @return
      */
-    public ResultadoEJB<CuestionarioPsicopedagogicoResultados> getResultadosPersonal(Estudiante estudiante, Evaluacion evaluacion, Personal personal){
+    public ResultadoEJB<CuestionarioPsicopedagogicoResultados> getResultadosCuestionarioPersonal(Estudiante estudiante, Personal examinador){
         try{
             CuestionarioPsicopedagogicoResultados resultados = new CuestionarioPsicopedagogicoResultados();
             if(estudiante ==null){return  ResultadoEJB.crearErroneo(2,resultados,"El estudiante no debe ser nulo");}
-            if(evaluacion ==null){return  ResultadoEJB.crearErroneo(3,resultados,"La evalución no debe ser nulo");}
-            if(personal ==null){return ResultadoEJB.crearErroneo(4,resultados,"El personal no debe ser nulo");}
             //TODO: Busca resultados
-            resultados = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:idEstudiante and c.cuestionarioPsicopedagogicoResultadosPK.evaluacion=:evaluacion",CuestionarioPsicopedagogicoResultados.class)
+            resultados = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:idEstudiante order by c.cuestionarioPsicopedagogicoResultadosPK.evaluacion",CuestionarioPsicopedagogicoResultados.class)
                     .setParameter("idEstudiante",estudiante.getIdEstudiante())
-                    .setParameter("evaluacion",evaluacion.getEvaluacion())
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
             ;
             //TODO: Si no se encuentran resultados el estudiante, se da aviso al personal examinador que el estudiante no ha respondido el cuestionario
             if(resultados==null){return ResultadoEJB.crearErroneo(5,resultados,"El estudiante con matricula "+estudiante.getMatricula() +" no ha respondido el cuestionario");}
-            //TODO: Caso contrario se comprueba que los resultados del cuestionario ya cuente con un personal examinador
+
             else {
-                //TODO: Si los resultados no cuentan no personal examinador, se agrega el del personal logueado (Personal de Psicopedagogia)
-                if(resultados.getClave()==null){resultados.setClave(personal.getClave());
-                return ResultadoEJB.crearCorrecto(resultados,"Resultados encontrados, se agrego personal examinidor");
+                //TODO: Se revisa que los resultados ya tengan personal examinador en caso de que no se agrega al personal logueado
+                if(resultados.getClave()==null){
+                    //TODO: Se agrega la clave del persona
+                    resultados.setClave(examinador.getClave());
+                    resultados.setReviso(false);
+                    em.merge(resultados);
+                    return ResultadoEJB.crearCorrecto(resultados,"Se ha agregado a personal examinador");
                 }else {return ResultadoEJB.crearCorrecto(resultados,"Resultados encontrados");}
+
             }
 
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo generar los resultados(Personal). (EjbCuestionarioPsicopedagogico.getResultadosPersonal)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados(Personal). (EjbCuestionarioPsicopedagogico.getResultadosCuestionarioPersonal)", e, null);
         }
+    }
+
+    /**
+     * Verifica que los resultados del cuestionario del estudiante que se obtuvieron ya cuenten ya hayan sido examinados por un el personal de psicopedadogia
+     * En caso de que no, se envia a los resultados la clave del personal logeado como personal de psicopedagogia
+     * @param resultados Resultados obtenidos del estudiante
+     * @param examinador Personal de Psicopedagogia, encargado de exminar los resultados del cuestionario
+     * @return Resultado del proceso (Resultados actualizados)
+     */
+    public ResultadoEJB<CuestionarioPsicopedagogicoResultados> crearResultadosPersonal(CuestionarioPsicopedagogicoResultados resultados, Personal examinador){
+        try{
+            if(resultados ==null){return ResultadoEJB.crearErroneo(2,resultados,"Los resultados no deben ser nulos");}
+            if(examinador ==null){return ResultadoEJB.crearErroneo(3,resultados,"El examinador no debe ser nulo");}
+            //TODO: Comprueba que tenga un examinador
+            if(resultados.getClave()==null){
+                //TODO: En caso de que sea nulo, le agrega la clave del personal examinador
+                resultados.setClave(examinador.getClave());
+                resultados.setReviso(false);
+                em.merge(resultados);
+                return ResultadoEJB.crearCorrecto(resultados,"Se ha agregado al personal examinador");
+            }
+            else {return ResultadoEJB.crearCorrecto(resultados,"Los resultados ya cuentan con personal examinador");}
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se agregar personal examinador a los resultados(Personal). (EjbCuestionarioPsicopedagogico.getResultadosCuestionarioPersonal)", e, null);
+        }
+    }
+
+    /**
+     * Identifica mensajes de alerta, en este caso sólo para identificar si el estudiante ha repondido (Completado el cuestionario psicopedagogico)
+     * Identifica si los resultados encontrados han sido examinados por el personal de psicopedagogía
+     * @param rol
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoAlerta>> identificaMensajes(CedulaIdentificacionRolPsicopedagogia rol){
+        try {
+            if(rol.getEstudiante()!=null){
+                List<DtoAlerta> alertas = new ArrayList<>();
+                //TODO: Buscar los resultados por estudiante
+               if(rol.getResultados().getEstudiante()==null ){
+                   //TODO: Se envia mensaje de alerta que el estudiante no ha respondido el cuestionario
+                   alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" no ha contestado el cuestionario", AlertaTipo.ERROR));
+               }else {
+                   //Todo: Comprueba que el estudiante ya lo haya terminado el cuestionario
+                   if(rol.getResultados().getCompleto()==true){
+                       //TODO:Lo termino
+                       alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" ha completado el cuestionario", AlertaTipo.CORRECTO));
+                   }
+                   else {
+                       //TODO: No lo ha terminado
+                       alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" no ha completado el cuestionario", AlertaTipo.INFORMATIVO));
+                   }
+                   //TODO: Comprueba que ya cuente con un personal examinador
+                   if(rol.getResultados().getClave()==null){
+                       //TODO: Se envia alerta de que el cuestionario no cuenta con personal examinador
+                       alertas.add(new DtoAlerta("Los resultados del cuestionario no han sido examinados.", AlertaTipo.INFORMATIVO));
+                   }else {
+                       //TODO: Revisa si el personal examinador  ya termino de revisar las respuestas
+                       if(rol.getResultados().getReviso()==true){
+                           //TODO: Envia mesaje de aviso que ya se ha terminado de revisar el cuestuinario
+                           alertas.add(new DtoAlerta("Los resultados del cuestionario han sido revisados", AlertaTipo.CORRECTO));
+                       }else {
+                           //TODO: Mensaje de alerta que no se ha terminado de revisar el cuestionario
+                           alertas.add(new DtoAlerta("Los resultados del cuestionario no se han terminado de examinar.", AlertaTipo.INFORMATIVO));
+                       }
+                   }
+
+               }
+                return ResultadoEJB.crearCorrecto(alertas, "Lista de mensajes");
+            }
+            return ResultadoEJB.crearCorrecto(Collections.EMPTY_LIST, "Sin mensajes");
+
+        } catch (Exception e) {return ResultadoEJB.crearErroneo(1, "No se pudieron identificar los mensajes(EjbCredencializacion.identificaMensajes)", e, null);}
     }
 
     /**
@@ -202,19 +280,90 @@ public class EjbCuestionarioPsicopedagogico {
                         case "r42": resultado.setR42(valor); break;
                         case "r43": resultado.setR43(valor); break;
                         case "r44": resultado.setR44(valor); break;
-                        case "r45": resultado.setR45(valor); break;
-                        case "r46": resultado.setR46(valor); break;
-                        case "r47": resultado.setR47(valor); break;
                     }return ResultadoEJB.crearCorrecto(resultado,"Se actualizaron las respuestas por pregunta");
                 default:
                     return ResultadoEJB.crearErroneo(2, "No se pudo actualizar", CuestionarioPsicopedagogicoResultados.class);
             }
 
         }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar o persistir las resupuestas (EjbCredencializacion.cargaResultadosCuestionarioPsicopedagogico)", e, null);
+
+        }
+    }
+    /**
+     * Actualiza y persiste (Segun la operacion) los resultados del Cuestionario del estudiante
+     * @param id Numero de pregunta
+     * @param valor Respuesta a guardar
+     * @param resultado Resultados
+     * @param operacion Operacion a realizar (Refrescar o persistir)
+     * @return
+     */
+    public ResultadoEJB<CuestionarioPsicopedagogicoResultados> cargaResultadosCuestionarioPsicopedagogicoPersonal(String id, String valor, CuestionarioPsicopedagogicoResultados resultado, Operacion operacion){
+        try{
+            switch(operacion){
+                case PERSISTIR:
+                    if(resultado!=null){
+                        em.merge(resultado);
+                        return ResultadoEJB.crearCorrecto(resultado,"Resultados Actualizados");
+                    }else { return  ResultadoEJB.crearErroneo(2,resultado,"Los resultados no deben ser nulos");}
+                case REFRESCAR:
+                    switch (id.trim()) {
+                        case "r45": resultado.setR45(valor); break;
+                        case "r46": resultado.setR46(valor); break;
+                        case "r47": resultado.setR47(valor); break;
+                        case "r48": resultado.setR48(valor); break;
+                        case "r49": resultado.setR49(valor); break;
+                        case "r50": resultado.setR50(valor); break;
+                        case "r51": resultado.setR51(valor); break;
+                        case "r52": resultado.setR52(valor); break;
+                        case "r53": resultado.setR53(valor); break;
+                    }return ResultadoEJB.crearCorrecto(resultado,"Se actualizaron las respuestas por pregunta");
+                default:
+                    return ResultadoEJB.crearErroneo(2, "No se pudo actualizar", CuestionarioPsicopedagogicoResultados.class);
+            }
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar o persistir las resupuestas del Personal(EjbCredencializacion.cargaResultadosCuestionarioPsicopedagogicoPersonal)", e, null);
+
+        }
+    }
+
+    /**
+     * Actualiza los resultados del cuestionario del estudiante como completos
+     * @param resultados Resultados del estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<CuestionarioPsicopedagogicoResultados> actualizarCompleto(CuestionarioPsicopedagogicoResultados resultados){
+        try {
+            if(resultados==null){return ResultadoEJB.crearErroneo(2,resultados,"Los resultados no deben ser nulos");}
+            resultados.setCompleto(true);
+            em.merge(resultados);
+            return ResultadoEJB.crearCorrecto(resultados,"Los resultados del cuestionario del estudiante se han actualizado como completo.");
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actulizar cuestionario completo (EjbCredencializacion.actualizarCompleto)", e, null);
+        }
+    }
+
+    /**
+     * Actualiza los resultados del cuestionario del estudiante a revisados por un personal examinador
+     * @param resultados Resultados del cuestionario del estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<CuestionarioPsicopedagogicoResultados> actualizaRevisado(CuestionarioPsicopedagogicoResultados resultados) {
+        try {
+            if(resultados==null){return ResultadoEJB.crearErroneo(2,resultados,"Los resultados no deben ser nulos");}
+            resultados.setReviso(true);
+            em.merge(resultados);
+            return ResultadoEJB.crearCorrecto(resultados,"Los resultados del cuestionario del estudiante se han actualizado como revisados por el examinador");
+
+        }catch (Exception e){
 
         }
         return null;
     }
+
+    //---------------------------------------------SECCIÓN DE APARTADOS Y POSIBLES RESPUESTAS--------------------------------------//
     /**
      * Genera los apartados con sus preguntas del cuestionario psicopedagógico
      * @return Apartados
@@ -356,9 +505,12 @@ public class EjbCuestionarioPsicopedagogico {
     public List<SelectItem> getGruposVunerabilidad(){
         List<SelectItem> l = new ArrayList<>();
         l.add(new SelectItem("Económico","Económico","Económico"));
-        l.add(new SelectItem("Con bastante frecuencia","Con bastante frecuencia","Con bastante frecuencia"));
-        l.add(new SelectItem("Con poca frecuencia","Con poca frecuencia","Con poca frecuencia"));
-        l.add(new SelectItem("Casi nunca o nunca","Casi nunca o nunca","Casi nunca o nunca"));
+        l.add(new SelectItem("Vocacional","Vocacional","Vocacional"));
+        l.add(new SelectItem("Familiar","Familiar","Familiar"));
+        l.add(new SelectItem("De salud","De salud","De Salud"));
+        l.add(new SelectItem("Afectivo emocional","Afectivo emocional","Afectivo emocional"));
+        l.add(new SelectItem("Autoestima","Autoestima","Autoestima"));
+        l.add(new SelectItem("Aprovechamiento académico","Aprovechamiento académico","Aprovechamiento académico"));
         return  l;
     }
 

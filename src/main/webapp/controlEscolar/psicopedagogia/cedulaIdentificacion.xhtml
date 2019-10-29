@@ -33,415 +33,1105 @@
         <h:outputScript library="js" name="dialogs.js"/>
     </ui:define>
     <ui:define name="description">
-        
+
     </ui:define>
 
     <ui:define name="body">
         <adm:breadcrumb title="Cédula de Identificación del Estudiante"/>
-            <div class="contenedor">
-                <c:if test="#{cedulaIdentificacionPsicopedagogia.tieneAcceso}">
-                    <h:form id="frm" prependId="false" class="form-inline">
-                        <div class="box box-primary">
-                            <div class="box-header with-border">
-                                <div id="main-buttons" class="hidden-sm hidden-xs">
-                                    <p:toolbar id="tb">
-                                        <f:facet name="right">
-                                            <p:commandLink
-                                                    class="btn btn-info"
-                                                    rendered="#{true}"
-                                                    disabled="#{false}"
-                                                    onclick="PF('modalAyuda').show();"
-                                                    title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
-                                                    class="fa fa-question"/>
-                                            </p:commandLink>
-                                        </f:facet>
-                                    </p:toolbar>
-                                </div>
-                            </div>
-                        </div>
-                    </h:form>
-                    <p:tabView id="tabw1">
-                        
-                        <p:tab title="Datos del estudiante">
-                            <section class="content">
-                        <h:form id="frm">
-                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="row">
-                                            <div class="col-sm-12 border-right">
-                                                <div class="description-block">
-                                                    <div class="row">
-                                                        <div class="form-group">
-                                                            <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{cedulaIdentificacionPsicopedagogia.rol.matricula}.jpg"  style="width: 150px; height: 220px;" class="img-circle"/>
-                                                            </div>
-                                                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                                                <p:outputLabel for="matricula" style="font-size: inherit;text-align: left;" value="Matricula:" />
-                                                                <p:inputText id="matricula" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.matricula}" required="true" requiredMessage="Ingrese la matricula del estudiante"  >
-                                                                    <p:ajax event="change" listener="#{cedulaIdentificacionPsicopedagogia.getEstudiante()}" update="@form,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6"/>
-                                                                </p:inputText>
-                                                                <p:message for="matricula"><p:autoUpdate/></p:message>
-                                                            </div>
-                                                            <div class="col-sm-6 col-md-6 col-lg-6">
-                                                                <p:outputLabel for="nombre" style="font-size: inherit;text-align: right;" value="Nombre:" />
-                                                                <p:inputText id="nombre" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosGenerales.p2}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-7 col-md-7 col-lg-7">
-                                                                <p:outputLabel for="carrera" style="font-size: inherit;text-align: right;" value="Carrera:" />
-                                                                <p:inputText id="carrera" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosGenerales.p3}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                <p:outputLabel for="s" style="font-size: inherit;text-align: right;" value="Sistema:" />
-                                                                <p:inputText id="s" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosGenerales.p4}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                                                <p:outputLabel for="grado" style="font-size: inherit;text-align: right;" value="Grado:" />
-                                                                <p:inputText id="grado" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosGenerales.p5}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                                                <p:outputLabel for="grupo" style="font-size: inherit;text-align: right;" value="Grupo:" />
-                                                                <p:inputText id="grupo" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosGenerales.p6}" readonly="true"/>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </h:form>
-                        
-                    </section>
-            </p:tab>
-        </p:tabView>
-        <p:tabView id="tabw2">
-            <p:tab title="#{cedulaIdentificacionPsicopedagogia.rol.apartados[1].contenido}" >
-                <section class="content">
-                        <h:form id="frm2">
-                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="row">
-                                            <div class="col-sm-12 border-right">
-                                                <div class="description-block">
-                                                    <div class="row">
-                                                        <div class="form-group">
-                                                            <c:set var="index" value="#{7}" />
-                                                            <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[1]}" />
-                                                            <c:forEach items="#{apartado.preguntas}" var="pregunta">
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                    <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
-                                                                    <p:inputText class="form-control"  value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
-
-                                                                    </p:inputText>
-                                                                    <c:set var="index" value="#{index+1}" />
-                                                                </div>
-                                                            </c:forEach>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="form-group">
-                                                            <label class="col-sm-12 control-label"><h3 style="text-align: cente; font-size: inherit; font-weight: bold">#{cedulaIdentificacionPsicopedagogia.rol.apartados[2].contenido}</h3></label>
-                                                            <c:set var="apartado2" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[2]}" />
-                                                            <c:set var="index" value="#{16}" />
-                                                            <c:forEach items="#{apartado2.preguntas}" var="pregunta">
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                    <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
-                                                                    <p:inputText class="form-control"  value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
-
-                                                                    </p:inputText>
-                                                                    <c:set var="index" value="#{index+1}" />
-                                                                </div>
-                                                            </c:forEach>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-
-                                                        <div class="form-group">
-                                                            <label class="col-sm-12 control-label"><h3 style="text-align: cente; font-size: inherit; font-weight: bold">#{cedulaIdentificacionPsicopedagogia.rol.apartados[3].contenido}</h3></label>
-                                                            <c:set var="apartado3" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[3]}" />
-                                                            <c:set var="index" value="#{25}" />
-                                                            <c:forEach items="#{apartado3.preguntas}" var="pregunta">
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                    <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
-                                                                    <p:inputText class="form-control"  value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
-
-                                                                    </p:inputText>
-                                                                    <c:set var="index" value="#{index+1}" />
-                                                                </div>
-                                                            </c:forEach>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <c:set var="apartado4" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[4]}" />
-                                                        <div class="form-group">
-                                                            <label class="col-sm-12 control-label"><h3 style="text-align: cente; font-size: inherit; font-weight: bold">#{cedulaIdentificacionPsicopedagogia.rol.apartados[4].contenido}</h3></label>
-                                                            <c:set var="apartado3" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[3]}" />
-                                                            <c:set var="index" value="#{33}" />
-                                                            <c:forEach items="#{apartado4.preguntas}" var="pregunta">
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                    <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
-                                                                    <p:inputText class="form-control"  value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
-
-                                                                    </p:inputText>
-                                                                    <c:set var="index" value="#{index+1}" />
-                                                                </div>
-                                                            </c:forEach>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </h:form>
-                        
-                    </section>
-            </p:tab>
-            <p:tab title="#{cedulaIdentificacionPsicopedagogia.rol.apartados[5].contenido}" >
-                <section class="content">
-                    <h:form id="frm3">
-                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                            <div class="col-md-12">
-                                <div class="box box-widget widget-user-2">
-                                    <div class="row">
-                                        <div class="col-sm-12 border-right">
-                                            <div class="description-block">
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <c:set var="index" value="#{38}" />
-                                                        <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[5]}" />
-                                                            <c:forEach items="#{apartado.preguntas}" var="pregunta">
-                                                                <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                    <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                    <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
-                                                                    <p:inputText class="form-control" placeholder="" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosSocioeconomicos[pos]}" readonly="true">
-                                                                       
-                                                                    </p:inputText>
-                                                                    <c:set var="index" value="#{index+1}" />
-                                                                </div>
-                                                            </c:forEach>
-                                                    </div>
-                                                </div>
-                                                
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                            
-                        </div> 
-                    </h:form>
-                    
-                </section>
-            
-            </p:tab>
-            
-            <p:tab title="#{cedulaIdentificacionPsicopedagogia.rol.apartados[6].contenido}" >
-                <section class="content">
-                    <h:form id="frm4">
-                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                            <div class="col-md-12">
-                                <div class="box box-widget widget-user-2">
-                                    <div class="row">
-                                        <div class="col-sm-12 border-right">
-                                            <div class="description-block">
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                            <c:set var="index" value="#{65}" />
-                                                            <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[6]}" />
-                                                            <c:forEach items="#{apartado.preguntas}" var="pregunta">
-                                                                <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                    <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                    <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
-                                                                    <p:inputText class="form-control" placeholder="" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosFamiliares[pos]}" readonly="true">
-
-                                                                    </p:inputText>
-                                                                    <c:set var="index" value="#{index+1}" />
-                                                                </div>
-                                                            </c:forEach>
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </h:form>
-
-                </section>
-            
-            </p:tab>
-            
-            <p:tab title="#{cedulaIdentificacionPsicopedagogia.rol.apartados[7].contenido}" >
-                <p:tabView id="tabw3">
-                    <p:tab title="Datos generales">
-                        <section class="content">
-                            <h:form id="frm5">
-                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                    <div class="col-md-12">
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="row">
-                                                <div class="col-sm-12 border-right">
-                                                    <div class="description-block">
-                                                        <div class="row">
-                                                            <div class="form-group">
-                                                                <c:set var="index" value="#{81}" />
-                                                                <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[7]}" />
-                                                                <c:forEach items="#{apartado.preguntas}" var="pregunta">
-                                                                    <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                        <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                        <p:outputLabel style="font-size: inherit" value="#{pregunta}"/>
-                                                                        <p:inputText class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosEscolares[pos]}" readonly="true">
-
-                                                                        </p:inputText>
-                                                                        <c:set var="index" value="#{index+1}" />
-                                                                    </div>
-                                                                </c:forEach>
-                                                            </div>
-
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </h:form>
-                        </section>
-
-                    </p:tab>
-                </p:tabView>
-
-            
-            </p:tab>
-            <p:tab title="#{cedulaIdentificacionPsicopedagogia.rol.apartados[8].contenido}" >
-                <section class="content">
-                    <h:form id="frm6">
-                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                            <div class="col-md-12">
-                                <div class="box box-widget widget-user-2">
-                                    <div class="row">
-                                        <div class="col-sm-12 border-right">
-                                            <div class="description-block">
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                         <c:set var="index" value="#{108}" />
-                                                            <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[8]}" />
-                                                            <c:forEach items="#{apartado.preguntas}" var="pregunta">
-                                                                <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                    <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                    <p:outputLabel style="font-size: inherit" value="#{pregunta}"/>
-                                                                    <p:inputText class="form-control" placeholder="" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosDeSalud[pos]}" readonly="true">
-                                                                        
-                                                                    </p:inputText>
-                                                                    <c:set var="index" value="#{index+1}" />
-                                                                </div>
-                                                            </c:forEach>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-sm-12 control-label"><h3 style="text-align: center; font-size: inherit; font-weight: bold">#{cedulaIdentificacionPsicopedagogia.rol.apartados[9].contenido}</h3></label>
-                                                        <c:set var="apartado2" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[9]}" />
-                                                        <c:set var="index" value="#{118}" />
-                                                        <c:forEach items="#{apartado2.preguntas}" var="pregunta">
-                                                            <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
-                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
-                                                                <p:inputText class="form-control"  value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosDeSalud[pos]}" readonly="true">
-
-                                                                </p:inputText>
-                                                                <c:set var="index" value="#{index+1}" />
-                                                            </div>
-                                                        </c:forEach>
-                                                    </div>
-                                                </div>
-                                                
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                            
-                        </div> 
-                    </h:form>
-                    
-                </section>
-            
-            </p:tab>
-            
-            
-        </p:tabView>
-                    
-        
-        </c:if>
-        <c:if test="#{cedulaIdentificacionPsicopedagogia.tieneAcceso}">
-                <!-- zona de importación de enums -->
-                <c:if test="#{!empty credencializacionSE.alertas || true}">
-                    <div class="box box-info">
-                        <div class="box-header">
-                            <ui:include src="/includes/alertas.xhtml">
-                                <ui:param name="alertas" value="#{credencializacionSE.alertas}"></ui:param>
-                            </ui:include>
-                        </div>
-                    </div>
-                </c:if>
-                <!-- Zona de cuadros de diálogo -->
-                <p:dialog id="modalAyuda"
-                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
-                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+        <div class="contenedor">
+            <c:if test="#{cedulaIdentificacionPsicopedagogia.tieneAcceso}">
+                <h:form id="frm1" prependId="false" class="form-inline">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para generar la Cédula de Identificación</h3></div>
-                        <div class="box-body">
-                            <ul class="todo-list">
-                                <c:forEach items="#{cedulaIdentificacionPsicopedagogia.rol.instrucciones}" var="instruccion">
-                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
-                                </c:forEach>
-                            </ul>
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+
+                            </div>
                         </div>
-                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
                     </div>
-                </p:dialog>
-       </c:if>
-        <c:if test="#{!cedulaIdentificacionPsicopedagogia.tieneAcceso}">
+                </h:form>
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h:form id="frmGrupo">
+
+                            <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                            <c:set var="casilla2" value="#{'col-sm-12 col-md-6 col-lg-6'}" />
+                            <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                            <div class="row margin-bottom" style="margin-top: 20px;">
+                                <div class="#{casilla}">
+                                    <div class="ui-material">
+                                        <p:selectOneMenu id="estudiante" value="#{cedulaIdentificacionPsicopedagogia.rol.matricula}" filter="true"
+                                                         filterMatchMode="contains" style = "object-fit: contain;" class="control-label"
+                                                         valueChangeListener="#{cedulaIdentificacionPsicopedagogia.getEstudiante}">
+                                            <f:selectItem itemValue="0" itemLabel="Estudiante "/>
+                                            <f:selectItems value="#{cedulaIdentificacionPsicopedagogia.rol.estudiantes}" var="estudiante" itemValue="#{estudiante.matricula}" itemLabel="#{estudiante.matricula} - #{estudiante.aspirante.idPersona.nombre.concat(' ').concat(estudiante.aspirante.idPersona.apellidoPaterno).concat(' ').concat(estudiante.aspirante.idPersona.apellidoMaterno)}" />
+                                            <p:ajax update="@this :tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6,:tabw2:frm7" listener="#{cedulaIdentificacionPsicopedagogia.getEstudiante}"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Estudiante" for="estudiante"/>
+                                        <p:message for="estudiante" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <p:tabView id="tabw1">
+                            <p:tab title="Datos del estudiante">
+                                <section class="content">
+                                    <h:form id="frm">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{cedulaIdentificacionPsicopedagogia.rol.matricula}.jpg"  style="width: 150px; height: 220px;" class="img-circle"/>
+                                                                        </div>
+                                                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                                                            <p:outputLabel for="matricula" style="font-size: inherit;text-align: right;" value="Matricula:" />
+                                                                            <p:inputText id="matricula" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.matricula}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                            <p:outputLabel for="nombre" style="font-size: inherit;text-align: right;" value="Nombre:" />
+                                                                            <p:inputText id="nombre" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosGenerales.p2}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-7 col-md-7 col-lg-7">
+                                                                            <p:outputLabel for="carrera" style="font-size: inherit;text-align: right;" value="Carrera:" />
+                                                                            <p:inputText id="carrera" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosGenerales.p3}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                            <p:outputLabel for="s" style="font-size: inherit;text-align: right;" value="Sistema:" />
+                                                                            <p:inputText id="s" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosGenerales.p4}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                                                            <p:outputLabel for="grado" style="font-size: inherit;text-align: right;" value="Grado:" />
+                                                                            <p:inputText id="grado" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosGenerales.p5}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                                                            <p:outputLabel for="grupo" style="font-size: inherit;text-align: right;" value="Grupo:" />
+                                                                            <p:inputText id="grupo" class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosGenerales.p6}" readonly="true"/>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </h:form>
+
+                                </section>
+                            </p:tab>
+                        </p:tabView>
+                        <p:tabView id="tabw2">
+                            <p:tab title="#{cedulaIdentificacionPsicopedagogia.rol.apartados[1].contenido}" >
+                                <section class="content">
+                                    <h:form id="frm2">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <c:set var="index" value="#{7}" />
+                                                                        <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[1]}" />
+                                                                        <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
+                                                                                <p:inputText class="form-control"  value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <label class="col-sm-12 control-label"><h3 style="text-align: cente; font-size: inherit; font-weight: bold">#{cedulaIdentificacionPsicopedagogia.rol.apartados[2].contenido}</h3></label>
+                                                                        <c:set var="apartado2" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[2]}" />
+                                                                        <c:set var="index" value="#{16}" />
+                                                                        <c:forEach items="#{apartado2.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
+                                                                                <p:inputText class="form-control"  value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+
+                                                                    <div class="form-group">
+                                                                        <label class="col-sm-12 control-label"><h3 style="text-align: cente; font-size: inherit; font-weight: bold">#{cedulaIdentificacionPsicopedagogia.rol.apartados[3].contenido}</h3></label>
+                                                                        <c:set var="apartado3" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[3]}" />
+                                                                        <c:set var="index" value="#{25}" />
+                                                                        <c:forEach items="#{apartado3.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
+                                                                                <p:inputText class="form-control"  value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <c:set var="apartado4" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[4]}" />
+                                                                    <div class="form-group">
+                                                                        <label class="col-sm-12 control-label"><h3 style="text-align: cente; font-size: inherit; font-weight: bold">#{cedulaIdentificacionPsicopedagogia.rol.apartados[4].contenido}</h3></label>
+                                                                        <c:set var="apartado3" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[3]}" />
+                                                                        <c:set var="index" value="#{33}" />
+                                                                        <c:forEach items="#{apartado4.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
+                                                                                <p:inputText class="form-control"  value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </h:form>
+
+                                </section>
+                            </p:tab>
+                            <p:tab title="#{cedulaIdentificacionPsicopedagogia.rol.apartados[5].contenido}" >
+                                <section class="content">
+                                    <h:form id="frm3">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <c:set var="index" value="#{38}" />
+                                                                        <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[5]}" />
+                                                                        <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
+                                                                                <p:inputText class="form-control" placeholder="" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosSocioeconomicos[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </h:form>
+
+                                </section>
+
+                            </p:tab>
+
+                            <p:tab title="#{cedulaIdentificacionPsicopedagogia.rol.apartados[6].contenido}" >
+                                <section class="content">
+                                    <h:form id="frm4">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <c:set var="index" value="#{65}" />
+                                                                        <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[6]}" />
+                                                                        <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
+                                                                                <p:inputText class="form-control" placeholder="" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosFamiliares[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </h:form>
+
+                                </section>
+
+                            </p:tab>
+
+                            <p:tab title="#{cedulaIdentificacionPsicopedagogia.rol.apartados[7].contenido}" >
+                                <p:tabView id="tabw3">
+                                    <p:tab title="Datos generales">
+                                        <section class="content">
+                                            <h:form id="frm5">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <c:set var="index" value="#{81}" />
+                                                                                <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[7]}" />
+                                                                                <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                                                                    <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                        <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                        <p:outputLabel style="font-size: inherit" value="#{pregunta}"/>
+                                                                                        <p:inputText class="form-control" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosEscolares[pos]}" readonly="true">
+
+                                                                                        </p:inputText>
+                                                                                        <c:set var="index" value="#{index+1}" />
+                                                                                    </div>
+                                                                                </c:forEach>
+                                                                            </div>
+
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </h:form>
+                                        </section>
+
+                                    </p:tab>
+                                </p:tabView>
+
+
+                            </p:tab>
+                            <p:tab title="#{cedulaIdentificacionPsicopedagogia.rol.apartados[8].contenido}" >
+                                <section class="content">
+                                    <h:form id="frm6">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <c:set var="index" value="#{108}" />
+                                                                        <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[8]}" />
+                                                                        <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta}"/>
+                                                                                <p:inputText class="form-control" placeholder="" value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosDeSalud[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <label class="col-sm-12 control-label"><h3 style="text-align: center; font-size: inherit; font-weight: bold">#{cedulaIdentificacionTutor.rol.apartados[9].contenido}</h3></label>
+                                                                        <c:set var="apartado2" value="#{cedulaIdentificacionPsicopedagogia.rol.apartados[9]}" />
+                                                                        <c:set var="index" value="#{118}" />
+                                                                        <c:forEach items="#{apartado2.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
+                                                                                <p:inputText class="form-control"  value="#{cedulaIdentificacionPsicopedagogia.rol.cedulaIdentificacion.datosDeSalud[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </h:form>
+
+                                </section>
+
+                            </p:tab>
+                            <p:tab title="Cuestionario Psicopedagógico">
+                                <section class="content">
+                                    <h:form id="frm7">
+                                        <div class="box-body">
+                                            <p:accordionPanel>
+                                                <p:tab title="Visualizar respuestas del cuestionario del estudiante">
+                                                            <c:set var="index" value="#{0}" />
+                                                            <div class="row">
+                                                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto; font-size: large;">
+                                                                    <table class="table table-striped table-responsive">
+                                                                        <thead>
+                                                                        <tr class="denegado">
+                                                                            <th>#</th>
+                                                                            <th>Pregunta</th>
+                                                                            <th style="text-align: center; width: 200px;">Respuesta</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <!-- 1 -->
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 500px;">
+                                                                                <f:ajax execute="r#{1}">
+                                                                                    <p:selectOneButton  id="r#{1}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r1}"
+                                                                                       disabled="true"
+                                                                                    >
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:selectOneButton>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!-- 2 -->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{2}">
+                                                                                    <p:inputTextarea  id="r#{2}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r2}"
+                                                                                                      style="margin-top: 0"
+                                                                                                      readonly="true"
+
+                                                                                    >
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!-- 3 -->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{3}">
+                                                                                    <p:inputTextarea  id="r#{3}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r3}"
+                                                                                    readonly="true"
+                                                                                    >
+
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!-- 4 -->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{4}">
+                                                                                    <p:inputTextarea  id="r#{4}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r4}"
+                                                                                    readonly="true"
+                                                                                    >
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--5-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{5}">
+                                                                                    <p:inputTextarea  id="r#{5}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r5}"
+                                                                                    readonly="true">
+
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--6-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{6}">
+                                                                                    <p:inputTextarea  id="r#{6}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r6}"
+                                                                                    readonly="true"
+                                                                                    >
+
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--7-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{7}">
+                                                                                    <p:inputTextarea  id="r#{7}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r7}"
+                                                                                    readonly="true"
+                                                                                    >
+
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--8-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{8}">
+                                                                                    <p:selectOneButton  id="r#{8}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r8}"
+                                                                                    disabled="true"
+                                                                                    >
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:selectOneButton>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--9-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{9}">
+                                                                                    <p:selectOneButton  id="r#{9}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r9}"
+                                                                                    disabled="true"
+                                                                                    >
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:selectOneButton>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--10-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{10}">
+                                                                                    <p:inputTextarea  id="r#{10}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r10}"
+                                                                                    readonly="true"
+                                                                                    >
+
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--11-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{11}">
+                                                                                    <p:inputTextarea  id="r#{11}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r11}"
+                                                                                    readonly="true"
+                                                                                    >
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--12-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{12}">
+                                                                                    <p:inputTextarea  id="r#{12}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r12}"
+                                                                                                     readonly="true">
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--13-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{13}">
+                                                                                    <p:inputTextarea  id="r#{13}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r13}"
+                                                                                    readonly="true"
+                                                                                    >
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--14-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{14}">
+                                                                                    <p:inputTextarea  id="r#{14}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r14}"
+                                                                                    readonly="true"
+                                                                                    >
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--15-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{15}">
+                                                                                    <p:inputTextarea  id="r#{15}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r15}">
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--16-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{16}">
+                                                                                    <p:selectOneButton  id="r#{16}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r16}"
+                                                                                    disabled="true"
+                                                                                    >
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.estadoCivilPadres}" />
+                                                                                    </p:selectOneButton>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--17-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <c:if test="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r16.equals('Finados') and not empty cedulaIdentificacionPsicopedagogia.rol.resultados.r16}">
+                                                                            <tr>
+                                                                                <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                                <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                                <td class="text-center" style="min-width: 120px;">
+                                                                                    <f:ajax execute="r#{17}">
+                                                                                        <p:selectOneButton  id="r#{17}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r17}"
+                                                                                                            disabled="true">
+
+                                                                                            <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.famFinado}" />
+                                                                                        </p:selectOneButton>
+                                                                                    </f:ajax>
+                                                                                    <c:set var="index" value="#{17}" />
+                                                                                </td>
+                                                                            </tr>
+
+                                                                        </c:if>
+                                                                        <c:set var="index" value="#{17}" />
+                                                                        <!--18-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{18}">
+                                                                                    <p:inputTextarea  id="r#{18}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r18}"
+                                                                                                      readonly="true">
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--19-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{19}">
+                                                                                    <p:selectOneButton  id="r#{19}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r19}"
+                                                                                                        disabled="true">
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:selectOneButton>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+
+                                                                        <!--20-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <c:if test="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r19.equals('Si') and not empty cedulaIdentificacionPsicopedagogia.rol.resultados.r19}">
+                                                                            <tr>
+                                                                                <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                                <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                                <td class="text-center" style="min-width: 120px;">
+                                                                                    <f:ajax execute="r#{20}">
+                                                                                        <p:selectOneButton  id="r#{20}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r20}"
+                                                                                                           disabled="true">
+
+                                                                                            <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tipoProblemaFam}" />
+                                                                                        </p:selectOneButton>
+                                                                                    </f:ajax>
+                                                                                    <c:set var="index" value="#{index+1}" />
+                                                                                </td>
+                                                                            </tr>
+                                                                            <!--21-->
+                                                                            <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                            <tr>
+                                                                                <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                                <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                                <td class="text-center" style="min-width: 120px;">
+                                                                                    <f:ajax execute="r#{21}">
+                                                                                        <p:selectOneButton  id="r#{21}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r21}"
+                                                                                                            disabled="true">
+
+                                                                                            <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                        </p:selectOneButton>
+                                                                                    </f:ajax>
+                                                                                    <c:set var="index" value="#{index+1}" />
+                                                                                </td>
+                                                                            </tr>
+                                                                        </c:if>
+                                                                        <c:set var="index" value="#{21}" />
+
+                                                                        <!--22-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{22}">
+                                                                                    <p:inputTextarea  id="r#{22}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r22}"
+                                                                                                      readonly="true">
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:inputTextarea>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <!--23-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{23}">
+                                                                                    <p:selectOneButton  id="r#{23}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r23}"
+                                                                                                       disabled="true">
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:selectOneButton>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[index]}" />
+                                                                        <c:if test="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r23.equals('Si') and not empty cedulaIdentificacionPsicopedagogia.rol.resultados.r23}">
+                                                                            <!--24-->
+                                                                            <tr>
+                                                                                <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                                <td style="text-align: justify;">#{pregunta.titulo}<strong style="color : red; font-size: small">(10 caracteres mínimo)</strong></td>
+                                                                                <td class="text-center" style="min-width: 120px;">
+                                                                                    <f:ajax execute="r#{24}">
+                                                                                        <p:inputTextarea  id="r#{24}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r24}"
+                                                                                                          disabled="true">
+
+                                                                                            <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                                        </p:inputTextarea>
+                                                                                    </f:ajax>
+                                                                                    <c:set var="index" value="#{index+1}" />
+                                                                                </td>
+                                                                            </tr>
+                                                                        </c:if>
+                                                                        <!--25-->
+                                                                        <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[0].preguntas[24]}" />
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                            <td class="text-center" style="min-width: 120px;">
+                                                                                <f:ajax execute="r#{25}">
+                                                                                    <p:selectOneButton  id="r#{25}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r25}"
+                                                                                                       disabled="true">
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:selectOneButton>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <!--APARTADO DE TECNICAS DE ESTUDIO-->
+                                                            <c:set var="index" value="#{26}" />
+                                                            <c:if test="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r25.equals('Si') and not empty cedulaIdentificacionPsicopedagogia.rol.resultados.r25}">
+                                                                <div class="row">
+                                                                    <div class="panel panel-primary" style="max-width: 1200px;margin: auto; font-size: large;">
+                                                                        <div class="panel-heading aceptado">
+                                                                            <h3 class="panel-title" style="text-align: justify;">
+                                                                                #{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[1].contenido}
+                                                                            </h3>
+                                                                        </div>
+                                                                        <table class="table table-striped table-responsive">
+                                                                            <tbody>
+                                                                            <c:set var="apartado" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[1]}" />
+                                                                            <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                                                                <tr>
+                                                                                    <td><h:outputLabel value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                                    <td style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                                    <td class="text-center" style="min-width: 200px;">
+                                                                                        <f:ajax execute="r#{index}">
+                                                                                            <c:set var="pos" value="#{'r'.concat(index)}" />
+                                                                                            <p:selectOneButton  id="p#{index}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados[pos]}"
+                                                                                                                disabled="true">
+
+                                                                                                <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.tecnicasEstudio}" />
+                                                                                            </p:selectOneButton>
+                                                                                        </f:ajax>
+                                                                                        <c:set var="index" value="#{index+1}" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </c:forEach>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+
+                                                            </c:if>
+                                                    <div class="row">
+                                                        <div class="panel panel-primary" style="max-width: 1200px;margin: auto; font-size: large;">
+                                                            <div class="panel-heading aceptado">
+                                                                <h3 class="panel-title" style="text-align: justify;">
+
+                                                                </h3>
+                                                            </div>
+                                                            <table class="table table-striped table-responsive">
+                                                                <tbody>
+                                                                        <!--43-->
+                                                                        <tr>
+                                                                            <td><h:outputLabel value="43"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                            <td style="text-align: justify;">¿Cuentas en casa con algunos libros que apoyan tus estudios?</td>
+                                                                            <td class="text-center" style="min-width: 200px;">
+                                                                                <f:ajax execute="r#{43}">
+                                                                                    <p:selectOneButton  id="r#{43}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r43}"
+                                                                                                       disabled="true">
+
+                                                                                        <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                    </p:selectOneButton>
+                                                                                </f:ajax>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        <c:if test="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r43.equals('Si') and not empty cedulaIdentificacionPsicopedagogia.rol.resultados.r43}">
+                                                                            <!--44-->
+                                                                            <tr>
+                                                                                <td><h:outputLabel value="44"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                                <td style="text-align: justify;">¿Cuáles?</td>
+                                                                                <td class="text-center" style="min-width: 200px;">
+                                                                                    <f:ajax execute="r#{44}">
+                                                                                        <p:inputTextarea  id="r#{44}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r44}"
+                                                                                                          readonly="true">
+
+                                                                                            <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                                        </p:inputTextarea>
+                                                                                    </f:ajax>
+                                                                                    <c:set var="index" value="#{index+1}" />
+                                                                                </td>
+                                                                            </tr>
+                                                                        </c:if>
+
+                                                                        </tbody>
+                                                                    </table>
+
+                                                                </div>
+
+                                                    </div>
+
+                                                </p:tab>
+                                                <p:tab title="Conclusiones de la eximinadora o examinador">
+                                                    <div class="row">
+                                                        <div class="panel panel-primary" style="max-width: 1400px;margin: auto; font-size: inherit;">
+                                                            <div class="panel-heading aceptado">
+                                                                <h3 class="panel-title" style="text-align: center;font-size: inherit; font-weight: bold">
+                                                                    #{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[3].contenido}
+                                                                </h3>
+                                                            </div>
+                                                            <table class="table table-striped table-responsive">
+                                                                <thead>
+                                                                <tr class="denegado">
+                                                                    <th>Pregunta</th>
+                                                                    <th style="text-align: center; width: 200px;">Respuesta</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                <c:set var="pregunta" value="#{cedulaIdentificacionPsicopedagogia.rol.apartadoCuestionario[3].preguntas[45]}" />
+                                                                <!-- 45-->
+                                                                <tr>
+                                                                    <td style="text-align: justify;">Con base en la información proporcionada ¿se considera al estudiante como elemento de uno o más grupos altamente vulnerables?</td>
+                                                                    <td class="text-center" style="min-width: 500px;">
+                                                                        <f:ajax execute="r#{45}">
+                                                                            <p:selectOneButton  id="r#{45}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r45}"
+                                                                                                valueChangeListener="#{cedulaIdentificacionPsicopedagogia.guardar}"
+                                                                            >
+                                                                                <p:ajax process="@this" update="@form"/>
+                                                                                <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                            </p:selectOneButton>
+                                                                        </f:ajax>
+                                                                        <c:set var="index" value="#{index+1}" />
+                                                                    </td>
+                                                                </tr>
+                                                                <!-- 46-->
+                                                                <tr>
+                                                                    <td style="text-align: justify;">Marque los grupos en los que considera al estudiante como altamente vulnerable:</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="text-align:center ;">Económico</td>
+                                                                    <td class="text-center" style="min-width: 500px;">
+                                                                        <p:selectOneButton  id="r#{46}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r46}"
+                                                                                            valueChangeListener="#{cedulaIdentificacionPsicopedagogia.guardar}"
+                                                                        >
+                                                                            <p:ajax process="@this" update="@form"/>
+                                                                            <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                        </p:selectOneButton>
+                                                                    </td>
+                                                                </tr>
+                                                                <!-- 47-->
+                                                                <tr>
+                                                                    <td style="text-align:center ;">Vocacional</td>
+                                                                    <td class="text-center" style="min-width: 500px;">
+                                                                        <p:selectOneButton  id="r#{47}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r47}"
+                                                                                            valueChangeListener="#{cedulaIdentificacionPsicopedagogia.guardar}"
+                                                                        >
+                                                                            <p:ajax process="@this" update="@form"/>
+                                                                            <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                        </p:selectOneButton>
+                                                                    </td>
+                                                                </tr>
+                                                                <!-- 48-->
+                                                                <tr>
+                                                                    <td style="text-align:center ;">Familiar</td>
+                                                                    <td class="text-center" style="min-width: 500px;">
+                                                                        <p:selectOneButton  id="r#{48}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r48}"
+                                                                                            valueChangeListener="#{cedulaIdentificacionPsicopedagogia.guardar}">
+                                                                            <p:ajax process="@this" update="@form"/>
+                                                                            <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                        </p:selectOneButton>
+                                                                    </td>
+                                                                </tr>
+                                                                <!-- 49-->
+                                                                <tr>
+                                                                    <td style="text-align:center ;">Salud</td>
+                                                                    <td class="text-center" style="min-width: 500px;">
+                                                                        <p:selectOneButton  id="r#{49}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r49}"
+                                                                                            valueChangeListener="#{cedulaIdentificacionPsicopedagogia.guardar}">
+                                                                            <p:ajax process="@this" update="@form"/>
+                                                                            <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                        </p:selectOneButton>
+                                                                    </td>
+                                                                </tr>
+                                                                <!-- 50-->
+                                                                <tr>
+                                                                    <td style="text-align:center ;">Afectivo emocional</td>
+                                                                    <td class="text-center" style="min-width: 500px;">
+                                                                        <p:selectOneButton  id="r#{50}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r50}"
+                                                                                            valueChangeListener="#{cedulaIdentificacionPsicopedagogia.guardar}">
+                                                                            <p:ajax process="@this" update="@form"/>
+                                                                            <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                        </p:selectOneButton>
+                                                                    </td>
+                                                                </tr>
+                                                                <!-- 51-->
+                                                                <tr>
+                                                                    <td style="text-align:center ;">Autoestima</td>
+                                                                    <td class="text-center" style="min-width: 500px;">
+                                                                        <p:selectOneButton  id="r#{51}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r51}"
+                                                                                            valueChangeListener="#{cedulaIdentificacionPsicopedagogia.guardar}">
+                                                                            <p:ajax process="@this" update="@form"/>
+                                                                            <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                        </p:selectOneButton>
+                                                                    </td>
+                                                                </tr>
+                                                                <!-- 52-->
+                                                                <tr>
+                                                                    <td style="text-align:center ;">Aprovechamiento académico</td>
+                                                                    <td class="text-center" style="min-width: 500px;">
+                                                                        <p:selectOneButton  id="r#{52}" value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r52}"
+                                                                                            valueChangeListener="#{cedulaIdentificacionPsicopedagogia.guardar}">
+                                                                            <p:ajax process="@this" update="@form"/>
+                                                                            <f:selectItems class="btn-primary" value="#{cedulaIdentificacionPsicopedagogia.rol.sino}" />
+                                                                        </p:selectOneButton>
+                                                                    </td>
+                                                                </tr>
+                                                                <!-- 53-->
+                                                                <tr>
+                                                                    <td style="text-align: justify;">Observaciones generales por parte de la examinadora o examinador</td>
+                                                                    <td class="text-center" style="min-width: 500px;">
+                                                                        <f:ajax execute="r#{53}">
+                                                                            <p:inputTextarea   value="#{cedulaIdentificacionPsicopedagogia.rol.resultados.r53}"
+                                                                                               valueChangeListener="#{cedulaIdentificacionPsicopedagogia.guardar}"
+                                                                                               style="margin-top: 0">
+                                                                                <p:ajax process="@this" update="@form"/>
+                                                                            </p:inputTextarea>
+                                                                        </f:ajax>
+                                                                    </td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+
+                                                </p:tab>
+                                            </p:accordionPanel>
+                                        </div>
+                                    </h:form>
+
+                                </section>
+
+                            </p:tab>
+
+
+                        </p:tabView>
+                    </div>
+                </div>
+
+            </c:if>
+
+            <c:if test="#{!empty cedulaIdentificacionPsicopedagogia.alertas || true}">
+                <div class="box box-info">
+                    <div class="box-header">
+                        <ui:include src="/includes/alertas.xhtml">
+                            <ui:param name="alertas" value="#{cedulaIdentificacionPsicopedagogia.alertas}"></ui:param>
+                        </ui:include>
+                    </div>
+                </div>
+            </c:if>
+            <c:if test="#{cedulaIdentificacionPsicopedagogia.tieneAcceso}">
+
+            <!-- Zona de cuadros de diálogo -->
+            <p:dialog id="modalAyuda"
+                      widgetVar="modalAyuda" width="800" max-height="500" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                     style="scroll-: 300px"
+                      modal="true" draggable="true" header="Cuestionario psicopedagógico" styleClass="panel panel-primary" responsive="true" resizable="true" closable="false" maximizable="true">
+                <div class="box box-primary">
+                    <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para generar la Cédula de Identificación</h3></div>
+                    <div class="box-body">
+                        <ul class="todo-list">
+                            <c:forEach items="#{cedulaIdentificacionPsicopedagogia.rol.instrucciones}" var="instruccion">
+                                <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                    <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                </div>
+            </p:dialog>
+        </c:if>
+            <c:if test="#{!cedulaIdentificacionPsicopedagogia.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a personal de Psicopedagogía."/>
+                        <h:outputText value="El acceso solo está autorizado a tutores de grupo."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>
-        </c:if>
-            
+            </c:if>
+
         </div>
-        
-        
-        
+
+
+
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>

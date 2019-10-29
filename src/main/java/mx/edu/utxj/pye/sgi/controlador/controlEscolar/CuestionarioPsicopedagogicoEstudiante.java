@@ -89,22 +89,13 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
                     getResultadosEstudiante();
                     //TODO: Comprueba si el cuestionario ya esta terminado
                     comprobar();
+
                 }
 
             }
         }catch (Exception e){
             mostrarExcepcion(e);
         }
-    }
-    public boolean getCuestionarioActivo(){
-        cargada2  =false;
-        //TODO: Verifica que haya un cuestionario activo
-        //System.out.println("Entra metodo");
-        ResultadoEJB<Evaluaciones> resEva = ejbCuestionario.getcuestionarioActiva();
-        if(resEva.getCorrecto()==true){rol.setCargada(true);cargada2=true; rol.setEvaluacion(resEva.getValor());
-        System.out.println("Cargada -->" + rol.isCargada() + "Cargada 2 --> " + cargada2);}
-        else {rol.setCargada(false);mostrarMensajeResultadoEJB(resEva);}
-        return cargada2;
     }
     public void getResultadosEstudiante(){
         ResultadoEJB<CuestionarioPsicopedagogicoResultados> resResultados= ejbCuestionario.getResultadosEstudiante(rol.getEstudiante(),rol.getEvaluacion());
@@ -142,10 +133,19 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
         comprobar();
 
     }
+
+    /**
+     * Comprueba si el cuestionario ha sido terminado por el estudiante
+     */
     public void comprobar(){
         //System.out.println("COMPROBAR");
         Comparador<CuestionarioPsicopedagogicoResultados> comparador = new ComparadorCuestionarioPsicopedagogicoEstudiante();
         rol.setFinalizado(comparador.isCompleto(rol.getResultados()));
+        if(rol.isFinalizado()==true){
+            ResultadoEJB<CuestionarioPsicopedagogicoResultados> resActualiza = ejbCuestionario.actualizarCompleto(rol.getResultados());
+            if(resActualiza.getCorrecto()==true){rol.setResultados(resActualiza.getValor());}
+            else {mostrarMensajeResultadoEJB(resActualiza);}
+        }
         //System.out.println(comparador.isCompleto(rol.getResultados()));
     }
 }
