@@ -79,19 +79,20 @@
                     <div id="main-buttons" class="hidden-sm hidden-xs" >                    
                         <div class="row">
                             <div class="col-sm-12 col-md-12 col-lg-12">            
-                                <p:panel header="Cuadro de Mando Integral Institucional">
+                                <p:panel header="Cuadro de Mando Integral #{controladorEmpleado.nuevoOBJListaPersonal.areaOperativaNombre}">
                                     <p:panelGrid style="margin-top:20px">
                                         <p:row>
                                             <p:column style="font-weight: bold;">Actividades Programadas</p:column>
                                             <p:column style="font-weight: bold;">#{cuadroMandoIntegralUniversidad.cmiGeneral.programadas}</p:column>
-                                            <p:column rowspan="3" style="font-weight: bold;">
+                                            <p:column rowspan="4" style="font-weight: bold;">
                                                 <!--# {cuadroMandoIntegralUniversidad.datosGraica(cuadroMandoIntegralUniversidad.cmiEJe1.avanceGraf)}-->
                                                 <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralUniversidad.cmiGeneral.avanceGraf}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiGeneral.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralUniversidad.df.format(115.00):cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralUniversidad.cmiGeneral.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
-                                            <p:column rowspan="3" style="font-weight: bold;">
+                                            <p:column rowspan="4" style="font-weight: bold;">
                                                 <p:chart type="metergauge" model="#{cuadroMandoIntegralUniversidad.cmiGeneral.gaugeChartModel}" responsive="true" />                                            
                                             </p:column>
                                         </p:row>
@@ -101,7 +102,11 @@
                                             <p:column style="font-weight: bold;">#{cuadroMandoIntegralUniversidad.cmiGeneral.realizadas}</p:column>
                                         </p:row>
                                         <p:row>
-                                            <p:column style="font-weight: bold;">Porcentaje Avance</p:column>
+                                            <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
+                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralUniversidad.df.format(cuadroMandoIntegralUniversidad.cmiGeneral.avanceSP)}%</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
                                             <p:column style="font-weight: bold;">#{cuadroMandoIntegralUniversidad.df.format(cuadroMandoIntegralUniversidad.cmiGeneral.avance)}%</p:column>
                                         </p:row>
                                     </p:panelGrid>
@@ -111,26 +116,30 @@
                                             <p:column style="font-weight: bold;">Grafica Lineal</p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe1.renderizar}">
                                                 <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralUniversidad.cmiEJe1.ejesRegistro}"
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralUniversidad.cmiEJe1.avanceGraf}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe1.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralUniversidad.df.format(115.00):cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe1.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe2.renderizar}">
                                                 <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralUniversidad.cmiEJe2.ejesRegistro}"
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralUniversidad.cmiEJe2.avanceGraf}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe2.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralUniversidad.df.format(115.00):cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe2.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe3.renderizar}">
                                                 <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralUniversidad.cmiEJe3.ejesRegistro}" 
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralUniversidad.cmiEJe3.avanceGraf}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe3.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralUniversidad.df.format(115.00):cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe3.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe4.renderizar}">
                                                 <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralUniversidad.cmiEJe4.ejesRegistro}" 
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralUniversidad.cmiEJe4.avanceGraf}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe4.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralUniversidad.df.format(115.00):cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe4.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                         </p:row>
@@ -156,7 +165,14 @@
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe4.renderizar}">#{cuadroMandoIntegralUniversidad.cmiEJe4.realizadas}</p:column>
                                         </p:row>
                                         <p:row>
-                                            <p:column style="font-weight: bold;">Porcentaje Avance</p:column>
+                                            <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe1.renderizar}">#{cuadroMandoIntegralUniversidad.df.format(cuadroMandoIntegralUniversidad.cmiEJe1.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe2.renderizar}">#{cuadroMandoIntegralUniversidad.df.format(cuadroMandoIntegralUniversidad.cmiEJe2.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe3.renderizar}">#{cuadroMandoIntegralUniversidad.df.format(cuadroMandoIntegralUniversidad.cmiEJe3.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe4.renderizar}">#{cuadroMandoIntegralUniversidad.df.format(cuadroMandoIntegralUniversidad.cmiEJe4.avanceSP)}%</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe1.renderizar}">#{cuadroMandoIntegralUniversidad.df.format(cuadroMandoIntegralUniversidad.cmiEJe1.avance)}%</p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe2.renderizar}">#{cuadroMandoIntegralUniversidad.df.format(cuadroMandoIntegralUniversidad.cmiEJe2.avance)}%</p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe3.renderizar}">#{cuadroMandoIntegralUniversidad.df.format(cuadroMandoIntegralUniversidad.cmiEJe3.avance)}%</p:column>

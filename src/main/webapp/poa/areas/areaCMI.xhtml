@@ -84,14 +84,15 @@
                                         <p:row>
                                             <p:column style="font-weight: bold;">Actividades Programadas</p:column>
                                             <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.programadas}</p:column>
-                                            <p:column rowspan="3" style="font-weight: bold;">
+                                            <p:column rowspan="4" style="font-weight: bold;">
                                                 <!--# {cuadroMandoIntegralArea.datosGraica(cuadroMandoIntegralArea.cmiEJe1.avanceGraf)}-->
                                                 <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralArea.df.format(115.00):cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
-                                            <p:column rowspan="3" style="font-weight: bold;">
+                                            <p:column rowspan="4" style="font-weight: bold;">
                                                 <p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiGeneral.gaugeChartModel}" responsive="true" />                                            
                                             </p:column>
                                         </p:row>
@@ -101,7 +102,11 @@
                                             <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.realizadas}</p:column>
                                         </p:row>
                                         <p:row>
-                                            <p:column style="font-weight: bold;">Porcentaje Avance</p:column>
+                                            <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
+                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiGeneral.avanceSP)}%</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
                                             <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiGeneral.avance)}%</p:column>
                                         </p:row>
                                     </p:panelGrid>
@@ -111,26 +116,30 @@
                                             <p:column style="font-weight: bold;">Grafica Lineal</p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe1.renderizar}">
                                                 <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe1.ejesRegistro}"
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiEJe1.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralArea.cmiEJe1.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralArea.df.format(115.00):cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralArea.cmiEJe1.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe2.renderizar}">
                                                 <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe2.ejesRegistro}"
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiEJe2.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralArea.cmiEJe2.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralArea.df.format(115.00):cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralArea.cmiEJe2.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe3.renderizar}">
                                                 <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe3.ejesRegistro}" 
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiEJe3.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralArea.cmiEJe3.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralArea.df.format(115.00):cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralArea.cmiEJe3.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe4.renderizar}">
                                                 <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralArea.cmiEJe4.ejesRegistro}" 
-                                                          xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                    <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiEJe4.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralArea.cmiEJe4.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralArea.df.format(115.00):cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralArea.cmiEJe4.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                         </p:row>
@@ -156,7 +165,14 @@
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe4.renderizar}">#{cuadroMandoIntegralArea.cmiEJe4.realizadas}</p:column>
                                         </p:row>
                                         <p:row>
-                                            <p:column style="font-weight: bold;">Porcentaje Avance</p:column>
+                                            <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe1.renderizar}">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiEJe1.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe2.renderizar}">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiEJe2.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe3.renderizar}">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiEJe3.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe4.renderizar}">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiEJe4.avanceSP)}%</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe1.renderizar}">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiEJe1.avance)}%</p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe2.renderizar}">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiEJe2.avance)}%</p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralArea.cmiEJe3.renderizar}">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiEJe3.avance)}%</p:column>

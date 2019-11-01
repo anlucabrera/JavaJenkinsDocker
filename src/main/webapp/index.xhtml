@@ -354,7 +354,7 @@
                                                     <!--# {cuadroMandoIntegralArea.datosGraica(cuadroMandoIntegralArea.cmiEJe1.avanceGraf)}-->
                                                     <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
                                                               xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                        <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGraf}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                        <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                     </hf:chart>
                                                 </p:column>
                                                 <p:column rowspan="3" style="font-weight: bold;">

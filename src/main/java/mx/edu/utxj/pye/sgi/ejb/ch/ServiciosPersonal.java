@@ -195,7 +195,7 @@ public class ServiciosPersonal implements EjbPersonal {
 
     @Override
     public List<ContactoEmergencias> mostrarAllContactosEmergencias() throws Throwable {
-        TypedQuery<ContactoEmergencias> q = em.createQuery("SELECT c FROM ContactoEmergencias ", ContactoEmergencias.class);
+        TypedQuery<ContactoEmergencias> q = em.createQuery("SELECT c FROM ContactoEmergencias c", ContactoEmergencias.class);
         List<ContactoEmergencias> pr = q.getResultList();
         return pr;
     }

@@ -131,101 +131,106 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 text-info text-center">           
                                     <p:panel id="panelResultados" header="Cuadro de Mando Integral #{cuadroMandoIntegralPlaneacion.au.nombre}">
-                                        <p:panelGrid style="margin-top:20px">
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Actividades Programadas</p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralPlaneacion.cmiGeneral.programadas}</p:column>
-                                                <p:column rowspan="4" style="font-weight: bold;">
-                                                    <!--# {cuadroMandoIntegralPlaneacion.datosGraica(cuadroMandoIntegralPlaneacion.cmiEJe1.avanceGraf)}-->
-                                                    <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
-                                                              xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                        <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralPlaneacion.cmiGeneral.avanceGraf}" var="point" point="#{cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
-                                                    </hf:chart>
-                                                </p:column>
-                                                <p:column rowspan="4" style="font-weight: bold;">
-                                                    <p:chart type="metergauge" model="#{cuadroMandoIntegralPlaneacion.cmiGeneral.gaugeChartModel}" responsive="true" />                                            
-                                                </p:column>
-                                            </p:row>
+                                    <p:panelGrid style="margin-top:20px">
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Actividades Programadas</p:column>
+                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralPlaneacion.cmiGeneral.programadas}</p:column>
+                                            <p:column rowspan="4" style="font-weight: bold;">
+                                                <!--# {cuadroMandoIntegralPlaneacion.datosGraica(cuadroMandoIntegralPlaneacion.cmiEJe1.avanceGraf)}-->
+                                                <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralPlaneacion.cmiGeneral.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralPlaneacion.df.format(115.00):cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralPlaneacion.cmiGeneral.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                </hf:chart>
+                                            </p:column>
+                                            <p:column rowspan="4" style="font-weight: bold;">
+                                                <p:chart type="metergauge" model="#{cuadroMandoIntegralPlaneacion.cmiGeneral.gaugeChartModel}" responsive="true" />                                            
+                                            </p:column>
+                                        </p:row>
 
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralPlaneacion.cmiGeneral.realizadas}</p:column>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiGeneral.avanceSP)}%</p:column>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiGeneral.avance)}%</p:column>
-                                            </p:row>
-                                        </p:panelGrid>
-                                        <br/>
-                                        <p:panelGrid style="margin-top:20px;">
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Grafica Lineal</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}">
-                                                    <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralPlaneacion.cmiEJe1.ejesRegistro}"
-                                                              xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                        <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralPlaneacion.cmiEJe1.avanceGraf}" var="point" point="#{cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
-                                                    </hf:chart>
-                                                </p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}">
-                                                    <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralPlaneacion.cmiEJe2.ejesRegistro}"
-                                                              xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                        <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralPlaneacion.cmiEJe2.avanceGraf}" var="point" point="#{cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
-                                                    </hf:chart>
-                                                </p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}">
-                                                    <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralPlaneacion.cmiEJe3.ejesRegistro}" 
-                                                              xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                        <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralPlaneacion.cmiEJe3.avanceGraf}" var="point" point="#{cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
-                                                    </hf:chart>
-                                                </p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}">
-                                                    <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralPlaneacion.cmiEJe4.ejesRegistro}" 
-                                                              xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                        <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralPlaneacion.cmiEJe4.avanceGraf}" var="point" point="#{cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}" />
-                                                    </hf:chart>
-                                                </p:column>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Grafica 2</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralPlaneacion.cmiEJe1.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralPlaneacion.cmiEJe2.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralPlaneacion.cmiEJe3.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralPlaneacion.cmiEJe4.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Actividades Programadas</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe1.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralPlaneacion.cmiEJe1.programadas}</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe2.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralPlaneacion.cmiEJe2.programadas}</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe3.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralPlaneacion.cmiEJe3.programadas}</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe4.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralPlaneacion.cmiEJe4.programadas}</p:column>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe1.realizadas}</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe2.realizadas}</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe3.realizadas}</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe4.realizadas}</p:column>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe1.avanceSP)}%</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe2.avanceSP)}%</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe3.avanceSP)}%</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe4.avanceSP)}%</p:column>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe1.avance)}%</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe2.avance)}%</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe3.avance)}%</p:column>
-                                                <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe4.avance)}%</p:column>
-                                            </p:row>
-                                        </p:panelGrid> 
-                                    </p:panel>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
+                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralPlaneacion.cmiGeneral.realizadas}</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
+                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiGeneral.avanceSP)}%</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
+                                            <p:column style="font-weight: bold;">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiGeneral.avance)}%</p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                    <br/>
+                                    <p:panelGrid style="margin-top:20px;">
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Grafica Lineal</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}">
+                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralPlaneacion.cmiEJe1.ejesRegistro}"
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralPlaneacion.cmiEJe1.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralPlaneacion.df.format(115.00):cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralPlaneacion.cmiEJe1.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                </hf:chart>
+                                            </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}">
+                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralPlaneacion.cmiEJe2.ejesRegistro}"
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralPlaneacion.cmiEJe2.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralPlaneacion.df.format(115.00):cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralPlaneacion.cmiEJe2.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                </hf:chart>
+                                            </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}">
+                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralPlaneacion.cmiEJe3.ejesRegistro}" 
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralPlaneacion.cmiEJe3.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralPlaneacion.df.format(115.00):cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralPlaneacion.cmiEJe3.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                </hf:chart>
+                                            </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}">
+                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralPlaneacion.cmiEJe4.ejesRegistro}" 
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralPlaneacion.cmiEJe4.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralPlaneacion.df.format(115.00):cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralPlaneacion.cmiEJe4.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralPlaneacion.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                </hf:chart>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Grafica 2</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralPlaneacion.cmiEJe1.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralPlaneacion.cmiEJe2.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralPlaneacion.cmiEJe3.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}"><p:chart type="metergauge" model="#{cuadroMandoIntegralPlaneacion.cmiEJe4.gaugeChartModel}" responsive="true" style="width: 380px"/> </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Actividades Programadas</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe1.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralPlaneacion.cmiEJe1.programadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe2.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralPlaneacion.cmiEJe2.programadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe3.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralPlaneacion.cmiEJe3.programadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe4.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralPlaneacion.cmiEJe4.programadas}</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe1.realizadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe2.realizadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe3.realizadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}">#{cuadroMandoIntegralPlaneacion.cmiEJe4.realizadas}</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe1.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe2.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe3.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe4.avanceSP)}%</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe1.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe1.avance)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe2.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe2.avance)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe3.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe3.avance)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralPlaneacion.cmiEJe4.renderizar}">#{cuadroMandoIntegralPlaneacion.df.format(cuadroMandoIntegralPlaneacion.cmiEJe4.avance)}%</p:column>
+                                        </p:row>
+                                    </p:panelGrid> 
+                                </p:panel>
                                 </div>
                             </div>
                         </div>

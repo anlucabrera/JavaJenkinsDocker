@@ -32,8 +32,9 @@ import org.primefaces.model.chart.MeterGaugeChartModel;
 @SessionScoped
 public class cuadroMandoIntegralPlaneacion implements Serializable {
 
-    @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>();
-    @Getter    @Setter    private List<Grafica> graf = new ArrayList<>();
+    @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>();    
+    @Getter    @Setter    private List<Grafica> grafSP = new ArrayList<>();
+    @Getter    @Setter    private List<Grafica> grafCP = new ArrayList<>();
 
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();
     @Getter    @Setter    private ResultadosCMI cmiGeneral;
@@ -49,8 +50,8 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     @Getter    @Setter    private List<EjesRegistro> ejesRegistros = new ArrayList<>();
     @Getter    @Setter    private List<String> resultados = new ArrayList<>();
 
-    @Getter    @Setter    private Integer programadas = 0, realizadas = 0, incremento = 0,prograRepo = 0, realRepo = 0,increRepo = 0;
-    @Getter    @Setter    private Integer alca = 0, progra = 0, numeroMes = 0, numeroEje = 0;
+    @Getter    @Setter    private Integer programadasCorte = 0, realizadasCorte = 0, incremento = 0,prograRepoCorte = 0, realRepoCorte = 0;
+    @Getter    @Setter    private Integer programadasMensual = 0, realizadasMensual = 0, numeroMes = 0,prograRepoMensual = 0, realRepoMensual = 0, numeroEje = 0;
     @Getter    @Setter    private Short ejercicioFiscal = 0;
     @Getter    @Setter    private Double avance = 0D,avanceSp = 0D;
     @Getter    @Setter    private String mes = "", valores = "",cuatri="";
@@ -111,11 +112,11 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     }
 
     public void reseteador() {
-        cmiGeneral = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe1 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe2 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe3 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe4 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiGeneral = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(),new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe1 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(),new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe2 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(),new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe3 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(),new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe4 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(),new ArrayList<>(), new MeterGaugeChartModel(), false);
     }
 
     public void buscarAreasPOA() {
@@ -132,7 +133,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         } else {
             actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasUniversidadaEjercicioFiscal(ejercicioFiscal);
         }
-        cmiGeneral = new ResultadosCMI(au.getNombre(), 0, 0, 0D,0D, graf, new MeterGaugeChartModel(), false);
+        cmiGeneral = new ResultadosCMI(au.getNombre(), 0, 0, 0D,0D, grafSP,grafCP, new MeterGaugeChartModel(), false);
         if (!actividadesPoas.isEmpty()) {
             List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
             actividadesPoasFiltradas.clear();
@@ -142,12 +143,12 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                 grafRA = initMeterGaugeModel();
                 grafRA.setTitle(mes);
                 grafRA.setSeriesColors("FF0000,ffff00,66ff33");
-                grafRA.setGaugeLabel(df.format((realizadas.doubleValue() / programadas.doubleValue()) * 100D) + " % avance");
+                grafRA.setGaugeLabel(df.format(avanceSp) + " % avance");
                 grafRA.setGaugeLabelPosition("bottom");
                 grafRA.setShowTickLabels(true);
                 grafRA.setLabelHeightAdjust(10);
                 grafRA.setIntervalOuterRadius(100);
-                cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), programadas, realizadas, avance,avanceSp, graf, grafRA, true);
+                cmiGeneral = new ResultadosCMI(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativaNombre(), programadasCorte, realizadasCorte, avance,avanceSp, grafSP,grafCP, grafRA, true);
             }
         }
     }
@@ -192,21 +193,24 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         grafRA.setShowTickLabels(true);
         grafRA.setLabelHeightAdjust(10);
         grafRA.setIntervalOuterRadius(100);
-        grafRA.setGaugeLabel(df.format(avance) + " % avance");
-        return new ResultadosCMI(er.getNombre(), programadas, realizadas, avance,avanceSp, graf, grafRA, true);        
+        grafRA.setGaugeLabel(df.format(avanceSp) + " % avance");
+        return new ResultadosCMI(er.getNombre(), programadasCorte, realizadasCorte, avance,avanceSp, grafSP,grafCP, grafRA, true);
     }
 
     public void calculosCMI(List<ActividadesPoa> actividadesPoa) {
-        programadas = 0;
-        realizadas = 0;
+        programadasCorte = 0;
+        realizadasCorte = 0;
         avance = 0D;
-        prograRepo = 0;
-        realRepo = 0;
-        graf = new ArrayList<>();
-        graf.clear();    
+        prograRepoCorte = 0;
+        realRepoCorte = 0;
+        grafSP = new ArrayList<>();
+        grafCP = new ArrayList<>();
+        grafSP.clear();
+        grafCP.clear();   
         if (actividadesPoa.isEmpty()) {
             for (incremento = 0; incremento <= numeroMes; incremento++) {
-                graf.add(new Grafica(poau.obtenerMesNombre(incremento), 0D));
+                grafSP.add(new Grafica(poau.obtenerMesNombre(incremento), 0D,0D));
+                grafCP.add(new Grafica(poau.obtenerMesNombre(incremento), 0D,0D));
             }
         } else {
             actividadesPoa.forEach((t) -> {
@@ -228,20 +232,22 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                         case 0:                            tR = tR + t.getNAEnero();                            tP = tP + t.getNPEnero();                            break;
                     }
                     if (tP != 0) {
-                        programadas = programadas + 1;
-                        prograRepo = prograRepo + 1;
+                        programadasCorte = programadasCorte + 1;
+                        prograRepoCorte = prograRepoCorte + 1;
                     }
                     if (tR != 0) {
-                        realizadas = realizadas + 1;
+                        realizadasCorte = realizadasCorte + 1;
                     }
                     if (tR != 0 && Objects.equals(tR, tP)) {                        
-                        realRepo = realRepo + 1;
+                        realRepoCorte = realRepoCorte + 1;
                     }
                 }
             });
             for (incremento = 0; incremento <= numeroMes; incremento++) {
-                alca = 0;
-                progra = 0;
+                programadasMensual = 0;
+                realizadasMensual = 0;
+                prograRepoMensual = 0;
+                realRepoMensual = 0;
                 actividadesPoa.forEach((t) -> {
                     if (t.getBandera().equals("y")) {
                         Integer tP = 0;
@@ -261,32 +267,47 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                             case 0:                            tR = tR + t.getNAEnero();                            tP = tP + t.getNPEnero();                            break;
                         }
                         if (tP != 0) {
-                            progra = progra + 1;
+                            programadasMensual = programadasMensual + 1;
+                            prograRepoMensual = prograRepoMensual + 1;
                         }
-
+                        if (tR != 0) {
+                            realizadasMensual = realizadasMensual + 1;
+                        }
                         if (tR != 0 && Objects.equals(tR, tP)) {
-                            alca = alca + 1;
+                            realRepoMensual = realRepoMensual + 1;
                         }
                     }
-                });
-                if (progra != 0) {
-                    graf.add(new Grafica(poau.obtenerMesNombre(incremento), (alca.doubleValue() / progra.doubleValue()) * 100D));
+                }); 
+                Double promSP=0D,promCP=0D;
+                
+                if (prograRepoMensual != 0) {
+                    promCP= (Double.parseDouble(realRepoMensual.toString()) / Double.parseDouble(prograRepoMensual.toString()) * 100D);
                 } else {
-                    graf.add(new Grafica(poau.obtenerMesNombre(incremento), 0D));
+                    promCP= 0D;
                 }
+
+                if (programadasMensual != 0 && realizadasMensual != 0) {
+                    promSP=(Double.parseDouble(realizadasMensual.toString()) / Double.parseDouble(programadasMensual.toString()) * 100D);
+                } else if (programadasMensual == 0 && realizadasMensual != 0) {
+                    promSP= realizadasMensual * 100D;
+                } else if (programadasMensual == 0 && realizadasMensual == 0) {
+                    promSP= 0D;
+                }                
+                    grafSP.add(new Grafica(poau.obtenerMesNombre(incremento), promSP,promSP));                    
+                    grafCP.add(new Grafica(poau.obtenerMesNombre(incremento), promCP,promCP));
             }
         }
-        if (prograRepo != 0) {
-            avance = (Double.parseDouble(realRepo.toString()) / Double.parseDouble(prograRepo.toString()) * 100D);
+        if (prograRepoCorte != 0) {
+            avance = (Double.parseDouble(realRepoCorte.toString()) / Double.parseDouble(prograRepoCorte.toString()) * 100D);
         } else {
             avance = 0D;
         }
         
-        if (programadas != 0 && realizadas != 0) {
-            avanceSp = (Double.parseDouble(realizadas.toString()) / Double.parseDouble(programadas.toString()) * 100D);
-        } else if (programadas == 0 && realizadas != 0) {
-            avanceSp = realizadas * 100D;
-        } else if (programadas == 0 && realizadas == 0) {
+        if (programadasCorte != 0 && realizadasCorte != 0) {
+            avanceSp = (Double.parseDouble(realizadasCorte.toString()) / Double.parseDouble(programadasCorte.toString()) * 100D);
+        } else if (programadasCorte == 0 && realizadasCorte != 0) {
+            avanceSp = realizadasCorte * 100D;
+        } else if (programadasCorte == 0 && realizadasCorte == 0) {
             avanceSp = 0D;
         }
     }
@@ -314,7 +335,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                 add(115.0);
             }
         };
-        return new MeterGaugeChartModel(avance, intervals);
+        return new MeterGaugeChartModel(avanceSp, intervals);
     }
 
     public void areaSeleccionada() {
@@ -345,17 +366,19 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         @Getter        @Setter        private Integer realizadas;
         @Getter        @Setter        private Double avance;
         @Getter        @Setter        private Double avanceSP;
-        @Getter        @Setter        private List<Grafica> avanceGraf;
+        @Getter        @Setter        private List<Grafica> avanceGrafSP;
+        @Getter        @Setter        private List<Grafica> avanceGrafCP;
         @Getter        @Setter        private MeterGaugeChartModel gaugeChartModel;
         @Getter        @Setter        private Boolean renderizar;
 
-        public ResultadosCMI(String ejesRegistro, Integer programadas, Integer realizadas, Double avance, Double avanceSP, List<Grafica> avanceGraf, MeterGaugeChartModel gaugeChartModel, Boolean renderizar) {
+        public ResultadosCMI(String ejesRegistro, Integer programadas, Integer realizadas, Double avance, Double avanceSP, List<Grafica> avanceGrafSP, List<Grafica> avanceGrafCP, MeterGaugeChartModel gaugeChartModel, Boolean renderizar) {
             this.ejesRegistro = ejesRegistro;
             this.programadas = programadas;
             this.realizadas = realizadas;
             this.avance = avance;
             this.avanceSP = avanceSP;
-            this.avanceGraf = avanceGraf;
+            this.avanceGrafSP = avanceGrafSP;
+            this.avanceGrafCP = avanceGrafCP;
             this.gaugeChartModel = gaugeChartModel;
             this.renderizar = renderizar;
         }
@@ -369,10 +392,12 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
 
         @Getter        @Setter        private String mes;
         @Getter        @Setter        private Double avance;
+        @Getter        @Setter        private Double avanceOF;
 
-        public Grafica(String mes, Double avance) {
+        public Grafica(String mes, Double avance, Double avanceOF) {
             this.mes = mes;
             this.avance = avance;
+            this.avanceOF = avanceOF;
         }
 
         @Override
