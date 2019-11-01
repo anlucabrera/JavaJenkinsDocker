@@ -246,68 +246,70 @@ public class EjbCedulaIdentificacion {
         a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 68f, "Parentesco:",""));
         a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 69f, "Nombre del padre:",""));
         a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 70f, "Ocupación del padre:",""));
-        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 71f, "Escolaridad máxima del padre:",""));
-        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 72f, "Nombre de la madre:",""));
-        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 73f, "Ocupación de la madre:",""));
-        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 74f, "Escolaridad máxima de la madre:",""));
-        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 75f, "Hermanos:",""));
-        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 76f, "Actividad principal de hermanas(os):",""));
-        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 77f, "En caso de accidente avisar a:",""));//Nombre
-        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 78f, "Domicilio:",""));//Domicilio completo de contacto de emergencia
-        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 79f, "Télefono de contacto:",""));//Telefono de contacto de emergencia
-        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 80f, "Parentesco:","")); //Parentesco del contacto de emergencia
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 71f, "Teléfono de contacto del padre:",""));
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 72f, "Escolaridad máxima del padre:",""));
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 73f, "Nombre de la madre:",""));
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 74f, "Ocupación de la madre:",""));
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 75f, "Teléfono de contacto de la madre:",""));
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 76f, "Escolaridad máxima de la madre:",""));
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 77f, "Hermanos:",""));
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 78f, "Actividad principal de hermanas(os):",""));
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 79f, "En caso de accidente avisar a:",""));//Nombre
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 80f, "Domicilio:",""));//Domicilio completo de contacto de emergencia
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 81f, "Télefono de contacto:",""));//Telefono de contacto de emergencia
+        a7.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 7f, 82f, "Parentesco:","")); //Parentesco del contacto de emergencia
         l.add(a7);
 
         Apartado a8 = new Apartado(8f);
         a8.setContenido("Datos escolares");
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 81f,"Periodo cuatrimestral:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 82f, "Generación:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 83f, "Primera opción de Educación Superior:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 84f, "Otra opción de Educación Superior:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 85f, "Examen de admisión en otras IES:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 86f, "Primera opción de carrera:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 87f, "Segunda opción de carrera:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 88f, "Medio de impacto para su inscripción:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 89f, "Razón por la que eligió la Universidad:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 90f, "Nombre:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 91f, "Localidad:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 92f, "Municipio:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 93f, "Estado:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 94f, "Tipo de IEMS:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 95f, "Proveniente de otra UT:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 96f, "Nombre:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 97f, "Promedio de bachillerato:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 98f, "Optativa del bachillerato:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 99f, "Estudiante de modalidad 2x3:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 100f, "Estatus (Activo o baja):",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 101f, "Tipo de baja:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 102f, "Causa de baja:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 103f, "Reingreso:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 104f, "Turno:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 105f, "Tutora o tutor de grupo:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 106f, "Promedio cuatrimestral:",""));
-        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 107f, "Promedio general:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 83f,"Periodo cuatrimestral:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 84f, "Generación:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 85f, "Primera opción de Educación Superior:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 86f, "Otra opción de Educación Superior:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 87f, "Examen de admisión en otras IES:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 88f, "Primera opción de carrera:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 89f, "Segunda opción de carrera:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 90f, "Medio de impacto para su inscripción:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 91f, "Razón por la que eligió la Universidad:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 92f, "Nombre:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 93f, "Localidad:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 94f, "Municipio:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 95f, "Estado:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 96f, "Tipo de IEMS:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 97f, "Proveniente de otra UT:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 98f, "Nombre:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 99f, "Promedio de bachillerato:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 100f, "Optativa del bachillerato:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 101f, "Estudiante de modalidad 2x3:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 102f, "Estatus (Activo o baja):",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 103f, "Tipo de baja:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 104f, "Causa de baja:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 105f, "Reingreso:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 106f, "Turno:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 107f, "Tutora o tutor de grupo:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 108f, "Promedio cuatrimestral:",""));
+        a8.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 8f, 109f, "Promedio general:",""));
         l.add(a8);
 
         Apartado a9 = new Apartado(9f);
         a9.setContenido("Datos de salud");
-        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 108f,"Estatura:",""));
-        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 109f, "Peso:",""));
-        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 110f, "Tipo de sangre:",""));
-        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 111f, "Discapacidad:",""));
-        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 112f, "Tipo de discapacidad:",""));
-        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 113f, "Alergias:",""));
-        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 114f, "Padecimiento de enfermedad:",""));
-        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 115f, "Tratamiento médico:",""));
-        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 116f, "IMSS:",""));
-        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 117f, "Número de seguridad social:",""));
+        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 110f,"Estatura:",""));
+        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 111f, "Peso:",""));
+        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 112f, "Tipo de sangre:",""));
+        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 113f, "Discapacidad:",""));
+        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 114f, "Tipo de discapacidad:",""));
+        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 115f, "Alergias:",""));
+        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 116f, "Padecimiento de enfermedad:",""));
+        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 117f, "Tratamiento médico:",""));
+        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 118f, "IMSS:",""));
+        a9.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 9f, 119f, "Número de seguridad social:",""));
         l.add(a9);
         Apartado a10 = new Apartado(10f);
         a10.setContenido("Atecedentes médicos familiares");
-        a10.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 10f, 118f, "Diabetes:",""));
-        a10.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 10f, 119f, "Hipertensión:",""));
-        a10.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 10f, 120f, "Problemas Cardiacos:",""));
-        a10.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 10f, 121f, "Cáncer:",""));
+        a10.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 10f, 120f, "Diabetes:",""));
+        a10.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 10f, 121f, "Hipertensión:",""));
+        a10.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 10f, 122f, "Problemas Cardiacos:",""));
+        a10.getPreguntas().add(new Opciones(EvaluacionesTipo.CEDULA_IDENTIFICACION.getNumero() , 10f, 123f, "Cáncer:",""));
         l.add(a10);
         return l;
 
@@ -757,11 +759,13 @@ public class EjbCedulaIdentificacion {
             datosFamiliares.setP68(estudiante.getAspirante().getDatosFamiliares().getTutor().getParentesco());//Parentesco
             datosFamiliares.setP69(estudiante.getAspirante().getDatosFamiliares().getNombrePadre());//Nombre completo del padre
             datosFamiliares.setP70(estudiante.getAspirante().getDatosFamiliares().getOcupacionPadre().getDescripcion());//Ocupacion del padre
-            datosFamiliares.setP71(estudiante.getAspirante().getDatosFamiliares().getEscolaridadPadre().getDescripcion());//Escolaridad maxicma del padre
-            datosFamiliares.setP72(estudiante.getAspirante().getDatosFamiliares().getNombreMadre());//Nombre completo de la madre
-            datosFamiliares.setP73(estudiante.getAspirante().getDatosFamiliares().getOcupacionMadre().getDescripcion());//Ocupacion de la madre
-            datosFamiliares.setP74(estudiante.getAspirante().getDatosFamiliares().getEscolaridadMadre().getDescripcion());//Escolaridad maxima de la madre
-            //Pregunta de la 75 a la 80 no hay datos en la base de datos, ni lugar para almacenarlo
+            datosFamiliares.setP71(estudiante.getAspirante().getDatosFamiliares().getTelefonoPadre());//Telefono de contacto del padre
+            datosFamiliares.setP72(estudiante.getAspirante().getDatosFamiliares().getEscolaridadPadre().getDescripcion());//Escolaridad maxima del padre
+            datosFamiliares.setP73(estudiante.getAspirante().getDatosFamiliares().getNombreMadre());//Nombre completo de la madre
+            datosFamiliares.setP74(estudiante.getAspirante().getDatosFamiliares().getOcupacionMadre().getDescripcion());//Ocupacion de la madre
+            datosFamiliares.setP75(estudiante.getAspirante().getDatosFamiliares().getTelefonoMadre());//Telefono de contacto de la madre
+            datosFamiliares.setP76(estudiante.getAspirante().getDatosFamiliares().getEscolaridadMadre().getDescripcion());//Escolaridad maxima de la madre
+            //Pregunta de la 77 a la 82 no hay datos en la base de datos, ni lugar para almacenarlo
             return ResultadoEJB.crearCorrecto(datosFamiliares,"Datos familiares encontrados con exito");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Error al obtener los datos familiares(EjbCedulaIdentificacion.getDatosFamiliares)", e, null);
@@ -781,14 +785,14 @@ public class EjbCedulaIdentificacion {
             PeriodosEscolares periodosEscolar = new PeriodosEscolares();
             ResultadoEJB<PeriodosEscolares> periodo= getPeriodo(estudiante);
             if(periodo.getCorrecto()==true){periodosEscolar = periodo.getValor();}
-            datosEscolares.setP81(caster.periodoToString(periodosEscolar));//Periodo cuatrimestral
+            datosEscolares.setP83(caster.periodoToString(periodosEscolar));//Periodo cuatrimestral
 
             //TODO:Generacion
             Generaciones generacion = new Generaciones();
             ResultadoEJB<Generaciones> resGeneracion = getGeneracion(estudiante);
             if(resGeneracion.getCorrecto()==true){generacion=resGeneracion.getValor();}
             else {return ResultadoEJB.crearCorrecto(datosEscolares,"No se pudo obtener la generación del estudiante");}
-            datosEscolares.setP82(generacion.getInicio().toString().concat("-").concat(generacion.getFin().toString()));//Generacion
+            datosEscolares.setP84(generacion.getInicio().toString().concat("-").concat(generacion.getFin().toString()));//Generacion
 
             //TODO: Datos de la encuesta
             EncuestaAspirante datosEncuesta = new EncuestaAspirante();
@@ -796,25 +800,25 @@ public class EjbCedulaIdentificacion {
             if(resDatosAspirante.getCorrecto()==true){datosEncuesta = resDatosAspirante.getValor();}
             else {return ResultadoEJB.crearErroneo(4,datosEscolares,"No se pudo obtener los datos de la encuesta");}
 
-            datosEscolares.setP83(datosEncuesta.getR13utxjPrimeraOpcion());// Primera opcion de educacion superior
-            //datosEscolares.setP84();//Otra opcion de educacion superior No se tiene respuesta
-            datosEscolares.setP85(datosEncuesta.getR14examenAdmisionOU());//Examen de admision en otra Universidad
+            datosEscolares.setP85(datosEncuesta.getR13utxjPrimeraOpcion());// Primera opcion de educacion superior
+            //datosEscolares.setP86();//Otra opcion de educacion superior No se tiene respuesta
+            datosEscolares.setP87(datosEncuesta.getR14examenAdmisionOU());//Examen de admision en otra Universidad
             //TODO: Carrera primera opcion
             AreasUniversidad primeraO = new AreasUniversidad();
             ResultadoEJB<AreasUniversidad> resPrimeraO = getAreaOpcion(estudiante.getAspirante().getDatosAcademicos().getPrimeraOpcion());
             if(resPrimeraO.getCorrecto()==true){primeraO= resPrimeraO.getValor();}
             else {return ResultadoEJB.crearErroneo(5,datosEscolares,"No se pudo obtener la carrera de primera opción del estudiante");}
 
-            datosEscolares.setP86(primeraO.getNombre());//Primera opcion de carrera
+            datosEscolares.setP88(primeraO.getNombre());//Primera opcion de carrera
             //TODO: Carrera segunda opcion
             AreasUniversidad segundaO = new AreasUniversidad();
             ResultadoEJB<AreasUniversidad> resSegundaO = getAreaOpcion(estudiante.getAspirante().getDatosAcademicos().getSegundaOpcion());
             if(resSegundaO.getCorrecto()==true){segundaO= resSegundaO.getValor(); }
             else {return ResultadoEJB.crearErroneo(5,datosEscolares,"No se pudo obtener la carrera de segunda opción del estudiante");}
 
-            datosEscolares.setP87(segundaO.getNombre());//Segunda opcion carrera
-            datosEscolares.setP88(datosEncuesta.getR15medioImpacto().getDescripcion());//Medio de impacto para su inscripcion
-            //datosEscolares.setP89(datosEncuesta.get16); //Razon por la que eligio la universidad -- No esta la informacion
+            datosEscolares.setP89(segundaO.getNombre());//Segunda opcion carrera
+            datosEscolares.setP90(datosEncuesta.getR15medioImpacto().getDescripcion());//Medio de impacto para su inscripcion
+            //datosEscolares.setP91(datosEncuesta.get16); //Razon por la que eligio la universidad -- No esta la informacion
            //TODO: Bachillerato
             Iems iems = new Iems();
             ResultadoEJB<Iems> resIems = getIems(estudiante);
@@ -822,18 +826,18 @@ public class EjbCedulaIdentificacion {
             }
             else {return ResultadoEJB.crearErroneo(6,datosEscolares,"No se pudo obtener iems");}
 
-            datosEscolares.setP90(iems.getNombre());//Nombre del bachillerato de prosedencia
+            datosEscolares.setP92(iems.getNombre());//Nombre del bachillerato de prosedencia
             //Domicilio dl bachillerato
-            datosEscolares.setP91(iems.getLocalidad().getNombre());//Localidad del bachillerato
-            datosEscolares.setP92(iems.getLocalidad().getMunicipio().getNombre());//Municipio del bachillerato
-            datosEscolares.setP93(iems.getLocalidad().getMunicipio().getEstado().getNombre()); //Estado del bachillerato
-            datosEscolares.setP94(iems.getTipo());//Tipo de bachillerato
-            //datosEscolares.setP95(); //Proveniente de otra ut -- No existe el dato
-            //datosEscolares.setP96(); //Nombre de la UT -- No existe el dato
-            datosEscolares.setP97(estudiante.getAspirante().getDatosAcademicos().getPromedio()) ;//Promedio de bachillerato
-            datosEscolares.setP98(estudiante.getAspirante().getDatosAcademicos().getEspecialidadIems().getNombre());//Optativa bachillerato
-            datosEscolares.setP99(datosEncuesta.getR16segundaCarrera());//Estudiante de modalidad 2x3
-            datosEscolares.setP100(estudiante.getTipoEstudiante().getDescripcion());//Estatus
+            datosEscolares.setP93(iems.getLocalidad().getNombre());//Localidad del bachillerato
+            datosEscolares.setP94(iems.getLocalidad().getMunicipio().getNombre());//Municipio del bachillerato
+            datosEscolares.setP95(iems.getLocalidad().getMunicipio().getEstado().getNombre()); //Estado del bachillerato
+            datosEscolares.setP96(iems.getTipo());//Tipo de bachillerato
+            //datosEscolares.setP97(); //Proveniente de otra ut -- No existe el dato
+            //datosEscolares.setP98(); //Nombre de la UT -- No existe el dato
+            datosEscolares.setP99(estudiante.getAspirante().getDatosAcademicos().getPromedio()) ;//Promedio de bachillerato
+            datosEscolares.setP100(estudiante.getAspirante().getDatosAcademicos().getEspecialidadIems().getNombre());//Optativa bachillerato
+            datosEscolares.setP101(datosEncuesta.getR16segundaCarrera());//Estudiante de modalidad 2x3
+            datosEscolares.setP102(estudiante.getTipoEstudiante().getDescripcion());//Estatus
             //TODO: Baja
            Baja baja = new Baja();
             ResultadoEJB<Baja> resBaja = buscarBaja(estudiante);
@@ -841,29 +845,29 @@ public class EjbCedulaIdentificacion {
             if(resBaja.getCorrecto()==true){
                 baja = resBaja.getValor();
                 //TODO:Verifica que tipo de baja es
-                if(baja.getTipoBaja()==1){datosEscolares.setP101("Temporal"); }//Tipo de baja (Temporal)
-                else if(baja.getTipoBaja()==2){datosEscolares.setP101("Definitiva");}//Tipo de baja (Definitiva)
-                else { datosEscolares.setP101("N/A");} //Tipo de baja
+                if(baja.getTipoBaja()==1){datosEscolares.setP103("Temporal"); }//Tipo de baja (Temporal)
+                else if(baja.getTipoBaja()==2){datosEscolares.setP103("Definitiva");}//Tipo de baja (Definitiva)
+                else { datosEscolares.setP103("N/A");} //Tipo de baja
                 //TODO: Buca la causa de la baja
                 ResultadoEJB<BajasCausa> resCausa= getCausaBaja(baja);
                 if(resCausa.getCorrecto()==true){
-                    datosEscolares.setP102(resCausa.getValor().getCausa());//Causa de la baja
-                }else { datosEscolares.setP102("N/A");}// Causa de baja
+                    datosEscolares.setP104(resCausa.getValor().getCausa());//Causa de la baja
+                }else { datosEscolares.setP104("N/A");}// Causa de baja
             }
             else {
-                datosEscolares.setP101("N/A"); //Tipo de baja (N/A, no se encontro registro del estudiante)
-                datosEscolares.setP102("N/A");// Causa de baja (n/a no existe registro)
+                datosEscolares.setP103("N/A"); //Tipo de baja (N/A, no se encontro registro del estudiante)
+                datosEscolares.setP104("N/A");// Causa de baja (n/a no existe registro)
             }
 
-            datosEscolares.setP103(estudiante.getAspirante().getTipoAspirante().getDescripcion());//Nuevo ingreso - Reingreso
-            datosEscolares.setP104("Matutino");//Turno
+            datosEscolares.setP105(estudiante.getAspirante().getTipoAspirante().getDescripcion());//Nuevo ingreso - Reingreso
+            datosEscolares.setP106("Matutino");//Turno
             //TODO:TUTOR
             Personal tutor = new Personal();
             ResultadoEJB<Personal> resTutor = getTutor(estudiante);
             if(resTutor.getCorrecto()==true){tutor = resTutor.getValor();}
             else {return ResultadoEJB.crearErroneo(7, datosEscolares,"No se pudo obtener al tutor del estudiante");}
 
-            datosEscolares.setP105(tutor.getNombre()); //Tutor
+            datosEscolares.setP107(tutor.getNombre()); //Tutor
             //Falta promedio cuatrimestral y general
             return ResultadoEJB.crearCorrecto(datosEscolares,"Datos escolares econtrados con exito");
 
@@ -900,13 +904,13 @@ public class EjbCedulaIdentificacion {
            // System.out.println("Entro a datos de salud");
             DtoCedulaIdentifiacionDatosDeSalud datosDeSalud = new DtoCedulaIdentifiacionDatosDeSalud();
             if (estudiante==null){return  ResultadoEJB.crearErroneo(2,datosDeSalud,"El estudiante no debe ser nulo");}
-            datosDeSalud.setP108(estudiante.getAspirante().getIdPersona().getDatosMedicos().getEstatura());//Estatura
-            datosDeSalud.setP109(estudiante.getAspirante().getIdPersona().getDatosMedicos().getPeso());//Peso
-            datosDeSalud.setP110(estudiante.getAspirante().getIdPersona().getDatosMedicos().getCveTipoSangre().getNombre());//Tipo de sangre
+            datosDeSalud.setP110(estudiante.getAspirante().getIdPersona().getDatosMedicos().getEstatura());//Estatura
+            datosDeSalud.setP111(estudiante.getAspirante().getIdPersona().getDatosMedicos().getPeso());//Peso
+            datosDeSalud.setP112(estudiante.getAspirante().getIdPersona().getDatosMedicos().getCveTipoSangre().getNombre());//Tipo de sangre
             if(estudiante.getAspirante().getIdPersona().getDatosMedicos().getCveDiscapacidad().getNombre().equals("No aplica")){
-                datosDeSalud.setP111("Ninguna");//Discapacidad
-            }else {datosDeSalud.setP111("Si");} //Discapacidad
-            datosDeSalud.setP112(estudiante.getAspirante().getIdPersona().getDatosMedicos().getCveDiscapacidad().getNombre());//Tipo discapacidad
+                datosDeSalud.setP113("Ninguna");//Discapacidad
+            }else {datosDeSalud.setP113("Si");} //Discapacidad
+            datosDeSalud.setP114(estudiante.getAspirante().getIdPersona().getDatosMedicos().getCveDiscapacidad().getNombre());//Tipo discapacidad
             //System.out.println("----> " +datosDeSalud);
             //TODO:Datos encuesta
             EncuestaAspirante datosEncuesta= new EncuestaAspirante();
@@ -914,26 +918,26 @@ public class EjbCedulaIdentificacion {
             if(resEncuesta.getCorrecto()==true){datosEncuesta = resEncuesta.getValor();}
             else {return ResultadoEJB.crearErroneo(3,datosDeSalud,"No obtuvieron los datos de la encuesta");}
             //System.out.println("Datos encuesta "+datosEncuesta );
-            datosDeSalud.setP113(datosEncuesta.getR17Alergia());//Alergias
-            datosDeSalud.setP114(datosEncuesta.getR18padecesEnfermedad());//Padecimiento de enfermedad
-            datosDeSalud.setP115(datosEncuesta.getR19tratamientoMedico());//Tratamiento medico
+            datosDeSalud.setP115(datosEncuesta.getR17Alergia());//Alergias
+            datosDeSalud.setP116(datosEncuesta.getR18padecesEnfermedad());//Padecimiento de enfermedad
+            datosDeSalud.setP117(datosEncuesta.getR19tratamientoMedico());//Tratamiento medico
             if(estudiante.getAspirante().getIdPersona().getDatosMedicos().getNssVigente() ==true){
-                datosDeSalud.setP116("Si");//IMSS vigente
-            }else {datosDeSalud.setP116("No");//IMSS Vigente
+                datosDeSalud.setP118("Si");//IMSS vigente
+            }else {datosDeSalud.setP118("No");//IMSS Vigente
             }
-            datosDeSalud.setP117(estudiante.getAspirante().getIdPersona().getDatosMedicos().getNss());//Numero de seguridad social
+            datosDeSalud.setP119(estudiante.getAspirante().getIdPersona().getDatosMedicos().getNss());//Numero de seguridad social
             //---------DIABETES----//
-            if(estudiante.getAspirante().getIdPersona().getDatosMedicos().getFDiabetes()==true){datosDeSalud.setP118("Si");}
-            else {datosDeSalud.setP118("No");}
-            //---Hipertensión---//
-            if(estudiante.getAspirante().getIdPersona().getDatosMedicos().getFHipertenso()==true){datosDeSalud.setP119("Si");}
-            else {datosDeSalud.setP119("No");}
-            //---Problemas cardiacos--//
-            if(estudiante.getAspirante().getIdPersona().getDatosMedicos().getFCardiaco()==true){datosDeSalud.setP120("Si");}
+            if(estudiante.getAspirante().getIdPersona().getDatosMedicos().getFDiabetes()==true){datosDeSalud.setP120("Si");}
             else {datosDeSalud.setP120("No");}
-            //---Cancer---//
-            if(estudiante.getAspirante().getIdPersona().getDatosMedicos().getFCancer()==true){datosDeSalud.setP121("Si");}
+            //---Hipertensión---//
+            if(estudiante.getAspirante().getIdPersona().getDatosMedicos().getFHipertenso()==true){datosDeSalud.setP121("Si");}
             else {datosDeSalud.setP121("No");}
+            //---Problemas cardiacos--//
+            if(estudiante.getAspirante().getIdPersona().getDatosMedicos().getFCardiaco()==true){datosDeSalud.setP122("Si");}
+            else {datosDeSalud.setP122("No");}
+            //---Cancer---//
+            if(estudiante.getAspirante().getIdPersona().getDatosMedicos().getFCancer()==true){datosDeSalud.setP123("Si");}
+            else {datosDeSalud.setP123("No");}
             //System.out.println("Datos de salud ---->" + datosDeSalud);
             return ResultadoEJB.crearCorrecto(datosDeSalud,"Los datos se han encontrado");
         }catch (Exception e) { return ResultadoEJB.crearErroneo(1, "Error al obtener los datos de salud(EjbCedulaIdentificacion.getDatosSalud)", e, null); }

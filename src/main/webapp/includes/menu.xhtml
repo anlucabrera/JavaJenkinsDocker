@@ -28,10 +28,13 @@
                 </p:link>
             </li>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Control escolar</li>
+            <c:if test="#{cambioPwdEstudiante.mostrarEnDesarrollo(request) and cambioPwdEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/modificacionDatosEstudiante.xhtml"><i class="fa fa-user-circle"></i><span>Mi perfil</span><span class="pull-right-container"></span></p:link></li></c:if>
             <c:if test="#{consultaCalificacionesEstudiante.mostrarEnDesarrollo(request) and consultaCalificacionesEstudiante.tieneAcceso}"><li>
                     <p:link href="#{request.contextPath}/controlEscolar/estudiante/consultarCalificaciones.xhtml"><i class="fa fa-list-alt"></i><span>Consultar mis calificaciones</span>
                     </p:link></li></c:if>
+            <c:if test="#{cambioPwdEstudiante.mostrarEnDesarrollo(request) and cambioPwdEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/CambioPwdEstudiante.xhtml"><i class="fa fa-key"></i><span>Cambio de contraseña</span><span class="pull-right-container"></span></p:link></li></c:if>
             <c:if test="#{cuestionarioPsicopedagogicoEstudiante.mostrarEnDesarrollo(request) and cuestionarioPsicopedagogicoEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/cuestionarioPsicopedagogico.xhtml"><i class="fa fa-id-badge"></i><span>Cuestionario Psicopedagógico</span><span class="pull-right-container"></span></p:link></li></c:if>
+
         </c:if>
         <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
             <li class="header" style="color: #040404;background: #ffffff">Encuestas</li>

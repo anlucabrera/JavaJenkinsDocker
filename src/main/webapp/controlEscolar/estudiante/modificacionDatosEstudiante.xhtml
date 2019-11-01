@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Mi Perfil
+    </ui:define>
+
+    <ui:define name="description">
+        Modificar mis datos personales
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Edicion de datos estudiante"/>
+        <div class="contenedor">
+            <c:if test="#{perfilEstudiante.tieneAcceso}">
+                <h:form id="frm1" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="right">
+                                        <p:commandButton
+                                                class="btn btn-primary"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                actionListener="#{perfilEstudiante.updateDatosEstudiante}"
+                                                icon="fa fa-check"
+                                                update="@form"
+                                                process="@form">
+
+                                            <p:confirm header="Modificar datos" message="¿Está seguro que desea modificar sus datos?"  icon="pi pi-exclamation-triangle" />
+                                        </p:commandButton>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" style="align-content: center"/>
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                                        </p:confirmDialog>
+                                        <p:spacer width="10px"/>
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <p:tabView id="tabw1">
+                            <p:tab title="Datos del estudiante">
+                                <section class="content">
+                                    <h:form id="frm">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{perfilEstudiante.rol.estudiante.matricula}.jpg"  style="width: 150px; height: 220px;" class="img-circle"/>
+                                                                        </div>
+                                                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                                                            <p:outputLabel for="matricula" style="font-size: inherit;text-align: right;" value="Matricula:" />
+                                                                            <p:inputText id="matricula" class="form-control" value="#{perfilEstudiante.rol.estudiante.matricula}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                            <p:outputLabel for="nombre" style="font-size: inherit;text-align: right;" value="Nombre:" />
+                                                                            <p:inputText id="nombre" class="form-control" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosGenerales.p2}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-7 col-md-7 col-lg-7">
+                                                                            <p:outputLabel for="carrera" style="font-size: inherit;text-align: right;" value="Carrera:" />
+                                                                            <p:inputText id="carrera" class="form-control" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosGenerales.p3}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                            <p:outputLabel for="s" style="font-size: inherit;text-align: right;" value="Sistema:" />
+                                                                            <p:inputText id="s" class="form-control" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosGenerales.p4}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                                                            <p:outputLabel for="grado" style="font-size: inherit;text-align: right;" value="Grado:" />
+                                                                            <p:inputText id="grado" class="form-control" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosGenerales.p5}" readonly="true">
+
+                                                                            </p:inputText>
+                                                                        </div>
+                                                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                                                            <p:outputLabel for="grupo" style="font-size: inherit;text-align: right;" value="Grupo:" />
+                                                                            <p:inputText id="grupo" class="form-control" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosGenerales.p6}" readonly="true"/>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </h:form>
+
+                                </section>
+                            </p:tab>
+                        </p:tabView>
+                        <p:tabView id="tabw2">
+                            <p:tab title="#{perfilEstudiante.rol.apartados[1].contenido}" >
+                                <section class="content">
+                                    <h:form id="frm2">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="row">
+                                                                    <c:set var="apartado" value="#{perfilEstudiante.rol.apartados[1]}" />
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[0].titulo}"/>
+                                                                            <p:inputText class="form-control"  value="#{perfilEstudiante.rol.cedulaIdentificacion.datosPersonales.p7}" readonly="true">
+                                                                            </p:inputText>
+                                                                        </div>
+                                                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[1].titulo}"/>
+                                                                            <p:inputText class="form-control"  value="#{perfilEstudiante.rol.cedulaIdentificacion.datosPersonales.p8}" readonly="true">
+                                                                            </p:inputText>
+                                                                        </div>
+                                                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[2].titulo}"/>
+                                                                            <p:inputText class="form-control"  value="#{perfilEstudiante.rol.cedulaIdentificacion.datosPersonales.p9}" readonly="true">
+                                                                            </p:inputText>
+                                                                        </div>
+                                                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[3].titulo}"/>
+                                                                            <p:inputText class="form-control"  value="#{perfilEstudiante.rol.cedulaIdentificacion.datosPersonales.p10}" readonly="true">
+                                                                            </p:inputText>
+                                                                        </div>
+                                                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[4].titulo}"/>
+                                                                            <p:inputText class="form-control"  value="#{perfilEstudiante.rol.cedulaIdentificacion.datosPersonales.p11}" readonly="true">
+                                                                            </p:inputText>
+                                                                        </div>
+                                                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[5].titulo}"/>
+                                                                            <p:inputText class="form-control"  value="#{perfilEstudiante.rol.cedulaIdentificacion.datosPersonales.p12}" readonly="true">
+                                                                            </p:inputText>
+                                                                        </div>
+                                                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[6].titulo}"/>
+                                                                            <p:inputText class="form-control"  value="#{perfilEstudiante.rol.medioComunicacion.email}" >
+                                                                                <p:ajax process="@this" update="@form, :tabw1:frm,:tabw2:frm2,:tabw2:frm4"/>
+                                                                            </p:inputText>
+                                                                        </div>
+                                                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[7].titulo}"/>
+                                                                            <p:inputMask mask="(99)(999)999-9999" id="telFijo" class="form-control" placeholder="(99)(999)-999-9999" value="#{perfilEstudiante.rol.medioComunicacion.telefonoFijo}">
+                                                                                <p:ajax process="@this" update="@form, :tabw1:frm,:tabw2:frm2,:tabw2:frm4"/>
+                                                                            </p:inputMask>
+                                                                        </div>
+                                                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[8].titulo}"/>
+                                                                            <p:inputMask mask="(999)999-9999" id="telMovil" class="form-control" placeholder="(999)(999)-999-9999" value="#{perfilEstudiante.rol.medioComunicacion.telefonoMovil}">
+                                                                                <p:ajax process="@this" update="@form, :tabw1:frm,:tabw2:frm2,:tabw2:frm4"/>
+                                                                            </p:inputMask>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <label class="col-sm-12 control-label"><h3 style="text-align: cente; font-size: inherit; font-weight: bold">#{perfilEstudiante.rol.apartados[2].contenido}</h3></label>
+                                                                        <c:set var="apartado2" value="#{perfilEstudiante.rol.apartados[2]}" />
+                                                                        <c:set var="index" value="#{16}" />
+                                                                        <c:forEach items="#{apartado2.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
+                                                                                <p:inputText class="form-control"  value="#{perfilEstudiante.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <label class="col-sm-12 control-label"><h3 style="text-align: cente; font-size: inherit; font-weight: bold">#{perfilEstudiante.rol.apartados[3].contenido}</h3></label>
+                                                                        <c:set var="apartado3" value="#{perfilEstudiante.rol.apartados[3]}" />
+                                                                        <c:set var="index" value="#{25}" />
+                                                                        <c:forEach items="#{apartado3.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
+                                                                                <p:inputText class="form-control"  value="#{perfilEstudiante.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <c:set var="apartado4" value="#{perfilEstudiante.rol.apartados[4]}" />
+                                                                    <div class="form-group">
+                                                                        <label class="col-sm-12 control-label"><h3 style="text-align: cente; font-size: inherit; font-weight: bold">#{perfilEstudiante.rol.apartados[4].contenido}</h3></label>
+                                                                        <c:set var="apartado3" value="#{perfilEstudiante.rol.apartados[3]}" />
+                                                                        <c:set var="index" value="#{33}" />
+                                                                        <c:forEach items="#{apartado4.preguntas}" var="pregunta">
+                                                                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <p:outputLabel style="font-size: inherit" value="#{pregunta.titulo}"/>
+                                                                                <p:inputText class="form-control"  value="#{perfilEstudiante.rol.cedulaIdentificacion.datosPersonales[pos]}" readonly="true">
+
+                                                                                </p:inputText>
+                                                                                <c:set var="index" value="#{index+1}" />
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </h:form>
+
+                                </section>
+                            </p:tab>
+                            <p:tab title="#{perfilEstudiante.rol.apartados[6].contenido}" >
+                                <section class="content">
+                                    <h:form id="frm4">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <c:set var="apartado" value="#{perfilEstudiante.rol.apartados[6]}" />
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[0].titulo}"/>
+                                                                                <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p65}" readonly="true"/>
+                                                                            </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[1].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p66}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[2].titulo}"/>
+                                                                            <p:inputMask mask="(999)999-9999" id="telMovilTutor" class="form-control" placeholder="(999)-999-9999" value="#{perfilEstudiante.rol.tutorFamiliar.noTelefono}">
+                                                                                <p:ajax process="@this" update="@form, :tabw1:frm,:tabw2:frm2,:tabw2:frm4"/>
+                                                                            </p:inputMask>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[3].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p68}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[4].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p69}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[5].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p70}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[6].titulo}"/>
+                                                                            <p:inputMask mask="(999)999-9999" id="telMovilPadre" class="form-control" placeholder="(999)-999-9999" value="#{perfilEstudiante.rol.datosFamiliares.telefonoPadre}">
+                                                                                <p:ajax process="@this" update="@form, :tabw1:frm,:tabw2:frm2,:tabw2:frm4"/>
+                                                                            </p:inputMask>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[7].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p72}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[8].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p73}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[9].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p74}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[10].titulo}"/>
+                                                                            <p:inputMask mask="(999)999-9999" id="telMovilMadre" class="form-control" placeholder="(999)-999-9999" value="#{perfilEstudiante.rol.datosFamiliares.telefonoMadre}">
+                                                                                <p:ajax process="@this" update="@form, :tabw1:frm,:tabw2:frm2,:tabw2:frm4"/>
+                                                                            </p:inputMask>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[11].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p76}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[12].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p77}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[13].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p78}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[14].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p79}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[15].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p80}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[16].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p81}" readonly="true"/>
+                                                                        </div>
+                                                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <p:outputLabel style="font-size: inherit" value="#{apartado.preguntas[17].titulo}"/>
+                                                                            <p:inputText class="form-control" placeholder="" value="#{perfilEstudiante.rol.cedulaIdentificacion.datosFamiliares.p82}" readonly="true"/>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </h:form>
+
+                                </section>
+
+                            </p:tab>
+
+                        </p:tabView>
+                    </div>
+                </div>
+
+
+
+
+
+            </c:if>
+            <c:if test="#{perfilEstudiante.tieneAcceso}">
+
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para generar la Cédula de Identificación</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{perfilEstudiante.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!perfilEstudiante.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a estudiantes."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+
+        </div>
+
+
+
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>

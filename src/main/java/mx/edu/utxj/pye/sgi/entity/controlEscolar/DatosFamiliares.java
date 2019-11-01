@@ -16,8 +16,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -31,25 +29,26 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DatosFamiliares.findAll", query = "SELECT d FROM DatosFamiliares d")
     , @NamedQuery(name = "DatosFamiliares.findByAspirante", query = "SELECT d FROM DatosFamiliares d WHERE d.aspirante = :aspirante")
     , @NamedQuery(name = "DatosFamiliares.findByNombrePadre", query = "SELECT d FROM DatosFamiliares d WHERE d.nombrePadre = :nombrePadre")
-    , @NamedQuery(name = "DatosFamiliares.findByNombreMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.nombreMadre = :nombreMadre")})
+    , @NamedQuery(name = "DatosFamiliares.findByTelefonoPadre", query = "SELECT d FROM DatosFamiliares d WHERE d.telefonoPadre = :telefonoPadre")
+    , @NamedQuery(name = "DatosFamiliares.findByNombreMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.nombreMadre = :nombreMadre")
+    , @NamedQuery(name = "DatosFamiliares.findByTelefonoMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.telefonoMadre = :telefonoMadre")})
 public class DatosFamiliares implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "aspirante")
     private Integer aspirante;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 450)
     @Column(name = "nombre_padre")
     private String nombrePadre;
+    @Column(name = "telefono_padre")
+    private String telefonoPadre;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 450)
     @Column(name = "nombre_madre")
     private String nombreMadre;
+    @Column(name = "telefono_madre")
+    private String telefonoMadre;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Aspirante aspirante1;
@@ -98,12 +97,28 @@ public class DatosFamiliares implements Serializable {
         this.nombrePadre = nombrePadre;
     }
 
+    public String getTelefonoPadre() {
+        return telefonoPadre;
+    }
+
+    public void setTelefonoPadre(String telefonoPadre) {
+        this.telefonoPadre = telefonoPadre;
+    }
+
     public String getNombreMadre() {
         return nombreMadre;
     }
 
     public void setNombreMadre(String nombreMadre) {
         this.nombreMadre = nombreMadre;
+    }
+
+    public String getTelefonoMadre() {
+        return telefonoMadre;
+    }
+
+    public void setTelefonoMadre(String telefonoMadre) {
+        this.telefonoMadre = telefonoMadre;
     }
 
     public Aspirante getAspirante1() {
