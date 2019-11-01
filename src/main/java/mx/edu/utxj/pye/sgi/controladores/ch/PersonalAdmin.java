@@ -207,6 +207,24 @@ public class PersonalAdmin implements Serializable {
             return;
         }
     }
+
+    public  String encriptaPassword(String password) throws Exception{
+        String contraseñaEncriptada = "";
+        String key = "92AE31A79FEEB2A3";
+        String iv = "0123456789ABCDEF";
+        contraseñaEncriptada = Encrypted.encrypt(key, iv, password);
+
+        return contraseñaEncriptada;
+    }
+
+    public  String desencriptaPassword(String password) throws Exception{
+        String contraseñaDesencriptada = "";
+        String key = "92AE31A79FEEB2A3";
+        String iv = "0123456789ABCDEF";
+        contraseñaDesencriptada = Encrypted.decrypt(key, iv, password);
+
+        return contraseñaDesencriptada;
+    }
  
     public void imprimirValores() {}
      

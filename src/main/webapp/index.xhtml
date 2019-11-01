@@ -294,13 +294,7 @@
         <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE19'}">
             <div class="box box-primary">
                 <div class="box box-solid">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Evaluaciones / Cuestionarios por estudiantes:</h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
+                    <!--Cuestionario Psicopedagogico -->
                     <div class="box-body">
                         <div class="row">
                             <c:if test="#{cuestionarioPsicopedagogicoEstudiante.tieneAcceso}">
@@ -321,6 +315,32 @@
                                         </p:link>
                                     </div>
                                 </div>
+                            </c:if>
+                        </div>
+                    </div>
+                    <!--Aviso de cambio de contraseña -->
+                    <div class="box-body">
+                        <div class="row">
+                            <c:if test="#{cambioPwdEstudiante.tieneAcceso}">
+                                <c:if test="#{cambioPwdEstudiante.rol.estudiante.aspirante.idPersona.login.modificado ==false}">
+                                    <div class="#{claseResumen}" style="max-height: 154px;">
+                                        <div class="small-box bg-yellow">
+                                            <div class="inner" style="cursor: pointer;" onclick="cambio();">
+                                                <h3>
+                                                    <h:outputLabel value="Cambio de contraseña" style="cursor: pointer;" onclick="cambio();" />
+                                                    <sup style="font-size: 20px"></sup>
+                                                </h3>
+                                                <p>¡No haz realizado el cambio de tu contraseña!. Ingresa aqui para hacer el cambio.<br/></p>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fa fa-key"></i>
+                                            </div>
+                                            <p:link  outcome="controlEscolar/estudiante/CambioPwdEstudiante" class="small-box-footer">
+                                                Entrar <i class="fa fa-arrow-circle-right"></i>
+                                            </p:link>
+                                        </div>
+                                    </div>
+                                </c:if>
                             </c:if>
                         </div>
                     </div>
