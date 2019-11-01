@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.BolsaTrabajo;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -85,7 +86,8 @@ public class ControladorBolsaTrabajo implements Serializable{
     public void init(){
         dto = new  DtoBolsaTrabajo();  
         dtopart = new  DtoBolsaEntrevistas();
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        consultaAreaRegistro(); 
       
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
@@ -100,6 +102,16 @@ public class ControladorBolsaTrabajo implements Serializable{
         claveRegistro = 23;
         consultarPermiso();
 
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 23);
+        if (areaRegistro == null) {
+            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            dto.setArea(areaRegistro);
+        }
     }
     
     public void descargarPlantilla() throws IOException, Throwable{
@@ -134,7 +146,7 @@ public class ControladorBolsaTrabajo implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(), dto.getEventoActual().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
     
@@ -182,7 +194,7 @@ public class ControladorBolsaTrabajo implements Serializable{
             dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
 
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(), dto.getEventoActual().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dto.getActividades());
         }else{
             dto.setAlineacionEje(null);

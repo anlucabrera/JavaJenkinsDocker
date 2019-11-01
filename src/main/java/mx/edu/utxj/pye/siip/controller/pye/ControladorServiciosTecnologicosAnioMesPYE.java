@@ -343,7 +343,7 @@ public class ControladorServiciosTecnologicosAnioMesPYE implements Serializable{
             dtoServicioTecnologico.setAlineacionLinea(dtoServicioTecnologico.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dtoServicioTecnologico.getLineasAccion());
 
-            dtoServicioTecnologico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoServicioTecnologico.getAlineacionLinea(), dtoServicioTecnologico.getAreaUniversidadPOA()));
+            dtoServicioTecnologico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoServicioTecnologico.getAlineacionLinea(), dtoServicioTecnologico.getAreaUniversidadPOA(),dtoServicioTecnologico.getRegistroParticipantes().getServiciosTecnologicosParticipantes().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dtoServicioTecnologico.getActividades());
         }else{
             dtoServicioTecnologico.setAlineacionEje(null);
@@ -353,7 +353,7 @@ public class ControladorServiciosTecnologicosAnioMesPYE implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dtoServicioTecnologico.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dtoServicioTecnologico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoServicioTecnologico.getAlineacionLinea(), dtoServicioTecnologico.getAreaUniversidadPOA()));
+        dtoServicioTecnologico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoServicioTecnologico.getAlineacionLinea(), dtoServicioTecnologico.getAreaUniversidadPOA(),dtoServicioTecnologico.getRegistroParticipantes().getServiciosTecnologicosParticipantes().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dtoServicioTecnologico.getActividades());
     }
     

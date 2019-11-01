@@ -307,7 +307,7 @@ public class ControladorOrganismosVinculadosPYE implements Serializable {
             dtoOrganismosVinculado.setAlineacionLinea(dtoOrganismosVinculado.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dtoOrganismosVinculado.getLineasAccion());
 
-            dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
+            dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getAreaUniversidadPOA(),dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dtoOrganismosVinculado.getActividades());
         }else{
             dtoOrganismosVinculado.setAlineacionEje(null);
@@ -317,7 +317,7 @@ public class ControladorOrganismosVinculadosPYE implements Serializable {
     
     public void actualizarActividades(ValueChangeEvent event){
         dtoOrganismosVinculado.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getAreaUniversidadPOA()));
+        dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getAreaUniversidadPOA(),dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dtoOrganismosVinculado.getActividades());
     }
     

@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
@@ -67,7 +68,8 @@ public class ControladorPerCapParticipantes implements Serializable{
     @PostConstruct
     public void init(){
         dto = new DtoParticipantesPerCap();        
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        consultaAreaRegistro();
         
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
@@ -77,6 +79,16 @@ public class ControladorPerCapParticipantes implements Serializable{
             Logger.getLogger(ControladorPersonalCapacitado.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 2);
+        if (areaRegistro == null) {
+            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            dto.setArea(areaRegistro);
+        }
     }
     
     public void listaParticipantesPerCapPrevia(String rutaArchivo) {
@@ -203,7 +215,7 @@ public class ControladorPerCapParticipantes implements Serializable{
     
       public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(), dto.getEventoActual().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
     
@@ -249,7 +261,7 @@ public class ControladorPerCapParticipantes implements Serializable{
             Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
 //            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.cargarAlineacionXActividad() lineas: " + dto.getLineasAccion());
 
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(), dto.getEventoActual().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dto.getActividades());
 //            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.cargarAlineacionXActividad() actividades: " + dto.getActividades());
 //            dto.setAlineacionActividad(dto.getAlineacionActividad());

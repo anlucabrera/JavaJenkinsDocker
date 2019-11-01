@@ -25,6 +25,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
@@ -69,7 +70,9 @@ public class ControladorFeriasParticipantes implements Serializable{
         dto.getRegistroTipo().setRegistroTipo((short) 35);
         dto.setEjesRegistro(new EjesRegistro());
         dto.getEjesRegistro().setEje(4);
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        consultaAreaRegistro(); 
+        
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 35));
         
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
@@ -85,6 +88,21 @@ public class ControladorFeriasParticipantes implements Serializable{
             dto.setEventoActual(ejbModulos.getEventoRegistro());
         } catch (EventoRegistroNoExistenteException ex) {
             Logger.getLogger(ControladorFeriasParticipantes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 27);
+        if (areaRegistro == null) {
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 64);
+            if (areaRegistro == null) {
+                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            } else {
+                dto.setArea(areaRegistro);
+            }
+        } else {
+            dto.setArea(areaRegistro);
         }
     }
     
@@ -118,7 +136,7 @@ public class ControladorFeriasParticipantes implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(),dto.getEventoActual().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
     
@@ -166,7 +184,7 @@ public class ControladorFeriasParticipantes implements Serializable{
             dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
 
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(),dto.getEventoActual().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dto.getActividades());
         }else{
             dto.setAlineacionEje(null);

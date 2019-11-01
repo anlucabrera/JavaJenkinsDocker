@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
@@ -61,7 +62,7 @@ public class ControladorAsesoriasTutoriasCuatrimestrales implements Serializable
     @PostConstruct
     public void init(){
         dto = new DtoAsesoriaTutoriaCuatrimestral();
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        consultaAreaRegistro();
         dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
         try {
             dto.setMensaje("");
@@ -73,6 +74,16 @@ public class ControladorAsesoriasTutoriasCuatrimestrales implements Serializable
             Logger.getLogger(ControladorAsesoriasTutoriasCuatrimestrales.class.getName()).log(Level.SEVERE, null, ex);
         }
         initFiltros();
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 89);
+        if (areaRegistro == null) {
+            dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            dto.setAreaPOA(areaRegistro);
+        }
     }
     
     public void cargarListaPorEvento(){

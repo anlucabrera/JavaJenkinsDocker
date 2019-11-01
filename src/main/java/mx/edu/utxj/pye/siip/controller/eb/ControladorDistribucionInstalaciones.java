@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
@@ -66,7 +67,9 @@ public class ControladorDistribucionInstalaciones implements Serializable{
     @PostConstruct
     public void init() {
         dto = new DtoDistribucionInstalaciones();
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        consultaAreaRegistro();
+        
         dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -74,6 +77,16 @@ public class ControladorDistribucionInstalaciones implements Serializable{
             Logger.getLogger(ControladorDistribucionInstalaciones.class.getName()).log(Level.SEVERE, null, ex);
         }
         initFiltros();
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 43);
+        if (areaRegistro == null) {
+            dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            dto.setAreaPOA(areaRegistro);
+        }
     }
     
     public void cargarListaPorEvento(){
@@ -362,7 +375,7 @@ public class ControladorDistribucionInstalaciones implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(),dto.getEventoActual().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
     
@@ -425,7 +438,7 @@ public class ControladorDistribucionInstalaciones implements Serializable{
             dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
 
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(),dto.getEventoActual().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dto.getActividades());
             
         }else{

@@ -71,7 +71,7 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
 
         dto = new DtoAsesoriasTutorias();
 //        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        consultaAreaRegistro();
         dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -79,6 +79,16 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
             Logger.getLogger(ControladorAsesoriasTutoriasCicloEscolar.class.getName()).log(Level.SEVERE, null, ex);
         }
         initFiltros();
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 9);
+        if (areaRegistro == null) {
+            dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            dto.setAreaPOA(areaRegistro);
+        }
     }
     
     public void cargarListaPorEvento(){
@@ -230,7 +240,7 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(),dto.getEventoActual().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
 
@@ -279,7 +289,7 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
             Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
 //            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.cargarAlineacionXActividad() lineas: " + dto.getLineasAccion());
 
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(),dto.getEventoActual().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dto.getActividades());
 //            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.cargarAlineacionXActividad() actividades: " + dto.getActividades());
 //            dto.setAlineacionActividad(dto.getAlineacionActividad());

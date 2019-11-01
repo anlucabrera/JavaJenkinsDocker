@@ -20,8 +20,10 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+import mx.edu.utxj.pye.siip.controller.ca.ControladorActFormacionIntegral;
 //import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistroUsuario;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.util.Messages;
@@ -91,4 +93,19 @@ public class ControladorModulosRegistro implements Serializable {
         eventosRegistros = ejbModulos.getEventoRegistro();
     }
    
+    public AreasUniversidad consultaAreaRegistro(Short claveModuloRegistroEspecifico){
+        try {
+            System.err.println("Clave personal y Registro: " + personal + " - " + claveModuloRegistroEspecifico);
+            
+            List<ModulosRegistrosUsuarios> mr = ejbModulos.getListaPermisoPorRegistro(personal, claveModuloRegistroEspecifico);
+            if (mr.get(0).getAreaRegistro() != null) {
+                return (ejbModulos.getAreaUniversidadPrincipalRegistro((short) mr.get(0).getAreaRegistro()));
+            } else {
+                return null;
+            }
+        } catch (Throwable ex) {
+            Logger.getLogger(ControladorActFormacionIntegral.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }

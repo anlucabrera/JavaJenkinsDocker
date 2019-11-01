@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CorreosEmpresa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -81,13 +82,25 @@ public class ControladorOrganismosVinculados implements Serializable {
     @PostConstruct
     public void init() {
         dtoOrganismosVinculado = new DtoOrganismosVinculados();
-        dtoOrganismosVinculado.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        consultaAreaRegistro(); 
+        
         inicializarUbicacion();
         filtros();
         try {
             dtoOrganismosVinculado.setListaProgramasEducativosBeneficiadosV(ejbOrganismosVinculados.getProgramasBeneficiadosVinculacion());
         } catch (Throwable ex) {
             Logger.getLogger(ControladorOrganismosVinculados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 29);
+        if (areaRegistro == null) {
+            dtoOrganismosVinculado.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            dtoOrganismosVinculado.setArea(areaRegistro);
         }
     }
     
@@ -307,7 +320,7 @@ public class ControladorOrganismosVinculados implements Serializable {
             dtoOrganismosVinculado.setAlineacionLinea(dtoOrganismosVinculado.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dtoOrganismosVinculado.getLineasAccion());
 
-            dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getArea()));
+            dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getArea(),dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dtoOrganismosVinculado.getActividades());
         }else{
             dtoOrganismosVinculado.setAlineacionEje(null);
@@ -317,7 +330,7 @@ public class ControladorOrganismosVinculados implements Serializable {
     
     public void actualizarActividades(ValueChangeEvent event){
         dtoOrganismosVinculado.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getArea()));
+        dtoOrganismosVinculado.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoOrganismosVinculado.getAlineacionLinea(), dtoOrganismosVinculado.getArea(),dtoOrganismosVinculado.getRegistro().getOrganismoVinculado().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dtoOrganismosVinculado.getActividades());
     }
     

@@ -331,7 +331,7 @@ public class ControladorProductosAcademicosPYE implements Serializable{
             dtoProductoAcademico.setAlineacionLinea(dtoProductoAcademico.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dtoProductoAcademico.getLineasAccion());
 
-            dtoProductoAcademico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoProductoAcademico.getAlineacionLinea(), dtoProductoAcademico.getAreaUniversidadPOA()));
+            dtoProductoAcademico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoProductoAcademico.getAlineacionLinea(), dtoProductoAcademico.getAreaUniversidadPOA(),dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dtoProductoAcademico.getActividades());
         }else{
             dtoProductoAcademico.setAlineacionEje(null);
@@ -341,7 +341,7 @@ public class ControladorProductosAcademicosPYE implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dtoProductoAcademico.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dtoProductoAcademico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoProductoAcademico.getAlineacionLinea(), dtoProductoAcademico.getAreaUniversidadPOA()));
+        dtoProductoAcademico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoProductoAcademico.getAlineacionLinea(), dtoProductoAcademico.getAreaUniversidadPOA(),dtoProductoAcademico.getRegistroProductoAcademico().getProductosAcademicos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dtoProductoAcademico.getActividades());
     }
     

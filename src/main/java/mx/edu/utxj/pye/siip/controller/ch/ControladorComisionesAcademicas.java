@@ -26,6 +26,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
@@ -88,7 +89,9 @@ public class ControladorComisionesAcademicas implements Serializable{
         dto.getRegistroTipo().setRegistroTipo((short)48);
         dto.setEje(new EjesRegistro());
         dto.getEje().setEje(2);
-        dto.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        
+        consultaAreaRegistro();
+        
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 48));   
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
@@ -96,7 +99,9 @@ public class ControladorComisionesAcademicas implements Serializable{
         dtopart.getRegistroTipo().setRegistroTipo((short)49);
         dtopart.setEje(new EjesRegistro());
         dtopart.getEje().setEje(2);
-        dtopart.setArea((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()); 
+        
+        consultaAreaRegistroParticipantes();
+        
         dtopart.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
         dtopart.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
        
@@ -114,6 +119,27 @@ public class ControladorComisionesAcademicas implements Serializable{
         consultarPermiso();
 
     }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 1);
+        if (areaRegistro == null) {
+            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+        } else {
+            dto.setArea(areaRegistro.getArea());
+        }
+    }
+    
+    public void consultaAreaRegistroParticipantes() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 1);
+        if (areaRegistro == null) {
+            dtopart.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+        } else {
+            dtopart.setArea(areaRegistro.getArea());
+        }
+    }
+    
     public void initFiltros(){
          
         if (dto.getSelectItemEjercicioFiscal() == null) {
@@ -214,7 +240,7 @@ public class ControladorComisionesAcademicas implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(),dto.getEventoActual().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
     
@@ -266,7 +292,7 @@ public class ControladorComisionesAcademicas implements Serializable{
             dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
 
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(),dto.getEventoActual().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dto.getActividades());
         }else{
             dto.setAlineacionEje(null);

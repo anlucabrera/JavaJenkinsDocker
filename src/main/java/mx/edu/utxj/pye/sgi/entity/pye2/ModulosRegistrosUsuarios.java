@@ -40,7 +40,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "ModulosRegistrosUsuarios.findByIconoEje", query = "SELECT m FROM ModulosRegistrosUsuarios m WHERE m.iconoEje = :iconoEje")
     , @NamedQuery(name = "ModulosRegistrosUsuarios.findByLinkEje", query = "SELECT m FROM ModulosRegistrosUsuarios m WHERE m.linkEje = :linkEje")
     , @NamedQuery(name = "ModulosRegistrosUsuarios.findByArea", query = "SELECT m FROM ModulosRegistrosUsuarios m WHERE m.area = :area")
-    , @NamedQuery(name = "ModulosRegistrosUsuarios.findByClavePersonal", query = "SELECT m FROM ModulosRegistrosUsuarios m WHERE m.clavePersonal = :clavePersonal")})
+    , @NamedQuery(name = "ModulosRegistrosUsuarios.findByClavePersonal", query = "SELECT m FROM ModulosRegistrosUsuarios m WHERE m.clavePersonal = :clavePersonal")
+    , @NamedQuery(name = "ModulosRegistrosUsuarios.findByAreaRegistro", query = "SELECT m FROM ModulosRegistrosUsuarios m WHERE m.areaRegistro = :areaRegistro")})
 public class ModulosRegistrosUsuarios implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -115,6 +116,8 @@ public class ModulosRegistrosUsuarios implements Serializable {
     @NotNull
     @Column(name = "clave_personal")
     private int clavePersonal;
+    @Column(name = "areaRegistro")
+    private Short areaRegistro;
 
     public ModulosRegistrosUsuarios() {
     }
@@ -237,6 +240,14 @@ public class ModulosRegistrosUsuarios implements Serializable {
 
     public void setClavePersonal(int clavePersonal) {
         this.clavePersonal = clavePersonal;
+    }
+
+    public Short getAreaRegistro() {
+        return areaRegistro;
+    }
+
+    public void setAreaRegistro(Short areaRegistro) {
+        this.areaRegistro = areaRegistro;
     }
     
 }

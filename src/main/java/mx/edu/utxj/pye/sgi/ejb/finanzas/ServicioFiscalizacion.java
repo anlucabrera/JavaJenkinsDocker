@@ -227,7 +227,7 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
             Short sinPernoctar = tramite.getComisionOficios().getComisionAvisos().getSinPernoctar();
             GastoTipo gastoTipo = GastoTipoConverter.of(tramite.getGastoTipo());
             TramiteTipo tipo = TramiteTipoConverter.of(tramite.getTipo());
-            List<ActividadesPoa> actividades = getActividadesPorLineaAccion(alineacionLinea, areaPOA);
+            List<ActividadesPoa> actividades = getActividadesPorLineaAccion(alineacionLinea, areaPOA, Short.valueOf(caster.getEjercicioFiscal()));
             List<AreasUniversidad> areas = tramite.getAlineacionTramites()!=null?getAreasConPOA(Short.valueOf(caster.getEjercicioFiscal())):Collections.EMPTY_LIST;
             List<EjesRegistro> ejes = getEjes(Short.valueOf(caster.getEjercicioFiscal()), areaPOA);
             List<Estrategias> estrategias = getEstrategiasPorEje(alineacionEje, areaPOA);
@@ -455,12 +455,13 @@ public class ServicioFiscalizacion implements EjbFiscalizacion {
     }
 
     @Override
-    public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, AreasUniversidad areaPOA) {
+    public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, AreasUniversidad areaPOA, Short ejercicio) {
         try {
             return em
-                    .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area = :area AND la.lineaAccion=:lineaAccion AND cmi.ejercicioFiscal.anio=2019  ORDER BY ac.denominacion", ActividadesPoa.class)
+                    .createQuery("SELECT ac FROM ActividadesPoa ac INNER JOIN ac.cuadroMandoInt cmi INNER JOIN cmi.lineaAccion la WHERE ac.area = :area AND la.lineaAccion=:lineaAccion AND cmi.ejercicioFiscal.anio=:ejercicio ORDER BY ac.denominacion", ActividadesPoa.class)
                     .setParameter("area", areaPOA.getArea())
                     .setParameter("lineaAccion", lineaaccion.getLineaAccion())
+                    .setParameter("ejercicio", ejercicio)
                     .getResultList()
                     .stream()
                     .distinct()

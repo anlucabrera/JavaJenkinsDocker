@@ -69,7 +69,9 @@ public class ControladorMatriculaPeriodosEscolares implements Serializable{
     @PostConstruct
     public void init(){
         dto = new DtoMatriculaPeriodoEscolar();
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        consultaAreaRegistro(); 
+        
         dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -79,6 +81,16 @@ public class ControladorMatriculaPeriodosEscolares implements Serializable{
             Logger.getLogger(ControladorMatriculaPeriodosEscolares.class.getName()).log(Level.SEVERE, null, ex);
         }
         initFiltros();
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 51);
+        if (areaRegistro == null) {
+            dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            dto.setAreaPOA(areaRegistro);
+        }
     }
     
     public void cargarListaPorEvento(){
@@ -215,7 +227,7 @@ public class ControladorMatriculaPeriodosEscolares implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(),dto.getEventoActual().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
     
@@ -260,7 +272,7 @@ public class ControladorMatriculaPeriodosEscolares implements Serializable{
             dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
 
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA()));
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getAreaPOA(), dto.getEventoActual().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dto.getActividades());
         }else{
             dto.setAlineacionEje(null);

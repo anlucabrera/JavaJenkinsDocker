@@ -108,7 +108,7 @@ public class Comisionar extends ViewScopedRol implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         comision.setAlineacionLinea((LineasAccion)event.getNewValue());
-        comision.setActividades(ejb.getActividadesPorLineaAccion(comision.getAlineacionLinea(), comision.getAreaPOA()));
+        comision.setActividades(ejb.getActividadesPorLineaAccion(comision.getAlineacionLinea(), comision.getAreaPOA(),Short.valueOf(caster.getEjercicioFiscal())));
         Faces.setSessionAttribute("actividades", comision.getActividades());
     }
     

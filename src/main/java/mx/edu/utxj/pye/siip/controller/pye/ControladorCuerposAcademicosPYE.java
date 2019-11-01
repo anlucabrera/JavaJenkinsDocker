@@ -442,7 +442,7 @@ public class ControladorCuerposAcademicosPYE implements Serializable{
             dtoCuerposAcademicos.setAlineacionLinea(dtoCuerposAcademicos.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dtoCuerposAcademicos.getLineasAccion());
 
-            dtoCuerposAcademicos.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoCuerposAcademicos.getAlineacionLinea(), dtoCuerposAcademicos.getAreaUniversidadPOA()));
+            dtoCuerposAcademicos.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoCuerposAcademicos.getAlineacionLinea(), dtoCuerposAcademicos.getAreaUniversidadPOA(),dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dtoCuerposAcademicos.getActividades());
         } else {
             dtoCuerposAcademicos.setAlineacionEje(null);
@@ -452,7 +452,7 @@ public class ControladorCuerposAcademicosPYE implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dtoCuerposAcademicos.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dtoCuerposAcademicos.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoCuerposAcademicos.getAlineacionLinea(), dtoCuerposAcademicos.getAreaUniversidadPOA()));
+        dtoCuerposAcademicos.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoCuerposAcademicos.getAlineacionLinea(), dtoCuerposAcademicos.getAreaUniversidadPOA(),dtoCuerposAcademicos.getRegistroCuerposAcademicosR().getCuerposAcademicosRegistro().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dtoCuerposAcademicos.getActividades());
     }
     

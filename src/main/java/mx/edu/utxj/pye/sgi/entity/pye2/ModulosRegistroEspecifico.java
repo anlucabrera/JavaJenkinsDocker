@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.entity.pye2;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -25,12 +26,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "ModulosRegistroEspecifico.findAll", query = "SELECT m FROM ModulosRegistroEspecifico m")
     , @NamedQuery(name = "ModulosRegistroEspecifico.findByClave", query = "SELECT m FROM ModulosRegistroEspecifico m WHERE m.modulosRegistroEspecificoPK.clave = :clave")
-    , @NamedQuery(name = "ModulosRegistroEspecifico.findByPersonal", query = "SELECT m FROM ModulosRegistroEspecifico m WHERE m.modulosRegistroEspecificoPK.personal = :personal")})
+    , @NamedQuery(name = "ModulosRegistroEspecifico.findByPersonal", query = "SELECT m FROM ModulosRegistroEspecifico m WHERE m.modulosRegistroEspecificoPK.personal = :personal")
+    , @NamedQuery(name = "ModulosRegistroEspecifico.findByAreaRegistro", query = "SELECT m FROM ModulosRegistroEspecifico m WHERE m.areaRegistro = :areaRegistro")})
 public class ModulosRegistroEspecifico implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected ModulosRegistroEspecificoPK modulosRegistroEspecificoPK;
+    @Column(name = "areaRegistro")
+    private Short areaRegistro;
     @JoinColumn(name = "clave", referencedColumnName = "clave", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private ModulosRegistro modulosRegistro;
@@ -52,6 +56,14 @@ public class ModulosRegistroEspecifico implements Serializable {
 
     public void setModulosRegistroEspecificoPK(ModulosRegistroEspecificoPK modulosRegistroEspecificoPK) {
         this.modulosRegistroEspecificoPK = modulosRegistroEspecificoPK;
+    }
+
+    public Short getAreaRegistro() {
+        return areaRegistro;
+    }
+
+    public void setAreaRegistro(Short areaRegistro) {
+        this.areaRegistro = areaRegistro;
     }
 
     public ModulosRegistro getModulosRegistro() {

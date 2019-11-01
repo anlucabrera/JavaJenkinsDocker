@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
@@ -47,6 +48,7 @@ public class ControladorArchivoCuerpAcad implements Serializable{
     
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorCuerposAcademicos controladorCuerposAcademicos;
+    @Inject ControladorModulosRegistro  controladorModulosRegistro;
     
     @EJB    EjbCarga ejbCarga;
     @EJB    EjbModulos ejbModulos;
@@ -55,8 +57,18 @@ public class ControladorArchivoCuerpAcad implements Serializable{
     public void init(){
         eje = ejes[1];
         ejercicio = ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio();
-        area = ejbModulos.getAreaUniversidadPrincipalRegistro(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        consultaAreaRegistro();
         setEtapa(RegistroSiipEtapa.MOSTRAR);
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 12);
+        if (areaRegistro == null) {
+            area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            area = areaRegistro;
+        }
     }
     
     public void recibirArchivo(ValueChangeEvent e){
