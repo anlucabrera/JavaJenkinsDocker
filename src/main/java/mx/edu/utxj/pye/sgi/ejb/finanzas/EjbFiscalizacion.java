@@ -159,9 +159,10 @@ public interface EjbFiscalizacion {
      * Consulta la lista de actividades correspondientes a una línea de acción determinada.
      * @param lineaaccion Línea de acción a consultar.
      * @param areaPOA
+     * @param ejercicio
      * @return Devuelve la lista de actividades.
      */
-    public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, AreasUniversidad areaPOA);
+    public List<ActividadesPoa> getActividadesPorLineaAccion(LineasAccion lineaaccion, AreasUniversidad areaPOA, Short ejercicio);
     
     /**
      * Obtiene el usuario SIIP a partir de la clave de un area de la institución.

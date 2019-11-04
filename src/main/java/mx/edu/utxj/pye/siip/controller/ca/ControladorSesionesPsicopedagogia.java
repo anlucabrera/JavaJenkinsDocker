@@ -66,7 +66,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
     @PostConstruct
     public void init(){
         dto = new DtoSesionPsicopedagogia();
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        consultaAreaRegistro(); 
         dto.setLstAreasConflicto(ejbSesionesPsicopedagogia.getListaAreasDeConflicto());
         dto.setLstOtrosTiposSesionesPsicopedagogia(ejbSesionesPsicopedagogia.getListaOtrosTiposSesionesPsicopedagogia());
         dto.setLstProgramasEducativos(ejbCatalogos.getProgramasEducativos());
@@ -75,6 +75,16 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
         Faces.setSessionAttribute("otroTipoSesion", dto.getLstOtrosTiposSesionesPsicopedagogia());
         Faces.setSessionAttribute("programasEducativos", dto.getLstProgramasEducativos());
         filtros();
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 88);
+        if (areaRegistro == null) {
+            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            dto.setArea(areaRegistro);
+        }
     }
     
     public void filtros(){
@@ -365,7 +375,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
             dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
 
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getArea()));
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getArea(),dto.getDtoSesionPsicopedagogia().getSesionIndividualMensualPsicopedogia().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dto.getActividades());
         }else{
             dto.setAlineacionEje(null);
@@ -375,7 +385,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getArea()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getArea(),dto.getDtoSesionPsicopedagogia().getSesionIndividualMensualPsicopedogia().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
     

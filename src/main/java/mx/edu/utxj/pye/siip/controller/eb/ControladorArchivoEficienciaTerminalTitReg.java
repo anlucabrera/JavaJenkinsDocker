@@ -51,6 +51,7 @@ public class ControladorArchivoEficienciaTerminalTitReg implements Serializable{
     ControladorEmpleado controladorEmpleado;
     @Inject
     ControladorEficienciaTerminalTitulacionRegistro controladorEficienciaTerminalTitulacionRegistro;
+    @Inject ControladorModulosRegistro  controladorModulosRegistro;
     
     @EJB    EjbCarga    ejbCarga;
     @EJB    EjbModulos  ejbModulos;
@@ -59,8 +60,18 @@ public class ControladorArchivoEficienciaTerminalTitReg implements Serializable{
     public void init(){
         eje = ejes[0];
         ejercicio = ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio();
-        area = ejbModulos.getAreaUniversidadPrincipalRegistro(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        consultaAreaRegistro(); 
         setEtapa(RegistroSiipEtapa.MOSTRAR);
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 44);
+        if (areaRegistro == null) {
+            area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            area = areaRegistro;
+        }
     }
     
     public void recibirArchivo(ValueChangeEvent e){

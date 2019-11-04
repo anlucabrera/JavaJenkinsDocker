@@ -26,6 +26,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
@@ -73,8 +74,18 @@ public class ControladorServiciosTecnologicosAnioMes implements Serializable{
     @PostConstruct
     public void init(){
         dtoServicioTecnologico = new DtoServiciosTecnologicos();
-        dtoServicioTecnologico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        consultaAreaRegistro();
         filtros();
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 30);
+        if (areaRegistro == null) {
+            dtoServicioTecnologico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            dtoServicioTecnologico.setArea(areaRegistro);
+        }
     }
     
     public void inicializarCatalogos(){
@@ -351,7 +362,7 @@ public class ControladorServiciosTecnologicosAnioMes implements Serializable{
             dtoServicioTecnologico.setAlineacionLinea(dtoServicioTecnologico.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dtoServicioTecnologico.getLineasAccion());
 
-            dtoServicioTecnologico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoServicioTecnologico.getAlineacionLinea(), dtoServicioTecnologico.getArea()));
+            dtoServicioTecnologico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoServicioTecnologico.getAlineacionLinea(), dtoServicioTecnologico.getArea(),dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dtoServicioTecnologico.getActividades());
         }else{
             dtoServicioTecnologico.setAlineacionEje(null);
@@ -361,7 +372,7 @@ public class ControladorServiciosTecnologicosAnioMes implements Serializable{
     
     public void actualizarActividades(ValueChangeEvent event){
         dtoServicioTecnologico.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dtoServicioTecnologico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoServicioTecnologico.getAlineacionLinea(), dtoServicioTecnologico.getArea()));
+        dtoServicioTecnologico.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoServicioTecnologico.getAlineacionLinea(), dtoServicioTecnologico.getArea(),dtoServicioTecnologico.getRegistro().getServiciosTecnologicosAnioMes().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dtoServicioTecnologico.getActividades());
     }
     

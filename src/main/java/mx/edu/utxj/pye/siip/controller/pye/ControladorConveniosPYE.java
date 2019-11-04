@@ -247,7 +247,7 @@ public class ControladorConveniosPYE implements Serializable {
             dtoConvenios.setAlineacionLinea(dtoConvenios.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dtoConvenios.getLineasAccion());
 
-            dtoConvenios.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoConvenios.getAlineacionLinea(), dtoConvenios.getAreaUniversidadPOA()));
+            dtoConvenios.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoConvenios.getAlineacionLinea(), dtoConvenios.getAreaUniversidadPOA(),dtoConvenios.getRegistro().getConvenio().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dtoConvenios.getActividades());
         }else{
             dtoConvenios.setAlineacionEje(null);
@@ -257,7 +257,7 @@ public class ControladorConveniosPYE implements Serializable {
     
     public void actualizarActividades(ValueChangeEvent event){
         dtoConvenios.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dtoConvenios.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoConvenios.getAlineacionLinea(), dtoConvenios.getAreaUniversidadPOA()));
+        dtoConvenios.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dtoConvenios.getAlineacionLinea(), dtoConvenios.getAreaUniversidadPOA(),dtoConvenios.getRegistro().getConvenio().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dtoConvenios.getActividades());
     }
     

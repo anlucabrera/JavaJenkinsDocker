@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
@@ -64,12 +65,22 @@ public class ControladorServiciosEnfermeriaCicloPeriodos implements Serializable
     public void init(){
         try {
             dto = new DtoServicioEnfermeria();
-            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            consultaAreaRegistro();
             dto.setListaServiciosEnfermeriaTipos(ejbServiciosEnfermeriaCicloPeriodos.getServiciosEnfermeriaTipos());
             Faces.setSessionAttribute("serviciosEnfermeriaTipos", dto.getListaServiciosEnfermeriaTipos());
             filtros();
         } catch (Throwable ex) {
             Logger.getLogger(ControladorServiciosEnfermeriaCicloPeriodos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 22);
+        if (areaRegistro == null) {
+            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            dto.setArea(areaRegistro);
         }
     }
     
@@ -240,7 +251,7 @@ public class ControladorServiciosEnfermeriaCicloPeriodos implements Serializable
             dto.setAlineacionLinea(dto.getAlineacionActividad().getCuadroMandoInt().getLineaAccion());
             Faces.setSessionAttribute("lineasAccion", dto.getLineasAccion());
 
-            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getArea()));
+            dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getArea(),dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
             Faces.setSessionAttribute("actividades", dto.getActividades());
         }else{
             dto.setAlineacionEje(null);
@@ -250,7 +261,7 @@ public class ControladorServiciosEnfermeriaCicloPeriodos implements Serializable
     
     public void actualizarActividades(ValueChangeEvent event){
         dto.setAlineacionLinea((LineasAccion)event.getNewValue());
-        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getArea()));
+        dto.setActividades(ejbFiscalizacion.getActividadesPorLineaAccion(dto.getAlineacionLinea(), dto.getArea(),dto.getRegistro().getServiciosEnfermeriaCicloPeriodos().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio()));
         Faces.setSessionAttribute("actividades", dto.getActividades());
     }
 

@@ -69,7 +69,7 @@
                                         <div class="form-group has-feedback">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                                <p:password type="email" class="form-control" placeholder="Contraseña actual" value="#{cambioPwdEstudiante.rol.pwdActual}" required="true" requiredMessage="Debe ingresar la contraseña actual"/>
+                                                <p:password  class="form-control" placeholder="Contraseña actual" value="#{cambioPwdEstudiante.rol.pwdActual}" maxlength="10" required="true" requiredMessage="Debe ingresar la contraseña actual"/>
                                             </div>
                                         </div>
                                     </div>
@@ -79,7 +79,7 @@
                                         <div class="form-group has-feedback">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                                <p:password type="email" class="form-control" placeholder="Nueva contraseña" value="#{cambioPwdEstudiante.rol.pwdNueva}" required="true" requiredMessage="Debe ingresar la nueva contraseña"/>
+                                                <p:password class="form-control" placeholder="Nueva contraseña" value="#{cambioPwdEstudiante.rol.pwdNueva}" maxlength="10" required="true" requiredMessage="Debe ingresar la nueva contraseña"/>
                                             </div>
                                         </div>
                                     </div>

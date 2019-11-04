@@ -36,13 +36,14 @@ public class ControladorReporteRegistros implements Serializable{
     
     @Inject ControladorEmpleado controladorEmpleado;
     
-    @Getter @Setter private Short claveArea;
-    @Getter @Setter private AreasUniversidad area;
+//    @Getter @Setter private Short claveArea;
+//    @Getter @Setter private AreasUniversidad area;
     
     @PostConstruct
     public void init(){
         
-        claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
+//        TODO: Detectar que tipos de registros se consultarán para determinar el área de registro
+//        claveArea = controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa();
         
     }
      
@@ -71,7 +72,7 @@ public class ControladorReporteRegistros implements Serializable{
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteAFI() throws IOException, Throwable{
+    public void descargarReporteAFI(Short claveArea) throws IOException, Throwable{
         File f = new File(ejb.getReporteAFI(claveArea));
         Faces.sendFile(f, true);
     }
@@ -91,7 +92,7 @@ public class ControladorReporteRegistros implements Serializable{
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteMov() throws IOException, Throwable{
+    public void descargarReporteMov(Short claveArea) throws IOException, Throwable{
         File f = new File(ejb.getReporteMov(claveArea));
         Faces.sendFile(f, true);
     }

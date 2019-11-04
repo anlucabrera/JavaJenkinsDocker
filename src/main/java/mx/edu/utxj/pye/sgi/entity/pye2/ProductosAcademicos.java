@@ -103,7 +103,7 @@ public class ProductosAcademicos implements Serializable {
     private String descripcion;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 25)
+    @Size(min = 1, max = 1000)
     @Column(name = "issn")
     private String issn;
     @Basic(optional = false)

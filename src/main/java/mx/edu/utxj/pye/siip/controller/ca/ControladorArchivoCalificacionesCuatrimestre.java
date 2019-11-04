@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
@@ -49,6 +50,7 @@ public class ControladorArchivoCalificacionesCuatrimestre implements Serializabl
     
 //    Inyección de dependencias
     @Inject ControladorEmpleado controladorEmpleado;
+    @Inject ControladorModulosRegistro  controladorModulosRegistro;
 //    TODO: Realizar el controlador de CalificacionesCuatrimestre
     
 //    EJB - Servicios
@@ -59,8 +61,18 @@ public class ControladorArchivoCalificacionesCuatrimestre implements Serializabl
     public void init(){
         eje = ejes[1];
         eventoRegistro = ejbModulos.getEventoRegistro();
-        area = ejbModulos.getAreaUniversidadPrincipalRegistro(controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        consultaAreaRegistro(); 
         setEtapa(RegistroSiipEtapa.MOSTRAR);
+    }
+    
+    public void consultaAreaRegistro() {
+        AreasUniversidad areaRegistro = new AreasUniversidad();
+        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 11);
+        if (areaRegistro == null) {
+            area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        } else {
+            area = areaRegistro;
+        }
     }
     
     public void recibirArchivo(ValueChangeEvent e){
