@@ -19,6 +19,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
+import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
@@ -92,6 +93,8 @@ public final class DtoProductoAcademico {
     @Getter @Setter private AreasUniversidad area;
     @Getter @Setter private String rutaArchivo;
  
+    @Getter @Setter private EventosRegistros eventoRegistro;
+    
     @Getter @Setter private List<DTOProductosAcademicos> lstDtoProductosAcademicos;
     @Getter @Setter private List<DTOProductosAcademicosPersonal> lstDtoProductosAcademicosPersonal;
     
