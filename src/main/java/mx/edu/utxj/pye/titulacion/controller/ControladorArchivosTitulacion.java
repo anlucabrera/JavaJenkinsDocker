@@ -333,16 +333,8 @@ public class ControladorArchivosTitulacion implements Serializable{
             Short gen = expediente.getGeneracion();
             String generacion = ejbEstudianteRegistro.obtenerGeneracionProntuario(gen);
             
-            String nivel = "";
-            if (expediente.getNivel() == 2) {
-                nivel = "ING";
-            } else if (expediente.getNivel() == 1) {
-                nivel = "TSU";
-            }
-            if (expediente.getNivel() == 4) {
-                nivel = "LIC";
-            }
-
+            String nivel = "TSU";
+            
             Documentos doc = new Documentos();
             doc = ejbEstudianteRegistro.obtenerInformacionDocumento(claveDoc);
 

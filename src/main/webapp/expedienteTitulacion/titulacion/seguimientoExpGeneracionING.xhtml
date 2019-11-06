@@ -58,7 +58,7 @@
                                                         <p:outputLabel value="Generación " for="generacion" />
                                                         <p:spacer width="3" />
                                                         <p:selectOneMenu id="generacion" converter="entityConverter"
-                                                                         value="#{controladorTitSegGen.generacion}" valueChangeListener="#{controladorTitSegGen.actualizarProgramasING}"
+                                                                         value="#{controladorTitSegGen.generacionING}" valueChangeListener="#{controladorTitSegGen.actualizarProgramasING}"
                                                                          class="form-control" style="padding-top: 0px;">
                                                             <f:selectItems value="#{controladorTitSegGen.generacionesING}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" itemDescription="#{caster.generacionToString(generacion)}" />
                                                             <p:ajax process="@this" update="@(form)" />
@@ -66,13 +66,13 @@
                                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                         <p:outputLabel value="Programa Educativo: " for="programa" />
                                                         <p:spacer width="3" />
-                                                        <p:selectOneMenu id="programa" value="#{controladorTitSegGen.programaSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
+                                                        <p:selectOneMenu id="programa" value="#{controladorTitSegGen.programaSeleccionadoING}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
                                                             <f:selectItems value="#{controladorTitSegGen.programasPorGeneracionING}" var="progGen" itemValue="#{progGen}" itemLabel="#{progGen.nombre}" itemDescription="#{progGen.nombre}"  />
                                                             <p:ajax process="@this" listener="#{controladorTitSegGen.cargarListaPorGenProgING()}" update="@(form)" />
                                                         </p:selectOneMenu>
                                                     </f:facet>
                                                     <f:facet name="right">
-                                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorTitSegGen.descargarReporteGeneracion()}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorTitSegGen.descargarReporteGeneracionING()}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
                                                     </f:facet>
                                                 </p:toolbar>
                                                 <p:sticky target="tb" />
