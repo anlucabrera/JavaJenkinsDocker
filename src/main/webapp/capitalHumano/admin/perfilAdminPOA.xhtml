@@ -128,8 +128,9 @@
                                                     <p:row class="success">
                                                         <p:column rowspan="2" headerText="Área" style="width: 30%;" styleClass="hederTablesTitle"/>
                                                         <p:column rowspan="2" headerText="Responsable" style="width: 20%;" styleClass="hederTablesTitle"/>
-                                                        <p:column colspan="3" headerText="Registros" style="width: 25%;" styleClass="hederTablesTitle"/>
-                                                        <p:column colspan="3" headerText="Validaciones" style="width: 25%;" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Correo" style="width: 25%;" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="3" headerText="Registros" style="width: 20%;" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="3" headerText="Validaciones" style="width: 20%;" styleClass="hederTablesTitle"/>
                                                     </p:row>
                                                     <p:row class="success">
                                                         <p:column headerText="Actividades"  styleClass="hederTablesTitle"/>
@@ -143,11 +144,13 @@
 
 
                                                 <p:column >
-
                                                     <h:outputText value="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" />
                                                 </p:column>   
                                                 <p:column >
                                                     <h:outputText value="#{administracionControl.buscarPersonal(procesoPoa.responsable)}" />
+                                                </p:column> 
+                                                <p:column >
+                                                    <h:outputText value="#{administracionControl.buscarCorreoArea(procesoPoa.area)}" />
                                                 </p:column> 
 
                                                 <p:column rendered="#{procesoPoa.responsable eq null}" colspan="6" >

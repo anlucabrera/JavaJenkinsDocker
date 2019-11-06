@@ -226,6 +226,8 @@ public class ControladorEmpleado implements Serializable {
                         }
                     }
                     procesopoa.setEvaluacion(periodoEvaluacion);
+                } else {
+                    evaluable = true;
                 }
                 tienePOA = true;
                 eventosRegistro();
@@ -267,25 +269,19 @@ public class ControladorEmpleado implements Serializable {
     }
 
     public Boolean periodoActivoPOA(Eventos t) {
+        nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
+        LocalDateTime fechaf = uch.castearDaLDT(t.getFechaFin());
         LocalDateTime fechai = uch.castearDaLDT(t.getFechaInicio());
-        LocalDateTime fechaf = uch.castearDaLDT(t.getFechaFin()).plusHours(23).plusMinutes(59).plusSeconds(59);
-        
+        if (nuevaEventosAreas != null) {
+            fechaf = uch.castearDaLDT(t.getFechaFin()).plusDays(nuevaEventosAreas.getDiasExtra()).plusHours(23).plusMinutes(59).plusSeconds(59);
+        } else {
+            fechaf = uch.castearDaLDT(t.getFechaFin()).plusHours(23).plusMinutes(59).plusSeconds(59);
+        }
+
         if ((fechaActualHora.isAfter(fechai) || fechaActualHora.equals(fechai)) && (fechaActualHora.isBefore(fechaf) || fechaActualHora.equals(fechaf))) {
             return true;
         } else {
-            nuevaEventosAreas = new EventosAreas();
-            nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), nuevoOBJListaPersonal.getAreaOperativa()));
-            if (nuevaEventosAreas != null) {
-                fechaF.plusDays(nuevaEventosAreas.getDiasExtra());
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.periodoActivoPOA(fechaf)" + fechaf);
-                if ((fechaActualHora.isAfter(fechai) || fechaActualHora.equals(fechai)) && (fechaActualHora.isBefore(fechaf) || fechaActualHora.equals(fechaf))) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            return false;
         }
     }
 

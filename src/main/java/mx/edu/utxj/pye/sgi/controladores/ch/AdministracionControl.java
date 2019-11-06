@@ -221,7 +221,18 @@ public class AdministracionControl implements Serializable {
             return "";
         }
     }
-    
+    public String buscarCorreoArea(Integer area) {
+        try {
+
+            AreasUniversidad areaU = new AreasUniversidad();
+            areaU = areasLogeo.mostrarAreasUniversidad(Short.parseShort(area.toString()));
+            return areaU.getCorreoInstitucional();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
 // -----------------------------------------------------------------------------Creacion   
     public void agreggarEventoArea() {
         try {

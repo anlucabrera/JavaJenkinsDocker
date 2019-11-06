@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,11 +21,11 @@ import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
-import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Faces;
 
 @Named
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class AreaPoaReporte implements Serializable {
     
     @Getter    @Setter    private Short ejercicioFiscal = 0;
@@ -88,6 +89,7 @@ public class AreaPoaReporte implements Serializable {
                 ejeses.add(new ListaEjes(ej, estrategiases));
             });
         }
+        Faces.refresh();
     }
 
     public void imprimirValores() {
