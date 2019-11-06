@@ -64,8 +64,8 @@ public class ControladorTitSegGeneracion implements Serializable{
     
     
     // Para consulta por Generación y Programa Educativo 
-    @Getter @Setter private Generaciones generacion;
-    @Getter @Setter private AreasUniversidad programaSeleccionado;
+    @Getter @Setter private Generaciones generacionTSU, generacionING;
+    @Getter @Setter private AreasUniversidad programaSeleccionadoTSU, programaSeleccionadoING;
     @Getter @Setter private List<Generaciones> generacionesING, generacionesTSU;
     @Getter @Setter private List<AreasUniversidad> programasPorGeneracionING, programasPorGeneracionTSU;
     @Getter @Setter private List<dtoExpedienteMatricula> listaING, listaTSU;
@@ -135,8 +135,8 @@ public class ControladorTitSegGeneracion implements Serializable{
     }
    
      public void actualizarProgramasING(ValueChangeEvent e){
-        generacion = (Generaciones)e.getNewValue();
-        programasPorGeneracionING = ejbTitulacionSeguimiento.getExpedientesPorGeneracionesING(generacion);
+        generacionING = (Generaciones)e.getNewValue();
+        programasPorGeneracionING = ejbTitulacionSeguimiento.getExpedientesPorGeneracionesING(generacionING);
         cargarListaPorGenProgING();
     }
      
@@ -147,34 +147,33 @@ public class ControladorTitSegGeneracion implements Serializable{
     }
    
      public void actualizarProgramasTSU(ValueChangeEvent e){
-        generacion = (Generaciones)e.getNewValue();
-        programasPorGeneracionTSU = ejbTitulacionSeguimiento.getExpedientesPorGeneracionesTSU(generacion);
+        generacionTSU = (Generaciones)e.getNewValue();
+        programasPorGeneracionTSU = ejbTitulacionSeguimiento.getExpedientesPorGeneracionesTSU(generacionTSU);
         cargarListaPorGenProgTSU();
     }
      
     public void cargarListaPorGenProgING(){
       
-        if(generacion == null && programaSeleccionado == null){
+        if(generacionING == null && programaSeleccionadoING == null){
             
-            generacion= generacionesING.get(0);
-            programaSeleccionado = programasPorGeneracionING.get(0);
+            generacionING= generacionesING.get(0);
+            programaSeleccionadoING = programasPorGeneracionING.get(0);
         
         }
       
-      listaING = ejbTitulacionSeguimiento.getListaExpedientesPorProgramaGeneracion(programaSeleccionado, generacion); 
+      listaING = ejbTitulacionSeguimiento.getListaExpedientesPorProgramaGeneracion(programaSeleccionadoING, generacionING); 
       
     }
     
     public void cargarListaPorGenProgTSU(){
       
-        if(generacion == null && programaSeleccionado == null){
+        if(generacionTSU== null && programaSeleccionadoTSU == null){
             
-            generacion= generacionesTSU.get(0);
-            programaSeleccionado = programasPorGeneracionTSU.get(0);
+            generacionTSU= generacionesTSU.get(0);
+            programaSeleccionadoTSU = programasPorGeneracionTSU.get(0);
         
         }
-      
-      listaTSU = ejbTitulacionSeguimiento.getListaExpedientesPorProgramaGeneracion(programaSeleccionado, generacion); 
+      listaTSU = ejbTitulacionSeguimiento.getListaExpedientesPorProgramaGeneracion(programaSeleccionadoTSU, generacionTSU); 
       
     }
     public void guardarDatosTitulacion() {
@@ -255,8 +254,13 @@ public class ControladorTitSegGeneracion implements Serializable{
         }
     }
    
-    public void descargarReporteGeneracion() throws IOException, Throwable{
-        File f = new File(ejbTitulacionSeguimiento.getReporteGeneracion(generacion));
+    public void descargarReporteGeneracionING() throws IOException, Throwable{
+        File f = new File(ejbTitulacionSeguimiento.getReporteGeneracion(generacionING));
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteGeneracionTSU() throws IOException, Throwable{
+        File f = new File(ejbTitulacionSeguimiento.getReporteGeneracion(generacionTSU));
         Faces.sendFile(f, true);
     }
     

@@ -106,11 +106,11 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
        
         DatosContacto cont = facade.getEntityManager().createQuery("SELECT d FROM DatosContacto d WHERE d.expediente.expediente =:expediente",  DatosContacto.class)
                    .setParameter("expediente", expediente)
-                   .getSingleResult();
-               
+                   .getResultStream().findFirst().orElse(null);
+        
         DomiciliosExpediente dom = facade.getEntityManager().createQuery("SELECT d FROM DomiciliosExpediente d WHERE d.expediente.expediente =:expediente", DomiciliosExpediente.class)
                    .setParameter("expediente", expediente)
-                   .getSingleResult();
+                   .getResultStream().findFirst().orElse(null);
                
         List<DocumentosExpediente> doc = facade.getEntityManager().createQuery("SELECT d FROM DocumentosExpediente d WHERE d.expediente.expediente =:expediente", DocumentosExpediente.class)
                    .setParameter("expediente", expediente)
@@ -118,44 +118,57 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         
         AntecedentesAcademicos ant = facade.getEntityManager().createQuery("SELECT a FROM AntecedentesAcademicos a WHERE a.matricula.matricula =:matricula",  AntecedentesAcademicos.class)
                    .setParameter("matricula", egre.getMatricula())
-                   .getSingleResult();
+                   .getResultStream().findFirst().orElse(null);
         
-        Estado edo = facade.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idestado = :idestado", Estado.class)
-                .setParameter("idestado", dom.getEstado())
-                .getSingleResult();
-       
-        Municipio mun = facade.getEntityManager().createQuery("SELECT m FROM Municipio m WHERE m.municipioPK.claveEstado = :claveEstado AND m.municipioPK.claveMunicipio = :claveMunicipio", Municipio.class)
-                .setParameter("claveEstado", dom.getEstado())
-                .setParameter("claveMunicipio", dom.getMunicipio())
-                .getSingleResult();
-       
-        Asentamiento loc = facade.getEntityManager().createQuery("SELECT a FROM Asentamiento a WHERE a.asentamientoPK.estado = :estado AND a.asentamientoPK.municipio = :municipio AND a.asentamientoPK.asentamiento = :asentamiento", Asentamiento.class)
-                .setParameter("estado", dom.getEstado())
-                .setParameter("municipio", dom.getMunicipio())
-                .setParameter("asentamiento", dom.getLocalidad())
-                .getSingleResult();
+        Estado edo = new Estado();
+        Municipio mun = new Municipio();
+        Asentamiento loc = new Asentamiento();
+        
+        if (dom == null) {
+        } else {
+            edo = facade.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idestado = :idestado", Estado.class)
+                    .setParameter("idestado", dom.getEstado())
+                    .getResultStream().findFirst().orElse(null);
+
+            mun = facade.getEntityManager().createQuery("SELECT m FROM Municipio m WHERE m.municipioPK.claveEstado = :claveEstado AND m.municipioPK.claveMunicipio = :claveMunicipio", Municipio.class)
+                    .setParameter("claveEstado", dom.getEstado())
+                    .setParameter("claveMunicipio", dom.getMunicipio())
+                    .getResultStream().findFirst().orElse(null);
+
+            loc = facade.getEntityManager().createQuery("SELECT a FROM Asentamiento a WHERE a.asentamientoPK.estado = :estado AND a.asentamientoPK.municipio = :municipio AND a.asentamientoPK.asentamiento = :asentamiento", Asentamiento.class)
+                    .setParameter("estado", dom.getEstado())
+                    .setParameter("municipio", dom.getMunicipio())
+                    .setParameter("asentamiento", dom.getLocalidad())
+                    .getResultStream().findFirst().orElse(null);
+        }
       
         Iems iems = new Iems();
+        Estado edoIems = new Estado();
+        
         if (ant == null) {
         } else {
             iems = facade.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.iems = :iems", Iems.class)
                     .setParameter("iems", ant.getIems())
-                    .getSingleResult();
-        }
-
-        Estado edoIems = new Estado();
-
-        if (iems == null) {
-        } else {
+                    .getResultStream().findFirst().orElse(null);
+            
             edoIems = facade.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idestado = :idestado", Estado.class)
                     .setParameter("idestado", iems.getLocalidad().getMunicipio().getEstado().getIdestado())
-                    .getSingleResult();
+                    .getResultStream().findFirst().orElse(null);
         }
+
+//        Estado edoIems = new Estado();
+//
+//        if (iems == null) {
+//        } else {
+//            edoIems = facade.getEntityManager().createQuery("SELECT e FROM Estado e WHERE e.idestado = :idestado", Estado.class)
+//                    .setParameter("idestado", iems.getLocalidad().getMunicipio().getEstado().getIdestado())
+//                    .getResultStream().findFirst().orElse(null);
+//        }
         DatosTitulacion datTit = buscarDatosTitulacion(expediente);
         
         AreasUniversidad prog = facade.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.siglas = :siglas", AreasUniversidad.class)
                 .setParameter("siglas", exp.getProgramaEducativo())
-                .getSingleResult();
+                .getResultStream().findFirst().orElse(null);
                 
         FechasDocumentos fecDoc = buscarFechasDocumentos(exp, prog);
         
@@ -349,7 +362,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
                 .stream()
                 .map(p -> p.getProgramaEducativo())
                 .collect(Collectors.toList());
-
+       
         return facade.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.siglas IN :siglas AND a.nivelEducativo.nivel LIKE CONCAT('%',:nivel,'%' ) ", AreasUniversidad.class)
                 .setParameter("siglas", programas)
                 .setParameter("nivel", "TSU")
@@ -645,7 +658,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         dtoPagosFinanzas dto = new dtoPagosFinanzas();
         listaDtoPagosFinanzas.forEach((pagoFinanzas) -> {
             
-         if(pagoFinanzas.getConcepto()==50){
+         if(pagoFinanzas.getConcepto()==50 || pagoFinanzas.getConcepto()==128){
              
              dto.setConcepto(pagoFinanzas.getConcepto());
              dto.setCveRegistro(pagoFinanzas.getConcepto());
@@ -668,7 +681,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         dtoPagosFinanzas dto = new dtoPagosFinanzas();
         listaDtoPagosFinanzas.forEach((pagoFinanzas) -> {
             
-         if(pagoFinanzas.getConcepto()==40){
+         if(pagoFinanzas.getConcepto()==40 || pagoFinanzas.getConcepto()==127){
              
              dto.setConcepto(pagoFinanzas.getConcepto());
              dto.setCveRegistro(pagoFinanzas.getConcepto());
