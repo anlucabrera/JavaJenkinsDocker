@@ -18,6 +18,7 @@ import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.EstudiantesPye;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesFormacionIntegral;
@@ -220,21 +221,18 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
             MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, e.getMatriculaPeriodosEscolares().getRegistro());
            
-            List<ViewMatriculaF911> lista = new ArrayList<>(); 
-//            ViewMatriculaF911 listaMat = saiiut.getEntityManager().find(ViewMatriculaF911.class, e.getMatriculaPeriodosEscolares().getMatricula());
-            lista = saiiut.getEntityManager().createQuery("SELECT v FROM ViewMatriculaF911 v WHERE v.matricula = :matricula", ViewMatriculaF911.class)
+            List<MatriculaPeriodosEscolares> datosSII = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.matricula = :matricula AND m.periodo = :periodo", MatriculaPeriodosEscolares.class)
             .setParameter("matricula", mat.getMatricula())
+            .setParameter("periodo", e.getActividadFormacionIntegral().getPeriodo())
             .getResultList();
-             
-            lista.forEach(lis -> {
-          
-                 l.add(new DTODatosEstudiante(
-                    mat,
-                    lis));
-//            genero = mat.getCurp().substring(10, 11);
+            
+            datosSII.forEach(sii -> {
+                String sexo = sii.getCurp().substring(10, 11);
+                AreasUniversidad carrera = f.getEntityManager().find(AreasUniversidad.class, sii.getProgramaEducativo());
+                l.add(new DTODatosEstudiante(mat, carrera.getNombre(), sexo));
             });
         });
-        
+
         return l;
     }
 
