@@ -92,10 +92,10 @@
                                         </div>
                                          <div class="col-sm-12 col-md-12 col-lg-8">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="carga" value="#{permisoAperturaExtemporaneaAdministrador.rol.carga}" converter="entityConverter" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.actualizarUnidadesMateria}">
+                                                <p:selectOneMenu id="carga" value="#{permisoAperturaExtemporaneaAdministrador.rol.carga}" converter="entityConverter" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarCargaAcademica}">
                                                     <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.cargasPeriodo}" var="carga"
                                                                    itemValue="#{carga}" itemLabel="#{carga.materia.nombre} (#{carga.planEstudioMateria.claveMateria}) #{carga.grupo.grado}° #{carga.grupo.literal} de #{carga.programa.nombre}"/>
-                                                    <p:ajax update="@this" process="@this, unidad"/>
+                                                    <p:ajax update="@this, unidad" process="@this, unidad"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Materia - Grupo - Programa Educativo" for="carga"/>
@@ -168,7 +168,7 @@
                                         </c:if>
                                     </center>   
                                     </div>
-                                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas ne null}">
+                                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas ne null and permisoAperturaExtemporaneaAdministrador.rol.docente ne null}">
                                     <div class="row margin-bottom" style="margin-top: 60px;">
                                             <center>
                                                 <p:dataTable id="tbAperExt" var="aperturasExt" value="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas}" sortBy="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.grado}° '#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.literal}' de #{aperturasExt.programaEducativo.nombre}"
@@ -181,7 +181,7 @@
                                                             <p:column headerText="Opciones" />
                                                             <p:column headerText="Grupo" /> 
                                                             <p:column headerText="Materia" /> 
-                                                            <p:column headerText="Docente" /> 
+                                                            <p:column headerText="Docente" />
                                                             <p:column headerText="Unidad" />
                                                             <p:column headerText="Tipo Evaluacion" />
                                                             <p:column headerText="Fecha Inicio" />
@@ -210,7 +210,7 @@
                                                         <h:outputText value="#{aperturasExt.personal.nombre}"/>
                                                     </p:column>
                                                     <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.nombre}" style="text-align: center;"/>
+                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.noUnidad}. #{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.nombre}" style="text-align: center;"/>
                                                     </p:column>
                                                     <p:column>
                                                         <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.tipoEvaluacion}" />

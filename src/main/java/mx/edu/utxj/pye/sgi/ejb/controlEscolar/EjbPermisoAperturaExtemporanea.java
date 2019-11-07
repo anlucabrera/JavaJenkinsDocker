@@ -392,7 +392,7 @@ public class EjbPermisoAperturaExtemporanea {
         try{
             List<DtoPermisoCapturaExtemporanea> listaDtoPermisoCapturaExtemporanea = new ArrayList<>();
             //buscar lista de permiso de captura extemporánea vigentes
-            List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupal = em.createQuery("SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.docente =:docente AND (:fechaActual BETWEEN p.fechaInicio AND p.fechaFin) OR :fechaActual <= p.fechaInicio", PermisosCapturaExtemporaneaGrupal.class)
+            List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupal = em.createQuery("SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.docente =:docente AND ((:fechaActual BETWEEN p.fechaInicio AND p.fechaFin) OR :fechaActual <= p.fechaInicio)", PermisosCapturaExtemporaneaGrupal.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("fechaActual", fechaActual)
                     .getResultList();
