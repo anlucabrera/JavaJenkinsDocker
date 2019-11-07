@@ -229,6 +229,7 @@ public class AreaPoaPresupuestacion implements Serializable {
     public void asignarRecursoActividad(ActividadesPoa actividadesPoaRecurso) {
         actividadesPoa = new ActividadesPoa();
         actividadesPoa = actividadesPoaRecurso;
+        partidas= new Partidas();
         Ajax.oncomplete("PF('delRegistroProdustos').show()");
     }
 

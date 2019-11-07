@@ -470,8 +470,8 @@
                                             </p:row>
                                         </p:columnGroup>
                                         <p:column style="text-align: center;"><h:outputText value="#{participanteAct.matriculaPeriodosEscolares.matricula}" /></p:column>
-                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAct.listaMatricula.carrera}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.listaMatricula.sexo}" /></p:column>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAct.carrera}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.sexo}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{participanteAct.matriculaPeriodosEscolares.cuatrimestre}° #{participanteAct.matriculaPeriodosEscolares.grupo}" /></p:column>
                                         <f:facet name="footer">
                                             <span style="font-size: smaller; font-weight: bold;">Total de participantes registrados: #{fn:length(partActFormInt.dto.listaParticipantesAFI)}.</span>

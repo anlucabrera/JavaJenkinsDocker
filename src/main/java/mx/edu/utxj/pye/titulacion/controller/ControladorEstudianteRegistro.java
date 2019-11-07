@@ -167,6 +167,26 @@ public class ControladorEstudianteRegistro implements Serializable{
                    
                 }
                 
+            } 
+            
+            else if (estudiante.getGradoActual() == 10) {
+               procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
+
+                if (procesosIntexp == null) {
+                    cargada = false;
+                } else {
+                    cargada = true;
+
+                    progresoExpediente = 0;
+                    datosPerVal();
+                    datosContVal();
+                    datosAntAcad();
+                    consultarStatusExpediente();
+                    listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+                    listaEstadosIEMS = eJBSelectItems.itemEstados();
+                   
+                }
+                
             } else {
                  cargada = false;
             }

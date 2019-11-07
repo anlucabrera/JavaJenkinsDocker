@@ -27,6 +27,7 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.ViewMatriculaF911;
 public class DTODatosEstudiante implements Serializable{
     private static final long serialVersionUID = 3775714024294956971L;
     @Getter @Setter @NonNull private MatriculaPeriodosEscolares matriculaPeriodosEscolares;
-    @Getter @Setter private ViewMatriculaF911 listaMatricula;
+    @Getter @Setter private String carrera;
+    @Getter @Setter private String sexo;
             
 }

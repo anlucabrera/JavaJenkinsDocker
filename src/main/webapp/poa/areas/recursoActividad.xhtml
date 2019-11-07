@@ -335,7 +335,7 @@
                                                             </p:column>
                                                             <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="text-align: center; width: 3%;"> 
                                                                 <p:commandButton id="btnRecurso" actionListener="#{areaPoaPresupuestacion.asignarRecursoActividad(actividad.actividadesPoa1)}"
-                                                                                 process="@this" icon="fa fa-usd" 
+                                                                                 process="@this" update="delRegistroProdustos" icon="fa fa-usd" 
                                                                                  styleClass="#{actividad.actividadesPoa1.recursosActividadList.size() eq 0?'btn-primary':'btn-success'}" title="Agregar recurso" onsuccess="actualizarTabla()"/> 
                                                             </p:column>
 
