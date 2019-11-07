@@ -85,7 +85,7 @@
                                                      actionListener="#{utilidadesPOA.enviarCorreo('R', 'Ad',true,'',adminPoaValidacionPresupuestacion.areaPOASeleccionada)}"
                                                      process="@this" disabled="#{adminPoaValidacionPresupuestacion.procesopoa.validacionRFFinalizado || !adminPoaValidacionPresupuestacion.procesopoa.asiganacionRFinalizado}"
                                                      icon="fa fa-info-circle" styleClass="btn-primary"/>
-                                    <p:commandButton value="Denagar Presupuestacion" id="btnEnviaCorreoNegacion" 
+                                    <p:commandButton value="Denegar Presupuestacion" id="btnEnviaCorreoNegacion" 
                                                      actionListener="#{adminPoaValidacionPresupuestacion.imprimirValores()}"
                                                      oncomplete="PF('dlgComentario').show()"
                                                      process="@this" disabled="#{adminPoaValidacionPresupuestacion.procesopoa.validacionRFFinalizado || !adminPoaValidacionPresupuestacion.procesopoa.asiganacionRFinalizado}"

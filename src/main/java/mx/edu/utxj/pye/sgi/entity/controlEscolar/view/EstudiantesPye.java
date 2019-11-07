@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mx.edu.utxj.pye.sgi.entity.controlEscolar;
+package mx.edu.utxj.pye.sgi.entity.controlEscolar.view;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

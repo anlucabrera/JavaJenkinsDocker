@@ -335,7 +335,11 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                 add(115.0);
             }
         };
-        return new MeterGaugeChartModel(avanceSp, intervals);
+        if (avanceSp >= 115) {
+            return new MeterGaugeChartModel(115D, intervals);
+        } else {
+            return new MeterGaugeChartModel(avanceSp, intervals);
+        }
     }
 
     public void areaSeleccionada() {

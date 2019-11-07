@@ -86,7 +86,7 @@
                                                      actionListener="#{utilidadesPOA.enviarCorreo('J', 'Ad',true,'',adminPoaValidacionJustificacion.areaPOASeleccionada)}"
                                                      process="@this" disabled="#{adminPoaValidacionJustificacion.procesopoa.validacionJustificacion || !adminPoaValidacionJustificacion.procesopoa.registroJustificacionFinalizado}"
                                                      icon="fa fa-info-circle" styleClass="btn-primary"/>
-                                    <p:commandButton value="Denagar POA" id="btnEnviaCorreoNegacion" 
+                                    <p:commandButton value="Denegar POA" id="btnEnviaCorreoNegacion" 
                                                      actionListener="#{adminPoaValidacionJustificacion.imprimirValores()}"
                                                      oncomplete="PF('dlgObservacion').show()"
                                                      process="@this" disabled="#{adminPoaValidacionJustificacion.procesopoa.validacionJustificacion || !adminPoaValidacionJustificacion.procesopoa.registroJustificacionFinalizado}"

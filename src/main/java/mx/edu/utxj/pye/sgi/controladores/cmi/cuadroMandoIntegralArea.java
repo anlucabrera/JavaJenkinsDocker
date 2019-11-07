@@ -304,7 +304,11 @@ public void reseteador() {
                 add(115.0);
             }
         };
-        return new MeterGaugeChartModel(avanceSp, intervals);
+        if (avanceSp >= 115) {
+            return new MeterGaugeChartModel(115D, intervals);
+        } else {
+            return new MeterGaugeChartModel(avanceSp, intervals);
+        }
     }
 
     public String datosGraica(List<cuadroMandoIntegralPlaneacion.Grafica> er) {

@@ -1,9 +1,8 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.dtoReporteBecas;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EstudiantesPye;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.EstudiantesPye;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BecaTipos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;

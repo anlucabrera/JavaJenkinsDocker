@@ -85,7 +85,7 @@
                                                      actionListener="#{utilidadesPOA.enviarCorreo('A', 'Ad',true,'',adminPoaValidacionProgramacion.areaPOASeleccionada)}"
                                                      process="@this" disabled="#{adminPoaValidacionProgramacion.procesopoa.validacionRegistroA || !adminPoaValidacionProgramacion.procesopoa.registroAFinalizado}"
                                                      icon="fa fa-info-circle" styleClass="btn-primary"/>
-                                    <p:commandButton value="Denagar Programación" id="btnEnviaCorreoNegacion" 
+                                    <p:commandButton value="Denegar Programación" id="btnEnviaCorreoNegacion" 
                                                      actionListener="#{adminPoaValidacionProgramacion.imprimirValores()}"
                                                      oncomplete="PF('dlgComentario').show()"
                                                      process="@this" disabled="#{adminPoaValidacionProgramacion.procesopoa.validacionRegistroA || !adminPoaValidacionProgramacion.procesopoa.registroAFinalizado}"
