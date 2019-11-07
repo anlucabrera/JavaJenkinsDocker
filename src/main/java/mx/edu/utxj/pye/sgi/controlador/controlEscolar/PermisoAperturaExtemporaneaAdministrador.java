@@ -197,6 +197,16 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         }else mostrarMensajeResultadoEJB(res);
     }
     
+    /**
+     * Permite que al cambiar el tipo de evaluación se pueda habilitar o deshabilitar la opción de unidad de la materia
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarCargaAcademica(ValueChangeEvent e){
+       rol.setCarga((DtoCargaAcademica)e.getNewValue());
+       actualizarUnidadesMateria();
+       Ajax.update("frm");
+    }
+    
      /**
      * Permite que al cambiar el tipo de evaluación se pueda habilitar o deshabilitar la opción de unidad de la materia
      * @param e Evento del cambio de valor
