@@ -8,13 +8,16 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.CedulaIdentificacionRolPsicopedagogia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalificacionEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCedulaIdentificacion;
 import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCedulaIdentificacion;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConsultaCalificacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCuestionarioPsicopedagogico;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CuestionarioPsicopedagogicoResultados;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
@@ -31,12 +34,12 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Named(value = "cedulaIdentificacionPsicopedagogia")
 @ViewScoped
@@ -44,11 +47,11 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
 
     @Getter @Setter
     CedulaIdentificacionRolPsicopedagogia rol;
-    @Inject
-    LogonMB logonMB;
+    @Inject LogonMB logonMB;
     @EJB EjbCedulaIdentificacion ejbCedulaIdentificacion;
     @EJB EjbCuestionarioPsicopedagogico ejbCuestionarioPsicopedagogico;
     @EJB private EjbPropiedades ep;
+    @EJB EjbConsultaCalificacion ejbCalificaiones;
     @Getter Boolean tieneAcceso = false;
     @Getter @Setter String valor;
 
@@ -110,8 +113,18 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
             if(resCedula.getCorrecto()==true){
                 //System.out.println("Entro a genera cedula");
                 rol.setCedulaIdentificacion(resCedula.getValor());
+                getPeriodoEstudiante();
                 getResultadosCuestionario();
                 alertas();
+                obtenerMateriasPorEstudiante();
+                obtenerUnidadesPorMateria();
+                obtenerCalificaciones();
+                obtenerPromedioMateria();
+                obtenerTareaIntegradoraPorMateria();
+                obtenerNivelacionesPorMateria();
+                obtenerPromediosFinales();
+                obtenerPromedioCuatrimestral();
+                obtenerPromedioAcumulado();
                 // System.out.println(resCedula.getValor());
             }else{ mostrarMensajeResultadoEJB(resCedula); }
         } else {mostrarMensajeResultadoEJB(resEstudiante);}
@@ -142,6 +155,12 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
         if(resResultados.getCorrecto()==true){resultados = resResultados.getValor();
         rol.setResultados(resultados);
         }else { rol.setResultados(resultados);}
+    }
+    public void getPeriodoEstudiante(){
+        PeriodosEscolares periodo = new PeriodosEscolares();
+        ResultadoEJB<PeriodosEscolares> resPeriodo= ejbCedulaIdentificacion.getPeriodoEstudiante(rol.getEstudiante());
+        if(resPeriodo.getCorrecto()==true){rol.setPeriodoEstudiante(resPeriodo.getValor());rol.setPeriodoE(rol.getPeriodoEstudiante().getPeriodo());}
+        else {mostrarMensajeResultadoEJB(resPeriodo);}
     }
 
     /**
@@ -180,5 +199,61 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
         }
         //System.out.println(comparador.isCompleto(rol.getResultados()));
     }
-    
+    //----------------------- Calificaciones del estudiante(Marce)---------------------
+
+    public void obtenerMateriasPorEstudiante() {
+        ResultadoEJB<List<DtoCalificacionEstudiante.MateriasPorEstudiante>> resMaterias = ejbCalificaiones.packMaterias(rol.getEstudiante());
+        rol.setMateriasPorEstudiante(resMaterias.getValor().stream().filter(a -> a.getGrupo().getPeriodo() == rol.getPeriodoE()).collect(Collectors.toList()));
+        Map<Integer, Long> group = rol.getMateriasPorEstudiante().stream().collect(Collectors.groupingBy(DtoCalificacionEstudiante.MateriasPorEstudiante::getPeriodo, Collectors.counting()));
+        group.forEach((k, v) -> {
+            rol.setPeriodo(k);
+        });
+    }
+    public void obtenerUnidadesPorMateria() {
+        List<DtoCalificacionEstudiante.MapUnidadesTematicas> resMap = new ArrayList<>();
+        ResultadoEJB<List<DtoCalificacionEstudiante.UnidadesPorMateria>> resUnidadesPorMateria = ejbCalificaiones.packUnidadesmateria(rol.getEstudiante());
+        rol.setUnidadesPorMateria(resUnidadesPorMateria.getValor().stream().filter(x -> x.getGrupo().getPeriodo() == rol.getPeriodoE()).collect(Collectors.toList()));
+        Map<Integer, Long> map = rol.getUnidadesPorMateria().stream().collect(Collectors.groupingBy(DtoCalificacionEstudiante.UnidadesPorMateria::getNoUnidad, Collectors.counting()));
+        map.forEach((k, v) -> {
+            resMap.add(new DtoCalificacionEstudiante.MapUnidadesTematicas(k, v.intValue()));
+        });
+        rol.setMapUnidadesTematicas(resMap);
+    }
+    public void obtenerCalificaciones() {
+        ResultadoEJB<List<DtoCalificacionEstudiante.CalificacionePorUnidad>> resCalificaciones = ejbCalificaiones.packCalificacionesPorUnidadyMateria1(rol.getEstudiante());
+        rol.setCalificacionePorUnidad(resCalificaciones.getValor().stream().filter(a -> a.getEstudiante().getGrupo().getPeriodo() == rol.getPeriodoE()).collect(Collectors.toList()));
+    }
+    public void obtenerPromedioMateria() {
+        ResultadoEJB<List<DtoCalificacionEstudiante.CalificacionePorMateria>> resultadoEJB = ejbCalificaiones.packPromedioMateria(rol.getEstudiante());
+        rol.setCalificacionePorMateria(resultadoEJB.getValor().stream().filter(a -> a.getGrupo().getPeriodo() == rol.getPeriodoE()).collect(Collectors.toList()));
+    }
+    public void obtenerPromediosFinales() {
+        ResultadoEJB<List<DtoCalificacionEstudiante.CalificacionePorMateria>> resultadoEJB = ejbCalificaiones.packCalificacionesFinales(rol.getEstudiante());
+        rol.setCalificacionesFinalesPorMateria(resultadoEJB.getValor().stream().filter(a -> a.getGrupo().getPeriodo() == rol.getPeriodoE()).collect(Collectors.toList()));
+    }
+    public void obtenerPromedioCuatrimestral() {
+        ResultadoEJB<BigDecimal> promedio = ejbCalificaiones.obtenerPromedioCuatrimestral( rol.getEstudiante(), rol.getPeriodo());
+        BigDecimal valor = promedio.getValor();
+        rol.setMateriasPorEstudiante(ejbCalificaiones.packMaterias(rol.getEstudiante()).getValor().stream().filter(a -> a.getGrupo().getPeriodo() == rol.getPeriodoE()).collect(Collectors.toList()));
+        BigDecimal numeroMaterias = new BigDecimal(rol.getMateriasPorEstudiante().size());
+        BigDecimal promedioCuatrimestral = valor.divide(numeroMaterias, RoundingMode.HALF_UP);
+        rol.setPromedio(promedioCuatrimestral.setScale(1, RoundingMode.HALF_UP));
+    }
+    public void obtenerPromedioAcumulado() {
+        ResultadoEJB<List<BigDecimal>> promedios = ejbCalificaiones.obtenerPromedioAcumulado(rol.getEstudiante());
+        BigDecimal numeroPromedios = new BigDecimal(promedios.getValor ().size());
+        BigDecimal suma = promedios.getValor().stream().map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal promedio = suma.divide(numeroPromedios, RoundingMode.HALF_UP);
+        rol.setPromedioAcumluado(promedio.setScale(1, RoundingMode.HALF_UP));
+    }
+
+    public void obtenerTareaIntegradoraPorMateria(){
+        ResultadoEJB<List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion>> resultadoEJB = ejbCalificaiones.tareaIntegradoraPresentacion(rol.getEstudiante());
+        rol.setTareaIntegradoraPresentacion(resultadoEJB.getValor());
+    }
+
+    public void obtenerNivelacionesPorMateria(){
+        ResultadoEJB<List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria>> resultadoEJB = ejbCalificaiones.packPromedioNivelacionPorMateria(rol.getEstudiante());
+        rol.setCalificacionesNivelacionPorMateria(resultadoEJB.getValor());
+    }
 }

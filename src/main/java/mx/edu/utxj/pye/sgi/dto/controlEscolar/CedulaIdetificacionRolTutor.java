@@ -12,6 +12,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class CedulaIdetificacionRolTutor extends AbstractRol {
@@ -20,7 +21,6 @@ public class CedulaIdetificacionRolTutor extends AbstractRol {
     @Getter @NonNull private List<PeriodosEscolares> periodos;
     @Getter @NonNull private PeriodosEscolares periodo;
     @Getter @NonNull private Integer periodoActivo;
-
     @Getter    @Setter private List<Listaalumnosca> listaEstudiantes;
     @Getter    @Setter    private List<Estudiante> estudiantes;
     @Getter    @Setter    private Grupo grupoSelec;
@@ -30,8 +30,20 @@ public class CedulaIdetificacionRolTutor extends AbstractRol {
     @Getter @Setter DtoCedulaIdentificacion cedulaIdentificacion;
     //TODO: Estudiante seleccionado
     @Getter @Setter Estudiante estudiante;
-
     @Getter @Setter String matricula;
+    //Calificaciones del estudiante
+    @Getter @NonNull private List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante;
+    @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad;
+    @Getter @NonNull private List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas;
+    @Getter @NonNull private List<DtoCalificacionEstudiante.UnidadesPorMateria> unidadesPorMateria;
+    @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionePorMateria, calificacionesFinalesPorMateria;
+    @Getter @NonNull private List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion;
+    @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria;
+    @Getter @NonNull private BigDecimal promedio = BigDecimal.ZERO;
+    @Getter @NonNull private BigDecimal promedioAcumluado = BigDecimal.ZERO;
+    @Getter @NonNull PeriodosEscolares periodoEstudiante;
+    @Getter @NonNull Integer periodoE;
+    @Getter @NonNull Integer periodoX;
 
     public CedulaIdetificacionRolTutor(@NonNull Filter<PersonalActivo> filtro) {
         super(filtro);
@@ -64,5 +76,57 @@ public class CedulaIdetificacionRolTutor extends AbstractRol {
 
     public void setGrupoSelec(Grupo grupoSelec) {
         this.grupoSelec = grupoSelec;
+    }
+
+    public void setMateriasPorEstudiante(List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante) {
+        this.materiasPorEstudiante = materiasPorEstudiante;
+    }
+
+    public void setCalificacionePorUnidad(List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad) {
+        this.calificacionePorUnidad = calificacionePorUnidad;
+    }
+
+    public void setMapUnidadesTematicas(List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas) {
+        this.mapUnidadesTematicas = mapUnidadesTematicas;
+    }
+
+    public void setUnidadesPorMateria(List<DtoCalificacionEstudiante.UnidadesPorMateria> unidadesPorMateria) {
+        this.unidadesPorMateria = unidadesPorMateria;
+    }
+
+    public void setCalificacionePorMateria(List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionePorMateria) {
+        this.calificacionePorMateria = calificacionePorMateria;
+    }
+
+    public void setCalificacionesFinalesPorMateria(List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionesFinalesPorMateria) {
+        this.calificacionesFinalesPorMateria = calificacionesFinalesPorMateria;
+    }
+
+    public void setTareaIntegradoraPresentacion(List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion) {
+        this.tareaIntegradoraPresentacion = tareaIntegradoraPresentacion;
+    }
+
+    public void setCalificacionesNivelacionPorMateria(List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria) {
+        this.calificacionesNivelacionPorMateria = calificacionesNivelacionPorMateria;
+    }
+
+    public void setPromedio(BigDecimal promedio) {
+        this.promedio = promedio;
+    }
+
+    public void setPromedioAcumluado(BigDecimal promedioAcumluado) {
+        this.promedioAcumluado = promedioAcumluado;
+    }
+
+    public void setPeriodoEstudiante(PeriodosEscolares periodoEstudiante) {
+        this.periodoEstudiante = periodoEstudiante;
+    }
+
+    public void setPeriodoE(Integer periodoE) {
+        this.periodoE = periodoE;
+    }
+
+    public void setPeriodoX(Integer periodoX) {
+        this.periodoX = periodoX;
     }
 }
