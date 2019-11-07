@@ -28,6 +28,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.*;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omg.CORBA.DATA_CONVERSION;
 
@@ -1054,5 +1055,23 @@ public class EjbCedulaIdentificacion {
        }catch(Exception e){
            return ResultadoEJB.crearErroneo(1, "Error al buscar el generar la cédula de Identificacíon(EjbCedulaIdentificacion.getCedulaIdentificacion)", e, null);
        }
+    }
+    //TODO: Busca el periodo del estudiante segun su grupo
+    public ResultadoEJB<PeriodosEscolares> getPeriodoEstudiante (Estudiante estudiante){
+        try{
+            PeriodosEscolares periodo = new PeriodosEscolares();
+            if(estudiante==null){return  ResultadoEJB.crearErroneo(2,periodo,"El estudiante no debe ser nulo");}
+            //TODO: Haca la consulta
+            periodo = em.createQuery("select p from PeriodosEscolares  p where p.periodo=:periodo",PeriodosEscolares.class)
+            .setParameter("periodo", estudiante.getGrupo().getPeriodo())
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            if(periodo==null){return ResultadoEJB.crearErroneo(3,periodo,"No se encontro el periodo");}
+            else {return ResultadoEJB.crearCorrecto(periodo,"Periodo escolar del estudiante, encontrado");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al buscar el periodo del estudiante(EjbCedulaIdentificacion.getPeriodoEstudiante)", e, null);
+        }
     }
 }

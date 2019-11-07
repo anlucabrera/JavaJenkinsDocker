@@ -127,19 +127,14 @@ public class EjbCuestionarioPsicopedagogico {
             ;
             //TODO: Si no se encuentran resultados el estudiante, se da aviso al personal examinador que el estudiante no ha respondido el cuestionario
             if(resultados==null){return ResultadoEJB.crearErroneo(5,resultados,"El estudiante con matricula "+estudiante.getMatricula() +" no ha respondido el cuestionario");}
-
-            else {
-                //TODO: Se revisa que los resultados ya tengan personal examinador en caso de que no se agrega al personal logueado
-                if(resultados.getClave()==null){
+            //TODO: Se revisa que los resultados ya hayan sido terminados
+            else if(resultados.getCompleto()==true){
                     //TODO: Se agrega la clave del persona
                     resultados.setClave(examinador.getClave());
                     resultados.setReviso(false);
                     em.merge(resultados);
                     return ResultadoEJB.crearCorrecto(resultados,"Se ha agregado a personal examinador");
-                }else {return ResultadoEJB.crearCorrecto(resultados,"Resultados encontrados");}
-
-            }
-
+            }else {return ResultadoEJB.crearCorrecto(resultados,"Resultados encontrados");}
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados(Personal). (EjbCuestionarioPsicopedagogico.getResultadosCuestionarioPersonal)", e, null);
         }

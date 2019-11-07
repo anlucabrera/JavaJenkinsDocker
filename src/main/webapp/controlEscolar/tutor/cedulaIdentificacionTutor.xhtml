@@ -87,7 +87,7 @@
                                                          valueChangeListener="#{cedulaIdentificacionTutor.getEstudiante}">
                                             <f:selectItem itemValue="0" itemLabel="Estudiante "/>
                                             <f:selectItems value="#{cedulaIdentificacionTutor.rol.listaEstudiantes}" var="estudiante" itemValue="#{estudiante.matricula}" itemLabel="#{estudiante.matricula} - #{estudiante.esNombre.concat(' ').concat(estudiante.esApePat).concat(' ').concat(estudiante.esApeMat)}" />
-                                            <p:ajax update="@this :tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6" listener="#{cedulaIdentificacionTutor.getEstudiante}"/>
+                                            <p:ajax update="@this :tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:tabw3:frmCalificaciones,:tabw2:frm6" listener="#{cedulaIdentificacionTutor.getEstudiante}"/>
                                         </p:selectOneMenu>
                                         <p:outputLabel value="Estudiante" for="estudiante"/>
                                         <p:message for="estudiante" />
@@ -365,6 +365,184 @@
                                                 </div>
                                             </h:form>
                                         </section>
+
+                                    </p:tab>
+                                    <p:tab title="Calificaciones">
+                                        <div class="box box-solid">
+                                            <div class="box-body">
+                                                <c:set var="panel" value="#{'col-sm-12 col-md-12 col-lg-12'}"/>
+                                                <c:set var="casilla" value="#{'col-sm-12 col-md-6 col-lg-2'}" />
+                                                <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                                <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                                <c:set var="casilla4" value="#{'col-sm-3 col-md-3 col-lg-3'}"/>
+                                                <c:set var="casilla5" value="#{'col-sm-4 col-md-4 col-lg-4'}"/>
+                                                <c:set var="casilla6" value="#{'col-sm-8 col-md-8 col-lg-8'}"/>
+                                                <c:set var="casilla7" value="#{'col-sm-9 col-md-9 col-lg-9'}"/>
+                                                <div class="row">
+                                                    <h:form id="frmCalificaciones">
+                                                        <div class="#{panel}">
+                                                            <p:separator styleClass="ui-noborder"/>
+                                                            <p:outputPanel id="contenedor">
+                                                                <p:dataTable var="calificaciones"
+                                                                             value="#{cedulaIdentificacionTutor.rol.materiasPorEstudiante}"
+                                                                             rendered="#{cedulaIdentificacionTutor.rol.periodoE eq cedulaIdentificacionTutor.rol.periodoX}"
+                                                                             emptyMessage="Sin registros."
+                                                                             style="font-size: small; text-align: center; font-weight: bold; margin-bottom: 20px"
+                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                                             tableStyle="vertical-align: middle;" >
+                                                                    <f:facet name="header">
+                                                                        <h:outputText value="Cuatrimestre: #{cedulaIdentificacionTutor.rol.estudiante.grupo.grado}  '#{cedulaIdentificacionTutor.rol.estudiante.grupo.literal}'"/>
+                                                                        <p:spacer width="10"/>
+                                                                        <h:outputText value="(#{caster.clavePeriodoToString(cedulaIdentificacionTutor.rol.estudiante.grupo.periodo)})"/>
+                                                                    </f:facet>
+
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row>
+                                                                            <p:column rowspan="2" headerText="Materias" width="220"/>
+                                                                            <p:column rowspan="2" headerText="Profesor" width="120"/>
+                                                                            <p:columns var="unidad" colspan="2" value="#{cedulaIdentificacionTutor.rol.mapUnidadesTematicas}"
+                                                                                       headerText="Unidad Temática # #{unidad.noUnidad}" width="80"/>
+                                                                            <p:column headerText="Tarea Integradora" width="80" colspan="2"/>
+                                                                            <p:column rowspan="2" headerText="Calificación Final Ordinaria" width="60"/>
+                                                                            <p:column rowspan="2" headerText="Nivelación Final #1" width="50"/>
+                                                                            <p:column rowspan="2" headerText="Calificación Final" width="50"/>
+                                                                        </p:row>
+                                                                        <p:row>
+                                                                            <c:forEach var="unidad2" items="#{cedulaIdentificacionTutor.rol.mapUnidadesTematicas}">
+                                                                                <p:column colspan="1" width="40" headerText="Calif."/>
+                                                                                <p:column colspan="1" width="40" headerText="%"/>
+                                                                            </c:forEach>
+                                                                            <p:column colspan="1" width="30" headerText="Calif."/>
+                                                                            <p:column colspan="1" width="30" headerText="%"/>
+                                                                        </p:row>
+                                                                    </p:columnGroup>
+                                                                    <p:column style="text-align: left">
+                                                                        <h:outputText value="#{calificaciones.planEstudioMateria.claveMateria }"/>
+                                                                        <p:spacer width="10"/>
+                                                                        <p:spacer width="10"/>
+                                                                        <h:outputText value="#{calificaciones.materia.nombre}" />
+                                                                    </p:column>
+                                                                    <p:column style="text-align: left"><h:outputText value="#{calificaciones.docente.nombre}" /></p:column>
+                                                                    <p:columns style="text-align: center" var="unidadesFantasmas" value="#{cedulaIdentificacionTutor.rol.mapUnidadesTematicas}"
+                                                                               colspan="2">
+                                                                        <c:forEach var="calificacion" items="#{cedulaIdentificacionTutor.rol.calificacionePorUnidad}">
+                                                                            <p:column style="text-align: center" rendered="#{calificacion.materia.idMateria eq calificaciones.materia.idMateria
+                                                                           and calificacion.unidadMateria.noUnidad eq unidadesFantasmas.noUnidad}">
+                                                                                <p:panelGrid columns="2" style="height: 20px">
+                                                                                    <h:outputText style="font-weight: bold; font-size: x-small; #{calificacion.promedioUnidad >= 8 ? 'color: #000000':'color: #E53935' or calificacion.promedioUnidad > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                                  value="#{calificacion.escala}"/>
+                                                                                    <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                    <h:outputText style="font-weight: bold; font-size: small; #{calificacion.promedioUnidad >= 8 ? 'color: #000000':'color: #E53935' or calificacion.promedioUnidad > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                                  value="#{calificacion.promedioUnidad}">
+                                                                                        <f:convertNumber pattern="#.##"/>
+                                                                                    </h:outputText>
+                                                                                    <h:outputText style="font-weight: bold; font-size: small" value="#{calificacion.porcentaje.divide(100)}" >
+                                                                                        <f:convertNumber pattern="#.###" currencySymbol="%"/>
+                                                                                    </h:outputText>
+                                                                                </p:panelGrid>
+                                                                            </p:column>
+                                                                        </c:forEach>
+                                                                    </p:columns>
+                                                                    <c:if test="#{cedulaIdentificacionTutor.rol.tareaIntegradoraPresentacion.size() eq 0}">
+                                                                        <p:column colspan="2">
+                                                                            <h:outputText style="font-weight: bold; font-size: small;" value=""/>
+                                                                            <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                            <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                            <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                        </p:column>
+                                                                    </c:if>
+                                                                    <c:forEach var="promedioIntegradora" items="#{cedulaIdentificacionTutor.rol.tareaIntegradoraPresentacion}">
+                                                                        <p:column rendered="#{promedioIntegradora.cargaAcademica.carga eq calificaciones.cargaAcademica.carga}" colspan="2">
+                                                                            <p:panelGrid columns="2">
+                                                                                <h:outputText style="font-weight: bold; font-size: small;" value=""/>
+                                                                                <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                <h:outputText style="font-weight: bold; font-size: small; #{promedioIntegradora.tareaIntegradora.valor > 8 ? 'color: #000000':'color: #E53935' or promedioIntegradora.tareaIntegradora.valor > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                              value="#{promedioIntegradora.promedio}"/>
+                                                                                <h:outputText style="font-weight: bold; font-size: small" value="#{promedioIntegradora.porcentaje}"/>
+                                                                            </p:panelGrid>
+                                                                        </p:column>
+                                                                    </c:forEach>
+                                                                    <c:forEach var="promedio" items="#{cedulaIdentificacionTutor.rol.calificacionePorMateria}">
+                                                                        <p:column rendered="#{calificaciones.materia.idMateria eq promedio.materia.idMateria}">
+                                                                            <p:panelGrid columns="1">
+                                                                                <h:outputText style="font-weight: bold; font-size: small; #{promedio.promedio > 8 ? 'color: #000000':'color: #E53935' or promedio.promedio > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                              value="#{promedio.promedio}">
+                                                                                    <f:convertNumber type="number" pattern="0.##"/>
+                                                                                </h:outputText>
+                                                                            </p:panelGrid>
+                                                                        </p:column>
+                                                                    </c:forEach>
+                                                                    <c:forEach var="nivelacion" items="#{cedulaIdentificacionTutor.rol.calificacionesNivelacionPorMateria}">
+                                                                        <p:column rendered="#{calificaciones.materia.idMateria eq nivelacion.materia.idMateria}">
+                                                                            <h:outputText rendered="#{nivelacion.promedio.compareTo(cedulaIdentificacionTutor.rol.promedio) eq 0}" style="font-weight: bold; font-size: small" value=""/>
+                                                                            <p:panelGrid columns="1">
+                                                                                <h:outputText rendered="#{nivelacion.promedio.compareTo(cedulaIdentificacionTutor.rol.promedio) > 0}"
+                                                                                              style="font-weight: bold; font-size: small; #{nivelacion.promedio > 8 ? 'color: #000000':'color: #E53935' or nivelacion.promedio > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                              value="#{nivelacion.promedio}"/>
+                                                                            </p:panelGrid>
+                                                                        </p:column>
+                                                                    </c:forEach>
+                                                                    <c:forEach var="promedioFinal" items="#{cedulaIdentificacionTutor.rol.calificacionesFinalesPorMateria}">
+                                                                        <p:column rendered="#{calificaciones.materia.idMateria eq promedioFinal.materia.idMateria}">
+                                                                            <p:panelGrid columns="1">
+                                                                                <h:outputText style="font-weight: bold; font-size: small; #{promedioFinal.promedio > 8 ? 'color: #000000':'color: #E53935' or promedioFinal.promedio > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                              value="#{promedioFinal.promedio}"/>
+                                                                            </p:panelGrid>
+                                                                        </p:column>
+                                                                    </c:forEach>
+                                                                    <p:columnGroup type="footer">
+                                                                        <p:row style="background-color: #D9F0FC; font-size: small">
+                                                                            <p:column colspan="1" style="text-align:left; font-weight: bold" footerText="Promedio cuatrimestral:" />
+                                                                            <p:column colspan="#{6 + cedulaIdentificacionTutor.rol.mapUnidadesTematicas.size() * 2}"
+                                                                                      style="text-align: right;font-weight: bold" footerText="#{cedulaIdentificacionTutor.rol.promedio}"/>
+                                                                        </p:row>
+                                                                        <p:row>
+                                                                            <p:column colspan="1" style="text-align:left; font-weight: bold" footerText="Promedio acumulado:" />
+                                                                            <p:column colspan="#{6 + cedulaIdentificacionTutor.rol.mapUnidadesTematicas.size() * 2}"
+                                                                                      style="text-align: right; font-weight: bold" footerText="#{cedulaIdentificacionTutor.rol.promedioAcumluado}" />
+                                                                        </p:row>
+                                                                    </p:columnGroup>
+
+
+                                                                </p:dataTable>
+                                                                <br/>
+
+                                                                <div class="row">
+                                                                    <br/>
+                                                                    <div class="col-xs-12" style="text-align: center">
+                                                                        <table class="table table-condensed table-bordered table-hover table-responsive" style="text-align: center">
+                                                                            <tbody>
+                                                                            <tr>
+                                                                                <td colspan="5" style="font-size: x-small; font-weight: bold; background-color: #3c8dbc; color: #ffffff">
+                                                                                    Escalas alfabéticas para las calificaciones alcanzadas
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td style="font-size: x-small; font-weight: bold">Asignatura No Integradora</td>
+                                                                                <td style="font-size: x-small; font-weight: bold">AU = Autónomo 10</td>
+                                                                                <td style="font-size: x-small; font-weight: bold">DE = Destacado 9</td>
+                                                                                <td style="font-size: x-small; font-weight: bold">SA = Satisfactorio 8</td>
+                                                                                <td style="font-size: x-small; font-weight: bold">NA = No Acreditado menor a 8</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td style="font-size: x-small; font-weight: bold">Asignatura Integradora</td>
+                                                                                <td style="font-size: x-small; font-weight: bold">CA = Competente Autónomo 10</td>
+                                                                                <td style="font-size: x-small; font-weight: bold">CD = Competente Destacado 9</td>
+                                                                                <td style="font-size: x-small; font-weight: bold">CO = Competente 8</td>
+                                                                                <td style="font-size: x-small; font-weight: bold">NA = No Acreditado menor a 8</td>
+                                                                            </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+
+                                                            </p:outputPanel>
+                                                        </div>
+                                                    </h:form>
+                                                </div>
+
+                                            </div>
+                                        </div>
 
                                     </p:tab>
                                 </p:tabView>
