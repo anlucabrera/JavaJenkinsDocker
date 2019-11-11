@@ -427,6 +427,7 @@ public class ControladorPersonal implements Serializable {
 
     public void mostrarLista() {
         try {
+            Boolean nulos=Boolean.FALSE;
             List<ListaEvaluaciones> listaEvaluaciones = new ArrayList<>();
             ResultadoEva nuevoResEva;
             String tipo="";
@@ -436,60 +437,64 @@ public class ControladorPersonal implements Serializable {
             
             List<PeriodosEscolares> periodos = ejbPersonalEvaluaciones.getPeriodos(nuevOBJPersonalSubordinado);
             Map<PeriodosEscolares, List<Evaluaciones360Resultados>> resultados360 = ejbPersonalEvaluaciones.getEvaluaciones360PorPeriodo(nuevOBJPersonalSubordinado, periodos);
+            if(resultados360==null){                nulos=Boolean.TRUE;            }
             Map<PeriodosEscolares, DesempenioEvaluacionResultados> resultadosDesempenio = ejbPersonalEvaluaciones.getEvaluacionesDesempenioPorPeriodo(nuevOBJPersonalSubordinado, periodos);
-            listaEvaluaciones = ejbPersonalEvaluaciones.empaquetar(nuevOBJPersonalSubordinado, periodos, resultados360, resultadosDesempenio);
+            if(resultadosDesempenio==null){                nulos=Boolean.TRUE;            }
+            if(nulos==Boolean.FALSE){
+                listaEvaluaciones = ejbPersonalEvaluaciones.empaquetar(nuevOBJPersonalSubordinado, periodos, resultados360, resultadosDesempenio);
 
-            for (int i = 0; i <= listaEvaluaciones.size() - 1; i++) {
-                nOBRE = listaEvaluaciones.get(i);
+                for (int i = 0; i <= listaEvaluaciones.size() - 1; i++) {
+                    nOBRE = listaEvaluaciones.get(i);
 
-                if (!nOBRE.getPromedio360().isNaN()) {
-                    if (nOBRE.getPromedio360() != null) {
-                        if (nOBRE.getPromedio360() == 0.0) {
-                            tipo = "proceso";
+                    if (!nOBRE.getPromedio360().isNaN()) {
+                        if (nOBRE.getPromedio360() != null) {
+                            if (nOBRE.getPromedio360() == 0.0) {
+                                tipo = "proceso";
+                            }
+                            if (nOBRE.getPromedio360() > 0.0 && nOBRE.getPromedio360() <= 0.9) {
+                                tipo = "danger";
+                            }
+                            if (nOBRE.getPromedio360() >= 1.0 && nOBRE.getPromedio360() <= 1.9) {
+                                tipo = "warning";
+                            }
+                            if (nOBRE.getPromedio360() >= 2.0 && nOBRE.getPromedio360() <= 2.9) {
+                                tipo = "info";
+                            }
+                            if (nOBRE.getPromedio360() >= 3.0 && nOBRE.getPromedio360() <= 4.0) {
+                                tipo = "success";
+                            }
+                            nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), Double.parseDouble(df.format(nOBRE.getPromedio360())), "Evaluación 360°", tipo);
+                            listaResultadoEva.add(nuevoResEva);
                         }
-                        if (nOBRE.getPromedio360() > 0.0 && nOBRE.getPromedio360() <= 0.9) {
-                            tipo = "danger";
-                        }
-                        if (nOBRE.getPromedio360() >= 1.0 && nOBRE.getPromedio360() <= 1.9) {
-                            tipo = "warning";
-                        }
-                        if (nOBRE.getPromedio360() >= 2.0 && nOBRE.getPromedio360() <= 2.9) {
-                            tipo = "info";
-                        }
-                        if (nOBRE.getPromedio360() >= 3.0 && nOBRE.getPromedio360() <= 4.0) {
-                            tipo = "success";
-                        }
-                        nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), Double.parseDouble(df.format(nOBRE.getPromedio360())), "Evaluación 360°", tipo);
+                    } else {
+                        nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), 0.00, "Evaluación 360°", "proceso");
                         listaResultadoEva.add(nuevoResEva);
                     }
-                } else {
-                    nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), 0.00, "Evaluación 360°", "proceso");
-                    listaResultadoEva.add(nuevoResEva);
-                }
 
-                if (!nOBRE.getPromedioDesepenio().isNaN()) {
-                    if (nOBRE.getPromedioDesepenio() != null) {
-                        if (nOBRE.getPromedioDesepenio() == 0.0) {
-                            tipo = "proceso";
+                    if (!nOBRE.getPromedioDesepenio().isNaN()) {
+                        if (nOBRE.getPromedioDesepenio() != null) {
+                            if (nOBRE.getPromedioDesepenio() == 0.0) {
+                                tipo = "proceso";
+                            }
+                            if (nOBRE.getPromedioDesepenio() > 0.0 && nOBRE.getPromedioDesepenio() <= 1.24) {
+                                tipo = "danger";
+                            }
+                            if (nOBRE.getPromedioDesepenio() >= 1.25 && nOBRE.getPromedioDesepenio() <= 2.49) {
+                                tipo = "warning";
+                            }
+                            if (nOBRE.getPromedioDesepenio() >= 2.50 && nOBRE.getPromedioDesepenio() <= 3.74) {
+                                tipo = "info";
+                            }
+                            if (nOBRE.getPromedioDesepenio() >= 3.75 && nOBRE.getPromedioDesepenio() <= 5.0) {
+                                tipo = "success";
+                            }
+                            nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), Double.parseDouble(df.format(nOBRE.getPromedioDesepenio())), "Evaluación Desempeño", tipo);
+                            listaResultadoEva.add(nuevoResEva);
                         }
-                        if (nOBRE.getPromedioDesepenio() > 0.0 && nOBRE.getPromedioDesepenio() <= 1.24) {
-                            tipo = "danger";
-                        }
-                        if (nOBRE.getPromedioDesepenio() >= 1.25 && nOBRE.getPromedioDesepenio() <= 2.49) {
-                            tipo = "warning";
-                        }
-                        if (nOBRE.getPromedioDesepenio() >= 2.50 && nOBRE.getPromedioDesepenio() <= 3.74) {
-                            tipo = "info";
-                        }
-                        if (nOBRE.getPromedioDesepenio() >= 3.75 && nOBRE.getPromedioDesepenio() <= 5.0) {
-                            tipo = "success";
-                        }
-                        nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), Double.parseDouble(df.format(nOBRE.getPromedioDesepenio())), "Evaluación Desempeño", tipo);
+                    } else {
+                        nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), 0.00, "Evaluación Desempeño", "proceso");
                         listaResultadoEva.add(nuevoResEva);
                     }
-                } else {
-                    nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), 0.00, "Evaluación Desempeño", "proceso");
-                    listaResultadoEva.add(nuevoResEva);
                 }
             }
         } catch (Throwable ex) {

@@ -94,17 +94,15 @@
                             <p:selectOneMenu id="clave" value="#{controladorPersonal.contactoDestino}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
                                 <f:selectItem itemValue="0" itemLabel=" Regresar "/>
                                 <f:selectItems value="#{controladorPersonal.listaPersonal}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.clave} - #{personal.nombre} - #{personal.categoriaOperativa.nombre}" />
+                                <p:ajax update="@form :frmFunciones :informacion panelDatos" process="@form :frmFunciones" listener="#{controladorPersonal.mostrarPerfilSubordinado()}"/>
                             </p:selectOneMenu>  
                             <p:message for="clave"/>
-                        </div>
-                        <div class="col-sm-2">
-                            <p:commandButton id="btnBuscarActiuvidades" value="Visualizar perfil" actionListener="#{controladorPersonal.mostrarPerfilSubordinado()}" icon="fa fa-search" class="btn-primary btn-block col-md-3" update="@form :frmFunciones :informacion panelDatos" process="@form :frmFunciones" /> 
                         </div>
                         <div class="col-sm-3">
                             <p:commandButton id="plantillaPersonal" value="Descargar plantilla del personal activo" actionListener="#{exelPlantillaPersonal.generarPlantillaPersoanl()}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
                         </div>
                         <div class="col-sm-2">
-                            <p:commandButton id="zip" value="Descargar evidencias" actionListener="#{controladorPersonal.listaArchivos()}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
+                            <p:commandButton id="zip" value="Descargar evidencias" actionListener="#{controladorPersonal.listaArchivos()}" disabled="#{controladorPersonal.contactoDestino eq 0}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
                         </div>
                     </h:form>
                 </div> 
