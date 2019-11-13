@@ -572,9 +572,9 @@
                                                             <td class="text-center" style="min-width: 200px;">
                                                                 <f:ajax execute="r#{index}">
                                                                     <c:set var="pos" value="#{'r'.concat(index)}" />
-                                                                    <p:selectOneButton  id="p#{index}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados[pos]}"
+                                                                    <p:selectOneButton  id="r#{index}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados[pos]}"
                                                                                         valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
-                                                                        <p:ajax process="@this" update="@form, :frm"/>
+                                                                        <p:ajax process="@this" update="@this, :frm"/>
                                                                         <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
                                                                     </p:selectOneButton>
                                                                 </f:ajax>

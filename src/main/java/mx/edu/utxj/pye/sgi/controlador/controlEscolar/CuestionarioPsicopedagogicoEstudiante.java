@@ -41,6 +41,7 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
     @Inject LogonMB logonMB;
     @EJB EjbCuestionarioPsicopedagogico ejbCuestionario;
     @Getter Boolean tieneAcceso = false;
+    @Getter  Boolean finalizo =false;
     @Getter Boolean cargada2 =false;
     @Getter @Setter CuestionarioPsicopedagogicoRolEstudiante rol = new CuestionarioPsicopedagogicoRolEstudiante();
     @Getter @Setter String valor;
@@ -62,7 +63,7 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
                 ResultadoEJB<Evaluaciones> resEvaluacion = ejbCuestionario.getcuestionarioActiva();
                 if(!resEvaluacion.getCorrecto()) tieneAcceso = false; //Debe negarle el acceso en caso de no haber un cuestionario activo
                 //----------------------------------------------------------------------------------------------------------------------------
-                if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+                //if(verificarInvocacionMenu()) return;detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
                 if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
                 rol.setNivelRol(NivelRol.OPERATIVO);
                 if(resEvaluacion.getCorrecto()==true){
@@ -89,6 +90,7 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
                     getResultadosEstudiante();
                     //TODO: Comprueba si el cuestionario ya esta terminado
                     comprobar();
+                   // System.out.println("1 --"+ finalizo);
 
                 }
 
@@ -141,6 +143,7 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
         //System.out.println("COMPROBAR");
         Comparador<CuestionarioPsicopedagogicoResultados> comparador = new ComparadorCuestionarioPsicopedagogicoEstudiante();
         rol.setFinalizado(comparador.isCompleto(rol.getResultados()));
+        finalizo =comparador.isCompleto(rol.getResultados());
         if(rol.isFinalizado()==true){
             ResultadoEJB<CuestionarioPsicopedagogicoResultados> resActualiza = ejbCuestionario.actualizarCompleto(rol.getResultados());
             if(resActualiza.getCorrecto()==true){rol.setResultados(resActualiza.getValor());}
