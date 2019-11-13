@@ -60,9 +60,9 @@ public class ControladorEmpleado implements Serializable {
     @Getter    @Setter    private List<Integer> administradores = new ArrayList();
     @Getter    @Setter    private List<Boolean> poaProces = new ArrayList();
     @Getter    @Setter    private String clavePersonalLogeado, mandos = "", fechaCVBencimiento, fechaFuncionesBencimiento, fechaLimiteCurriculumVitae = "", fechaLimiteRegistroFunciones = "",
-            mensajeIndex1 = "", mensajeIndex2 = "";
+            mensajeIndex1 = "", mensajeIndex2 = "",mensajeIndexPoa = "";
 
-    @Getter    @Setter    private Boolean fechaLimiteCV, fechaLimiteFunciones, tienePOA = false, estiloInfo = false, mensajeGeneral = false,evaluable=false;
+    @Getter    @Setter    private Boolean fechaLimiteCV, fechaLimiteFunciones, tienePOA = false,mensajeVisiblePOA = false, estiloInfo = false, mensajeGeneral = false,evaluable=false;
     @Getter    @Setter    private List<Modulosregistro> nuevaListaModulosregistro = new ArrayList<>();
 
     @Getter    @Setter    private EventosAreas nuevaEventosAreas = new EventosAreas();
@@ -277,8 +277,13 @@ public class ControladorEmpleado implements Serializable {
         } else {
             fechaf = uch.castearDaLDT(t.getFechaFin()).plusHours(23).plusMinutes(59).plusSeconds(59);
         }
-
+        Integer minutos = (int) ((uch.castearLDTaD(fechaf).getTime() - uch.castearLDTaD(fechaActualHora).getTime()) / 60000);
+        Integer diasR = minutos / 1440;
+        Integer horasR = (minutos % 1440);
+        Integer res = (minutos % 60);
         if ((fechaActualHora.isAfter(fechai) || fechaActualHora.equals(fechai)) && (fechaActualHora.isBefore(fechaf) || fechaActualHora.equals(fechaf))) {
+            mensajeIndexPoa = "Resta " + diasR + " día(s) " + (horasR / 60) + " hora(s) y " + (res) + " minutos para que finalice el periodo para el Proceso de " + t.getNombre();
+            mensajeVisiblePOA = Boolean.TRUE;
             return true;
         } else {
             return false;

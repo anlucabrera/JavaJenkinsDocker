@@ -69,7 +69,7 @@ public class ZipWritter {
                     if (f.isFile()) {
                         zipFile.addFile(f, parameters);
                     } else if (f.isDirectory()) {
-//                        zipFile.addFolder(f, parameters);
+                        zipFile.addFolder(f, parameters);
                         final String nombre = nombres.get(i);
                         try (Stream<Path> paths = Files.walk(Paths.get(f.toString()))) {
                             paths.filter(Files::isRegularFile).forEach((Path path) -> {
@@ -127,4 +127,4 @@ public class ZipWritter {
 //        }
         return zw.getZipFile().getFile();
     }
-}
+    }

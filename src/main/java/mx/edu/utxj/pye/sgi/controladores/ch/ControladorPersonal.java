@@ -93,7 +93,7 @@ public class ControladorPersonal implements Serializable {
 ////////////////////////////////////////////////////////////////////////////////Variables de apoyo
     @Getter    @Setter    private Short actividad = 0, categoriaOP = 0, categoriaOF = 0, categoria360 = 0, grado = 0;
     @Getter    @Setter    private Integer contactoDestino=0, total = 0, tv1 = 0, tv2 = 0, tv3 = 0, tv4 = 0, tv5 = 0, tv6 = 0, tv7 = 0, tv8 = 0, tv9 = 0;
-    @Getter    @Setter    private String clase = "", nombreTabla;
+    @Getter    @Setter    private String clase = "", nombreTabla,nombreArchivo="";
     @Getter    @Setter    DecimalFormat df = new DecimalFormat("#.00");
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
@@ -309,7 +309,7 @@ public class ControladorPersonal implements Serializable {
                         tv4 = tv4 + 1;
                     }
                 });
-            }            
+            }
             if (!listaLibrosPubs.isEmpty()) {
                 listaLibrosPubs.forEach((t) -> {
                     if (t.getEvidencia() != null){
@@ -319,7 +319,7 @@ public class ControladorPersonal implements Serializable {
                         tv7 = tv7 + 1;
                     }
                 });
-            }            
+            }
             if (!listaArticulosp.isEmpty()) {
                 listaArticulosp.forEach((t) -> {
                     if (t.getEvidencia() != null){
@@ -329,7 +329,7 @@ public class ControladorPersonal implements Serializable {
                         tv8 = tv8 + 1;
                     }
                 });
-            }            
+            }
             if (!listaMemoriaspub.isEmpty()) {
                 listaMemoriaspub.forEach((t) -> {
                     if (t.getEvidencia() != null){
@@ -339,7 +339,7 @@ public class ControladorPersonal implements Serializable {
                         tv9 = tv9 + 1;
                     }
                 });
-            }            
+            }
             if (!listaDistinciones.isEmpty()) {
                 listaDistinciones.forEach((t) -> {
                     if (t.getEvidenciaDistincion() != null){
@@ -349,9 +349,9 @@ public class ControladorPersonal implements Serializable {
                         tv6 = tv6 + 1;
                     }
                 });
-            }            
+            }
             if (!listaFormacionAcademica.isEmpty()) {
-                listaFormacionAcademica.forEach((t) -> {                                        
+                listaFormacionAcademica.forEach((t) -> {
                     if (t.getEvidenciaCedula() != null){
                         rutasEvidenciasBD.add(t.getEvidenciaCedula());
                     }
@@ -362,7 +362,7 @@ public class ControladorPersonal implements Serializable {
                         tv1 = tv1 + 1;
                     }
                 });
-            }            
+            }
             if (!listaExperienciasLaborales.isEmpty()) {
                 listaExperienciasLaborales.forEach((t) -> {
                     if (t.getEvidenciaNombremiento() != null){
@@ -372,7 +372,7 @@ public class ControladorPersonal implements Serializable {
                         tv2 = tv2 + 1;
                     }
                 });
-            }            
+            }
             if (!listaCapacitacionespersonal.isEmpty()) {
                 listaCapacitacionespersonal.forEach((t) -> {
                     if (t.getEvidenciaCapacitacion() != null){
@@ -382,7 +382,7 @@ public class ControladorPersonal implements Serializable {
                         tv3 = tv3 + 1;
                     }
                 });
-            }            
+            }
             if (!listaDesarrollosTecnologicos.isEmpty()) {
                 listaDesarrollosTecnologicos.forEach((t) -> {
                     if (t.getDocumentoRespaldo() != null){
@@ -393,7 +393,7 @@ public class ControladorPersonal implements Serializable {
                     }
                 });
             }
-            
+
             total = tv1 + tv2 + tv3 + tv4 + tv5 + tv6 + tv7 + tv8 + tv9;
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -427,20 +427,24 @@ public class ControladorPersonal implements Serializable {
 
     public void mostrarLista() {
         try {
-            Boolean nulos=Boolean.FALSE;
+            Boolean nulos = Boolean.FALSE;
             List<ListaEvaluaciones> listaEvaluaciones = new ArrayList<>();
             ResultadoEva nuevoResEva;
-            String tipo="";
+            String tipo = "";
             ListaEvaluaciones nOBRE;
             listaResultadoEva.clear();
             listaEvaluaciones.clear();
-            
+
             List<PeriodosEscolares> periodos = ejbPersonalEvaluaciones.getPeriodos(nuevOBJPersonalSubordinado);
             Map<PeriodosEscolares, List<Evaluaciones360Resultados>> resultados360 = ejbPersonalEvaluaciones.getEvaluaciones360PorPeriodo(nuevOBJPersonalSubordinado, periodos);
-            if(resultados360==null){                nulos=Boolean.TRUE;            }
+            if (resultados360 == null) {
+                nulos = Boolean.TRUE;
+            }
             Map<PeriodosEscolares, DesempenioEvaluacionResultados> resultadosDesempenio = ejbPersonalEvaluaciones.getEvaluacionesDesempenioPorPeriodo(nuevOBJPersonalSubordinado, periodos);
-            if(resultadosDesempenio==null){                nulos=Boolean.TRUE;            }
-            if(nulos==Boolean.FALSE){
+            if (resultadosDesempenio == null) {
+                nulos = Boolean.TRUE;
+            }
+            if (nulos == Boolean.FALSE) {
                 listaEvaluaciones = ejbPersonalEvaluaciones.empaquetar(nuevOBJPersonalSubordinado, periodos, resultados360, resultadosDesempenio);
 
                 for (int i = 0; i <= listaEvaluaciones.size() - 1; i++) {
@@ -502,7 +506,7 @@ public class ControladorPersonal implements Serializable {
             Logger.getLogger(ControladorResultadosEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void descargarEvidenciasCH() {
         try {
             String nombreArchivo = "";
@@ -522,11 +526,11 @@ public class ControladorPersonal implements Serializable {
                 if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc() != null){
                     rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc());
                 }
-            }                        
+            }
             nombreArchivo = nuevoOBJListaPersonal.getClave() + " CV " + nuevoOBJListaPersonal.getNombre();
 
             if (!rutasEvidenciasBD.isEmpty()) {
-                File zip = ZipWritter.generarZipPoa(rutasEvidenciasBD, nombreArchivo, Integer.parseInt(String.valueOf(nuevoOBJInformacionAdicionalPersonal.getClave())));
+                File zip = ZipWritter.generarZipPoa(rutasEvidenciasBD,nombreArchivo, Integer.parseInt(String.valueOf(contactoDestino)));
                 Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/" + nombreArchivo + ".zip" + "');");
             }
         } catch (Throwable ex) {

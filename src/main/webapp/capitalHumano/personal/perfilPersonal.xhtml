@@ -10,6 +10,14 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
@@ -102,7 +110,7 @@
                             <p:commandButton id="plantillaPersonal" value="Descargar plantilla del personal activo" actionListener="#{exelPlantillaPersonal.generarPlantillaPersoanl()}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
                         </div>
                         <div class="col-sm-2">
-                            <p:commandButton id="zip" value="Descargar evidencias" actionListener="#{controladorPersonal.listaArchivos()}" disabled="#{controladorPersonal.contactoDestino eq 0}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
+                            <p:commandButton id="zip" value="Descargar evidencias" actionListener="#{controladorPersonal.descargarEvidenciasCH()}" disabled="#{controladorPersonal.contactoDestino eq 0}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
                         </div>
                     </h:form>
                 </div> 
