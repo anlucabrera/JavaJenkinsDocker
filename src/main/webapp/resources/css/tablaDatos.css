@@ -49,6 +49,14 @@ table[role="grid"]{
    width: 20.5em;
 }
 
+.campoAutocompleteEstudiante input {
+   width: 19em;
+}
+
+.campoAutocompleteDocente input {
+   width: 30em;
+}
+
 .campo3Partes input {
    width: 14em;
 }
@@ -61,8 +69,28 @@ table[role="grid"]{
     width: 45.5em
 }
 
+.campoTiempo input{
+    width: 10em
+}
+
+.campoTutoriaGrupalDT input {
+   width: 8em;
+}
+
 .alert{
     padding-top: 2px;
     padding-bottom: 2px;
     margin-bottom: 5px;
+}
+body .ui-datatable .ui-datatable-header, body .ui-treetable .ui-datatable-header, body .ui-datatable .ui-treetable-header, body .ui-treetable .ui-treetable-header, body .ui-datatable .ui-datatable-footer, body .ui-treetable .ui-datatable-footer, body .ui-datatable .ui-treetable-footer, body .ui-treetable .ui-treetable-footer {
+    background: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    border-color: #f4f4f4;
+}
+
+.casoCriticoTG {
+    background-color: #fca752 !important;
+    background-image: none !important;
+    color: #000000 !important;
 }

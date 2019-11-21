@@ -10,6 +10,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "tutorias_individuales", catalog = "control_escolar", schema = "")
@@ -32,75 +34,120 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "TutoriasIndividuales.findAll", query = "SELECT t FROM TutoriasIndividuales t")
     , @NamedQuery(name = "TutoriasIndividuales.findByTutoriaIndividual", query = "SELECT t FROM TutoriasIndividuales t WHERE t.tutoriaIndividual = :tutoriaIndividual")
-    , @NamedQuery(name = "TutoriasIndividuales.findByFechaHora", query = "SELECT t FROM TutoriasIndividuales t WHERE t.fechaHora = :fechaHora")
+    , @NamedQuery(name = "TutoriasIndividuales.findByFecha", query = "SELECT t FROM TutoriasIndividuales t WHERE t.fecha = :fecha")
+    , @NamedQuery(name = "TutoriasIndividuales.findByHoraInicio", query = "SELECT t FROM TutoriasIndividuales t WHERE t.horaInicio = :horaInicio")
+    , @NamedQuery(name = "TutoriasIndividuales.findByTiempoInvertido", query = "SELECT t FROM TutoriasIndividuales t WHERE t.tiempoInvertido = :tiempoInvertido")
+    , @NamedQuery(name = "TutoriasIndividuales.findByTipoTiempo", query = "SELECT t FROM TutoriasIndividuales t WHERE t.tipoTiempo = :tipoTiempo")
     , @NamedQuery(name = "TutoriasIndividuales.findByMotivo", query = "SELECT t FROM TutoriasIndividuales t WHERE t.motivo = :motivo")
     , @NamedQuery(name = "TutoriasIndividuales.findByAccionesObservaciones", query = "SELECT t FROM TutoriasIndividuales t WHERE t.accionesObservaciones = :accionesObservaciones")
-    , @NamedQuery(name = "TutoriasIndividuales.findByTiempoSesion", query = "SELECT t FROM TutoriasIndividuales t WHERE t.tiempoSesion = :tiempoSesion")})
+    , @NamedQuery(name = "TutoriasIndividuales.findByEventoRegistro", query = "SELECT t FROM TutoriasIndividuales t WHERE t.eventoRegistro = :eventoRegistro")})
 public class TutoriasIndividuales implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
     @Column(name = "tutoria_individual")
-    private String tutoriaIndividual;
+    private Integer tutoriaIndividual;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "fecha_hora")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaHora;
+    @Column(name = "fecha")
+    @Temporal(TemporalType.DATE)
+    private Date fecha;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 500)
+    @Column(name = "hora_inicio")
+    @Temporal(TemporalType.TIME)
+    private Date horaInicio;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tiempo_invertido")
+    private short tiempoInvertido;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 7)
+    @Column(name = "tipo_tiempo")
+    private String tipoTiempo;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 5000)
     @Column(name = "motivo")
     private String motivo;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 500)
+    @Size(min = 1, max = 5000)
     @Column(name = "acciones_observaciones")
     private String accionesObservaciones;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "tiempo_sesion")
-    private String tiempoSesion;
+    @Column(name = "evento_registro")
+    private int eventoRegistro;
     @JoinColumn(name = "caso_critico", referencedColumnName = "caso")
     @ManyToOne
     private CasoCritico casoCritico;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
     private Estudiante estudiante;
+    @JoinColumn(name = "sesion_grupal", referencedColumnName = "sesion_grupal")
+    @ManyToOne(optional = false)
+    private SesionesGrupalesTutorias sesionGrupal;
 
     public TutoriasIndividuales() {
     }
 
-    public TutoriasIndividuales(String tutoriaIndividual) {
+    public TutoriasIndividuales(Integer tutoriaIndividual) {
         this.tutoriaIndividual = tutoriaIndividual;
     }
 
-    public TutoriasIndividuales(String tutoriaIndividual, Date fechaHora, String motivo, String accionesObservaciones, String tiempoSesion) {
+    public TutoriasIndividuales(Integer tutoriaIndividual, Date fecha, Date horaInicio, short tiempoInvertido, String tipoTiempo, String motivo, String accionesObservaciones, int eventoRegistro) {
         this.tutoriaIndividual = tutoriaIndividual;
-        this.fechaHora = fechaHora;
+        this.fecha = fecha;
+        this.horaInicio = horaInicio;
+        this.tiempoInvertido = tiempoInvertido;
+        this.tipoTiempo = tipoTiempo;
         this.motivo = motivo;
         this.accionesObservaciones = accionesObservaciones;
-        this.tiempoSesion = tiempoSesion;
+        this.eventoRegistro = eventoRegistro;
     }
 
-    public String getTutoriaIndividual() {
+    public Integer getTutoriaIndividual() {
         return tutoriaIndividual;
     }
 
-    public void setTutoriaIndividual(String tutoriaIndividual) {
+    public void setTutoriaIndividual(Integer tutoriaIndividual) {
         this.tutoriaIndividual = tutoriaIndividual;
     }
 
-    public Date getFechaHora() {
-        return fechaHora;
+    public Date getFecha() {
+        return fecha;
     }
 
-    public void setFechaHora(Date fechaHora) {
-        this.fechaHora = fechaHora;
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public Date getHoraInicio() {
+        return horaInicio;
+    }
+
+    public void setHoraInicio(Date horaInicio) {
+        this.horaInicio = horaInicio;
+    }
+
+    public short getTiempoInvertido() {
+        return tiempoInvertido;
+    }
+
+    public void setTiempoInvertido(short tiempoInvertido) {
+        this.tiempoInvertido = tiempoInvertido;
+    }
+
+    public String getTipoTiempo() {
+        return tipoTiempo;
+    }
+
+    public void setTipoTiempo(String tipoTiempo) {
+        this.tipoTiempo = tipoTiempo;
     }
 
     public String getMotivo() {
@@ -119,12 +166,12 @@ public class TutoriasIndividuales implements Serializable {
         this.accionesObservaciones = accionesObservaciones;
     }
 
-    public String getTiempoSesion() {
-        return tiempoSesion;
+    public int getEventoRegistro() {
+        return eventoRegistro;
     }
 
-    public void setTiempoSesion(String tiempoSesion) {
-        this.tiempoSesion = tiempoSesion;
+    public void setEventoRegistro(int eventoRegistro) {
+        this.eventoRegistro = eventoRegistro;
     }
 
     public CasoCritico getCasoCritico() {
@@ -141,6 +188,14 @@ public class TutoriasIndividuales implements Serializable {
 
     public void setEstudiante(Estudiante estudiante) {
         this.estudiante = estudiante;
+    }
+
+    public SesionesGrupalesTutorias getSesionGrupal() {
+        return sesionGrupal;
+    }
+
+    public void setSesionGrupal(SesionesGrupalesTutorias sesionGrupal) {
+        this.sesionGrupal = sesionGrupal;
     }
 
     @Override

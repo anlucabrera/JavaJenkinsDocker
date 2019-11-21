@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga;
+import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.eb.DTOArchivoRepositorio;
 import mx.edu.utxj.pye.siip.dto.eb.DTORepositorio;
@@ -40,6 +42,15 @@ import mx.edu.utxj.pye.siip.dto.eb.DTORepositorio;
 public class Ejemplo {
     
     public static void main (String args[]){
+        
+        System.out.println("----------------------------------------------------------------------------------------------------------------");
+        
+        List<CasoCriticoEstado> estadosAbiertos = Arrays.stream(CasoCriticoEstado.values())
+                        .filter(casoCriticoEstado -> casoCriticoEstado.getNivel() < 0D)
+                        .collect(Collectors.toList());
+        System.err.println("estadosAbiertos: " + estadosAbiertos);
+        
+        System.out.println("----------------------------------------------------------------------------------------------------------------");
         try {
             List<String> listarArchivos = new ArrayList<>();
             if (Files.exists(Paths.get("C:\\archivos\\modulos_registro\\2018\\dpye\\calidad_academica\\diciembre\\actividades_varias\\"), LinkOption.NOFOLLOW_LINKS)) {

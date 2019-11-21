@@ -26,4 +26,12 @@ PrimeFaces.locales['es'] = {
         day: 'Día',
         allDayText: 'Todo el día'
     };
+PrimeFacesExt.locales.TimePicker['es'] = {
+    hourText: 'Hora',
+    minuteText: 'Minuto',
+    amPmText: ['AM', 'PM'],
+    closeButtonText: 'Hecho',
+    nowButtonText: 'Ahora',
+    deselectButtonText: 'Deseleccionar'
+};
 

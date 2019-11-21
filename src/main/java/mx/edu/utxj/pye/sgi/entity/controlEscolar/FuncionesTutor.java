@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "funciones_tutor", catalog = "control_escolar", schema = "")
@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "FuncionesTutor.findAll", query = "SELECT f FROM FuncionesTutor f")
     , @NamedQuery(name = "FuncionesTutor.findByFuncionTutor", query = "SELECT f FROM FuncionesTutor f WHERE f.funcionTutor = :funcionTutor")
+    , @NamedQuery(name = "FuncionesTutor.findByNoSesion", query = "SELECT f FROM FuncionesTutor f WHERE f.noSesion = :noSesion")
     , @NamedQuery(name = "FuncionesTutor.findByMetaFuncionTutor", query = "SELECT f FROM FuncionesTutor f WHERE f.metaFuncionTutor = :metaFuncionTutor")})
 public class FuncionesTutor implements Serializable {
 
@@ -40,6 +41,10 @@ public class FuncionesTutor implements Serializable {
     @Basic(optional = false)
     @Column(name = "funcion_tutor")
     private Integer funcionTutor;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "no_sesion")
+    private short noSesion;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 5000)
@@ -56,8 +61,9 @@ public class FuncionesTutor implements Serializable {
         this.funcionTutor = funcionTutor;
     }
 
-    public FuncionesTutor(Integer funcionTutor, String metaFuncionTutor) {
+    public FuncionesTutor(Integer funcionTutor, short noSesion, String metaFuncionTutor) {
         this.funcionTutor = funcionTutor;
+        this.noSesion = noSesion;
         this.metaFuncionTutor = metaFuncionTutor;
     }
 
@@ -67,6 +73,14 @@ public class FuncionesTutor implements Serializable {
 
     public void setFuncionTutor(Integer funcionTutor) {
         this.funcionTutor = funcionTutor;
+    }
+
+    public short getNoSesion() {
+        return noSesion;
+    }
+
+    public void setNoSesion(short noSesion) {
+        this.noSesion = noSesion;
     }
 
     public String getMetaFuncionTutor() {

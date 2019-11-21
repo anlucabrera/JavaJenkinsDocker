@@ -18,6 +18,7 @@ public enum CasoCriticoTipo {
     DIFERENCIA_ASIMILACION("Diferencia en la detección de asimilación de conocimientos y habilidades", 1d),
     DIFERENCIA_VALORES_ACTITUDES("Deficiencia en la información de valores y actitudes", 1d),
     SISTEMA_UNIDAD_REPROBADA("Sistema - unidad reprobada", 0d),
+    SISTEMA_TUTORIA_GRUPAL("Sistema - Detectado en Tutoria Grupal",0d),
     SISTEMA_ASISTENCIA_IRREGURLAR("Sistema - Asistencia irregular", 0d);
     @Getter @NonNull private String label;
     @Getter @NonNull private Double nivel;

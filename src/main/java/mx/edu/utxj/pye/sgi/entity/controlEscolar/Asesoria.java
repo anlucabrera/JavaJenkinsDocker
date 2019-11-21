@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
@@ -31,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "asesoria", catalog = "control_escolar", schema = "")
@@ -42,6 +41,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Asesoria.findByFechaHora", query = "SELECT a FROM Asesoria a WHERE a.fechaHora = :fechaHora")
     , @NamedQuery(name = "Asesoria.findByObservacionesCompromisos", query = "SELECT a FROM Asesoria a WHERE a.observacionesCompromisos = :observacionesCompromisos")
     , @NamedQuery(name = "Asesoria.findByTiempoInvertido", query = "SELECT a FROM Asesoria a WHERE a.tiempoInvertido = :tiempoInvertido")
+    , @NamedQuery(name = "Asesoria.findByTipoTiempo", query = "SELECT a FROM Asesoria a WHERE a.tipoTiempo = :tipoTiempo")
     , @NamedQuery(name = "Asesoria.findByTipo", query = "SELECT a FROM Asesoria a WHERE a.tipo = :tipo")
     , @NamedQuery(name = "Asesoria.findByEventoRegistro", query = "SELECT a FROM Asesoria a WHERE a.eventoRegistro = :eventoRegistro")})
 public class Asesoria implements Serializable {
@@ -64,9 +64,13 @@ public class Asesoria implements Serializable {
     private String observacionesCompromisos;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
     @Column(name = "tiempo_invertido")
-    private String tiempoInvertido;
+    private short tiempoInvertido;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 7)
+    @Column(name = "tipo_tiempo")
+    private String tipoTiempo;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 11)
@@ -76,7 +80,7 @@ public class Asesoria implements Serializable {
     @NotNull
     @Column(name = "evento_registro")
     private int eventoRegistro;
-    @JoinTable(name = "participantes_asesoria", joinColumns = {
+    @JoinTable(name = "control_escolar.participantes_asesoria", joinColumns = {
         @JoinColumn(name = "asesoria", referencedColumnName = "id_asesoria")}, inverseJoinColumns = {
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")})
     @ManyToMany
@@ -92,11 +96,12 @@ public class Asesoria implements Serializable {
         this.idAsesoria = idAsesoria;
     }
 
-    public Asesoria(Integer idAsesoria, Date fechaHora, String observacionesCompromisos, String tiempoInvertido, String tipo, int eventoRegistro) {
+    public Asesoria(Integer idAsesoria, Date fechaHora, String observacionesCompromisos, short tiempoInvertido, String tipoTiempo, String tipo, int eventoRegistro) {
         this.idAsesoria = idAsesoria;
         this.fechaHora = fechaHora;
         this.observacionesCompromisos = observacionesCompromisos;
         this.tiempoInvertido = tiempoInvertido;
+        this.tipoTiempo = tipoTiempo;
         this.tipo = tipo;
         this.eventoRegistro = eventoRegistro;
     }
@@ -125,12 +130,20 @@ public class Asesoria implements Serializable {
         this.observacionesCompromisos = observacionesCompromisos;
     }
 
-    public String getTiempoInvertido() {
+    public short getTiempoInvertido() {
         return tiempoInvertido;
     }
 
-    public void setTiempoInvertido(String tiempoInvertido) {
+    public void setTiempoInvertido(short tiempoInvertido) {
         this.tiempoInvertido = tiempoInvertido;
+    }
+
+    public String getTipoTiempo() {
+        return tipoTiempo;
+    }
+
+    public void setTipoTiempo(String tipoTiempo) {
+        this.tipoTiempo = tipoTiempo;
     }
 
     public String getTipo() {
@@ -190,5 +203,5 @@ public class Asesoria implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Asesoria[ idAsesoria=" + idAsesoria + " ]";
     }
-
+    
 }

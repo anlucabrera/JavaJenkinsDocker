@@ -36,6 +36,12 @@ public enum ControlEscolarVistaControlador {
     REPORTE_ASISTENCIA_TUTOR("/controlEscolar/tutor/reporteAsistenciasTutor.xhtml",  ReporteAsistenciasTutor.class),
     CONSULTA_CALIFICACION_ESTUDIANTE("/controlEscolar/estudiante/consultarCalificaciones.xhtml",  ConsultaCalificacionesEstudiante.class),
     VALIDACION_PLANEACION_CUATRIMESTRAL("/controlEscolar/docente/planeacionCuatrimestralValidacion.xhtml", PlaneacionCuatrimestralValidacion.class),
+    REGISTRO_ASESORIA("/controlEscolar/docente/registro_asesorias.xhtml", RegistroAsesoriaDocente.class),
+    PLAN_ACCION_TUTORIAL("/controlEscolar/tutor/plan_accion_tutorial.xhtml", RegistroPlanTutoriaTutor.class),
+    REGISTRO_TUTORIA_GRUPAL("/controlEscolar/tutor/registro_tutoria_grupal.xhtml", RegistroTutoriaGrupal.class),
+    REGISTRO_TUTORIA_INDIVIDUAL("/controlEscolar/tutor/registro_tutoria_individual.xhtml", RegistroTutoriaIndividual.class),
+    SEGUIMIENTO_CASO_CRITICO_ESPECIALISTA("/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml", SeguimientoCasoCriticoEspecialista.class),
+    VALIDACION_PLAN_ACCION_TUTORIAL_DIRECTOR("/controlEscolar/director/validacion_plan_accion_tutorial.xhtml", ValidacionPlanAccionTutorialDirector.class),
     REPORTE_ASISTENCIA_DIRECTOR("/controlEscolar/director/reporteAsistenciasDirector.xhtml",  ReporteAsistenciasDirector.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;

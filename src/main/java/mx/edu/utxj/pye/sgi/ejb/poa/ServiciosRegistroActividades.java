@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.poa;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
@@ -81,7 +82,7 @@ public class ServiciosRegistroActividades implements EjbRegistroActividades {
         TypedQuery<ActividadesPoa> q = em.createQuery("SELECT a FROM ActividadesPoa a INNER JOIN a.cuadroMandoInt cm INNER JOIN cm.ejercicioFiscal ef WHERE a.area = :area AND ef.ejercicioFiscal=:ejercicioFiscal", ActividadesPoa.class);
         q.setParameter("area", area);
         q.setParameter("ejercicioFiscal", ejercicioFiscal);
-        List<ActividadesPoa> pr = q.getResultList();
+        List<ActividadesPoa> pr = Collections.EMPTY_LIST;
         return pr;
     }
 
@@ -91,7 +92,7 @@ public class ServiciosRegistroActividades implements EjbRegistroActividades {
         q.setParameter("area", area);
         q.setParameter("eje", ejesRegistro.getEje());
         q.setParameter("ejercicioFiscal", ejerciciosFiscales);
-        List<ActividadesPoa> pr = q.getResultList();
+        List<ActividadesPoa> pr = Collections.EMPTY_LIST;
         return pr;
     }
 

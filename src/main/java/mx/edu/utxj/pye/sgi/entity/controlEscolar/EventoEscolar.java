@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "evento_escolar", catalog = "control_escolar", schema = "")
@@ -63,7 +63,7 @@ public class EventoEscolar implements Serializable {
     private Date fin;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 38)
+    @Size(min = 1, max = 43)
     @Column(name = "tipo")
     private String tipo;
     @Basic(optional = false)

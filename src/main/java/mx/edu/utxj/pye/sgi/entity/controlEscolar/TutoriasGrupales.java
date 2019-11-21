@@ -21,7 +21,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "tutorias_grupales", catalog = "control_escolar", schema = "")
@@ -42,7 +41,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "TutoriasGrupales.findByTutoriaGrupal", query = "SELECT t FROM TutoriasGrupales t WHERE t.tutoriaGrupal = :tutoriaGrupal")
     , @NamedQuery(name = "TutoriasGrupales.findByFecha", query = "SELECT t FROM TutoriasGrupales t WHERE t.fecha = :fecha")
     , @NamedQuery(name = "TutoriasGrupales.findByHoraInicio", query = "SELECT t FROM TutoriasGrupales t WHERE t.horaInicio = :horaInicio")
-    , @NamedQuery(name = "TutoriasGrupales.findByHoraCierre", query = "SELECT t FROM TutoriasGrupales t WHERE t.horaCierre = :horaCierre")})
+    , @NamedQuery(name = "TutoriasGrupales.findByHoraCierre", query = "SELECT t FROM TutoriasGrupales t WHERE t.horaCierre = :horaCierre")
+    , @NamedQuery(name = "TutoriasGrupales.findByEventoRegistro", query = "SELECT t FROM TutoriasGrupales t WHERE t.eventoRegistro = :eventoRegistro")})
 public class TutoriasGrupales implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -84,13 +84,17 @@ public class TutoriasGrupales implements Serializable {
     @Size(min = 1, max = 65535)
     @Column(name = "observaciones")
     private String observaciones;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "evento_registro")
+    private int eventoRegistro;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tutoriasGrupales")
     private List<ParticipantesTutoriaGrupal> participantesTutoriaGrupalList;
     @JoinColumn(name = "jefe_grupo", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
     private Estudiante jefeGrupo;
     @JoinColumn(name = "sesion_grupal", referencedColumnName = "sesion_grupal")
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private SesionesGrupalesTutorias sesionGrupal;
 
     public TutoriasGrupales() {
@@ -100,7 +104,7 @@ public class TutoriasGrupales implements Serializable {
         this.tutoriaGrupal = tutoriaGrupal;
     }
 
-    public TutoriasGrupales(Integer tutoriaGrupal, Date fecha, Date horaInicio, Date horaCierre, String ordenDia, String acuerdos, String observaciones) {
+    public TutoriasGrupales(Integer tutoriaGrupal, Date fecha, Date horaInicio, Date horaCierre, String ordenDia, String acuerdos, String observaciones, int eventoRegistro) {
         this.tutoriaGrupal = tutoriaGrupal;
         this.fecha = fecha;
         this.horaInicio = horaInicio;
@@ -108,6 +112,7 @@ public class TutoriasGrupales implements Serializable {
         this.ordenDia = ordenDia;
         this.acuerdos = acuerdos;
         this.observaciones = observaciones;
+        this.eventoRegistro = eventoRegistro;
     }
 
     public Integer getTutoriaGrupal() {
@@ -164,6 +169,14 @@ public class TutoriasGrupales implements Serializable {
 
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
+    }
+
+    public int getEventoRegistro() {
+        return eventoRegistro;
+    }
+
+    public void setEventoRegistro(int eventoRegistro) {
+        this.eventoRegistro = eventoRegistro;
     }
 
     @XmlTransient

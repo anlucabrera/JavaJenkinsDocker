@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                >
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="css" name="timepicker.css"/>
+        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
+        <h:outputScript library="js" name="dialogs.js"/>        
+        <h:outputScript library="js" name="calendario.js"/>
+        <h:outputScript library="primefaces62" name="inputnumber.js"  />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Registro de Asesorías
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Registro de Asesorías"/>
+
+        <div class="contenedor">
+            <c:if test="#{registroAsesoriaDocente.tieneAcceso}">
+                <!-- zona de importación de enums -->
+
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registroAsesoriaDocente.rol.periodoActivo)} " />
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Evento de registro activo: #{registroAsesoriaDocente.rol.eventoRegistroActivo.mes}" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                       onclick="PF('modalAyuda').show();"
+                                                       process="@this"
+                                                       title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </h:form>
+                        <div class="box box-solid">
+                            <div class="box-body">
+                                <h:form id="frmFiltros" prependId="false" class="form-inline">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{registroAsesoriaDocente.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{registroAsesoriaDocente.rol.periodosConCarga}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this" update="@this carga configuracion mes contenedor contenedorEstudiantes" listener="#{registroAsesoriaDocente.cambiarPeriodo}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="carga" value="#{registroAsesoriaDocente.rol.cargaAcademicaSeleccionada}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{registroAsesoriaDocente.rol.cargasDocente}" var="carga" itemValue="#{carga}" itemLabel="#{caster.dtoCargaAcademicaToString(carga)}" />
+                                                    <p:ajax process="@this" update="@this configuracion contenedor contenedorEstudiantes" listener="#{registroAsesoriaDocente.cambiarCarga}"  />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Carga académica" for="carga"/>
+                                                <p:message for="carga" ><p:autoUpdate/></p:message>
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="configuracion" value="#{registroAsesoriaDocente.rol.unidadConfiguracionSeleccionada}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{registroAsesoriaDocente.rol.unidadConfiguraciones}" var="configuracion" itemValue="#{configuracion}" itemLabel="#{caster.dtoUnidadConfiguracionToString(configuracion)}" />
+                                                    <p:ajax process="@this" update="@this contenedor contenedorEstudiantes" listener="#{registroAsesoriaDocente.cambiarUnidad}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Unidad" for="configuracion"/>
+                                                <p:message for="configuracion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="mes" value="#{registroAsesoriaDocente.rol.eventoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{registroAsesoriaDocente.rol.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" />
+                                                    <p:ajax process="@this" update="@this frmRegistro contenedorEstudiantes" listener="#{registroAsesoriaDocente.cambiarUnidad}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Mes" for="mes"/>
+                                                <p:message for="mes" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </h:form>
+                                <h:form id="frmRegistro" prependId="false" class="form-inline">
+                                    <p:remoteCommand id="actualizarRegistroAsesoria" name="actualizarRegistroAsesoria" actionListener="#{registroAsesoriaDocente.actualizar()}" process="@this" update="contenedor" />
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                        <div class="col-lg-12 col-md-12 text-info">
+
+                                            <p:outputPanel id="contenedor">
+                                                <div style="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo?'margin-bottom: 10px;display: none':'margin-bottom: 10px;'}">
+                                                    <p:outputLabel value="Ingrese los datos de la asesoría:"/>
+                                                </div>
+                                                <div class="row margin-bottom" style="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo?'display: none':''}">
+                                                    <div class="col-sm-12 col-md-3 col-lg-2">
+                                                        <div class="ui-material">
+                                                            <p:calendar id="raFechaInicio"
+                                                                        label="raFechaInicio"
+                                                                        required="true"
+                                                                        requiredMessage="Ingrese Fecha de Inicio"
+                                                                        value="#{registroAsesoriaDocente.rol.fecha}"
+                                                                        pattern="yyyy-MM-dd"
+                                                                        styleClass="campo4Partes"
+                                                                        locale="es"
+                                                                        readonlyInput="true"
+                                                                        disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                        mask="true"
+                                                                        mindate="#{registroAsesoriaDocente.rol.periodoSeleccionado.periodoEscolarFechas.inicio}"
+                                                                        maxdate="#{registroAsesoriaDocente.rol.periodoSeleccionado.periodoEscolarFechas.fin}"
+                                                                        >
+                                                            </p:calendar>
+                                                        </div>
+                                                        <p:watermark for="raFechaInicio" value="2019-10-01 (aa-MM-dd)*" />
+                                                        <p:message for="raFechaInicio" />
+                                                        <p>Fecha de la asesoría</p>
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-3 col-lg-2">
+                                                        <div class="ui-material">
+                                                            <pe:timePicker id="raHora"
+                                                                           value="#{registroAsesoriaDocente.rol.hora}" 
+                                                                           locale="es"
+                                                                           timeSeparator="-" 
+                                                                           startHours="7" 
+                                                                           endHours="20"  
+                                                                           startMinutes="00" 
+                                                                           endMinutes="59" 
+                                                                           intervalMinutes="10" 
+                                                                           showDeselectButton="true" 
+                                                                           showNowButton="true"
+                                                                           showCloseButton="true"
+                                                                           rows="3" 
+                                                                           showPeriod="true"
+                                                                           widgetVar="customTimeWidget" 
+                                                                           label="Hora de la Asesoría" 
+                                                                           required="true" 
+                                                                           requiredMessage="La hora de la asesoría es requerida"
+                                                                           mode="popup"
+                                                                           disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                           />
+                                                        </div>
+                                                        <p:watermark for="raHora" value="08:30AM (hh:mm) *" />
+                                                        <p:message for="raHora" />
+                                                        <p>Hora de la Asesoría</p>  
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-3 col-lg-2" >
+                                                        <div class="ui-material">
+                                                            <p:spinner id="raTiempoInvertido"
+                                                                       label="raTiempoInvertido"
+                                                                       required="true"
+                                                                       requiredMessage="Ingrese el tiempo invertido"
+                                                                       value="#{registroAsesoriaDocente.rol.dtoAsesoriaCE.asesoria.tiempoInvertido}" 
+                                                                       min="0" max="120"
+                                                                       styleClass="campo4Partes"
+                                                                       placeholder="2 *"
+                                                                       disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                       />
+                                                            <p>Tiempo Invertido</p>
+                                                        </div>
+                                                        <p:message for="raTiempoInvertido" />
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-3 col-lg-2">
+                                                        <p:selectOneButton id="horasMinutos"
+                                                                           label="horasMinutos"
+                                                                           value="#{registroAsesoriaDocente.rol.dtoAsesoriaCE.asesoria.tipoTiempo}"
+                                                                           required="true"
+                                                                           requiredMessage="Seleccione el tipo de tiempo"
+                                                                           disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                           >
+                                                            <f:selectItem itemLabel="Horas" itemValue="Horas" />
+                                                            <f:selectItem itemLabel="Minutos" itemValue="Minutos" />
+                                                        </p:selectOneButton>
+                                                        <p>Horas/Minutos</p>
+                                                        <p:message for="horasMinutos" />
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-3 col-lg-2" style="margin-bottom: 15px;">
+                                                        <p:selectOneButton id="raTipo"
+                                                                           label="raTipo"
+                                                                           value="#{registroAsesoriaDocente.rol.dtoAsesoriaCE.asesoria.tipo}"
+                                                                           required="true"
+                                                                           requiredMessage="Seleccione el tipo de asesoría"
+                                                                           disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                           >
+                                                            <f:selectItem itemLabel="Individual" itemValue="Individual" />
+                                                            <f:selectItem itemLabel="Grupal" itemValue="Grupal" />
+                                                        </p:selectOneButton>
+                                                        <p>Tipo de Asesoría</p>
+                                                        <p:message for="raTipo" />
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
+                                                        <div class="ui-material">
+                                                            <p:inputTextarea id="raObservacionesCompromisos"
+                                                                             rows="3" 
+                                                                             cols="100"
+                                                                             counter="displayCompromisos" 
+                                                                             maxlength="3000" 
+                                                                             counterTemplate="{0} caracteres en total." 
+                                                                             autoResize="true"
+                                                                             required="true"
+                                                                             class="form-control"
+                                                                             requiredMessage="Es requerido el campo de Observaciones y Compromisos"
+                                                                             value="#{registroAsesoriaDocente.rol.dtoAsesoriaCE.asesoria.observacionesCompromisos}"
+                                                                             disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                             />
+                                                            <h:outputText id="displayCompromisos" />
+                                                            <p:watermark for="raObservacionesCompromisos" value="Ejemplo de Observaciones y Compromisos *" />
+                                                            <p:message for="raObservacionesCompromisos" />
+                                                            <p:outputLabel for="raObservacionesCompromisos" value="Observaciones ó Compromisos " />
+                                                        </div>
+                                                        <p:message for="raObservacionesCompromisos" />
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-6 col-lg-6">
+                                                        <p:commandButton id="btnGuardarAsesoria" 
+                                                                         value="Guardar" 
+                                                                         action="#{registroAsesoriaDocente.guardarNuevaAsesoria()}" 
+                                                                         oncomplete="actualizarRegistroAsesoria();" 
+                                                                         icon="fa fa-pencil-square-o" 
+                                                                         class="btn-primary" 
+                                                                         style="width:15em;" 
+                                                                         disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                         title="Guardar Asesoría"
+                                                                         />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                                </div>
+
+                                                <div style="margin-bottom: 10px">
+                                                    <p:outputLabel value="Listado de Asesorías registradas en la unidad y mes de registro seleccionados"/>
+                                                </div>
+                                                <div class="row margin-bottom">
+                                                    <center>
+                                                        <p:dataTable id="dtAsesorias" 
+                                                                     var="asesoria" 
+                                                                     value="#{registroAsesoriaDocente.rol.listaAsesorias}" 
+                                                                     sortBy="#{asesoria.idAsesoria}"
+                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                     resizeMode="expand"
+                                                                     emptyMessage="Aún no se han registrado asesorías en la unidad y evento de registro seleccionado"
+                                                                     selection="#{registroAsesoriaDocente.rol.asesoriaSeleccionada}" 
+                                                                     rowKey="#{asesoria.idAsesoria}"
+                                                                     >
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="sucess">
+                                                                    <p:column headerText=""  width="30"/>
+                                                                    <p:column headerText="Opciones"  width="40"/>
+                                                                    <p:column headerText="Fecha" width="100"/>
+                                                                    <p:column headerText="Hora" width="100"/>
+                                                                    <p:column headerText="Tiempo invertido" width="100"/>
+                                                                    <p:column headerText="Tipo" width="100"/>
+                                                                    <p:column headerText="Observaciones ó compromisos" width="300"/>
+                                                                    <p:column headerText="Tipo de Asesoría" width="110" />
+                                                                </p:row>
+                                                            </p:columnGroup>
+                                                            <c:set var="idAsesoria" value="#{asesoria.idAsesoria}"/>
+                                                            <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                                                            <p:column>
+                                                                <center>
+                                                                    <div class="btn-group">
+                                                                        <p:commandButton class="btn btn-info btn-sm" 
+                                                                                         icon="fa fa-trash" 
+                                                                                         actionListener="#{registroAsesoriaDocente.eliminarAsesoria(idAsesoria)}" 
+                                                                                         title="Eliminar registro." 
+                                                                                         process="dtAsesorias" 
+                                                                                         oncomplete="actualizarRegistroAsesoria();" 
+                                                                                         global="false"
+                                                                                         disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                                         >
+                                                                            <p:confirm header="Eliminar" message="¿Está seguro de eliminar la asesoría seleccionada?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </div>
+                                                                </center>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <p:calendar required="true"
+                                                                            requiredMessage="Ingrese Fecha de Inicio"
+                                                                            value="#{asesoria.fechaHora}"
+                                                                            locale="es"
+                                                                            valueChangeListener="#{registroAsesoriaDocente.actualizarFecha}"
+                                                                            pattern="yyyy-MM-dd"
+                                                                            styleClass="campo4Partes"
+                                                                            disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                            title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB ó ENTER, ó bien colocar el cursor en el siguiente campo"
+                                                                            placeholder="2019-10-01 (aa-MM-dd)*"
+                                                                            readonlyInput="true"
+                                                                            mask="true"
+                                                                            mindate="#{registroAsesoriaDocente.rol.periodoSeleccionado.periodoEscolarFechas.inicio}"
+                                                                            maxdate="#{registroAsesoriaDocente.rol.periodoSeleccionado.periodoEscolarFechas.fin}"
+                                                                            >
+                                                                    <p:ajax event="dateSelect"
+                                                                            process="@this"
+                                                                            update="dtAsesorias"
+                                                                            global="false"
+                                                                            listener="#{registroAsesoriaDocente.cambiarUnidadDate()}"
+                                                                            />
+                                                                    <p:ajax event="change"
+                                                                            process="@this"
+                                                                            update="dtAsesorias"
+                                                                            global="false"
+                                                                            listener="#{registroAsesoriaDocente.cambiarUnidadDate()}"
+                                                                            />
+                                                                    <f:attribute name="asesoria" 
+                                                                                 value="#{asesoria}" 
+                                                                                 />
+                                                                </p:calendar>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <pe:timePicker required="true" 
+                                                                               requiredMessage="La hora de la asesoría es requerida"
+                                                                               value="#{asesoria.fechaHora}"
+                                                                               valueChangeListener="#{registroAsesoriaDocente.actualizarHora}"
+                                                                               locale="es"
+                                                                               timeSeparator="-" 
+                                                                               startHours="7" 
+                                                                               endHours="20"  
+                                                                               startMinutes="00" 
+                                                                               endMinutes="59" 
+                                                                               intervalMinutes="10" 
+                                                                               showDeselectButton="true" 
+                                                                               showNowButton="true"
+                                                                               showCloseButton="true"
+                                                                               rows="3" 
+                                                                               showPeriod="true"
+                                                                               mode="popup"
+                                                                               title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+                                                                               disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                               >
+                                                                    <p:ajax process="@this"
+                                                                            update="dtAsesorias"
+                                                                            global="false"
+                                                                            listener="#{registroAsesoriaDocente.cambiarUnidad}"
+                                                                            />
+                                                                    <f:attribute name="asesoria" 
+                                                                                 value="#{asesoria}" 
+                                                                                 />
+                                                                </pe:timePicker>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <p:inputNumber required="true"
+                                                                               requiredMessage="Ingrese el tiempo invertido"
+                                                                               value="#{asesoria.tiempoInvertido}"
+                                                                               valueChangeListener="#{registroAsesoriaDocente.actualizarTiempoInvertido}"
+                                                                               minValue="0"
+                                                                               maxValue="120"
+                                                                               placeholder="2 *"
+                                                                               class="campoTiempo"
+                                                                               step="any"
+                                                                               disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                               >
+                                                                    <p:ajax process="@this"
+                                                                            update="dtAsesorias"
+                                                                            global="false"
+                                                                            />
+                                                                    <f:attribute name="asesoria" 
+                                                                                 value="#{asesoria}" 
+                                                                                 />
+                                                                </p:inputNumber>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <p:selectOneButton required="true"
+                                                                                   requiredMessage="Seleccione el tipo de tiempo"
+                                                                                   value="#{asesoria.tipoTiempo}"
+                                                                                   valueChangeListener="#{registroAsesoriaDocente.actualizarTipoTiempo}"
+                                                                                   disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                                   >
+                                                                    <f:selectItem itemLabel="Horas" itemValue="Horas" />
+                                                                    <f:selectItem itemLabel="Minutos" itemValue="Minutos" />
+                                                                    <p:ajax process="@this" 
+                                                                            update="dtAsesorias" 
+                                                                            global="false"
+                                                                            /> 
+                                                                    <f:attribute name="asesoria" 
+                                                                                 value="#{asesoria}" 
+                                                                                 />
+                                                                </p:selectOneButton>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <p:inputTextarea rows="1" 
+                                                                                 cols="77"
+                                                                                 maxlength="3000" 
+                                                                                 autoResize="true"
+                                                                                 required="true"
+                                                                                 requiredMessage="Es requerido el campo de objetivos"
+                                                                                 class="form-control"
+                                                                                 title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+                                                                                 value="#{asesoria.observacionesCompromisos}"
+                                                                                 valueChangeListener="#{registroAsesoriaDocente.actualizarObservacionesCompromiso}"
+                                                                                 disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                                 >
+                                                                    <p:ajax process="@this" 
+                                                                            update="dtAsesorias" 
+                                                                            global="false"
+                                                                            /> 
+                                                                    <f:attribute name="asesoria" 
+                                                                                 value="#{asesoria}" 
+                                                                                 />
+                                                                </p:inputTextarea>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <p:selectOneButton required="true"
+                                                                                   requiredMessage="Seleccione el tipo de asesoría"
+                                                                                   value="#{asesoria.tipo}"
+                                                                                   valueChangeListener="#{registroAsesoriaDocente.actualizarTipo}"
+                                                                                   disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+                                                                                   >
+                                                                    <f:selectItem itemLabel="Individual" itemValue="Individual" />
+                                                                    <f:selectItem itemLabel="Grupal" itemValue="Grupal" />
+                                                                    <p:ajax process="@this" 
+                                                                            update="dtAsesorias" 
+                                                                            global="false"
+                                                                            /> 
+                                                                    <f:attribute name="asesoria" 
+                                                                                 value="#{asesoria}" 
+                                                                                 />
+                                                                </p:selectOneButton>
+                                                            </p:column>
+
+                                                            <f:facet name="footer">
+                                                                <div style="text-align: left">
+                                                                    <p:column style="text-align: left;">
+                                                                        <p:commandButton process="dtAsesorias" 
+                                                                                         update="contenedorEstudiantes" 
+                                                                                         actionListener="#{registroAsesoriaDocente.verificarParticipantes}" 
+                                                                                         icon="fa fa-search" 
+                                                                                         class="btn-primary" 
+                                                                                         value="Verificar Participantes"
+                                                                                         title="Presione este botón para verificar o asignar participantes a la asesoría seleccionada"
+                                                                                         disabled="#{!empty registroAsesoriaDocente.rol.listaAsesorias?'false':'true'}"
+                                                                                         />
+
+                                                                    </p:column>
+                                                                    <p:column style="text-align: left;">
+                                                                        Usted ha registrado un total de: #{fn:length(registroAsesoriaDocente.rol.listaAsesorias)} asesorías.
+                                                                    </p:column>
+                                                                </div>
+                                                            </f:facet>
+                                                        </p:dataTable>
+                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                        </p:confirmDialog> 
+                                                    </center>
+                                                    <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                                </div>
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>    
+                                </h:form>
+                                <h:form id="frmRegistroParticipantes" prependId="false" class="form-inline">
+                                    <p:remoteCommand id="actualizarEstudiantes" name="actualizarEstudiantes" actionListener="#{registroAsesoriaDocente.actualizarEstudiantes}" process="@this" update="contenedorEstudiantes" />
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info">
+                                            <p:outputPanel id="contenedorEstudiantes">
+                                                <div style="margin-bottom: 10px">
+                                                    <p:outputLabel value="Para registrar la asistencia de los estudiantes deberá seleccionar previamente una asesoría"/>
+                                                </div>
+                                                <div class="row margin-bottom">
+                                                    <center>
+                                                        <p:dataTable id="dtEstudiantes" 
+                                                                     widgetVar="dtEstudiantes"
+                                                                     var="est" 
+                                                                     value="#{registroAsesoriaDocente.rol.listaEstudiantes}" 
+                                                                     filteredValue="#{registroAsesoriaDocente.rol.listaFiltroEstudiantes}"
+                                                                     sortBy="#{est.estudiante.estudiante.idEstudiante}"
+                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                     resizeMode="expand"
+                                                                     emptyMessage="No se encontrarón estudiantes en el grupo seleccionado"
+                                                                     >
+                                                            <p:column filterBy="#{est.estudiante.estudiante.matricula}" headerText="Matricula" filterMatchMode="contains" width="100" style="text-align:  center">
+                                                                <h:outputText value="#{est.estudiante.estudiante.matricula}" />
+                                                            </p:column>
+
+                                                            <p:column filterBy="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" headerText="Nombre" filterMatchMode="contains" width="400" priority="3">
+                                                                <h:outputText value="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Genéro" width="80" style="text-align:  center" priority="5">
+                                                                <h:outputText value="#{est.estudiante.estudiante.aspirante.idPersona.genero eq 1?'Femenino':'Masculino'}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Situación" width="80" style="text-align:  center" priority="4">
+                                                                <h:outputText value="#{est.estudiante.estudiante.tipoEstudiante.descripcion}" />
+                                                            </p:column>
+
+                                                            <p:column filterBy="#{est.participacion}" headerText="Asistencia" filterMatchMode="equals" width="200" style="text-align:  center">
+                                                                <f:facet name="filter">
+                                                                    <p:selectOneButton onchange="PF('dtEstudiantes').filter()" styleClass="custom-filter">
+                                                                        <f:converter converterId="javax.faces.Boolean" />
+                                                                        <f:selectItem itemLabel="Todos" itemValue="" />
+                                                                        <f:selectItem itemLabel="Asistió" itemValue="true" />
+                                                                        <f:selectItem itemLabel="No Asistió" itemValue="false" />
+                                                                    </p:selectOneButton>
+                                                                </f:facet>
+
+                                                                <p:selectBooleanButton value="#{est.participacion}" 
+                                                                                       onLabel="Asistió" 
+                                                                                       offLabel="No Asistió" 
+                                                                                       valueChangeListener="#{registroAsesoriaDocente.guardarAsistenciaAsesoria}"
+                                                                                       onIcon="ui-icon-check"
+                                                                                       offIcon="ui-icon-close"
+                                                                                       style="text-align: left"
+                                                                                       disabled="#{registroAsesoriaDocente.rol.asesoriaSeleccionada.idAsesoria eq null or registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo?'true':'false'}"
+                                                                                       >
+                                                                    <p:ajax process="@this"
+                                                                            oncomplete="actualizarEstudiantes();"
+                                                                            />
+                                                                    <f:attribute name="estudiante" 
+                                                                                 value="#{est.estudiante.estudiante}" 
+                                                                                 />
+                                                                </p:selectBooleanButton>
+                                                            </p:column>
+
+                                                            <f:facet name="footer">
+                                                                Actualmente están inscritos: #{fn:length(registroAsesoriaDocente.rol.listaEstudiantes)} estudiantes en el grupo seleccionado.
+                                                            </f:facet>
+                                                        </p:dataTable>
+                                                    </center>
+                                                </div>
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>
+                                </h:form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <c:if test="#{!empty registroAsesoriaDocente.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{registroAsesoriaDocente.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el registro de asesoría</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{registroAsesoriaDocente.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!registroAsesoriaDocente.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a docentes con cargas académicas."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+            <div style="display: none;">
+                <!-- Es necesario este bloque para que se cargue en el navegador el soporte para el control inputnumber -->
+                <h:form>
+                    <p:inputNumber />
+                </h:form>
+            </div>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>
