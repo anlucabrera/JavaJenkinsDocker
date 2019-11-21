@@ -1,6 +1,9 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import java.io.Serializable;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -45,11 +48,14 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>();
     @Getter    @Setter    private List<Procesopoa> procesopoas = new ArrayList<>();
     @Getter    @Setter    private List<ConfiguracionPropiedades> cps = new ArrayList<>();
+    @Getter    @Setter    private List<EventosAreaPOA> areaPOAs = new ArrayList<>();
 
+    @Getter    @Setter    private Eventos eventos = new Eventos();
     @Getter    @Setter    private Integer eventoC = 0;
     @Getter    @Setter    private Short areaC = 0;
+    @Getter    @Setter    private Date fehDate = new Date();
 
-    @Getter    @Setter    private EventosAreas eventosAreas = new EventosAreas();
+    @Getter    @Setter    private EventosAreas editEventosAreas = new EventosAreas();
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo areasLogeo;
@@ -66,22 +72,72 @@ public class AdministracionControl implements Serializable {
         estatus.add("Aceptado");
         estatus.add("Denegado");
         estatus.add("Pendiente");
-        mostrarProcesoPOA();
+        mostrarProcesos();        
         mostrarIncidencias();
         mostrarModulos();
-        mostrarEventos();
         mostrarConfiguracionProp();
     }
 
 
 // -----------------------------------------------------------------------------Busqueda    
-    public void mostrarProcesoPOA() {
+    public void mostrarProcesos() {
         try {
             procesopoas = new ArrayList<>();
+            eventoses = new ArrayList<>();
+            eventosesAreases = new ArrayList<>();
+            areasUniversidads = new ArrayList<>();
+            areaPOAs = new ArrayList<>();
+
+            areasUniversidads.clear();
+            eventoses.clear();
+            eventosesAreases.clear();
             procesopoas.clear();
-
+            areaPOAs.clear();
+            
+            eventoses = ejbUtilidadesCH.mostrarEventoses();
+            eventosesAreases = ejbUtilidadesCH.mostrarEventosesAreases();
             procesopoas = ejbUtilidadesCH.mostrarProcesopoa();
-
+            procesopoas.forEach((t) -> {
+                if (t.getResponsable() != null) {
+                    try {
+                        areasUniversidads.add(areasLogeo.mostrarAreasUniversidad(t.getArea()));
+                    } catch (Throwable ex) {
+                        Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+                        Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+            if (controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 564) {
+                if (!eventosesAreases.isEmpty()) {
+                    eventosesAreases.forEach((t) -> {
+                        try {
+                            AreasUniversidad au = areasLogeo.mostrarAreasUniversidad(t.getEventosAreasPK().getAreaOperativa());
+                            LocalDateTime datetimeLimite = utilidadesCH.castearDaLDT(t.getEventos().getFechaFin()).plusDays(t.getDiasExtra()).plusHours(23).plusMinutes(59).plusSeconds(59);
+                            LocalDate dateLimite = utilidadesCH.castearDaLD(t.getEventos().getFechaFin()).plusDays(t.getDiasExtra());
+                            LocalDate dateLibera = utilidadesCH.castearDaLD(t.getEventos().getFechaFin());
+                            if (dateLimite.getDayOfWeek().equals(DayOfWeek.FRIDAY)) {
+                                dateLibera = dateLibera.plusDays((t.getDiasExtra() - 4));
+                            } else {
+                                dateLibera = dateLibera.plusDays((t.getDiasExtra() - 6));
+                            }
+                            Integer minutos = (int) ((utilidadesCH.castearLDTaD(datetimeLimite).getTime() - utilidadesCH.castearLDTaD(LocalDateTime.now()).getTime()) / 60000);
+                            Integer diasR = minutos / 1440;
+                            Integer horasR = (minutos % 1440);
+                            Integer res = (minutos % 60);
+                            String mensaje="";
+                            if (diasR<0) {
+                                    mensaje = "El periodo venció hace " + Math.abs(diasR) + " día(s) " + Math.abs((horasR / 60)) + " hora(s) com " + Math.abs(res) + " minutos";
+                            } else {
+                                mensaje = "Resta " + diasR + " día(s) " + (horasR / 60) + " hora(s) com " + (res) + " minutos";
+                            }
+                            areaPOAs.add(new EventosAreaPOA(t, au.getNombre(), t.getEventos().getTipo() + " -- " + t.getEventos().getNombre(), buscarPersonal(au.getResponsable()), utilidadesCH.castearLDaD(dateLibera), utilidadesCH.castearLDaD(dateLimite), mensaje));
+                        } catch (Throwable ex) {
+                            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+                            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+                }
+            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
@@ -115,28 +171,6 @@ public class AdministracionControl implements Serializable {
 
             cps = administrador.buscarConfiguracionPropiedadeses();
 
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void mostrarEventos() {
-        try {
-            areasUniversidads = new ArrayList<>();
-            eventoses = new ArrayList<>();
-            eventosesAreases = new ArrayList<>();
-            areasUniversidads.clear();
-            eventoses.clear();
-            eventosesAreases.clear();
-
-            eventoses = ejbUtilidadesCH.mostrarEventoses();
-            eventosesAreases = ejbUtilidadesCH.mostrarEventosesAreases();
-            areasLogeo.mostrarAreasUniversidadActivas().forEach((a) -> {
-                if (a.getTienePoa() == true) {
-                    areasUniversidads.add(a);
-                }
-            });
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
@@ -221,6 +255,7 @@ public class AdministracionControl implements Serializable {
             return "";
         }
     }
+    
     public String buscarCorreoArea(Integer area) {
         try {
 
@@ -236,15 +271,28 @@ public class AdministracionControl implements Serializable {
 // -----------------------------------------------------------------------------Creacion   
     public void agreggarEventoArea() {
         try {
-            eventosAreas = new EventosAreas();
-            eventosAreas.setEventos(new Eventos());
-            eventosAreas.setEventosAreasPK(new EventosAreasPK());
+            editEventosAreas = new EventosAreas();
+            editEventosAreas.setEventos(new Eventos());
+            editEventosAreas.setEventosAreasPK(new EventosAreasPK());
+            eventoses.forEach((t) -> {
+                if (t.getEvento() == eventoC) {
+                    eventos = t;
+                }
+            });
+            Integer diasExtra = (int) ((fehDate.getTime() - eventos.getFechaFin().getTime()) / 86400000);
 
-            eventosAreas.setEventos(new Eventos(eventoC));
-            eventosAreas.setEventosAreasPK(new EventosAreasPK(eventoC, areaC));
-            ejbUtilidadesCH.agregarEventosesAreases(eventosAreas);
+            editEventosAreas.setEventos(new Eventos(eventoC));
+            editEventosAreas.setEventosAreasPK(new EventosAreasPK(eventoC, areaC));
+
+            editEventosAreas.setDiasExtra(diasExtra);
+            ejbUtilidadesCH.agregarEventosesAreases(editEventosAreas);
             Messages.addGlobalInfo("¡Evento Agregado!");
-            mostrarEventos();
+            mostrarProcesos();
+            editEventosAreas = new EventosAreas();
+            eventoC = 0;
+            areaC = 0;
+            Ajax.update("frmInci");
+
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
@@ -257,7 +305,7 @@ public class AdministracionControl implements Serializable {
             Eventos e = (Eventos) event.getObject();
             ejbUtilidadesCH.actualizarEventoses(e);
             Messages.addGlobalInfo("¡Operación exitosa!");
-            mostrarEventos();
+            mostrarProcesos();
             Ajax.update("frmEventos");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -294,25 +342,18 @@ public class AdministracionControl implements Serializable {
 
     public void onRowEditEventosAreas(RowEditEvent event) {
         try {
-            EventosAreas e = (EventosAreas) event.getObject();
-            eventosAreas = new EventosAreas();
+            EventosAreaPOA a = (EventosAreaPOA) event.getObject();
+            EventosAreas eventosAreas = new EventosAreas();
             eventosAreas.setEventos(new Eventos());
             eventosAreas.setEventosAreasPK(new EventosAreasPK());
-
-            eventosAreas = e;
-            Integer cEve = 0;
-            Short cAre = 0;
-
-            cEve = e.getEventos().getEvento();
-            cAre = Short.parseShort(String.valueOf(e.getEventosAreasPK().getAreaOperativa()));
-
-            eventosAreas.setEventos(new Eventos(cEve));
-            eventosAreas.setEventosAreasPK(new EventosAreasPK(cEve, cAre));
+            
+            Integer diasExtra=(int) ((a.getEvento().getEventos().getFechaFin().getTime()- a.getFechaLimiteProceso().getTime()) / 86400000);
+            eventosAreas = a.getEvento();
+            eventosAreas.setDiasExtra(Math.abs(diasExtra));            
             ejbUtilidadesCH.actualizarEventosesAreases(eventosAreas);
-
             Messages.addGlobalInfo("¡Operación exitosa!");
-            mostrarEventos();
-            Ajax.update("frmModulos");
+            mostrarProcesos();
+            Ajax.update("frmEventosAreas");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
@@ -337,10 +378,11 @@ public class AdministracionControl implements Serializable {
     }
     
 // -----------------------------------------------------------------------------Eliminacion
-    public void eliminarEventoArea(EventosAreas ea) {
+    public void eliminarEventoArea(EventosAreaPOA ea) {
         try {
-            ejbUtilidadesCH.eliminarEventosesEventosAreas(ea);
-            mostrarEventos();
+            ejbUtilidadesCH.eliminarEventosesEventosAreas(ea.getEvento());
+            mostrarProcesos();
+            Ajax.update("frmEventos");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
@@ -360,5 +402,26 @@ public class AdministracionControl implements Serializable {
 
 // -----------------------------------------------------------------------------Utilidades
     public void imprimirValores() {
+    }
+    
+    public static class EventosAreaPOA {
+
+        @Getter        @Setter        private EventosAreas evento;
+        @Getter        @Setter        private String area;
+        @Getter        @Setter        private String proceso;
+        @Getter        @Setter        private String responsable;
+        @Getter        @Setter        private Date fecaValidacion;
+        @Getter        @Setter        private Date fechaLimiteProceso;
+        @Getter        @Setter        private String diasrestantes;
+
+        public EventosAreaPOA(EventosAreas evento, String area, String proceso, String responsable, Date fecaValidacion, Date fechaLimiteProceso, String diasrestantes) {
+            this.evento = evento;
+            this.area = area;
+            this.proceso = proceso;
+            this.responsable = responsable;
+            this.fecaValidacion = fecaValidacion;
+            this.fechaLimiteProceso = fechaLimiteProceso;
+            this.diasrestantes = diasrestantes;
+        }
     }
 }

@@ -45,7 +45,10 @@ public class EjbOrganigrama {
     @Produces(MediaType.APPLICATION_JSON)
     public List<PersonalOrganigrama> obtenerPersonal(){
         organigrama = new ArrayList<>();
-        List<AreasUniversidad> aus = new ArrayList<>();     
+        organigrama.clear();
+        List<AreasUniversidad> aus = new ArrayList<>();  
+        List<ListaPersonal> direcPersonals = new ArrayList<>();     
+        direcPersonals.clear();
         idOrganigrama=0;        
         TypedQuery<AreasUniversidad> q = empy.createQuery("SELECT a FROM AreasUniversidad a INNER JOIN a.categoria c WHERE a.vigente=:vigente AND c.categoria<=:categoria ORDER BY a.area", AreasUniversidad.class);
         q.setParameter("vigente", "1");
@@ -68,6 +71,7 @@ public class EjbOrganigrama {
             ListaPersonal l = new ListaPersonal();
             if (ar.getResponsable() != 0) {
                 l = emch.find(ListaPersonal.class, ar.getResponsable());
+                direcPersonals.add(l);
             }
             String color = "";
             if (ar.getCategoria().getCategoria() == 7) {
@@ -104,22 +108,26 @@ public class EjbOrganigrama {
         doc = d.getResultList();
         
         adm.forEach((l) -> {
-            AreasUniversidad ar = empy.find(AreasUniversidad.class, l.getAreaOperativa());
-            if (ar.getCategoria().getCategoria() <= 8) {
-                if (ar.getArea()==1) {
-                    organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), idArApoRec, l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
+            if (!direcPersonals.contains(l)) {
+                AreasUniversidad ar = empy.find(AreasUniversidad.class, l.getAreaOperativa());
+                if (ar.getCategoria().getCategoria() <= 8) {
+                    if (ar.getArea() == 1) {
+                        organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), idArApoRec, l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
 
+                    } else {
+                        organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(String.valueOf(l.getAreaOperativa())), l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
+                    }
                 } else {
-                    organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(String.valueOf(l.getAreaOperativa())), l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
+                    organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(ar.getAreaSuperior().toString()), l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
                 }
-            } else {
-                organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(ar.getAreaSuperior().toString()), l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
+                idOrganigrama++;
             }
-            idOrganigrama++;
         });
         doc.forEach((l) -> {
-            organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(String.valueOf(l.getAreaSuperior())), l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
-            idOrganigrama++;
+            if (!direcPersonals.contains(l)) {
+                organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(String.valueOf(l.getAreaSuperior())), l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
+                idOrganigrama++;
+            }
         });
 //        
         
@@ -131,61 +139,4 @@ public class EjbOrganigrama {
             return organigrama;
         }
     }
-    
-    
-//    @GET
-//    @Path("/json/altomando")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public PersonalOrganigrama obtenerPersonalAltoMando(){
-//        List<PersonalOrganigrama> po = new ArrayList<>();
-//        List<Personal> p = f.getEntityManager().createQuery("select p from Personal as p where p.areaOperativa = :areaOp and p.categoriaOperativa.categoria = :catOp", Personal.class)
-//                .setParameter("areaOp", Short.parseShort("1"))
-//                .setParameter("catOp", Short.parseShort("33")).getResultStream().collect(Collectors.toList());
-//        p.forEach(x -> {
-//            po.add(new PersonalOrganigrama(x.getAreaOperativa(), x.getAreaSuperior(), x.getClave(), x.getNombre(), x.getCategoriaOficial().getNombre(), x.getPerfilProfesional()));
-//        });
-//        if(po.isEmpty()){
-//            return new PersonalOrganigrama();
-//        }else{
-//            return po.get(0);
-//
-//        }
-//    }
-//
-//    @GET
-//    @Path("/json/abogado")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public PersonalOrganigrama obtenerPersonalAbogadoGral(){
-//        List<PersonalOrganigrama> po = new ArrayList<>();
-//        f.getEntityManager().createQuery("select p from Personal as p where p.areaOperativa = :areaOp and p.categoriaOperativa.categoria = :categoria and p.status = :estatus", Personal.class)
-//                .setParameter("estatus", 'A')
-//                .setParameter("areaOp", Short.parseShort("3"))
-//                .setParameter("categoria", Short.parseShort("1"))
-//                .getResultStream().forEach(x -> {
-//                    po.add(new PersonalOrganigrama(x.getAreaOperativa(), x.getAreaSuperior(), x.getClave(), x.getNombre(), x.getCategoriaOficial().getNombre(), x.getPerfilProfesional()));
-//        });
-//        if(po.isEmpty()){
-//            return new PersonalOrganigrama();
-//        }else{
-//            return po.get(0);
-//        }
-//    }
-//
-//    @GET
-//    @Path("json/directivos")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public List<PersonalOrganigrama> obtenePersonalDirectivoArea(){
-//        List<PersonalOrganigrama> po = new ArrayList<>();
-//        List<Personal> p = f.getEntityManager().createQuery("select p from Personal as p " +
-//                "where (p.categoriaOperativa.categoria = :cat1 or p.categoriaOperativa.categoria = :cat2) and p.areaSuperior = :areaSup and p.status = :estatus order by p.areaOperativa", Personal.class)
-//                .setParameter("estatus", 'A')
-//                .setParameter("cat1", Short.parseShort("38"))
-//                .setParameter("cat2", Short.parseShort("18"))
-//                .setParameter("areaSup", Short.parseShort("1"))
-//                .getResultStream().collect(Collectors.toList());
-//            p.forEach(x -> {
-//                po.add(new PersonalOrganigrama(x.getAreaOperativa(), x.getAreaSuperior(), x.getClave(), x.getNombre(), x.getCategoriaOficial().getNombre(), x.getPerfilProfesional()));
-//            });
-//        return po;
-//    }
 }

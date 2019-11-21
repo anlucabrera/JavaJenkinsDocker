@@ -81,7 +81,8 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     @EJB EjbPropiedades ep;
     @EJB EjbPacker packer;
     @EJB EjbCasoCritico ecc;
-    private Integer hora=0,minutos=0,tasis=0;
+    private Integer hora=0,minutos=0,tasis=0,noSesi=2;
+    private String dateAnterior="",dateActual="";
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @Inject LogonMB logon;
@@ -254,18 +255,16 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     public void seleccionarFecha(SelectEvent event){
         Date date = (Date) event.getObject();
         rol.setFechaClase(date);
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.seleccionarFecha()"+rol.getFechaClase());
     }
+    
     public void seleccionarHora(SelectEvent event){
         Date date = (Date) event.getObject();
         rol.getFechaClase().setHours(date.getHours());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.seleccionarHora()"+rol.getFechaClase());
     }
     
     public void seleccionarMinutos(SelectEvent event){
         Date date = (Date) event.getObject();
         rol.getFechaClase().setMinutes(date.getMinutes());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.seleccionarMinutos()"+rol.getFechaClase());
     }
     
     public void guardaPaseLista() {
@@ -390,19 +389,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 0).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Enero", as.size()));
                         }
@@ -411,19 +408,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 1).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Febrero", as.size()));
                         }
@@ -432,19 +427,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 2).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Marzo", as.size()));
                         }
@@ -453,19 +446,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 3).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Abril", as.size()));
                         }
@@ -474,19 +465,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 4).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Mayo", as.size()));
                         }
@@ -495,19 +484,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 5).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Junio", as.size()));
                         }
@@ -516,19 +503,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 6).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Julio", as.size()));
                         }
@@ -537,19 +522,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 7).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Agosto", as.size()));
                         }
@@ -558,19 +541,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 8).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Septiembre", as.size()));
                         }
@@ -579,19 +560,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 9).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Octubre", as.size()));
                         }
@@ -600,19 +579,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 10).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Noviembre", as.size()));
                         }
@@ -621,19 +598,17 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         as = new ArrayList<>();
                         as = asFilter.stream().filter(t -> t.getAsistencia().getFechaHora().getMonth() == 11).collect(Collectors.toList());
                         if (!as.isEmpty()) {
+                            noSesi=2;
                             as.forEach((t) -> {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
-                                hora = t.getAsistencia().getFechaHora().getHours();
-                                minutos = t.getAsistencia().getFechaHora().getMinutes();
-                                if (hora >= 10 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "" + minutos);
-                                } else if (hora <= 9 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "0" + minutos);
-                                } else if (hora >= 10 && minutos <= 9) {
-                                    rol.getHorasPaseLista().add("" + hora + ":" + "0" + minutos);
-                                } else if (hora <= 9 && minutos >= 10) {
-                                    rol.getHorasPaseLista().add("0" + hora + ":" + "" + minutos);
+                                dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();                                
+                                if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
+                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    noSesi++;
+                                }else{
+                                    rol.getHorasPaseLista().add("1° Sesion");
                                 }
+                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Diciembre", as.size()));
                         }

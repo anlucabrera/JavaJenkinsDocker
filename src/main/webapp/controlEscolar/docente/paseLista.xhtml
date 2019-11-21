@@ -77,10 +77,10 @@
                                         </div>
                                         <div class="#{casilla3}">
                                             <div class="ui-material">
-                                                <p:calendar id="fecha" value="#{paseListaDoc.rol.fechaClase}" pattern="MM/dd/yyyy HH:mm">     
+                                                <p:calendar id="fecha" value="#{paseListaDoc.rol.fechaClase}" pattern="MM/dd/yyyy">     
                                                 <p:ajax update="@this" process="@this" event="dateSelect" listener="#{paseListaDoc.seleccionarFecha}"/>
                                                 </p:calendar>
-                                                <p:outputLabel value="Fecha y Hora de la clase" for="carga"/>
+                                                <p:outputLabel value="Fecha de la clase" for="carga"/>
                                                 <p:message for="carga" />
                                             </div>
                                             <br/>

@@ -193,7 +193,7 @@
                                                                             <c:forEach var="i" begin="0" end="#{paseListaDoc.rol.diasPaseLista.size()-1}">
                                                                                 <c:set var="t" value="#{paseListaDoc.rol.diasPaseLista.get(i)}"/>
                                                                                 <c:set var="g" value="#{paseListaDoc.rol.horasPaseLista.get(i)}"/>
-                                                                                <p:column rowspan="2">#{t} <hr/> #{g} hrs.</p:column>
+                                                                                <p:column rowspan="2">#{t} <hr/> #{g}</p:column>
                                                                             </c:forEach>
                                                                         </p:row>
                                                                     </f:facet>
@@ -261,9 +261,6 @@
                                             <p:column headerText="Fecha">
                                                 <h:outputText value="#{car.asistencia.fechaHora}"><f:convertDateTime pattern="dd, yyyy" locale="es"/></h:outputText>
                                             </p:column>
-                                            <p:column headerText="Hora">
-                                                <h:outputText value="#{car.asistencia.fechaHora}"><f:convertDateTime pattern="HH:mm" locale="es"  timeZone="America/Mexico_City"/></h:outputText>
-                                            </p:column>
 
                                             <p:column headerText="Valor">
                                                 <p:cellEditor>
@@ -326,14 +323,11 @@
                                             <p:column headerText="Fecha">
                                                 <h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="dd, yyyy" locale="es"  timeZone="America/Mexico_City"/></h:outputText>
                                             </p:column>
-                                            <p:column headerText="Hora">
-                                                <h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="HH:mm" locale="es"  timeZone="America/Mexico_City"/></h:outputText>
-                                            </p:column>
                                             <p:column headerText="Fecha completa">
                                                 <p:cellEditor>
-                                                    <f:facet name="output"><h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm" locale="es" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                    <f:facet name="output"><h:outputText value="#{car.fechaHora}"><f:convertDateTime pattern="MM/dd/yyyy" locale="es" timeZone="America/Mexico_City"/></h:outputText></f:facet>
                                                     <f:facet name="input">
-                                                        <p:calendar locale="es" value="#{car.fechaHora}" pattern="MM/dd/yyyy HH:mm"/>
+                                                        <p:calendar locale="es" value="#{car.fechaHora}" pattern="MM/dd/yyyy"/>
                                                     </f:facet>
                                                 </p:cellEditor>
                                             </p:column>

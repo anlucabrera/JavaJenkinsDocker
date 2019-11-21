@@ -2,6 +2,8 @@ package mx.edu.utxj.pye.sgi.util;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +22,8 @@ import org.omnifaces.util.Messages;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
+import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -31,7 +35,9 @@ import org.omnifaces.util.Faces;
 public class UtilidadesPOA implements Serializable {
 
     @Getter    @Setter    private Short ef = 0;
-    @Getter    @Setter    private Integer mes=0;
+    @Getter    @Setter    private Integer mes=0,diasExtra=0;
+    @Getter    @Setter    private LocalDateTime fechaActualHora = LocalDateTime.now();
+    @Getter    @Setter    private Eventos ea= new Eventos();
     @Getter    @Setter    private Procesopoa procesopoa = new Procesopoa();
     @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
 
@@ -41,6 +47,7 @@ public class UtilidadesPOA implements Serializable {
     @EJB    private EjbUtilidadesCH euch;
     @Inject ControladorEmpleado ce;
     @Inject UtilidadesCorreosElectronicos correosElectronicos;
+    @Inject    UtilidadesCH uch;
 
     public Short obtenerejercicioFiscal(String tipo, Integer resta) {
         try {
@@ -199,10 +206,43 @@ public class UtilidadesPOA implements Serializable {
     
     public void enviarCorreo(String tipo, String rol, Boolean aceptado, String observaciones, AreasUniversidad areaDestino) {
         Integer tipoDcorreo = 1;
+        diasExtra=0;
         Boolean refi = false, pye = false;
         String mensajeArea = "", mensajeRefi = "", mensajePye = "", titulo = "", asunto = "";
         try {
             procesopoa = euch.mostrarEtapaPOAArea(areaDestino.getArea());
+            if (aceptado && rol.equals("Ad")) {
+                switch (tipo) {
+                    case "A":                        ea = euch.mostrarEventosRegistro("POA", "Recurso").get(0);                        break;
+                    case "R":                        ea = euch.mostrarEventosRegistro("POA", "Justificacion").get(0);                        break;
+                }
+                LocalDateTime fechaf = uch.castearDaLDT(ea.getFechaFin());
+                LocalDateTime fechai = uch.castearDaLDT(ea.getFechaInicio());
+                if ((fechaActualHora.isAfter(fechai) || fechaActualHora.equals(fechai))) {
+                    EventosAreas e = new EventosAreas();
+                    EventosAreasPK epk = new EventosAreasPK();
+                    epk = new EventosAreasPK(ea.getEvento(), procesopoa.getArea());                    
+                    e.setEventosAreasPK(new EventosAreasPK());
+                    e.setEventosAreasPK(epk);                  
+                    Integer dias = (int) ((uch.castearLDTaD(fechaf).getTime() - uch.castearLDTaD(fechaActualHora).getTime()) / 86400000);
+                    if(dias<0){
+                        diasExtra=Math.abs((int) ((uch.castearLDTaD(fechaActualHora).getTime()- uch.castearLDTaD(fechaf).getTime()) / 86400000));
+                    }
+                    if (dias <= 4) {
+                        switch (fechaActualHora.getDayOfWeek()) {
+                            case MONDAY:                                diasExtra =diasExtra+ 4;                                break;
+                            case TUESDAY:                                diasExtra = diasExtra+6;                                break;
+                            case WEDNESDAY:                                diasExtra = diasExtra+6;                                break;
+                            case THURSDAY:                                diasExtra =diasExtra+ 6;                                break;
+                            case FRIDAY:                                diasExtra = diasExtra+6;                                break;
+                            case SATURDAY:                                diasExtra = diasExtra+5;                                break;
+                            case SUNDAY:                                diasExtra =diasExtra+ 4;                                break;
+                        }
+                    }                    
+                    e.setDiasExtra(diasExtra);
+                    euch.agregarEventosesAreases(e);
+                }
+            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
@@ -235,7 +275,7 @@ public class UtilidadesPOA implements Serializable {
                         refi = false;
                         break;
                     case "Ad":
-                        if (aceptado) {
+                        if (aceptado) {                            
                             asunto = "Confirmación de Validación de Registro de actividades";
                             mensajeArea = "Por medio del presente le informo que su área concluyó satisfactoriamente la etapa de Registro de Actividades. \n"
                                     + "Puede continuar con la etapa de Presupuestación";

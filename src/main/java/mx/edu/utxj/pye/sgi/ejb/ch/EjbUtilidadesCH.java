@@ -12,8 +12,6 @@ import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
-import mx.edu.utxj.pye.sgi.entity.ch.Permisosadminstracion;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Reporteerrores;
