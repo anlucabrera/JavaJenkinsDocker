@@ -21,7 +21,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -95,7 +94,7 @@ public class TutoriasGrupales implements Serializable {
     @ManyToOne(optional = false)
     private Estudiante jefeGrupo;
     @JoinColumn(name = "sesion_grupal", referencedColumnName = "sesion_grupal")
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private SesionesGrupalesTutorias sesionGrupal;
 
     public TutoriasGrupales() {

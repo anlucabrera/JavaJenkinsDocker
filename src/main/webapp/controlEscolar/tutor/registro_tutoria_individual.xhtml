@@ -1,0 +1,946 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                >
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="css" name="timepicker.css"/>
+        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
+        <h:outputScript library="js" name="dialogs.js"/>        
+        <h:outputScript library="js" name="calendario.js"/>
+        <h:outputScript library="primefaces62" name="inputnumber.js"  />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Registro de Tutorías Individuales
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Registro de Tutorías Individuales"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado" var="casoCriticoEstado" allSuffix="ESTADOS" />
+        <div class="contenedor">
+            <c:if test="#{registroTutoriaIndividual.tieneAcceso}">
+                <!-- zona de importación de enums -->
+
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registroTutoriaIndividual.rol.periodoActivo)} " />
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Evento de registro activo: #{registroTutoriaIndividual.rol.eventoRegistroActivo.mes}" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                       onclick="PF('modalAyuda').show();"
+                                                       process="@this"
+                                                       title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </h:form>
+                        <div class="box box-solid">
+                            <div class="box-body">
+                                <h:form id="frmFiltros" prependId="false" class="form-inline">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{registroTutoriaIndividual.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{registroTutoriaIndividual.rol.periodosConCargaGrupo}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this" update="@this grupo sesion mes contenedor" listener="#{registroTutoriaIndividual.cambiarPeriodo}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="grupo" value="#{registroTutoriaIndividual.rol.grupoTutorSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{registroTutoriaIndividual.rol.listadoGruposTutor}" var="grupo" itemValue="#{grupo}" itemLabel="#{grupo.grupo.grado}° #{grupo.grupo.literal} #{grupo.grupo.idSistema.nombre} de #{grupo.programaEducativo.nombre}" />
+                                                    <p:ajax process="@this" update="@this sesion contenedor" listener="#{registroTutoriaIndividual.cambiarGrupo}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Grupo Tutorado" for="grupo"/>
+                                                <p:message for="grupo" ><p:autoUpdate/></p:message>
+                                            </div>
+                                        </div>
+
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="sesion" value="#{registroTutoriaIndividual.rol.sesionGrupalSeleccionada}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{registroTutoriaIndividual.rol.listaSesionesGrupalesTutorias}" var="sesion" itemValue="#{sesion}" itemLabel="P.#{sesion.planAccionTutoria.planAccionTutoria}-S.#{sesion.sesionGrupal}-No.#{sesion.noSesion}- #{sesion.actividadProgramada}" />
+                                                    <p:ajax process="@this" update="@this contenedor" listener="#{registroTutoriaIndividual.cambiarSesiones()}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Sesión Grupal de Tutoría" for="sesion"/>
+                                                <p:message for="sesion" ><p:autoUpdate/></p:message>
+                                            </div>
+                                        </div>
+
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="mes" value="#{registroTutoriaIndividual.rol.eventoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{registroTutoriaIndividual.rol.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" />
+                                                    <p:ajax process="@this" update="@this contenedor" listener="#{registroTutoriaIndividual.cambiarSesiones()}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Mes" for="mes"/>
+                                                <p:message for="mes" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </h:form>
+                                <h:form id="frmRegistro" prependId="false" class="form-inline">
+                                    <p:remoteCommand id="actualizarRegistroTutoria" name="actualizarRegistroTutoria" actionListener="#{registroTutoriaIndividual.actualizar}" process="@this" update="contenedor modalCargaEvidenciaCasoCriticoTutor modalSeguimientoEspecilista" />
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                        <div class="col-lg-12 col-md-12 text-info">
+                                            <p:commandButton id="btnConsultarCasosCriticos"
+                                                             actionListener="#{registroTutoriaIndividual.consultarCasosCriticos}"
+                                                             class="btn btn-sm btn-info" 
+                                                             icon="fa fa-search"
+                                                             title="Consultar número de casos críticos por atender"
+                                                             value="Consultar número de casos críticos por atender"
+                                                             process="@this"
+                                                             global="false"
+                                                             />
+                                            <p:separator/>
+
+                                            <p:outputPanel id="contenedor">
+                                                <div style="margin-bottom: 10px;">
+                                                    <p:outputLabel value="1.- Ingrese la matricula ó nombre del estudiante "></p:outputLabel>
+                                                </div>
+                                                <div class="row margin-bottom" style="margin-bottom: 10px;">
+
+                                                    <div class="col-sm-12 col-md-6 col-lg-6">
+                                                        <div class="ui-material">
+                                                            <p:autoComplete id="tiEstudiante" 
+                                                                            value="#{registroTutoriaIndividual.rol.estudianteSeguimientoSeleccionado}" 
+                                                                            completeMethod="#{registroTutoriaIndividual.completeEstudiantes}" 
+                                                                            queryDelay="800"
+                                                                            valueChangeListener="#{registroTutoriaIndividual.cambiarEstudianteSeleccionado}"
+                                                                            var="estudiante" 
+                                                                            itemValue="#{estudiante}" 
+                                                                            itemLabel="#{estudiante.datosComplete}" 
+                                                                            converter="entityConverter" 
+                                                                            forceSelection="true"
+                                                                            minQueryLength="4"
+                                                                            required="true"
+                                                                            requiredMessage="Favor de seleccionar un estudiante"
+                                                                            styleClass="campoAutocompleteEstudiante"
+                                                                            scrollHeight="300"
+                                                                            style="width: 25em;"
+                                                                            disabled="#{registroTutoriaIndividual.rol.dtoTutoriaIndividualCE.tutoriaIndividual.tutoriaIndividual ne null}"
+                                                                            >
+                                                                <p:column>#{estudiante.datosComplete}</p:column>
+                                                                <p:ajax event="itemSelect" 
+                                                                        process="@this" 
+                                                                        update="contenedor"
+                                                                        />
+                                                            </p:autoComplete>
+                                                        </div>
+                                                        <p:watermark for="tiEstudiante" value="190000 ó Nayeli Martinez Lechuga" />
+                                                        <p:message for="tiEstudiante" />
+                                                        <p>Estudiante</p>
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-6 col-lg-6">
+                                                        <div class="ui-material">
+                                                            <p:inputText value="#{registroTutoriaIndividual.rol.sesionGrupalSeleccionada.actividadProgramada}"
+                                                                         style="width: 18em;"
+                                                                         disabled="true"
+                                                                         />
+                                                        </div>
+                                                        <p>Sesión grupal de tutoría</p>
+                                                    </div>
+                                                    
+                                                    <c:if test="#{!empty registroTutoriaIndividual.rol.listaCasosCriticos}">
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10p">
+                                                            <p:separator/>
+                                                            <p:outputLabel value="2.- Seguimiento de caso crítico - Seleccione un elemento de la lista de opciones (En caso de que aplique)"/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px">
+                                                            <div class="ui-material">
+                                                                <p:selectOneMenu id="tiCasosCriticos" 
+                                                                                 value="#{registroTutoriaIndividual.rol.dtoCasoCritico}" 
+                                                                                 converter="entityConverter" 
+                                                                                 styleClass="form-control" 
+                                                                                 valueChangeListener="#{registroTutoriaIndividual.verificarAsistenciaAsesoria}"
+                                                                                 disabled="#{registroTutoriaIndividual.rol.dtoTutoriaIndividualCE.tutoriaIndividual.tutoriaIndividual ne null}"
+                                                                                 >
+                                                                    <f:selectItem itemLabel=" - Seleccione - " 
+                                                                                  itemValue="#{null}"/>
+                                                                    <f:selectItems value="#{registroTutoriaIndividual.rol.listaCasosCriticos}" 
+                                                                                   var="casoCritico" 
+                                                                                   itemValue="#{casoCritico}" 
+                                                                                   itemLabel="#{casoCritico.toLabel(casoCritico)}"
+                                                                                   />
+                                                                    <p:ajax process="@this" 
+                                                                            update="contenedor modalCargaEvidenciaCasoCriticoTutor modalSeguimientoEspecilista" 
+                                                                            />
+                                                                </p:selectOneMenu>
+                                                                <p:message for="tiCasosCriticos" ><p:autoUpdate/></p:message>
+                                                            </div>
+                                                            <p>Casos Críticos Registrados</p>
+                                                        </div>
+
+                                                        <c:if test="#{registroTutoriaIndividual.rol.mensajeVerificacionAsesorias ne ''}">
+                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                                                <c:if test="#{registroTutoriaIndividual.rol.verificacionAsesorias eq true}">
+                                                                    <div class="callout callout-info">
+                                                                        <p><code style="color:#4185A0;">El caso crítico fue registrado en: #{registroTutoriaIndividual.rol.fechaCasoCritico}</code></p>
+                                                                        <p><code style="color:#4185A0;">#{registroTutoriaIndividual.rol.mensajeVerificacionAsesorias}</code></p>
+                                                                    </div>
+                                                                </c:if>
+
+                                                                <c:if test="#{registroTutoriaIndividual.rol.verificacionAsesorias eq false}">
+                                                                    <div class="callout callout-warning">
+                                                                        <p><code style="color:#4185A0;">El caso crítico fue registrado en: #{registroTutoriaIndividual.rol.fechaCasoCritico}</code></p>
+                                                                        <p><code style="color:#4185A0;">#{registroTutoriaIndividual.rol.mensajeVerificacionAsesorias}</code></p>
+                                                                    </div>
+                                                                </c:if>
+                                                            </div>  
+
+                                                            
+                                                            <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px">
+                                                                <p:separator/>
+                                                                <p:outputLabel value="3.- En caso de seleciconar un caso crítico, favor de llenar la siguiente información. (Puede adjuntar evidencia de seguimiento, canalizar estudiante con especialista, ingresar comentarios del caso crítico seleciconado) "></p:outputLabel>
+                                                            </div>
+                                                            
+                                                            <div class="col-sm-12 col-md-12 col-lg-4" style="margin-bottom: 15px">
+
+                                                                <div class="ui-material" style="margin-bottom: 5px">
+                                                                    <p:commandButton id="btnTISubirEvidenciaTutor"
+                                                                                     value="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaTutor eq null or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaTutor eq ''?'Adjuntar evidencia de seguimiento por parte del tutor':'Actualizar Evidencia de seguimiento por parte del tutor'}"
+                                                                                     actionListener="#{registroTutoriaIndividual.abriDialogoEvidencia}"
+                                                                                     class="btn btn-sm #{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaTutor eq null or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaTutor eq ''?'btn-danger':'btn-info'}" 
+                                                                                     icon="fa fa-image"
+                                                                                     title="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaTutor eq null or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaTutor eq ''?'Adjuntar evidencia de seguimiento por parte del tutor':'Actualizar Evidencia de seguimiento por parte del tutor'}"
+                                                                                     style="width: 28em"
+                                                                                     process="@this"
+                                                                                     global="false"
+                                                                                     />
+                                                                </div>
+
+                                                                <div class="ui-material" style="margin-bottom: 5px">
+                                                                    <p:commandButton id="btnTISeguimientoEspecialista"
+                                                                                     value="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.comentariosEspecialista eq null or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.comentariosEspecialista eq ''?'Canalizar estudiante con especialista':'Consultar seguimiento especialista'}"
+                                                                                     actionListener="#{registroTutoriaIndividual.abriDialogoSeguimientoEspecilista}"
+                                                                                     class="btn btn-sm #{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.comentariosEspecialista eq null or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.comentariosEspecialista eq ''?'btn-warning':'btn-info'}" 
+                                                                                     icon="fa fa-list-ul"
+                                                                                     title="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.comentariosEspecialista eq null or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.comentariosEspecialista eq ''?'Canalizar estudiante con especialista':'Consultar seguimiento especialista'}"
+                                                                                     style="width: 28em"
+                                                                                     process="@this"
+                                                                                     global="false"
+                                                                                     />
+                                                                </div>
+
+                                                            </div>
+                                                            
+                                                            <div class="col-sm-12 col-md-12 col-lg-8" style="margin-bottom: 15px">
+                                                                <div class="ui-material">
+                                                                    <p:inputTextarea id="ticcComentariosTutor"
+                                                                                     rows="3" 
+                                                                                     cols="120"
+                                                                                     counter="displayTICCComentariosTutor" 
+                                                                                     maxlength="3000" 
+                                                                                     counterTemplate="{0} caracteres en total." 
+                                                                                     autoResize="true"
+                                                                                     required="true"
+                                                                                     class="form-control"
+                                                                                     requiredMessage="Es requerido el campo de Comentarios Tutor"
+                                                                                     value="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.comentariosTutor}"
+                                                                                     />
+                                                                    <h:outputText id="displayTICCComentariosTutor" />
+                                                                    <p:watermark for="ticcComentariosTutor" value="Ejemplo de comentarios del tutor *" />
+                                                                    <p:message for="ticcComentariosTutor" />
+                                                                    <p:outputLabel for="ticcComentariosTutor" value="Comentarios del tutor (caso crítico)" />
+                                                                </div>
+                                                                <p:message for="ticcComentariosTutor" />
+                                                            </div>
+                                                            
+                                                            <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px"></div>
+                                                        </c:if>
+                                                    </c:if>
+
+                                                    
+                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                        <p:separator/>
+                                                        <p:outputLabel value="4.- Ingrese la información de la tutoría individual "></p:outputLabel>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-6 col-lg-3">
+                                                        <div class="ui-material">
+                                                            <p:calendar id="rtiFecha"
+                                                                        label="rtiFecha"
+                                                                        required="true"
+                                                                        requiredMessage="Ingrese Fecha de la Tutoría Indivudual"
+                                                                        value="#{registroTutoriaIndividual.rol.fecha}"
+                                                                        pattern="yyyy-MM-dd"
+                                                                        style="width: 18em;"
+                                                                        locale="es"
+                                                                        readonlyInput="true"
+                                                                        mask="true"
+                                                                        mindate="#{registroTutoriaIndividual.rol.periodoSeleccionado.periodoEscolarFechas.inicio}"
+                                                                        maxdate="#{registroTutoriaIndividual.rol.periodoSeleccionado.periodoEscolarFechas.fin}"
+                                                                        >
+                                                            </p:calendar>
+                                                        </div>
+                                                        <p:watermark for="rtiFecha" value="2019-10-01 (aa-MM-dd)*" />
+                                                        <p:message for="rtiFecha" />
+                                                        <p>Fecha de la tutoría individual</p>
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-6 col-lg-3">
+                                                        <div class="ui-material">
+                                                            <pe:timePicker id="rtiHoraInicio"
+                                                                           value="#{registroTutoriaIndividual.rol.horaInicio}" 
+                                                                           locale="es"
+                                                                           timeSeparator="-" 
+                                                                           startHours="7" 
+                                                                           endHours="20"  
+                                                                           startMinutes="00" 
+                                                                           endMinutes="59" 
+                                                                           intervalMinutes="10" 
+                                                                           showDeselectButton="true" 
+                                                                           showNowButton="true"
+                                                                           showCloseButton="true"
+                                                                           rows="3" 
+                                                                           showPeriod="true"
+                                                                           widgetVar="customTimeWidget" 
+                                                                           label="Hora de inicio de la tutoría individual" 
+                                                                           required="true" 
+                                                                           requiredMessage="La hora de inicio de la tutoría individual es requerida"
+                                                                           mode="popup"
+                                                                           styleClass="campo3Partes"
+                                                                           />
+                                                        </div>
+                                                        <p:watermark for="rtiHoraInicio" value="08:30AM (hh:mm) *" />
+                                                        <p:message for="rtiHoraInicio" />
+                                                        <p>Hora de Inicio</p>  
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-6 col-lg-3" >
+                                                        <div class="ui-material">
+                                                            <p:spinner id="rtiTiempoInvertido"
+                                                                       label="rtiTiempoInvertido"
+                                                                       required="true"
+                                                                       requiredMessage="Ingrese el tiempo invertido"
+                                                                       value="#{registroTutoriaIndividual.rol.dtoTutoriaIndividualCE.tutoriaIndividual.tiempoInvertido}" 
+                                                                       min="0" max="120"
+                                                                       styleClass="campo4Partes"
+                                                                       placeholder="2 *"
+                                                                       />
+                                                            <p>Tiempo Invertido</p>
+                                                        </div>
+                                                        <p:message for="rtiTiempoInvertido" />
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-6 col-lg-3">
+                                                        <p:selectOneButton id="horasMinutos"
+                                                                           label="horasMinutos"
+                                                                           value="#{registroTutoriaIndividual.rol.dtoTutoriaIndividualCE.tutoriaIndividual.tipoTiempo}" 
+                                                                           required="true"
+                                                                           requiredMessage="Seleccione el tipo de tiempo"
+                                                                           >
+                                                            <f:selectItem itemLabel="Horas" itemValue="Horas" />
+                                                            <f:selectItem itemLabel="Minutos" itemValue="Minutos" />
+                                                        </p:selectOneButton>
+                                                        <p>Horas/Minutos</p>
+                                                        <p:message for="horasMinutos" />
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
+                                                        <div class="ui-material">
+                                                            <p:inputTextarea id="rtgMotivo"
+                                                                             rows="3" 
+                                                                             cols="80"
+                                                                             counter="displayMotivo" 
+                                                                             maxlength="3000" 
+                                                                             counterTemplate="{0} caracteres en total." 
+                                                                             autoResize="true"
+                                                                             required="true"
+                                                                             class="form-control"
+                                                                             requiredMessage="Es requerido el campo de motivo"
+                                                                             value="#{registroTutoriaIndividual.rol.dtoTutoriaIndividualCE.tutoriaIndividual.motivo}"
+                                                                             />
+                                                            <h:outputText id="displayMotivo" />
+                                                            <p:watermark for="rtgMotivo" value="Ejemplo del motivo de la tutoría individual *" />
+                                                            <p:message for="rtgMotivo" />
+                                                            <p:outputLabel for="rtgMotivo" value="Motivo de la tutoría individual" />
+                                                        </div>
+                                                        <p:message for="rtgMotivo" />
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
+                                                        <div class="ui-material">
+                                                            <p:inputTextarea id="rtiAccionesObservaciones"
+                                                                             rows="3" 
+                                                                             cols="80"
+                                                                             counter="displayAccionesObservaciones" 
+                                                                             maxlength="3000" 
+                                                                             counterTemplate="{0} caracteres en total." 
+                                                                             autoResize="true"
+                                                                             required="true"
+                                                                             class="form-control"
+                                                                             requiredMessage="Es requerido el acciones u observaciones de motivo"
+                                                                             value="#{registroTutoriaIndividual.rol.dtoTutoriaIndividualCE.tutoriaIndividual.accionesObservaciones}"
+                                                                             />
+                                                            <h:outputText id="displayAccionesObservaciones" />
+                                                            <p:watermark for="rtiAccionesObservaciones" value="Ejemplo de acciones u observaciones de la tutoría individual *" />
+                                                            <p:message for="rtiAccionesObservaciones" />
+                                                            <p:outputLabel for="rtiAccionesObservaciones" value="Acciones u observaciones de la tutoría individual" />
+                                                        </div>
+                                                        <p:message for="rtiAccionesObservaciones" />
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+
+
+                                                        <c:if test="#{registroTutoriaIndividual.rol.dtoTutoriaIndividualCE.tutoriaIndividual.tutoriaIndividual eq null}">
+                                                            <p:commandButton id="btnGuardarTutoriaIndividual" 
+                                                                             value="Guardar tutoría individual" 
+                                                                             action="#{registroTutoriaIndividual.guardarTutoriaIndividual()}" 
+                                                                             oncomplete="actualizarRegistroTutoria();" 
+                                                                             icon="fa fa-pencil-square-o" 
+                                                                             class="btn-primary" 
+                                                                             style="width:20em;" 
+                                                                             title="Guardar tutoría individual"
+                                                                             />
+                                                        </c:if>
+                                                        <c:if test="#{registroTutoriaIndividual.rol.dtoTutoriaIndividualCE.tutoriaIndividual.tutoriaIndividual ne null}">
+                                                            <p:commandButton id="btnActualizarTutoriaIndividual" 
+                                                                             value="Actualizar tutoría individual" 
+                                                                             action="#{registroTutoriaIndividual.editatutoriaIndividual()}" 
+                                                                             oncomplete="actualizarRegistroTutoria();" 
+                                                                             icon="fa fa-pencil-square-o" 
+                                                                             class="btn-primary" 
+                                                                             style="width:20em;" 
+                                                                             title="Actualizar tutoría individual"
+                                                                             />
+                                                        </c:if>
+                                                        <c:if test="#{registroTutoriaIndividual.rol.dtoCasoCritico ne null}">
+                                                            <c:if test="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado eq casoCriticoEstado.EN_SEGUMIENTO_TUTOR.label or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado eq casoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.label}">
+                                                                <p:commandButton id="btnCerrarCasoCritico"
+                                                                                 action="#{registroTutoriaIndividual.liberarCasoCritico}" 
+                                                                                 oncomplete="actualizarRegistroTutoria();" 
+                                                                                 icon="fa fa-check-square" 
+                                                                                 class="btn-primary btn-success" 
+                                                                                 style="width:15em;" 
+                                                                                 value="Cerrar caso crítico"
+                                                                                 />
+                                                            </c:if>
+                                                        </c:if>
+
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                    </p:confirmDialog>
+                                                </div>
+
+                                                <div style="margin-bottom: 10px">
+                                                    <p:outputLabel value="Listado de tutorías individuales registrados en la sesión y mes de registro seleccionados"/>
+                                                </div>
+                                                <div class="row margin-bottom">
+                                                    <!--Listado de TI-->
+                                                    <center>
+                                                        <p:dataTable id="dtTutoriasIndividuales" 
+                                                                     var="ti" 
+                                                                     value="#{registroTutoriaIndividual.rol.listaDtoTutoriasIndividuales}" 
+                                                                     sortBy="#{ti.tutoriaIndividual.tutoriaIndividual}"
+                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                     resizeMode="expand"
+                                                                     emptyMessage="Aún no se han registrado tutorías individuales en la sesión y evento de registro seleccionado"
+                                                                     selection="#{registroTutoriaIndividual.rol.tutoriaIndividualSeleccionada}" 
+                                                                     rowKey="#{ti.tutoriaIndividual.tutoriaIndividual}"
+                                                                     >
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="sucess">
+                                                                    <p:column headerText=""  width="30"/>
+                                                                    <p:column headerText="Opciones"  width="60"/>
+                                                                    <p:column headerText="Matricula" width="60"/>
+                                                                    <p:column headerText="Estudiante" width="300"/>
+                                                                    <p:column headerText="Fecha" width="100"/>
+                                                                    <p:column headerText="Hora Inicio" width="100"/>
+                                                                    <p:column headerText="Tiempo Invertido" width="100"/>
+                                                                    <p:column headerText="Motivo" width="500"/>
+                                                                    <p:column headerText="Acciones ú observaciones" width="500"/>
+                                                                    <p:column headerText="Caso crítico" width="1000"/>
+                                                                </p:row>
+                                                            </p:columnGroup>
+
+                                                            <c:set var="tutoriaIndividual" value="#{ti.tutoriaIndividual}"/>
+                                                            <c:set var="dtoCasoCritico" value="#{ti.casoCritico}"/>
+                                                            <!--Selección-->
+                                                            <p:column selectionMode="single" style="width:16px;text-align:center"/>
+
+                                                            <!--Eliminación-->
+                                                            <p:column>
+                                                                <center>
+                                                                    <div class="btn-group">
+                                                                        <p:commandButton class="btn btn-info btn-sm" 
+                                                                                         icon="fa fa-trash" 
+                                                                                         actionListener="#{registroTutoriaIndividual.eliminarTutoriaIndividual(tutoriaIndividual, dtoCasoCritico)}" 
+                                                                                         title="Eliminar registro." 
+                                                                                         process="dtTutoriasIndividuales" 
+                                                                                         oncomplete="actualizarRegistroTutoria();" 
+                                                                                         global="false"
+                                                                                         disabled="#{registroTutoriaIndividual.rol.tutoriaIndividualSeleccionada ne null}"
+                                                                                         >
+                                                                            <p:confirm header="Eliminar" message="¿Está seguro de eliminar la tutoría individual seleccionada?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </div>
+                                                                </center>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{ti.estudiante.inscripcionActiva.inscripcion.matricula}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{ti.estudiante.persona.apellidoMaterno} #{ti.estudiante.persona.apellidoPaterno} #{ti.estudiante.persona.nombre}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{ti.tutoriaIndividual.fecha}">
+                                                                    <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                </h:outputText>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{caster.parseHoraMinutos(ti.tutoriaIndividual.horaInicio)}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{ti.tutoriaIndividual.tiempoInvertido} #{ti.tutoriaIndividual.tipoTiempo}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{ti.tutoriaIndividual.motivo}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{ti.tutoriaIndividual.accionesObservaciones}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{ti.casoCritico eq null?'No aplica':ti.casoCritico.toLabel(ti.casoCritico)}" />
+                                                            </p:column>
+
+                                                            <f:facet name="footer">
+                                                                <div style="text-align: left">
+                                                                    <p:column style="text-align: left;">
+                                                                        <p:commandButton process="dtTutoriasIndividuales" 
+                                                                                         oncomplete="actualizarRegistroTutoria();"
+                                                                                         actionListener="#{registroTutoriaIndividual.seleccionarTutoriaIndividual}" 
+                                                                                         icon="fa fa-search" 
+                                                                                         class="btn-primary" 
+                                                                                         value="Seguimiento Tutoria Individual"
+                                                                                         title="Presione este botón para brindar seguimiento a la tutoria individual"
+                                                                                         disabled="#{!empty registroTutoriaIndividual.rol.listaDtoTutoriasIndividuales?'false':'true'}"
+                                                                                         />
+
+                                                                    </p:column>
+                                                                    <p:column style="text-align: left;">
+                                                                        Usted ha registrado un total de: #{fn:length(registroTutoriaIndividual.rol.listaDtoTutoriasIndividuales)} tutorías individuales.
+                                                                    </p:column>
+                                                                </div>
+                                                            </f:facet>
+
+                                                        </p:dataTable>
+                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                        </p:confirmDialog>
+                                                    </center>
+                                                </div>
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>    
+                                </h:form>
+
+                                <!-- Sección de evidencia por parte del tutor -->
+                                <p:dialog id="modalCargaEvidenciaCasoCriticoTutor" 
+                                          widgetVar="modalCargaEvidenciaCasoCriticoTutor" 
+                                          width="700" 
+                                          height="auto"  
+                                          closeOnEscape="true" 
+                                          visible="#{false}"
+                                          showEffect="fade" 
+                                          hideEffect="fade" 
+                                          modal="true" 
+                                          draggable="true" 
+                                          header="Carga de evidencia seguimiento" 
+                                          onHide="actualizarRegistroTutoria();"
+                                          styleClass="panel panel-primary" 
+                                          responsive="true" 
+                                          resizable="false" 
+                                          maximizable="false">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p:toolbar>
+                                                <f:facet name="left">
+                                                    <p:spacer width="10" />
+                                                    <p:outputLabel value="Seguimiento del tutor:" style="padding-top: 5px;" />
+                                                    <p:spacer width="10" />
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                    <o:form id="formularioEvidencia" 
+                                                            enctype="multipart/form-data" 
+                                                            class="form-inline">
+                                                        <o:inputFile id="files" 
+                                                                     value="#{registroTutoriaIndividual.rol.archivo}"
+                                                                     class="form-control"
+                                                                     accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                                     acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                                     maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                                     maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                                     required="true" 
+                                                                     requiredMessage="Debe elegir al menos un archivo."
+                                                                     >
+                                                        </o:inputFile>
+                                                        <h:commandButton id="btnuploadFiles" 
+                                                                         value="Subir archivo" 
+                                                                         class="btn btn-primary"
+                                                                         actionListener="#{registroTutoriaIndividual.subirEvidencia()}"
+                                                                         />
+                                                    </o:form>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12" style="margin-top: 10px"></div>
+
+                                    <h:form id="frmEvidencias" >
+                                        <p:remoteCommand name="actualizar2" update="frmEvidencias" />
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div style="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaTutor eq null or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaTutor eq ''?'margin-bottom: 5px;display: none;':'margin-bottom: 5px;'}">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Evidencia principal registrada: #{caster.rutaToArchivoNombre(registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaTutor)}" style="padding-top: 5px;" />
+                                                            <p></p>
+
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:commandLink class="btn btn-info btn-sm"
+                                                                           ajax="false"
+                                                                           action="#{registroTutoriaIndividual.descargarEvidencia()}" 
+                                                                           target="_blank" 
+                                                                           title="Descargar evidencia."
+                                                                           value="Descargar evidencia "
+                                                                           >
+                                                                <i class="fa fa-download" />
+                                                            </p:commandLink>
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:commandButton class="btn btn-danger btn-sm" 
+                                                                             icon="fa fa-trash" 
+                                                                             actionListener="#{registroTutoriaIndividual.eliminarEvidencia()}" 
+                                                                             onsuccess="actualizar2();" 
+                                                                             title="Eliminar evidencia."
+                                                                             value="Eliminar evidencia "
+                                                                             >
+                                                                <p:confirm header="Eliminar evidencia" 
+                                                                           message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaTutor)}?" 
+                                                                           icon="ui-icon-alert" />
+                                                            </p:commandButton>
+
+                                                        </f:facet>
+                                                    </p:toolbar>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </p:dialog>
+
+
+                                <!-- Seguimiento del especialista -->
+                                <p:dialog id="modalSeguimientoEspecilista" 
+                                          widgetVar="modalSeguimientoEspecilista" 
+                                          width="700" 
+                                          height="auto"  
+                                          closeOnEscape="true" 
+                                          visible="#{false}"
+                                          showEffect="fade" 
+                                          hideEffect="fade" 
+                                          modal="true" 
+                                          draggable="true" 
+                                          header="Seguimiento de especialista" 
+                                          onHide="actualizarRegistroTutoria();"
+                                          styleClass="panel panel-primary" 
+                                          responsive="true" 
+                                          resizable="false" 
+                                          maximizable="false">
+                                    <div class="col-md-12" style="margin-top: 10px"></div>
+                                    <h:form id="frmSeguimientoEspecialista" >
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div style="margin-bottom: 5px;">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Asignación de especialista:" style="padding-bottom: 10px;" />
+                                                            <br/>
+                                                            <br/>
+                                                            <div class="ui-material">
+                                                                <p:autoComplete id="acEspecialista" 
+                                                                                value="#{registroTutoriaIndividual.rol.docente}" 
+                                                                                valueChangeListener="#{registroTutoriaIndividual.seleccionarEspecialista}"
+                                                                                completeMethod="#{registroTutoriaIndividual.completeDocentes}" 
+                                                                                queryDelay="800"
+                                                                                var="docente"
+                                                                                itemValue="#{docente}" 
+                                                                                itemLabel="#{docente.personal.nombre}"
+                                                                                converter="entityConverter" 
+                                                                                forceSelection="true"
+                                                                                size="35"
+                                                                                styleClass="campoAutocompleteDocente"
+                                                                                scrollHeight="300"
+                                                                                disabled="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.comentariosEspecialista ne null}"
+                                                                                >
+                                                                    <p:column>#{docente.personal.clave}</p:column>
+                                                                    <p:column>#{docente.personal.nombre}</p:column>
+                                                                    <p:column>#{docente.areaOperativa.nombre}</p:column>
+                                                                    <p:ajax event="itemSelect" 
+                                                                            process="@this" 
+                                                                            update="frmSeguimientoEspecialista"
+                                                                            />
+                                                                </p:autoComplete>
+                                                                <p:outputLabel value="Ingrese clave, nombre ó área del especialista:" for="acEspecialista" />
+                                                            </div>
+                                                            <p:watermark for="acEspecialista" value="232 ó Grajeda Ramírez Clara" />
+                                                            <p:message for="acEspecialista" />
+                                                            <p></p>
+                                                        </f:facet>
+                                                    </p:toolbar>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12" style="margin-top: 10px"></div>
+                                        <p:remoteCommand name="actualizar3" update="frmSeguimientoEspecialista" />
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div style="margin-bottom: 5px;">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Especialista: #{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.especialista eq null or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.especialista eq ''?'No se ha asignado especialista':caster.personalActivoLabel(registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.especialista)}" style="padding-top: 5px;" />
+                                                            <p></p>
+
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Evidencia principal registrada del especialista: #{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaEspecialista eq null or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaEspecialista eq ''?'El especialista aún no adjunta ninguna evidencia':caster.rutaToArchivoNombre(registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaEspecialista)}" style="padding-top: 5px;" />
+                                                            <p></p>
+
+                                                            <div style="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaEspecialista eq null or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.evidenciaEspecialista eq ''?'display: none;':'margin-bottom: 1px;'}">
+                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                <p:commandLink class="btn btn-info btn-sm"
+                                                                               ajax="false"
+                                                                               action="#{registroTutoriaIndividual.descargarEvidenciaEspecialista()}" 
+                                                                               target="_blank" 
+                                                                               title="Descargar evidencia."
+                                                                               value="Descargar evidencia "
+                                                                               >
+                                                                    <i class="fa fa-download" />
+                                                                </p:commandLink>
+                                                            </div>
+
+                                                            <p></p>
+                                                            <div class="ui-material">
+                                                                <p:inputTextarea rows="3" 
+                                                                                 readonly="true"
+                                                                                 cols="103"
+                                                                                 autoResize="true"
+                                                                                 class="form-control"
+                                                                                 value="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.comentariosEspecialista}"
+                                                                                 id="rtiComentariosEspecialista"
+                                                                                 />
+                                                                <p:message for="rtiComentariosEspecialista" />
+                                                                <p:outputLabel for="rtiComentariosEspecialista" value="Comentarios del especialista" />
+                                                            </div>
+                                                        </f:facet>
+                                                    </p:toolbar>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </p:dialog>
+
+                                <!--Modal de casos críticos pendientes-->
+                                <p:dialog id="modalCasosCriticosPendientes" 
+                                          widgetVar="modalCasosCriticosPendientes" 
+                                          width="700" 
+                                          height="auto"  
+                                          closeOnEscape="true" 
+                                          visible="#{false}"
+                                          showEffect="fade" 
+                                          hideEffect="fade" 
+                                          modal="true" 
+                                          draggable="true" 
+                                          header="Número de casos críticos por atender"
+                                          styleClass="panel panel-primary" 
+                                          responsive="true" 
+                                          resizable="false" 
+                                          maximizable="false">
+                                    <div class="col-md-12" style="margin-top: 10px"></div>
+
+                                    <h:form id="frmCasosCriticosPendientes" >
+                                        <p:remoteCommand name="actualizar3" update="frmCasosCriticosPendientes" />
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p:toolbar>
+                                                    <f:facet name="left">
+                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                        <p:outputLabel value="Número de casos críticos pendientes por atender" style="padding-top: 5px;" />
+                                                        <p></p>
+                                                    </f:facet>
+                                                </p:toolbar>
+
+                                                <center>
+                                                    <p:dataTable id="dtCasosCriticosPendientes" 
+                                                                 var="casoCriticoPendiente" 
+                                                                 value="#{registroTutoriaIndividual.rol.listaCasosCriticosPendientes}"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                 resizeMode="expand"
+                                                                 emptyMessage="No se han detectado casos críticos registrados"
+                                                                 >
+                                                        <p:ajax event="rowToggle" listener="#{registroTutoriaIndividual.onRowToggle}"/>
+                                                        <f:attribute name="casoCriticoPendiente" 
+                                                                     value="#{casoCriticoPendiente}" 
+                                                                     />
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="sucess">
+                                                                <p:column headerText="Detalle" width="60"/>
+                                                                <p:column headerText="No." width="60"/>
+                                                                <p:column headerText="Tipo" width="300"/>
+                                                                <p:column headerText="Estado" width="200"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+
+                                                        <p:column exportable="false" width="5%" style="text-align: center;" >  
+                                                            <p:rowToggler />  
+                                                        </p:column>  
+
+                                                        <p:column style="text-align: center;">
+                                                            <h:outputText value="#{casoCriticoPendiente.casosCriticosPorAtender}" />
+                                                        </p:column>
+
+                                                        <p:column style="text-align: center;">
+                                                            <h:outputText value="#{casoCriticoPendiente.tipo}" />
+                                                        </p:column>
+
+                                                        <p:column style="text-align: center;">
+                                                            <h:outputText value="#{casoCriticoPendiente.estado}" />
+                                                        </p:column>
+
+                                                        <p:rowExpansion>  
+
+                                                            <c:if test="#{!empty registroTutoriaIndividual.rol.listaSecundaria}">
+                                                                <div class="box-body">
+                                                                    <ul class="todo-list">
+                                                                        <c:forEach items="#{registroTutoriaIndividual.rol.listaSecundaria}" var="instruccion">
+                                                                            <li><span class="text" style="text-align: justify;font-size: 0.92em;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                                                        </c:forEach>
+                                                                    </ul>
+                                                                </div>
+                                                            </c:if>
+
+                                                            <c:if test="#{empty registroTutoriaIndividual.rol.listaSecundaria}">
+                                                                <div class="box-body">
+                                                                    <ul class="todo-list">
+                                                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> No hay casos críticos para enlistar</span></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </c:if>
+
+                                                        </p:rowExpansion>  
+
+                                                    </p:dataTable>
+                                                </center>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </p:dialog>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <c:if test="#{!empty registroTutoriaIndividual.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{registroTutoriaIndividual.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el registro de tutorías grupales</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{registroTutoriaIndividual.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!registroTutoriaIndividual.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a docentes con cargas académicas."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+            <div style="display: none;">
+                <!-- Es necesario este bloque para que se cargue en el navegador el soporte para el control inputnumber -->
+                <h:form>
+                    <p:inputNumber />
+                </h:form>
+            </div>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>

@@ -25,6 +25,7 @@ import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.exception.EvidenciaRegistroExtensionNoValidaException;
 import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCasoCritico;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
@@ -45,6 +46,13 @@ public class ServicioArchivos implements Serializable{
     public static final String[] CATEGORIAS = {"cargas","fotos"};
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmm");
     public static List<String> extensiones = Arrays.asList("pdf","jpg","jpeg","png");
+    
+    public static final String control_escolar = "control_escolar";
+    public static final String estudiante = "estudiante";
+    public static final String tutoria_individual = "tutoria_individual";
+    public static final String sesion_especialista = "sesion_especialista";
+    public static final String caso_critico = "caso_critico";
+    
     /**
      * Variable creada para la creación del directorio para los Módulos de Registro
      */
@@ -266,6 +274,91 @@ public class ServicioArchivos implements Serializable{
         } catch (IOException ex) {
             System.out.println("Mensaje de la excepción: " + ex.getMessage());
         }
+    }
+    
+    /**
+     * Genera una ruta relativa para el expendiente del estudiante,
+     * @param   control_escolar     Diferenciador para expediente del estudiante
+     * @param   estudiante          Diferenciador para expendiente del estudiante
+     * @param   id_persona          Identificador único del estudiante
+     * @param   tutoria_individual  Diferenciador único para registro
+     * @param   caso_critico        Diferenciador único para registro
+     * @param   tipo_caso_critico   Indentificador de tipo cadena del caso critico
+     * @param   id_caso_critico     Identificador único del caso_critico
+     * @return Ruta relativa resultante
+     */
+    public static String genRutaRelativaTutoriaInvididual(Integer id_estudiante, String tipo_caso_critico, Integer id_caso_critico){
+        //anio,area,mes,registro
+        return control_escolar.trim().concat(File.separator)
+                .concat(estudiante.toLowerCase().trim()).concat(File.separator)
+                .concat(String.valueOf(id_estudiante).toLowerCase().trim()).concat(File.separator)
+                .concat(tutoria_individual.toLowerCase().trim()).concat(File.separator)
+                .concat(caso_critico.toLowerCase().trim()).concat(File.separator)
+                .concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(tipo_caso_critico.toLowerCase()))).concat(File.separator)
+                .concat(String.valueOf(id_caso_critico).toLowerCase().trim()).concat(File.separator);
+    }
+    
+    public static String genRutaRelativaSesionEspecialista(Integer id_estudiante, String tipo_caso_critico, Integer id_caso_critico){
+        //anio,area,mes,registro
+        return control_escolar.trim().concat(File.separator)
+                .concat(estudiante.toLowerCase().trim()).concat(File.separator)
+                .concat(String.valueOf(id_estudiante).toLowerCase().trim()).concat(File.separator)
+                .concat(sesion_especialista.toLowerCase().trim()).concat(File.separator)
+                .concat(caso_critico.toLowerCase().trim()).concat(File.separator)
+                .concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(tipo_caso_critico.toLowerCase()))).concat(File.separator)
+                .concat(String.valueOf(id_caso_critico).toLowerCase().trim()).concat(File.separator);
+    }
+    
+    public static String almacenarArchivoEvidenciaTutorCasoCritico(DtoCasoCritico dtoCasoCritico, Part archivo)throws IOException, EvidenciaRegistroExtensionNoValidaException {
+        if (!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())) {
+            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
+        }
+//        C:\archivos\control_escolar\estudiante\1209\tutoria_individual\caso_critico\ unidad_reprobada\150
+        String ruta = ServicioArchivos.genRutaRelativaTutoriaInvididual(
+                dtoCasoCritico.getDtoEstudiante().getPersona().getIdpersona(),
+                dtoCasoCritico.getCasoCritico().getTipo(),
+                dtoCasoCritico.getCasoCritico().getCaso());
+
+        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
+        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
+        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+
+        Integer cont = 1;
+        while (Files.exists(Paths.get(rutaAbsoluta))) {
+            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
+            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
+            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+            cont++;
+        }
+        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
+        archivo.write(rutaArchivo);
+        return rutaAbsoluta;
+    }
+    
+    public static String almacenarArchivoEvidenciaEspecialistaCasoCritico(DtoCasoCritico dtoCasoCritico, Part archivo)throws IOException, EvidenciaRegistroExtensionNoValidaException {
+        if (!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())) {
+            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
+        }
+//        C:\archivos\control_escolar\estudiante\1209\tutoria_individual\caso_critico\ unidad_reprobada\150
+        String ruta = ServicioArchivos.genRutaRelativaSesionEspecialista(
+                dtoCasoCritico.getDtoEstudiante().getPersona().getIdpersona(),
+                dtoCasoCritico.getCasoCritico().getTipo(),
+                dtoCasoCritico.getCasoCritico().getCaso());
+
+        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
+        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
+        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+
+        Integer cont = 1;
+        while (Files.exists(Paths.get(rutaAbsoluta))) {
+            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
+            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
+            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+            cont++;
+        }
+        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
+        archivo.write(rutaArchivo);
+        return rutaAbsoluta;
     }
 
 }

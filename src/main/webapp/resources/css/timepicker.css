@@ -1,0 +1,64 @@
+.ui-timepicker-table table.ui-timepicker {
+    padding-top: 2px !important;
+}
+
+.ui-timepicker-table {
+    background-color: #fbfcfd !important;
+    border: 1px solid #c0c5c7 !important;
+    padding: 2px !important;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3) !important;
+}
+            
+.ui-timepicker-table table {
+	border-collapse: inherit !important;
+	font-size: 0.9em !important;
+}
+            
+.ui-timepicker-table:focus {
+	border: 1px solid #27aae1;
+}
+
+.ui-timepicker-table td {
+	padding: 0.5em !important;
+}
+
+.ui-timepicker-table td a {
+	width: 100% !important;
+}
+
+.pe-timepicker-input {
+	width: 150px !important;
+}
+
+.pe-timepicker-button {
+	height: 70% !important;
+}
+            
+.ui-timepicker-table tbody tr td.ui-timepicker-hours td.ui-timepicker-hour-cell a.ui-state-active,
+.ui-timepicker-table tbody tr td.ui-timepicker-minutes td.ui-timepicker-minute-cell a.ui-state-active {
+	border: 1px solid #c0c5c7;
+        color: #cccccc;
+}
+
+.ui-timepicker-table tbody tr td.ui-timepicker-hours td.ui-timepicker-hour-cell a:hover,
+.ui-timepicker-table tbody tr td.ui-timepicker-minutes td.ui-timepicker-minute-cell a:hover {
+	color: #292B2C;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	border: 1px solid #c0c5c7;
+}
+
+.ui-timepicker-table tbody tr td.ui-timepicker-hours td.ui-timepicker-hour-cell a,
+.ui-timepicker-table tbody tr td.ui-timepicker-minutes td.ui-timepicker-minute-cell a {
+    border: 1px solid #e5ebf0;
+    border-radius: 3px;
+    cursor: default;
+    -webkit-transition: all 0.5s ease; 
+    -moz-transition: all 0.5s ease; 
+    -ms-transition: all 0.5s ease; 
+    -o-transition: all 0.5s ease;
+    padding: 0.5em;
+    color: #93a8b0;
+}

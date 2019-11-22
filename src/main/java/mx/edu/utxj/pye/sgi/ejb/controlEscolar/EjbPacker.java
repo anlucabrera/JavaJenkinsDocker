@@ -474,4 +474,19 @@ public class EjbPacker {
             return ResultadoEJB.crearErroneo(1, "", e, DtoCasoCritico.class);
         }
     }
+    
+    public ResultadoEJB<DtoCasoCritico> packCasoCriticoEstudiante(CasoCritico casoCritico, DtoEstudiante dtoEstudiante){
+        try{
+//            System.out.println("EjbPacker.packCasoCritico");
+//            System.out.println("casoCritico = [" + casoCritico + "], dtoEstudiante = [" + dtoEstudiante + "], dtoCargaAcademica = [" + dtoCargaAcademica + "], dtoUnidadConfiguracion = [" + dtoUnidadConfiguracion + "]");
+            CasoCriticoEstado estado = CasoCriticoEstadoConverter.of(casoCritico.getEstado());
+            CasoCriticoTipo tipo = CasoCriticoTipoConverter.of(casoCritico.getTipo());
+//            System.out.println("tipo = " + tipo);
+            DtoCasoCritico dtoCasoCritico = new DtoCasoCritico(casoCritico, tipo, estado, dtoEstudiante);
+            return ResultadoEJB.crearCorrecto(dtoCasoCritico, "Caso crítico empaquetado");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "", e, DtoCasoCritico.class);
+        }
+    }
 }

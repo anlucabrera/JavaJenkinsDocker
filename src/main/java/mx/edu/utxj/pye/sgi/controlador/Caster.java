@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
+import java.text.DateFormat;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
@@ -36,10 +37,14 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.EstudiantesPye;
 
 /**
  *
@@ -330,4 +335,40 @@ public class Caster {
         }
         return result;
     }
+    
+    public DtoEstudianteComplete dtoEstudianteAutocomplete(Integer idEstudiante) {
+        if (idEstudiante == null) {
+            return null;
+        } else {
+            List<EstudiantesPye> estudiantes = em.createQuery("select e from EstudiantesPye e where e.idEstudiante = :idEstudiante", EstudiantesPye.class)
+                    .setParameter("idEstudiante", idEstudiante)
+                    .getResultList();
+
+            List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
+
+            estudiantes.forEach(estudiante -> {
+                String datosComplete = estudiante.getAPaterno() + " " + estudiante.getAMaterno() + " " + estudiante.getNombre() + " - " + estudiante.getMatricula();
+                DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete);
+                listaDtoEstudiantes.add(dtoEstudianteComplete);
+            });
+            return listaDtoEstudiantes.get(0);
+        }
+    }
+    
+    public String personalActivoLabel(Integer clave){
+         List<PersonalActivo> docentes = em.createQuery("select p from Personal p where p.estado <> 'B' and p.clave = :clave ", Personal.class)
+                    .setParameter("clave", clave)
+                    .getResultStream()
+                    .map(p -> ejbPersonalBean.pack(p))
+                    .collect(Collectors.toList());
+         return String.valueOf(docentes.get(0).getPersonal().getClave()).concat(" - ")
+                 .concat(docentes.get(0).getPersonal().getNombre()).concat(" - ")
+                 .concat(docentes.get(0).getAreaOperativa().getNombre());
+    }
+    
+    public String parseHoraMinutos(Date hora){
+        DateFormat formatoHora = new SimpleDateFormat("HH:mm a");    
+        return formatoHora.format(hora);
+    }
+
 }

@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                >
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="css" name="timepicker.css"/>
+        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
+        <h:outputScript library="js" name="dialogs.js"/>        
+        <h:outputScript library="js" name="calendario.js"/>
+        <h:outputScript library="primefaces62" name="inputnumber.js"  />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento caso crítico especialista
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Seguimiento caso crítico especialista"/>
+
+        <div class="contenedor">
+            <c:if test="#{seguimientoCasoCriticoEspecialista.tieneAcceso}">
+                <!-- zona de importación de enums -->
+
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(seguimientoCasoCriticoEspecialista.rol.periodoActivo)} " />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                       onclick="PF('modalAyuda').show();"
+                                                       process="@this"
+                                                       title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </h:form>
+                        <div class="box box-solid">
+                            <div class="box-body">
+                                <h:form id="frmFiltros" prependId="false" class="form-inline">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{seguimientoCasoCriticoEspecialista.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{seguimientoCasoCriticoEspecialista.rol.periodosConCargaCasosCriticos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this" update="@this programaEducativo contenedor modalCargaEvidenciaCasoCriticoEspecialista" listener="#{seguimientoCasoCriticoEspecialista.cambiarPeriodo}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programaEducativo" value="#{seguimientoCasoCriticoEspecialista.rol.programaEducativo}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{seguimientoCasoCriticoEspecialista.rol.programasEducativos}" var="programaEducativo" itemValue="#{programaEducativo}" itemLabel="#{programaEducativo.nombre}" />
+                                                    <p:ajax process="@this" update="@this contenedor modalCargaEvidenciaCasoCriticoEspecialista" listener="#{seguimientoCasoCriticoEspecialista.cambiarProgramaEducativo}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa Educativo" for="programaEducativo"/>
+                                                <p:message for="programaEducativo" ><p:autoUpdate/></p:message>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </h:form>
+                                <h:form id="frmRegistro" prependId="false" class="form-inline">
+                                    <p:remoteCommand id="actualizarCasoCriticos" name="actualizarCasoCriticos" actionListener="#{seguimientoCasoCriticoEspecialista.actualizar}" process="@this" update="contenedor modalCargaEvidenciaCasoCriticoEspecialista" />
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                        <div class="col-lg-12 col-md-12 text-info">
+
+                                            <p:outputPanel id="contenedor">
+                                                <div style="margin-bottom: 10px;">
+                                                    <p:outputLabel value="Listado de estudiantes canalizados debido a que se encuentran en caso crítico"/>
+                                                </div>
+                                                <div class="row margin-bottom" style="margin-bottom: 10px;">
+                                                    <center>
+                                                        <p:dataTable id="dtCasosCriticosCanalizados" 
+                                                                     var="dto" 
+                                                                     value="#{seguimientoCasoCriticoEspecialista.rol.listaCasosCriticos}" 
+                                                                     sortBy="#{dto.casoCritico.fechaRegistro}"
+                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                     resizeMode="expand"
+                                                                     emptyMessage="Aún no se han canalizado casos críticos en el periodo y programa educativo seleccionado"
+                                                                     >
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="sucess">
+                                                                    <p:column headerText="Evidencia"                     width="70"/>
+                                                                    <p:column headerText="Matricula"                     width="80"/>
+                                                                    <p:column headerText="Estudiante"                    width="200"/>
+                                                                    <p:column headerText="Comentarios Especialista"      width="600"/>
+                                                                    <p:column headerText="Caso Crítico"                  width="500"/>
+                                                                    <p:column headerText="Descripción"                   width="500"/>
+                                                                    <p:column headerText="Comentarios Tutor"             width="500"/>
+                                                                    <p:column headerText="Fecha de registro"             width="110"/>
+                                                                    <p:column headerText="Fecha de cierre"               width="110"/>
+                                                                </p:row>
+
+                                                            </p:columnGroup>
+
+                                                            <p:column>
+                                                                <div class="ui-material" style="margin-bottom: 5px; text-align: center">
+                                                                    <p:commandButton id="btnTISubirEvidenciaEspecialista"
+                                                                                     actionListener="#{seguimientoCasoCriticoEspecialista.abriDialogoEvidencia(dto)}"
+                                                                                     class="btn btn-sm #{dto.casoCritico.evidenciaEspecialista eq null or dto.casoCritico.evidenciaEspecialista eq ''?'btn-danger':'btn-info'}" 
+                                                                                     icon="fa fa-image"
+                                                                                     title="#{dto.casoCritico.evidenciaEspecialista eq null or dto.casoCritico.evidenciaEspecialista eq ''?'Adjuntar evidencia de seguimiento por parte del tutor':'Actualizar Evidencia de seguimiento por parte del tutor'}"
+
+                                                                                     process="@this"
+                                                                                     global="false"
+                                                                                     />
+                                                                </div>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{dto.dtoEstudiante.inscripcionActiva.inscripcion.matricula}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{dto.dtoEstudiante.persona.apellidoPaterno} #{dto.dtoEstudiante.persona.apellidoMaterno} #{dto.dtoEstudiante.persona.nombre}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <p:inputTextarea rows="1" 
+                                                                                 cols="74"
+                                                                                 maxlength="3000" 
+                                                                                 autoResize="true"
+                                                                                 required="true"
+                                                                                 requiredMessage="Es requerido el campo de comentarios del especialista"
+                                                                                 class="form-control"
+                                                                                 title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en cualquier parte de la pantalla"
+                                                                                 value="#{dto.casoCritico.comentariosEspecialista}"
+                                                                                 valueChangeListener="#{seguimientoCasoCriticoEspecialista.actualizarComentariosEspecialista}"
+
+                                                                                 >
+                                                                    <p:ajax process="@this" 
+                                                                            update="dtCasosCriticosCanalizados" 
+                                                                            global="false"
+                                                                            oncomplete="actualizarCasoCriticos();"
+                                                                            /> 
+                                                                    <f:attribute name="dtoCasoCritico" 
+                                                                                 value="#{dto}" 
+                                                                                 />
+                                                                </p:inputTextarea>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{dto.toLabel(dto)}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{dto.casoCritico.descripcion}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{dto.casoCritico.comentariosTutor}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{dto.casoCritico.fechaRegistro}">
+                                                                    <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                </h:outputText>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{dto.casoCritico.fechaCierre}">
+                                                                    <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                </h:outputText>
+                                                            </p:column>
+
+                                                            <f:facet name="footer">
+                                                                <div style="text-align: left">
+                                                                    <p:column style="text-align: left;">
+                                                                        Existen un total de: #{fn:length(seguimientoCasoCriticoEspecialista.rol.listaCasosCriticos)} caso(s) crítico(s) registrado(s).
+                                                                    </p:column>
+                                                                </div>
+                                                            </f:facet>
+                                                        </p:dataTable>
+                                                    </center>
+                                                </div>
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>    
+                                </h:form>
+
+                                <!-- Sección de evidencia por parte del especialista -->
+                                <p:dialog id="modalCargaEvidenciaCasoCriticoEspecialista" 
+                                          widgetVar="modalCargaEvidenciaCasoCriticoEspecialista" 
+                                          width="700" 
+                                          height="auto"  
+                                          closeOnEscape="true" 
+                                          visible="#{false}"
+                                          showEffect="fade" 
+                                          hideEffect="fade" 
+                                          modal="true" 
+                                          draggable="true" 
+                                          header="Carga de evidencia seguimiento" 
+                                          onHide="actualizarCasoCriticos();"
+                                          styleClass="panel panel-primary" 
+                                          responsive="true" 
+                                          resizable="false" 
+                                          maximizable="false">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p:toolbar>
+                                                <f:facet name="left">
+                                                    <p:spacer width="10" />
+                                                    <p:outputLabel value="Seguimiento del especialista:" style="padding-top: 5px;" />
+                                                    <p:spacer width="10" />
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                    <o:form id="formularioEvidencia" 
+                                                            enctype="multipart/form-data" 
+                                                            class="form-inline">
+                                                        <o:inputFile id="files" 
+                                                                     value="#{seguimientoCasoCriticoEspecialista.rol.archivo}"
+                                                                     class="form-control"
+                                                                     accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                                     acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                                     maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                                     maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                                     required="true" 
+                                                                     requiredMessage="Debe elegir al menos un archivo."
+                                                                     >
+                                                        </o:inputFile>
+                                                        <h:commandButton id="btnuploadFiles" 
+                                                                         value="Subir archivo" 
+                                                                         class="btn btn-primary"
+                                                                         actionListener="#{seguimientoCasoCriticoEspecialista.subirEvidencia()}"
+                                                                         />
+                                                    </o:form>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12" style="margin-top: 10px"></div>
+
+                                    <h:form id="frmEvidencias" >
+                                        <p:remoteCommand name="actualizar2" update="frmEvidencias" />
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div style="#{seguimientoCasoCriticoEspecialista.rol.dtoCasoCritico.casoCritico.evidenciaEspecialista eq null or seguimientoCasoCriticoEspecialista.rol.dtoCasoCritico.casoCritico.evidenciaEspecialista eq ''?'margin-bottom: 5px;display: none;':'margin-bottom: 5px;'}">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Evidencia principal registrada: #{caster.rutaToArchivoNombre(seguimientoCasoCriticoEspecialista.rol.dtoCasoCritico.casoCritico.evidenciaEspecialista)}" style="padding-top: 5px;" />
+                                                            <p></p>
+
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:commandLink class="btn btn-info btn-sm"
+                                                                           ajax="false"
+                                                                           action="#{seguimientoCasoCriticoEspecialista.descargarEvidencia()}" 
+                                                                           target="_blank" 
+                                                                           title="Descargar evidencia."
+                                                                           value="Descargar evidencia "
+                                                                           >
+                                                                <i class="fa fa-download" />
+                                                            </p:commandLink>
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:commandButton class="btn btn-danger btn-sm" 
+                                                                             icon="fa fa-trash" 
+                                                                             actionListener="#{seguimientoCasoCriticoEspecialista.eliminarEvidencia}" 
+                                                                             onsuccess="actualizar2();" 
+                                                                             title="Eliminar evidencia."
+                                                                             value="Eliminar evidencia "
+                                                                             >
+                                                                <p:confirm header="Eliminar evidencia" 
+                                                                           message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(seguimientoCasoCriticoEspecialista.rol.dtoCasoCritico.casoCritico.evidenciaEspecialista)}?" 
+                                                                           icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog>
+                                                        </f:facet>
+                                                    </p:toolbar>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </p:dialog>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <c:if test="#{!empty seguimientoCasoCriticoEspecialista.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{seguimientoCasoCriticoEspecialista.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el seguimiento del especialista</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{seguimientoCasoCriticoEspecialista.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+
+            </c:if>
+            <c:if test="#{!seguimientoCasoCriticoEspecialista.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a docentes con cargas académicas."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+            <div style="display: none;">
+                <!-- Es necesario este bloque para que se cargue en el navegador el soporte para el control inputnumber -->
+                <h:form>
+                    <p:inputNumber />
+                </h:form>
+            </div>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>
