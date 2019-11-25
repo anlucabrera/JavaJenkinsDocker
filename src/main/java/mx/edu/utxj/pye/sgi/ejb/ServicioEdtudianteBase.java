@@ -7,10 +7,12 @@ package mx.edu.utxj.pye.sgi.ejb;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 
@@ -20,19 +22,28 @@ import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.EstudiantesClaves;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
 
+import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEvaluacionTutor;
 import mx.edu.utxj.pye.sgi.saiiut.entity.ListaUsuarioClaveNomina;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
 /**
- *
+ * Ejb  para detectar si es estudiante esta registrado en la base de Saiiut o en control escolar.
+ * 1.- Busca el numero de registro del estudiante por matricula y por periodo (Tabla - Matricula Periodos Escolar)
+ * 2.- Del registro se busca la matricula en Saiiut y en Control Escolar y se llena un DTO con todos los datos necesarios
+ * 3.- Se busca la clave del estudiante (Estudiantes-claves)---
+ * Nota: Buscar para las proximas evaluaciones quitar esa tabla
  * @author Taatisz :)
  */
 @Stateless
@@ -43,186 +54,266 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
     @EJB Facade2 fs;
     @EJB EjbPropiedades ep;
     @Inject EjbAdministracionTutores ejbAdmin;
+    private EntityManager em;
+    private EntityManager em2;
 
-    @Override
-    public MatriculaPeriodosEscolares getEstudianteSauiiut(String matricula, Integer periodo) {
-        //Obtiene el periodo actual
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEdtudianteBase.getEstudianteSauiiut()--> ENTRO A BUSCAR EN MATRICULA PERIODOS" + matricula);
-        
-        MatriculaPeriodosEscolares ae = new MatriculaPeriodosEscolares();
-        //Busca la matricula en la pye2, con matricula y el periodo activo
-        System.out.println("Matricula a buscar --->" + matricula);
-        System.err.println("Periodo get Estudiantes " + periodo);
-        
-        MatriculaPeriodosEscolares mpe = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.matricula=:matricula AND m.periodo=:periodo", MatriculaPeriodosEscolares.class)
-                    .setParameter("matricula", matricula.toString())
-                    .setParameter("periodo", periodo)
-                    .getResultStream()
-                    .findAny()
-                    .orElse(null);
-        System.out.println("mpe: " + mpe);
-        return mpe;
-    }
+    @PostConstruct
+    public void init(){em = f.getEntityManager();em2 = fs.getEntityManager();}
 
-    @Override
-    public Estudiante getEstudianteControlEscolar( String matricula) {
-        List<Estudiante> le = new ArrayList<>();
-        Estudiante e = new Estudiante();
-        TypedQuery<Estudiante> ece= fce.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula", Estudiante.class);
-        ece.setParameter("matricula", matricula);
-        le = ece.getResultList();
-        if(le.isEmpty()){
-            e = le.get(0);
-            System.out.println("No encontro estudiante con esa matricula en CONTROL ESCOLAR");
-            return e;
-        }else{
-            e=le.get(0);
-            System.out.println("Se encontro al estudiante en la base de Control Escolar");
-            return e;
+
+    public ResultadoEJB<MatriculaPeriodosEscolares> getMatriculaPeriodo(String matricula, int periodo){
+        try{
+            MatriculaPeriodosEscolares registro = new MatriculaPeriodosEscolares();
+            if (matricula==null){return  ResultadoEJB.crearErroneo(2,registro,"La matricula no debe ser nula");}
+            if (periodo==0) { return  ResultadoEJB.crearErroneo(3,registro,"El periodo no debe ser nulo");}
+            //Se hace la consulta en pye2 por matricula y periodo
+            registro = em.createQuery("select m from MatriculaPeriodosEscolares m where  m.matricula=:matricula and m.periodo=:periodo",MatriculaPeriodosEscolares.class)
+            .setParameter("matricula",matricula)
+            .setParameter("periodo",periodo)
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            if(registro!=null){
+                //El estudiante esta registrado
+                return ResultadoEJB.crearCorrecto(registro,"Estudiante encontrado");
+            }else {
+                //El estudiante no esta registrado
+                return ResultadoEJB.crearErroneo(4,registro,"El estudiante no se encuentra registrado en este periodo");
+            }
+
+        }catch ( Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el registro del estudiante por periodo(EjbAdminEstudianteBase.getMatriculaPeriodo)", e, null);
         }
     }
 
     /**
-     * Obtiene la clave del estudiante que realiza la evaluación ya sea en periodos anteriores o en periodos del nuevo control escolar
+     * Busca todos los datos necesarios del estudiante registrado en Saiiut por matricula
+     * @param estudiante estudiante (registro de Matricula periodos escolares)
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<dtoEstudiantesEvalauciones> getEstudianteSaiiut(MatriculaPeriodosEscolares estudiante){
+        try {
+            dtoEstudiantesEvalauciones estudianteSaiiut = new dtoEstudiantesEvalauciones();
+            if(estudiante==null){return ResultadoEJB.crearErroneo(2,estudianteSaiiut,"El estudiante no debe ser nulo");}
+            //Hace la consulta en la vista de sauiit
+            AlumnosEvaluacionTutor alumnosEvaluacionTutor = new AlumnosEvaluacionTutor();
+            alumnosEvaluacionTutor = em2.createQuery("select a from AlumnosEvaluacionTutor a where a.matricula=:matricula", AlumnosEvaluacionTutor.class)
+            .setParameter("matricula",estudiante.getMatricula())
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            if(alumnosEvaluacionTutor==null){
+                //El estudiante no esta registrado en saiiut
+                return ResultadoEJB.crearErroneo(3,estudianteSaiiut,"El estudiante no esta en Saiiut");
+            }else {
+                //El estudiante esta registrado en saiiut
+                estudianteSaiiut.setEstudianteSaiiut(alumnosEvaluacionTutor);
+                //Buscar tutor
+                ResultadoEJB<Personal > Restutor= getClaveNominabyClavePersona(alumnosEvaluacionTutor.getCveMaestro());
+                if(Restutor.getCorrecto()==true){estudianteSaiiut.setTutor(Restutor.getValor());}
+                else {return ResultadoEJB.crearErroneo(3,estudianteSaiiut,"Error al biscar al tutor del estudiante de Saiiut");}
+                //BUSCO director
+                ResultadoEJB<Personal> Resdirector = getClaveNominabyClavePersona(Integer.parseInt(alumnosEvaluacionTutor.getCveDirector()));
+                if(Resdirector.getCorrecto()==true){estudianteSaiiut.setDirector(Resdirector.getValor());}
+                else {return ResultadoEJB.crearErroneo(4,estudianteSaiiut,"Error al buscar al director del estudiante de Saiiut");}
+                //Busca carrera por abreviatura
+                ResultadoEJB<AreasUniversidad> resArea= getAreabySiglas(estudianteSaiiut.getEstudianteSaiiut().getAbreviatura());
+                if(resArea.getCorrecto()==true){estudianteSaiiut.setCarrera(resArea.getValor());}
+                else {return  ResultadoEJB.crearErroneo(5,estudianteSaiiut, "Error a buscar la carrera del estudiante de Saiiut");}
+                //Se llenan los datos aparte del dto (Aunque ya no los necesita, sólo para no afecta el funcionamiento de la creacion de los Reportes)
+                estudianteSaiiut.setMatricula(alumnosEvaluacionTutor.getMatricula());
+                estudianteSaiiut.setRegistro(estudiante.getRegistro());
+                estudianteSaiiut.setNombreCEstudiante(alumnosEvaluacionTutor.getNombre().concat(" ").concat(alumnosEvaluacionTutor.getApellidoPat().concat(" ").concat(alumnosEvaluacionTutor.getApellidoMat())));
+                estudianteSaiiut.setGrado(((int) alumnosEvaluacionTutor.getGrado()));
+                estudianteSaiiut.setGrupo(alumnosEvaluacionTutor.getIdGrupo());
+                estudianteSaiiut.setClavePE((int)resArea.getValor().getArea());
+                estudianteSaiiut.setNombrePE(resArea.getValor().getSiglas());
+                estudianteSaiiut.setClaveTutor(Restutor.getValor().getClave());
+                estudianteSaiiut.setClaveDirector(Resdirector.getValor().getClave());
+                return ResultadoEJB.crearCorrecto(estudianteSaiiut,"Estudiante Saiiut");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener al estudiante de Saiiut(EjbAdminEstudianteBase.getEstudianteSaiiut)", e, null);
+        }
+    }
+    public ResultadoEJB<dtoEstudiantesEvalauciones> getEstudianteControlEscolar(MatriculaPeriodosEscolares estudiante){
+        try{
+            //System.out.println("Entro a Ce " + estudiante);
+            dtoEstudiantesEvalauciones estudianteControlEscolar = new dtoEstudiantesEvalauciones();
+            if(estudiante ==null){return ResultadoEJB.crearErroneo(2,estudianteControlEscolar,"El estudiante no debe ser nulo");}
+            //Busca al estudiante en la base de Control Escolar
+            Estudiante estudianteCE = new Estudiante();
+            estudianteCE = em.createQuery("select e from Estudiante e where e.matricula=:matricula",Estudiante.class)
+            .setParameter("matricula",Integer.parseInt(estudiante.getMatricula()))
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            //System.out.println("Estudiante CE---> " +estudianteCE);
+            if(estudianteCE==null){return ResultadoEJB.crearErroneo(3,estudianteControlEscolar,"El estudiante no esta registrado en la base de control escolar");}
+            else {
+                //Se envia los datos necesarios al dto
+                estudianteControlEscolar.setMatriculaPeriodosEscolares(estudiante);
+                estudianteControlEscolar.setEstudianteCE(estudianteCE);
+                //Se busca la carrera del estudiante
+                ResultadoEJB<AreasUniversidad> resArea= getAreabyClave(estudiante.getProgramaEducativo());
+                //System.out.println("Carrera CE---> " +resArea.getValor());
+                if(resArea.getCorrecto()==true){estudianteControlEscolar.setCarrera(resArea.getValor());}
+                else {return ResultadoEJB.crearErroneo(4,estudianteControlEscolar,"No se encontro el área del estudiante");}
+                //Busca al tutor
+                ResultadoEJB<Personal> resTutor = getPersonalbyClave(estudianteCE.getGrupo().getTutor());
+                //System.out.println("Tutor---> " +resTutor);
+                if(resTutor.getCorrecto()==true){estudianteControlEscolar.setTutor(resTutor.getValor());}
+                else {return ResultadoEJB.crearErroneo(5,estudianteControlEscolar,"No se pudo obeneter al tutor del estudiante de CE");}
+                //Director
+                ResultadoEJB<Personal> resDirector = getDirectorCE(resArea.getValor());
+               // System.out.println("Director" +resArea.getValor());
+                if(resDirector.getCorrecto() ==true){estudianteControlEscolar.setDirector(resDirector.getValor());}
+                else {return ResultadoEJB.crearErroneo(6,estudianteControlEscolar,"No se pudo obeneter al director");}
+                estudianteControlEscolar.setMatricula(Integer.toString(estudianteCE.getMatricula()));
+                estudianteControlEscolar.setRegistro(estudiante.getRegistro());
+                estudianteControlEscolar.setNombreCEstudiante(estudianteCE.getAspirante().getIdPersona().getNombre().concat(" ").concat(estudianteCE.getAspirante().getIdPersona().getApellidoPaterno()).concat(" ").concat(estudianteCE.getAspirante().getIdPersona().getApellidoMaterno()));
+                estudianteControlEscolar.setGrado(estudianteCE.getGrupo().getGrado());
+                estudianteControlEscolar.setGrupo(estudianteCE.getGrupo().getLiteral().toString());
+                estudianteControlEscolar.setClavePE(estudianteCE.getCarrera());
+                estudianteControlEscolar.setNombrePE(resArea.getValor().getSiglas());
+                estudianteControlEscolar.setClaveTutor(resTutor.getValor().getClave());
+                estudianteControlEscolar.setNombreTutor(resTutor.getValor().getNombre());
+                estudianteControlEscolar.setClaveDirector(resDirector.getValor().getClave());
+                //System.out.println("Completo CE---> " +estudianteControlEscolar);
+                return ResultadoEJB.crearCorrecto(estudianteControlEscolar,"Estudiante en Control Escolar");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener al estudiante de Control Escolar(EjbAdminEstudianteBase.getEstudianteControlEscolar)", e, null);
+        }
+    }
+
+    /**
+     * Busca el registro del estudiante por matricula y periodo
+     * @param matricula
+     * @param periodo periodo de la evaluacion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<MatriculaPeriodosEscolares> getRegistroEstudiantebyPeriodo(String matricula, int periodo){
+        try {
+            MatriculaPeriodosEscolares registro= new MatriculaPeriodosEscolares();
+            if (matricula==null){return ResultadoEJB.crearErroneo(2,registro,"La matricula no debe ser nula");}
+            if(periodo==0){return ResultadoEJB.crearErroneo(3,registro,"El periodo no debe ser nulo");}
+            //Se hace la consulta
+            registro = em.createQuery("select m from MatriculaPeriodosEscolares  m where  m.matricula=:matricula and m.periodo=:periodo",MatriculaPeriodosEscolares.class)
+            .setParameter("matricula", matricula)
+            .setParameter("periodo",periodo)
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            if(registro==null){return ResultadoEJB.crearErroneo(4,registro,"No se encontro registro del estudiante con matricula "+ matricula + " en ese periodo");}
+            else {return ResultadoEJB.crearCorrecto(registro,"Se encontro al estudiante");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el registro del estudiante(EjbAdminEstudianteBase.getRegistroEstudiantebyPeriodo)", e, null);
+        }
+    }
+
+
+    /**
+     * Obtiene al estudiante, identifica donde esta registrado ya sea en saiiut o en control escolar y obtiene todos los datos necesarios
      * @param matricula MAtrícula del estudiante evaluador
      * @param periodoEvaluacion Periodo en el que se realiza la evaluacion
      * @return Regresa la referencia del estudiante evaluador segun su periodo, si no lo encuentra en el repositorio correspondiente regresa null.
      */
     @Override
-    public ResultadoEJB<EstudiantesClaves> getClaveEstudiante(String matricula, Integer periodoEvaluacion) {
-        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEdtudianteBase.getClaveEstudiante()");
-        Estudiante estudianteControlEscolar = new Estudiante();
-        MatriculaPeriodosEscolares estudianteSauiit = new MatriculaPeriodosEscolares();
-        EstudiantesClaves estudianteClave = new EstudiantesClaves();
-       
-        //TODO:busca al estudiante en la base de Contorl Escolar
-        
-        Integer ultimoPeriodoSauiit = ep.leerPropiedadEntera("ultimoPeriodoSauiit").orElse(51);
-        System.out.println("PERIODO EN EJB "+ periodoEvaluacion);
-        if(periodoEvaluacion <= ultimoPeriodoSauiit){
-            //TODO: buscar referencia correspondiente al empate con SAIIUT
-            MatriculaPeriodosEscolares estudiantePeriodo = getEstudianteSauiiut(matricula, periodoEvaluacion);
-            if(estudiantePeriodo==null){return ResultadoEJB.crearErroneo(4,estudianteClave,"Es egresado");}
-            else{
-                System.err.println("Estudiante en MatriculaPeriodos" + estudiantePeriodo);
-                estudianteClave= f.getEntityManager().createQuery("SELECT e FROM EstudiantesClaves e WHERE e.registro=:registro", EstudiantesClaves.class)
-                        .setParameter("registro", estudiantePeriodo.getRegistro())
-                        .getResultStream()
-                        .findFirst()
-                        .orElse(null);
-                System.err.println("Estudiante Clave encontrado" + estudiantePeriodo);
-
-                if(estudianteClave!=null){
-                    //todo: existe en la base de sauiit, con el periodo activo
-                    return ResultadoEJB.crearCorrecto(estudianteClave,"El estudiante esta registrado en sauiit");
-
-                }else {//TODO: No esta registrado en la base de sauiit o  es egresado
-                    return ResultadoEJB.crearErroneo(2,estudianteClave,"El estudiante no esta registrado en sauiit o es egresado"); }
-
+    public ResultadoEJB<dtoEstudiantesEvalauciones> getClaveEstudiante(String matricula, Integer periodoEvaluacion) {
+        try{
+           // System.out.println("Matricula que recibe " + matricula);
+            //System.out.println("Periodo " + periodoEvaluacion);
+            dtoEstudiantesEvalauciones estudiante = new dtoEstudiantesEvalauciones();
+            if(matricula==null){return ResultadoEJB.crearErroneo(2,estudiante,"La matricula no debe ser nula");}
+            if(periodoEvaluacion==0){return ResultadoEJB.crearErroneo(3,estudiante,"El periodo no debe ser nulo");}
+            //Se busca el registro del estudiante segun su matricula y periodo de la evaluacion
+            ResultadoEJB<MatriculaPeriodosEscolares> resRegistro= getRegistroEstudiantebyPeriodo(matricula,periodoEvaluacion);
+           // System.out.println("Registro " + resRegistro.getValor());
+            if(resRegistro.getCorrecto()==true){
+                //Existe registro en la tabla Matricula Periodos escolares
+                //Se envia al dto el registro del estudiante
+                estudiante.setMatriculaPeriodosEscolares(resRegistro.getValor());
+                //Se busca la clave del estudiante (Estudiantes claves)
+                EstudiantesClaves clave = new EstudiantesClaves();
+                clave= em.createQuery("select e from EstudiantesClaves e where e.registro=:registro",EstudiantesClaves.class)
+                .setParameter("registro",estudiante.getMatriculaPeriodosEscolares().getRegistro())
+                .getResultStream()
+                .findFirst()
+                .orElse(null)
+                ;
+                //System.out.println("Clave" + clave);
+                if(clave==null){
+                    //El estudiante no esta registrado en la tabla de claves
+                    return ResultadoEJB.crearErroneo(4,estudiante,"El estudiante no esta registrado en la tabla de Claves Estudiantes");
+                }else {
+                    //El estudiante esta registrado en la tabla
+                    //Se busca en que base esta (Saiiut o Control escolar)
+                    estudiante.setEstudiantesClaves(clave);
+                    estudiante.setClaveEstudiante(clave.getClave());
+                    ResultadoEJB<dtoEstudiantesEvalauciones> resSaiiut =  getEstudianteSaiiut(estudiante.getMatriculaPeriodosEscolares());
+                    if(resSaiiut.getCorrecto()==true){
+                        //System.out.println("Esta en Saiiut" + resSaiiut.getValor());
+                        //El estudiante esta regristrado en Saiiut
+                        estudiante.setEstudianteSaiiut(resSaiiut.getValor().getEstudianteSaiiut());
+                        estudiante.setTutor(resSaiiut.getValor().getTutor());
+                        estudiante.setDirector(resSaiiut.getValor().getDirector());
+                        estudiante.setCarrera(resSaiiut.getValor().getCarrera());
+                        estudiante.setMatricula(resSaiiut.getValor().getMatricula());
+                        estudiante.setRegistro(resSaiiut.getValor().getRegistro());
+                        estudiante.setClaveEstudiante(resSaiiut.getValor().getClaveEstudiante());
+                        estudiante.setNombreCEstudiante(resSaiiut.getValor().getNombreCEstudiante());
+                        estudiante.setGrado(resSaiiut.getValor().getGrado());
+                        estudiante.setGrupo(resSaiiut.getValor().getGrupo());
+                        estudiante.setClavePE(resSaiiut.getValor().getClavePE());
+                        estudiante.setNombrePE(resSaiiut.getValor().getNombrePE());
+                        estudiante.setClaveTutor(resSaiiut.getValor().getClaveTutor());
+                        estudiante.setNombreTutor(resSaiiut.getValor().getNombreTutor());
+                        estudiante.setClaveDirector(resSaiiut.getValor().getClaveDirector());
+                        return ResultadoEJB.crearCorrecto(estudiante,"Se encontro al estudiante en Saiiut");
+                    }
+                    else {
+                        //Se busca en Control Escolar
+                        ResultadoEJB<dtoEstudiantesEvalauciones> resCE= getEstudianteControlEscolar(estudiante.getMatriculaPeriodosEscolares());
+                        if(resCE.getCorrecto()==true){
+                         //   System.out.println("Esta en Control Escolar" + resCE.getValor());
+                            //Esta en control Escolar
+                            estudiante.setEstudianteCE(resCE.getValor().getEstudianteCE());
+                            estudiante.setTutor(resCE.getValor().getTutor());
+                            estudiante.setDirector(resCE.getValor().getDirector());
+                            estudiante.setCarrera(resCE.getValor().getCarrera());
+                            estudiante.setMatricula(resCE.getValor().getMatricula());
+                            estudiante.setRegistro(resCE.getValor().getRegistro());
+                            estudiante.setClaveEstudiante(resCE.getValor().getClaveEstudiante());
+                            estudiante.setNombreCEstudiante(resCE.getValor().getNombreCEstudiante());
+                            estudiante.setGrado(resCE.getValor().getGrado());
+                            estudiante.setGrupo(resCE.getValor().getGrupo());
+                            estudiante.setClavePE(resCE.getValor().getClavePE());
+                            estudiante.setNombrePE(resCE.getValor().getNombrePE());
+                            estudiante.setClaveTutor(resCE.getValor().getClaveTutor());
+                            estudiante.setNombreTutor(resCE.getValor().getNombreTutor());
+                            estudiante.setClaveDirector(resCE.getValor().getClaveDirector());
+                            return ResultadoEJB.crearCorrecto(estudiante,"Se encontro al estudiante en Control Escolar");
+                        }
+                        else {
+                            //No esta en niguna base
+                            return ResultadoEJB.crearErroneo(5,estudiante,"No se encontro al estudiante en ninguna base");}
+                    }
+                }
+            }else {
+                //No existe registro del estudiante
+                return ResultadoEJB.crearErroneo(4,estudiante,"No existe regirstro del estudiante en la tabla");
             }
 
-        }else {
-           //TODO: buscar referencia en el nuevo control escolar
-           Estudiante estudianteCE = getEstudianteControlEscolar(matricula);
-            System.out.println("Estudiante en base de CE=" + estudianteCE);
-            estudianteClave =f.getEntityManager().createQuery("SELECT ec FROM EstudiantesClaves ec WHERE ec.idEstudiante=:idEstudiante",EstudiantesClaves.class)
-                    .setParameter("idEstudiante", estudianteCE.getIdEstudiante())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null)
-                    ;
-            if(estudianteClave!=null){
-             //TODO: Estudiante registrado en Control Escolar
-                return ResultadoEJB.crearCorrecto(estudianteClave,"Registrado en control escolar");
-
-            }else{
-                //TODO: No esta registrado en Control escolar
-                return ResultadoEJB.crearErroneo(3,estudianteClave,"No existe registro en la base de control escolar del estudiante");
-
-            }
-
-        }
-
-        
-    }
-
-    @Override
-    public ResultadoEJB<MatriculaPeriodosEscolares> getEstudianteSauittClave(EstudiantesClaves estudiante, PeriodosEscolares periodo) {
-        
-        try{
-            if(estudiante==null){ResultadoEJB.crearErroneo(3, "El estudiante no debe ser nulo",  MatriculaPeriodosEscolares.class);}
-            if(periodo==null){ResultadoEJB.crearErroneo(4, "El periodo no debe ser nulo", MatriculaPeriodosEscolares.class);}
-             //TODO: Busca al estudiante en la tabla MatriculaPeriodosEscolares por el numero de registro 
-          MatriculaPeriodosEscolares estudianteSauitt = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.registro=:registro AND m.periodo=:periodo", MatriculaPeriodosEscolares.class)
-                    .setParameter("registro", estudiante.getRegistro() )
-                    .setParameter("periodo", periodo.getPeriodo())
-                    .getResultStream()
-                    .findAny()
-                    .orElse(null);
-            
-            //TODO:  Compara si fue localizado el estudante
-            if(estudianteSauitt !=null){return ResultadoEJB.crearCorrecto(estudianteSauitt, "Estudiante encontrado");}
-            else{return ResultadoEJB.crearErroneo(2, estudianteSauitt, "No se econtró al estudiante.");}
-            
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo hacer la busqueda", e, null);
-        }
-     
-    }
-
-    @Override
-    public ResultadoEJB<Estudiante> getEstudianteCEClave(EstudiantesClaves estudiante) {
-        try {
-            if(estudiante==null){return ResultadoEJB.crearErroneo(3, "El estudiante no debe ser nulo.", Estudiante.class);}
-            //TODO: Busca al estudiante en la base de CE por el idEstudiante
-             Estudiante estudianteCE = fce.getEntityManager().createQuery("SELECT e FROM Estudiante e WHERE e.idEstudiante=:idEstudiante", Estudiante.class)
-                    .setParameter("idEstudiante",estudiante.getIdEstudiante() )
-                    .getResultStream()
-                    .findAny()
-                    .orElse(null);
-             if(estudianteCE !=null){return ResultadoEJB.crearCorrecto(estudianteCE,"Se encontro al estudiante en la base de CE");}
-             else{return ResultadoEJB.crearErroneo(2, estudianteCE, "No se localizó al estudiante en la base de CE");}
-                  
-             
-        } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la busqueda (EjbAdmminEstudianteBase)", e, null);
-            
-        }
-        
-    }
-
-    @Override
-    public ResultadoEJB<dtoEstudiantesEvalauciones> getEstudianteActivobyMatriculaSauiit(String matricula) {
-        try{
-            dtoEstudiantesEvalauciones dto = new dtoEstudiantesEvalauciones();
-            //TODO: Busca en la vista al estudiante por la matricula
-            AlumnosEncuestas estudiante= fs.getEntityManager().createQuery("SELECT a from AlumnosEncuestas a where a.matricula=:matricula",AlumnosEncuestas.class)
-                    .setParameter("matricula", matricula)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null)
-                    ;
-            //TODO:Si el resultado de la busqueda es nula, quiere decir que el estudiante no etsá activo
-            if(estudiante==null){return ResultadoEJB.crearErroneo(2,dto,"El estudiante no esta activo");}
-            //TODO:Encontro al estudiante
-            else{
-                //TODO:Obtengo la clave de nomina tanto de su tutor como de su director de carreras
-                ResultadoEJB<Personal > Restutor= getClaveNominabyClavePersona(estudiante.getCveMaestro());
-                ResultadoEJB<Personal> Resdirector = getClaveNominabyClavePersona(Integer.parseInt(estudiante.getCveDirector()));
-                if(Resdirector.getCorrecto()==true){ dto.setClaveDirector(Resdirector.getValor().getClave());}
-                if(Restutor.getCorrecto()==true){dto.setClaveTutor(Restutor.getValor().getClave());}
-                dto.setMatricula(estudiante.getMatricula());
-                dto.setNombreCEstudiante(estudiante.getNombre() + " " + estudiante.getApellidoPat() + " " + estudiante.getApellidoPat());
-                dto.setNombrePE(estudiante.getAbreviatura());
-                dto.setGrado(estudiante.getGrado());
-                dto.setGrupo(estudiante.getIdGrupo());
-                dto.setNombreTutor(estudiante.getNombreTutor() + " " + estudiante.getApPatTutor()+ " "+ estudiante.getApMatTutor());
-                return  ResultadoEJB.crearCorrecto(dto,"Estudiante activo");}
-
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la busqueda (EjbAdmminEstudianteBase,getEstudiantebyMatriculaSauiit)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener al estudiante(EjbAdminEstudianteBase.getClaveEstudiante)", e, null);
         }
     }
+
 
     @Override
     public ResultadoEJB<List<dtoEstudiantesEvalauciones>> getEstudiantesSauiit(PeriodosEscolares periodo) {
@@ -234,10 +325,10 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
             listAlumnosSauiit = fs.getEntityManager().createQuery("SELECT a FROM AlumnosEncuestas a", AlumnosEncuestas.class)
                     .getResultList()
                     ;
-            System.out.println("Lista de vista --->" + listAlumnosSauiit.size());
+          //  System.out.println("Lista de vista --->" + listAlumnosSauiit.size());
             if(listAlumnosSauiit.isEmpty() || listAlumnosSauiit== null){return ResultadoEJB.crearErroneo(2,listDtoEstudiantesSauiit , "La lista de Estudiantes en Sauiit es nula");}
             else{
-                System.out.println("La lista no esta vacía!");
+              //  System.out.println("La lista no esta vacía!");
                 // TODO:recorre la lista general de estudiantes activos en sauiit para poder llenar el dto
                 listAlumnosSauiit.forEach(x ->{
 
@@ -275,7 +366,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                     //TODO: Agrega el dto a la lista
                     listDtoEstudiantesSauiit.add(dtoEstudiante);
                 });
-                System.out.println("Lista total--> " + listDtoEstudiantesSauiit.size());
+               // System.out.println("Lista total--> " + listDtoEstudiantesSauiit.size());
             }
             if(listDtoEstudiantesSauiit.isEmpty()||listDtoEstudiantesSauiit ==null){return ResultadoEJB.crearErroneo(3, listDtoEstudiantesSauiit, "No se pudo hacer el llenado de la lista de estudiantes en sauiit.");}
             else{return ResultadoEJB.crearCorrecto(listDtoEstudiantesSauiit,"Lista de Estudiantes activos en sauiit creada correctamente");}
@@ -288,16 +379,6 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
       
     }
 
-    @Override
-    public ResultadoEJB<List<dtoEstudiantesEvalauciones>> getEstudiantesCE(PeriodosEscolares periodo) {
-        //TODO: AQUI HABRÍA QUE HACER LA LISTA DEL DTO, UNA VEZ QUE EXITAN DATOS REALES EN CONTROL ESCOLAR!!
-        try {
-            
-            
-        } catch (Exception e) {
-        }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
     @Override
     public ResultadoEJB<List<dtoEstudiantesEvalauciones>> getEstudiantesSauiityCE(PeriodosEscolares periodoEvaluacion) {
@@ -307,23 +388,23 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                 return ResultadoEJB.crearErroneo(3, listTotalEstudiantes, "El periodo de la evaluación no debe ser nulo");
 
             }else{
-                System.out.println("Periodo que recibe en ejb del administracion de alumnos" + periodoEvaluacion.getPeriodo());
+               // System.out.println("Periodo que recibe en ejb del administracion de alumnos" + periodoEvaluacion.getPeriodo());
                 List<dtoEstudiantesEvalauciones> listEstudiantesSauiit = new ArrayList<>();
                 List<dtoEstudiantesEvalauciones> listEstudiantesCE = new ArrayList<>();
 
                 //TODO:Obtiene la lista de Estudiantes en sauiit
                 listEstudiantesSauiit = getEstudiantesSauiit(periodoEvaluacion).getValor();
-                System.out.println("Genero la lista de estudiantes en Sauiit"+ listEstudiantesSauiit.size());
+              //  System.out.println("Genero la lista de estudiantes en Sauiit"+ listEstudiantesSauiit.size());
                 //TODO: Obtiene la lista de Estudiantes en Control Escolar
                // listEstudiantesCE = getEstudiantesCE(periodoEvaluacion).getValor(); -->Descomentar cuando haya estudiantes en CE
                 //TODO:Agrega ambas listas a la lista total de estudiantes
                 //listTotalEstudiantes.addAll(listEstudiantesCE); --> Descomentar cuado haya estudiantes en CE
                 listTotalEstudiantes.addAll(listEstudiantesSauiit);
-                System.out.println("Se añadio a la lista general!" + listTotalEstudiantes.size());
+               // System.out.println("Se añadio a la lista general!" + listTotalEstudiantes.size());
                 if (listTotalEstudiantes.isEmpty()) {
                     return ResultadoEJB.crearErroneo(3, listTotalEstudiantes, "La lista total esta vacia!");
                 } else {
-                    System.out.println("Se creo ResultadoEjbCorrecto");
+                    //System.out.println("Se creo ResultadoEjbCorrecto");
                     return ResultadoEJB.crearCorrecto(listTotalEstudiantes, "Lista total");
                 }
             }
@@ -373,6 +454,105 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
 
 
     }
+
+    /**
+     * Busca el Area por las siglas
+     * @param siglas
+     * @return
+     */
+    public ResultadoEJB<AreasUniversidad> getAreabySiglas(String siglas){
+        try{
+            AreasUniversidad area = new AreasUniversidad();
+            if(siglas==null){return ResultadoEJB.crearErroneo(2,area,"Las siglas no deben ser nulas");}
+            //Se hace la consulta
+            area = em.createQuery("select a from AreasUniversidad  a where a.siglas=:siglas", AreasUniversidad.class)
+                    .setParameter("siglas",siglas)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+            ;
+            if(area==null){return ResultadoEJB.crearErroneo(3,area,"No se encontro el área");}
+            else {return ResultadoEJB.crearCorrecto(area,"Se encontro el área");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el área(EjbAdminEstudianteBase.getAreabySiglas)", e, null);
+        }
+    }
+
+    /**
+     * Busca área por clave
+     * @param clave
+     * @return
+     */
+    public ResultadoEJB<AreasUniversidad> getAreabyClave(short clave){
+        try{
+            AreasUniversidad area = new AreasUniversidad();
+            if(clave==0){return ResultadoEJB.crearErroneo(2,area,"La clave del área no debe ser nulo");}
+            //Se hace la consulta
+            area = em.createQuery("select a from AreasUniversidad  a where a.area=:area",AreasUniversidad.class)
+                    .setParameter("area",clave)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+            ;
+            if(area ==null){return ResultadoEJB.crearErroneo(3,area,"No se encontro el área");}
+            else {return ResultadoEJB.crearCorrecto(area,"Área encontrada");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el área(EjbAdminEstudianteBase.getAreabyClave)", e, null);
+        }
+    }
+
+    /**
+     * Busca a personal por clave
+     * @param clave
+     * @return
+     */
+    @Override
+    public ResultadoEJB<Personal> getPersonalbyClave(int clave){
+        try{
+            Personal personal = new Personal();
+            if(clave ==0){return ResultadoEJB.crearErroneo(2,personal,"La clave del personal no debe ser nulo");}
+            //Se hace la consulta
+            personal = em.createQuery("select p from Personal p where p.clave=:clave",Personal.class)
+            .setParameter("clave",clave)
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            if(personal==null){return ResultadoEJB.crearErroneo(3,personal,"No se encontro al personal");}
+            else {return ResultadoEJB.crearCorrecto(personal,"Personal encontrado");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener al personal(EjbAdminEstudianteBase.getPersonalbyClave)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene al director segun el plan eductivo(carrera)del estudiante de CE
+     * @param carrera Plan educativo (carrera) del estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Personal> getDirectorCE (AreasUniversidad carrera){
+        try{
+            Personal director = new Personal();
+            if(carrera==null){return ResultadoEJB.crearErroneo(2,director,"La carrera no debe ser nulo");}
+            //Busca el superior de la carrera
+            ResultadoEJB<AreasUniversidad> resAreaSuperior = getAreabyClave(carrera.getAreaSuperior());
+            if(resAreaSuperior.getCorrecto()==true){
+                //Se busca al personal encargado del area
+                ResultadoEJB<Personal> resPersonal = getPersonalbyClave(resAreaSuperior.getValor().getResponsable());
+                if(resPersonal.getCorrecto()==true){
+                    //Se encontro al director de la carrera
+                    director =resPersonal.getValor();
+                    return ResultadoEJB.crearCorrecto(director,"Director encontrado");
+                }
+                //No se encontro al director
+                else {return ResultadoEJB.crearErroneo(4,director,"No se pudo encontrar al director");}
+
+            }else {return ResultadoEJB.crearErroneo(3,director,"No se contro el area superior de la carrera");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener al director del estudiante(EjbAdminEstudianteBase.getDirectorCE)", e, null);
+        }
+    }
+
 
 
 }

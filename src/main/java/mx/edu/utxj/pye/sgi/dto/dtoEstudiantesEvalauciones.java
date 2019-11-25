@@ -7,13 +7,34 @@ package mx.edu.utxj.pye.sgi.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.ch.EstudiantesClaves;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
+import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEvaluacionTutor;
+
+import java.util.List;
 
 /**
- *
+ *Dto para identificar en las evaluaciones (Tutor- Docente) si estan registrados en Sauiit o en Control Escolar
  * @author Taatisz
  */
 public class dtoEstudiantesEvalauciones {
-    
+    @Getter @Setter EstudiantesClaves estudiantesClaves;
+    //Representa el registro por periodo
+    @Getter  @Setter MatriculaPeriodosEscolares matriculaPeriodosEscolares;
+    //Representa si es un estudiante registrado en Control Escolar
+    @Getter @Setter Estudiante estudianteCE;
+    //Representa si es un estudiante registrado en Sauiit
+    @Getter @Setter AlumnosEvaluacionTutor estudianteSaiiut;
+    //Tutor
+    @Getter @Setter Personal tutor;
+    //Director
+    @Getter @Setter Personal director;
+    //Carrera
+    @Getter @Setter AreasUniversidad carrera;
+    //Datos del estudiante
     @Getter @Setter String matricula;
     @Getter @Setter int registro;
     @Getter @Setter int claveEstudiante;
@@ -25,7 +46,6 @@ public class dtoEstudiantesEvalauciones {
     @Getter @Setter int claveTutor;
     @Getter @Setter String nombreTutor;
     @Getter @Setter int claveDirector;
-
     public dtoEstudiantesEvalauciones() {
     }
 

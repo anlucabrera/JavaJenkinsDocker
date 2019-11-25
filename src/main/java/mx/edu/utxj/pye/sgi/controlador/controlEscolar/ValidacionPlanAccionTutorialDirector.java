@@ -167,11 +167,11 @@ public class ValidacionPlanAccionTutorialDirector extends ViewScopedRol implemen
     
     public void validarPlanAccionTutorial(DtoPlanAccionTutorial dtoPAT) {
         rol.setDtoPlanAccionTutorial(dtoPAT);
-        if(rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().getValidacionDirector()){
-            rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().setValidacionDirector(Boolean.FALSE);
-        }else{
-            rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().setValidacionDirector(Boolean.TRUE);
-        }  
+//        if(rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().getValidacionDirector()){
+//            rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().setValidacionDirector(Boolean.FALSE);
+//        }else{
+//            rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().setValidacionDirector(Boolean.TRUE);
+//        }  
         ResultadoEJB<PlanAccionTutorial> res = ejb.guardaPlanAccionTutorial(dtoPAT.getPlanAccionTutorial());
         if (res.getCorrecto()) {
             actualizarPlanesAccionTutorial();

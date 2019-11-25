@@ -10,6 +10,7 @@ import javax.ejb.Local;
 import javax.faces.model.SelectItem;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
@@ -57,21 +58,8 @@ public interface EjbEvaluacionTutor2 {
      * Regresa la evaluación activa segun la fecha de inicio y fin programada en base de datos
      * @return Regresa nulo si no hay una evaluación activa.
      */
-    public Evaluaciones evaluacionActiva();
 
-    public PeriodosEscolares getPeriodo(Evaluaciones evaluacion);
-
-
-    /**
-     * Obtiene al estudiante de la vista de Alumnos encuestas (alumnos activos sauitt) por la matricula
-     * @param matricula Matricula del alumno logueado
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<AlumnosEncuestas> getEstudianteTutorSauiit( String matricula);
-    /**
-     * Obtiene el estudiante cocn su tutor de la Base de Control Escolar
-     */
-
+    ResultadoEJB<Evaluaciones> getEvaluacionActiva();
 
 
     /**
@@ -81,7 +69,7 @@ public interface EjbEvaluacionTutor2 {
      * @return  Resultado del proceso
      *
      */
-    public ResultadoEJB<EvaluacionTutoresResultados> getResultadosEvaluacionTutorEstudiante(Evaluaciones evaluacion, EstudiantesClaves estudiante);
+    public ResultadoEJB<EvaluacionTutoresResultados> getResultadosEvaluacionTutorEstudiante(Evaluaciones evaluacion, dtoEstudiantesEvalauciones estudiante);
 
     /**
      * Actuliza / guarda (Segun la Operacion que recibe) los resultados de la evaluacion a tutor por clave del estudiante.

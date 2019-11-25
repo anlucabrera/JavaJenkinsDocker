@@ -40,7 +40,8 @@ public class ServicioAdministracionEvTutor  implements EjbAdministracionEvTutor 
     public ResultadoEJB<Evaluaciones> getEvaluacionTutorActiva() {
         try {
             //TODO: Obtene la evaluacion activa del ejb de evaluacion tutor
-            Evaluaciones evalucionTutor= ejbTutor.evaluacionActiva();
+            ResultadoEJB<Evaluaciones> resEv= ejbTutor.getEvaluacionActiva();
+            Evaluaciones evalucionTutor= resEv.getValor();
             //System.out.println("Evaluacion activa encontrada -->" + evalucionTutor.getEvaluacion());
             if(evalucionTutor == null){return ResultadoEJB.crearErroneo(3, evalucionTutor, "La evaluacion es nula");}
             else{return ResultadoEJB.crearCorrecto(evalucionTutor, "La evaluacion a tutor se encontro");}

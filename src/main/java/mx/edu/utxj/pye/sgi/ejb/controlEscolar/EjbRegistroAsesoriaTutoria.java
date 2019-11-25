@@ -488,7 +488,7 @@ public class EjbRegistroAsesoriaTutoria {
      */
     public ResultadoEJB<Boolean> eliminarPlanAccionTutorial(PlanAccionTutorial planAccionTutorial) {
         try {
-            if(planAccionTutorial.getValidacionDirector() == false) {
+//            if(planAccionTutorial.getValidacionDirector() == false) {
                 if (!(buscaSesionesGrupalesXPlanAT(planAccionTutorial.getGrupo()).getCorrecto())) {
                     PlanAccionTutorial pat = em.find(PlanAccionTutorial.class, planAccionTutorial.getPlanAccionTutoria());
                     em.remove(pat);
@@ -497,9 +497,9 @@ public class EjbRegistroAsesoriaTutoria {
                 } else {
                     return ResultadoEJB.crearErroneo(2, Boolean.FALSE, "No se ha podido eliminar el plan de acción debido a que ya tiene asignadas Sesiones Grupales");
                 }
-            } else {
-                return ResultadoEJB.crearErroneo(3, Boolean.FALSE, "No se ha podido eliminar el plan de acción tutorial, debido a que ya ha sido validado por el director de carrera");
-            }
+//            } else {
+//                return ResultadoEJB.crearErroneo(3, Boolean.FALSE, "No se ha podido eliminar el plan de acción tutorial, debido a que ya ha sido validado por el director de carrera");
+//            }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el plan de acción tutorial seleccionado (EjbRegistroAsesoriaTutoria.eliminarPlanAccionTutorial)", e, Boolean.TYPE);
         }
@@ -972,11 +972,11 @@ public class EjbRegistroAsesoriaTutoria {
             PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, e.getPeriodo());
             DtoDatosEstudiante dto = new DtoDatosEstudiante(e, programaEducativo, periodoEscolar);
             DtoParticipantesTutoriaGrupalCE dtoPTG;
-            ResultadoEJB<ParticipantesTutoriaGrupal> resGuardar = guardaParticipanteTutoriaGrupal(new ParticipantesTutoriaGrupal(new ParticipantesTutoriaGrupalPK(tutoriaGrupal.getTutoriaGrupal(), e.getIdEstudiante()), false, "Pendiente de registro"));
-            if (resGuardar.getCorrecto()) {
-                dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, resGuardar.getValor(), true);
-                lista.add(dtoPTG);
-            }
+//            ResultadoEJB<ParticipantesTutoriaGrupal> resGuardar = guardaParticipanteTutoriaGrupal(new ParticipantesTutoriaGrupal(new ParticipantesTutoriaGrupalPK(tutoriaGrupal.getTutoriaGrupal(), e.getIdEstudiante()), false, "Pendiente de registro"));
+//            if (resGuardar.getCorrecto()) {
+//                dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, resGuardar.getValor(), true);
+//                lista.add(dtoPTG);
+//            }
         });
         return lista;
     }
@@ -993,11 +993,11 @@ public class EjbRegistroAsesoriaTutoria {
                 dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, res.getValor().get(0), true);
                 lista.add(dtoPTG);
             } else {
-                ParticipantesTutoriaGrupalPK pk = new ParticipantesTutoriaGrupalPK(tutoriaGrupal.getTutoriaGrupal(), e.getIdEstudiante());
-                ParticipantesTutoriaGrupal partTG = new ParticipantesTutoriaGrupal(pk, true, "Pendiente de registro");
-                partTG.setEstadoCasoCritico(Boolean.FALSE);
-                dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, partTG, false);
-                lista.add(dtoPTG);
+//                ParticipantesTutoriaGrupalPK pk = new ParticipantesTutoriaGrupalPK(tutoriaGrupal.getTutoriaGrupal(), e.getIdEstudiante());
+//                ParticipantesTutoriaGrupal partTG = new ParticipantesTutoriaGrupal(pk, true, "Pendiente de registro");
+//                partTG.setEstadoCasoCritico(Boolean.FALSE);
+//                dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, partTG, false);
+//                lista.add(dtoPTG);
             }
         });
         return lista;
