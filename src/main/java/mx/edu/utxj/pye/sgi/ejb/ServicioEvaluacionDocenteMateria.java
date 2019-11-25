@@ -11,20 +11,19 @@ import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
+import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 
 import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
-import mx.edu.utxj.pye.sgi.dto.Apartado;
-import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.TipoCuestionario;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultadosPK;
+import mx.edu.utxj.pye.sgi.dto.*;
+import mx.edu.utxj.pye.sgi.entity.ch.*;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionDocenteMateriaPye;
@@ -39,21 +38,35 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    @EJB
-    Facade f;
-    @EJB
-    Facade2 f2;
+    @EJB Facade f;
+    @EJB Facade2 f2;
+    private EntityManager em;
+    private EntityManager em2;
+    @EJB EJBAdimEstudianteBase estudianteBase;
 
+    @PostConstruct
+    public void init(){em = f.getEntityManager();em2 = f2.getEntityManager();}
+
+
+    /**
+     * Posibles respuestas
+     * @return
+     */
     @Override
     public List<SelectItem> getRespuestasPosibles() {
         List<SelectItem> l = new SerializableArrayList<>();
-        l.add(new SelectItem("5", "E", "Excelente"));
-        l.add(new SelectItem("4", "MB", "Muy Bueno"));
-        l.add(new SelectItem("3", "B", "Bueno"));
-        l.add(new SelectItem("2", "R", "Regular"));
-        l.add(new SelectItem("1", "D", "Deficiente"));
+        l.add(new SelectItem("5", "Excelente", "Excelente"));
+        l.add(new SelectItem("4", "Muy Bueno", "Muy Bueno"));
+        l.add(new SelectItem("3", "Bueno", "Bueno"));
+        l.add(new SelectItem("2", "Regular", "Regular"));
+        l.add(new SelectItem("1", "Deficiente", "Deficiente"));
         return l;
     }
+
+    /**
+     * Apartados de la evaluación
+     * @return
+     */
 
     @Override
     public List<Apartado> getApartados() {
@@ -110,12 +123,18 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
         return l;
     }
 
+    /**
+     * Obtiene la evaluacion a docente activa
+     * @return Resultado del proceso (Evaluacion activa)
+     */
     @Override
     public ResultadoEJB<Evaluaciones> getEvDocenteActiva() {
         try{
-            Evaluaciones evaluacion = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc",Evaluaciones.class)
-                    .setParameter("tipo","Docente materia")
-                    .setParameter("fecha",new Date())
+           // Evaluaciones evaluacion = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc",Evaluaciones.class)
+             Evaluaciones evaluacion = em.createQuery("select e from Evaluaciones  e where  e.evaluacion=:evaluacion",Evaluaciones.class)
+                    .setParameter("evaluacion",35)
+                     //.setParameter("tipo","Docente materia")
+                    //.setParameter("fecha",new Date())
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
@@ -127,6 +146,10 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
         }
     }
 
+    /**
+     * Obtiene la ultima evaluacion activa
+     * @return
+     */
     @Override
     public ResultadoEJB<Evaluaciones> getUltimaEvDocenteActiva() {
         try{
@@ -184,6 +207,121 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
         }
     }
 
+    /**
+     * Obtiene la lista de materias del estudiante por periodo de la evaluacion, este sólo se usa cuando el estudiante esta registrados en sauiit
+     * @param estudiante
+     * @return
+     */
+    public  ResultadoEJB<List<dtoEstudianteMateria>> getMateriasbyEstudianteSaiiut(dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion){
+        try{
+            List<dtoEstudianteMateria> listMaterias = new ArrayList<>();
+            List<VistaEvaluacionDocenteMateriaPye> materiasSaiiut = new ArrayList<>();
+            if(estudiante==null){return ResultadoEJB.crearErroneo(2,listMaterias,"El estudiante no debe ser nulo");}
+            if(evaluacion==null){return  ResultadoEJB.crearErroneo(3,listMaterias, "La evaluacion no debe ser nula");}
+            //Se buscan las materias por estudiante en la vista
+            materiasSaiiut = em2.createQuery("select v from VistaEvaluacionDocenteMateriaPye v where v.matricula=:matricula and v.periodo=:periodo", VistaEvaluacionDocenteMateriaPye.class)
+            .setParameter("matricula", estudiante.getMatricula())
+            .setParameter("periodo",evaluacion.getPeriodo())
+            .getResultList()
+            ;
+            if(materiasSaiiut==null || materiasSaiiut.isEmpty()){return ResultadoEJB.crearErroneo(4,listMaterias,"No se encontraron materias del estudiante");}
+            else {
+                // Se reccorre la lista para porder generar la lista de materias
+                materiasSaiiut.stream().forEach(m->{
+                    dtoEstudianteMateria materia = new dtoEstudianteMateria();
+                    //Se obtiene al docente que imparte la materia
+                    ResultadoEJB<Personal> docente = estudianteBase.getPersonalbyClave(Integer.parseInt(m.getNumeroNomina()));
+                    if(docente.getCorrecto()==true){ materia.setDocenteImparte(docente.getValor()); }
+                    //Se llena el dto de la materia
+                    materia.setClaveMateria(m.getCveMateria());
+                    materia.setNombreMateria(m.getNombreMateria());
+                    listMaterias.add(materia);
+                });
+                return ResultadoEJB.crearCorrecto(listMaterias,"Lista de materias");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias por estudiante (EJBEvaluacionDocenteMteria, getMateriasbyEstudiante)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene la lista de materias por estudiante registrado en Control Escolar
+     * @param estudiante dto Estudiante
+     * @param evaluacion Evaluacion activa
+     * @return
+     */
+
+    public ResultadoEJB<List<dtoEstudianteMateria>> getMateriasbyEstudianteCE(dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion){
+        try{
+            List<dtoEstudianteMateria> listMaterias = new ArrayList<>();
+            if(estudiante ==null){return ResultadoEJB.crearErroneo(2,listMaterias,"El estudiante no debe ser nulo");}
+            if(evaluacion ==null){return ResultadoEJB.crearErroneo(3,listMaterias,"La evaluacion no debe ser nula");}
+            //Consulta la carga academica segun el grupo que esta adscrito el estudiante y el periodo de la evaluacion
+            List<CargaAcademica> cargaAcademica = new ArrayList<>();
+            cargaAcademica = em.createQuery("select c from CargaAcademica c where c.cveGrupo.idGrupo=:idGrupo and c.cveGrupo.periodo=:periodo",CargaAcademica.class)
+                .setParameter("idGrupo",estudiante.getEstudianteCE().getGrupo().getIdGrupo())
+            .setParameter("periodo",evaluacion.getPeriodo())
+            .getResultList()
+            ;
+            if(cargaAcademica==null || cargaAcademica.isEmpty()){return ResultadoEJB.crearErroneo(4,listMaterias,"No se econtro carga academica"); }
+            else {
+                //Se reoorre la lista de carga acedemica para llenar las materias del estudiante
+                cargaAcademica.stream().forEach(c->{
+                    dtoEstudianteMateria materia = new dtoEstudianteMateria();
+                    //Se busca al docente que imparte la materia
+                    ResultadoEJB<Personal> docente = estudianteBase.getPersonalbyClave(c.getDocente());
+                    if(docente.getCorrecto()==true){materia.setDocenteImparte(docente.getValor());}
+                    materia.setClaveMateria(c.getIdPlanMateria().getClaveMateria());
+                    materia.setNombreMateria(c.getIdPlanMateria().getIdMateria().getNombre());
+                    listMaterias.add(materia);
+                });
+                return ResultadoEJB.crearCorrecto(listMaterias,"Lista de materias del estudiante");
+            }
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias por estudiante CE (EJBEvaluacionDocenteMteria.getMateriasbyEstudianteCE)", e, null);
+        }
+    }
+
+    /**
+     * Identifica en que base de datos esta registrado el estudiante, y respecto a eso obtiene una lista de materias
+     * @param estudiante dtoEstudiante
+     * @param evaluacion Evaluacion actuva
+     * @return Resultado del proceso (Lista de materias)
+     */
+    public ResultadoEJB<List<dtoEstudianteMateria>> getMateriasbyEstudiante (dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion){
+        try{
+            List<dtoEstudianteMateria> materias = new ArrayList<>();
+            if(estudiante==null){return  ResultadoEJB.crearErroneo(2,materias, "El estudiante no debe ser nulo");}
+            if(evaluacion ==null){return  ResultadoEJB.crearErroneo(3,materias,"La evaluacion no debe ser nula");}
+            //Comprueba si es estudiante registrado en Control Escolar o en Saiiut
+            if(estudiante.getEstudianteCE()!=null){
+               //El estudiante esta registrado en Control escolar
+                //Se obtienen las materias del estudiante
+                ResultadoEJB<List<dtoEstudianteMateria>> materiasCE = getMateriasbyEstudianteCE(estudiante,evaluacion);
+                if(materiasCE.getCorrecto()==true){
+                    materias = materiasCE.getValor();
+                    return ResultadoEJB.crearCorrecto(materias,"Lista de materias");
+                }else {return ResultadoEJB.crearErroneo(5,materias,"Ocurrio un error al obetener la lista de materias del estudiante");}
+            }
+            else if(estudiante.getEstudianteSaiiut()!=null){
+                //El estudiante esta registrado en Saiiut
+                //Se obtienen la lista de materias desde Saiiut
+                ResultadoEJB<List<dtoEstudianteMateria>>materiasSaiiut= getMateriasbyEstudianteSaiiut(estudiante,evaluacion);
+                if(materiasSaiiut.getCorrecto()==true){
+                    materias = materiasSaiiut.getValor();
+                    return ResultadoEJB.crearCorrecto(materias,"Lista de materias");
+
+                }else {return ResultadoEJB.crearErroneo(6,materias,"Error al obtener el listado de materias del estudiante");}
+            }else {
+                return ResultadoEJB.crearErroneo(4, materias,"No esta registrado en ninguna base");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias por estudiante  (EJBEvaluacionDocenteMteria.getMateriasbyEstudiante)", e, null);
+        }
+    }
+
+
     @Override
     public ResultadoEJB<List<VistaEvaluacionDocenteMateriaPye>> getDocenteMateriabyMatricula(String matricula) {
         try {
@@ -198,6 +336,71 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
         }
     }
 
+    /**
+     * Se obtiene la lista de resultados de la evaluacion a docente por matricula del estudiante
+     * @param evaluacion evaluacion activa
+     * @param estudiante dto estufiante evaluaciones
+     * @return Resultado del proceso (Lista de Resultados)
+     */
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> getListResultadosbyEstudiante (Evaluaciones evaluacion, dtoEstudiantesEvalauciones estudiante){
+        try{
+            List<EvaluacionDocentesMateriaResultados> listResultados= new ArrayList<>();
+            if(estudiante==null){return ResultadoEJB.crearErroneo(2,listResultados,"El estudiante no debe ser nulo");}
+            if(evaluacion==null){return ResultadoEJB.crearErroneo(3,listResultados,"La evaluación no debe ser nula");}
+            listResultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados e where e.evaluacionDocentesMateriaResultadosPK.evaluador=:evaluador", EvaluacionDocentesMateriaResultados.class)
+            .setParameter("evaluador",Integer.parseInt(estudiante.getMatricula()))
+            .getResultList()
+            ;
+            if(listResultados==null || listResultados.isEmpty()){return ResultadoEJB.crearErroneo(4,listResultados,"No se encontraron resultados del estudiante"); }
+            else {return  ResultadoEJB.crearCorrecto(listResultados,"Lista de resultados encontrados");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de resultados de la evaluacion(EJBEvaluacionDocenteMteria.getListResultadosbyEstudiante)", e, null);
+        }
+    }
+
+    /**
+     * Busca los resultados de la evaluacion a docente por evaluador, evaluado y evaluacion
+     * @param evaluador Estudiante evaluador
+     * @param evaluado Docente - materia evaluado
+     * @param evaluacion Evaluacion activa
+     * @return
+     */
+    public ResultadoEJB<EvaluacionDocentesMateriaResultados> getResultadobyEvaluadorEvaluado(dtoEstudiantesEvalauciones evaluador,dtoEstudianteMateria evaluado, Evaluaciones evaluacion){
+        try {
+            EvaluacionDocentesMateriaResultados resultados = new EvaluacionDocentesMateriaResultados();
+            if(evaluador ==null){return  ResultadoEJB.crearErroneo(2,resultados,"El evaluador no debe ser nulo");}
+            if(evaluado ==null){return ResultadoEJB.crearErroneo(3,resultados,"El evaluador no debe ser nulo");}
+            if(evaluacion==null){return ResultadoEJB.crearErroneo(4,resultados,"La evaluación no debe ser nula");}
+            resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados e where e.evaluacionDocentesMateriaResultadosPK.evaluador=:evaluador and e.evaluacionDocentesMateriaResultadosPK.evaluado=:evaluado and e.evaluacionDocentesMateriaResultadosPK.cveMateria=:cveMateria and e.evaluacionDocentesMateriaResultadosPK.evaluacion=:evaluacion",EvaluacionDocentesMateriaResultados.class)
+            .setParameter("evaluador",Integer.parseInt(evaluador.getMatricula()))
+            .setParameter("evaluado",evaluado.getDocenteImparte().getClave())
+            .setParameter("cveMateria",evaluado.getClaveMateria())
+            .setParameter("evaluacion",evaluacion.getEvaluacion())
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            if(resultados ==null){
+                //No existen resultados, entonces los crea
+                EvaluacionDocentesMateriaResultadosPK pk = new EvaluacionDocentesMateriaResultadosPK();
+                pk.setEvaluacion(evaluacion.getEvaluacion());
+                pk.setEvaluador(Integer.parseInt(evaluador.getMatricula()));
+                pk.setEvaluado(evaluado.getDocenteImparte().getClave());
+                pk.setCveMateria(evaluado.getClaveMateria());
+                EvaluacionDocentesMateriaResultados resultados1 = new EvaluacionDocentesMateriaResultados();
+                resultados1.setEvaluacionDocentesMateriaResultadosPK(pk);
+                em.persist(resultados1);
+                resultados = resultados1;
+                return ResultadoEJB.crearCorrecto(resultados,"Se crearon los resultados");
+            }else {
+                //Existen resultados ...
+                return ResultadoEJB.crearCorrecto(resultados,"Resultados");
+            }
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados (EJBEvaluacionDocenteMteria.getResultadobyEvaluadorEvaluado)", e, null);
+        }
+    }
     @Override
     public EvaluacionDocentesMateriaResultados getResultados(Evaluaciones evaluacion, VistaEvaluacionDocenteMateriaPye docenteMateriaPye) {
         TypedQuery<EvaluacionDocentesMateriaResultados> q = f.getEntityManager().createQuery("SELECT e FROM EvaluacionDocentesMateriaResultados e WHERE e.evaluacionDocentesMateriaResultadosPK.evaluacion=:evaluacion AND e.evaluacionDocentesMateriaResultadosPK.evaluador=:evaluador AND e.evaluacionDocentesMateriaResultadosPK.evaluado=:evaluado", EvaluacionDocentesMateriaResultados.class);
@@ -217,16 +420,19 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
 
     @Override
     public Evaluaciones evaluacionActiva() {
-        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("buscar_evaluacion_docentes_materia_activa", Evaluaciones.class);
-        List<Evaluaciones> l = spq.getResultList();
-        if (l == null || l.isEmpty()) {
-//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion es nula");
-            return new Evaluaciones();
-        } else {
-//            System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionDocenteMateria.evaluacionActiva() la evaluacion activa es : " + l.get(0).getEvaluacion());
+        Evaluaciones evaluacion = new Evaluaciones();
+        evaluacion =em.createQuery("select e from Evaluaciones  e where e.evaluacion=:evaluacion",Evaluaciones.class)
+        .setParameter("evaluacion",35)
+        .getResultStream()
+        .findFirst()
+        .orElse(null)
+        ;
+        return evaluacion;
+    }
 
-            return l.get(0);
-        }
+    @Override
+    public ResultadoEJB<Evaluacion> getEvaluacionDocenteActiva() {
+        return null;
     }
 
     @Override
@@ -234,6 +440,112 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
         TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e where e.tipo=:tipo ORDER BY e.evaluacion DESC", Evaluaciones.class);
         List<Evaluaciones> l = q.setParameter("tipo", "Docente materia").getResultList();
         return l.get(0);
+    }
+    public ResultadoEJB<EvaluacionDocentesMateriaResultados> actualizaRespuestaPorPregunta2(EvaluacionDocentesMateriaResultados resultados, String pregunta, String valor){
+        try{
+            switch (pregunta.toString()) {
+                case "r1":
+                    resultados.setR1(Short.parseShort(valor));
+                    break;
+                case "r2":
+                    resultados.setR2(Short.parseShort(valor));
+                    break;
+                case "r3":
+                    resultados.setR3(Short.parseShort(valor));
+                    break;
+                case "r4":
+                    resultados.setR4(Short.parseShort(valor));
+                    break;
+                case "r5":
+                    resultados.setR5(Short.parseShort(valor));
+                    break;
+                case "r6":
+                    resultados.setR6(Short.parseShort(valor));
+                    break;
+                case "r7":
+                    resultados.setR7(Short.parseShort(valor));
+                    break;
+                case "r8":
+                    resultados.setR8(Short.parseShort(valor));
+                    break;
+                case "r9":
+                    resultados.setR9(Short.parseShort(valor));
+                    break;
+                case "r10":
+                    resultados.setR10(Short.parseShort(valor));
+                    break;
+                case "r11":
+                    resultados.setR11(Short.parseShort(valor));
+                    break;
+                case "r12":
+                    resultados.setR12(Short.parseShort(valor));
+                    break;
+                case "r13":
+                    resultados.setR13(Short.parseShort(valor));
+                    break;
+                case "r14":
+                    resultados.setR14(Short.parseShort(valor));
+                    break;
+                case "r15":
+                    resultados.setR15(Short.parseShort(valor));
+                    break;
+                case "r16":
+                    resultados.setR16(Short.parseShort(valor));
+                    break;
+                case "r17":
+                    resultados.setR17(Short.parseShort(valor));
+                    break;
+                case "r18":
+                    resultados.setR18(Short.parseShort(valor));
+                    break;
+                case "r19":
+                    resultados.setR19(Short.parseShort(valor));
+                    break;
+                case "r20":
+                    resultados.setR20(Short.parseShort(valor));
+                    break;
+                case "r21":
+                    resultados.setR21(Short.parseShort(valor));
+                    break;
+                case "r22":
+                    resultados.setR22(Short.parseShort(valor));
+                    break;
+                case "r23":
+                    resultados.setR23(Short.parseShort(valor));
+                    break;
+                case "r24":
+                    resultados.setR24(Short.parseShort(valor));
+                    break;
+                case "r25":
+                    resultados.setR25(Short.parseShort(valor));
+                    break;
+                case "r26":
+                    resultados.setR26(Short.parseShort(valor));
+                    break;
+                case "r27":
+                    resultados.setR27(Short.parseShort(valor));
+                    break;
+                case "r28":
+                    resultados.setR28(Short.parseShort(valor));
+                    break;
+                case "r29":
+                    resultados.setR29(Short.parseShort(valor));
+                    break;
+                case "r30":
+                    resultados.setR30(Short.parseShort(valor));
+                    break;
+                case "r31":
+                    resultados.setR31(Short.parseShort(valor));
+                    break;
+                case "r32":
+                    resultados.setR32(valor);
+                    break;
+            }
+            return ResultadoEJB.crearCorrecto(resultados,"Resultados actualizados");
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar los resultados (EJBEvaluacionDocenteMteria.actualizaRespuestaPorPregunta2)", e, null);
+        }
     }
 
     @Override
@@ -511,6 +823,7 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
         resultado.setCompleto(completo);
         resultado.setIncompleto(!completo);
         resultado.setPromedio(suma / cantidad);
+        em.merge(resultado);
     }
 
     @Override

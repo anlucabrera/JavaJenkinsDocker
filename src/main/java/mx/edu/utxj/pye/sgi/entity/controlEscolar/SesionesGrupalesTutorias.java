@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,11 +18,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -72,8 +74,10 @@ public class SesionesGrupalesTutorias implements Serializable {
     @JoinColumn(name = "plan_accion_tutoria", referencedColumnName = "plan_accion_tutoria")
     @ManyToOne(optional = false)
     private PlanAccionTutorial planAccionTutoria;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "sesionGrupal")
-    private TutoriasGrupales tutoriasGrupales;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sesionGrupal")
+    private List<TutoriasIndividuales> tutoriasIndividualesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sesionGrupal")
+    private List<TutoriasGrupales> tutoriasGrupalesList;
 
     public SesionesGrupalesTutorias() {
     }
@@ -147,12 +151,22 @@ public class SesionesGrupalesTutorias implements Serializable {
         this.planAccionTutoria = planAccionTutoria;
     }
 
-    public TutoriasGrupales getTutoriasGrupales() {
-        return tutoriasGrupales;
+    @XmlTransient
+    public List<TutoriasIndividuales> getTutoriasIndividualesList() {
+        return tutoriasIndividualesList;
     }
 
-    public void setTutoriasGrupales(TutoriasGrupales tutoriasGrupales) {
-        this.tutoriasGrupales = tutoriasGrupales;
+    public void setTutoriasIndividualesList(List<TutoriasIndividuales> tutoriasIndividualesList) {
+        this.tutoriasIndividualesList = tutoriasIndividualesList;
+    }
+
+    @XmlTransient
+    public List<TutoriasGrupales> getTutoriasGrupalesList() {
+        return tutoriasGrupalesList;
+    }
+
+    public void setTutoriasGrupalesList(List<TutoriasGrupales> tutoriasGrupalesList) {
+        this.tutoriasGrupalesList = tutoriasGrupalesList;
     }
 
     @Override

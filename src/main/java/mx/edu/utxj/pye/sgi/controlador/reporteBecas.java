@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EstudiantesPye;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.EstudiantesPye;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaAlumnosPye;

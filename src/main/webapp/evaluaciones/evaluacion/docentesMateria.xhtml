@@ -45,12 +45,10 @@
                     <div id="main-buttons" class="" >
                         <p:toolbar id="tb">
                             <f:facet name="left">
-                                <p:outputLabel value="Total a evualuar: #{evaluacionDoncenteMateriaControler.listaDatosEvaluacion.size()}" />
+                                <p:outputLabel value="Total a evualuar: #{evaluacionDoncenteMateriaControler.totalDocentes}}" />
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                <p:outputLabel value="Evaluados:  #{evaluacionDoncenteMateriaControler.evaluados}" />
+                                <p:outputLabel value="Evaluados:  #{evaluacionDoncenteMateriaControler.totalDocentes - evaluacionDoncenteMateriaControler.evaluados2}" />
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                <p:outputLabel value="Evaluando: #{evaluacionDoncenteMateriaControler.evaluando}" />
-                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                              
                             </f:facet>
                             <f:facet name="right">
                                 <p:commandButton value="Actualizar" id="btnActualizar" actionListener="#{evaluacionDoncenteMateriaControler.actualizar()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary "  />
@@ -88,17 +86,16 @@
                             <c:if test="#{!empty evaluacionDoncenteMateriaControler.evaluacion}">
                                 <div jsf:id="filaHeader" class="row hidden-sm hidden-md hidden-sm hidden-xs" style="background-color: white;">
                                     <div class="col-lg-4 text-center text-info" style="height: 230px; vertical-align: middle;">
-                                        <c:if test="#{evaluacionDoncenteMateriaControler.listaDatosEvaluacion.size() eq evaluacionDoncenteMateriaControler.evaluados}">
+                                        <c:if test="#{evaluacionDoncenteMateriaControler.listaDocentesEvaluados.size() eq evaluacionDoncenteMateriaControler.evaluados}">
                                             <div>
                                                 <h2 style="background-color: aliceblue;">Evaluación terminada</h2>
                                                 <p:graphicImage library="img" name="ok_azul.png" height="100" />
-                                                <h3 style="background-color: aliceblue;">Gracias por finalizar la evaluación docente: #{evaluacionDoncenteMateriaControler.evaluador.nombre}</h3>
+                                                <h3 style="background-color: aliceblue;">Gracias por finalizar la evaluación docente: #{evaluacionDoncenteMateriaControler.estudianteEvaluacion.nombreCEstudiante}</h3>
                                             </div>
                                         </c:if>
                                     </div>
                                     <c:set var="index" value="#{caster.toInt(0)}" />
-                                    <c:forEach items="#{evaluacionDoncenteMateriaControler.listaDocentesEvaluando}" var="evaluado"> 
-
+                                    <c:forEach items="#{evaluacionDoncenteMateriaControler.listaResultados}" var="evaluado">
                                         <div class="col-lg-2 text-center" style="padding-left: 2px; padding-right: 2px; background-color: aliceblue;">                                            
                                             <p:outputPanel >
                                                 <p:autoUpdate/>
@@ -110,7 +107,7 @@
                                                     <f:convertNumber type="number" pattern="##.##"/>
                                                 </h:outputText>
                                             </p:outputPanel>
-                                            <p:selectOneMenu id="opcion#{index}" class="form-control" autoWidth="false" 
+                                            <p:selectOneMenu id="opcion#{index}" class="form-control" autoWidth="false"
                                                              var="s" panelStyle="width:380px" effect="fade"
                                                              valueChangeListener="#{evaluacionDoncenteMateriaControler.cambiarOpciones}">
                                                 <f:selectItems value="#{evaluacionDoncenteMateriaControler.opciones[index]}" var="docentes" itemValue="#{docentes.cveMateria}" itemLabel="#{docentes.nombreMateria}" itemDescription="#{docentes.nombreCompletoDocente}"  />
@@ -157,7 +154,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <c:forEach items="#{evaluacionDoncenteMateriaControler.listaDocentesEvaluando}" var="evaluado2">
+                                            <c:forEach items="#{evaluacionDoncenteMateriaControler.listaResultados}" var="evaluado2">
                                                 <div class="col-lg-2 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
 
                                                     <c:set var="id" value="#{'r'.concat(pregunta.numero).replace('.','-').concat('_').concat(evaluado2.evaluacionDocentesMateriaResultadosPK.cveMateria.toString())}" />

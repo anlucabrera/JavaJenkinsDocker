@@ -8,8 +8,12 @@ package mx.edu.utxj.pye.sgi.ejb;
 import java.util.List;
 import javax.ejb.Local;
 import javax.faces.model.SelectItem;
+
+import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.dtoEstudianteMateria;
+import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -97,6 +101,8 @@ public interface EJBEvaluacionDocenteMateria {
      * @return
      */
     public Evaluaciones evaluacionActiva();
+
+    public ResultadoEJB<Evaluacion> getEvaluacionDocenteActiva();
     
     public Evaluaciones ultimaEvaluacionDocenteMaterias();
 
@@ -117,6 +123,8 @@ public interface EJBEvaluacionDocenteMateria {
      * @param respuesta
      */
     public void actualizarRespuestaPorPregunta(EvaluacionDocentesMateriaResultados resultado, Float pregunta, String respuesta);
+
+    public ResultadoEJB<EvaluacionDocentesMateriaResultados> actualizaRespuestaPorPregunta2(EvaluacionDocentesMateriaResultados resultados, String pregunta, String valor);
 
     /**
      * Obtiene los resultados de las encuestas completas o incompletas
@@ -178,5 +186,22 @@ public interface EJBEvaluacionDocenteMateria {
      * @param resultado
      */
     public void comprobarResultado(EvaluacionDocentesMateriaResultados resultado);
+
+    /**
+     * Idetentifica en que base esta regustrado el estudiante(Control Escolar/Saiiut) y respecto a eso busca el listado de sus materias que esta cursando
+     * @param estudiante dtoEstudiante
+     * @param evaluacion Evaluación activa
+     * @return Resultado del Proceso(Lista de materias)
+     */
+    public ResultadoEJB<List<dtoEstudianteMateria>> getMateriasbyEstudiante (dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion);
+
+    /**
+     * Obtiene los resultados de la evaluacion por matricula, evaluacion, evaluado
+     * @param evaluador Estudiante
+     * @param evaluado Docente
+     * @param evaluacion Evaluacion activa
+     * @return
+     */
+    public ResultadoEJB<EvaluacionDocentesMateriaResultados> getResultadobyEvaluadorEvaluado(dtoEstudiantesEvalauciones evaluador,dtoEstudianteMateria evaluado, Evaluaciones evaluacion);
 
 }

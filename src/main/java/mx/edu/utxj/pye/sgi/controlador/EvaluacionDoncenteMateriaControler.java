@@ -23,24 +23,33 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
+import javax.faces.event.ActionListener;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import jdk.nashorn.internal.objects.NativeUint16Array;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.dtoEstudianteMateria;
+import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
+import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
 import mx.edu.utxj.pye.sgi.ejb.EJBEvaluacionDocenteMateria;
 import mx.edu.utxj.pye.sgi.ejb.EjbEstudioEgresados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionDocenteMateriaPye;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
+import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
@@ -51,7 +60,7 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
  */
 @Named
 @SessionScoped
-public class EvaluacionDoncenteMateriaControler implements Serializable {
+public class EvaluacionDoncenteMateriaControler extends ViewScopedRol {
 
     @Getter private Boolean finalizado = false;
     @Getter private Integer numeroNomina;
@@ -79,16 +88,70 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
     @Getter @Setter Map<String, Map<Float, Object>> respuestas = new HashMap<>();
     @Getter @Setter List<Integer> clavesOpciones = new SerializableArrayList<>();
     @Getter @Setter List<String> clavesOpcionesMateria = new SerializableArrayList<>();
+    //---------------------------
+    @Getter @Setter dtoEstudiantesEvalauciones estudianteEvaluacion;
+    @Getter @Setter List<dtoEstudianteMateria> listaMaterias,listaResultados;
+    @Getter @Setter int totalDocentes, evaluados2;
+    @Getter @Setter double porcentaje;
+    @Getter @Setter dtoEstudianteMateria dtoDocenteEvaluando;
+    @Getter @Setter EvaluacionDocentesMateriaResultados resultadosEvaluando;
+    @Getter @Setter Boolean estudianteSauiit, estudianteCE;
+    @Getter private String valor;
 
     @Inject LogonMB logonMB;
     @EJB private Facade facade;
     @EJB private Facade2 facadeSaiiut;
     @EJB private EjbEstudioEgresados egresados;
     @EJB EJBEvaluacionDocenteMateria eJBEvaluacionDocenteMateria;
+    @EJB EJBAdimEstudianteBase ejbAdminEstudiante;
 
     @PostConstruct
     public void init() {
-        if (eJBEvaluacionDocenteMateria.evaluacionActiva() != null) {
+        setVistaControlador(ControlEscolarVistaControlador.EVALUACION_DOCENTE);
+        //Verificamos que exista una evaluacion activa
+       // System.out.println("Init ");
+        ResultadoEJB<Evaluaciones> resEvaluacion = eJBEvaluacionDocenteMateria.getEvDocenteActiva();
+        if(resEvaluacion.getCorrecto()==true){
+            evaluacion = resEvaluacion.getValor();
+           // System.out.println("Evaluacion " + evaluacion);
+            //Obtenemos al estudiante
+            ResultadoEJB<dtoEstudiantesEvalauciones> resEstudiante = ejbAdminEstudiante.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
+            if(resEstudiante.getCorrecto() ==true){
+                //TODO: Obtuvo al estudiante, sólo hay que obetener sus materias identificando en que base estan registrados y quitar a estudiantes de 6to y 11vo
+                estudianteEvaluacion = resEstudiante.getValor();
+                //System.out.println("Estudiante " + estudianteEvaluacion);
+                if(estudianteEvaluacion.getEstudianteCE() !=null){
+                    estudianteCE = true;
+                }
+                if(estudianteEvaluacion.getEstudianteSaiiut() !=null){
+                    estudianteSauiit =true;
+                }
+                if(estudianteEvaluacion.getGrado()==6 || estudianteEvaluacion.getGrado() ==11){cargada=false; }
+                else {
+                    //System.out.println("No es de 6 o 11");
+                    //El estudiante es ! a 11 o 6
+                    //Se obtienen la lista de sus materias
+                    ResultadoEJB<List<dtoEstudianteMateria>> resMaterias = eJBEvaluacionDocenteMateria.getMateriasbyEstudiante(estudianteEvaluacion,evaluacion);
+                    if(resMaterias.getCorrecto()==true){
+                        listaMaterias= resMaterias.getValor();
+                        //System.out.println("Lista de materias " + listaMaterias);
+                        //Cargar la lista de resultados
+                        getResultados();
+                        preguntas = eJBEvaluacionDocenteMateria.getApartados();
+                        respuestasPosibles = eJBEvaluacionDocenteMateria.getRespuestasPosibles();
+                        cargada =true;
+                    }else {mostrarMensajeResultadoEJB(resMaterias);}
+                }
+            }else {
+                //Mostrar mensaje
+                mostrarMensajeResultadoEJB(resEstudiante);
+            }
+        }else {
+            cargada=false;
+        }
+        /*
+
+         if (eJBEvaluacionDocenteMateria.evaluacionActiva() != null) {
             respuestasPosibles = eJBEvaluacionDocenteMateria.getRespuestasPosibles();
             preguntas = eJBEvaluacionDocenteMateria.getApartados();
             //paso 1 obtemer lista de los alumnos que evaluan
@@ -155,8 +218,48 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
             }
 
         }
+        */
     }
 
+    /**
+     * Obtiene los resultados del estudiante logueado
+     */
+    public void getResultados(){
+        listaResultados = new ArrayList<>();
+        //Se recorre la lista de materias que cursa el estudiante (Esta lista ya tiene quien imparte la materia
+        listaMaterias.stream().forEach(m->{
+            EvaluacionDocentesMateriaResultados resultados = new EvaluacionDocentesMateriaResultados();
+            dtoEstudianteMateria materia = new dtoEstudianteMateria();
+            //Obtienen los datos ---> Aqui si no existen los crea dentro del metodo que se llama en el ejb
+            ResultadoEJB<EvaluacionDocentesMateriaResultados> resResultados = eJBEvaluacionDocenteMateria.getResultadobyEvaluadorEvaluado(estudianteEvaluacion,m,evaluacion);
+            if(resResultados.getCorrecto()==true){
+                //Se le asigna el valor
+                resultados = resResultados.getValor();
+                //Se agrega a la lista de resultados
+                materia.setResultados(resultados);
+               // System.out.println("Resultados "+ materia.getResultados().getR1());
+                materia.setNombreMateria(m.getNombreMateria());
+                materia.setClaveMateria(m.getClaveMateria());
+                materia.setDocenteImparte(m.getDocenteImparte());
+              //  System.out.println("Materia " + materia);
+                listaResultados.add(materia);
+            }else {mostrarMensajeResultadoEJB(resResultados);}
+        });
+        totalDocentes = listaResultados.size();
+        evaluados2 = listaResultados.stream().filter(docente -> docente.getResultados().getCompleto()).collect(Collectors.toList()).size();
+        Double dte = new Double(totalDocentes);
+        Double dc= new Double(evaluados2);
+        porcentaje = (dc * 100) / dte;
+      //  System.out.println("Evaluados" + evaluados2 + " Porcentaje  " + porcentaje);
+      //  System.out.println("Resultados" + listaResultados);
+        //Una vez obtenida la lista de resultados, filtramos por las que ya estan completas y las que no
+        // System.out.println("Resultados filtrados " + listaDocentesEvaluados + "  " + listaDocentesEvaluando);
+    }
+    public void  getdocenteEvaluando(dtoEstudianteMateria evaluando){
+        dtoDocenteEvaluando = evaluando;
+        Ajax.update("frmEvaluacion");
+        //System.out.println("Evaluado" + dtoDocenteEvaluando);
+    }
     private void initOpciones() {
         opciones.clear();
         Integer index = 0;
@@ -231,8 +334,25 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
         evaluando = listaDocentesEvaluados.stream().filter(docente -> docente.getIncompleto()).collect(Collectors.toList()).size();
 //         System.out.println("evaluando : " + evaluando);
     }
+    public void saveRespueta(ValueChangeEvent e){
+        UIComponent id = (UIComponent)e.getSource();
 
-    public void guardarRespuesta(ValueChangeEvent e) {
+        if(e.getNewValue() != null){
+            valor = e.getNewValue().toString();
+        }else{
+            valor = e.getOldValue().toString();
+        }
+      ResultadoEJB<EvaluacionDocentesMateriaResultados> resActualiza = eJBEvaluacionDocenteMateria.actualizaRespuestaPorPregunta2(dtoDocenteEvaluando.getResultados(),id.getId(),valor);
+        if(resActualiza.getCorrecto()==true){
+            //System.out.println("Pregunta: "+ id.getId()+"Valor ----------->" +valor);
+            EvaluacionDocentesMateriaResultados resultados = new EvaluacionDocentesMateriaResultados();
+            resultados = resActualiza.getValor();
+           // System.out.println("Valoooor"+resultados.getR1());
+            eJBEvaluacionDocenteMateria.comprobarResultado(resultados);
+            getResultados();
+        }
+    }
+    /*public void guardarRespuesta(ValueChangeEvent e) {
         UIComponent origen = (UIComponent) e.getSource();
         String[] datos = origen.getId().split("_");
         Float pregunta_id = Float.parseFloat(datos[0].replaceAll("-", "\\.").replaceAll("r", ""));
@@ -261,6 +381,7 @@ public class EvaluacionDoncenteMateriaControler implements Serializable {
 
         initDocenteEvaluando();
     }
+    */
 
     public void cambiarOpciones(ValueChangeEvent e) throws IOException {
         SelectOneMenu origen = (SelectOneMenu) e.getSource();

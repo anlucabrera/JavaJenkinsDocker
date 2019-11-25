@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Reporteplaneacioncuatrimestralareaacademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Reporteplaneacioncuatrimestralareaacademica;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Messages;
 
