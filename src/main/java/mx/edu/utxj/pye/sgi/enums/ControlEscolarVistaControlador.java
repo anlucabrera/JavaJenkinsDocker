@@ -3,6 +3,8 @@ package mx.edu.utxj.pye.sgi.enums;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import mx.edu.utxj.pye.sgi.controlador.EvaluacionDoncenteMateriaControler;
+import mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
 
@@ -53,8 +55,10 @@ public enum ControlEscolarVistaControlador {
     PASE_DE_LISTA("/controlEscolar/docente/paseLista.xhtml", PaseListaDoc.class),
     CAPTURA_COMENTARIOS_DOCENTE("/controlEscolar/docente/captura_comentarios.xhtml", CapturaComentariosDocente.class),
     AVANCE_PROGRAMATICO_DOCENTE("/controlEscolar/docente/avanceP.xhtml",  AvanceProgramaticoDocente.class),
-    
+
     REPORTE_BECAS("/becas/reporteBecas.xhtml", reporteBecas.class),
+    EVALAUCION_TUTOR("/evaluaciones/evaluacion/tutores2.xhtml", EvaluacionTutor2.class),
+    EVALUACION_DOCENTE("/evaluaciones/evaluacion/tutores2.xhtml", EvaluacionDoncenteMateriaControler.class),
     CONSULTA_CALIFICACION_ESTUDIANTE("/controlEscolar/estudiante/consultarCalificaciones.xhtml",  ConsultaCalificacionesEstudiante.class),
     CUESTIONARIO_PSICOPEDAGOGICO("/controlEscolar/estudiante/cuestionarioPsicopedagogico.xhtml",CuestionarioPsicopedagogicoEstudiante.class),
     CAMBIO_PWD("/controlEscolar/estudiante/CambioPwdEstudiante.xhtml",CambioPwdEstudiante.class),

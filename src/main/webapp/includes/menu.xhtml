@@ -34,6 +34,7 @@
                     </p:link></li></c:if>
             <c:if test="#{cambioPwdEstudiante.mostrarEnDesarrollo(request) and cambioPwdEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/CambioPwdEstudiante.xhtml"><i class="fa fa-key"></i><span>Cambio de contraseña</span><span class="pull-right-container"></span></p:link></li></c:if>
             <c:if test="#{cuestionarioPsicopedagogicoEstudiante.mostrarEnDesarrollo(request) and cuestionarioPsicopedagogicoEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/cuestionarioPsicopedagogico.xhtml"><i class="fa fa-id-badge"></i><span>Cuestionario Psicopedagógico</span><span class="pull-right-container"></span></p:link></li></c:if>
+            <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
 
         </c:if>
         <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">

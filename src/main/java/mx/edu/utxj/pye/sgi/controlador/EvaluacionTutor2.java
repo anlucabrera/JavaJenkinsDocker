@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
 import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacionTutor2;
 import mx.edu.utxj.pye.sgi.entity.ch.EstudiantesClaves;
@@ -29,6 +30,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionTutor;
@@ -62,79 +64,41 @@ public class EvaluacionTutor2 extends ViewScopedRol{
 
 
     @PostConstruct
-    public void init(){
+    public void init() {
+        setVistaControlador(ControlEscolarVistaControlador.EVALAUCION_TUTOR);
         //Busca la Evaluación activa
-        evaluacion = ejbEvaluacionTutor2.evaluacionActiva();
-       // System.out.println("evaluacion = " + evaluacion);
-        getTutor();
-        //System.out.println("EJECUTO TUTOR");
-
-        if(evaluacion != null){
+        ResultadoEJB<Evaluaciones> resEvaluacion = ejbEvaluacionTutor2.getEvaluacionActiva();
+        if (resEvaluacion.getCorrecto() == true) {
+            evaluacion = resEvaluacion.getValor();
             //TODO:Busca estudiantes en bases de SAUIIT Y Control Escolar
             //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2.init()-->Entro al initi evaluacion no nula -- Periodo de la evaluacion" + evaluacion.getPeriodo());
-            ResultadoEJB<EstudiantesClaves> resEstudiante = ejbEstudianteBase.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
+            //System.out.println("LOGON " +logonMB.getCurrentUser());
+            ResultadoEJB<dtoEstudiantesEvalauciones> resEstudiante = ejbEstudianteBase.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
+            //System.out.println("Estudiante " +resEstudiante.getValor());
             if(resEstudiante.getCorrecto()==true){
                 //TODO: El estudiante se encuentra en alguna de las dos bases (Sauiit o Control escolar)
-                estudianteClave = resEstudiante.getValor();
+                //estudianteClave = resEstudiante.getValor().getEstudiantesClaves();
+                //System.out.println("Llego a encontrar estudiante");
+               // System.out.println("Estudiante clave --->" + estudianteClave);
                 //TODO: Busca los resultados del estudiante que se encontro, si no existen, se crean
-                ResultadoEJB<EvaluacionTutoresResultados>  resResultados = ejbEvaluacionTutor2.getResultadosEvaluacionTutorEstudiante(evaluacion, estudianteClave);
+                ResultadoEJB<EvaluacionTutoresResultados>  resResultados = ejbEvaluacionTutor2.getResultadosEvaluacionTutorEstudiante(evaluacion, resEstudiante.getValor());
                 if(resResultados.getCorrecto()){
                     mostrarMensajeResultadoEJB(resResultados);
                     resultados= resResultados.getValor();
                     //System.out.println("resultados = " + resultados);
                     apartados = ejbEvaluacionTutor2.getApartados();
-
                     //System.out.println("apartados = " + apartados);
                     respuestasPosibles = ejbEvaluacionTutor2.getRespuestasPosibles();
                     //System.out.println("respuestasPosibles = " + respuestasPosibles);
                     //TODO: Se activa la evaluacion
                     cargada = true;
+                    tutorEstudiante = resEstudiante.getValor().getTutor();
                     comprobar();
-                }else {mostrarMensajeResultadoEJB(resResultados);}
-            }else{
-                //TODO:No se encuentra en niguna de las bases o es egresado, no se le muestra la evaluacion
 
-                cargada=false;
-            }
-
-
-                   /* estudianteClave = ejbEstudianteBase.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2.init()--> Ejecuto bien al estudianyte" + estudianteClave);
-            if(estudianteClave !=null){
-
-                ResultadoEJB<EvaluacionTutoresResultados>  resResultados = ejbEvaluacionTutor2.getResultadosEvaluacionTutorEstudiante(evaluacion, estudianteClave);
-                if(resResultados.getCorrecto()){
-                    mostrarMensajeResultadoEJB(resResultados);
-                    resultados= resResultados.getValor();
-                    System.out.println("resultados = " + resultados);
-                    apartados = ejbEvaluacionTutor2.getApartados();
-
-                    System.out.println("apartados = " + apartados);
-                    respuestasPosibles = ejbEvaluacionTutor2.getRespuestasPosibles();
-                    System.out.println("respuestasPosibles = " + respuestasPosibles);
-                    cargada = true;
-                    comprobar();
-                }else {mostrarMensajeResultadoEJB(resResultados);}
-
-
-
-            }else{
-                System.out.println("El alumno no esta registrado en ninguna base, pye, sauiit o control escolar");
-            }
-            */
-
-
-        }
+            }else {mostrarMensajeResultadoEJB(resResultados);}}
+        }else {cargada= false;}
     }
-    public void getTutor(){
-        estudianteTutor2 = new AlumnosEncuestas();
-        ResultadoEJB<AlumnosEncuestas> estudiante = ejbEvaluacionTutor2.getEstudianteTutorSauiit(logonMB.getCurrentUser());
-        estudianteTutor2 = estudiante.getValor();
-        ResultadoEJB<Personal> restutor = ejbEvaluacionTutor2.getTutor(estudianteTutor2);
-        tutorEstudiante= restutor.getValor();
 
-
-    }
 
     public void guardar(ValueChangeEvent e) throws ELException{
 

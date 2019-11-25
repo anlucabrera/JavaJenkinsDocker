@@ -5,17 +5,17 @@ import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.TipoCuestionario;
-import mx.edu.utxj.pye.sgi.entity.ch.EstudiantesClaves;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
+import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
@@ -32,6 +32,12 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
     @EJB Facade f;
     @EJB Facade2 f2;
     @EJB EJBAdimEstudianteBase ejbAdminAlumno;
+
+    private EntityManager em;
+    private EntityManager em2;
+
+    @PostConstruct
+    public void init(){em = f.getEntityManager();em2 = f2.getEntityManager();}
 
     @Override
     public List<SelectItem> getRespuestasPosibles() {
@@ -72,23 +78,29 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
         return l;
     }
 
+
     @Override
-    public Evaluaciones evaluacionActiva() {
-        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
-        q.setParameter("tipo", "Tutor");
-        q.setParameter("fecha", new Date());
-        List<Evaluaciones> l = q.getResultList();
-        //System.out.println("Lista en Ejb"+ l.size());
-        if(l.isEmpty()){
-            return null;
-        }else{
-            return l.get(0);
+    public ResultadoEJB<Evaluaciones> getEvaluacionActiva() {
+        try{
+            Evaluaciones evaluacion = new Evaluaciones();
+            //TODO: Ahorita solo es de prueba, pero se debe cambiar a que busque por rango de fecha, para que tome la evaluacion actual
+            evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
+            .setParameter("tipo", "Tutor")
+            .setParameter("fecha", new Date())
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            if(evaluacion==null){return ResultadoEJB.crearErroneo(2,evaluacion,"La evaluacion no se encontro");}
+            else {return  ResultadoEJB.crearCorrecto(evaluacion,"Evaluacion encontrada");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la evaluación activa(ServicioEvaluacionTutor2.getEvaluacionActiva)", e, null);
         }
     }
 
     @Override
     public VistaEvaluacionesTutores getEstudianteTutor(Integer periodo, String matricula) {
-        TypedQuery<VistaEvaluacionesTutores> q = f2.getEntityManager().createQuery("SELECT v from VistaEvaluacionesTutores v WHERE v.pk.matricula=:matricula AND v.pk.periodo=:periodo", VistaEvaluacionesTutores.class);
+        TypedQuery<VistaEvaluacionesTutores> q = em2.createQuery("SELECT v from VistaEvaluacionesTutores v WHERE v.pk.matricula=:matricula AND v.pk.periodo=:periodo", VistaEvaluacionesTutores.class);
         q.setParameter("periodo", periodo);
         q.setParameter("matricula", matricula);
 
@@ -152,21 +164,16 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
         }
     }
 
-    @Override
-    public PeriodosEscolares getPeriodo(Evaluaciones evaluacion) {
-        f.setEntityClass(PeriodosEscolares.class);
-        return (PeriodosEscolares)f.find(evaluacion.getPeriodo());
-    }
 
     @Override
     public List<VistaEvaluacionesTutores> getListaTutores() {
-        TypedQuery<Listaperiodosescolares> periodo = f.getEntityManager().createQuery("SELECT p from Listaperiodosescolares p ORDER BY p.periodo DESC", Listaperiodosescolares.class);
+        TypedQuery<Listaperiodosescolares> periodo = em.createQuery("SELECT p from Listaperiodosescolares p ORDER BY p.periodo DESC", Listaperiodosescolares.class);
         if (periodo.getResultList().isEmpty() || periodo.getResultList() == null) {
            // System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionTutor2.getListaTutores() no se encontro ninguna lista de periodos");
         } else {
            // System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioEvaluacionTutor2.getListaTutores() el periodo es  --> : " + periodo);
         }
-        TypedQuery<VistaEvaluacionesTutores> q = f2.getEntityManager().createQuery("SELECT v from VistaEvaluacionesTutores v WHERE v.pk.periodo = :periodo", VistaEvaluacionesTutores.class);
+        TypedQuery<VistaEvaluacionesTutores> q = em2.createQuery("SELECT v from VistaEvaluacionesTutores v WHERE v.pk.periodo = :periodo", VistaEvaluacionesTutores.class);
         q.setParameter("periodo", periodo.getSingleResult().getPeriodo());
         if(q.getResultList().isEmpty() || q.getResultList() == null){
             return null;
@@ -176,36 +183,17 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
     }
 
 
-    @Override
-    public ResultadoEJB<AlumnosEncuestas> getEstudianteTutorSauiit(String matricula) {
-        try {
-            if(matricula ==null){return ResultadoEJB.crearErroneo(3, "La matricula no debe ser nula",AlumnosEncuestas.class);}
-            AlumnosEncuestas estudianteTutor= f2.getEntityManager().createQuery("SELECT a FROM AlumnosEncuestas a WHERE a.matricula=:matricula", AlumnosEncuestas.class)
-                    .setParameter("matricula", matricula)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-            if(estudianteTutor!=null){return ResultadoEJB.crearCorrecto(estudianteTutor,"Se encontro al estudiante en la vista para tutores");}
-            else{return ResultadoEJB.crearErroneo(2,"No se encontró al estudiante en la vista para tutores", AlumnosEncuestas.class);}
-
-        } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados de la evaluacion a tutor del estudiante", e, null);
-
-        }
-
-
-    }
 
     @Override
-    public ResultadoEJB<EvaluacionTutoresResultados> getResultadosEvaluacionTutorEstudiante(Evaluaciones evaluacion, EstudiantesClaves estudiante) {
+    public ResultadoEJB<EvaluacionTutoresResultados> getResultadosEvaluacionTutorEstudiante(Evaluaciones evaluacion, dtoEstudiantesEvalauciones estudiante) {
 
         try {
             if(evaluacion==null){return ResultadoEJB.crearErroneo(3, "La evaluación no debe ser nula", EvaluacionTutoresResultados.class);}
             if(estudiante == null){return ResultadoEJB.crearErroneo(4, "El estudiante no debe ser nulo", EvaluacionTutoresResultados.class);}
-            //TODO: Busca si existe registro en la tabla de resultados 
-            EvaluacionTutoresResultados resultados = f.getEntityManager().createQuery("SELECT e FROM EvaluacionTutoresResultados e WHERE e.evaluaciones.evaluacion=:evaluacion AND e.evaluacionTutoresResultadosPK.evaluador=:clave", EvaluacionTutoresResultados.class)
+            //TODO: Busca si existe registro en la tabla de resultados
+            EvaluacionTutoresResultados resultados =em.createQuery("SELECT e FROM EvaluacionTutoresResultados e WHERE e.evaluaciones.evaluacion=:evaluacion AND e.evaluacionTutoresResultadosPK.evaluador=:clave", EvaluacionTutoresResultados.class)
                     .setParameter("evaluacion", evaluacion.getEvaluacion())
-                    .setParameter("clave", estudiante.getClave())
+                    .setParameter("clave", estudiante.getEstudiantesClaves().getClave())
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
@@ -213,23 +201,15 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
             if(resultados!=null){return ResultadoEJB.crearCorrecto(resultados, "Se cargaron los resultados.");}
             //TODO:Si no encuentra regustro de resultados del estudiante, lo crea.
             else if (resultados== null){
-                //TODO: Obtiene datos del estudiante 
-                PeriodosEscolares periodo = getPeriodo(evaluacion);
-                ResultadoEJB<MatriculaPeriodosEscolares> estudianteSauitt = ejbAdminAlumno.getEstudianteSauittClave(estudiante, periodo);
-               // System.out.println("EJBSERVICIO---> GETESTUDIANTEsAUIT --->" + estudianteSauitt.getValor().getMatricula());
-                //Aqui tendría que haber una condicional en cuanro entren en vigor los estduantes en a base de control escolar
-                //TODO:BUSCA EN SAUITT AL TUTOR DEL ESTUDIANTE
-                ResultadoEJB<AlumnosEncuestas> estudianteTutor = getEstudianteTutorSauiit(estudianteSauitt.getValor().getMatricula());
-                //System.out.println("aLUMNO ENCONTRADO EN VISTA --->"+ estudianteTutor.getValor().getMatricula());
-                //TODO:Busca al tutor en la Base de Capital Humano
-                ResultadoEJB<Personal> tutorPersonal = getTutor(estudianteTutor.getValor());
-                //System.err.println("Tutor Encontrado en Capital Humano"+ tutorPersonal.getValor().getClave());
-                //TODO: Llena entidad para crear los nuevos resultados
-                f.setEntityClass(EvaluacionTutoresResultados.class);
-                resultados = new EvaluacionTutoresResultados(evaluacion.getEvaluacion(), estudiante.getClave(), tutorPersonal.getValor().getClave());
-                f.create(resultados);
-                return ResultadoEJB.crearCorrecto(resultados, "Se crearon los resultados");
-
+                //Si no encuentra resultados se deben crear
+                EvaluacionTutoresResultados newResultados= new EvaluacionTutoresResultados();
+                EvaluacionTutoresResultadosPK pk = new EvaluacionTutoresResultadosPK();
+                pk.setEvaluacion(evaluacion.getEvaluacion());
+                pk.setEvaluado(estudiante.getTutor().getClave());
+                pk.setEvaluador(estudiante.getEstudiantesClaves().getClave());
+                newResultados.setEvaluacionTutoresResultadosPK(pk);
+                em.persist(newResultados);
+                return ResultadoEJB.crearCorrecto(newResultados,"Se crearon los resultados");
             }
             else{return ResultadoEJB.crearCorrecto(resultados, "Se encontraron resultados");}
         } catch (Exception e) {
@@ -244,7 +224,7 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
                 case PERSISTIR:
                     //TODO: Crear los resultados cargar los valores
                     f.setEntityClass(EvaluacionTutoresResultados.class);
-                    f.edit(resultados);
+                    em.merge(resultados);
                     return ResultadoEJB.crearCorrecto(resultados, "Evaluacion Tutor Resultados, correcta");
                 case REFRESCAR:
                     // TODO: Actualizar los resultados de las preguntas
@@ -277,7 +257,7 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
         try {
             if(tutor==null){return ResultadoEJB.crearErroneo(3,"El tutor no debe ser nulo", Personal.class);}
             //TODO: Busca al tutor en sauitt para sacar la clave de su nomina
-            ListaUsuarioClaveNomina tutorSauitt= f2.getEntityManager().createQuery("SELECT l FROM ListaUsuarioClaveNomina l WHERE l.cvePersona=:clave", ListaUsuarioClaveNomina.class)
+            ListaUsuarioClaveNomina tutorSauitt= em2.createQuery("SELECT l FROM ListaUsuarioClaveNomina l WHERE l.cvePersona=:clave", ListaUsuarioClaveNomina.class)
                     .setParameter("clave", tutor.getCveMaestro())
                     .getResultStream()
                     .findFirst()
@@ -285,7 +265,7 @@ public class ServicioEvaluacionTutor2 implements EjbEvaluacionTutor2 {
                     ;
             if(tutorSauitt!=null){
                 //TODO: Busca al tutor por clave de su nomina en la base de Capital humano
-                Personal tutorPersonal= f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE p.clave=:clave", Personal.class)
+                Personal tutorPersonal= em.createQuery("SELECT p FROM Personal p WHERE p.clave=:clave", Personal.class)
                         .setParameter("clave", Integer.parseInt(tutorSauitt.getNumeroNomina()))
                         .getResultStream()
                         .findFirst()

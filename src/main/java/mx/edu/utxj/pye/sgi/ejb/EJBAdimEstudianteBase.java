@@ -23,38 +23,14 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
  */
 @Local
 public interface EJBAdimEstudianteBase {
-    /*Busca al estudiante por matricula en la base de pye2
-    /@return obtejo de tipo Matricula Periodos Escolares
-    */
-    public MatriculaPeriodosEscolares getEstudianteSauiiut (String matricula, Integer periodo);
-    // Busca al estudiante por matricula en la base de Control escolar
-    public Estudiante getEstudianteControlEscolar (String matricula);
-    // Devuelve la clave del estudiante segun sea un estudiante registrado en SAUIIT o en Control Escolar
-    public ResultadoEJB<EstudiantesClaves>  getClaveEstudiante (String matricula, Integer periodo);
-   
     /**
-    * Buca a un estudiante por su clave  en la tabla de Matricula Periodos Escolares (Que son los que se encuentran registrados en sauitt por periodo)
-    * @param estudiante Clave del estudiante 
-    * @param periodo periodo 
-    * @return Resultado del proceso
-    */
-    public ResultadoEJB<MatriculaPeriodosEscolares> getEstudianteSauittClave(EstudiantesClaves estudiante, PeriodosEscolares periodo);
-    
-    /**
-     * Busca a un estudiante po la clave del estudiante en la base de Control Escolar
-     * @param estudiante estudiante a buscar
-     * @return  Resultado del proceso de la busqueda
-    */
-    public ResultadoEJB<Estudiante> getEstudianteCEClave(EstudiantesClaves estudiante);
-
-    /**
-     * Obtiene al estudiante por matricula de la vista de alumnos encuestas (que son los activos en Sauiit)
+     * Devuelve un dto de estudiante segun su matricula y su periodo
+     * El dto contiene todoo lo necesario para la evaluaciones
      * @param matricula
+     * @param periodo periodo de la evaluacion
      * @return
      */
-    public ResultadoEJB<dtoEstudiantesEvalauciones> getEstudianteActivobyMatriculaSauiit(String matricula);
-
-
+    public ResultadoEJB<dtoEstudiantesEvalauciones>  getClaveEstudiante (String matricula, Integer periodo);
     /**
      * 1.Obtiene un listado de todos los alumnos activos del periodo actual en sauiit(Vista Alumnos Encuestas) 
      * 2.Lleno la informacion en un dtoEstudiantes Evaluciones
@@ -65,15 +41,7 @@ public interface EJBAdimEstudianteBase {
      * 
      */
     public ResultadoEJB<List<dtoEstudiantesEvalauciones>> getEstudiantesSauiit(PeriodosEscolares periodo);
-    
-    
-    /**
-     * 1. Obtiene una lista de estudiantes buscada por matricula en la base de CE, los datos que se tengan los agrega el dto
-     * 2. Obtiene una lista de claves de estudiante buscada por id de estudiante y la agrega al dto
-     * Falta agregar la busqueda del tutor, director 
-     * @return  resultado de proceso/ lista tipo dto de estudiantes de ce
-     */
-    public ResultadoEJB<List<dtoEstudiantesEvalauciones>> getEstudiantesCE(PeriodosEscolares periodo);
+
     
     /**
      * 2.Obtiene la lista general de estudiantes tanto de sauiit y CE
@@ -90,6 +58,8 @@ public interface EJBAdimEstudianteBase {
      * @return  Resultado del proceso
      */
     public ResultadoEJB<List<ProgramasEducativos>> getPEActivos ();
+
+    public ResultadoEJB<Personal> getPersonalbyClave(int clave);
 
 
 }
