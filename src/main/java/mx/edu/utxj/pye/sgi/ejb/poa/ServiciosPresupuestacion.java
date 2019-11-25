@@ -109,6 +109,30 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
 
 //  ---------------------------------------------------------------------- Pretecho Financiero --------------------------------------------------
     @Override
+    public PretechoFinanciero agregarPretechoFinanciero(PretechoFinanciero financiero) {
+        facadePoa.setEntityClass(PretechoFinanciero.class);
+        facadePoa.create(financiero);
+        facadePoa.flush();
+        return financiero;
+    }
+
+    @Override
+    public PretechoFinanciero actualizaPretechoFinanciero(PretechoFinanciero financiero) {
+        facadePoa.setEntityClass(PretechoFinanciero.class);
+        facadePoa.edit(financiero);
+        facadePoa.flush();
+        return financiero;
+    }
+
+    @Override
+    public PretechoFinanciero eliminarPretechoFinanciero(PretechoFinanciero financiero) {
+        facadePoa.setEntityClass(PretechoFinanciero.class);
+        facadePoa.remove(financiero);
+        facadePoa.flush();
+        return financiero;
+    }
+
+    @Override
     public List<PretechoFinanciero> mostrarPretechoFinancieros(Short clavearea, Short ejercicioFiscal) {
         TypedQuery<PretechoFinanciero> q = em.createQuery("SELECT p FROM PretechoFinanciero p INNER JOIN p.ejercicioFiscal e WHERE p.area = :area AND e.ejercicioFiscal=:ejercicioFiscal", PretechoFinanciero.class);
         q.setParameter("area", clavearea);
@@ -116,7 +140,14 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
         List<PretechoFinanciero> pr = q.getResultList();
         return pr;
     }
-
+    
+    @Override
+    public List<PretechoFinanciero> mostrarPretechoFinancierosGeneral(Short ejercicioFiscal) {
+        TypedQuery<PretechoFinanciero> q = em.createQuery("SELECT p FROM PretechoFinanciero p INNER JOIN p.ejercicioFiscal e WHERE e.ejercicioFiscal=:ejercicioFiscal", PretechoFinanciero.class);
+        q.setParameter("ejercicioFiscal", ejercicioFiscal);
+        List<PretechoFinanciero> pr = q.getResultList();
+        return pr;
+    }
 //  ------------------------------------------------------------------------ Partidas --------------------------------------------------
     @Override
     public List<Partidas> mostrarPartidases(Short ejercicio, Short area) {

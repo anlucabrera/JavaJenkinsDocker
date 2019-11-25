@@ -13,7 +13,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RecursosActividad;
 
 @Local
 public interface EjbPresupuestacion {
-    
+
 //---------------------------------------------------------------------- Actividades Poa --------------------------------------------------
     public List<ActividadesPoa> mostrarActividadesPoaCuadroDeMandoRecurso(Short area, Short ejercicioFiscal, CuadroMandoIntegral cuadroMando);
 
@@ -32,9 +32,17 @@ public interface EjbPresupuestacion {
     public List<ProductosAreas> mostrarProductosAreases(Short clavearea, Short ejercicioFiscal);
 
     public ProductosAreas mostrarProductosAreas(Productos productos, Partidas partidas, Short area);
-    
+
 //  ---------------------------------------------------------------------- Pretecho Financiero --------------------------------------------------
+    public PretechoFinanciero agregarPretechoFinanciero(PretechoFinanciero financiero);
+
+    public PretechoFinanciero actualizaPretechoFinanciero(PretechoFinanciero financiero);
+
+    public PretechoFinanciero eliminarPretechoFinanciero(PretechoFinanciero financiero);
+
     public List<PretechoFinanciero> mostrarPretechoFinancieros(Short clavearea, Short ejercicioFiscal);
+
+    public List<PretechoFinanciero> mostrarPretechoFinancierosGeneral(Short ejercicioFiscal);
 
 //  ------------------------------------------------------------------------ Partidas --------------------------------------------------
     public List<Partidas> mostrarPartidases(Short ejercicio, Short area);

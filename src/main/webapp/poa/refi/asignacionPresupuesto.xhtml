@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="informacion">
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-10">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>
+                            <h:form id="frmInci"> 
+                                <p:outputPanel >            
+                                    <p:autoUpdate/>
+                                    <p:panel header="Registro de Presupuesto Áreas" class="box box-primary">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 col-md-6 col-lg-2 border-right">
+                                                                        <p:outputLabel for="anio" value="Año" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                        <p:selectOneMenu  id="anio" value="#{administracionControl.ejeFiscal}" valueChangeListener="#{administracionControl.numeroAnioAsiganado}">>
+                                                                            <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.ejercicioFiscal}" itemLabel="#{anio.anio}" />
+                                                                            <p:ajax update=":frmEventosAreas" listener="#{administracionControl.imprimirValores()}"/>
+                                                                        </p:selectOneMenu >
+                                                                        <hr/>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-6 col-lg-10"> 
+                                                                        <p:outputLabel for="arC" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Áreas" />
+                                                                        <p:selectOneMenu id="arC" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{administracionControl.areaC}" filter="true" filterMatchMode="contains">
+                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                            <f:selectItems value="#{administracionControl.areasUniversidads}" var="area" itemLabel="#{area.nombre}" itemValue="#{area.area}" />
+                                                                        </p:selectOneMenu> 
+                                                                        <p:message for="arC" display="tooltip" />
+                                                                        <hr/>
+                                                                    </div>                                                                            
+                                                                    <div class="col-sm-12 col-md-6 col-lg-3 border-right">
+                                                                        <p:outputLabel for="cp2" value="Capitulo 2000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                        <p:inputNumber id="cp2" placeholder="0" decimalPlaces="0" minValue="0" value="#{administracionControl.cp2}"/>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-6 col-lg-3 border-right">
+                                                                        <p:outputLabel for="cp3" value="Capitulo 3000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                        <p:inputNumber id="cp3" placeholder="0" decimalPlaces="0" minValue="0" value="#{administracionControl.cp3}"/>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-6 col-lg-3 border-right">
+                                                                        <p:outputLabel for="cp4" value="Capitulo 4000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                        <p:inputNumber id="cp4" placeholder="0" decimalPlaces="0" minValue="0" value="#{administracionControl.cp4}"/>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-6 col-lg-3 border-right">
+                                                                        <p:outputLabel for="cpd" value="Captación de derechos" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                        <p:inputNumber id="cpd" placeholder="0" decimalPlaces="0" minValue="0" value="#{administracionControl.cpd}"/>
+                                                                    </div>
+
+                                                                </div>
+                                                                <hr/>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                            <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{administracionControl.agreggarPresupuestoArea()}" 
+                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" oncomplete="PF('frmEventosAreas').update();"/> 
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </p:panel>
+                                </p:outputPanel>
+                            </h:form>
+                            <h:form id="frmEventosAreas"> 
+                                <p:outputPanel id="incidenciasReporte">
+                                    <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
+                                    <p:dataTable id="tblEvenAre"  value="#{administracionControl.presupuestoPOAs}"  var="pres" editable="true"
+                                                 style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+                                        <p:columnGroup type="header" class="hederTablesTitle">
+                                            <p:row class="success">
+                                                <p:column rowspan="2" headerText="" style="width: 50px;" styleClass="hederTablesTitle"/>
+                                                <p:column rowspan="2" headerText="Área" style="width: 200px;" styleClass="hederTablesTitle"/>
+                                                <p:column rowspan="2" headerText="Responsable" style="width: 200px;" styleClass="hederTablesTitle"/>
+                                                <p:column colspan="4" headerText="Monto" style="width: 400px;" styleClass="hederTablesTitle"/>
+                                                <p:column rowspan="2" headerText="Total" style="width: 100px;" styleClass="hederTablesTitle"/>
+                                                <p:column rowspan="2" headerText="" style="width: 50px;" styleClass="hederTablesTitle"/>
+                                            </p:row>
+                                            <p:row class="success">
+                                                <p:column headerText="Capitulo 2000"  styleClass="hederTablesTitle"/>
+                                                <p:column headerText="Capitulo 3000"  styleClass="hederTablesTitle"/>
+                                                <p:column headerText="Capitulo 4000"  styleClass="hederTablesTitle"/>
+                                                <p:column headerText="Captación de derechos"  styleClass="hederTablesTitle"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditPresupuesto}" update="tblEvenAre" process="@this"/>
+                                        <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblEvenAre" />
+                                        <p:column>
+                                            <p:commandButton actionListener="#{administracionControl.eliminarPresuPuesto(pres)}" update="tblEvenAre" process="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
+                                                             styleClass="btn-primary" title="Eliminar evento área">
+                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación del Presupuesto del área #{pres.area}?" icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                        </p:column>
+                                        <p:column >
+                                            <h:outputText value="#{pres.area}" />
+                                        </p:column>   
+                                        <p:column >
+                                            <h:outputText value="#{pres.responsable}" />
+                                        </p:column>  
+                                        <p:column >
+                                            <p:cellEditor>
+                                                <f:facet name="output"><h:outputText value="#{pres.cap2000.monto}" ><f:convertNumber pattern="$ ###,###,###.00"/></h:outputText></f:facet>
+                                                <f:facet name="input"><p:inputNumber value="#{pres.cap2000.monto}"/></f:facet>
+                                            </p:cellEditor>
+                                        </p:column>  
+                                        <p:column >
+                                            <p:cellEditor>
+                                                <f:facet name="output"><h:outputText value="#{pres.cap3000.monto}" ><f:convertNumber pattern="$ ###,###,###.00"/></h:outputText></f:facet>
+                                                <f:facet name="input"><p:inputNumber value="#{pres.cap3000.monto}"/></f:facet>
+                                            </p:cellEditor>
+                                        </p:column> 
+                                        <p:column >
+                                            <p:cellEditor>
+                                                <f:facet name="output"><h:outputText value="#{pres.cap4000.monto}" ><f:convertNumber pattern="$ ###,###,###.00"/></h:outputText></f:facet>
+                                                <f:facet name="input"><p:inputNumber value="#{pres.cap4000.monto}"/></f:facet>
+                                            </p:cellEditor>
+                                        </p:column> 
+                                        <p:column >
+                                            <p:cellEditor>
+                                                <f:facet name="output"><h:outputText value="#{pres.capdder.monto}" ><f:convertNumber pattern="$ ###,###,###.00"/></h:outputText></f:facet>
+                                                <f:facet name="input"><p:inputNumber value="#{pres.capdder.monto}"/></f:facet>
+                                            </p:cellEditor>
+                                        </p:column>                                                 
+                                        <p:column >
+                                            <h:outputText value="#{pres.cap2000.monto+pres.cap3000.monto+pres.cap4000.monto+pres.capdder.monto}" >
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column> 
+                                        <p:column class="noprint">
+                                            <p:rowEditor />
+                                        </p:column>
+                                    </p:dataTable>     
+                                </p:outputPanel> 
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>   
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+</ui:composition>

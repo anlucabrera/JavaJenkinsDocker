@@ -172,9 +172,7 @@
                                                         <p:column style="text-align: justify"> 
                                                             <p:cellEditor>
                                                                 <f:facet name="output"><h:outputText value="#{pOa.denominacion}" /> </f:facet>
-                                                                <f:facet name="input">
-                                                                    <f:facet name="input"><p:inputTextarea value="#{pOa.denominacion}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
-                                                                </f:facet>
+                                                                <f:facet name="input"><p:inputTextarea value="#{pOa.denominacion}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
                                                             </p:cellEditor>
                                                         </p:column>
                                                         <p:column style="text-align: justify"> 
@@ -256,8 +254,8 @@
                                                         </p:column>
                                                         <p:column class="noprint" >
                                                             <p:selectBooleanCheckbox id="validar" value="#{pOa.estratejica}" rendered="#{pOa.numeroS eq 0}" style="border-color: #000000 !important;"
-                                                                                      valueChangeListener="#{adminPoaValidacionProgramacion.actualizarestrategica}"
-                                                                                      title="Activa la casilla para indicar al secretario académico que has validado los valores." >
+                                                                                     valueChangeListener="#{adminPoaValidacionProgramacion.actualizarestrategica}"
+                                                                                     title="Activa la casilla para indicar al secretario académico que has validado los valores." >
                                                                 <p:ajax update="dtbBajas" />
                                                             </p:selectBooleanCheckbox>
                                                         </p:column>

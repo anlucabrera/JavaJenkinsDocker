@@ -118,7 +118,7 @@
                                 <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
                                     <p:outputLabel value="Capítulo 5000"/>                            
                                 </div>
-                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{adminPoaValidacionPresupuestacion.pretechoCPDD eq 0.0?'collapse':'visible'};">
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; ">
                                     <p:outputLabel value="Captación de derechos"/>                            
                                 </div>
                                 <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center;">
@@ -149,7 +149,7 @@
                                         <f:convertNumber pattern="$ ###,###,###.00"/>
                                     </p:outputLabel>
                                 </div>
-                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{adminPoaValidacionPresupuestacion.pretechoCPDD eq 0.0?'collapse':'visible'};">
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; ">
                                     <p:outputLabel value="#{adminPoaValidacionPresupuestacion.pretechoCPDD}">
                                         <f:convertNumber pattern="$ ###,###,###.00"/>
                                     </p:outputLabel>
@@ -200,8 +200,8 @@
                                         </p:column>                                                                               
                                     </p:dataTable>
                                 </div>
-                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center visibility:#{adminPoaValidacionPresupuestacion.pretechoCPDD eq 0.0?'collapse':'visible'};">
-                                    <p:dataTable var="capituloCPDD" value="#{adminPoaValidacionPresupuestacion.capituloCPDD}" emptyMessage="Sin recurso asignado" rendered="#{adminPoaValidacionPresupuestacion.pretechoCPDD eq 0.0?false:true}">
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center ">
+                                    <p:dataTable var="capituloCPDD" value="#{adminPoaValidacionPresupuestacion.capituloCPDD}" emptyMessage="Sin recurso asignado">
                                         <p:column headerText="Partida"><h:outputText value="#{capituloCPDD.partidas1.partida}" /></p:column>   
                                         <p:column headerText="Programado"><h:outputText value="#{capituloCPDD.total}">
                                                 <f:convertNumber pattern="$ ###,###,###.00"/>
@@ -237,7 +237,7 @@
                                         <f:convertNumber pattern="$ ###,###,###.00"/>
                                     </p:outputLabel>
                                 </div>
-                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{adminPoaValidacionPresupuestacion.pretechoCPDD eq 0.0?'collapse':'visible'};">
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; ">
                                     <p:outputLabel value="#{adminPoaValidacionPresupuestacion.totalCaptituloCPDD}">
                                         <f:convertNumber pattern="$ ###,###,###.00"/>
                                     </p:outputLabel>
@@ -272,7 +272,7 @@
                                         <f:convertNumber pattern="$ ###,###,###.00"/>
                                     </p:outputLabel>
                                 </div>
-                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; visibility:#{adminPoaValidacionPresupuestacion.pretechoCPDD eq 0.0?'collapse':'visible'};">
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; ">
                                     <p:outputLabel style="#{adminPoaValidacionPresupuestacion.clasePC eq 'mayor'?'':'color: #ff0000'}" value="#{adminPoaValidacionPresupuestacion.pretechoCPDD-adminPoaValidacionPresupuestacion.totalCaptituloCPDD}">
                                         <f:convertNumber pattern="$ ###,###,###.00"/>
                                     </p:outputLabel>

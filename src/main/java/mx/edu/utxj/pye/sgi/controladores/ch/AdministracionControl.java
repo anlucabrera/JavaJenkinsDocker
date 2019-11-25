@@ -10,15 +10,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
+import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbPresupuestacion;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
@@ -28,6 +31,9 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
+import mx.edu.utxj.pye.sgi.entity.pye2.CapitulosTipos;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
+import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
@@ -49,10 +55,15 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private List<Procesopoa> procesopoas = new ArrayList<>();
     @Getter    @Setter    private List<ConfiguracionPropiedades> cps = new ArrayList<>();
     @Getter    @Setter    private List<EventosAreaPOA> areaPOAs = new ArrayList<>();
-
+    @Getter    @Setter    private List<PresupuestoPOA> presupuestoPOAs = new ArrayList<>();
+    @Getter    @Setter    private List<PretechoFinanciero> p=new ArrayList<>();
+    @Getter    @Setter    private List<PretechoFinanciero> pfs = new ArrayList<>();
+    
     @Getter    @Setter    private Eventos eventos = new Eventos();
+    @Getter    @Setter    private PretechoFinanciero financiero= new PretechoFinanciero();
     @Getter    @Setter    private Integer eventoC = 0;
-    @Getter    @Setter    private Short areaC = 0;
+    @Getter    @Setter    private Double cp2=0D,cp3=0D,cp4=0D,cpd=0D,cp2T=0D,cp3T=0D,cp4T=0D,cpdT=0D;
+    @Getter    @Setter    private Short areaC = 0,ejeFiscal = 0;
     @Getter    @Setter    private Date fehDate = new Date();
 
     @Getter    @Setter    private EventosAreas editEventosAreas = new EventosAreas();
@@ -62,6 +73,7 @@ public class AdministracionControl implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.administrador.EjbAdministrador administrador;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
+    @EJB    EjbPresupuestacion ejbPresupuestacion;
 
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesCH utilidadesCH;
@@ -72,7 +84,9 @@ public class AdministracionControl implements Serializable {
         estatus.add("Aceptado");
         estatus.add("Denegado");
         estatus.add("Pendiente");
-        mostrarProcesos();        
+        ejeFiscal=controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
+        mostrarProcesos();    
+        mostrarPresupuestos();
         mostrarIncidencias();
         mostrarModulos();
         mostrarConfiguracionProp();
@@ -93,7 +107,7 @@ public class AdministracionControl implements Serializable {
             eventosesAreases.clear();
             procesopoas.clear();
             areaPOAs.clear();
-            
+
             eventoses = ejbUtilidadesCH.mostrarEventoses();
             eventosesAreases = ejbUtilidadesCH.mostrarEventosesAreases();
             procesopoas = ejbUtilidadesCH.mostrarProcesopoa();
@@ -137,11 +151,37 @@ public class AdministracionControl implements Serializable {
                         }
                     });
                 }
-            }
+            }                                               
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void mostrarPresupuestos() {
+        presupuestoPOAs = new ArrayList<>();
+        presupuestoPOAs.clear();
+        pfs = new ArrayList<>();
+        pfs = ejbPresupuestacion.mostrarPretechoFinancierosGeneral(ejeFiscal);
+        if (!pfs.isEmpty()) {
+            areasUniversidads.forEach((a) -> {
+                p = new ArrayList<>();
+                p = pfs.stream().filter(t -> t.getArea() == a.getArea()).collect(Collectors.toList());
+                if (!p.isEmpty()) {
+                    presupuestoPOAs.add(new PresupuestoPOA(a.getNombre(), buscarPersonal(a.getResponsable()), p.get(0), p.get(1), p.get(2), p.get(3)));
+                }
+            });
+            if (!presupuestoPOAs.isEmpty()) {
+                presupuestoPOAs.forEach((t) -> {
+                    cp2T = cp2T + t.cap2000.getMonto();
+                    cp3T = cp3T + t.cap3000.getMonto();
+                    cp4T = cp4T + t.cap4000.getMonto();
+                    cpdT = cpdT + t.capdder.getMonto();
+                });
+                presupuestoPOAs.add(new PresupuestoPOA("Total", "", new PretechoFinanciero(0, Short.valueOf("0"), cp2T), new PretechoFinanciero(0, Short.valueOf("0"), cp3T), new PretechoFinanciero(0, Short.valueOf("0"), cp4T), new PretechoFinanciero(0, Short.valueOf("0"), cpdT)));
+            }
+        }
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.mostrarPresupuestos(presupuestoPOAs)"+presupuestoPOAs.size());
     }
 
     public String buscarPersonal(Integer clave) {
@@ -299,6 +339,31 @@ public class AdministracionControl implements Serializable {
         }
     }
     
+    public void agreggarPresupuestoArea() {
+        try {
+            for (int i = 1; i <= 4; i++) {
+                financiero = new PretechoFinanciero();
+                financiero.setEjercicioFiscal(new EjerciciosFiscales());
+                financiero.setArea(areaC);
+                financiero.getEjercicioFiscal().setEjercicioFiscal(ejeFiscal);
+                financiero.setCapituloTipo(new CapitulosTipos());
+                switch (i) {
+                    case 1:financiero.getCapituloTipo().setCapituloTipo(Short.parseShort("2"));financiero.setMonto(cp2);break;
+                    case 2:financiero.getCapituloTipo().setCapituloTipo(Short.parseShort("3"));financiero.setMonto(cp3);break;
+                    case 3:financiero.getCapituloTipo().setCapituloTipo(Short.parseShort("4"));financiero.setMonto(cp4);break;
+                    case 4:financiero.getCapituloTipo().setCapituloTipo(Short.parseShort("6"));financiero.setMonto(cpd);break;
+                }
+                ejbPresupuestacion.agregarPretechoFinanciero(financiero);
+            }
+            mostrarProcesos();
+            mostrarPresupuestos();
+            Ajax.update("frmEventosAreas");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 // -----------------------------------------------------------------------------Edicion    
     public void onRowEditEventos(RowEditEvent event) {
         try {
@@ -373,6 +438,22 @@ public class AdministracionControl implements Serializable {
         }
     }
 
+    public void onRowEditPresupuesto(RowEditEvent event) {
+        try {
+            PresupuestoPOA cp = (PresupuestoPOA) event.getObject();
+            ejbPresupuestacion.actualizaPretechoFinanciero(cp.getCap2000());
+            ejbPresupuestacion.actualizaPretechoFinanciero(cp.getCap3000());
+            ejbPresupuestacion.actualizaPretechoFinanciero(cp.getCap4000());
+            ejbPresupuestacion.actualizaPretechoFinanciero(cp.getCapdder());    
+            Messages.addGlobalInfo("¡Operación exitosa! Presupuesto actualizado para el área: "+cp.getArea());
+            mostrarPresupuestos();
+            Ajax.update("frmEventosAreas");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalInfo("¡Operación cancelada!");
     }
@@ -398,12 +479,33 @@ public class AdministracionControl implements Serializable {
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    public void eliminarPresuPuesto(PresupuestoPOA cp) {
+        try {
+            ejbPresupuestacion.eliminarPretechoFinanciero(cp.getCap2000());
+            ejbPresupuestacion.eliminarPretechoFinanciero(cp.getCap3000());
+            ejbPresupuestacion.eliminarPretechoFinanciero(cp.getCap4000());
+            ejbPresupuestacion.eliminarPretechoFinanciero(cp.getCapdder());
+            mostrarProcesos();
+            mostrarPresupuestos();
+            Ajax.update("frmEventosAreas");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
 // -----------------------------------------------------------------------------Utilidades
     public void imprimirValores() {
     }
-    
+
+    public void numeroAnioAsiganado(ValueChangeEvent event) {
+        ejeFiscal = Short.parseShort(event.getNewValue().toString());
+        mostrarProcesos();
+        mostrarPresupuestos();
+        Ajax.update("frmEventosAreas");
+    }
+
     public static class EventosAreaPOA {
 
         @Getter        @Setter        private EventosAreas evento;
@@ -422,6 +524,25 @@ public class AdministracionControl implements Serializable {
             this.fecaValidacion = fecaValidacion;
             this.fechaLimiteProceso = fechaLimiteProceso;
             this.diasrestantes = diasrestantes;
+        }
+    }
+    
+    public static class PresupuestoPOA {
+
+        @Getter        @Setter        private String area;
+        @Getter        @Setter        private String responsable;
+        @Getter        @Setter        private PretechoFinanciero cap2000;
+        @Getter        @Setter        private PretechoFinanciero cap3000;        
+        @Getter        @Setter        private PretechoFinanciero cap4000;
+        @Getter        @Setter        private PretechoFinanciero capdder;
+
+        public PresupuestoPOA(String area, String responsable, PretechoFinanciero cap2000, PretechoFinanciero cap3000, PretechoFinanciero cap4000, PretechoFinanciero capdder) {
+            this.area = area;
+            this.responsable = responsable;
+            this.cap2000 = cap2000;
+            this.cap3000 = cap3000;
+            this.cap4000 = cap4000;
+            this.capdder = capdder;
         }
     }
 }
