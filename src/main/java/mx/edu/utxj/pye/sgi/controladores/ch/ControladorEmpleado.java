@@ -35,6 +35,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Notificaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisosadminstracion;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
 
@@ -91,6 +92,9 @@ public class ControladorEmpleado implements Serializable {
     @PostConstruct
     public void init() {
         try {
+            if(logonMB.getUsuarioTipo() != UsuarioTipo.TRABAJADOR){
+                return;
+            }
 // Comentar la siguiente asignación cuando saiiut falle//
             if (logonMB.getPersonal().getStatus().equals('B')) {
                 nuevoOBJListaPersonal = null;
