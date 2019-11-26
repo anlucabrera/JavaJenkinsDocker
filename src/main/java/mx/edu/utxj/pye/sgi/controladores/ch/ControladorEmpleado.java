@@ -214,6 +214,11 @@ public class ControladorEmpleado implements Serializable {
             if (procesopoa == null) {
                 if (administradores.contains(nuevoOBJListaPersonal.getClave())) {
                     procesopoa = ejbUtilidadesCH.mostrarEtapaPOAArea(nuevoOBJListaPersonal.getAreaOperativa());
+                }else{
+                    Procesopoa p = ejbUtilidadesCH.mostrarEtapaPOAArea(Short.parseShort("9"));
+                    procesopoa=p;
+                    procesopoa.setActivaEtapa1(Boolean.FALSE);
+                    procesopoa.setActivaEtapa2(Boolean.FALSE);
                 }
             }
             if (procesopoa != null) {
@@ -274,6 +279,9 @@ public class ControladorEmpleado implements Serializable {
     }
 
     public Boolean periodoActivoPOA(Eventos t) {
+        if(!procesopoa.getActivaEtapa1()){
+            return Boolean.FALSE;
+        }
         nuevaEventosAreas = ejbUtilidadesCH.mostrarEventoAreas(new EventosAreasPK(t.getEvento(), procesopoa.getArea()));
         LocalDateTime fechaf = uch.castearDaLDT(t.getFechaFin());
         LocalDateTime fechai = uch.castearDaLDT(t.getFechaInicio());

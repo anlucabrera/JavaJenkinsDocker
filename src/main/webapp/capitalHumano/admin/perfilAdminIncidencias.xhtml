@@ -56,7 +56,7 @@
             </h1>
         </p:panel-->
         <p:panel id="informacion" >
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 49}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 647}">
                 <section class="content">
                     <div class="row">
                         <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
@@ -71,8 +71,8 @@
                                         </p:link>
                                     </div>      
                                 </div>
-                                <h:form id="Parametros">
-                                    <div class="box box-primary">
+                                    <h:form id="Parametros" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?false:true}">
+                                    <div class="box box-primary" >
                                         <div id="main-buttons" class="hidden-sm hidden-xs" >
                                             <div class="row">
                                                 <div class="col-sm-2 border-right">
@@ -98,7 +98,7 @@
                                 </h:form>
 
                                 <p:tabView id="reportes">
-                                    <p:tab title="Reporte Incidencias">       
+                                    <p:tab title="Reporte Incidencias" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?false:true}">       
                                         <h:form id="frmInciGeneral"> 
 
                                             <p:outputPanel>

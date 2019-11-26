@@ -170,11 +170,11 @@
                                                                  sortBy="#{incidencia.clavePersonal.areaSuperior}" expandableRowGroups="true"
                                                                  emptyMessage="No se encontraron Registros." rendered="true">
                                                         <p:headerRow>
-                                                            <p:column colspan="10" style="background: #2796cb; color: #FFFFFF;">
+                                                            <p:column colspan="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?'9':'10'}" style="background: #2796cb; color: #FFFFFF;">
                                                                 <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(incidencia.clavePersonal.actividad.actividad eq 1?incidencia.clavePersonal.areaOperativa:incidencia.clavePersonal.areaSuperior)}" />
                                                             </p:column>
                                                         </p:headerRow>
-                                                        <p:column style="width: 50px;" class="noprint">
+                                                        <p:column style="width: 50px;" class="noprint" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?false:true}">
                                                             <p:commandButton actionListener="#{controladorIncidenciasGeneral.eliminarIncidencia(incidencia)}" process="@this" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
                                                                              onsuccess="PF('frmInci').update();" styleClass="btn-primary" title="Eliminar Incidencias">
                                                                 <p:confirm header="Confirmación" message="¿Confirma la eliminación de la incidencia de #{incidencia.tipo} del dia #{incidencia.fecha}?" icon="ui-icon-alert" />
@@ -269,11 +269,11 @@
                                                                  sortBy="#{incapacidades.clavePersonal.areaSuperior}" expandableRowGroups="true"
                                                                  emptyMessage="No se encontraron Registros." rendered="true">
                                                         <p:headerRow>
-                                                            <p:column colspan="6" style="background: #2796cb; color: #FFFFFF;">
+                                                            <p:column colspan="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?'5':'6'}" style="background: #2796cb; color: #FFFFFF;">
                                                                 <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(incapacidades.clavePersonal.actividad.actividad eq 1?incapacidades.clavePersonal.areaOperativa:incapacidades.clavePersonal.areaSuperior)}" />
                                                             </p:column>
                                                         </p:headerRow>
-                                                        <p:column style="width: 50px;">
+                                                        <p:column style="width: 50px;" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?false:true}">
                                                             <p:commandButton actionListener="#{controladorIncidenciasGeneral.eliminarIncapacidad(incapacidades)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
                                                                              onsuccess="PF('frmInci').update();" styleClass="btn-primary" title="Eliminar Incidencias">
                                                                 <p:confirm header="Confirmación" message="¿Confirma la eliminación de la incapacidad de #{incapacidades.clavePersonal.nombre} de la fecha #{incidencia.fecha}?" icon="ui-icon-alert" />
@@ -356,11 +356,11 @@
                                                                  sortBy="#{cuidados.personal.areaSuperior}" expandableRowGroups="true"
                                                                  emptyMessage="No se encontraron Registros." rendered="true">
                                                         <p:headerRow>
-                                                            <p:column colspan="7" style="background: #2796cb; color: #FFFFFF;">
+                                                            <p:column colspan="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?'6':'7'}" style="background: #2796cb; color: #FFFFFF;">
                                                                 <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(cuidados.personal.actividad.actividad eq 1?cuidados.personal.areaOperativa:cuidados.personal.areaSuperior)}" />
                                                             </p:column>
                                                         </p:headerRow>
-                                                        <p:column style="width: 5%;">
+                                                        <p:column style="width: 5%;" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?false:true}">
                                                             <p:commandButton actionListener="#{controladorIncidenciasGeneral.eliminarIncapacidad(cuidados)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
                                                                              onsuccess="PF('frmInci').update();" styleClass="btn-primary" title="Eliminar Incidencias">
                                                                 <p:confirm header="Confirmación" message="¿Confirma la eliminación de la incapacidad de #{cuidados.personal.nombre} de la fecha #{cuidados.fechaInicio}?" icon="ui-icon-alert" />

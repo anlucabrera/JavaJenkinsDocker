@@ -373,6 +373,29 @@ public class UtilidadesPOA implements Serializable {
                 }
                 refi = true;
                 break;
+            case "P":
+                asunto = "Presupuesto";
+                switch (rol) {
+                    case "As":
+                        mensajeArea = "Por medio del presente le informo que su área ya cuenta con presupuesto asignado para realizar la presupuestación correspondiente la cual estará habilitada a partir de que le llegue el correo de 'Confirmación de Validación de Registro de actividades' por parte de la Dirección de Planeación y Evaluación";
+                        mensajeRefi = "Por medio del presente le informo que ha asigando presupuesto al área de " + areaDestino.getNombre() + "el cual estara desponible para realizar la presupuestación correspondiente que estará habilitada a partir de que le llegue el correo de 'Confirmación de Validación de Registro de actividades' por parte de la Dirección de Planeación y Evaluación";
+                        mensajePye = "Por medio del presente se le informa que el área." + areaDestino.getNombre() + " ya cuenta con presupuesto asignado para realizar la presupuestación correspondiente";
+
+                        pye = true;
+                        break;
+                    case "Ac":
+                        mensajeArea = "Por medio del presente le informo que se le ha realizado un reajuste al presupuesto de su área, para más información. \n Enviar comentarios y solicitar más al correo de recursos.financieros@utxicotepec.edu.mx";
+                        mensajeRefi = "Por medio del presente le informo que ha realizado un reajuste al presupuesto del área de " + areaDestino.getNombre();
+                        break;
+                    case "El":
+                        mensajeArea = "Por medio del presente le informo que se le ha retirado el presupuesto de su área, para más información. \n Enviar comentarios al correo de recursos.financieros@utxicotepec.edu.mx";
+                        mensajeRefi = "Por medio del presente le informo que ha le ha retirado el presupuesto al área de " + areaDestino.getNombre();
+                        mensajePye = "Por medio del presente se le informa que el área." + areaDestino.getNombre() + " ya NO cuenta con presupuesto asignado para realizar la presupuestación correspondiente";
+                        pye = true;
+                        break;
+                }
+                refi = true;
+                break;
         }
 
         correosElectronicos.enviarConfirmacionCorreoElectronico(areaDestino.getCorreoInstitucional(), titulo, asunto, mensajeArea, tipoDcorreo);

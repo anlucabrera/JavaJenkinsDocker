@@ -175,7 +175,7 @@
                 <c:if test="#{registroPlanTutoriaTutor.mostrarEnDesarrollo(request) and registroPlanTutoriaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/plan_accion_tutorial.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{registroTutoriaGrupal.mostrarEnDesarrollo(request) and registroTutoriaGrupal.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_grupal.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Grupales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{registroTutoriaIndividual.mostrarEnDesarrollo(request) and registroTutoriaIndividual.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_individual.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Individuales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                
+
                 <!-- Especialista -->
                 <c:if test="#{seguimientoCasoCriticoEspecialista.mostrarEnDesarrollo(request) and seguimientoCasoCriticoEspecialista.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Caso Crítico Especialista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
             </c:if>
@@ -1020,7 +1020,7 @@
                                 </p:link>
                             </li>
                         </c:if>
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 647}">
                             <li>
                                 <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalIn.xhtml">
                                     <i class="fa fa-folder-open"></i>
@@ -1028,7 +1028,7 @@
                                 </p:link>
                             </li>
                         </c:if>
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564 and controladorEmpleado.nuevoOBJListaPersonal.clave ne 647}">
                             <li>
                                 <p:link href="#{request.contextPath}/capitalHumano/personal/perfilContactosE.xhtml">
                                     <i class="fa fa-list-alt"></i>
@@ -1036,11 +1036,13 @@
                                 </p:link>
                             </li>
                         </c:if>
-                        <li>
-                            <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
-                                <span>Reporte de Registros</span>
-                            </p:link>
-                        </li>
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 647}">
+                            <li>
+                                <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                                    <span>Reporte de Registros</span>
+                                </p:link>
+                            </li>
+                        </c:if>
                     </ul>
                 </li>
             </c:if>

@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ParticipantesTutoriaGrupal.findAll", query = "SELECT p FROM ParticipantesTutoriaGrupal p")
     , @NamedQuery(name = "ParticipantesTutoriaGrupal.findByTutoriaGrupal", query = "SELECT p FROM ParticipantesTutoriaGrupal p WHERE p.participantesTutoriaGrupalPK.tutoriaGrupal = :tutoriaGrupal")
     , @NamedQuery(name = "ParticipantesTutoriaGrupal.findByEstudiante", query = "SELECT p FROM ParticipantesTutoriaGrupal p WHERE p.participantesTutoriaGrupalPK.estudiante = :estudiante")
+    , @NamedQuery(name = "ParticipantesTutoriaGrupal.findByAsistencia", query = "SELECT p FROM ParticipantesTutoriaGrupal p WHERE p.asistencia = :asistencia")
     , @NamedQuery(name = "ParticipantesTutoriaGrupal.findByAceptacionAcuerdos", query = "SELECT p FROM ParticipantesTutoriaGrupal p WHERE p.aceptacionAcuerdos = :aceptacionAcuerdos")
-    , @NamedQuery(name = "ParticipantesTutoriaGrupal.findByComentarios", query = "SELECT p FROM ParticipantesTutoriaGrupal p WHERE p.comentarios = :comentarios")
-    , @NamedQuery(name = "ParticipantesTutoriaGrupal.findByEstadoCasoCritico", query = "SELECT p FROM ParticipantesTutoriaGrupal p WHERE p.estadoCasoCritico = :estadoCasoCritico")})
+    , @NamedQuery(name = "ParticipantesTutoriaGrupal.findByComentarios", query = "SELECT p FROM ParticipantesTutoriaGrupal p WHERE p.comentarios = :comentarios")})
 public class ParticipantesTutoriaGrupal implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,15 +40,18 @@ public class ParticipantesTutoriaGrupal implements Serializable {
     protected ParticipantesTutoriaGrupalPK participantesTutoriaGrupalPK;
     @Basic(optional = false)
     @NotNull
+    @Column(name = "asistencia")
+    private boolean asistencia;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 31)
     @Column(name = "aceptacion_acuerdos")
-    private boolean aceptacionAcuerdos;
+    private String aceptacionAcuerdos;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1000)
     @Column(name = "comentarios")
     private String comentarios;
-    @Column(name = "estado_caso_critico")
-    private Boolean estadoCasoCritico;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Estudiante estudiante1;
@@ -63,8 +66,9 @@ public class ParticipantesTutoriaGrupal implements Serializable {
         this.participantesTutoriaGrupalPK = participantesTutoriaGrupalPK;
     }
 
-    public ParticipantesTutoriaGrupal(ParticipantesTutoriaGrupalPK participantesTutoriaGrupalPK, boolean aceptacionAcuerdos, String comentarios) {
+    public ParticipantesTutoriaGrupal(ParticipantesTutoriaGrupalPK participantesTutoriaGrupalPK, boolean asistencia, String aceptacionAcuerdos, String comentarios) {
         this.participantesTutoriaGrupalPK = participantesTutoriaGrupalPK;
+        this.asistencia = asistencia;
         this.aceptacionAcuerdos = aceptacionAcuerdos;
         this.comentarios = comentarios;
     }
@@ -81,11 +85,19 @@ public class ParticipantesTutoriaGrupal implements Serializable {
         this.participantesTutoriaGrupalPK = participantesTutoriaGrupalPK;
     }
 
-    public boolean getAceptacionAcuerdos() {
+    public boolean getAsistencia() {
+        return asistencia;
+    }
+
+    public void setAsistencia(boolean asistencia) {
+        this.asistencia = asistencia;
+    }
+
+    public String getAceptacionAcuerdos() {
         return aceptacionAcuerdos;
     }
 
-    public void setAceptacionAcuerdos(boolean aceptacionAcuerdos) {
+    public void setAceptacionAcuerdos(String aceptacionAcuerdos) {
         this.aceptacionAcuerdos = aceptacionAcuerdos;
     }
 
@@ -95,14 +107,6 @@ public class ParticipantesTutoriaGrupal implements Serializable {
 
     public void setComentarios(String comentarios) {
         this.comentarios = comentarios;
-    }
-
-    public Boolean getEstadoCasoCritico() {
-        return estadoCasoCritico;
-    }
-
-    public void setEstadoCasoCritico(Boolean estadoCasoCritico) {
-        this.estadoCasoCritico = estadoCasoCritico;
     }
 
     public Estudiante getEstudiante1() {

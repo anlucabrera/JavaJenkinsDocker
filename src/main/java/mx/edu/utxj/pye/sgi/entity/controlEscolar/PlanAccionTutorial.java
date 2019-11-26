@@ -36,7 +36,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "PlanAccionTutorial.findByObjetivo", query = "SELECT p FROM PlanAccionTutorial p WHERE p.objetivo = :objetivo")
     , @NamedQuery(name = "PlanAccionTutorial.findByComentarios", query = "SELECT p FROM PlanAccionTutorial p WHERE p.comentarios = :comentarios")
     , @NamedQuery(name = "PlanAccionTutorial.findBySugerencias", query = "SELECT p FROM PlanAccionTutorial p WHERE p.sugerencias = :sugerencias")
-    , @NamedQuery(name = "PlanAccionTutorial.findByValidacionDirector", query = "SELECT p FROM PlanAccionTutorial p WHERE p.validacionDirector = :validacionDirector")})
+    , @NamedQuery(name = "PlanAccionTutorial.findByEstatus", query = "SELECT p FROM PlanAccionTutorial p WHERE p.estatus = :estatus")
+    , @NamedQuery(name = "PlanAccionTutorial.findByComentariosDirector", query = "SELECT p FROM PlanAccionTutorial p WHERE p.comentariosDirector = :comentariosDirector")})
 public class PlanAccionTutorial implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,8 +63,12 @@ public class PlanAccionTutorial implements Serializable {
     private String sugerencias;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "validacion_director")
-    private boolean validacionDirector;
+    @Size(min = 1, max = 21)
+    @Column(name = "estatus")
+    private String estatus;
+    @Size(max = 5000)
+    @Column(name = "comentarios_director")
+    private String comentariosDirector;
     @JoinColumn(name = "plan_accion_tutoria", referencedColumnName = "id_grupo", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Grupo grupo;
@@ -79,12 +84,12 @@ public class PlanAccionTutorial implements Serializable {
         this.planAccionTutoria = planAccionTutoria;
     }
 
-    public PlanAccionTutorial(Integer planAccionTutoria, String objetivo, String comentarios, String sugerencias, boolean validacionDirector) {
+    public PlanAccionTutorial(Integer planAccionTutoria, String objetivo, String comentarios, String sugerencias, String estatus) {
         this.planAccionTutoria = planAccionTutoria;
         this.objetivo = objetivo;
         this.comentarios = comentarios;
         this.sugerencias = sugerencias;
-        this.validacionDirector = validacionDirector;
+        this.estatus = estatus;
     }
 
     public Integer getPlanAccionTutoria() {
@@ -119,12 +124,20 @@ public class PlanAccionTutorial implements Serializable {
         this.sugerencias = sugerencias;
     }
 
-    public boolean getValidacionDirector() {
-        return validacionDirector;
+    public String getEstatus() {
+        return estatus;
     }
 
-    public void setValidacionDirector(boolean validacionDirector) {
-        this.validacionDirector = validacionDirector;
+    public void setEstatus(String estatus) {
+        this.estatus = estatus;
+    }
+
+    public String getComentariosDirector() {
+        return comentariosDirector;
+    }
+
+    public void setComentariosDirector(String comentariosDirector) {
+        this.comentariosDirector = comentariosDirector;
     }
 
     public Grupo getGrupo() {
