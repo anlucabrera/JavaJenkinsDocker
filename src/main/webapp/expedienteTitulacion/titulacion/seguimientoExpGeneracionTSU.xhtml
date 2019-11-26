@@ -97,11 +97,15 @@
                                                                  <p:commandButton actionListener="#{controladorTitSegGen.consultarExpediente(expTitExp)}" action="/expedienteTitulacion/titulacion/seguimientoExpGeneracionIndTSU?faces-redirect=true" 
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-search"
-                                                                                  title="#{ExpTit.expedientesTitulacion.expediente}"/>  
+                                                                                  title="Consultar Expediente Titulación"/>  
                                                                  <c:set var="status" value="#{controladorTitSegGen.consultarStatus(expTitExp)}" />
                                                                  <p:commandButton actionListener="#{controladorTitSegGen.validarExpediente(expTitExp)}"
                                                                                   class="btn btn-sm #{!empty status?'btn-info':'btn-danger'}" icon="#{!empty status?'fa fa-close':'fa fa-check'}"
                                                                                   title="#{!empty status?'Invalidar expediente.':'Validar expediente.'}" />
+                                                                 <p:commandButton actionListener="#{controladorTitSegGen.consultarListaPagos(expTitEgre)}" 
+                                                                                  class="btn btn-sm btn-success" 
+                                                                                  icon="fa fa-usd"
+                                                                                  title="Consultar Lista de Pagos"/>  
                                                              </p:column>
                                                              <p:column headerText="No. Expediente" style="width: 150px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.expediente}">
                                                                  <h:outputText value="#{ExpTit.expedientesTitulacion.expediente}"/>
@@ -139,6 +143,10 @@
                                                                  <h:outputText value="#{ExpTit.pagosFinanzas.fechaPago}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                              </p:column>
                                                              
+                                                             <p:column headerText="Carta de No Adeudo" style="width: 200px; text-align: center;" sortBy="#{ExpTit.pagosFinanzas.valcartanoadueudoTSU}">
+                                                                 <h:outputText value="#{ExpTit.pagosFinanzas.valcartanoadueudoTSU?'Si':'No'}"/>
+                                                             </p:column>
+                                                             
                                                              <p:column headerText="Documentos" style="width: 200px; text-align: center;" sortBy="#{controladorTitSegGen.numDocs} de #{controladorTitSegGen.numTotalDocs}">
                                                                  <h:outputText value="#{controladorTitSegGen.numDocs} de #{controladorTitSegGen.numTotalDocs}" />
                                                              </p:column>
@@ -167,6 +175,54 @@
                     </div>
                 </div>
             </section>
+            <!-- Modal para consultar pagos del estudiante seleccionado -->
+                    <p:dialog id="modalPagos" 
+                              widgetVar="modalPagos" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorTitSegGen.aperturaPagos}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              header="Listado de Pagos"
+                              modal="true" 
+                              draggable="true" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <h:form id="frmModalPagos" enctype="multipart/form-data"> 
+                                         <p:dataTable id="dtbListaPagos" emptyMessage="No cuenta con pagos el estudiante seleccionado." value="#{controladorTitSegGen.listaDtoPagosFinanzas}" var="ListPag"
+                                                      paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                      resizeMode="expand"
+                                                      tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                             <p:column headerText="Clave registro" style="width: 100px; text-align: center;" sortBy="#{ListPag.cveRegistro}">
+                                                 <h:outputText value="#{ListPag.cveRegistro}"/>
+                                             </p:column>
+                                             
+                                             <p:column headerText="Concepto" style="width: 150px; text-align: center;" sortBy="#{ListPag.concepto}">
+                                                 <h:outputText value="#{ListPag.concepto}" />
+                                             </p:column>
+                                             
+                                             <p:column headerText="Fecha" style="width: 100px; text-align: center;" sortBy="#{ListPag.fechaPago}">
+                                                 <h:outputText value="#{ListPag.fechaPago}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                             </p:column>
+                                             
+                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;">
+                                                 <h:outputText value="#{ListPag.matricula}" />
+                                             </p:column>
+
+                                             <p:column headerText="Descripción" style="width: 150px; text-align: center;" sortBy="#{ListPag.descripcion}">
+                                                 <h:outputText value="#{ListPag.descripcion}"/>
+                                             </p:column>
+
+                                             <p:column headerText="Monto" style="width: 100px; text-align: center;" sortBy="#{ListPag.monto}">
+                                                 <h:outputText value="#{ListPag.monto}"><f:convertNumber minFractionDigits = "2" currencySymbol="$" type="currency"/></h:outputText>
+                                             </p:column>
+                                         </p:dataTable>
+                                    </h:form>
+                    </p:dialog>
         </p:panel>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />

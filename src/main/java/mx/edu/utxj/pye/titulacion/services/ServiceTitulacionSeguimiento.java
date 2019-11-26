@@ -43,7 +43,8 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
 import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
+import mx.edu.utxj.pye.titulacion.dto.dtoExpedientesActuales;
+//import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosIntexp;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
 import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
@@ -52,6 +53,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
@@ -74,17 +76,18 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     @EJB EjbCarga ejbCarga;
     @EJB EjbCatalogos ejbCatalogos;
     
-    public static final String ACTUALIZADO = "expTitulacion_reporte.xlsx";
+    public static final String ACTUALIZADO_TSU = "expTitulacion_tsu.xlsx", ACTUALIZADO_ING = "expTitulacion_ing.xlsx";
 
-    @Override
-    public List<ListaExpedientes> consultaListaExpedientes() {
-        TypedQuery<ListaExpedientes> q = facade.getEntityManager().createQuery("SELECT l FROM ListaExpedientes l ORDER BY l.matricula ASC", ListaExpedientes.class);
-        List<ListaExpedientes> pr = q.getResultList();
-        if (pr.isEmpty() ) {
-          pr=new ArrayList<>();
-        } 
-        return pr;
-    }
+//    @Override
+//    public List<ListaExpedientes> consultaListaExpedientes() {
+//        TypedQuery<ListaExpedientes> q = facade.getEntityManager().createQuery("SELECT l FROM ListaExpedientes l ORDER BY l.matricula ASC", ListaExpedientes.class);
+//        List<ListaExpedientes> pr = q.getResultList();
+//        if (pr.isEmpty() ) {
+//          pr=new ArrayList<>();
+//        } 
+//        return pr;
+//    }
+   
 
     @Override
     public dtoExpedienteMatricula mostrarExpediente(Integer expediente) throws Throwable {
@@ -534,15 +537,31 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
 
     @Override
-    public String getReporteGeneracion(Generaciones generacion) throws Throwable {
+    public String getReporteGeneracionTSU(Generaciones generacion, Integer nivel) throws Throwable {
         String gen = generacion.getInicio() + "-" + generacion.getFin();
         String rutaPlantilla = "C:\\archivos\\formatosTitulacion\\reporteTitulacion.xlsx";
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompletoTit(gen);
 
-        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO);
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_TSU);
         
         Map beans = new HashMap();
-        beans.put("repGen", getListaExpedientesPorGeneracion(generacion));
+        beans.put("repGen", getListaExpedientesPorGeneracion(generacion, nivel));
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+    @Override
+    public String getReporteGeneracionING(Generaciones generacion, Integer nivel) throws Throwable {
+        String gen = generacion.getInicio() + "-" + generacion.getFin();
+        String rutaPlantilla = "C:\\archivos\\formatosTitulacion\\reporteTitulacion.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompletoTit(gen);
+
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_ING);
+        
+        Map beans = new HashMap();
+        beans.put("repGen", getListaExpedientesPorGeneracion(generacion, nivel));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 
@@ -574,7 +593,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
 
     @Override
-    public List<dtoExpedienteMatricula> getListaExpedientesPorGeneracion(Generaciones generacion) {
+    public List<dtoExpedienteMatricula> getListaExpedientesPorGeneracion(Generaciones generacion, Integer nivel) {
         //verificar que los parametros no sean nulos
         if(generacion == null){
             return null;
@@ -583,10 +602,23 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         //obtener la lista de expedientes de titulación filtrando por generación y programa educativo
         List<dtoExpedienteMatricula> l = new ArrayList<>();
         List<ExpedientesTitulacion> entities = new ArrayList<>();
-      
-        entities = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.generacion =:generacion", ExpedientesTitulacion.class)
+        
+        if(nivel==1){
+        
+            entities = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.generacion =:generacion AND e.nivel =:nivel", ExpedientesTitulacion.class)
                 .setParameter("generacion", generacion.getGeneracion())
+                .setParameter("nivel", nivel)
                 .getResultList();
+        
+        }else{
+        
+           List<Integer> niveles = Arrays.asList(2, 4);
+            entities = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.generacion =:generacion AND e.nivel IN :niveles", ExpedientesTitulacion.class)
+                .setParameter("generacion", generacion.getGeneracion())
+                .setParameter("niveles", niveles)
+                .getResultList();
+        
+        }
         
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
@@ -646,7 +678,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
             Type listType = new TypeToken<ArrayList<dtoPagosFinanzas>>() {
             }.getType();
             arrayDeJson = gson.fromJson(output, listType);
-
+           
         } catch (Throwable ex) {
             arrayDeJson = null;
         }
@@ -655,6 +687,13 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
 
     @Override
     public dtoPagosFinanzas getDtoPagosFinanzasTSU(ArrayList<dtoPagosFinanzas> listaDtoPagosFinanzas) {
+        Boolean validacion;
+        Long existeValidacion  = listaDtoPagosFinanzas.stream().filter(p -> p.getValcartanoadueudoTSU()== true).count();
+        if(existeValidacion == 0){
+            validacion = false;
+        }else{
+            validacion = true;
+        }
         dtoPagosFinanzas dto = new dtoPagosFinanzas();
         listaDtoPagosFinanzas.forEach((pagoFinanzas) -> {
             
@@ -668,7 +707,8 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
              dto.setMatricula(pagoFinanzas.getMatricula());
              dto.setMonto(pagoFinanzas.getMonto());
              dto.setSiglas(pagoFinanzas.getSiglas());
-                
+             dto.setValcartanoadueudoTSU(validacion);
+             
          }
                 
         });
@@ -678,6 +718,13 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     
     @Override
     public dtoPagosFinanzas getDtoPagosFinanzasING(ArrayList<dtoPagosFinanzas> listaDtoPagosFinanzas) {
+        Boolean validacion;
+        Long existeValidacion  = listaDtoPagosFinanzas.stream().filter(p -> p.getValcartanoadedudoIng()== true).count();
+        if(existeValidacion == 0){
+            validacion = false;
+        }else{
+            validacion = true;
+        }
         dtoPagosFinanzas dto = new dtoPagosFinanzas();
         listaDtoPagosFinanzas.forEach((pagoFinanzas) -> {
             
@@ -691,7 +738,8 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
              dto.setMatricula(pagoFinanzas.getMatricula());
              dto.setMonto(pagoFinanzas.getMonto());
              dto.setSiglas(pagoFinanzas.getSiglas());
-                
+             dto.setValcartanoadedudoIng(validacion);
+            
          }
                 
         });
@@ -828,6 +876,37 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
          }
         
         return numero;
+    }
+
+    @Override
+    public List<dtoExpedientesActuales> consultaListaExpedientes() {
+         //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
+        List<ExpedientesTitulacion> expedientes = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e ORDER BY e.matricula.matricula ASC", ExpedientesTitulacion.class)
+                .getResultList();
+
+        List<dtoExpedientesActuales> listaDtoExpedientes = new ArrayList<>();
+
+        expedientes.forEach(expediente -> {
+            String nombre = expediente.getMatricula().getApellidoPaterno() + " " + expediente.getMatricula().getApellidoPaterno() + " " + expediente.getMatricula().getNombre();
+            AreasUniversidad programa = facade.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.siglas =:siglas", AreasUniversidad.class)
+                .setParameter("siglas", expediente.getProgramaEducativo())
+                .getResultStream().findFirst().orElse(null);
+            dtoExpedientesActuales dtoExpedientesAct = new dtoExpedientesActuales(expediente.getMatricula().getMatricula(), nombre, programa.getNombre(), expediente.getExpediente());
+            listaDtoExpedientes.add(dtoExpedientesAct);
+        });
+        
+        return listaDtoExpedientes;
+    }
+
+    @Override
+    public String obtenerSituacionCartaNoAdeudo(Boolean validada) {
+        String descripcion;
+        if (validada) {
+            descripcion = "Validada";
+        } else {
+            descripcion = "Sin validar";
+        }
+        return descripcion;
     }
 
 }

@@ -34,4 +34,6 @@ public class dtoPagosFinanzas implements Serializable{
     @Getter @Setter private String matricula;
     @Getter @Setter private Double monto;
     @Getter @Setter private String siglas;
+    @Getter @Setter private Boolean valcartanoadueudoTSU; 
+    @Getter @Setter private Boolean valcartanoadedudoIng;
 }
