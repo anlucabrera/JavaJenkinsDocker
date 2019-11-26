@@ -53,6 +53,7 @@ import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 /**
  *
@@ -95,8 +96,9 @@ public class EvaluacionDoncenteMateriaControler extends ViewScopedRol {
     @Getter @Setter double porcentaje;
     @Getter @Setter dtoEstudianteMateria dtoDocenteEvaluando;
     @Getter @Setter EvaluacionDocentesMateriaResultados resultadosEvaluando;
-    @Getter @Setter Boolean estudianteSauiit, estudianteCE;
+    @Getter @Setter Boolean estudianteSauiit, estudianteCE,acceso;
     @Getter private String valor;
+
 
     @Inject LogonMB logonMB;
     @EJB private Facade facade;
@@ -107,48 +109,52 @@ public class EvaluacionDoncenteMateriaControler extends ViewScopedRol {
 
     @PostConstruct
     public void init() {
-        setVistaControlador(ControlEscolarVistaControlador.EVALUACION_DOCENTE);
-        //Verificamos que exista una evaluacion activa
-       // System.out.println("Init ");
-        ResultadoEJB<Evaluaciones> resEvaluacion = eJBEvaluacionDocenteMateria.getEvDocenteActiva();
-        if(resEvaluacion.getCorrecto()==true){
-            evaluacion = resEvaluacion.getValor();
-           // System.out.println("Evaluacion " + evaluacion);
-            //Obtenemos al estudiante
-            ResultadoEJB<dtoEstudiantesEvalauciones> resEstudiante = ejbAdminEstudiante.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
-            if(resEstudiante.getCorrecto() ==true){
-                //TODO: Obtuvo al estudiante, sólo hay que obetener sus materias identificando en que base estan registrados y quitar a estudiantes de 6to y 11vo
-                estudianteEvaluacion = resEstudiante.getValor();
-                //System.out.println("Estudiante " + estudianteEvaluacion);
-                if(estudianteEvaluacion.getEstudianteCE() !=null){
-                    estudianteCE = true;
-                }
-                if(estudianteEvaluacion.getEstudianteSaiiut() !=null){
-                    estudianteSauiit =true;
-                }
-                if(estudianteEvaluacion.getGrado()==6 || estudianteEvaluacion.getGrado() ==11){cargada=false; }
-                else {
-                    //System.out.println("No es de 6 o 11");
-                    //El estudiante es ! a 11 o 6
-                    //Se obtienen la lista de sus materias
-                    ResultadoEJB<List<dtoEstudianteMateria>> resMaterias = eJBEvaluacionDocenteMateria.getMateriasbyEstudiante(estudianteEvaluacion,evaluacion);
-                    if(resMaterias.getCorrecto()==true){
-                        listaMaterias= resMaterias.getValor();
-                        //System.out.println("Lista de materias " + listaMaterias);
-                        //Cargar la lista de resultados
-                        getResultados();
-                        preguntas = eJBEvaluacionDocenteMateria.getApartados();
-                        respuestasPosibles = eJBEvaluacionDocenteMateria.getRespuestasPosibles();
-                        cargada =true;
-                    }else {mostrarMensajeResultadoEJB(resMaterias);}
+        if(logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19) || logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE)){
+            acceso =true;
+            setVistaControlador(ControlEscolarVistaControlador.EVALUACION_DOCENTE);
+            //Verificamos que exista una evaluacion activa
+            // System.out.println("Init ");
+            ResultadoEJB<Evaluaciones> resEvaluacion = eJBEvaluacionDocenteMateria.getEvDocenteActiva();
+            if(resEvaluacion.getCorrecto()==true){
+                evaluacion = resEvaluacion.getValor();
+                // System.out.println("Evaluacion " + evaluacion);
+                //Obtenemos al estudiante
+                ResultadoEJB<dtoEstudiantesEvalauciones> resEstudiante = ejbAdminEstudiante.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
+                if(resEstudiante.getCorrecto() ==true){
+                    //TODO: Obtuvo al estudiante, sólo hay que obetener sus materias identificando en que base estan registrados y quitar a estudiantes de 6to y 11vo
+                    estudianteEvaluacion = resEstudiante.getValor();
+                    //System.out.println("Estudiante " + estudianteEvaluacion);
+                    if(estudianteEvaluacion.getEstudianteCE() !=null){
+                        estudianteCE = true;
+                    }
+                    if(estudianteEvaluacion.getEstudianteSaiiut() !=null){
+                        estudianteSauiit =true;
+                    }
+                    if(estudianteEvaluacion.getGrado()==6 || estudianteEvaluacion.getGrado() ==11){cargada=false; }
+                    else {
+                        //System.out.println("No es de 6 o 11");
+                        //El estudiante es ! a 11 o 6
+                        //Se obtienen la lista de sus materias
+                        ResultadoEJB<List<dtoEstudianteMateria>> resMaterias = eJBEvaluacionDocenteMateria.getMateriasbyEstudiante(estudianteEvaluacion,evaluacion);
+                        if(resMaterias.getCorrecto()==true){
+                            listaMaterias= resMaterias.getValor();
+                            //System.out.println("Lista de materias " + listaMaterias);
+                            //Cargar la lista de resultados
+                            getResultados();
+                            preguntas = eJBEvaluacionDocenteMateria.getApartados();
+                            respuestasPosibles = eJBEvaluacionDocenteMateria.getRespuestasPosibles();
+                            cargada =true;
+                        }else {mostrarMensajeResultadoEJB(resMaterias);}
+                    }
+                }else {
+                    //Mostrar mensaje
+                    mostrarMensajeResultadoEJB(resEstudiante);
                 }
             }else {
-                //Mostrar mensaje
-                mostrarMensajeResultadoEJB(resEstudiante);
+                cargada=false;
             }
-        }else {
-            cargada=false;
         }
+
         /*
 
          if (eJBEvaluacionDocenteMateria.evaluacionActiva() != null) {
@@ -344,7 +350,7 @@ public class EvaluacionDoncenteMateriaControler extends ViewScopedRol {
         }
       ResultadoEJB<EvaluacionDocentesMateriaResultados> resActualiza = eJBEvaluacionDocenteMateria.actualizaRespuestaPorPregunta2(dtoDocenteEvaluando.getResultados(),id.getId(),valor);
         if(resActualiza.getCorrecto()==true){
-            //System.out.println("Pregunta: "+ id.getId()+"Valor ----------->" +valor);
+           // System.out.println("Pregunta: "+ id.getId()+"Valor ----------->" +valor);
             EvaluacionDocentesMateriaResultados resultados = new EvaluacionDocentesMateriaResultados();
             resultados = resActualiza.getValor();
            // System.out.println("Valoooor"+resultados.getR1());
