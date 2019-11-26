@@ -117,6 +117,7 @@ public class LogonMB extends AdminSession implements Serializable {
             Faces.redirect("index.xhtml");
         }else {
             usuarioTipo = ejbLogin.getTipoUsuario(email);
+           // System.out.println("Usario tipo --->" +usuarioTipo);
             if(estudiante19 == null && usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) {
                 addDetailMessage("La contraseña ingresada es incorrecta.");
                 try{
