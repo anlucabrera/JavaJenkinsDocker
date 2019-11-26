@@ -13,7 +13,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
+
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
+import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
 import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
@@ -160,8 +165,12 @@ public class ServicioLogin implements EjbLogin {
     public UsuarioTipo getTipoUsuario(String usuario) {
         if (usuario != null) {
             if(patronMatricula19.coincide(usuario.trim())){
-                return UsuarioTipo.ESTUDIANTE19;
+                //System.out.println("Emtra en 19");
+                //System.out.println("--->"+ existeenBD(usuario));
+                if(existeenBD(usuario)) {return UsuarioTipo.ESTUDIANTE19;}
+                else { return  UsuarioTipo.ESTUDIANTE;}
             } else if (patronMatricula.coincide(usuario.trim())) {
+                //System.out.println("Emtra en Estudiante");
                 return UsuarioTipo.ESTUDIANTE;
             } else {
                 return UsuarioTipo.TRABAJADOR;
@@ -169,6 +178,18 @@ public class ServicioLogin implements EjbLogin {
         } else {
             return null;
         }
+    }
+
+    private boolean existeenBD(String usuario){
+        Estudiante estudiante = new Estudiante();
+        estudiante = f2.getEntityManager().createQuery("select e from Estudiante e where e.matricula =:matricula",Estudiante.class)
+            .setParameter("matricula",Integer.parseInt(usuario))
+            .getResultStream()
+            .findAny()
+            .orElse(null)
+        ;
+        if(estudiante!=null){return true;}
+            else {return false;}
     }
 
     @Override
