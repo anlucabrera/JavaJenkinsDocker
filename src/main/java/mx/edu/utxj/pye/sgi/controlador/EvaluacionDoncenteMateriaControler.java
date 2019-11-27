@@ -256,8 +256,12 @@ public class EvaluacionDoncenteMateriaControler extends ViewScopedRol {
         // System.out.println("Resultados filtrados " + listaDocentesEvaluados + "  " + listaDocentesEvaluando);
     }
     public void  getdocenteEvaluando(dtoEstudianteMateria evaluando){
-        dtoDocenteEvaluando = evaluando;
-        Ajax.update("frmEvaluacion");
+        if(evaluando==null){
+            setDtoDocenteEvaluando(getDtoDocenteEvaluando());
+        }else{
+            dtoDocenteEvaluando = evaluando;
+            Ajax.update("frmEvaluacion");
+        }                
         //System.out.println("Evaluado" + dtoDocenteEvaluando);
     }
     private void initOpciones() {
