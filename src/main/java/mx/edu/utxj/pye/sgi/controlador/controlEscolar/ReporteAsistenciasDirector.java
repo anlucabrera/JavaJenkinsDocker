@@ -108,7 +108,8 @@ public class ReporteAsistenciasDirector extends ViewScopedRol implements Desarro
             
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
-            rol.setPeriodos(resPeriodos.getValor());            
+            rol.setPeriodos(resPeriodos.getValor());      
+            rol.setPeriodo(ejb.getPeriodoActual());            
             
             rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
             

@@ -361,7 +361,7 @@
                                                             </p:column>
                                                         </p:headerRow>
                                                         <p:column style="width: 5%;" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?false:true}">
-                                                            <p:commandButton actionListener="#{controladorIncidenciasGeneral.eliminarIncapacidad(cuidados)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
+                                                            <p:commandButton actionListener="#{controladorIncidenciasGeneral.eliminarCuidado(cuidados)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
                                                                              onsuccess="PF('frmInci').update();" styleClass="btn-primary" title="Eliminar Incidencias">
                                                                 <p:confirm header="Confirmación" message="¿Confirma la eliminación de la incapacidad de #{cuidados.personal.nombre} de la fecha #{cuidados.fechaInicio}?" icon="ui-icon-alert" />
                                                             </p:commandButton>

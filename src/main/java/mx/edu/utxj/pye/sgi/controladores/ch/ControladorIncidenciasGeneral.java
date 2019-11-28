@@ -131,7 +131,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
             listaIncidencias = new ArrayList<>();
             listaIncidencias.clear();
             incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
-                        if (!incidenciases.isEmpty()) {
+            if (!incidenciases.isEmpty()) {
                 incidenciases.forEach((t) -> {
                     if (area != 0) {
                         if (t.getClavePersonal().getAreaOperativa() == area) {
@@ -146,7 +146,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     }
                 });
             }
-         
+
             listaBitacoraaccesos = new ArrayList<>();
             listaBitacoraaccesos.clear();
             listaBitacoraaccesos = ejbUtilidadesCH.mostrarBitacoraacceso("Incidencias", utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
@@ -169,11 +169,11 @@ public class ControladorIncidenciasGeneral implements Serializable {
                 }
 
             });
-                        
+
             listaIncapacidads = new ArrayList<>();
             listaIncapacidads.clear();
             incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
-                        if (!incapacidads.isEmpty()) {
+            if (!incapacidads.isEmpty()) {
                 incapacidads.forEach((t) -> {
                     if (area != 0) {
                         if (t.getClavePersonal().getAreaOperativa() == area) {
@@ -188,8 +188,11 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     }
                 });
             }
+
+            listaCuidadoses = new ArrayList<>();
+            listaCuidadoses.clear();
             cuidadoses = ejbNotificacionesIncidencias.mostrarCuidadosReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
-                        if (!cuidadoses.isEmpty()) {
+            if (!cuidadoses.isEmpty()) {
                 cuidadoses.forEach((t) -> {
                     if (area != 0) {
                         if (t.getPersonal().getAreaOperativa() == area) {
@@ -203,8 +206,8 @@ public class ControladorIncidenciasGeneral implements Serializable {
                         listaCuidadoses.add(t);
                     }
                 });
-            }            
-            
+            }
+
             Ajax.update("frmInciGeneral");
             Ajax.update("frmIncaGeneral");
             Ajax.update("frmCuidGeneral");
@@ -269,6 +272,19 @@ public class ControladorIncidenciasGeneral implements Serializable {
                 CargaArchivosCH.eliminarArchivo(incapacidad.getEvidencia());
             }
             ejbNotificacionesIncidencias.eliminarIncapacidad(incapacidad);
+            mostrarIncidencias(String.valueOf(fechaActual.getMonthValue()));
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void eliminarCuidado(Cuidados cuidados) {
+        try {
+            if (cuidados.getEvidencia() != null) {
+                CargaArchivosCH.eliminarArchivo(cuidados.getEvidencia());
+            }
+            ejbNotificacionesIncidencias.eliminarCuidados(cuidados);
             mostrarIncidencias(String.valueOf(fechaActual.getMonthValue()));
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

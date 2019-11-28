@@ -658,7 +658,7 @@
                     </div>
                 </div>
             </c:if>
-            <c:if test="#{!AsignacionTutorAcademico.tieneAcceso}">
+            <c:if test="#{!administracionPlanEstudioDirector.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
                         <h:outputText

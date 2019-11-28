@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.StoredProcedureQuery;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaRegistro;
@@ -551,6 +552,19 @@ public class EjbRegistroPlanEstudio {
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionIndicadoresCriterios.getPeriodosDescendentes)", e, null);
         }
+    }
+    
+    public PeriodosEscolares getPeriodoActual() {
+
+        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+        List<PeriodosEscolares> l = spq.getResultList();
+
+        if (l == null || l.isEmpty()) {
+            return new PeriodosEscolares();
+        } else {
+            return l.get(0);
+        }
+    
     }
 
 }

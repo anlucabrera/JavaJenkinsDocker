@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
@@ -80,9 +81,11 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = evr.validarDirector(logon.getPersonal().getClave());
             ResultadoEJB<Filter<PersonalActivo>> resValidaEnc = evr.validarEncargadoDireccion(logon.getPersonal().getClave());//validar si es director                        
             if (!resValidaEnc.getCorrecto() && !resValidacion.getCorrecto()) {
+                rol.setMensajeV("El acceso solo está autorizado a Directores y Encargados de Direcciones Académicas.");
                 mostrarMensajeResultadoEJB(resValidacion);
                 return;
-            }//cortar el flujo si no se pudo validar            
+            }//cortar el flujo si no se pudo validar    
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralValidacion.init(1)");
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación            
             PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());            
             rol = new ValidacionPlaneacionCuatrimestral(filtro, director, director.getAreaOficial());            
@@ -94,8 +97,8 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
-            ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDirector());
-            if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
+            ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEventoValidacion(rol.getDirector());
+            if(!resEvento.getCorrecto()){rol.setMensajeV("No existe periodo activo para la validación de planeaciones ."); tieneAcceso = false;}//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
             
             ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = erpe.getProgramasEducativos(director);
             if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
@@ -104,6 +107,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());            
+            rol.setPeriodo(ejb.getPeriodoActual());
             
             rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
             
@@ -130,6 +134,33 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         return mostrar(request, map.containsValue(valor));
     }
     
+    public void cambiarPeriodo() {
+//        System.out.println("rol.getPeriodoSeleccionado() = " + caster.periodoToString(rol.getPeriodoSeleccionado()));
+        if (rol.getPeriodo() == null) {
+            mostrarMensaje("No hay periodo escolar seleccionado.");
+            rol.setGrupos(Collections.EMPTY_LIST);
+            rol.setCargas(Collections.EMPTY_LIST);  
+            rol.setGrupoSelec(new Grupo());            
+            rol.setCarga(null);
+            return;
+        }
+        rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
+        ResultadoEJB<List<Grupo>> resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(), rol.getPeriodo());
+        if (!resgrupos.getCorrecto()) {
+            mostrarMensajeResultadoEJB(resgrupos);
+        }
+        rol.setGrupos(resgrupos.getValor());
+        rol.setGrupoSelec(rol.getGrupos().get(0));
+
+        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());
+        if (!resCarga.getCorrecto()) {
+            mostrarMensajeResultadoEJB(resCarga);
+        }
+        rol.setCargas(resCarga.getValor());
+        rol.setCarga(resCarga.getValor().get(0));
+        existeAsignacion();
+    }
+     
     public void cambiarPlanestudio(ValueChangeEvent event) {
         rol.setGrupos(new ArrayList<>());
         rol.setCargas(new ArrayList<>());

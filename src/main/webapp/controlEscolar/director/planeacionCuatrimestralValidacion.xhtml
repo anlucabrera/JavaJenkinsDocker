@@ -76,7 +76,7 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="periodo" value="#{planeacionCuatrimestralValidacion.rol.periodo}" converter="entityConverter" styleClass="form-control" >
                                                     <f:selectItems value="#{planeacionCuatrimestralValidacion.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, carga"/>
+                                                    <p:ajax process="@this, carga" listener="#{planeacionCuatrimestralValidacion.cambiarPeriodo}"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>
@@ -340,7 +340,7 @@
             <c:if test="#{!planeacionCuatrimestralValidacion.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a personal docente."/>
+                        <h:outputText value="#{planeacionCuatrimestralValidacion.rol.mensajeV}"/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

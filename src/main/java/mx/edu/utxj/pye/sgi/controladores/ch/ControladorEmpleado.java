@@ -226,28 +226,35 @@ public class ControladorEmpleado implements Serializable {
                 }
             }
             if (procesopoa != null) {
-                nuevaAreasUniversidad=ejbAreasLogeo.mostrarAreasUniversidad(procesopoa.getArea());
-                if (procesopoa.getEvaluacion() == null) {
-                    procesopoa.setEvaluacion(new Calendarioevaluacionpoa());
-                    Calendarioevaluacionpoa periodoEvaluacion = new Calendarioevaluacionpoa();
-                    periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(fechaActual));
-                    if (periodoEvaluacion != null) {
-                        evaluable = true;
-                    } else {
-                        periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 1)));
-                        if (periodoEvaluacion != null) {
-                            periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 25)));
-                        }
-                    }
-                    procesopoa.setEvaluacion(periodoEvaluacion);
+                if (Objects.equals(procesopoa.getActivaEtapa1(), Boolean.FALSE) && Objects.equals(procesopoa.getActivaEtapa2(), Boolean.FALSE)) {
+                    tienePOA = false;
+                    evaluable = false;
                 } else {
-                    evaluable = true;
+                    nuevaAreasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(procesopoa.getArea());
+                    if (procesopoa.getActivaEtapa2()==Boolean.TRUE) {
+                        if (procesopoa.getEvaluacion() == null) {
+                            procesopoa.setEvaluacion(new Calendarioevaluacionpoa());
+                            Calendarioevaluacionpoa periodoEvaluacion = new Calendarioevaluacionpoa();
+                            periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(fechaActual));
+                            if (periodoEvaluacion != null) {
+                                evaluable = true;
+                            } else {
+                                periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 1)));
+                                if (periodoEvaluacion != null) {
+                                    periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 25)));
+                                }
+                            }
+                            procesopoa.setEvaluacion(periodoEvaluacion);
+                        } else {
+                            evaluable = true;
+                        }
+                        tienePOA = true;
+                        eventosRegistro();
+                        if(!procesopoa.getValidacionRegistroA() && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Registro").get(0))){poaProces.add(true);} else {poaProces.add(false);}
+                        if(procesopoa.getValidacionRegistroA() && (procesopoa.getValidacionRFFinalizado() == false) && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Recurso").get(0))){poaProces.add(true);} else {poaProces.add(false);}
+                        if(procesopoa.getValidacionRFFinalizado() && (procesopoa.getValidacionJustificacion() == false) && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Justificacion").get(0))){poaProces.add(true);} else {poaProces.add(false);}
+                    }
                 }
-                tienePOA = true;
-                eventosRegistro();
-                if(!procesopoa.getValidacionRegistroA() && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Registro").get(0))){poaProces.add(true);} else {poaProces.add(false);}
-                if(procesopoa.getValidacionRegistroA() && (procesopoa.getValidacionRFFinalizado() == false) && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Recurso").get(0))){poaProces.add(true);} else {poaProces.add(false);}
-                if(procesopoa.getValidacionRFFinalizado() && (procesopoa.getValidacionJustificacion() == false) && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Justificacion").get(0))){poaProces.add(true);} else {poaProces.add(false);}
             } else {
                 tienePOA = false;
                 evaluable = false;

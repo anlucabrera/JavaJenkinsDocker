@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +40,11 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGraficaCronograma;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ImpresionPlaneacionCuatrimestral;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.el.functions.Dates;
@@ -123,6 +129,28 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
         return mostrar(request, map.containsValue(valor));
     }
 
+    public void cambiarPeriodo() {
+//        System.out.println("rol.getPeriodoSeleccionado() = " + caster.periodoToString(rol.getPeriodoSeleccionado()));
+        if (rol.getPeriodo() == null) {
+            mostrarMensaje("No hay periodo escolar seleccionado.");
+            rol.setCargas(Collections.EMPTY_LIST);
+            rol.setCarga(null);
+            return;
+        }
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo()"+rol.getPeriodo());
+        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(rol.getDocente(), rol.getPeriodo());
+        rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+        rol.setCargas(Collections.EMPTY_LIST);
+        rol.setCronograma(Collections.EMPTY_LIST);
+        if (!resCarga.getValor().isEmpty()) {
+            rol.setCargas(resCarga.getValor());
+            rol.setCarga(null);
+            existeAsignacion();
+            crearCronograma(rol.getCarga());
+        }
+        Ajax.update("frm");
+    }
+    
     public void cambiarCarga(ValueChangeEvent event) {
         rol.setExisteConfiguracion(false);
         rol.setCarga((DtoCargaAcademica) event.getNewValue());

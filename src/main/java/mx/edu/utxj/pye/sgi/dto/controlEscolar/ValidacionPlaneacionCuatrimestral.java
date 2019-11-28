@@ -87,6 +87,8 @@ public class ValidacionPlaneacionCuatrimestral extends AbstractRol{
     @Getter @Setter private Integer cuatrimestre;
     @Getter @Setter private Double porcIni;
     @Getter @Setter private Integer numDtotales;
+    
+    @Getter @Setter private String mensajeV;
     @Getter    @NonNull    private Map<AreasUniversidad, List<PlanEstudio>> areaPlanEstudioMap;
     // Representa el listado de programas educativos vigentes
     @Getter    @NonNull    private List<AreasUniversidad> programas;
