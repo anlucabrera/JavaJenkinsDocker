@@ -110,7 +110,7 @@ public class CedulaIdentificacionSE extends ViewScopedRol implements Desarrollab
                 obtenerNivelacionesPorMateria();
                 obtenerPromediosFinales();
                 obtenerPromedioCuatrimestral();
-                obtenerPromedioAcumulado();
+               // obtenerPromedioAcumulado();
             }else{ mostrarMensajeResultadoEJB(resCedula); }
         } else {mostrarMensajeResultadoEJB(resEstudiante);}
     }

@@ -31,11 +31,8 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
-import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
+import mx.edu.utxj.pye.sgi.saiiut.entity.*;
 
-import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEvaluacionTutor;
-import mx.edu.utxj.pye.sgi.saiiut.entity.ListaUsuarioClaveNomina;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
 /**
@@ -379,6 +376,50 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
       
     }
 
+    @Override
+    public ResultadoEJB<List<dtoEstudiantesEvalauciones>> getEstudiantesCE(PeriodosEscolares periodo) {
+        List<dtoEstudiantesEvalauciones> listEstudiantesCE = new ArrayList<>();
+        if(periodo ==null){return ResultadoEJB.crearErroneo(2,listEstudiantesCE,"El periodo no debe ser nulo");}
+        //TODO: Busco la lista de estudiantes en control escolar por periodo
+        List<Estudiante> estudiantesCE = new ArrayList<>();
+        estudiantesCE = em.createQuery("select e from Estudiante e where e.periodo=:periodo",Estudiante.class)
+            .setParameter("periodo",periodo.getPeriodo() )
+            .getResultList()
+        ;
+        if(estudiantesCE ==null || estudiantesCE.isEmpty()){return ResultadoEJB.crearErroneo(3,listEstudiantesCE,"No hay registro de estudiantes en el periodo");}
+        else {
+            //Se recorre la lista para obetener sus datos
+            estudiantesCE.forEach(e->{
+                dtoEstudiantesEvalauciones dtoEstudiante = new dtoEstudiantesEvalauciones();
+                //Datos generales del estudiante
+                dtoEstudiante.setNombreCEstudiante(e.getAspirante().getIdPersona().getNombre().concat(" ").concat(e.getAspirante().getIdPersona().getApellidoPaterno().concat(" ").concat(e.getAspirante().getIdPersona().getApellidoMaterno())));
+                //Busco al tutor
+                ResultadoEJB<Personal> tutor= getPersonalbyClave(e.getGrupo().getTutor());
+                if(tutor.getCorrecto()==true){
+                    //Se envia al tutor  y sus datos
+                    dtoEstudiante.setTutor(tutor.getValor());
+                    dtoEstudiante.setNombreTutor(tutor.getValor().getNombre());
+                    dtoEstudiante.setClaveTutor(tutor.getValor().getClave());
+                }
+                //Busco el area a la que está inscrito
+                ResultadoEJB<AreasUniversidad> areas = getAreabyClave(e.getCarrera());
+                if(areas.getCorrecto()==true){
+                    //Se mandan todos los datos de las areas
+                    dtoEstudiante.setCarrera(areas.getValor());
+                    dtoEstudiante.setNombrePE(areas.getValor().getSiglas());
+                    dtoEstudiante.setClavePE(areas.getValor().getArea());
+                }
+
+
+                //Busco al director
+                //ResultadoEJB<Personal> director =
+            });
+
+        }
+
+        return null;
+    }
+
 
     @Override
     public ResultadoEJB<List<dtoEstudiantesEvalauciones>> getEstudiantesSauiityCE(PeriodosEscolares periodoEvaluacion) {
@@ -396,7 +437,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                 listEstudiantesSauiit = getEstudiantesSauiit(periodoEvaluacion).getValor();
               //  System.out.println("Genero la lista de estudiantes en Sauiit"+ listEstudiantesSauiit.size());
                 //TODO: Obtiene la lista de Estudiantes en Control Escolar
-               // listEstudiantesCE = getEstudiantesCE(periodoEvaluacion).getValor(); -->Descomentar cuando haya estudiantes en CE
+               // listEstudiantesCE = getEstudiantesCE(periodoEvaluacion).getValor();
                 //TODO:Agrega ambas listas a la lista total de estudiantes
                 //listTotalEstudiantes.addAll(listEstudiantesCE); --> Descomentar cuado haya estudiantes en CE
                 listTotalEstudiantes.addAll(listEstudiantesSauiit);
