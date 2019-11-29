@@ -94,7 +94,7 @@ public class ConsultaCalificacionesCoordinadorAD extends ViewScopedRol implement
         obtenerPromedioMateria(rol.getEstudiante());
         obtenerPromediosFinales(rol.getEstudiante());
         obtenerPromedioCuatrimestral(rol.getEstudiante());
-        obtenerPromedioAcumulado(rol.getEstudiante());
+//        obtenerPromedioAcumulado(rol.getEstudiante());
         obtenerTareaIntegradoraPorMateria(rol.getEstudiante());
         obtenerNivelacionesPorMateria(rol.getEstudiante());
     }

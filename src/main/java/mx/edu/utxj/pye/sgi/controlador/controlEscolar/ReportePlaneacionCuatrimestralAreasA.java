@@ -15,7 +15,9 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReporteConfiguracionesCA;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Reporteplaneacioncuatrimestralareaacademica;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Messages;
@@ -32,7 +34,8 @@ public class ReportePlaneacionCuatrimestralAreasA implements Serializable {
     @Getter    @Setter private List<Reporteplaneacioncuatrimestralareaacademica> rs = new ArrayList<>();    
     
     @EJB    EjbAreasLogeo eal;
-    @EJB    EjbAsignacionIndicadoresCriterios eaic;
+    @EJB    EjbAsignacionIndicadoresCriterios eaic;    
+    @EJB    EjbReporteConfiguracionesCA ercca;
 
     @PostConstruct
     public void init() {
@@ -67,7 +70,46 @@ public class ReportePlaneacionCuatrimestralAreasA implements Serializable {
         }
     }
     
+    public void mostrarReporte() {
+        try {
+//            List<CargaAcademica> academicas=new ArrayList<>();
+//            academicas=ercca.
+            
+//            rs=eaic.buscarReporteAreaAcademica(au.getArea());            
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ReportePlaneacionCuatrimestralAreasA.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void extra() {
         
     }
+    
+    public static class ReporteConfiguracion {
+
+        @Getter        @Setter        private String programa;
+        @Getter        @Setter        private String grupo;
+        @Getter        @Setter        private String materia;
+        @Getter        @Setter        private String unidad;
+        @Getter        @Setter        private String ser;
+        @Getter        @Setter        private String sab;
+        @Getter        @Setter        private String sah;        
+        @Getter        @Setter        private Integer inSer;
+        @Getter        @Setter        private String inSab;
+        @Getter        @Setter        private String inSah;
+
+        public ReporteConfiguracion(String programa, String grupo, String materia, String unidad, String ser, String sab, String sah, Integer inSer, String inSab, String inSah) {
+            this.programa = programa;
+            this.grupo = grupo;
+            this.materia = materia;
+            this.unidad = unidad;
+            this.ser = ser;
+            this.sab = sab;
+            this.sah = sah;
+            this.inSer = inSer;
+            this.inSab = inSab;
+            this.inSah = inSah;
+        }
+    }    
 }
