@@ -133,7 +133,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             existeConfiguracion();
         }else mostrarMensajeResultadoEJB(res);
         
-        
 //        ResultadoEJB<List<DtoAlerta>> resMensajes = ejb.identificarMensajes(rol);
 //        System.out.println("resMensajes = " + resMensajes);
 //        if(resMensajes.getCorrecto()){
@@ -146,7 +145,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
     }
     
     public void existeConfiguracion(){
-        if(rol.getCarga()== null) return;
         ResultadoEJB<List<UnidadMateriaConfiguracion>> res = ejb.buscarConfiguracionUnidadMateria(rol.getCarga());
         if(res.getValor().size()>0 && !res.getValor().isEmpty()){
             rol.setExisteConfiguracion(true);
@@ -199,6 +197,12 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         }else mostrarMensajeResultadoEJB(res);  
     }
     
+    public void cambiarPeriodo(ValueChangeEvent event){
+        rol.setPeriodo((PeriodosEscolares)event.getNewValue());
+        actualizarCargaAcademica();
+        existeAsignacion();
+    }
+   
      public void cambiarCarga(ValueChangeEvent event){
         rol.setExisteConfiguracion(false);
         rol.setCarga((DtoCargaAcademica)event.getNewValue());

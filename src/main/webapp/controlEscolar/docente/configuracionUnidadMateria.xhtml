@@ -70,9 +70,9 @@
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="periodo" value="#{configuracionUnidadMateriaDocente.rol.periodo}" converter="entityConverter" styleClass="form-control" >
+                                                <p:selectOneMenu id="periodo" value="#{configuracionUnidadMateriaDocente.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{configuracionUnidadMateriaDocente.cambiarPeriodo}">
                                                     <f:selectItems value="#{configuracionUnidadMateriaDocente.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, carga" update="@form" oncomplete="actualizarconf();" />
+                                                    <p:ajax process="@this, carga"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>
@@ -84,7 +84,7 @@
                                                 <p:selectOneMenu id="carga" value="#{configuracionUnidadMateriaDocente.rol.carga}" converter="entityConverter" valueChangeListener="#{configuracionUnidadMateriaDocente.cambiarCarga}">
                                                     <f:selectItems value="#{configuracionUnidadMateriaDocente.rol.cargas}" var="carga"
                                                                    itemValue="#{carga}" itemLabel="#{carga.materia.nombre} (#{carga.planEstudioMateria.claveMateria}) #{carga.grupo.grado}° #{carga.grupo.literal} de #{carga.programa.nombre}"/>
-                                                    <p:ajax update="@this" process="@this" oncomplete="actualizarconf();" />
+                                                    <p:ajax update="@this" process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Materia - Grupo - Programa Educativo" for="carga"/>

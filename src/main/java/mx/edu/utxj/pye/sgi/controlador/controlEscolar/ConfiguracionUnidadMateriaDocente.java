@@ -309,6 +309,11 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
 //        }
     }
     
+    public void cambiarPeriodo(ValueChangeEvent event){
+        rol.setPeriodo((PeriodosEscolares)event.getNewValue());
+        actualizarCargaAcademica();
+        existeConfiguracion();
+    }
    
     public void cambiarCarga(ValueChangeEvent event){
         rol.setCarga((DtoCargaAcademica)event.getNewValue());

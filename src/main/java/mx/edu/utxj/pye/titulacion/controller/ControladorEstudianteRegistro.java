@@ -150,21 +150,26 @@ public class ControladorEstudianteRegistro implements Serializable{
                 }
             } else if (estudiante.getGradoActual() == 7) {
                 estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
-                procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
-
-                if (estudiante == null || procesosIntexp == null) {
+                
+                if (estudiante == null) {
                     cargada = false;
                 } else {
-                    cargada = true;
+                    procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
 
-                    progresoExpediente = 0;
-                    datosPerVal();
-                    datosContVal();
-                    datosAntAcad();
-                    consultarStatusExpediente();
-                    listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
-                    listaEstadosIEMS = eJBSelectItems.itemEstados();
-                   
+                    if (procesosIntexp == null) {
+                        cargada = false;
+                    } else {
+                        cargada = true;
+
+                        progresoExpediente = 0;
+                        datosPerVal();
+                        datosContVal();
+                        datosAntAcad();
+                        consultarStatusExpediente();
+                        listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+                        listaEstadosIEMS = eJBSelectItems.itemEstados();
+
+                    }
                 }
                 
             } 

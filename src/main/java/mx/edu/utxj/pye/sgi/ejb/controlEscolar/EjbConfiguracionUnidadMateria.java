@@ -82,7 +82,7 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosDescendentes(){
         try{
-            final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
+            final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo >=52 order by p.periodo desc", PeriodosEscolares.class)
                     .getResultList();
             
             return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
