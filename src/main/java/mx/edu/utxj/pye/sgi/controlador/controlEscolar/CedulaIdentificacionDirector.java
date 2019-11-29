@@ -23,6 +23,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import org.omnifaces.cdi.ViewScoped;
 
 import javax.annotation.PostConstruct;
@@ -80,14 +81,13 @@ public class CedulaIdentificacionDirector extends ViewScopedRol implements Desar
             ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = ejb.getProgramasEducativos(director);
             if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
             rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());
-
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
-            rol.setPeriodo(rol.getPeriodos().get(0));
-
+            //Periodo Actual
+            ResultadoEJB<PeriodosEscolares>  periodoActual = ejbCedulaIdentificacion.getPeriodoActual();
+            if(periodoActual.getCorrecto()==true){rol.setPeriodo(periodoActual.getValor());}
             rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
-
             ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
             rol.setGrupos(resgrupos.getValor());
@@ -111,6 +111,9 @@ public class CedulaIdentificacionDirector extends ViewScopedRol implements Desar
         } catch (Exception e) {
             mostrarExcepcion(e);
         }
+    }
+    public void cambiarPeriodo(ValueChangeEvent event){
+        rol.setPeriodo((PeriodosEscolares)event.getNewValue());
     }
 
     public void cambiarPlanestudio(ValueChangeEvent event) {
@@ -158,8 +161,7 @@ public class CedulaIdentificacionDirector extends ViewScopedRol implements Desar
                 obtenerNivelacionesPorMateria();
                 obtenerPromediosFinales();
                 obtenerPromedioCuatrimestral();
-                obtenerPromedioAcumulado();
-
+                //obtenerPromedioAcumulado();
             }else{
                 mostrarMensajeResultadoEJB(resCedula);
             }

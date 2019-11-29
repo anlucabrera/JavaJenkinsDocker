@@ -124,8 +124,7 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
                 obtenerNivelacionesPorMateria();
                 obtenerPromediosFinales();
                 obtenerPromedioCuatrimestral();
-                obtenerPromedioAcumulado();
-                // System.out.println(resCedula.getValor());
+                //obtenerPromedioAcumulado();
             }else{ mostrarMensajeResultadoEJB(resCedula); }
         } else {mostrarMensajeResultadoEJB(resEstudiante);}
     }

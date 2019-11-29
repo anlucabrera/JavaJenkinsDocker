@@ -118,7 +118,7 @@ public class CedulaIdentificacionTutor extends ViewScopedRol implements Desarrol
                 rol.setCedulaIdentificacion(resCedula.getValor());
                 // System.out.println(resCedula.getValor());
                 getPeriodoEstudiante();
-                obtenerMateriasPorEstudiante();
+               obtenerMateriasPorEstudiante();
                 obtenerUnidadesPorMateria();
                 obtenerCalificaciones();
                 obtenerPromedioMateria();
@@ -126,7 +126,7 @@ public class CedulaIdentificacionTutor extends ViewScopedRol implements Desarrol
                 obtenerNivelacionesPorMateria();
                 obtenerPromediosFinales();
                 obtenerPromedioCuatrimestral();
-                obtenerPromedioAcumulado();
+                //obtenerPromedioAcumulado();
             }else{
                 mostrarMensajeResultadoEJB(resCedula);
             }

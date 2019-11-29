@@ -69,6 +69,16 @@
                                 <c:set var="casilla2" value="#{'col-sm-12 col-md-6 col-lg-6'}" />
                                 <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
                                 <div class="row margin-bottom" style="margin-top: 20px;">
+                                    <div class="#{casilla}">
+                                        <div class="ui-material">
+                                            <p:selectOneMenu id="periodo" value="#{cedulaIdentificacionDirector.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{cedulaIdentificacionDirector.cambiarPeriodo}">
+                                                <f:selectItems value="#{cedulaIdentificacionDirector.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                <p:ajax process="@this" update="@form"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Periodo" for="periodo"/>
+                                            <p:message for="periodo" />
+                                        </div>
+                                    </div>
                                     <div class="#{casilla2}">
                                         <div class="ui-material">
                                             <p:selectOneMenu id="planEstudio" value="#{cedulaIdentificacionDirector.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{cedulaIdentificacionDirector.cambiarPlanestudio}">
