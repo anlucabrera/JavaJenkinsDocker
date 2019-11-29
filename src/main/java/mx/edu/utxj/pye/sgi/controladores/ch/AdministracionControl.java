@@ -183,7 +183,6 @@ public class AdministracionControl implements Serializable {
                 presupuestoPOAs.add(new PresupuestoPOA(Short.valueOf("0"),"Total", "", new PretechoFinanciero(0, Short.valueOf("0"), cp2T), new PretechoFinanciero(0, Short.valueOf("0"), cp3T), new PretechoFinanciero(0, Short.valueOf("0"), cp4T), new PretechoFinanciero(0, Short.valueOf("0"), cpdT)));
             }
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.mostrarPresupuestos(presupuestoPOAs)"+presupuestoPOAs.size());
     }
 
     public String buscarPersonal(Integer clave) {

@@ -468,6 +468,15 @@ public class AreaPoaPresupuestacion implements Serializable {
         capituloCD.setRendered(capituloCD.getTotalPretecho().equals(0D));
         capituloTT.setRendered(capituloTT.getTotalPretecho().equals(0D));
         
+        
+        
+        capitulo2m.setColorClase(claseVista(capitulo2m.getTotalPretecho(),capitulo2m.getTotalProgramado()));
+        capitulo3m.setColorClase(claseVista(capitulo3m.getTotalPretecho(),capitulo3m.getTotalProgramado()));
+        capitulo4m.setColorClase(claseVista(capitulo4m.getTotalPretecho(),capitulo4m.getTotalProgramado()));
+        capitulo5m.setColorClase(claseVista(capitulo5m.getTotalPretecho(),capitulo5m.getTotalProgramado()));
+        capituloCD.setColorClase(claseVista(capituloCD.getTotalPretecho(),capituloCD.getTotalProgramado()));
+        capituloTT.setColorClase(claseVista(capituloTT.getTotalPretecho(),capituloTT.getTotalProgramado()));
+        
     }
     
     public Double totalProgrado(List<RecursosActividad> listaRecAc) {
@@ -481,8 +490,8 @@ public class AreaPoaPresupuestacion implements Serializable {
     }
 
     public String claseVista(Double asigando,Double disponible) {
-        if (asigando <= disponible) {
-            return "#ffffff";
+        if (asigando >= disponible) {
+            return "#000000";
         }else{            
             return "#FF0000";
         }    

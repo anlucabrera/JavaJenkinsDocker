@@ -85,7 +85,6 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
                 mostrarMensajeResultadoEJB(resValidacion);
                 return;
             }//cortar el flujo si no se pudo validar    
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralValidacion.init(1)");
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación            
             PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());            
             rol = new ValidacionPlaneacionCuatrimestral(filtro, director, director.getAreaOficial());            

@@ -129,16 +129,15 @@
                                                                                 <p:message for="gradoD" display="tooltip" />
                                                                                 <hr/>
                                                                             </div>
-                                                                            <div class="col-sm-12 col-md-6 col-lg-12"> 
+                                                                            <div class="col-sm-12 col-md-6 col-lg-9"> 
                                                                                 <p:outputLabel for="arC" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Áreas" />
                                                                                 <p:selectOneMenu id="arC" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{administracionControl.areaC}" filter="true" filterMatchMode="contains">
                                                                                     <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                                                                     <f:selectItems value="#{administracionControl.areasUniversidads}" var="area" itemLabel="#{area.nombre}" itemValue="#{area.area}" />
                                                                                 </p:selectOneMenu> 
                                                                                 <p:message for="arC" display="tooltip" />
-                                                                                <hr/>
                                                                             </div>
-                                                                            <div class="col-sm-3 col-md-3 col-lg-3">                                                                              
+                                                                            <div class="col-sm-12 col-md-6 col-lg-3">                                                                              
                                                                                 <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha limite de proceso" />
                                                                                 <p:calendar locale="es" id="fechaIn" value="#{administracionControl.fehDate}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="La incidencia debe contar con una fecha"/>
                                                                                 <p:message for="fechaIn"><p:autoUpdate/></p:message>     
@@ -167,15 +166,15 @@
                                         <p:outputPanel id="incidenciasReporte">
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
                                             <p:dataTable id="tblEvenAre"  value="#{administracionControl.areaPOAs}"  var="eventosAr" editable="true"
+                                                         sortBy="#{eventosAr.proceso}" expandableRowGroups="true"
                                                          style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
                                                 <p:columnGroup type="header" class="hederTablesTitle">
                                                     <p:row class="success">
                                                         <p:column rowspan="2" headerText="" style="width: 50px;" styleClass="hederTablesTitle"/>
                                                         <p:column rowspan="2" headerText="Área" style="width: 300px;" styleClass="hederTablesTitle"/>
                                                         <p:column rowspan="2" headerText="Responsable" style="width: 200px;" styleClass="hederTablesTitle"/>
-                                                        <p:column rowspan="2" headerText="Proceso" style="width: 100px;" styleClass="hederTablesTitle"/>
-                                                        <p:column colspan="2" headerText="Fecha" style="width: 200px;" styleClass="hederTablesTitle"/>
-                                                        <p:column rowspan="2" headerText="Restan" style="width: 100px;" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="2" headerText="Fecha" style="width: 160px;" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Restan" style="width: 200px;" styleClass="hederTablesTitle"/>
                                                         <p:column rowspan="2" headerText="" style="width: 50px;" styleClass="hederTablesTitle"/>
                                                     </p:row>
                                                     <p:row class="success">
@@ -185,6 +184,13 @@
                                                 </p:columnGroup>
                                                 <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditEventosAreas}" update="tblEvenAre" process="@this"/>
                                                 <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblEvenAre" />
+
+                                                <p:headerRow>
+                                                    <p:column colspan="7" style="background: #2796cb; color: #FFFFFF;">
+                                                        <h:outputText value="#{eventosAr.proceso}" />
+                                                    </p:column>
+                                                </p:headerRow>
+
                                                 <p:column>
                                                     <p:commandButton actionListener="#{administracionControl.eliminarEventoArea(eventosAr)}" update="tblEvenAre" process="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
                                                                      styleClass="btn-primary" title="Eliminar evento área">
@@ -196,9 +202,6 @@
                                                 </p:column>   
                                                 <p:column >
                                                     <h:outputText value="#{eventosAr.responsable}" />
-                                                </p:column>  
-                                                <p:column >
-                                                    <h:outputText value="#{eventosAr.proceso}" />
                                                 </p:column>  
                                                 <p:column >
                                                     <h:outputLabel value="#{eventosAr.fecaValidacion}"><f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/></h:outputLabel>
