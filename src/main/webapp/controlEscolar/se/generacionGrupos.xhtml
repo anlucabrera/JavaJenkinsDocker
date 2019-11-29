@@ -161,17 +161,23 @@
                                                                         <p:selectOneMenu id="cuatrimestre" value="#{generacionGruposServiciosEscolares.rol.grupo.grado}" required="true"
                                                                             requiredMessage="Debe seleccionar el cuatrimestre a registrar">
                                                                             <f:selectItem itemValue="#{null}"/>
-                                                                            <f:selectItem itemValue="1" itemLabel="1"/>
-                                                                            <f:selectItem itemValue="2" itemLabel="2"/>
-                                                                            <f:selectItem itemValue="3" itemLabel="3"/>
-                                                                            <f:selectItem itemValue="4" itemLabel="4"/>
-                                                                            <f:selectItem itemValue="5" itemLabel="5"/>
-                                                                            <f:selectItem itemValue="6" itemLabel="6"/>
-                                                                            <f:selectItem itemValue="7" itemLabel="7"/>
-                                                                            <f:selectItem itemValue="8" itemLabel="8"/>
-                                                                            <f:selectItem itemValue="9" itemLabel="9"/>
-                                                                            <f:selectItem itemValue="10" itemLabel="10"/>
-                                                                            <f:selectItem itemValue="11" itemLabel="11"/>
+                                                                            <c:if test="#{generacionGruposServiciosEscolares.rol.periodo.mesInicio.numero eq 9}">
+                                                                                <f:selectItem itemValue="1" itemLabel="1"/>
+                                                                                <f:selectItem itemValue="4" itemLabel="4"/>
+                                                                                <f:selectItem itemValue="7" itemLabel="7"/>
+                                                                                <f:selectItem itemValue="10" itemLabel="10"/>
+                                                                            </c:if>
+                                                                            <c:if test="#{generacionGruposServiciosEscolares.rol.periodo.mesInicio.numero eq 1}">
+                                                                                <f:selectItem itemValue="2" itemLabel="2"/>
+                                                                                <f:selectItem itemValue="5" itemLabel="5"/>
+                                                                                <f:selectItem itemValue="8" itemLabel="8"/>
+                                                                                <f:selectItem itemValue="11" itemLabel="11"/>
+                                                                            </c:if>
+                                                                            <c:if test="#{generacionGruposServiciosEscolares.rol.periodo.mesInicio.numero eq 5}">
+                                                                                <f:selectItem itemValue="3" itemLabel="3"/>
+                                                                                <f:selectItem itemValue="6" itemLabel="6"/>
+                                                                                <f:selectItem itemValue="9" itemLabel="9"/>
+                                                                            </c:if>
                                                                             <p:ajax process="@this" update="@this"/>
                                                                         </p:selectOneMenu>
                                                                         <p:outputLabel for="cuatrimestre" value="Cuatrimestre"/>
@@ -197,7 +203,7 @@
                                                                 </div>
                                                                 <div class="#{casilla4}">
                                                                     <div class="ui-material">
-                                                                        <p:outputLabel for="noG" value="No. estudiantes"
+                                                                        <p:outputLabel for="noG" value="No. grupos"
                                                                                        style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/><br/>
                                                                         <p:spinner id="noG" required="true" value="#{generacionGruposServiciosEscolares.rol.noGrupos}"
                                                                                    maxlength="3" min="0" max="30" size="2" requiredMessage="Ingrese el número maximo de estudiantes.">
@@ -210,7 +216,7 @@
                                                                     <div class="ui-material">
                                                                         <p:outputLabel for="noEstu" value="Capacidad Maxima Estudiantes"
                                                                                        style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/><br/>
-                                                                        <p:spinner id="noEstu" required="true"  maxlength="3" readonly="true"
+                                                                        <p:spinner id="noEstu" required="true"  maxlength="3" readonly="true" value="#{generacionGruposServiciosEscolares.rol.capMax}"
                                                                                    min="30" max="30" size="2" requiredMessage="Ingrese la cantidad de días." rendered="true">
                                                                             <p:ajax process="@this" update="@this"/>
                                                                         </p:spinner>

@@ -7,6 +7,7 @@ import mx.edu.utxj.pye.sgi.controlador.EvaluacionDoncenteMateriaControler;
 import mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaCalificacionesRolCoordinadorAD;
 
 @RequiredArgsConstructor
 public enum ControlEscolarVistaControlador {
@@ -69,8 +70,9 @@ public enum ControlEscolarVistaControlador {
     CAMBIO_PWD("/controlEscolar/estudiante/CambioPwdEstudiante.xhtml",CambioPwdEstudiante.class),
     PERFIL_ESTUDIANTE("/controlEscolar/estudiante/modificacionDatosEstudiante.xhtml",PerfilEstudiante.class),        
     
-    SEGUIMIENTO_CASO_CRITICO_ESPECIALISTA("/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml", SeguimientoCasoCriticoEspecialista.class);
-    
+    SEGUIMIENTO_CASO_CRITICO_ESPECIALISTA("/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml", SeguimientoCasoCriticoEspecialista.class),
+
+    CONSULTA_CALIFICACION_COORDINADOR("/controlEscolar/coordinador/consultarCalificacionesCoordinador.xhtml", ConsultaCalificacionesCoordinadorAD.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
 }

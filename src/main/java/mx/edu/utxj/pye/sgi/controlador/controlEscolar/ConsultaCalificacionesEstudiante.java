@@ -66,6 +66,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
                 ResultadoEJB<List<PeriodosEscolares>> resPeriodosEscolares = ejb.obtenerListaPeriodosEscolares();
                 rol.setPeriodosEscolares(resPeriodosEscolares.getValor());
 
+
                 obtenerMateriasPorEstudiante();
                 obtenerUnidadesPorMateria();
                 obtenerCalificaciones();
@@ -74,7 +75,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
                 obtenerNivelacionesPorMateria();
                 obtenerPromediosFinales();
                 obtenerPromedioCuatrimestral();
-                obtenerPromedioAcumulado();
+                //obtenerPromedioAcumulado();
             }
         }catch (Exception e){
             mostrarExcepcion(e);
@@ -127,10 +128,10 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
 
     public void obtenerPromedioAcumulado() {
         ResultadoEJB<List<BigDecimal>> promedios = ejb.obtenerPromedioAcumulado(rol.getEstudiante());
-        BigDecimal numeroPromedios = new BigDecimal(promedios.getValor ().size());
-        BigDecimal suma = promedios.getValor().stream().map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal promedio = suma.divide(numeroPromedios, RoundingMode.HALF_UP);
-        rol.setPromedioAcumluado(promedio.setScale(1, RoundingMode.HALF_UP));
+            BigDecimal numeroPromedios = new BigDecimal(promedios.getValor ().size());
+            BigDecimal suma = promedios.getValor().stream().map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal promedio = suma.divide(numeroPromedios, RoundingMode.HALF_UP);
+            rol.setPromedioAcumluado(promedio.setScale(1, RoundingMode.HALF_UP));
     }
 
     public void obtenerTareaIntegradoraPorMateria(){
