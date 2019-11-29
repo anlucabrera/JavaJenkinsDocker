@@ -37,7 +37,7 @@ public class GeneracionGruposRolServiciosEscolares extends AbstractRol{
     /**
      * Representa la clave del periodo activo
      */
-    @Getter @NonNull private Integer periodoActivo, periodoAct, noGrupos;
+    @Getter @NonNull private Integer periodoActivo, periodoAct, noGrupos, capMax;
 
     /**
      * Representa el area que pertenece
@@ -121,5 +121,9 @@ public class GeneracionGruposRolServiciosEscolares extends AbstractRol{
 
     public void setNoGrupos(Integer noGrupos) {
         this.noGrupos = noGrupos;
+    }
+
+    public void setCapMax(Integer capMax) {
+        this.capMax = capMax;
     }
 }

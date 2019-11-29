@@ -179,6 +179,11 @@
 
                 <!-- Especialista -->
                 <c:if test="#{seguimientoCasoCriticoEspecialista.mostrarEnDesarrollo(request) and seguimientoCasoCriticoEspecialista.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Caso Crítico Especialista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+
+                <!-- Coordinador -->
+                <c:if test="#{consultaCalificacionesCoordinadorAD.mostrarEnDesarrollo(request) and consultaCalificacionesCoordinadorAD.tieneAcceso}"><li>
+                    <p:link href="#{request.contextPath}/controlEscolar/coordinador/consultarCalificacionesCoordinador.xhtml"><i class="fa fa-list-alt"></i><span>Consultar calificaciones</span>
+                    </p:link></li></c:if>
             </c:if>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
             <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">

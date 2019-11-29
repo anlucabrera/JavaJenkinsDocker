@@ -13,11 +13,14 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.AlertaTipo;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -28,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 @Stateless
@@ -110,7 +114,7 @@ public class EjbGeneracionGrupos {
         }
     }
 
-    public ResultadoEJB<Grupo> guardarGrupo(Grupo grupo, Integer periodoActivo, Integer noGrupos, PlanEstudio planEstudio, Generaciones generacion, Operacion operacion){
+    public ResultadoEJB<Grupo> guardarGrupo(Grupo grupo, Integer periodoActivo, Integer noGrupos, Integer capaMax, PlanEstudio planEstudio, Generaciones generacion, Operacion operacion){
         try{
             if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no puede ser nulo.", Grupo.class);
             if(periodoActivo == null) return ResultadoEJB.crearErroneo(3, "El periodo no puede ser nulo.", Grupo.class);
@@ -119,6 +123,7 @@ public class EjbGeneracionGrupos {
                     .setParameter("grupo", grupo.getIdGrupo()).getResultStream().findFirst().orElse(null);
             Integer gruposReg = em.createQuery("SELECT g FROM Grupo g WHERE g.idPe = :id_Pe AND g.periodo = :idPeriodo AND g.grado = :grado")
                     .setParameter("id_Pe", grupo.getIdPe()).setParameter("idPeriodo", periodoActivo).setParameter("grado", grupo.getGrado()).getResultList().size();
+
             switch (operacion){
                 case PERSISTIR:
                     if(g == null){
@@ -127,8 +132,8 @@ public class EjbGeneracionGrupos {
                         for(int i = gruposReg; i < noAcumulado;i++) {
                             g = grupo;
                             g.setPeriodo(periodoActivo);
-                            g.setLiteral((abecedario[i]));
-                            g.setCapMaxima(noGrupos);
+                            g.setLiteral((abecedario[i++ ]));
+                            g.setCapMaxima(capaMax);
                             g.setPlan(planEstudio);
                             g.setGeneracion(generacion.getGeneracion());
                             em.persist(g);
@@ -165,12 +170,13 @@ public class EjbGeneracionGrupos {
             if(o == null) return ResultadoEJB.crearErroneo(3, "La operación no debe ser nula.", Grupo.class);
             List<CargaAcademica> cg = em.createQuery("select c from CargaAcademica as c where c.cveGrupo.idGrupo =:grupo", CargaAcademica.class)
                     .setParameter("grupo", g.getIdGrupo()).getResultStream().collect(Collectors.toList());
-
+            Grupo grupo = em.createQuery("select g from Grupo as g where g.idGrupo = :idG", Grupo.class).setParameter("idG", g.getIdGrupo()).getResultStream().findFirst().orElse(null);
             switch (o){
                 case ELIMINAR:
                     if(cg.isEmpty()){
-                        em.remove(g);
-                        return ResultadoEJB.crearCorrecto(null,"Se ha eliminado correctamente");
+                        em.remove(grupo);
+                        em.flush();
+                        return ResultadoEJB.crearCorrecto(g,"Se ha eliminado correctamente");
                     }else{
                         return ResultadoEJB.crearErroneo(4, "No se pudo eliminar la información", Grupo.class);
                     }
@@ -248,6 +254,26 @@ public class EjbGeneracionGrupos {
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se encontraron areas para este periodo. (EjbGeneracionGrupos.obtenerSugerenciaGeneracionGrupos())", e, null);
         }
+    }
+
+    public ResultadoEJB<List<SelectItem>> obtenerListaPeriodos(){
+        try {
+            List<PeriodosEscolares> au = em.createQuery("SELECT p FROM PeriodosEscolares p WHERE p.periodo >= :periodo",
+                    PeriodosEscolares.class).setParameter("periodo", 52).getResultStream().collect(Collectors.toList());
+            List<SelectItem> lip = new ArrayList<>();
+            for (PeriodosEscolares x : au) {
+                lip.add(new SelectItem(x.getPeriodo(), x.getMesInicio().getMes() + "-" + x.getMesFin().getMes() + " del año " + x.getAnio(), "Periodo " + x.getMesInicio().getMes() + "-" + x.getMesFin().getMes() + " de evaluacion en el ciclo escolar " + x.getAnio()));
+            }
+            return ResultadoEJB.crearCorrecto(lip, "Areas encontradas con éxito");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se encontraron areas para este periodo. (EjbGeneracionGrupos.obtenerAreasUniversidad())", e, null);
+        }
+    }
+
+    public ResultadoEJB<PeriodosEscolares> obtenerPeriodo(Integer periodo){
+        PeriodosEscolares pe = em.createQuery("select p from PeriodosEscolares as p where p.periodo = :periodo", PeriodosEscolares.class)
+                .setParameter("periodo", periodo).getResultStream().findFirst().orElse(null);
+        return ResultadoEJB.crearCorrecto(pe, "Periodo activo");
     }
 
 }
