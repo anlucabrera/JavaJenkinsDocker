@@ -27,7 +27,6 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DatosTitulacion;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
 import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
 import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
@@ -48,13 +47,12 @@ public class ControladorTitSegGeneracion implements Serializable{
     private static final long serialVersionUID = 5303936724764561828L;
 
     @Getter @Setter private Integer expediente;
-    @Getter @Setter private List<ListaExpedientes> nuevaListaExpedientes = new ArrayList<>();
     @Getter @Setter private dtoExpedienteMatricula nuevoDtoExpMat;
     @Getter @Setter private List<DocumentosExpediente> listaDocsExp;
     @Getter @Setter private DocumentosExpediente documentoExp;
     @Getter @Setter private AntecedentesAcademicos antecedentesAcademicos;
     @Getter @Setter private DatosTitulacion datosTitulacion;
-    @Getter @Setter private Boolean aperturaDialogo;
+    @Getter @Setter private Boolean aperturaDialogo, aperturaPagos;
     @Getter @Setter private Boolean valorValidacion;
     @Getter @Setter private ArrayList<dtoPagosFinanzas> listaDtoPagosFinanzas;
     @Getter @Setter private dtoPagosFinanzas nuevoDtoPagosFinanzas;
@@ -85,6 +83,7 @@ public class ControladorTitSegGeneracion implements Serializable{
     public void init() {
        
         aperturaDialogo = Boolean.FALSE;
+        aperturaPagos = Boolean.FALSE;
         initFiltrosING();
         initFiltrosTSU();
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
@@ -254,23 +253,51 @@ public class ControladorTitSegGeneracion implements Serializable{
         }
     }
    
-    public void descargarReporteGeneracionING() throws IOException, Throwable{
-        File f = new File(ejbTitulacionSeguimiento.getReporteGeneracion(generacionING));
+    public void descargarReporteGeneracionTSU() throws IOException, Throwable{
+        Integer nivel = 1;
+        File f = new File(ejbTitulacionSeguimiento.getReporteGeneracionTSU(generacionTSU, nivel));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteGeneracionTSU() throws IOException, Throwable{
-        File f = new File(ejbTitulacionSeguimiento.getReporteGeneracion(generacionTSU));
+    public void descargarReporteGeneracionING() throws IOException, Throwable{
+        Integer nivel = 2;
+        File f = new File(ejbTitulacionSeguimiento.getReporteGeneracionING(generacionING, nivel));
         Faces.sendFile(f, true);
     }
     
     public void consultaTotalDocsExp(Integer expediente) throws Throwable{
         ExpedientesTitulacion exp = ejbTitulacionSeguimiento.buscarExpedienteTitulacion(expediente);
+        Integer tsu = 1;
         
         if ("LTF".equals(exp.getProgramaEducativo())) {
             numTotalDocs = 9;
-        } else {
+        }
+        else if (tsu.equals(exp.getNivel())) {
+            numTotalDocs = 7;
+        }
+        else {
             numTotalDocs = 8;
+        }
+    }
+    
+    public void consultarListaPagos(String matricula) {
+       try {
+            listaDtoPagosFinanzas = new ArrayList<>();
+            listaDtoPagosFinanzas = ejbTitulacionSeguimiento.getListaDtoPagosFinanzas(matricula);
+            Ajax.update("frmModalPagos");
+            Ajax.oncomplete("skin();");
+            aperturaPagos = Boolean.TRUE;
+            forzarAperturaPagosDialogo();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+     public void forzarAperturaPagosDialogo(){
+        if(getAperturaPagos()){
+           Ajax.oncomplete("PF('modalPagos').show();");
+           aperturaPagos = Boolean.FALSE;
         }
     }
        

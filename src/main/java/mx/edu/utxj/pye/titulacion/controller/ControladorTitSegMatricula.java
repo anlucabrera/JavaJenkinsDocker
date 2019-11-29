@@ -23,7 +23,8 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DatosTitulacion;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
+//import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
+import mx.edu.utxj.pye.titulacion.dto.dtoExpedientesActuales;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
 import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
 import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
@@ -42,7 +43,7 @@ public class ControladorTitSegMatricula implements Serializable{
     private static final long serialVersionUID = -7349256943810409604L;
 
     @Getter @Setter private Integer expediente;
-    @Getter @Setter private List<ListaExpedientes> nuevaListaExpedientes = new ArrayList<>();
+    @Getter @Setter private List<dtoExpedientesActuales> nuevaListaExpedientes = new ArrayList<>();
     @Getter @Setter private dtoExpedienteMatricula nuevoDtoExpMat;
     @Getter @Setter private List<DocumentosExpediente> listaDocsExp;
     @Getter @Setter private DocumentosExpediente documentoExp;

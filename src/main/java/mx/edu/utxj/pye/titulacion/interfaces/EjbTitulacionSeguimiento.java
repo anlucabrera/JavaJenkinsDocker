@@ -10,7 +10,8 @@ import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
+//import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
+import mx.edu.utxj.pye.titulacion.dto.dtoExpedientesActuales;
 import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
 import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
@@ -26,11 +27,17 @@ import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
 @Local
 public interface EjbTitulacionSeguimiento {
     
+//     /**
+//     * Consulta expedientes registrados actualmente
+//     * @return Lista de una vista llamada ListaExpedientes
+//     */
+//    public List<ListaExpedientes> consultaListaExpedientes(); 
+    
      /**
      * Consulta expedientes registrados actualmente
      * @return Lista de una vista llamada ListaExpedientes
      */
-    public List<ListaExpedientes> consultaListaExpedientes();  
+    public List<dtoExpedientesActuales> consultaListaExpedientes();  
     
      /**
      * Muestra expediente completo de titulación del estudiante
@@ -157,10 +164,20 @@ public interface EjbTitulacionSeguimiento {
     /**
     * Genera reporte de expedientes por generación 
     * @param generacion
+     * @param nivel
     * @return Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteGeneracion(Generaciones generacion) throws Throwable;
+    public String getReporteGeneracionTSU(Generaciones generacion, Integer nivel) throws Throwable;
+    
+    /**
+    * Genera reporte de expedientes por generación 
+    * @param generacion
+     * @param nivel
+    * @return Ruta del archivo del reporte
+    * @throws Throwable
+    */
+    public String getReporteGeneracionING(Generaciones generacion, Integer nivel) throws Throwable;
     
     /**
      * Obtiene nombre del personal que validó o invalidó el expediente
@@ -173,9 +190,10 @@ public interface EjbTitulacionSeguimiento {
      /**
      * Obtiene la lista de expedientes correspondiente a la generación y programa educativo seleccionado.
      * @param generacion
+     * @param nivel
      * @return Lista de dtoExpedienteMatricula
      */
-    public List<dtoExpedienteMatricula> getListaExpedientesPorGeneracion(Generaciones generacion);
+    public List<dtoExpedienteMatricula> getListaExpedientesPorGeneracion(Generaciones generacion, Integer nivel);
     
      /**
      * Obtiene la lista de pagos de finanzas del egresado seleccionado
@@ -247,4 +265,11 @@ public interface EjbTitulacionSeguimiento {
      * @throws java.lang.Throwable
      */
     public Integer consultarDocsEscolares (Integer expediente) throws Throwable;
+    
+     /**
+     * Obtener descripción de la situación actual de la Carta de No Adeuda del Nivel de T.S.U. e Ing/Lic
+     * @param validada
+     * @return descripción del status
+     */
+    public String obtenerSituacionCartaNoAdeudo (Boolean validada);
 }
