@@ -58,14 +58,13 @@ public class EjbReporteConfiguracionesCA {
         em = f.getEntityManager();
     }
     
-    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosDescendentes(){
+    public List<PeriodosEscolares> getPeriodosDescendentes(){
         try{
             final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
-                    .getResultList();
-            
-            return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
+                    .getResultList();            
+            return periodos;
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionIndicadoresCriterios.getPeriodosDescendentes)", e, null);
+            return new ArrayList<>();
         }
     }
     
@@ -89,12 +88,10 @@ public class EjbReporteConfiguracionesCA {
             List<DtoCargaAcademica> academicas = new ArrayList<>();
 
             aus = ejbAreasLogeo.mostrarAreasUniversidadSubordinadas(area);
-
             if (aus.isEmpty()) {return new ArrayList<>();}
 
             aus.forEach((t) -> {
-                List<PlanEstudioMateria> list = new ArrayList<>();
-                list = em.createQuery("SELECT p FROM PlanEstudioMateria p INNER JOIN p.idPlan pe WHERE pe.idPe =:idPe AND", PlanEstudioMateria.class)
+                List<PlanEstudioMateria> list = em.createQuery("SELECT p FROM PlanEstudioMateria p INNER JOIN p.idPlan pe WHERE pe.idPe =:idPe", PlanEstudioMateria.class)
                         .setParameter("idPe", t.getArea())
                         .getResultList();
                 if (!list.isEmpty()) {
@@ -102,12 +99,10 @@ public class EjbReporteConfiguracionesCA {
                 }
                 list.clear();
             });
-
             if (pems.isEmpty()) {return new ArrayList<>();}
 
             pems.forEach((p) -> {
-                List<DtoCargaAcademica> list = new ArrayList<>();
-                list = em.createQuery("SELECT c FROM CargaAcademica c INNER JOIN c.idPlanMateria pe INNER JOIN c.evento ev WHERE pe.idPlanMateria =:idPlanMateria AND ev.periodo=:periodo", CargaAcademica.class)
+                List<DtoCargaAcademica> list = em.createQuery("SELECT c FROM CargaAcademica c INNER JOIN c.idPlanMateria pe INNER JOIN c.evento ev WHERE pe.idPlanMateria =:idPlanMateria AND ev.periodo=:periodo", CargaAcademica.class)
                         .setParameter("idPlanMateria", p.getIdPlanMateria())
                         .setParameter("periodo", periodo.getPeriodo())
                         .getResultStream()
