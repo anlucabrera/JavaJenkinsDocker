@@ -28,6 +28,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionTutor;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.dto.dtoAvanceEvaluaciones;
@@ -67,6 +68,7 @@ public class AdministracionEvaluacionTutor extends ViewScopedRol implements Seri
 
     @PostConstruct
     public void init(){
+        setVistaControlador(ControlEscolarVistaControlador.SEGUIMIENTO_EV_TUTOR);
         getPersona();
         getEvaluacionTutorActiva();
         getPeriodoEvaluacion();

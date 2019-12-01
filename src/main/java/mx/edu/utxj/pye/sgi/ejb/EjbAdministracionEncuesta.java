@@ -17,6 +17,7 @@ import lombok.Getter;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
@@ -89,6 +90,24 @@ public class EjbAdministracionEncuesta {
 
                 .getResultStream().collect(Collectors.toList());
         return tutor;
+    }
+    public Grupo esTutorCE (Integer clave){
+        List<Periodos> periodos = f2.getEntityManager().createQuery("select p from Periodos as p", Periodos.class).getResultStream().collect(Collectors.toList());
+        periodos.forEach(x -> {
+            Boolean activo = true;
+            Boolean acv = x.getActivo().equals(true);
+            if (activo.equals(acv)) {
+                periodo = x.getPeriodosPK().getCvePeriodo();
+            }
+        });
+        Grupo tutorCE = f.getEntityManager().createQuery("select g from Grupo g where g.periodo=:periodo and g.tutor=:tutor",Grupo.class)
+                .setParameter("periodo",periodo)
+                .setParameter("tutor",clave)
+                .getResultStream()
+                .findFirst()
+                .orElse(null)
+                ;
+        return tutorCE;
     }
 
     public boolean aperturaVisualizacionEncuesta(String tipo){
