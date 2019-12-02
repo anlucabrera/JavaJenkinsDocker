@@ -131,16 +131,17 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
     public ResultadoEJB<Evaluaciones> getEvDocenteActiva() {
         try{
            // Evaluaciones evaluacion = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc",Evaluaciones.class)
-             Evaluaciones evaluacion = em.createQuery("select e from Evaluaciones  e where  e.evaluacion=:evaluacion",Evaluaciones.class)
-                    .setParameter("evaluacion",35)
-                     //.setParameter("tipo","Docente materia")
-                    //.setParameter("fecha",new Date())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null)
-                    ;
-            if(evaluacion==null){return ResultadoEJB.crearErroneo(2,evaluacion,"No encontro la evaluacion");}
-            else{return ResultadoEJB.crearCorrecto(evaluacion,"Se encontro la evaluación");}
+             Evaluaciones evaluacion = new Evaluaciones();
+            //TODO: Ahorita solo es de prueba, pero se debe cambiar a que busque por rango de fecha, para que tome la evaluacion actual
+            evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
+            .setParameter("tipo", "Docente materia")
+            .setParameter("fecha", new Date())
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            if(evaluacion==null){return ResultadoEJB.crearErroneo(2,evaluacion,"La evaluacion no se encontro");}
+            else {return  ResultadoEJB.crearCorrecto(evaluacion,"Evaluacion encontrada");}
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la evaluacion activa(EJBEvaluacionDocenteMteria, getEvDocenteActiva)", e, null);
         }
