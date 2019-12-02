@@ -111,48 +111,36 @@
                                                                                     <div class="col-md-12">
                                                                                         <c:forEach items="#{evaluacionDoncenteMateriaControler.listaResultados}" var="evaluado">
                                                                                             <div class="col-md-6 col-sm-6 col-12">
-                                                                                                <c:if test="#{evaluado.resultados.completo}">
-                                                                                                    <div class="small-box bg-green">
-                                                                                                        <span class="info-box-icon"> <img class="profile-user-img img-fluid img-circle"
+                                                                                                <c:set var="c" value="#{evaluado.resultados.completo}"/>
+                                                                                                <c:set var="v"/>
+                                                                                                <c:set var="b"/>
+                                                                                                <c:if test="#{c}">
+                                                                                                    <c:set var="v" value="bg-green"/>
+                                                                                                    <c:set var="b" value="btn-success"/>
+                                                                                                </c:if>
+                                                                                                <c:if test="#{!c}">
+                                                                                                    <c:set var="v" value=" bg-yellow"/>
+                                                                                                    <c:set var="b" value="btn-warning"/>
+                                                                                                </c:if>
+                                                                                                <div class="small-box #{v}">
+                                                                                                    <span class="info-box-icon"> <img class="profile-user-img img-fluid img-circle"
                                                                                                                                           src="http://siip.utxicotepec.edu.mx/sgot-images/evidencias/personal/#{evaluado.docenteImparte.clave}.jpg"
                                                                                                                                           alt="User profile picture"></img></span>
-                                                                                                        <div class="info-box-content">
+                                                                                                    <div class="info-box-content">
                                                                                                             <span class="info-box-number">Finalizado</span>
                                                                                                             <span class="info-box-more">#{evaluado.docenteImparte.nombre}</span>
                                                                                                             <span class="info-box-number">#{evaluado.nombreMateria}</span>
 
-                                                                                                        </div>
-
-                                                                                                        <p:commandButton value="Ver evaluación" class="btn btn-block btn-success btn-sm"
-                                                                                                                         actionListener="#{evaluacionDoncenteMateriaControler.getdocenteEvaluando(evaluado)}"
-                                                                                                                         oncomplete="PF('modalEvaluacion').show();" 
-
-                                                                                                        >
-                                                                                                            <p:ajax process="@this" oncomplete="updateEvaluacion"/>
-                                                                                                        </p:commandButton>
-
                                                                                                     </div>
-                                                                                                </c:if>
-                                                                                                <c:if test="#{!evaluado.resultados.completo}">
-                                                                                                    <div class="small-box bg-yellow">
-                                                                                                        <span class="info-box-icon"> <img class="profile-user-img img-fluid img-circle"
-                                                                                                                                          src="http://siip.utxicotepec.edu.mx/sgot-images/evidencias/personal/#{evaluado.docenteImparte.clave}.jpg"
-                                                                                                                                          alt="User profile picture"></img></span>
-                                                                                                        <div class="info-box-content">
-                                                                                                            <span class="info-box-number">Pendiente</span>
-                                                                                                            <span class="info-box-more">#{evaluado.docenteImparte.nombre}</span>
-                                                                                                            <span class="info-box-number">#{evaluado.nombreMateria}</span>
-
-                                                                                                        </div>
-                                                                                                        <p:commandButton value="Evaluar" class="btn btn-block btn-warning btn-sm"
+                                                                                                    <p:commandButton value="Ver evaluación" class="btn btn-block #{b} btn-sm"
                                                                                                                          actionListener="#{evaluacionDoncenteMateriaControler.getdocenteEvaluando(evaluado)}"
                                                                                                                          oncomplete="PF('modalEvaluacion').show();"
 
-                                                                                                        >
-                                                                                                            <p:ajax process="@this" oncomplete="updateEvaluacion"/>
-                                                                                                        </p:commandButton>
-                                                                                                    </div>
-                                                                                                </c:if>
+                                                                                                    >
+                                                                                                        <p:ajax process="@this" oncomplete="updateEvaluacion" update=":frmEvaluacion,:frm"/>
+                                                                                                    </p:commandButton>
+
+                                                                                                </div>
                                                                                             </div>
                                                                                         </c:forEach>
                                                                                     </div>
@@ -855,10 +843,11 @@
                                                 <div class="col-lg-5"/>
                                                 <div class="col-lg-4">
                                                     <p:commandButton value="Continuar evaluado" styleClass="btn-primary"
+                                                                     actionListener="#{evaluacionDoncenteMateriaControler.actualizaDocente}"
                                                                      onclick="PF('modalEvaluacion').hide();"
 
                                                     >
-                                                        <p:ajax  update=":frm:tabw1"/>
+                                                        <p:ajax  update=":frm,:frmEvaluacion"/>
                                                     </p:commandButton>
                                                 </div>
 

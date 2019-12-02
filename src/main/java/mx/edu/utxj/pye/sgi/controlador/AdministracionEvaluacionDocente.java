@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoAvanceEvaluaciones;
+import mx.edu.utxj.pye.sgi.dto.dtoEstudianteMateria;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
 import mx.edu.utxj.pye.sgi.ejb.EJBEvaluacionDocenteMateria;
@@ -15,6 +16,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionDocenteMateriaPye;
 
 import javax.annotation.PostConstruct;
@@ -49,6 +51,7 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
 
     @PostConstruct
     public void init(){
+        setVistaControlador(ControlEscolarVistaControlador.SEGUIMIENTO_EV_DOCENTE);
         getUltimaEvaluacionActiva();
         getPeriodoEvaluacion();
         getPersonal();
@@ -92,19 +95,19 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
         listNoAcceso = new ArrayList<>();
         //TODO: Recorre la lista de sus estudiantes
         estudiantes.forEach(e->{
-            //TODO: Obtiene la lista de docentes que debe evaluar por su numero de matricula
-            ResultadoEJB<List<VistaEvaluacionDocenteMateriaPye>> resDocentes = ejbEvaluacionDocenteMateria.getDocenteMateriabyMatricula(e.getMatricula());
-            if(resDocentes.getCorrecto()==true){
-                List<VistaEvaluacionDocenteMateriaPye> listDocentesMateria = resDocentes.getValor();
-                //TODO: Obtiene la lista de resultados del estudiante
+            //Obtine la lista de materias, no importa en que base este registrada
+            List<dtoEstudianteMateria> listaMaterias = new ArrayList<>();
+            ResultadoEJB<List<dtoEstudianteMateria>> resMaterias = ejbEvaluacionDocenteMateria.getMateriasbyEstudiante(e,evaluacion);
+            if(resMaterias.getCorrecto()==true){
+                listaMaterias = resMaterias.getValor();
+                //Obtiene la lista de resultados por matricula y evaluacion
                 ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> resResultadosEvaluacion = ejbEvaluacionDocenteMateria.getListResultadosDocenteMateriabyMatricula(evaluacion,Integer.parseInt(e.getMatricula()));
-               List<EvaluacionDocentesMateriaResultados> listTotalResuldos = resResultadosEvaluacion.getValor();
-                //System.out.println("TOTAL DE RESULTADOS ENCONTRADOS "+ listTotalResuldos.size());
+                List<EvaluacionDocentesMateriaResultados> listTotalResuldos = resResultadosEvaluacion.getValor();
                 if(resResultadosEvaluacion.getCorrecto()==true){
                     //TODO: Se filtran los resultados encontrados, para obtener solo los resultados completos
                     List<EvaluacionDocentesMateriaResultados> listResultadosCompletos= resResultadosEvaluacion.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
-                   // System.out.println("TOTAL DE RESULTADOS COMPLETOS "+ listResultadosCompletos.size());
-                    int totalaEvaluar = listDocentesMateria.size();
+                    // System.out.println("TOTAL DE RESULTADOS COMPLETOS "+ listResultadosCompletos.size());
+                    int totalaEvaluar = listaMaterias.size();
                     int totalResultadosCompletos = listResultadosCompletos.size();
                     //TODO: Comprueba si ha terminado la evaluacion a docente
                     if(totalResultadosCompletos < totalaEvaluar){
@@ -114,15 +117,15 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
                     }if(totalResultadosCompletos == totalaEvaluar){
                         //TODO: Si los registros de resultados completos del estudiante es igual al los que debe evaluar, entonces la evaluacion esta finalizada, y se agrega a la lista de completos
                         listCompletos.add(e);
-                       // System.out.println("Ev completa");
+                        // System.out.println("Ev completa");
                     }
                 }
                 //TODO: Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
                 else {listNoAcceso.add(e); totalNoAcceso++;
                     //System.out.println("Ev no accedio");
                 }
-
-            }else {mostrarMensajeResultadoEJB(resDocentes);}
+            }
+            else {mostrarMensajeResultadoEJB(resMaterias);}
         });
     }
     //TODO: Genera el avance de la evaluacion

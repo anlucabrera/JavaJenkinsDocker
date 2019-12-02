@@ -22,7 +22,9 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionListener;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -56,7 +58,7 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
 
 /**
  *
- * @author Carlos Alfredo Vargas Galindo
+ * @author Carlos Alfredo Vargas Galindo ---> Editado by Taatisz :P
  */
 @Named
 @SessionScoped
@@ -220,6 +222,11 @@ public class EvaluacionDoncenteMateriaControler extends ViewScopedRol {
         }
         */
     }
+    public void actualizaDocente(){
+        dtoDocenteEvaluando = new dtoEstudianteMateria();
+        Ajax.update("frmEvaluacion");
+        Ajax.update("frm");
+    }
 
     /**
      * Obtiene los resultados del estudiante logueado
@@ -250,18 +257,17 @@ public class EvaluacionDoncenteMateriaControler extends ViewScopedRol {
         Double dte = new Double(totalDocentes);
         Double dc= new Double(evaluados2);
         porcentaje = (dc * 100) / dte;
+        if(totalDocentes==evaluados2){finalizado =true;}
+        else {finalizado =false;}
       //  System.out.println("Evaluados" + evaluados2 + " Porcentaje  " + porcentaje);
       //  System.out.println("Resultados" + listaResultados);
         //Una vez obtenida la lista de resultados, filtramos por las que ya estan completas y las que no
         // System.out.println("Resultados filtrados " + listaDocentesEvaluados + "  " + listaDocentesEvaluando);
     }
     public void  getdocenteEvaluando(dtoEstudianteMateria evaluando){
-        if(evaluando==null){
-            setDtoDocenteEvaluando(getDtoDocenteEvaluando());
-        }else{
-            dtoDocenteEvaluando = evaluando;
-            Ajax.update("frmEvaluacion");
-        }                
+        dtoDocenteEvaluando = new dtoEstudianteMateria();
+        dtoDocenteEvaluando = evaluando;
+        Ajax.update("frmEvaluacion");
         //System.out.println("Evaluado" + dtoDocenteEvaluando);
     }
     private void initOpciones() {

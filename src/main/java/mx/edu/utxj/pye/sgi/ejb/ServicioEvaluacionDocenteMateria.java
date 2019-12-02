@@ -131,14 +131,14 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
     public ResultadoEJB<Evaluaciones> getEvDocenteActiva() {
         try{
            // Evaluaciones evaluacion = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc",Evaluaciones.class)
-             Evaluaciones evaluacion = new Evaluaciones();
+            Evaluaciones evaluacion = new Evaluaciones();
             //TODO: Ahorita solo es de prueba, pero se debe cambiar a que busque por rango de fecha, para que tome la evaluacion actual
             evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
-            .setParameter("tipo", "Docente materia")
-            .setParameter("fecha", new Date())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("tipo", "Docente materia")
+                    .setParameter("fecha", new Date())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(evaluacion==null){return ResultadoEJB.crearErroneo(2,evaluacion,"La evaluacion no se encontro");}
             else {return  ResultadoEJB.crearCorrecto(evaluacion,"Evaluacion encontrada");}

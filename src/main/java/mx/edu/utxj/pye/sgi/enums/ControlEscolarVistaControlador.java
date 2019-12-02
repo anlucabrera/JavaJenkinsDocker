@@ -3,8 +3,7 @@ package mx.edu.utxj.pye.sgi.enums;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import mx.edu.utxj.pye.sgi.controlador.EvaluacionDoncenteMateriaControler;
-import mx.edu.utxj.pye.sgi.controlador.EvaluacionTutor2;
+import mx.edu.utxj.pye.sgi.controlador.*;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaCalificacionesRolCoordinadorAD;
@@ -63,6 +62,8 @@ public enum ControlEscolarVistaControlador {
     REGISTRO_ASESORIA("/controlEscolar/docente/registro_asesorias.xhtml", RegistroAsesoriaDocente.class),
     
     REPORTE_BECAS("/becas/reporteBecas.xhtml", reporteBecas.class),
+    SEGUIMIENTO_EV_TUTOR("/evaluaciones/administracion/administracionEvaluacionTutor.xhtml", AdministracionEvaluacionTutor.class),
+    SEGUIMIENTO_EV_DOCENTE("/evaluaciones/administracion/administracionEvaluacionDocente.xhtml", AdministracionEvaluacionDocente.class),
     EVALAUCION_TUTOR("/evaluaciones/evaluacion/tutores2.xhtml", EvaluacionTutor2.class),
     EVALUACION_DOCENTE("/evaluaciones/evaluacion/tutores2.xhtml", EvaluacionDoncenteMateriaControler.class),
     CONSULTA_CALIFICACION_ESTUDIANTE("/controlEscolar/estudiante/consultarCalificaciones.xhtml",  ConsultaCalificacionesEstudiante.class),

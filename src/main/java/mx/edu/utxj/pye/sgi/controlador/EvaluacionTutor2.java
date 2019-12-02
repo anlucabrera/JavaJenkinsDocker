@@ -76,26 +76,31 @@ public class EvaluacionTutor2 extends ViewScopedRol{
             ResultadoEJB<dtoEstudiantesEvalauciones> resEstudiante = ejbEstudianteBase.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
             //System.out.println("Estudiante " +resEstudiante.getValor());
             if(resEstudiante.getCorrecto()==true){
-                //TODO: El estudiante se encuentra en alguna de las dos bases (Sauiit o Control escolar)
-                //estudianteClave = resEstudiante.getValor().getEstudiantesClaves();
-                //System.out.println("Llego a encontrar estudiante");
-               // System.out.println("Estudiante clave --->" + estudianteClave);
-                //TODO: Busca los resultados del estudiante que se encontro, si no existen, se crean
-                ResultadoEJB<EvaluacionTutoresResultados>  resResultados = ejbEvaluacionTutor2.getResultadosEvaluacionTutorEstudiante(evaluacion, resEstudiante.getValor());
-                if(resResultados.getCorrecto()){
-                    mostrarMensajeResultadoEJB(resResultados);
-                    resultados= resResultados.getValor();
-                    //System.out.println("resultados = " + resultados);
-                    apartados = ejbEvaluacionTutor2.getApartados();
-                    //System.out.println("apartados = " + apartados);
-                    respuestasPosibles = ejbEvaluacionTutor2.getRespuestasPosibles();
-                    //System.out.println("respuestasPosibles = " + respuestasPosibles);
-                    //TODO: Se activa la evaluacion
-                    cargada = true;
-                    tutorEstudiante = resEstudiante.getValor().getTutor();
-                    comprobar();
+                //Los estudiantes de 7mo y 11vo ya no responden la evaluacion así que se les niega el acceso
+                if(resEstudiante.getValor().getGrado()!= 6 || resEstudiante.getValor().getGrado() !=11){
+                    //TODO: El estudiante se encuentra en alguna de las dos bases (Sauiit o Control escolar)
+                    //estudianteClave = resEstudiante.getValor().getEstudiantesClaves();
+                    //System.out.println("Llego a encontrar estudiante");
+                    // System.out.println("Estudiante clave --->" + estudianteClave);
+                    //TODO: Busca los resultados del estudiante que se encontro, si no existen, se crean
+                    ResultadoEJB<EvaluacionTutoresResultados>  resResultados = ejbEvaluacionTutor2.getResultadosEvaluacionTutorEstudiante(evaluacion, resEstudiante.getValor());
+                    if(resResultados.getCorrecto()){
+                        mostrarMensajeResultadoEJB(resResultados);
+                        resultados= resResultados.getValor();
+                        //System.out.println("resultados = " + resultados);
+                        apartados = ejbEvaluacionTutor2.getApartados();
+                        //System.out.println("apartados = " + apartados);
+                        respuestasPosibles = ejbEvaluacionTutor2.getRespuestasPosibles();
+                        //System.out.println("respuestasPosibles = " + respuestasPosibles);
+                        //TODO: Se activa la evaluacion
+                        cargada = true;
+                        tutorEstudiante = resEstudiante.getValor().getTutor();
+                        comprobar();
 
-            }else {mostrarMensajeResultadoEJB(resResultados);}}
+                    }else {mostrarMensajeResultadoEJB(resResultados);}}
+                    else {cargada =false;}
+                }
+
         }else {cargada= false;}
     }
 
