@@ -127,7 +127,8 @@
                                                                                                                                           src="http://siip.utxicotepec.edu.mx/sgot-images/evidencias/personal/#{evaluado.docenteImparte.clave}.jpg"
                                                                                                                                           alt="User profile picture"></img></span>
                                                                                                     <div class="info-box-content">
-                                                                                                            <span class="info-box-number">Finalizado</span>
+                                                                                                            <c:if test="#{evaluado.resultados.completo}"><span class="info-box-number">Finalizado</span></c:if>
+                                                                                                            <c:if test="#{!evaluado.resultados.completo}"><span class="info-box-number">Pendiente</span></c:if>
                                                                                                             <span class="info-box-more">#{evaluado.docenteImparte.nombre}</span>
                                                                                                             <span class="info-box-number">#{evaluado.nombreMateria}</span>
 

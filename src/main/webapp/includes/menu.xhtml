@@ -186,6 +186,19 @@
                     </p:link></li></c:if>
             </c:if>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
+            <c:if test="#{controlEscolarMenu.tieneElementos()}">
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-list-alt"></i> <span>Evaluaciones</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <c:if test="#{evaluacionConocimientoCodigoEtica.mostrarEnDesarrollo(request) and evaluacionConocimientoCodigoEtica.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Ética</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    </ul>
+                </li>
+            </c:if>
             <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">
                 <li class="treeview">
                     <a href="#">
@@ -198,7 +211,6 @@
                         <c:if test="#{evaluacionDesempenioAdmin.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/desempenio.xhtml"><i class="fa fa-line-chart"></i><span>Desempeño</span></p:link></li></c:if>
                         <c:if test="#{evaluacion360Admin1.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/360_1.xhtml"><i class="fa fa-group"></i><span>360 grados</span></p:link></li></c:if>
                         <c:if test="#{evaluacionControlInterno.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/evaControlInterno.xhtml"><i class="fa fa-group"></i><span>Evaluación de control interno</span></p:link></li></c:if>
-                        <c:if test="#{climaLaboral.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/climaLaboral.xhtml"><i class="fa fa-group"></i><span>Clima laboral</span></p:link></li></c:if>
                     </ul>
                 </li>
             </c:if>

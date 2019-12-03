@@ -592,7 +592,7 @@
                 </div>
             </div> 
             <!--/c:if-->
-            <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacion360Admin1.cargada}">
+            <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacion360Admin1.cargada || evaluacionConocimientoCodigoEtica.tieneAcceso}">
                 <div class="box box-primary">
                     <div class="box box-solid">
                         <div class="box-header with-border">
@@ -624,6 +624,27 @@
                                         </div>
                                     </div>
                                 </c:if-->
+                                <c:if test="#{evaluacionConocimientoCodigoEtica.tieneAcceso}">
+                                    <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
+                                    <div class="col-md-4" style="max-height: 154px;">
+                                        <div class="small-box bg-blue">
+                                            <div class="inner" style="cursor: pointer;" onclick="climaLaboral();">
+                                                <h3>
+                                                    <h:outputLabel value="#{evaluacionConocimientoCodigoEtica.finalizado?'Terminada':'Pendiente'}"></h:outputLabel>
+                                                    <sup style="font-size: 20px"></sup>
+                                                </h3>
+                                                <p>Evaluación de Conocimiento de los Códigos de Ética</p>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fa fa-calendar-check-o"></i>
+                                            </div>
+                                            <p:link outcome="encuestas/personal/evaluacionCodigosDeEticaConducta"  class="small-box-footer">
+                                                Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                            </p:link>
+                                            <h:form><p:remoteCommand name="evaluacionConocimientoCodigoEtica" action="encuestas/personal/evaluacionCodigosDeEticaConducta" /></h:form>
+                                        </div>
+                                    </div>
+                                </c:if>
                                 <c:if test="#{evaluacionDesempenioAdmin.cargada}">
                                     <c:if test="#{evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 2 || evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 4 }">
                                         <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
