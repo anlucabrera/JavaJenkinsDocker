@@ -56,6 +56,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Personal.findByCorreoElectronico2", query = "SELECT p FROM Personal p WHERE p.correoElectronico2 = :correoElectronico2")})
 public class Personal implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<EvaluacionConocimientoCodigoEticaResultados> evaluacionConocimientoCodigoEticaResultadosList;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -878,6 +881,15 @@ public class Personal implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Personal[ clave=" + clave + " ]";
+    }
+
+    @XmlTransient
+    public List<EvaluacionConocimientoCodigoEticaResultados> getEvaluacionConocimientoCodigoEticaResultadosList() {
+        return evaluacionConocimientoCodigoEticaResultadosList;
+    }
+
+    public void setEvaluacionConocimientoCodigoEticaResultadosList(List<EvaluacionConocimientoCodigoEticaResultados> evaluacionConocimientoCodigoEticaResultadosList) {
+        this.evaluacionConocimientoCodigoEticaResultadosList = evaluacionConocimientoCodigoEticaResultadosList;
     }
     
 }

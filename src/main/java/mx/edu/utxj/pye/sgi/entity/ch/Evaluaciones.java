@@ -40,6 +40,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Evaluaciones.findByTipo", query = "SELECT e FROM Evaluaciones e WHERE e.tipo = :tipo")})
 public class Evaluaciones implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionConocimientoCodigoEticaResultados> evaluacionConocimientoCodigoEticaResultadosList;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -238,6 +241,15 @@ public class Evaluaciones implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones[ evaluacion=" + evaluacion + " ]";
+    }
+
+    @XmlTransient
+    public List<EvaluacionConocimientoCodigoEticaResultados> getEvaluacionConocimientoCodigoEticaResultadosList() {
+        return evaluacionConocimientoCodigoEticaResultadosList;
+    }
+
+    public void setEvaluacionConocimientoCodigoEticaResultadosList(List<EvaluacionConocimientoCodigoEticaResultados> evaluacionConocimientoCodigoEticaResultadosList) {
+        this.evaluacionConocimientoCodigoEticaResultadosList = evaluacionConocimientoCodigoEticaResultadosList;
     }
     
 }
