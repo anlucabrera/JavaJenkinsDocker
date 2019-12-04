@@ -52,8 +52,8 @@ public class cuadroMandoIntegralArea implements Serializable {
     @Getter    @Setter    private Integer programadasCorte = 0, realizadasCorte = 0, incremento = 0,prograRepoCorte = 0, realRepoCorte = 0;
     @Getter    @Setter    private Integer programadasMensual = 0, realizadasMensual = 0, numeroMes = 0,prograRepoMensual = 0, realRepoMensual = 0, numeroEje = 0;
     @Getter    @Setter    private Short ejercicioFiscal = 0;
-    @Getter    @Setter    private Double avance = 0D,avanceSp = 0D;
-    @Getter    @Setter    private String mes = "", valores = "";
+    @Getter    @Setter    private Double avance = 0D,avanceSp = 0D,maximoValor=0D;
+    @Getter    @Setter    private String mes = "", valores = "",extender;
     @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -95,20 +95,20 @@ public class cuadroMandoIntegralArea implements Serializable {
         cmiEnGeneral();
         cmiPorEje();
     }
-    
-public void reseteador() {
-        cmiGeneral = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(),new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe1 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(),new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe2 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(),new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe3 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(),new ArrayList<>(), new MeterGaugeChartModel(), false);
-        cmiEJe4 = new ResultadosCMI("", 0, 0, 0D,0D, new ArrayList<>(),new ArrayList<>(), new MeterGaugeChartModel(), false);
+
+    public void reseteador() {
+        cmiGeneral = new ResultadosCMI("", 0, 0, 0D, 0D, extender, new ArrayList<>(), new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe1 = new ResultadosCMI("", 0, 0, 0D, 0D, extender, new ArrayList<>(), new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe2 = new ResultadosCMI("", 0, 0, 0D, 0D, extender, new ArrayList<>(), new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe3 = new ResultadosCMI("", 0, 0, 0D, 0D, extender, new ArrayList<>(), new ArrayList<>(), new MeterGaugeChartModel(), false);
+        cmiEJe4 = new ResultadosCMI("", 0, 0, 0D, 0D, extender, new ArrayList<>(), new ArrayList<>(), new MeterGaugeChartModel(), false);
     }
 
     public void cmiEnGeneral() {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
         actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasTotalArea(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal);
-        cmiGeneral = new ResultadosCMI(poau.obtenerAreaNombre(controladorEmpleado.getProcesopoa().getArea()), 0, 0, 0D,0D, grafSP,grafCP, new MeterGaugeChartModel(), false);
+        cmiGeneral = new ResultadosCMI(poau.obtenerAreaNombre(controladorEmpleado.getProcesopoa().getArea()), 0, 0, 0D,0D,extender, grafSP,grafCP, new MeterGaugeChartModel(), false);
         if (!actividadesPoas.isEmpty()) {
             List<ActividadesPoa> actividadesPoasFiltradas = new ArrayList<>();
             actividadesPoasFiltradas.clear();
@@ -123,7 +123,7 @@ public void reseteador() {
                 grafRA.setShowTickLabels(true);
                 grafRA.setLabelHeightAdjust(10);
                 grafRA.setIntervalOuterRadius(100);
-                cmiGeneral = new ResultadosCMI(poau.obtenerAreaNombre(controladorEmpleado.getProcesopoa().getArea()), programadasCorte, realizadasCorte, avance,avanceSp, grafSP,grafCP, grafRA, true);
+                cmiGeneral = new ResultadosCMI(poau.obtenerAreaNombre(controladorEmpleado.getProcesopoa().getArea()), programadasCorte, realizadasCorte, avance,avanceSp,extender, grafSP,grafCP, grafRA, true);
             }
         }
     }
@@ -162,10 +162,12 @@ public void reseteador() {
         grafRA.setLabelHeightAdjust(10);
         grafRA.setIntervalOuterRadius(100);
         grafRA.setGaugeLabel(df.format(avanceSp) + " % avance");
-        return new ResultadosCMI(er.getNombre(), programadasCorte, realizadasCorte, avance,avanceSp, grafSP,grafCP, grafRA, true);
+        return new ResultadosCMI(er.getNombre(), programadasCorte, realizadasCorte, avance,maximoValor,extender, grafSP,grafCP, grafRA, true);
     }
 
     public void calculosCMI(List<ActividadesPoa> actividadesPoa) {
+        maximoValor=0D;
+        extender="";
         programadasCorte = 0;
         realizadasCorte = 0;
         avance = 0D;
@@ -261,7 +263,23 @@ public void reseteador() {
                 } else if (programadasMensual == 0 && realizadasMensual == 0) {
                     promSP= 0D;
                 }
-                
+
+                if (maximoValor <= promSP) {
+                    maximoValor = promSP;
+                }
+
+                if (maximoValor <= 115) {
+                    extender = "myconfig1";
+                } else if (maximoValor <= 200) {
+                    extender = "myconfig2";
+                } else if (maximoValor <= 300) {
+                    extender = "myconfig3";
+                } else if (maximoValor <= 400) {
+                    extender = "myconfig4";
+                } else if (maximoValor <= 500) {
+                    extender = "myconfig5";
+                }
+
                     grafSP.add(new Grafica(poau.obtenerMesNombre(incremento), promSP,promSP));                    
                     grafCP.add(new Grafica(poau.obtenerMesNombre(incremento), promCP,promCP));
             }
@@ -278,7 +296,7 @@ public void reseteador() {
             avanceSp = realizadasCorte * 100D;
         } else if (programadasCorte == 0 && realizadasCorte == 0) {
             avanceSp = 0D;
-        }
+        }        
     }
     
     public List<ActividadesPoa> actividadesFiltradas(List<ActividadesPoa> actividadesPoas) {
@@ -301,14 +319,19 @@ public void reseteador() {
             {
                 add(90.0);
                 add(95.0);
-                add(115.0);
+                if (maximoValor >= 100) {
+                    add(maximoValor);
+                }else{
+                    add(100.0);
+                }
             }
         };
-        if (avanceSp >= 115) {
-            return new MeterGaugeChartModel(115D, intervals);
-        } else {
-            return new MeterGaugeChartModel(avanceSp, intervals);
-        }
+//        if (avanceSp >= 115) {
+//            return new MeterGaugeChartModel(115D, intervals);
+//        } else {
+//            return new MeterGaugeChartModel(avanceSp, intervals);
+//        }
+        return new MeterGaugeChartModel(avanceSp, intervals);
     }
 
     public String datosGraica(List<cuadroMandoIntegralPlaneacion.Grafica> er) {
@@ -591,22 +614,24 @@ public void reseteador() {
         @Getter        @Setter        private Integer realizadas;
         @Getter        @Setter        private Double avance;
         @Getter        @Setter        private Double avanceSP;
+        @Getter        @Setter        private String extender;
         @Getter        @Setter        private List<Grafica> avanceGrafSP;
         @Getter        @Setter        private List<Grafica> avanceGrafCP;
         @Getter        @Setter        private MeterGaugeChartModel gaugeChartModel;
         @Getter        @Setter        private Boolean renderizar;
 
-        public ResultadosCMI(String ejesRegistro, Integer programadas, Integer realizadas, Double avance, Double avanceSP, List<Grafica> avanceGrafSP, List<Grafica> avanceGrafCP, MeterGaugeChartModel gaugeChartModel, Boolean renderizar) {
+        public ResultadosCMI(String ejesRegistro, Integer programadas, Integer realizadas, Double avance, Double avanceSP, String extender, List<Grafica> avanceGrafSP, List<Grafica> avanceGrafCP, MeterGaugeChartModel gaugeChartModel, Boolean renderizar) {
             this.ejesRegistro = ejesRegistro;
             this.programadas = programadas;
             this.realizadas = realizadas;
             this.avance = avance;
             this.avanceSP = avanceSP;
+            this.extender = extender;
             this.avanceGrafSP = avanceGrafSP;
             this.avanceGrafCP = avanceGrafCP;
             this.gaugeChartModel = gaugeChartModel;
             this.renderizar = renderizar;
-        }
+        }        
 
         private ResultadosCMI() {
 

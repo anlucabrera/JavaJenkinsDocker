@@ -29,28 +29,49 @@
             }
         </script>
         <script type="text/javascript">
-            function myconfig() {
-                console.log("ejemplo");
+            function myconfig1() {
                 this.yAxis = {
                     type: 'double',
                     min: 0,
                     max: 115,
-                    tickAmount: 7,
-                    plotBands: [{
-                            from: 0.0,
-                            to: 89.99,
-                            color: '#FF0000'
-                        },
-                        {
-                            from: 90.0,
-                            to: 94.99,
-                            color: '#ffff00'
-                        },
-                        {
-                            from: 95.0,
-                            to: 115.99,
-                            color: '#66ff33'
-                        }]
+                    tickAmount: 10,
+                    plotBands: [{from: 0.0,  to: 89.99,  color: '#FF0000'},{from: 90.0, to: 94.99,  color: '#ffff00'},{from: 95.0, to: 115.99, color: '#66ff33'}]
+                };
+            }
+            function myconfig2() {
+                this.yAxis = {
+                    type: 'double',
+                    min: 0,
+                    max: 200,
+                    tickAmount: 10,
+                    plotBands: [{from: 0.0,  to: 89.99,  color: '#FF0000'},{from: 90.0, to: 94.99,  color: '#ffff00'},{from: 95.0, to: 200.99, color: '#66ff33'}]
+                };
+            }
+            function myconfig3() {
+                this.yAxis = {
+                    type: 'double',
+                    min: 0,
+                    max: 300,
+                    tickAmount: 10,
+                    plotBands: [{from: 0.0,  to: 89.99,  color: '#FF0000'},{from: 90.0, to: 94.99,  color: '#ffff00'},{from: 95.0, to: 300.99, color: '#66ff33'}]
+                };
+            }
+            function myconfig4() {
+                this.yAxis = {
+                    type: 'double',
+                    min: 0,
+                    max: 400,
+                    tickAmount: 10,
+                    plotBands: [{from: 0.0,  to: 89.99,  color: '#FF0000'},{from: 90.0, to: 94.99,  color: '#ffff00'},{from: 95.0, to: 400.99, color: '#66ff33'}]
+                };
+            }
+            function myconfig5() {
+                this.yAxis = {
+                    type: 'double',
+                    min: 0,
+                    max: 500,
+                    tickAmount: 10,
+                    plotBands: [{from: 0.0,  to: 89.99,  color: '#FF0000'},{from: 90.0, to: 94.99,  color: '#ffff00'},{from: 95.0, to: 500.99, color: '#66ff33'}]
                 };
             }
         </script>
@@ -86,9 +107,9 @@
                                             <p:column style="font-weight: bold;">#{cuadroMandoIntegralUniversidad.cmiGeneral.programadas}</p:column>
                                             <p:column rowspan="4" style="font-weight: bold;">
                                                 <!--# {cuadroMandoIntegralUniversidad.datosGraica(cuadroMandoIntegralUniversidad.cmiEJe1.avanceGraf)}-->
-                                                <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
+                                                <hf:chart type="line" height="400px" extender="#{cuadroMandoIntegralUniversidad.cmiGeneral.extender}" render="true" updateMethod="true"
                                                           xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
-                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiGeneral.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralUniversidad.df.format(115.00):cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiGeneral.avanceGrafSP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
                                                     <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralUniversidad.cmiGeneral.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
@@ -115,30 +136,30 @@
                                         <p:row>
                                             <p:column style="font-weight: bold;">Grafica Lineal</p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe1.renderizar}">
-                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralUniversidad.cmiEJe1.ejesRegistro}"
+                                                <hf:chart type="line" height="380px" extender="#{cuadroMandoIntegralUniversidad.cmiEJe1.extender}" title="#{cuadroMandoIntegralUniversidad.cmiEJe1.ejesRegistro}"
                                                           xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
-                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe1.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralUniversidad.df.format(115.00):cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe1.avanceGrafSP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
                                                     <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe1.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe2.renderizar}">
-                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralUniversidad.cmiEJe2.ejesRegistro}"
+                                                <hf:chart type="line" height="380px" extender="#{cuadroMandoIntegralUniversidad.cmiEJe2.extender}" title="#{cuadroMandoIntegralUniversidad.cmiEJe2.ejesRegistro}"
                                                           xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
-                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe2.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralUniversidad.df.format(115.00):cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe2.avanceGrafSP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
                                                     <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe2.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe3.renderizar}">
-                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralUniversidad.cmiEJe3.ejesRegistro}" 
+                                                <hf:chart type="line" height="380px" extender="#{cuadroMandoIntegralUniversidad.cmiEJe3.extender}" title="#{cuadroMandoIntegralUniversidad.cmiEJe3.ejesRegistro}" 
                                                           xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
-                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe3.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralUniversidad.df.format(115.00):cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe3.avanceGrafSP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
                                                     <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe3.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>
                                             <p:column style="font-weight: bold;" rendered="#{cuadroMandoIntegralUniversidad.cmiEJe4.renderizar}">
-                                                <hf:chart type="line" height="380px" extender="myconfig" title="#{cuadroMandoIntegralUniversidad.cmiEJe4.ejesRegistro}" 
+                                                <hf:chart type="line" height="380px" extender="#{cuadroMandoIntegralUniversidad.cmiEJe4.extender}" title="#{cuadroMandoIntegralUniversidad.cmiEJe4.ejesRegistro}" 
                                                           xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
-                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe4.avanceGrafSP}" var="point" point="#{point.avance ge 115?cuadroMandoIntegralUniversidad.df.format(115.00):cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe4.avanceGrafSP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
                                                     <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralUniversidad.cmiEJe4.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralUniversidad.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                 </hf:chart>
                                             </p:column>

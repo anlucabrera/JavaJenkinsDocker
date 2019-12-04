@@ -73,7 +73,7 @@ public class ControladorIncidenciasAdministrador implements Serializable {
             listaIncidencias = new ArrayList<>();
             listaIncidencias.clear();
             List<Incidencias> is = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 01, 01)), utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 12, 31)));
-            List<Incidencias> l =is.stream().filter(t-> t.getClavePersonal().getAreaOperativa()==au.getArea() && t.getClavePersonal().getAreaSuperior()==au.getArea()).collect(Collectors.toList());
+            List<Incidencias> l =is.stream().filter(t-> t.getClavePersonal().getAreaOperativa()==au.getArea() || t.getClavePersonal().getAreaSuperior()==au.getArea()).collect(Collectors.toList());
             if(!l.isEmpty()){
                 l.forEach((t) -> {
                     if(!au.getNombre().equals("Rectoría")){
