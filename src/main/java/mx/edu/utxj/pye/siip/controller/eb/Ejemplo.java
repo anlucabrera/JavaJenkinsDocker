@@ -12,7 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -42,6 +44,9 @@ import mx.edu.utxj.pye.siip.dto.eb.DTORepositorio;
 public class Ejemplo {
     
     public static void main (String args[]){
+        
+        System.out.println("Fecha minima del mes: " + getFechaMinima(1, 2019));
+        System.out.println("Fecha maxima del mes: " + getFechaMaxima(1, 2019));
         
         System.out.println("----------------------------------------------------------------------------------------------------------------");
         
@@ -296,6 +301,26 @@ public class Ejemplo {
             });
         });
 
+    }
+    
+    private static String getFechaMinima(int mes, int anio) {
+        Calendar calendar = Calendar.getInstance();
+        // passing month-1 because 0-->jan, 1-->feb... 11-->dec
+        calendar.set(anio, mes-1, 1);
+        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DATE));
+        Date date = calendar.getTime();
+        DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+        return DATE_FORMAT.format(date);
+    }
+    
+    private static String getFechaMaxima(int mes, int anio) {
+        Calendar calendar = Calendar.getInstance();
+        // passing month-1 because 0-->jan, 1-->feb... 11-->dec
+        calendar.set(anio, mes-1, 1);
+        calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+        Date date = calendar.getTime();
+        DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+        return DATE_FORMAT.format(date);
     }
     
     public static String convierteEjesRegistro(String ejeRegistro) {

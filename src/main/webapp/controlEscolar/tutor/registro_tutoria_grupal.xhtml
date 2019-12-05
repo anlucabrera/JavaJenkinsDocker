@@ -125,7 +125,7 @@
 
                                             <p:outputPanel id="contenedor">
                                                 <div style="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'margin-bottom: 10px;display: none':'margin-bottom: 10px;'}">
-                                                    <p:outputLabel value="Ingrese los datos de la asesoría: "/>
+                                                    <p:outputLabel value="Ingrese los datos de la tutoría grupal "/>
                                                 </div>
                                                 <div class="row margin-bottom" style="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'display: none':''}">
 
@@ -180,8 +180,8 @@
                                                                         readonlyInput="true"
                                                                         disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
                                                                         mask="true"
-                                                                        mindate="#{registroTutoriaGrupal.rol.periodoSeleccionado.periodoEscolarFechas.inicio}"
-                                                                        maxdate="#{registroTutoriaGrupal.rol.periodoSeleccionado.periodoEscolarFechas.fin}"
+                                                                        mindate="#{caster.fechaMinina(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
+                                                                        maxdate="#{caster.fechaMaxima(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
                                                                         >
                                                             </p:calendar>
                                                         </div>
@@ -336,16 +336,18 @@
                                                     <div class="col-sm-12 col-md-12"><p:separator/></div>
                                                 </div>
 
-                                                <div style="margin-bottom: 10px">
-                                                    <p:outputLabel value="Listado de tutorías grupales registrados en la sesión y mes de registro seleccionados"/>
-                                                </div>
-
-                                                <div class="row margin-bottom">
+                                                <div class="row margin-bottom" style="margin-bottom: 10px">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Listado de tutorías grupales registrados en la sesión y mes de registro seleccionados" style="padding-top: 5px;" />
+                                                            <p></p>
+                                                        </f:facet>
+                                                    </p:toolbar>
                                                     <center>
                                                         <p:dataTable id="dtTutoriasGrupales" 
                                                                      var="tutoriaGrupal" 
-                                                                     value="#{registroTutoriaGrupal.rol.listaDtoTuriasGrupales}" 
-                                                                     sortBy="#{tutoriaGrupal.tutoriaGrupal.tutoriaGrupal}"
+                                                                     value="#{registroTutoriaGrupal.rol.listaDtoTuriasGrupales}"
                                                                      tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                      resizeMode="expand"
                                                                      emptyMessage="Aún no se han registrado tutorías en la sesión y evento de registro seleccionado"
@@ -435,8 +437,8 @@
                                                                             placeholder="2019-10-01 (aa-MM-dd)*"
                                                                             readonlyInput="true"
                                                                             mask="true"
-                                                                            mindate="#{registroTutoriaGrupal.rol.periodoSeleccionado.periodoEscolarFechas.inicio}"
-                                                                            maxdate="#{registroTutoriaGrupal.rol.periodoSeleccionado.periodoEscolarFechas.fin}"
+                                                                            mindate="#{caster.fechaMinina(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
+                                                                            maxdate="#{caster.fechaMaxima(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
                                                                             >
                                                                     <p:ajax event="dateSelect"
                                                                             process="@this"
@@ -628,92 +630,98 @@
                                     </div>    
                                 </h:form>
                                 <h:form id="frmRegistroParticipantes" prependId="false" class="form-inline">
-                                    <p:remoteCommand id="actualizarEstudiantes" name="actualizarEstudiantes" actionListener="#{registroTutoriaGrupal.actualizar()}" process="@this" update="contenedorEstudiantes frmCasosCriticos modalRegistroCasoCritico" />
+                                    <p:remoteCommand id="actualizarEstudiantes" name="actualizarEstudiantes" actionListener="#{registroTutoriaGrupal.actualizarEstudiantes()}" process="@this" update="contenedorEstudiantes frmCasosCriticos modalRegistroCasoCritico" />
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 text-info">
                                             <p:outputPanel id="contenedorEstudiantes">
-                                                <div style="margin-bottom: 10px">
-                                                    <p:outputLabel value="Para registrar la asistencia de los estudiantes deberá seleccionar previamente una tutoría grupal"/>
-                                                </div>
-                                                <p:dataTable id="dtTGEstudiantes" 
-                                                             widgetVar="dtTGEstudiantes"
-                                                             var="est" 
-                                                             value="#{registroTutoriaGrupal.rol.listaEstudiantes}" 
-                                                             filteredValue="#{registroTutoriaGrupal.rol.listaEstudiantesFiltro}"
-                                                             sortBy="#{est.estudiante.estudiante.idEstudiante}"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                             resizeMode="expand"
-                                                             emptyMessage="No se encontrarón estudiantes en el grupo y tutoría seleccionados"
-                                                             >
+                                                <div class="row margin-bottom" style="margin-bottom: 10px">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Para registrar la asistencia de los estudiantes deberá seleccionar previamente una tutoría grupal" style="padding-top: 5px;" />
+                                                            <p></p>
+                                                        </f:facet>
+                                                    </p:toolbar>
+                                                    <p:dataTable id="dtTGEstudiantes" 
+                                                                 widgetVar="dtTGEstudiantes"
+                                                                 var="est" 
+                                                                 value="#{registroTutoriaGrupal.rol.listaEstudiantes}" 
+                                                                 filteredValue="#{registroTutoriaGrupal.rol.listaEstudiantesFiltro}"
+                                                                 sortBy="#{est.estudiante.estudiante.idEstudiante}"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                 resizeMode="expand"
+                                                                 emptyMessage="No se encontrarón estudiantes en el grupo y tutoría seleccionados"
+                                                                 >
 
-                                                    <p:column filterBy="#{est.estudiante.estudiante.matricula}" headerText="Matricula" filterMatchMode="contains" width="60" style="text-align:  center">
-                                                        <h:outputText value="#{est.estudiante.estudiante.matricula}" />
-                                                    </p:column>
+                                                        <p:column filterBy="#{est.estudiante.estudiante.matricula}" headerText="Matricula" filterMatchMode="contains" width="60" style="text-align:  center">
+                                                            <h:outputText value="#{est.estudiante.estudiante.matricula}" />
+                                                        </p:column>
 
-                                                    <p:column filterBy="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" headerText="Nombre" filterMatchMode="contains" width="200" priority="2">
-                                                        <h:outputText value="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" />
-                                                    </p:column>
+                                                        <p:column filterBy="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" headerText="Nombre" filterMatchMode="contains" width="200" priority="2">
+                                                            <h:outputText value="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" />
+                                                        </p:column>
 
-                                                    <p:column filterBy="#{est.participacion}" headerText="Asistencia" filterMatchMode="equals" width="200" style="text-align:  center">
-                                                        <f:facet name="filter">
-                                                            <p:selectOneButton onchange="PF('dtTGEstudiantes').filter()" styleClass="custom-filter">
-                                                                <f:converter converterId="javax.faces.Boolean" />
-                                                                <f:selectItem itemLabel="Todos" itemValue="" />
-                                                                <f:selectItem itemLabel="Asistió" itemValue="true" />
-                                                                <f:selectItem itemLabel="No Asistió" itemValue="false" />
-                                                            </p:selectOneButton>
+                                                        <p:column filterBy="#{est.participacion}" headerText="Asistencia" filterMatchMode="equals" width="200" style="text-align:  center">
+                                                            <f:facet name="filter">
+                                                                <p:selectOneButton onchange="PF('dtTGEstudiantes').filter()" styleClass="custom-filter">
+                                                                    <f:converter converterId="javax.faces.Boolean" />
+                                                                    <f:selectItem itemLabel="Todos" itemValue="" />
+                                                                    <f:selectItem itemLabel="Asistió" itemValue="true" />
+                                                                    <f:selectItem itemLabel="No Asistió" itemValue="false" />
+                                                                </p:selectOneButton>
+                                                            </f:facet>
+
+                                                            <p:selectBooleanButton value="#{est.participacion}" 
+                                                                                   onLabel="Asistió" 
+                                                                                   offLabel="No Asistió" 
+                                                                                   valueChangeListener="#{registroTutoriaGrupal.guardarParticipanteTutoriaGrupal}"
+                                                                                   onIcon="ui-icon-check"
+                                                                                   offIcon="ui-icon-close"
+                                                                                   style="text-align: left"
+                                                                                   disabled="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal eq null or registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'true':'false'}"
+                                                                                   >
+                                                                <p:ajax process="@this"
+                                                                        oncomplete="actualizarEstudiantes();"
+                                                                        />
+                                                                <f:attribute name="participante" 
+                                                                             value="#{est.participanteTutoriaGrupal}" 
+                                                                             />
+                                                            </p:selectBooleanButton>
+                                                        </p:column>
+
+                                                        <p:column headerText="Genéro" width="60" style="text-align:  center" priority="4">
+                                                            <h:outputText value="#{est.estudiante.estudiante.aspirante.idPersona.genero eq 1?'Femenino':'Masculino'}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Situación" width="60" style="text-align:  center" priority="3">
+                                                            <h:outputText value="#{est.estudiante.estudiante.tipoEstudiante.descripcion}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Aceptación de acuerdos (Estudiante)" width="155" style="text-align:center" priority="5">
+                                                            <h:outputText value="#{est.participanteTutoriaGrupal.aceptacionAcuerdos}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Comentarios (Estudiante)" width="300" priority="6">
+                                                            <h:outputText value="#{est.participanteTutoriaGrupal.comentarios}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Casos Críticos Registrados" width="60" style="text-align:  center" priority="1">
+                                                            <p:commandButton actionListener="#{registroTutoriaGrupal.listarCasosCriticos(est.estudiante.estudiante)}"
+                                                                             class="btn btn-sm #{fn:length(est.listaCasosCriticos)>0?'btn-danger':'btn-info'}" 
+                                                                             icon="fa fa-check-square"
+                                                                             title="Presione el botón para visualizar casos críticos"
+                                                                             process="@this"
+                                                                             global="false"
+                                                                             oncomplete="actualizarEstudiantes();"
+                                                                             />
+                                                        </p:column>
+
+                                                        <f:facet name="footer">
+                                                            Actualmente están inscritos: #{fn:length(registroTutoriaGrupal.rol.listaEstudiantes)} estudiantes en el grupo seleccionado.
                                                         </f:facet>
 
-                                                        <p:selectBooleanButton value="#{est.participacion}" 
-                                                                               onLabel="Asistió" 
-                                                                               offLabel="No Asistió" 
-                                                                               valueChangeListener="#{registroTutoriaGrupal.guardarParticipanteTutoriaGrupal}"
-                                                                               onIcon="ui-icon-check"
-                                                                               offIcon="ui-icon-close"
-                                                                               style="text-align: left"
-                                                                               disabled="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal eq null or registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'true':'false'}"
-                                                                               >
-                                                            <p:ajax process="@this"
-                                                                    oncomplete="actualizarEstudiantes();"
-                                                                    />
-                                                            <f:attribute name="participante" 
-                                                                         value="#{est.participanteTutoriaGrupal}" 
-                                                                         />
-                                                        </p:selectBooleanButton>
-                                                    </p:column>
-
-                                                    <p:column headerText="Genéro" width="60" style="text-align:  center" priority="4">
-                                                        <h:outputText value="#{est.estudiante.estudiante.aspirante.idPersona.genero eq 1?'Femenino':'Masculino'}" />
-                                                    </p:column>
-
-                                                    <p:column headerText="Situación" width="60" style="text-align:  center" priority="3">
-                                                        <h:outputText value="#{est.estudiante.estudiante.tipoEstudiante.descripcion}" />
-                                                    </p:column>
-
-                                                    <p:column headerText="Aceptación de acuerdos" width="60" style="text-align:  center" priority="5">
-                                                        <h:outputText value="#{est.participanteTutoriaGrupal.aceptacionAcuerdos?'Si':'No'}" />
-                                                    </p:column>
-
-                                                    <p:column headerText="Comentarios" width="300" priority="6">
-                                                        <h:outputText value="#{est.participanteTutoriaGrupal.comentarios}" />
-                                                    </p:column>
-
-                                                    <p:column headerText="Casos Críticos Registrados" width="60" style="text-align:  center" priority="1">
-                                                        <p:commandButton actionListener="#{registroTutoriaGrupal.listarCasosCriticos(est.estudiante.estudiante)}"
-                                                                         class="btn btn-sm #{fn:length(est.listaCasosCriticos)>0?'btn-danger':'btn-info'}" 
-                                                                         icon="fa fa-check-square"
-                                                                         title="Presione el botón para visualizar casos críticos"
-                                                                         process="@this"
-                                                                         global="false"
-                                                                         oncomplete="actualizarEstudiantes();"
-                                                                         />
-                                                    </p:column>
-
-                                                    <f:facet name="footer">
-                                                        Actualmente están inscritos: #{fn:length(registroTutoriaGrupal.rol.listaEstudiantes)} estudiantes en el grupo seleccionado.
-                                                    </f:facet>
-
-                                                </p:dataTable>
+                                                    </p:dataTable>
+                                                </div>
                                             </p:outputPanel>
                                         </div>
                                     </div>
@@ -776,7 +784,7 @@
                                     </ul>
                                 </div>
                             </c:if>
-                            
+
                             <c:if test="#{empty registroTutoriaGrupal.rol.listaSecundaria}">
                                 <div class="box-body">
                                     <ul class="todo-list">

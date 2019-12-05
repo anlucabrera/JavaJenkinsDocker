@@ -261,9 +261,15 @@
                                                 </div>
 
                                                 <div style="margin-bottom: 10px">
-                                                    <p:outputLabel value="Listado de Asesorías registradas en la unidad y mes de registro seleccionados"/>
                                                 </div>
                                                 <div class="row margin-bottom">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Listado de Asesorías registradas en la unidad y mes de registro seleccionados" style="padding-top: 5px;" />
+                                                            <p></p>
+                                                        </f:facet>
+                                                    </p:toolbar>
                                                     <center>
                                                         <p:dataTable id="dtAsesorias" 
                                                                      var="asesoria" 
@@ -481,7 +487,6 @@
                                                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                                                         </p:confirmDialog> 
                                                     </center>
-                                                    <div class="col-sm-12 col-md-12"><p:separator/></div>
                                                 </div>
                                             </p:outputPanel>
                                         </div>
@@ -493,9 +498,15 @@
                                         <div class="col-lg-12 col-md-12 text-info">
                                             <p:outputPanel id="contenedorEstudiantes">
                                                 <div style="margin-bottom: 10px">
-                                                    <p:outputLabel value="Para registrar la asistencia de los estudiantes deberá seleccionar previamente una asesoría"/>
                                                 </div>
                                                 <div class="row margin-bottom">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Para registrar la asistencia de los estudiantes deberá seleccionar previamente una asesoría" style="padding-top: 5px;" />
+                                                            <p></p>
+                                                        </f:facet>
+                                                    </p:toolbar>
                                                     <center>
                                                         <p:dataTable id="dtEstudiantes" 
                                                                      widgetVar="dtEstudiantes"

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.SesionesGrupalesTutorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
+import mx.edu.utxj.pye.sgi.enums.PlanAccionTutorialEstado;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
@@ -167,12 +169,40 @@ public class ValidacionPlanAccionTutorialDirector extends ViewScopedRol implemen
     
     public void validarPlanAccionTutorial(DtoPlanAccionTutorial dtoPAT) {
         rol.setDtoPlanAccionTutorial(dtoPAT);
-//        if(rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().getValidacionDirector()){
-//            rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().setValidacionDirector(Boolean.FALSE);
-//        }else{
-//            rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().setValidacionDirector(Boolean.TRUE);
-//        }  
-        ResultadoEJB<PlanAccionTutorial> res = ejb.guardaPlanAccionTutorial(dtoPAT.getPlanAccionTutorial());
+        if(rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().getEstatus().equals(PlanAccionTutorialEstado.VALIDADO.getLabel())){
+            rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().setEstatus(PlanAccionTutorialEstado.EN_OBSERVACIONES.getLabel());
+            rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().setComentariosDirector("Pendiente de registrar observaciones");
+        }else{
+            rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().setEstatus(PlanAccionTutorialEstado.VALIDADO.getLabel());
+            rol.getDtoPlanAccionTutorial().getPlanAccionTutorial().setComentariosDirector("Plan de Accion Tutoríal Validado");
+        }  
+        ResultadoEJB<PlanAccionTutorial> res = ejb.validarPlanDeAccionTutorial(dtoPAT.getPlanAccionTutorial());
+        if (res.getCorrecto()) {
+            actualizarPlanesAccionTutorial();
+            mostrarMensajeResultadoEJB(res);
+        } else {
+            actualizarPlanesAccionTutorial();
+            mostrarMensajeResultadoEJB(res);
+        }
+    }
+    
+    public void actualizarComentariosObservacionesDirector(ValueChangeEvent event){
+        DtoPlanAccionTutorial pat = (DtoPlanAccionTutorial) event.getComponent().getAttributes().get("pat");
+        String comentarioObservaciones = (String) event.getNewValue();
+        if(comentarioObservaciones == null || "".equals(comentarioObservaciones)){
+            pat.getPlanAccionTutorial().setEstatus(PlanAccionTutorialEstado.ENVIADO_PARA_REVISION.getLabel());
+            pat.getPlanAccionTutorial().setComentariosDirector(null);
+        }else{
+            pat.getPlanAccionTutorial().setEstatus(PlanAccionTutorialEstado.EN_OBSERVACIONES.getLabel());
+            mostrarMensaje("Se han enviado los comentarios u observaciones al tutor");
+            pat.getPlanAccionTutorial().setComentariosDirector(comentarioObservaciones);
+        }
+        actualizarPAT(pat);
+    }
+    
+    public void actualizarPAT(DtoPlanAccionTutorial dtoPAT) {
+        rol.setDtoPlanAccionTutorial(dtoPAT);
+        ResultadoEJB<PlanAccionTutorial> res = ejb.validarPlanDeAccionTutorial(dtoPAT.getPlanAccionTutorial());
         if (res.getCorrecto()) {
             actualizarPlanesAccionTutorial();
             mostrarMensajeResultadoEJB(res);

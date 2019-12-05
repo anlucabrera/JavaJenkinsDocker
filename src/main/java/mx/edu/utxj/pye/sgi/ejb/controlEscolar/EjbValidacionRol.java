@@ -1,6 +1,8 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.util.List;
+import javax.annotation.PostConstruct;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
@@ -9,11 +11,23 @@ import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.facade.Facade;
 
 @Stateless
 public class EjbValidacionRol {
     @EJB EjbPersonalBean ejbPersonalBean;
     @EJB EjbPropiedades ep;
+    
+    @EJB Facade f;
+    private EntityManager em;
+
+    @PostConstruct
+    public void init(){
+        em = f.getEntityManager();
+    }
+    
     /**
      * Permite validar si el usuario logueado es un docente
      * @param clave Número de nómina del usuario logueado
@@ -127,4 +141,20 @@ public class EjbValidacionRol {
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbValidacionRol.validarencargadoDepartamento)", e, null);
         }
     }
+    
+    public ResultadoEJB<Estudiante> validarEstudiante(Integer matricula){        
+        try {
+            List<Estudiante> e = em.createQuery("SELECT e FROM Estudiante AS e WHERE e.matricula = :matricula ORDER BY e.periodo DESC", Estudiante.class)
+                    .setParameter("matricula", matricula)
+                    .getResultList();
+            if (!e.isEmpty()) {
+                return ResultadoEJB.crearCorrecto(e.get(0), "El usuario ha sido comprobado como estudiante.");
+            } else {
+                return ResultadoEJB.crearErroneo(2, "No se ha podido validar el estudiante", Estudiante.class);
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El estudiate no se pudo validar. (EjbValidacionRol.validarEstudiante)", e, null);
+        }
+    }
+    
 }

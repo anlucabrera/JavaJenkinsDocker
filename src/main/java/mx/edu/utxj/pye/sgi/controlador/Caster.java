@@ -15,7 +15,6 @@ import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PlaneacionesCuatrimestrales;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.finanzas.ComisionOficios;
 import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
@@ -37,14 +36,16 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.EstudiantesPye;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPeriodoEventoRegistro;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroAsesoriaTutoria;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.enums.converter.PlanAccionTutorialEstadoConverter;
 
 /**
  *
@@ -60,6 +61,8 @@ public class Caster {
     @EJB Facade f;
     private EntityManager em;
     @EJB EjbPersonalBean ejbPersonalBean;
+    @EJB EjbRegistroAsesoriaTutoria ejbTutor;
+    @EJB EjbPeriodoEventoRegistro ejbPeriodo;
 
     @PostConstruct
     public  void init(){
@@ -340,35 +343,65 @@ public class Caster {
         if (idEstudiante == null) {
             return null;
         } else {
-            List<EstudiantesPye> estudiantes = em.createQuery("select e from EstudiantesPye e where e.idEstudiante = :idEstudiante", EstudiantesPye.class)
-                    .setParameter("idEstudiante", idEstudiante)
-                    .getResultList();
-
-            List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
-
-            estudiantes.forEach(estudiante -> {
-                String datosComplete = estudiante.getAPaterno() + " " + estudiante.getAMaterno() + " " + estudiante.getNombre() + " - " + estudiante.getMatricula();
-                DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete);
-                listaDtoEstudiantes.add(dtoEstudianteComplete);
-            });
-            return listaDtoEstudiantes.get(0);
+            ResultadoEJB<DtoEstudianteComplete> res = ejbTutor.empaquetaDtoEstudianteComplete(idEstudiante);
+            if(res.getCorrecto()) return res.getValor();
+            else return null;
         }
     }
     
     public String personalActivoLabel(Integer clave){
-         List<PersonalActivo> docentes = em.createQuery("select p from Personal p where p.estado <> 'B' and p.clave = :clave ", Personal.class)
-                    .setParameter("clave", clave)
-                    .getResultStream()
-                    .map(p -> ejbPersonalBean.pack(p))
-                    .collect(Collectors.toList());
-         return String.valueOf(docentes.get(0).getPersonal().getClave()).concat(" - ")
-                 .concat(docentes.get(0).getPersonal().getNombre()).concat(" - ")
-                 .concat(docentes.get(0).getAreaOperativa().getNombre());
+         try {
+            return ejbTutor.personalActivoLabel(clave);
+        } catch (Exception e) {
+            return "";
+        }
     }
     
     public String parseHoraMinutos(Date hora){
         DateFormat formatoHora = new SimpleDateFormat("HH:mm a");    
         return formatoHora.format(hora);
     }
+    
+    public Boolean permiteEliminarPAT(String estado){
+        if(estado.isEmpty() || estado.equals(""))return Boolean.FALSE;
+        else return (PlanAccionTutorialEstadoConverter.of(estado).getNivel() < 2.2D);
+    }
+    
+    public Boolean validarDirector(String estado){
+        if(PlanAccionTutorialEstadoConverter.of(estado).getNivel() > 1D || PlanAccionTutorialEstadoConverter.of(estado).getNivel() == -1.1D){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
+    public String leyendaValidacion(String estado){
+        if(estado.isEmpty() || estado.equals("")){
+            return "Pendiente de registro";
+        }else{
+            return (PlanAccionTutorialEstadoConverter.of(estado).getLabel());
+        }
+    }
+    
+    public Date fechaMinina(Integer anio, String mes){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(anio, ejbPeriodo.getNumeroMes(mes)-1,1);
+        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DATE));
+        Date date = calendar.getTime();
+        return date;
+    }
+    
+    public Date fechaMaxima(Integer anio, String mes){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(anio, ejbPeriodo.getNumeroMes(mes)-1,1);
+        calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+        Date date = calendar.getTime();
+        return date;
+    }
 
+    public AreasUniversidad getNombreCarrera(Short carreraEstudiante){
+        ResultadoEJB<AreasUniversidad> res = ejbTutor.getCarreraEstudiante(carreraEstudiante);
+        if(res.getCorrecto())return res.getValor();
+        else return (new AreasUniversidad());
+    }
 }

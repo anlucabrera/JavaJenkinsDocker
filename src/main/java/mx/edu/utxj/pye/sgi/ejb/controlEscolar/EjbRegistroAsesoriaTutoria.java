@@ -42,10 +42,10 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPlanAccionTutorial;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTutoriaIndividualCE;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asesoria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CasoCritico;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.EstudiantesPye;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.FuncionesTutor;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ParticipantesTutoriaGrupal;
@@ -58,7 +58,10 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
+import mx.edu.utxj.pye.sgi.enums.ParticipanteTutoriaGrupalAcuerdos;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
+import mx.edu.utxj.pye.sgi.enums.PlanAccionTutorialEstado;
+import mx.edu.utxj.pye.sgi.enums.converter.PlanAccionTutorialEstadoConverter;
 import mx.edu.utxj.pye.sgi.exception.EvidenciaRegistroExtensionNoValidaException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -448,15 +451,26 @@ public class EjbRegistroAsesoriaTutoria {
             PlanAccionTutorial pat = new PlanAccionTutorial();
             if(!(buscaPlanAccionTutorialExistente(planAccionTutorial.getGrupo()).getCorrecto())){
                 pat = planAccionTutorial;
+                pat.setEstatus(PlanAccionTutorialEstado.REGISTRADO.getLabel());
                 em.persist(pat);
                 return ResultadoEJB.crearCorrecto(pat, "El registro del plan de acción tutorial ha sido guardado correctamente en el sistema");
             }else{
                 pat = planAccionTutorial;
+                pat.setEstatus(PlanAccionTutorialEstado.ENVIADO_PARA_REVISION.getLabel());
                 em.merge(pat);
                 return ResultadoEJB.crearCorrecto(pat, "El registro del plan de acción tutorial ha sido actualizado correctamente en el sistema");
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener el plan de acción tutorial del grupo seleccionado (EjbRegistroAsesoriaTutoria.guardaPlanAccionTutorial)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<PlanAccionTutorial> validarPlanDeAccionTutorial(PlanAccionTutorial planAccionTutorial){
+        try {
+            em.merge(planAccionTutorial);
+            return ResultadoEJB.crearCorrecto(planAccionTutorial, "El plan de acción tutorial se ha actualzado correctamente en el sistema");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido actualizar el plan de acción tutorial del tutor seleccionado (EjbRegistroAsesoriaTutoria.validarPlanDeAccionTutorial)", e, null);
         }
     }
     
@@ -488,7 +502,7 @@ public class EjbRegistroAsesoriaTutoria {
      */
     public ResultadoEJB<Boolean> eliminarPlanAccionTutorial(PlanAccionTutorial planAccionTutorial) {
         try {
-//            if(planAccionTutorial.getValidacionDirector() == false) {
+            if(PlanAccionTutorialEstadoConverter.of(planAccionTutorial.getEstatus()).getNivel() > 0D && PlanAccionTutorialEstadoConverter.of(planAccionTutorial.getEstatus()).getNivel() < 2.2D) {
                 if (!(buscaSesionesGrupalesXPlanAT(planAccionTutorial.getGrupo()).getCorrecto())) {
                     PlanAccionTutorial pat = em.find(PlanAccionTutorial.class, planAccionTutorial.getPlanAccionTutoria());
                     em.remove(pat);
@@ -497,9 +511,9 @@ public class EjbRegistroAsesoriaTutoria {
                 } else {
                     return ResultadoEJB.crearErroneo(2, Boolean.FALSE, "No se ha podido eliminar el plan de acción debido a que ya tiene asignadas Sesiones Grupales");
                 }
-//            } else {
-//                return ResultadoEJB.crearErroneo(3, Boolean.FALSE, "No se ha podido eliminar el plan de acción tutorial, debido a que ya ha sido validado por el director de carrera");
-//            }
+            } else {
+                return ResultadoEJB.crearErroneo(3, Boolean.FALSE, "No se ha podido eliminar el plan de acción tutorial, debido a que ya ha sido validado por el director de carrera");
+            }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el plan de acción tutorial seleccionado (EjbRegistroAsesoriaTutoria.eliminarPlanAccionTutorial)", e, Boolean.TYPE);
         }
@@ -842,32 +856,66 @@ public class EjbRegistroAsesoriaTutoria {
     
     public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(String pista, Integer periodo, Integer grado, Character literal, short carrera){
         try{
-            List<EstudiantesPye> estudiantes = em.createQuery("select e from EstudiantesPye e where concat(e.aPaterno, e.aMaterno, e.nombre, e.matricula) like concat('%',:pista,'%') AND e.periodo = :periodo AND e.grado = :grado AND e.grupo = :literal AND e.carrera = :carrera", EstudiantesPye.class)
+            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') AND e.periodo = :periodo AND e.grupo.grado = :grado AND e.grupo.literal = :literal AND e.carrera = :carrera ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo", Estudiante.class)
                     .setParameter("pista", pista)
                     .setParameter("periodo", periodo)
                     .setParameter("grado", grado)
                     .setParameter("literal", literal)
                     .setParameter("carrera", carrera)
                     .getResultList();
-            
+
             List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
-            
+
             estudiantes.forEach(estudiante -> {
-                String datosComplete = estudiante.getAPaterno() +" "+ estudiante.getAMaterno() +" "+ estudiante.getNombre() + " - " + estudiante.getMatricula();
+                String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno() + " " + estudiante.getAspirante().getIdPersona().getApellidoMaterno() + " " + estudiante.getAspirante().getIdPersona().getNombre() + " - " + estudiante.getMatricula();
                 DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete);
                 listaDtoEstudiantes.add(dtoEstudianteComplete);
             });
-            
+
             return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Lista para mostrar en autocomplete");
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo localizar la lista de estudiantes activos. (EjbRegistroAsesoriaTutoria.buscarEstudiante)", e, null);
         }
+    }
+    
+    public ResultadoEJB<DtoEstudianteComplete> empaquetaDtoEstudianteComplete(Integer idEstudiante) {
+        try {
+            if (idEstudiante == null) {
+                return null;
+            } else {
+                List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.idEstudiante = :idEstudiante", Estudiante.class)
+                        .setParameter("idEstudiante", idEstudiante)
+                        .getResultList();
+
+                List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
+
+                estudiantes.forEach(estudiante -> {
+                    String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno() + " " + estudiante.getAspirante().getIdPersona().getApellidoMaterno() + " " + estudiante.getAspirante().getIdPersona().getNombre() + " - " + estudiante.getMatricula();
+                    DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete);
+                    listaDtoEstudiantes.add(dtoEstudianteComplete);
+                });
+                return ResultadoEJB.crearCorrecto(listaDtoEstudiantes.get(0), "Estudiante empaquetado");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el estudiante. (EjbRegistroAsesoriaTutoria.empaquetaDtoEstudianteComplete)", e, DtoEstudianteComplete.class);
+        }
+    }
+    
+    public String personalActivoLabel(Integer clave){
+         List<PersonalActivo> docentes = em.createQuery("SELECT p FROM Personal p WHERE p.estado <> 'B' AND p.clave = :clave ", Personal.class)
+                    .setParameter("clave", clave)
+                    .getResultStream()
+                    .map(p -> ejbPersonalBean.pack(p))
+                    .collect(Collectors.toList());
+         return String.valueOf(docentes.get(0).getPersonal().getClave()).concat(" - ")
+                 .concat(docentes.get(0).getPersonal().getNombre()).concat(" - ")
+                 .concat(docentes.get(0).getAreaOperativa().getNombre());
     }
     
     public ResultadoEJB<List<TutoriasGrupales>> buscaTutoriasGrupalesPorSesionEventoRegistro(SesionesGrupalesTutorias sesionGrupal, EventosRegistros eventoRegistro){
         try {
             List<TutoriasGrupales> listaTutoriasGrupales = new ArrayList<>();
-            listaTutoriasGrupales = em.createQuery("SELECT tg FROM TutoriasGrupales tg WHERE tg.sesionGrupal.sesionGrupal = :sesionGrupal AND tg.eventoRegistro = :eventoRegistro", TutoriasGrupales.class)
+            listaTutoriasGrupales = em.createQuery("SELECT tg FROM TutoriasGrupales tg WHERE tg.sesionGrupal.sesionGrupal = :sesionGrupal AND tg.eventoRegistro = :eventoRegistro ORDER BY tg.tutoriaGrupal DESC", TutoriasGrupales.class)
                     .setParameter("sesionGrupal", sesionGrupal.getSesionGrupal())
                     .setParameter("eventoRegistro", eventoRegistro.getEventoRegistro())
                     .getResultList();
@@ -904,13 +952,12 @@ public class EjbRegistroAsesoriaTutoria {
             ptg = participante;
             ResultadoEJB<List<ParticipantesTutoriaGrupal>> res = buscaParticipanteTutoriaGrupal(ptg.getParticipantesTutoriaGrupalPK().getTutoriaGrupal(),ptg.getParticipantesTutoriaGrupalPK().getEstudiante());
             if(!res.getCorrecto()){
+                ptg.setAsistencia(Boolean.TRUE);
                 em.persist(ptg);
                 em.flush();
                 return ResultadoEJB.crearCorrecto(ptg, "El participante ha sido guardado correctamente");
             }else{
-                em.remove(res.getValor().get(0));
-                em.flush();
-                return ResultadoEJB.crearCorrecto(ptg, "El participante ha sido removido correctamente");
+                return ResultadoEJB.crearErroneo(2, "No es permitido guardar un estudiante dos veces en en una tutoría grupal" ,ParticipantesTutoriaGrupal.class);
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se ha podido guardar la participación del estudiante en la tutoria grupal", e, ParticipantesTutoriaGrupal.class);
@@ -925,6 +972,8 @@ public class EjbRegistroAsesoriaTutoria {
             if(!(buscaParticipanteTutoriaGrupal(ptg.getParticipantesTutoriaGrupalPK().getTutoriaGrupal(),ptg.getParticipantesTutoriaGrupalPK().getEstudiante()).getCorrecto())){
                 return ResultadoEJB.crearErroneo(2, "El participante necesita ser guardado previamente", ParticipantesTutoriaGrupal.class);
             }else{
+                if(ptg.getAsistencia()) ptg.setAsistencia(Boolean.FALSE);
+                else ptg.setAsistencia(Boolean.TRUE);
                 em.merge(ptg);
                 return ResultadoEJB.crearCorrecto(ptg, "El participante ha sido actualizado correctamente");
             }
@@ -972,11 +1021,11 @@ public class EjbRegistroAsesoriaTutoria {
             PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, e.getPeriodo());
             DtoDatosEstudiante dto = new DtoDatosEstudiante(e, programaEducativo, periodoEscolar);
             DtoParticipantesTutoriaGrupalCE dtoPTG;
-//            ResultadoEJB<ParticipantesTutoriaGrupal> resGuardar = guardaParticipanteTutoriaGrupal(new ParticipantesTutoriaGrupal(new ParticipantesTutoriaGrupalPK(tutoriaGrupal.getTutoriaGrupal(), e.getIdEstudiante()), false, "Pendiente de registro"));
-//            if (resGuardar.getCorrecto()) {
-//                dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, resGuardar.getValor(), true);
-//                lista.add(dtoPTG);
-//            }
+            ResultadoEJB<ParticipantesTutoriaGrupal> resGuardar = guardaParticipanteTutoriaGrupal(new ParticipantesTutoriaGrupal(new ParticipantesTutoriaGrupalPK(tutoriaGrupal.getTutoriaGrupal(), e.getIdEstudiante()),Boolean.TRUE, ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel(), "Pendiente de registro"));
+            if (resGuardar.getCorrecto()) {
+                dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, resGuardar.getValor(), true);
+                lista.add(dtoPTG);
+            }
         });
         return lista;
     }
@@ -990,14 +1039,13 @@ public class EjbRegistroAsesoriaTutoria {
             DtoParticipantesTutoriaGrupalCE dtoPTG;
             ResultadoEJB<List<ParticipantesTutoriaGrupal>> res = buscaParticipanteTutoriaGrupal(tutoriaGrupal.getTutoriaGrupal(), e.getIdEstudiante());
             if (res.getCorrecto()) {
-                dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, res.getValor().get(0), true);
+                dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, res.getValor().get(0), res.getValor().get(0).getAsistencia());
                 lista.add(dtoPTG);
             } else {
-//                ParticipantesTutoriaGrupalPK pk = new ParticipantesTutoriaGrupalPK(tutoriaGrupal.getTutoriaGrupal(), e.getIdEstudiante());
-//                ParticipantesTutoriaGrupal partTG = new ParticipantesTutoriaGrupal(pk, true, "Pendiente de registro");
-//                partTG.setEstadoCasoCritico(Boolean.FALSE);
-//                dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, partTG, false);
-//                lista.add(dtoPTG);
+                ParticipantesTutoriaGrupalPK pk = new ParticipantesTutoriaGrupalPK(tutoriaGrupal.getTutoriaGrupal(), e.getIdEstudiante());
+                ParticipantesTutoriaGrupal partTG = new ParticipantesTutoriaGrupal(pk, Boolean.FALSE, ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel(), "Sistema - No se ha registrado la asistencia de este estudiante");
+                dtoPTG = new DtoParticipantesTutoriaGrupalCE(dto, partTG, false);
+                lista.add(dtoPTG);
             }
         });
         return lista;
@@ -1076,7 +1124,6 @@ public class EjbRegistroAsesoriaTutoria {
                 em.remove(ti);
                 return ResultadoEJB.crearCorrecto(Boolean.TRUE, "La tutoría individual se ha eliminado del sistema");
             }else{
-                System.err.println("Caso Critico: " + dtoCC.getCasoCritico().getCaso());
                 if(dtoCC.getEstado().getNivel() < CasoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.getNivel() && dtoCC.getEstado().getNivel() < CasoCriticoEstado.EN_SEGUMIENTO_TUTOR.getNivel()){
                     TutoriasIndividuales ti = em.find(TutoriasIndividuales.class, tutoriaIndividual.getTutoriaIndividual());
                     eliminarEvidenciaCasoCritico(dtoCC);
@@ -1114,7 +1161,7 @@ public class EjbRegistroAsesoriaTutoria {
     public ResultadoEJB<List<DtoTutoriaIndividualCE>> buscaTutoriasIndividuales(SesionesGrupalesTutorias sesionGrupal, EventosRegistros eventoRegistro) {
         try {
             List<TutoriasIndividuales> listaTutoriasIndividuales = new ArrayList<>();
-            listaTutoriasIndividuales = em.createQuery("SELECT ti FROM TutoriasIndividuales ti WHERE ti.sesionGrupal.sesionGrupal = :sesionGrupal AND ti.eventoRegistro = :eventoRegistro", TutoriasIndividuales.class)
+            listaTutoriasIndividuales = em.createQuery("SELECT ti FROM TutoriasIndividuales ti WHERE ti.sesionGrupal.sesionGrupal = :sesionGrupal AND ti.eventoRegistro = :eventoRegistro ORDER BY ti.tutoriaIndividual DESC", TutoriasIndividuales.class)
                     .setParameter("sesionGrupal", sesionGrupal.getSesionGrupal())
                     .setParameter("eventoRegistro", eventoRegistro.getEventoRegistro())
                     .getResultList();
@@ -1436,6 +1483,14 @@ public class EjbRegistroAsesoriaTutoria {
             return ResultadoEJB.crearCorrecto(pendientes, "Lista de casos críticos pendientes");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de casos críticos pendientes de seguimiento (EjbRegistroAsesoriaTutoria.getCasoCriticosPendientes).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<AreasUniversidad> getCarreraEstudiante(Short carreraEstudiante){
+        try {
+            return ResultadoEJB.crearCorrecto(em.find(AreasUniversidad.class, carreraEstudiante), "Área Encontrada");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la participación de la tutoría grupal (EjbRegistroAsesoriaTutoria.getCarreraEstudiante)", e, null);
         }
     }
 }
