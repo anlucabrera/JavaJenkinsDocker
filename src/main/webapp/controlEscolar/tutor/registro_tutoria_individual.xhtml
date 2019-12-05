@@ -180,7 +180,7 @@
                                                         </div>
                                                         <p>Sesión grupal de tutoría</p>
                                                     </div>
-                                                    
+
                                                     <c:if test="#{!empty registroTutoriaIndividual.rol.listaCasosCriticos}">
                                                         <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10p">
                                                             <p:separator/>
@@ -229,12 +229,12 @@
                                                                 </c:if>
                                                             </div>  
 
-                                                            
+
                                                             <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px">
                                                                 <p:separator/>
                                                                 <p:outputLabel value="3.- En caso de seleciconar un caso crítico, favor de llenar la siguiente información. (Puede adjuntar evidencia de seguimiento, canalizar estudiante con especialista, ingresar comentarios del caso crítico seleciconado) "></p:outputLabel>
                                                             </div>
-                                                            
+
                                                             <div class="col-sm-12 col-md-12 col-lg-4" style="margin-bottom: 15px">
 
                                                                 <div class="ui-material" style="margin-bottom: 5px">
@@ -264,7 +264,7 @@
                                                                 </div>
 
                                                             </div>
-                                                            
+
                                                             <div class="col-sm-12 col-md-12 col-lg-8" style="margin-bottom: 15px">
                                                                 <div class="ui-material">
                                                                     <p:inputTextarea id="ticcComentariosTutor"
@@ -286,12 +286,12 @@
                                                                 </div>
                                                                 <p:message for="ticcComentariosTutor" />
                                                             </div>
-                                                            
+
                                                             <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px"></div>
                                                         </c:if>
                                                     </c:if>
 
-                                                    
+
                                                     <div class="col-sm-12 col-md-12 col-lg-12">
                                                         <p:separator/>
                                                         <p:outputLabel value="4.- Ingrese la información de la tutoría individual "></p:outputLabel>
@@ -308,8 +308,8 @@
                                                                         locale="es"
                                                                         readonlyInput="true"
                                                                         mask="true"
-                                                                        mindate="#{registroTutoriaIndividual.rol.periodoSeleccionado.periodoEscolarFechas.inicio}"
-                                                                        maxdate="#{registroTutoriaIndividual.rol.periodoSeleccionado.periodoEscolarFechas.fin}"
+                                                                        mindate="#{caster.fechaMinina(registroTutoriaIndividual.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaIndividual.rol.eventoSeleccionado.mes)}"
+                                                                        maxdate="#{caster.fechaMaxima(registroTutoriaIndividual.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaIndividual.rol.eventoSeleccionado.mes)}"
                                                                         >
                                                             </p:calendar>
                                                         </div>
@@ -469,15 +469,21 @@
                                                 </div>
 
                                                 <div style="margin-bottom: 10px">
-                                                    <p:outputLabel value="Listado de tutorías individuales registrados en la sesión y mes de registro seleccionados"/>
                                                 </div>
                                                 <div class="row margin-bottom">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Listado de tutorías individuales registrados en la sesión y mes de registro seleccionados" style="padding-top: 5px;" />
+                                                            <p></p>
+                                                        </f:facet>
+                                                    </p:toolbar>
                                                     <!--Listado de TI-->
                                                     <center>
                                                         <p:dataTable id="dtTutoriasIndividuales" 
                                                                      var="ti" 
                                                                      value="#{registroTutoriaIndividual.rol.listaDtoTutoriasIndividuales}" 
-                                                                     sortBy="#{ti.tutoriaIndividual.tutoriaIndividual}"
+
                                                                      tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                      resizeMode="expand"
                                                                      emptyMessage="Aún no se han registrado tutorías individuales en la sesión y evento de registro seleccionado"

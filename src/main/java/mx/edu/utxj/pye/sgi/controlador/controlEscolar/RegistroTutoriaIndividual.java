@@ -14,11 +14,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -41,7 +43,6 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroAsesoriaTutoria;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.EstudiantesPye;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SesionesGrupalesTutorias;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutoriasIndividuales;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -137,7 +138,7 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
         tutoriaIndividual.setEventoRegistro(rol.getEventoSeleccionado().getEventoRegistro());
         rol.getDtoTutoriaIndividualCE().setTutoriaIndividual(tutoriaIndividual);
         
-        EstudiantesPye estudiantesPye = new EstudiantesPye();
+        Estudiante estudiantesPye = new Estudiante();
         DtoEstudianteComplete estudiante = new DtoEstudianteComplete(estudiantesPye, "");
         rol.setEstudianteSeguimientoSeleccionado(estudiante);
         
@@ -230,7 +231,7 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
     public void cambiarEstudianteSeleccionado(ValueChangeEvent event){
         if(event.getNewValue() instanceof DtoEstudianteComplete){
             DtoEstudianteComplete estudiante = (DtoEstudianteComplete) event.getNewValue();
-            ResultadoEJB<Estudiante> estudianteEncontrado = ejb.buscaEstudiante(estudiante.getEstudiantesPye().getIdEstudiante());
+            ResultadoEJB<Estudiante> estudianteEncontrado = ejb.buscaEstudiante(estudiante.getEstudiantes().getIdEstudiante());
             if(estudianteEncontrado.getCorrecto()){
                 rol.setEstudianteSeleccionado(estudianteEncontrado.getValor());
                 actualizarListaCasosCriticos();
@@ -352,7 +353,7 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
         rol.setFecha(rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual().getFecha());
         rol.setHoraInicio(rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual().getHoraInicio());
 //        Actualizar lista de casos criticos el estudiante seleccionado
-        ResultadoEJB<Estudiante> estudianteEncontrado = ejb.buscaEstudiante(rol.getEstudianteSeguimientoSeleccionado().getEstudiantesPye().getIdEstudiante());
+        ResultadoEJB<Estudiante> estudianteEncontrado = ejb.buscaEstudiante(rol.getEstudianteSeguimientoSeleccionado().getEstudiantes().getIdEstudiante());
         rol.setEstudianteSeleccionado(estudianteEncontrado.getValor());
 
 //        Validar que el caso critico sea o no nulo
@@ -469,7 +470,7 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
         ResultadoEJB<List<DtoCasosCriticosPendientes>> res = ejb.getCasoCriticosPendientes(rol.getGrupoTutorSeleccionado().getGrupo());
         if(res.getCorrecto()){
             rol.setListaCasosCriticosPendientes(Collections.EMPTY_LIST);
-            rol.setListaCasosCriticosPendientes(res.getValor());
+            rol.setListaCasosCriticosPendientes(res.getValor().stream().sorted(Comparator.comparingInt(DtoCasosCriticosPendientes::getCasosCriticosPorAtender).reversed()).collect(Collectors.toList()));
         }else{
             rol.setListaCasosCriticosPendientes(Collections.EMPTY_LIST);
             mostrarMensajeResultadoEJB(res);
