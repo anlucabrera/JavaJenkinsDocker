@@ -54,18 +54,26 @@ public class EjbDatosEstudianteAdmin {
     }
     
     public List<Estudiante> buscaEstudiantes(Integer periodo) {
-        List<Estudiante> es = new ArrayList<>();
-        es = em.createQuery("SELECT es FROM Estudiante es WHERE es.periodo =:periodo", Estudiante.class)
+        List<Estudiante> es = em.createQuery("SELECT es FROM Estudiante es WHERE es.periodo =:periodo", Estudiante.class)
                 .setParameter("periodo", periodo)
                 .getResultList();
-        return es;
+        
+        if (es == null || es.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return es;
+        }
     }
     public Estudiante buscaEstudiante(Integer matricula) {
         Estudiante e = new Estudiante();
         e = em.createQuery("SELECT es FROM Estudiante es WHERE es.matricula =:matricula", Estudiante.class)
                 .setParameter("matricula", matricula)
                 .getResultList().get(0);
-        return e;
+        if (e == null) {
+            return new Estudiante();
+        } else {
+            return e;
+        }
 
     }        
     public Login actualizarUser(Login login){

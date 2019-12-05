@@ -237,12 +237,12 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                         programadasCorte = programadasCorte + 1;
                         prograRepoCorte = prograRepoCorte + 1;
                     }
-                    if (tR != 0) {
+                    if ((tR != 0) && (tR>=tP)) {                
                         realizadasCorte = realizadasCorte + 1;
                     }
                     if (tR != 0 && Objects.equals(tR, tP)) {                        
                         realRepoCorte = realRepoCorte + 1;
-                    }
+                }
                 }
             });
             for (incremento = 0; incremento <= numeroMes; incremento++) {
@@ -272,7 +272,7 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                             programadasMensual = programadasMensual + 1;
                             prograRepoMensual = prograRepoMensual + 1;
                         }
-                        if (tR != 0) {
+                        if ((tR != 0) && (tR>=tP)) {
                             realizadasMensual = realizadasMensual + 1;
                         }
                         if (tR != 0 && Objects.equals(tR, tP)) {
@@ -301,15 +301,15 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                 }
 
                 
-                if (maximoValor <= 115) {
+                if (maximoValor < 150) {
                     extender = "myconfig1";
-                } else if (maximoValor <= 200) {
+                } else if (maximoValor < 250) {
                     extender = "myconfig2";
-                } else if (maximoValor <= 300) {
+                } else if (maximoValor < 350) {
                     extender = "myconfig3";
-                } else if (maximoValor <= 400) {
+                } else if (maximoValor < 450) {
                     extender = "myconfig4";
-                } else if (maximoValor <= 500) {
+                } else if (maximoValor < 550) {
                     extender = "myconfig5";
                 }
                 

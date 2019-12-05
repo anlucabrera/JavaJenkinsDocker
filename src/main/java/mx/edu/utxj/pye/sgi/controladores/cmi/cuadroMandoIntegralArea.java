@@ -205,12 +205,12 @@ public class cuadroMandoIntegralArea implements Serializable {
                         programadasCorte = programadasCorte + 1;
                         prograRepoCorte = prograRepoCorte + 1;
                     }
-                    if (tR != 0) {
+                    if ((tR != 0) && (tR>=tP)) {                
                         realizadasCorte = realizadasCorte + 1;
                     }
                     if (tR != 0 && Objects.equals(tR, tP)) {                        
                         realRepoCorte = realRepoCorte + 1;
-                    }
+                }
                 }
             });
             for (incremento = 0; incremento <= numeroMes; incremento++) {
@@ -240,7 +240,7 @@ public class cuadroMandoIntegralArea implements Serializable {
                             programadasMensual = programadasMensual + 1;
                             prograRepoMensual = prograRepoMensual + 1;
                         }
-                        if (tR != 0) {
+                        if ((tR != 0) && (tR>=tP)) {
                             realizadasMensual = realizadasMensual + 1;
                         }
                         if (tR != 0 && Objects.equals(tR, tP)) {
@@ -262,24 +262,25 @@ public class cuadroMandoIntegralArea implements Serializable {
                     promSP= realizadasMensual * 100D;
                 } else if (programadasMensual == 0 && realizadasMensual == 0) {
                     promSP= 0D;
-                }
+                }     
 
                 if (maximoValor <= promSP) {
                     maximoValor = promSP;
                 }
 
-                if (maximoValor <= 115) {
+                
+                if (maximoValor < 150) {
                     extender = "myconfig1";
-                } else if (maximoValor <= 200) {
+                } else if (maximoValor < 250) {
                     extender = "myconfig2";
-                } else if (maximoValor <= 300) {
+                } else if (maximoValor < 350) {
                     extender = "myconfig3";
-                } else if (maximoValor <= 400) {
+                } else if (maximoValor < 450) {
                     extender = "myconfig4";
-                } else if (maximoValor <= 500) {
+                } else if (maximoValor < 550) {
                     extender = "myconfig5";
                 }
-
+                
                     grafSP.add(new Grafica(poau.obtenerMesNombre(incremento), promSP,promSP));                    
                     grafCP.add(new Grafica(poau.obtenerMesNombre(incremento), promCP,promCP));
             }
@@ -334,7 +335,7 @@ public class cuadroMandoIntegralArea implements Serializable {
         return new MeterGaugeChartModel(avanceSp, intervals);
     }
 
-    public String datosGraica(List<cuadroMandoIntegralPlaneacion.Grafica> er) {
+    public String datosGraica(List<Grafica> er) {
         valores = "";
         er.forEach((t) -> {
             valores = valores + "---- mes: " + t.getMes() + " avance: " + t.getAvance() + "----";
