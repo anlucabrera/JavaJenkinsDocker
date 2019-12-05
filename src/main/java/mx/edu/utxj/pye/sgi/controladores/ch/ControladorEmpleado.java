@@ -231,7 +231,7 @@ public class ControladorEmpleado implements Serializable {
                     evaluable = false;
                 } else {
                     nuevaAreasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(procesopoa.getArea());
-                    if (procesopoa.getActivaEtapa2()==Boolean.TRUE) {
+                    if (Objects.equals(procesopoa.getActivaEtapa2(), Boolean.TRUE)) {
                         if (procesopoa.getEvaluacion() == null) {
                             procesopoa.setEvaluacion(new Calendarioevaluacionpoa());
                             Calendarioevaluacionpoa periodoEvaluacion = new Calendarioevaluacionpoa();
@@ -248,11 +248,17 @@ public class ControladorEmpleado implements Serializable {
                         } else {
                             evaluable = true;
                         }
-                        tienePOA = true;
                         eventosRegistro();
+                    }
+                    if (Objects.equals(procesopoa.getActivaEtapa1(), Boolean.TRUE)) {
+                        tienePOA = true;
                         if(!procesopoa.getValidacionRegistroA() && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Registro").get(0))){poaProces.add(true);} else {poaProces.add(false);}
                         if(procesopoa.getValidacionRegistroA() && (procesopoa.getValidacionRFFinalizado() == false) && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Recurso").get(0))){poaProces.add(true);} else {poaProces.add(false);}
                         if(procesopoa.getValidacionRFFinalizado() && (procesopoa.getValidacionJustificacion() == false) && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Justificacion").get(0))){poaProces.add(true);} else {poaProces.add(false);}
+                    } else {
+                        poaProces.add(false);
+                        poaProces.add(false);
+                        poaProces.add(false);
                     }
                 }
             } else {

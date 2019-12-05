@@ -124,7 +124,7 @@
                                                                                                 </c:if>
                                                                                                 <div class="small-box #{v}">
                                                                                                     <span class="info-box-icon"> <img class="profile-user-img img-fluid img-circle"
-                                                                                                                                          src="http://siip.utxicotepec.edu.mx/sgot-images/evidencias/personal/#{evaluado.docenteImparte.clave}.jpg"
+                                                                                                                                          src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{evaluado.docenteImparte.clave}.jpg"
                                                                                                                                           alt="User profile picture"></img></span>
                                                                                                     <div class="info-box-content">
                                                                                                             <c:if test="#{evaluado.resultados.completo}"><span class="info-box-number">Finalizado</span></c:if>
@@ -193,7 +193,7 @@
                                                     <c:set var="docente" value="#{evaluacionDoncenteMateriaControler.dtoDocenteEvaluando}" />
                                                     <p:outputPanel >
                                                         <h4 class="#{docente.resultados.completo?'text-info':'text-warn'} " style="margin: 0px;">#{docente.resultados.completo?'Finalizado':'Pendiente'}</h4>
-                                                        <img src="http://siip.utxicotepec.edu.mx/sgot-images/evidencias/personal/#{numeroNomina}.jpg" width="150"
+                                                        <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{numeroNomina}.jpg" width="150"
                                                              alt="#{numeroNomina}" title="Personal #{numeroNomina}"
                                                              style="border-color: black; border-style: solid; border-width: 2px;" />
                                                     </p:outputPanel>
