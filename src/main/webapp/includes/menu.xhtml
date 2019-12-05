@@ -34,8 +34,9 @@
                     </p:link></li></c:if>
             <c:if test="#{cambioPwdEstudiante.mostrarEnDesarrollo(request) and cambioPwdEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/CambioPwdEstudiante.xhtml"><i class="fa fa-key"></i><span>Cambio de contraseña</span><span class="pull-right-container"></span></p:link></li></c:if>
             <c:if test="#{cuestionarioPsicopedagogicoEstudiante.mostrarEnDesarrollo(request) and cuestionarioPsicopedagogicoEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/cuestionarioPsicopedagogico.xhtml"><i class="fa fa-id-badge"></i><span>Cuestionario Psicopedagógico</span><span class="pull-right-container"></span></p:link></li></c:if>
-            <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/docentesMateriaIndex.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
-            <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
+            
+            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Asesorías y Tutorías</li>
+            <c:if test="#{validacionTutoriaGrupalEstudiante.mostrarEnDesarrollo(request) and validacionTutoriaGrupalEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/tutorias_grupales.xhtml"><i class="fa fa-slideshare"></i><span>Tutorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
         </c:if>
         <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
@@ -48,7 +49,7 @@
                         <i class=""></i>
                     </span>
                 </a>
-                <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/docentesMateriaIndex.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
+                <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/docentesMateria.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
                 <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
                 <c:if test="#{estudioEgresados.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/estudioEgresados.xhtml"><i class="fa fa-graduation-cap"></i><span>Estudio egresado</span></p:link></li></c:if>
                 <c:if test="#{encuestaSatisfaccionEgresadosIng.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción ING.</span></p:link></li></c:if>
@@ -176,14 +177,9 @@
                 <c:if test="#{registroPlanTutoriaTutor.mostrarEnDesarrollo(request) and registroPlanTutoriaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/plan_accion_tutorial.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{registroTutoriaGrupal.mostrarEnDesarrollo(request) and registroTutoriaGrupal.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_grupal.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Grupales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{registroTutoriaIndividual.mostrarEnDesarrollo(request) and registroTutoriaIndividual.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_individual.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Individuales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-
+                
                 <!-- Especialista -->
                 <c:if test="#{seguimientoCasoCriticoEspecialista.mostrarEnDesarrollo(request) and seguimientoCasoCriticoEspecialista.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Caso Crítico Especialista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-
-                <!-- Coordinador -->
-                <c:if test="#{consultaCalificacionesCoordinadorAD.mostrarEnDesarrollo(request) and consultaCalificacionesCoordinadorAD.tieneAcceso}"><li>
-                    <p:link href="#{request.contextPath}/controlEscolar/coordinador/consultarCalificacionesCoordinador.xhtml"><i class="fa fa-list-alt"></i><span>Consultar calificaciones</span>
-                    </p:link></li></c:if>
             </c:if>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
             <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">
@@ -232,7 +228,7 @@
                         </li>
                     </c:if>
                     <!-- Segumiento de Evaluciones  a Tutor y Evaluacion a Docente-->
-                    <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.tutorCe or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
+                    <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-check-square-o"></i> <span>Seguimiento Evaluaciones</span>
@@ -423,44 +419,6 @@
                     </ul>
                 </li>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 60}">
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Titulación</li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-folder"></i><span>Expedientes</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li>
-                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpMatricula.xhtml" target="_blank"><i class="fa fa-user-o"></i>
-                                <span>Seguimiento por Matricula</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpGeneracionING.xhtml" target="_blank"><i class="fa fa-group"></i>
-                                <span>Seguimiento Nivel ING/LIC</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpGeneracionTSU.xhtml" target="_blank"><i class="fa fa-group"></i>
-                                <span>Seguimiento Nivel TSU</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/fechasDocumentos.xhtml" target="_blank"><i class="fa fa-calendar"></i>
-                                <span>Catálogo Fechas Documentos</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/reporteEstadistico.xhtml" target="_blank"><i class="fa fa-table"></i>
-                                <span>Reportes Expedientes</span>
-                            </p:link>
-                        </li>
-                    </ul>
-                </li>
-            </c:if>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Justificación de asistencias</li>
             <li class="treeview">
                 <a href="#">
@@ -629,54 +587,49 @@
                             </a>
                             <ul class="treeview-menu" style="display: none;">
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/1_ESPACIOS_CONCERTADOS_DE_ESTADIA_2020.xlsx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/1. ESPACIOS CONCERTADOS DE ESTADÍA (1).xlsx">
                                         <span>1. Espacios concertados</span>
                                     </p:link>
                                 </li>      
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/2_CONCENTRADO_DE_ESTADIAS_2020.xlsx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/2. CONCENTRADO DE ESTADÍAS (1).xlsx">
                                         <span>2. Concentrado de estadías</span>
                                     </p:link>
                                 </li>       
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/3_CARTA_DE_PRESENTACION_2020.docx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/3. CARTA DE PRESENTACIÓN (1).docx">
                                         <span>3. Carta de presentación</span>
                                     </p:link>
                                 </li>       
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/4_CARTA_DE_ACEPTACION_2020.docx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/4. CARTA DE ACEPTACIÓN (1).docx">
                                         <span>4. Carta de aceptación</span>
                                     </p:link>
                                 </li>   
                                 <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29) || (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/5_Seguimiento_Estadia_Tecnica_2020.xls">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/5. Seguimiento de la Estadía Técnica (1).xls">
                                             <span>5. Seguimiento de la estadía</span>
                                         </p:link>
                                     </li>       
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/6_Informe_Mensual_2020.doc">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/6. Informe_Mensual.doc">
                                             <span>6. Informe mensual</span>
                                         </p:link>
                                     </li>       
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/7_EVALUACION_POR_ASESOR_EMPRESARIAL_2020.xls">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/7. EVALUACIÓN POR ASESOR EMPRESARIAL.xls">
                                             <span>7. Evaluación asesor <br/>empresarial</span>
                                         </p:link>
                                     </li>       
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/8_CARTA_DE_LIBERACION_2020.docx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/8. CARTA DE LIBERACIÓN (2).docx">
                                             <span>8. Carta de liberación <br/>empresarial</span>
                                         </p:link>
                                     </li>       
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/9_Carta_de_evaluacion_y_acreditacion_de_estadia_2020.doc">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/9. Carta de evaluación y acreditación de estadia.doc">
                                             <span>9. Evaluación, acreditación <br/>estadía</span>
-                                        </p:link>
-                                    </li> 
-                                    <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/FICHA_TECNICA_2020.docx">
-                                            <span>FICHA TÉCNICA</span>
                                         </p:link>
                                     </li> 
                                 </c:if>
@@ -1004,6 +957,39 @@
                     </c:forEach>
                 </c:if>
             </c:forEach> 
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 60}">
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Titulación</li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-users"></i><span>Expedientes</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpMatricula.xhtml" target="_blank"><i class="fa fa-user-o"></i>
+                                <span>Seguimiento por Matricula</span>
+                            </p:link>
+                        </li>
+                        <li>
+                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpGeneracionING.xhtml" target="_blank"><i class="fa fa-group"></i>
+                                <span>Seguimiento Nivel ING/LIC</span>
+                            </p:link>
+                        </li>
+                        <li>
+                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpGeneracionTSU.xhtml" target="_blank"><i class="fa fa-group"></i>
+                                <span>Seguimiento Nivel TSU</span>
+                            </p:link>
+                        </li>
+                        <li>
+                            <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/fechasDocumentos.xhtml" target="_blank"><i class="fa fa-folder-open"></i>
+                                <span>Catálogo Fechas Documentos</span>
+                            </p:link>
+                        </li>
+                    </ul>
+                </li>
+            </c:if>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                 <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
                     <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Personal</li>
@@ -1036,7 +1022,7 @@
                                 </p:link>
                             </li>
                         </c:if>
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 647}">
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                             <li>
                                 <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalIn.xhtml">
                                     <i class="fa fa-folder-open"></i>
@@ -1044,7 +1030,7 @@
                                 </p:link>
                             </li>
                         </c:if>
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564 and controladorEmpleado.nuevoOBJListaPersonal.clave ne 647}">
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
                             <li>
                                 <p:link href="#{request.contextPath}/capitalHumano/personal/perfilContactosE.xhtml">
                                     <i class="fa fa-list-alt"></i>
@@ -1052,13 +1038,11 @@
                                 </p:link>
                             </li>
                         </c:if>
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 647}">
-                            <li>
-                                <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
-                                    <span>Reporte de Registros</span>
-                                </p:link>
-                            </li>
-                        </c:if>
+                        <li>
+                            <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                                <span>Reporte de Registros</span>
+                            </p:link>
+                        </li>
                     </ul>
                 </li>
             </c:if>

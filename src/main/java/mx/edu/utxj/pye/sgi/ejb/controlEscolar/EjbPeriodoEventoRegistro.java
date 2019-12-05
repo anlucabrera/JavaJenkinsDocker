@@ -51,7 +51,7 @@ public class EjbPeriodoEventoRegistro {
     public ResultadoEJB<Map.Entry<List<PeriodosEscolares>, List<EventosRegistros>>> comprobarEventoActualDocente(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoRegistroActivo, PersonalActivo docente) throws PeriodoEscolarNecesarioNoRegistradoException {
         try {
             if(periodos == null || periodos.isEmpty()) periodos = ejbValidadorDocente.getPeriodosConCapturaCargaAcademica(docente).getValor();
-            return comprobarEventoActualDocenteResultado(periodos, eventos, eventoRegistroActivo, docente);
+            return comprobarEventoActualResultado(periodos, eventos, eventoRegistroActivo);
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener el mapa de periodos escolares y eventos registros (EjbPeriodoEventoRegistro.comprobarEventoActualDocente).", e, null);
         }
@@ -61,13 +61,13 @@ public class EjbPeriodoEventoRegistro {
     public ResultadoEJB<Map.Entry<List<PeriodosEscolares>, List<EventosRegistros>>> comprobarEventoActualTutor(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoRegistroActivo, PersonalActivo docente) throws PeriodoEscolarNecesarioNoRegistradoException {
         try {
             if(periodos == null || periodos.isEmpty()) periodos = ejbValidadorDocente.getPeriodosConCapturaCargaAcademicaTutor(docente).getValor();
-            return comprobarEventoActualDocenteResultado(periodos, eventos, eventoRegistroActivo, docente);
+            return comprobarEventoActualResultado(periodos, eventos, eventoRegistroActivo);
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener el mapa de periodos escolares y eventos registros (EjbPeriodoEventoRegistro.comprobarEventoActualTutor).", e, null);
         }
     }
     
-    public ResultadoEJB<Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>>> comprobarEventoActualDocenteResultado(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoRegistroActivo, PersonalActivo docente) throws  PeriodoEscolarNecesarioNoRegistradoException{
+    public ResultadoEJB<Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>>> comprobarEventoActualResultado(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoRegistroActivo) throws  PeriodoEscolarNecesarioNoRegistradoException{
         try {
             if(periodos == null || periodos.isEmpty()) return null;
             if(eventoRegistroActivo == null) eventoRegistroActivo = getEventoRegistro().getValor();

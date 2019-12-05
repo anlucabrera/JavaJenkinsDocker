@@ -194,7 +194,7 @@ public class EjbCasoCritico implements Serializable {
 
             //lista de casos críticos abiertos del estudiante correspondientes a la carga académica
 //                List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante AND cc.caso = :caso and cc.estado in :estadosAbiertos order by cc.fechaRegistro desc", CasoCritico.class)
-            List<CasoCritico> casosCriticos = em.createQuery("SELECT cc FROM CasoCritico cc WHERE cc.idEstudiante.grupo.idGrupo = :grupo AND cc.estado NOT IN :estadosCerrados AND cc.tipo = :tipo AND cc.estado = :estado ORDER BY cc.tipo, cc.estado", CasoCritico.class)
+            List<CasoCritico> casosCriticos = em.createQuery("SELECT cc FROM CasoCritico cc WHERE cc.idEstudiante.grupo.idGrupo = :grupo AND cc.estado NOT IN :estadosCerrados AND cc.tipo = :tipo AND cc.estado = :estado ORDER BY cc.idEstudiante.matricula,cc.tipo, cc.estado", CasoCritico.class)
                     .setParameter("grupo", grupo)
                     .setParameter("estadosCerrados", estadosCerrados)
                     .setParameter("tipo", tipo)

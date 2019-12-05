@@ -7,6 +7,7 @@ import mx.edu.utxj.pye.sgi.controlador.*;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaCalificacionesRolCoordinadorAD;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.ValidacionTutoriaGrupalEstudiante;
 
 @RequiredArgsConstructor
 public enum ControlEscolarVistaControlador {
@@ -70,6 +71,7 @@ public enum ControlEscolarVistaControlador {
     CUESTIONARIO_PSICOPEDAGOGICO("/controlEscolar/estudiante/cuestionarioPsicopedagogico.xhtml",CuestionarioPsicopedagogicoEstudiante.class),
     CAMBIO_PWD("/controlEscolar/estudiante/CambioPwdEstudiante.xhtml",CambioPwdEstudiante.class),
     PERFIL_ESTUDIANTE("/controlEscolar/estudiante/modificacionDatosEstudiante.xhtml",PerfilEstudiante.class),        
+    TUTORIAS_GRUPALES_ESTUDIANTE("/controlEscolar/estudiante/tutorias_grupales.xhtml",ValidacionTutoriaGrupalEstudiante.class),
     
     SEGUIMIENTO_CASO_CRITICO_ESPECIALISTA("/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml", SeguimientoCasoCriticoEspecialista.class),
 

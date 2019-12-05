@@ -41,7 +41,6 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroAsesoriaTutoria;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.EstudiantesPye;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ParticipantesTutoriaGrupal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SesionesGrupalesTutorias;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutoriasGrupales;
@@ -72,7 +71,7 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
     @Inject     LogonMB                         logon;
     @Inject     Caster                          caster;
     @Getter     Boolean                         tieneAcceso = false;
-    
+
     
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
@@ -142,11 +141,11 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
         tutoriasGrupales.setEventoRegistro(rol.getEventoSeleccionado().getEventoRegistro());
         rol.setTutoriaGrupal(tutoriasGrupales);
         
-        EstudiantesPye estudiantePye = new EstudiantesPye();
+        Estudiante estudiantePye = new Estudiante();
         DtoEstudianteComplete estudiante = new DtoEstudianteComplete(estudiantePye, "");
         rol.setEstudianteJefeGrupoSeleccionado(estudiante);
         
-        rol.setTutoriaGrupalSeleccionada(new DtoTutoriaGrupalCE(new TutoriasGrupales(), new DtoEstudianteComplete(new EstudiantesPye(), "")));
+        rol.setTutoriaGrupalSeleccionada(new DtoTutoriaGrupalCE(new TutoriasGrupales(), new DtoEstudianteComplete(new Estudiante(), "")));
     }
     
     public void inicializarListaTutoriasGrupales(){
@@ -229,7 +228,7 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
     public void cambiarEstudianteSeleccionado(ValueChangeEvent event){
         if(event.getNewValue() instanceof DtoEstudianteComplete){
             DtoEstudianteComplete estudiante = (DtoEstudianteComplete) event.getNewValue();
-            rol.getTutoriaGrupal().setJefeGrupo(ejb.buscaEstudiante(estudiante.getEstudiantesPye().getIdEstudiante()).getValor());
+            rol.getTutoriaGrupal().setJefeGrupo(ejb.buscaEstudiante(estudiante.getEstudiantes().getIdEstudiante()).getValor());
         }else mostrarMensaje("El valor seleccionado no es valido");
     }
     
@@ -252,7 +251,7 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
         if(event.getNewValue() instanceof DtoEstudianteComplete){
             DtoEstudianteComplete estudiante = (DtoEstudianteComplete)event.getNewValue();
             TutoriasGrupales tutoria = (TutoriasGrupales) event.getComponent().getAttributes().get("tutoriaGrupal");
-            ResultadoEJB<Estudiante> resEstudiante = ejb.buscaEstudiante(estudiante.getEstudiantesPye().getIdEstudiante());
+            ResultadoEJB<Estudiante> resEstudiante = ejb.buscaEstudiante(estudiante.getEstudiantes().getIdEstudiante());
             if(resEstudiante.getCorrecto()){
                 tutoria.setJefeGrupo(resEstudiante.getValor());
                 actualizarTutoriaGrupal(tutoria);
@@ -326,7 +325,7 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
     
     public void guardarParticipanteTutoriaGrupal(ValueChangeEvent event){
         ParticipantesTutoriaGrupal participante = (ParticipantesTutoriaGrupal) event.getComponent().getAttributes().get("participante");
-        ResultadoEJB<ParticipantesTutoriaGrupal> res = ejb.guardaParticipanteTutoriaGrupal(participante);
+        ResultadoEJB<ParticipantesTutoriaGrupal> res = ejb.editaParticipanteTutoriaGrupal(participante);
         mostrarMensajeResultadoEJB(res);
     }
     
@@ -352,13 +351,17 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
     public void listarEstudiantes() {
         if (rol.getTutoriaGrupalSeleccionada() != null) {
             ResultadoEJB<List<DtoParticipantesTutoriaGrupalCE>> res = ejb.obtenerListaEstudiantesTutoriaGrupal(rol.getGrupoTutorSeleccionado().getGrupo(), rol.getTutoriaGrupalSeleccionada().getTutoriaGrupal());
-            res.getValor().forEach((t) -> {
-                ResultadoEJB<List<DtoCasoCritico>> lista = ejbCritico.identificarPorEsdudiante(t.getEstudiante().getEstudiante());
-                if(lista.getCorrecto()){
-                    t.setListaCasosCriticos(lista.getValor());
-                }
-            });
-            rol.setListaEstudiantes(res.getValor());
+            if (res.getCorrecto()) {
+                res.getValor().forEach((t) -> {
+                    ResultadoEJB<List<DtoCasoCritico>> lista = ejbCritico.identificarPorEsdudiante(t.getEstudiante().getEstudiante());
+                    if (lista.getCorrecto()) {
+                        t.setListaCasosCriticos(lista.getValor());
+                    }
+                });
+                rol.setListaEstudiantes(res.getValor());
+            }else{
+                rol.setListaEstudiantes(Collections.EMPTY_LIST);
+            }
         }
     }
     
