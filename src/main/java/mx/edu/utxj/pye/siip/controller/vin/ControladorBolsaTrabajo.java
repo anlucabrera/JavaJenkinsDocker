@@ -105,12 +105,16 @@ public class ControladorBolsaTrabajo implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 23);
-        if (areaRegistro == null) {
-            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        } else {
-            dto.setArea(areaRegistro);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 23);
+            if (areaRegistro == null) {
+                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            } else {
+                dto.setArea(areaRegistro);
+            }
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorBolsaTrabajo.consultaAreaRegistro(): " + e.getMessage());
         }
     }
     

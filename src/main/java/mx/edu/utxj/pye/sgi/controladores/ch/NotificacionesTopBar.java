@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Notificaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
@@ -57,8 +59,13 @@ public class NotificacionesTopBar implements Serializable {
     @Inject
     UtilidadesCH uch;
 
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;
         if (controladorEmpleado.getNuevoOBJListaPersonal() == null) {
             Messages.addGlobalFatal("El usuario para no Existe o ha sido dado de baja, si cree que es un error favor de Comunicarse con el área de personal");
             return;

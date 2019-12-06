@@ -1,9 +1,7 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
@@ -17,7 +15,6 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
@@ -27,15 +24,19 @@ import org.omnifaces.util.Ajax;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named
 @ViewScoped
@@ -56,8 +57,16 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         return mostrar(request, map.containsValue(valor));
     }
 
-    @PostConstruct
+    
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
 //        System.out.println("CapturaCalificacionesDocente.init");
         setVistaControlador(ControlEscolarVistaControlador.CAPTURA_CALIFICACIONES);
         ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDocente(logon.getPersonal().getClave());

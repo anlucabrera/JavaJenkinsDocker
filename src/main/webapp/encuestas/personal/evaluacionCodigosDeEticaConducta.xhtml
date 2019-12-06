@@ -44,6 +44,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{evaluacionConocimientoCodigoEtica.cargado}">
         <div class="contenedor">
             <c:if test="#{evaluacionConocimientoCodigoEtica.tieneAcceso}">
                 <h:form id="frm" prependId="false" class="form-inline">
@@ -196,5 +197,6 @@
                 </p:panel>
             </c:if>
         </div>
+            </c:if>
     </ui:define>
 </ui:composition>

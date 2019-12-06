@@ -107,19 +107,23 @@ public class ControladorProgramasPertCalidad implements Serializable{
         consultarPermiso();
 
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 20);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 57);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 20);
             if (areaRegistro == null) {
-                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 57);
+                if (areaRegistro == null) {
+                    dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+                } else {
+                    dto.setArea(areaRegistro.getArea());
+                }
             } else {
                 dto.setArea(areaRegistro.getArea());
             }
-        } else {
-            dto.setArea(areaRegistro.getArea());
+        } catch (Exception ex) {
+            System.out.println("ControladorProgramasPertCalidad.consultaAreaRegistro: " + ex.getMessage());
         }
     }
     

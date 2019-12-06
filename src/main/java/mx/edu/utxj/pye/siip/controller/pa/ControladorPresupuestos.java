@@ -114,17 +114,21 @@ public class ControladorPresupuestos implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 5);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 54);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 5);
             if (areaRegistro == null) {
-                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 54);
+                if (areaRegistro == null) {
+                    dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                } else {
+                    dto.setArea(areaRegistro);
+                }
             } else {
                 dto.setArea(areaRegistro);
             }
-        } else {
-            dto.setArea(areaRegistro);
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.pa.ControladorPresupuestos.consultaAreaRegistro(): " + e.getMessage());
         }
     }
     

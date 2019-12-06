@@ -34,6 +34,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{asignacionAcademicaDirector.cargado}">
         <adm:breadcrumb title="Validación de captura de calificaciones"/>
 
         <div class="contenedor">
@@ -289,5 +290,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

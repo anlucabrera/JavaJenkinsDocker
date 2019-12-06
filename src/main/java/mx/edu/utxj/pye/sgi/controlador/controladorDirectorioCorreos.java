@@ -18,6 +18,12 @@ import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
+
 @Named
 @ViewScoped
 @ManagedBean
@@ -30,8 +36,16 @@ public class controladorDirectorioCorreos implements Serializable {
 
 
 
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         listPersonal = ctrl.getListaPersonalTotal();
         listCorrreosAreas= correosAreas();
         list2CorreosAreas = correosAreas();

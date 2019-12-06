@@ -1,7 +1,6 @@
 package mx.edu.utxj.pye.sgi.controlador.finanzas;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
@@ -14,7 +13,6 @@ import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.finanzas.Facturas;
 import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
-import mx.edu.utxj.pye.sgi.enums.FiscalizacionEtapa;
 import mx.edu.utxj.pye.sgi.enums.GastoTipo;
 import mx.edu.utxj.pye.sgi.enums.TramiteTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -28,7 +26,6 @@ import org.primefaces.event.RowEditEvent;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +34,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 
 @Named
 @ViewScoped
@@ -51,8 +53,14 @@ public class TramitesOperativo extends ViewScopedRol {
     @Getter Boolean tieneAcceso;
     @Getter private XMLReader reader;
 
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         Short area = logon.getPersonal().getAreaOperativa();
         Filter<PersonalActivo> filtro = new Filter<>();
 //        System.out.println("filtro.getParams() = " + filtro.getParams());

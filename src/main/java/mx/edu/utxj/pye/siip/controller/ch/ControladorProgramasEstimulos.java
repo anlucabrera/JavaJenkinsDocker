@@ -105,12 +105,16 @@ public class ControladorProgramasEstimulos implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 3);
-        if (areaRegistro == null) {
-            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
-        } else {
-            dto.setArea(areaRegistro.getArea());
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 3);
+            if (areaRegistro == null) {
+                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+            } else {
+                dto.setArea(areaRegistro.getArea());
+            }
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.ch.ControladorProgramasEstimulos.consultaAreaRegistro(): " + e.getMessage());
         }
     }
     

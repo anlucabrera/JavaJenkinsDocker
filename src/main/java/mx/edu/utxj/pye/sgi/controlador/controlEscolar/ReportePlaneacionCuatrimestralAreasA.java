@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
-import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import lombok.Getter;
@@ -19,13 +18,18 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReporteConfiguracionesCA;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionCriterio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Reporteplaneacioncuatrimestralareaacademica;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named
 @ManagedBean
@@ -45,8 +49,16 @@ public class ReportePlaneacionCuatrimestralAreasA implements Serializable {
     @EJB    EjbAsignacionIndicadoresCriterios eaic;    
     @EJB    EjbReporteConfiguracionesCA ercca;
 
-    @PostConstruct
+    
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init() {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         au = new AreasUniversidad();
         mostrarListaAreas();
         mostrarReporte();

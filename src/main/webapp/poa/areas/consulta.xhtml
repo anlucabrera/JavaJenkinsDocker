@@ -41,6 +41,7 @@
 
     <ui:define name="body">
 
+        <c:if test="#{areaPoaReporte.cargado}">
         <h:form id="Parametros">
             <div class="box box-primary">
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
@@ -309,5 +310,6 @@
                 </div>
             </div>
         </h:form>
+        </c:if>
     </ui:define>
 </ui:composition>

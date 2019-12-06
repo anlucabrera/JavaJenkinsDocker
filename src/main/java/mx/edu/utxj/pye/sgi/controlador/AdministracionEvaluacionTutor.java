@@ -2,25 +2,20 @@ package mx.edu.utxj.pye.sgi.controlador;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
-import javax.print.Doc;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEvTutor;
-import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacionTutor2;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.EstudiantesClaves;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
@@ -36,6 +31,9 @@ import org.omnifaces.util.Messages;
 
 
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 @Named
 @SessionScoped
@@ -65,9 +63,14 @@ public class AdministracionEvaluacionTutor extends ViewScopedRol implements Seri
     @Inject private LogonMB logonMB;
 
 
+@Getter private Boolean cargado = false;
+
+
 
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         setVistaControlador(ControlEscolarVistaControlador.SEGUIMIENTO_EV_TUTOR);
         getPersona();
         getEvaluacionTutorActiva();

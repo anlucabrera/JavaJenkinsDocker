@@ -37,6 +37,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{cedulaIdentificacionDirector.cargado}">
         <adm:breadcrumb title="Cédula de Identificación del Estudiante"/>
             <div class="contenedor">
                 <c:if test="#{cedulaIdentificacionDirector.tieneAcceso}">
@@ -673,5 +674,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

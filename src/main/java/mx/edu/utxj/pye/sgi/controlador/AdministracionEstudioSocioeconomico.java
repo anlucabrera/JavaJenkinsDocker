@@ -5,19 +5,14 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ListadoEvaluacionEgresados;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
-import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestaServicios;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEstudioSocioeconomico;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionTutores;
-import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesEstudioSocioeconomicoResultados;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
-import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstudioSocioEconomico;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
 import org.omnifaces.util.Messages;
@@ -25,7 +20,6 @@ import org.omnifaces.util.Messages;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,6 +28,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 /**
  *
@@ -56,8 +56,15 @@ public class AdministracionEstudioSocioeconomico implements Serializable{
     @EJB private EjbAdministracionEncuesta ejbAdmEncuesta;
     @EJB private EjbAdministracionTutores ejbAdmTutor;
 
+
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
     }
 
     public void seguimientoEncuestaIyE() {

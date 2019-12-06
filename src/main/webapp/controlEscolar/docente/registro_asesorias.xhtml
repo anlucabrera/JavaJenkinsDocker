@@ -36,6 +36,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{registroAsesoriaDocente.cargado}">
         <adm:breadcrumb title="Registro de Asesorías"/>
 
         <div class="contenedor">
@@ -620,5 +621,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

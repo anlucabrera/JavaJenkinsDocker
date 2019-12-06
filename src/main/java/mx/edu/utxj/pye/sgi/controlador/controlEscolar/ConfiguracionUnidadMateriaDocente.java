@@ -1,9 +1,7 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.Collections;
-import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
@@ -11,7 +9,6 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConfiguracionUnidadMateriaRolDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
-import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
@@ -23,7 +20,6 @@ import org.omnifaces.cdi.ViewScoped;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -36,7 +32,12 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionCriterio;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
-import org.primefaces.event.CellEditEvent;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 /**
  * La selección del grupo, docente y del periodo deben ser directos de un control de entrada
@@ -60,9 +61,17 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
      *      La lista de periodos escolares en forma descendente por medio de operación segura antierror<br/>
      *      EL mapa de programas con grupos por medio de operación segura antierror ordenando programas por areas, niveles y nombre del programa y los grupos por grado y letra
      */
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
     @PostConstruct
     public void init(){
         try{
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.CONFIGURACION_UNIDAD_MATERIA);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDocente(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso

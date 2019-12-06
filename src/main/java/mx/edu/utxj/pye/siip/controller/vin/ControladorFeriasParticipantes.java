@@ -92,17 +92,21 @@ public class ControladorFeriasParticipantes implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 27);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 64);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 27);
             if (areaRegistro == null) {
-                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 64);
+                if (areaRegistro == null) {
+                    dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                } else {
+                    dto.setArea(areaRegistro);
+                }
             } else {
                 dto.setArea(areaRegistro);
             }
-        } else {
-            dto.setArea(areaRegistro);
+        } catch (Exception ex) {
+            System.out.println("ControladorFeriasParticipantes.consultaAreaRegistro: " + ex.getMessage());
         }
     }
     

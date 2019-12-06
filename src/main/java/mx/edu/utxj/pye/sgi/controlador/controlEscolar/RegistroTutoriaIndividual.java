@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import lombok.Getter;
@@ -58,6 +56,12 @@ import org.omnifaces.util.Messages;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.Visibility;
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
+
 /**
  *
  * @author UTXJ
@@ -83,9 +87,17 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
         return mostrar(request, map.containsValue(valor));
     }
     
-    @PostConstruct
+    
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
         try{
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.REGISTRO_TUTORIA_INDIVIDUAL);
 
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarTutor(logon.getPersonal().getClave());

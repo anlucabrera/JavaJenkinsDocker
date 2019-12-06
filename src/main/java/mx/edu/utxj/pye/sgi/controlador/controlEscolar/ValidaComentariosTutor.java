@@ -1,16 +1,11 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ValidaComentariosRolTutor;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
@@ -22,11 +17,15 @@ import org.omnifaces.cdi.ViewScoped;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named
 @ViewScoped
@@ -40,8 +39,16 @@ public class ValidaComentariosTutor extends ViewScopedRol implements Desarrollab
     @EJB EjbCapturaCalificaciones ejbCapturaCalificaciones;
     @EJB EjbValidacionRol ejbValidacionRol;
 
-    @PostConstruct
+    
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         setVistaControlador(ControlEscolarVistaControlador.VALIDACION_COMENTARIOS_TUTOR);
         ResultadoEJB<Filter<PersonalActivo>> validarTutor = ejbValidacionRol.validarTutor(logon.getPersonal().getClave());
         if(!validarTutor.getCorrecto()) {mostrarMensajeResultadoEJB(validarTutor);return;}

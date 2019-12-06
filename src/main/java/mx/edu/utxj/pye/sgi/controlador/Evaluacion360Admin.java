@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -20,7 +19,6 @@ import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,6 +33,12 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.omnifaces.util.Faces;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 /**
  *
@@ -69,8 +73,15 @@ public class Evaluacion360Admin implements Serializable {
     @EJB private EjbEvaluacion360 ejbEvaluacion360;
     @Inject private LogonMB logonMB;
 
+
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         evaluaciones360 = ejbEvaluacion360.getEvaluacionActiva();
         System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin.init() evaluacion: " + evaluaciones360);
         respuestasPosibles = ejbEvaluacion360.getRespuestasPosibles();

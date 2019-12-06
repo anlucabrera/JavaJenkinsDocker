@@ -35,6 +35,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{registroPlanTutoriaTutor.cargado}">
         <adm:breadcrumb title="Registro de Plan de Acción Tutorial"/>
         <adm:sidebar collapsed="true"/>
         <p:importEnum type="mx.edu.utxj.pye.sgi.enums.PlanAccionTutorialEstado" var="patEstado" allSuffix="ESTADOS" />
@@ -634,5 +635,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

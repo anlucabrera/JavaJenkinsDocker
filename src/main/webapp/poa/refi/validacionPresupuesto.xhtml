@@ -41,6 +41,7 @@
 
     <ui:define name="body">
 
+        <c:if test="#{concentradoCalificacionesSecAca.cargado}">
         <adm:sidebar collapsed="true"/> 
 
         <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
@@ -527,6 +528,6 @@
                 </p:panelGrid>
             </p:dialog>
         </h:form>
-
+        </c:if>
     </ui:define>
 </ui:composition>

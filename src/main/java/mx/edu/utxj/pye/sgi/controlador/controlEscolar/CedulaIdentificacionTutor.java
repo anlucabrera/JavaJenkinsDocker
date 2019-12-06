@@ -2,7 +2,6 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
@@ -28,7 +27,6 @@ import org.omnifaces.cdi.ViewScoped;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -37,6 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named
 @ViewScoped
@@ -50,9 +54,17 @@ public class CedulaIdentificacionTutor extends ViewScopedRol implements Desarrol
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
 
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
     @PostConstruct
     public void init(){
         try {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.CEDULA_IDENTIFICACION_TUTOR);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = evr.validarTutor(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso

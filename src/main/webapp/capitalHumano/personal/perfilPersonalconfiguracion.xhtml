@@ -21,7 +21,7 @@
     <ui:define name="title"/>
 
     <ui:define name="body">
-
+        <c:if test="#{controladorPersonalconfiguracion.cargado}">
         <style>
             .description-block{
                 text-align: justify;
@@ -451,6 +451,7 @@
                 </h1>
             </c:if>
         </p:panel>
+            </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

@@ -42,6 +42,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{planeacionCuatrimestral.cargado}">
         <adm:breadcrumb title="Planeación cuatrimestral - Secretario/a Académico/a"/>
         <adm:sidebar collapsed="true"/>
         <p:panel header="Registro de actividades" visible="#{!planeacionCuatrimestral.activa}" class="box box-primary" >
@@ -433,6 +434,7 @@
                     </p:panelGrid>
                 </p:dialog>
             </h:form>
+        </c:if>
         </c:if>
     </ui:define>
 </ui:composition>

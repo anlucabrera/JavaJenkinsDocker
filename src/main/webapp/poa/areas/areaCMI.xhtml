@@ -92,6 +92,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{cuadroMandoIntegralArea.cargado}">
         <adm:sidebar collapsed="true"/>
         <c:if test="#{controladorEmpleado.tienePOA}">
             <h:form id="frmGraficasCMI" prependId="false" class="form-inline">
@@ -415,6 +416,7 @@
                     </div>
                 </div>
             </div>
+        </c:if>
         </c:if>
     </ui:define>
 </ui:composition>

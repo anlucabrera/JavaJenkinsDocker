@@ -41,6 +41,7 @@
 
     <ui:define name="body">
 
+        <c:if test="#{adminPoaValidacionJustificacion.cargado}">
 
         <adm:sidebar collapsed="true"/>
 
@@ -354,6 +355,6 @@
             </p:dialog>
         </h:form>
         
-        
+        </c:if>
     </ui:define>
 </ui:composition>

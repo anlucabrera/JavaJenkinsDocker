@@ -37,6 +37,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{estudioEgresados.cargada}">
         <adm:breadcrumb title="Seguimiento a egresados"/>
         <h:form class="form-horizontal" prependId="false" id="frmPagoAlumno">
             <p:outputPanel >
@@ -2285,5 +2286,6 @@
                 </div>
             </p:dialog>
         </h:form>
+        </c:if>
     </ui:define>
 </ui:composition>

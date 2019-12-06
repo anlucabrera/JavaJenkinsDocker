@@ -66,6 +66,7 @@ public class ControladorArchivoEgetsu implements Serializable{
     }
     
     public void consultaAreaRegistro() {
+        try {
         AreasUniversidad areaRegistro = new AreasUniversidad();
         areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 14);
         if (areaRegistro == null) {
@@ -77,6 +78,9 @@ public class ControladorArchivoEgetsu implements Serializable{
             }
         } else {
             area = areaRegistro;
+        }
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorArchivoEgetsu.consultaAreaRegistro(): " + e.getMessage());
         }
     }
     

@@ -34,6 +34,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{asignacionTutorAcademico.cargado}">
         <adm:breadcrumb title="Asignación de Tutor Académico"/>
         <div class="contenedor">
             <c:if test="#{asignacionTutorAcademico.tieneAcceso}">
@@ -165,5 +166,6 @@
             </c:if>
 
         </div>
+        </c:if>
     </ui:define>
 </ui:composition>

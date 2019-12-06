@@ -73,6 +73,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{administracionEncuesta.cargado}">
         <h:form id="fr2">
          <div id="main-buttons"  >
             <p:toolbar id="tb">
@@ -145,7 +146,7 @@
                     </h:form>
 
             </c:if>
-
+            </c:if>
             <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
                 <p:tab title="Información no disponible">
                     <p:outputPanel>

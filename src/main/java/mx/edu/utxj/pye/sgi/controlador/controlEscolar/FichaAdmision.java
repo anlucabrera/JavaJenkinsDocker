@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
@@ -52,6 +51,12 @@ import mx.edu.utxj.pye.sgi.funcional.Guardable;
 import org.omnifaces.util.Ajax;
 
 import org.omnifaces.util.Faces;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named(value = "FichaAdmision")
 @ViewScoped
@@ -107,8 +112,16 @@ public class FichaAdmision implements Serializable, Guardable{
     //Ejb Encuestas
     @Inject EjbEncuestaIngreso ejb;
 
-    @PostConstruct
+    
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         persona = new Persona();
         datosMedicos = new DatosMedicos();
         medioComunicacion = new MedioComunicacion();

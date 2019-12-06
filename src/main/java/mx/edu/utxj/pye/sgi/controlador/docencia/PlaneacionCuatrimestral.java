@@ -38,6 +38,8 @@ import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
 
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+        
 /**
  *
  * @author UTXJ
@@ -91,8 +93,15 @@ public class PlaneacionCuatrimestral implements Serializable{
     @Inject LogonMB logonMB;
     @EJB EjbPlaneacionCuatrimestral ejb;
     
-    @PostConstruct
+    
+
+@Getter private Boolean cargado = false;
+
+
+@PostConstruct
     public void init() {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         evento = ejb.getEventoActivo();
         activa = evento != null;
         if (!activa) {

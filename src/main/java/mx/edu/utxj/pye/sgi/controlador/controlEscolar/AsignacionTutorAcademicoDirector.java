@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import lombok.Getter;
@@ -40,6 +38,12 @@ import org.omnifaces.util.Ajax;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 /**
  *
  * @author UTXJ
@@ -64,9 +68,17 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
      *      La lista de periodos escolares en forma descendente por medio de operación segura antierror<br/>
      *      EL mapa de programas con el DTO de grupos y su refencia al tutor de grupo
      */
-    @PostConstruct
+    
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
         try {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.ASIGNACION_TUTOR_ACADEMICO);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarEncargadoDireccion(logon.getPersonal().getClave());

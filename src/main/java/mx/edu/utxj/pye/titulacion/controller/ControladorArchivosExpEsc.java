@@ -32,6 +32,12 @@ import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
+
 /**
  *
  * @author UTXJ
@@ -61,8 +67,14 @@ public class ControladorArchivosExpEsc implements Serializable{
     
     @Getter @Setter private ExpedientesTitulacion expediente;
     
+
+@Getter private Boolean cargado = false;
+
+
     @PostConstruct
     public void init() {
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         cargarDocumentosPorExpediente();
         matricula = controladorTitSegGeneracion.getNuevoDtoExpMat().getExpedientesTitulacion().getMatricula().getMatricula();
         expediente = controladorTitSegGeneracion.getNuevoDtoExpMat().getExpedientesTitulacion();

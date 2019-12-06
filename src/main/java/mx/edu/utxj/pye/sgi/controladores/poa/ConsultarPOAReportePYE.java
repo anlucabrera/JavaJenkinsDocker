@@ -28,6 +28,10 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 @Named
 @ManagedBean
 @SessionScoped
@@ -51,8 +55,16 @@ public class ConsultarPOAReportePYE implements Serializable {
     @Inject    ControladorEmpleado controladorEmpleado;
 
     
-    @PostConstruct
+    
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+@PostConstruct
     public void init() {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         ejeses=new ArrayList<>();
         ejeses.clear();

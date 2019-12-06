@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -22,6 +23,7 @@ import org.omnifaces.cdi.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -50,8 +52,13 @@ public class ExelPlantillaPersonal implements Serializable {
 
     @Inject    UtilidadesCH uch;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
-    public void init() {
+    public void init() { 
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;
         try {
             nuevaListaListaPersonal.clear();
             nuevoOBJListaListaPersonal = new ListaPersonal();

@@ -66,18 +66,23 @@ public class ControladorArchivoExani implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 16);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 48);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 16);
             if (areaRegistro == null) {
-                area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 48);
+                if (areaRegistro == null) {
+                    area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                } else {
+                    area = areaRegistro;
+                }
             } else {
                 area = areaRegistro;
             }
-        } else {
-            area = areaRegistro;
+        }catch (Exception ex){
+            System.out.println("ControladorArchivoExani.consultaAreaRegistro: " + ex.getMessage());
         }
+
     }
 
     public void recibirArchivo(ValueChangeEvent e){

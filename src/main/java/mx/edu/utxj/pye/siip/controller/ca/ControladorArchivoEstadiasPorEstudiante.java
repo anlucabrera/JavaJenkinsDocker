@@ -61,15 +61,20 @@ public class ControladorArchivoEstadiasPorEstudiante implements Serializable{
         consultaAreaRegistro();
         setEtapa(RegistroSiipEtapa.MOSTRAR);
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 15);
-        if (areaRegistro == null) {
-            area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        } else {
-            area = areaRegistro;
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 15);
+            if (areaRegistro == null) {
+                area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            } else {
+                area = areaRegistro;
+            }
+        } catch (Exception ex) {
+            System.out.println("ControladorArchivoEstadiasPorEstudiante.consultaAreaRegistro: " + ex.getMessage());
         }
+
     }
     
     public void recibirArchivo(ValueChangeEvent e){

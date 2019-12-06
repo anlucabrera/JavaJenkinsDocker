@@ -32,6 +32,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{validacionPlanAccionTutorialDirector.cargado}">
         <adm:breadcrumb title="Captura de comentarios"/>
 
         <div class="contenedor">
@@ -294,5 +295,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

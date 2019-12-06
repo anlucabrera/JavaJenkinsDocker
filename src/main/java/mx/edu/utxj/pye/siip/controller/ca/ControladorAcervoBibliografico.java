@@ -95,18 +95,23 @@ public class ControladorAcervoBibliografico implements Serializable{
     }
 
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 6);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 32);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 6);
             if (areaRegistro == null) {
-                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 32);
+                if (areaRegistro == null) {
+                    dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                } else {
+                    dto.setArea(areaRegistro);
+                }
             } else {
                 dto.setArea(areaRegistro);
             }
-        } else {
-            dto.setArea(areaRegistro);
+        } catch (Exception ex) {
+            System.out.println("ControladorAcervoBibliografico.consultaAreaRegistro: " + ex.getMessage());
         }
+
     }
 
     public void descargarPlantilla() throws IOException, Throwable{

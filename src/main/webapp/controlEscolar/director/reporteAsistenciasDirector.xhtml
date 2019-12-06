@@ -39,6 +39,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{reporteAsistenciasDirector.cargado}">
         <adm:breadcrumb title="Pase de lista"/>
         <div class="contenedor">
             <c:if test="#{reporteAsistenciasDirector.tieneAcceso}">
@@ -260,5 +261,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

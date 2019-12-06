@@ -26,6 +26,7 @@
 
     </ui:define>
     <ui:define name="body">
+        <c:if test="#{adminEvaluacion360.cargado}">
         <adm:breadcrumb title="Admin 360"/>
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
@@ -558,5 +559,6 @@
                 </p:outputPanel>
             </h:form>
         </p:dialog>
+        </c:if>
     </ui:define>
 </ui:composition>

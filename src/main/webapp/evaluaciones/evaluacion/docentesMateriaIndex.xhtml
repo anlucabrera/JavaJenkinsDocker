@@ -34,6 +34,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{evaluacionDoncenteMateriaControler.cargada}">
         <adm:breadcrumb title="Avance de la evaluación"/>
         <div class="contenedor">
             <c:if test="#{evaluacionDoncenteMateriaControler.cargada}">
@@ -875,5 +876,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

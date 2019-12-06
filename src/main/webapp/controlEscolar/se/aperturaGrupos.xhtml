@@ -29,6 +29,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{procesoInscripcion.cargado}">
         <adm:sidebar collapsed="true"/> 
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
@@ -179,4 +180,5 @@
             </p:tab>
         </p:tabView>
     </ui:define>
+</c:if>
 </ui:composition>

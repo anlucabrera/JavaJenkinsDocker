@@ -42,7 +42,7 @@
     </ui:define>
 
     <ui:define name="body">
-
+        <c:if test="#{planeacionCuatrimestral.cargado}">
 
         <adm:breadcrumb title="Planeación cuatrimestral - Director/a"/>
         <adm:sidebar collapsed="true"/>
@@ -577,6 +577,7 @@
                                      disabled="#{planeacionCuatrimestral.superaAsigacion}"/>
                 </p:dialog>
             </h:form>
+        </c:if>
         </c:if>
     </ui:define>
 </ui:composition>

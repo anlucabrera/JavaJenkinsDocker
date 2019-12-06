@@ -119,24 +119,32 @@ public class ControladorComisionesAcademicas implements Serializable{
         consultarPermiso();
 
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 1);
-        if (areaRegistro == null) {
-            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
-        } else {
-            dto.setArea(areaRegistro.getArea());
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 1);
+            if (areaRegistro == null) {
+                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+            } else {
+                dto.setArea(areaRegistro.getArea());
+            }
+        } catch (Exception ex) {
+            System.out.println("ControladorComisionesAcademicas.consultaAreaRegistro: " + ex.getMessage());
         }
     }
-    
+
     public void consultaAreaRegistroParticipantes() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 1);
-        if (areaRegistro == null) {
-            dtopart.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
-        } else {
-            dtopart.setArea(areaRegistro.getArea());
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 1);
+            if (areaRegistro == null) {
+                dtopart.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+            } else {
+                dtopart.setArea(areaRegistro.getArea());
+            }
+        } catch (Exception ex) {
+            System.out.println("ControladorComisionesAcademicas.consultaAreaRegistroParticipantes: " + ex.getMessage());
         }
     }
     

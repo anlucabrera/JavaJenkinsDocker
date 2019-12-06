@@ -41,6 +41,10 @@ import org.omnifaces.util.Servlets;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.StreamedContent;
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 @Named
 @ManagedBean
 @ViewScoped
@@ -94,8 +98,16 @@ public class AreaPoaEvaluacion implements Serializable {
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA pOAUtilidades;
     
-    @PostConstruct
+    
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+@PostConstruct
     public void init() {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         ejeses.clear();
         ejesesFiltrado.clear();
         actividadesPoasAreas.clear();

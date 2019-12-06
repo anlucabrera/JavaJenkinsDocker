@@ -90,14 +90,18 @@ public class ControladorCuerposAcademicos implements Serializable{
             Logger.getLogger(ControladorCuerposAcademicos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 12);
-        if (areaRegistro == null) {
-            dtoCuerposAcademicos.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        } else {
-            dtoCuerposAcademicos.setArea(areaRegistro);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 12);
+            if (areaRegistro == null) {
+                dtoCuerposAcademicos.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            } else {
+                dtoCuerposAcademicos.setArea(areaRegistro);
+            }
+        } catch (Exception ex) {
+            System.out.println("ControladorCuerposAcademicos.consultaAreaRegistro: " + ex.getMessage());
         }
     }
     

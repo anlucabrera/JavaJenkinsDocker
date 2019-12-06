@@ -95,8 +95,6 @@ public class ControladorModulosRegistro implements Serializable {
    
     public AreasUniversidad consultaAreaRegistro(Short claveModuloRegistroEspecifico){
         try {
-            System.err.println("Clave personal y Registro: " + personal + " - " + claveModuloRegistroEspecifico);
-            
             List<ModulosRegistrosUsuarios> mr = ejbModulos.getListaPermisoPorRegistro(personal, claveModuloRegistroEspecifico);
             if (mr.get(0).getAreaRegistro() != null) {
                 return (ejbModulos.getAreaUniversidadPrincipalRegistro((short) mr.get(0).getAreaRegistro()));

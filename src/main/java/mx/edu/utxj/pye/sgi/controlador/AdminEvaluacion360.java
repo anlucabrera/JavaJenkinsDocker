@@ -38,6 +38,12 @@ import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
+
 
 /**
  *
@@ -85,8 +91,16 @@ public class AdminEvaluacion360 implements Serializable {
     @EJB EjbAdministracionEncuestas ejbAdministracionEncuestas;
     @EJB EjbEvaluacionDesempenio ejbDes;
     
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init() {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         listaPersonal = new ArrayList<>();
         listaPersonal = ejbEvaluacion360Combinaciones.getPersonalActivo();
         listaCategorias = new ArrayList<>();

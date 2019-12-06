@@ -37,7 +37,8 @@
     </ui:define>
 
     <ui:define name="body">
-        <adm:breadcrumb title="Credencialización"/>
+        <c:if test="#{credencializacionSE.cargado}">
+            <adm:breadcrumb title="Credencialización"/>
             <div class="contenedor">
                 <c:if test="#{credencializacionSE.tieneAcceso}">
                     <h:form id="frm" prependId="false" class="form-inline">
@@ -46,14 +47,14 @@
                                 <div id="main-buttons" class="hidden-sm hidden-xs">
                                     <p:toolbar id="tb">
                                         <f:facet name="right">
-                                            <p:commandButton id="imprimeCredencial" icon="fa fa-print" class="btn-primary btn-block" onclick="target='_blank'"
+                                            <p:commandButton id="imprimeCredencial" icon="fa fa-print" class="btn-primary btn-block" onclick="target = '_blank'"
                                                              process="@form" update="@form" actionListener="#{credencializacionSE.generarCredencial()}" ajax="false" />
                                             <p:commandLink
-                                                    class="btn btn-info"
-                                                    rendered="#{true}"
-                                                    disabled="#{false}"
-                                                    onclick="PF('modalAyuda').show();"
-                                                    title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
                                                     class="fa fa-question"/>
                                             </p:commandLink>
                                         </f:facet>
@@ -65,113 +66,114 @@
                     <p:tabView id="tabw1">
                         <p:tab title="Datos del estudiante">
                             <section class="content">
-                        <h:form id="frm">
-                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="row">
-                                            <div class="col-sm-12 border-right">
-                                                <div class="description-block">
-                                                    <div class="row">
-                                                        <div class="form-group">
-                                                            <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{credencializacionSE.rol.matricula}.jpg"  style="width: 150px; height: 220px;" class="img-circle"/>
+                                <h:form id="frm">
+                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                        <div class="col-md-12">
+                                            <div class="box box-widget widget-user-2">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                        <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{credencializacionSE.rol.matricula}.jpg"  style="width: 150px; height: 220px;" class="img-circle"/>
+                                                                    </div>
+                                                                    <div class="col-sm-1 col-md-1 col-lg-1">
+                                                                        <p:outputLabel for="matricula" style="font-size: inherit;text-align: left;" value="Matricula:" />
+                                                                        <p:inputText id="matricula" class="form-control" value="#{credencializacionSE.rol.matricula}" required="true" requiredMessage="Ingrese la matricula del estudiante"  >
+                                                                            <p:ajax event="change" listener="#{credencializacionSE.buscaEstudiante()}" update="@form"/>
+                                                                        </p:inputText>
+                                                                        <p:message for="matricula"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                        <p:outputLabel for="nombre" style="font-size: inherit;text-align: right;" value="Nombre:" />
+                                                                        <p:inputText id="nombre" class="form-control" value="#{credencializacionSE.rol.nombreC}" readonly="true"/>
+                                                                    </div>
+                                                                    <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                        <p:outputLabel for="curp" style="font-size: inherit;text-align: right;" value="CURP:" />
+                                                                        <p:inputText id="curp" class="form-control" value="#{credencializacionSE.rol.estudiante.aspirante.idPersona.curp}" readonly="true"/>
+                                                                    </div>
+                                                                    <div class="col-sm-1 col-md-1 col-lg-1">
+                                                                        <p:outputLabel for="ts" style="font-size: inherit;text-align: right;" value="Tipo de sangre:" />
+                                                                        <p:inputText id="ts" class="form-control" value="#{credencializacionSE.rol.estudiante.aspirante.idPersona.datosMedicos.cveTipoSangre.nombre}" readonly="true"/>
+                                                                    </div>
+                                                                    <div class="col-sm-7 col-md-7 col-lg-7">
+                                                                        <p:outputLabel for="carrera" style="font-size: inherit;text-align: right;" value="Carrera:" />
+                                                                        <p:inputText id="carrera" class="form-control" value="#{credencializacionSE.rol.carrera.nombre}" readonly="true"/>
+                                                                    </div>
+                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                        <p:outputLabel for="s" style="font-size: inherit;text-align: right;" value="Sistema:" />
+                                                                        <p:inputText id="s" class="form-control" value="#{credencializacionSE.rol.estudiante.grupo.idSistema.nombre}" readonly="true"/>
+                                                                    </div>
+                                                                    <div class="col-sm-1 col-md-1 col-lg-1">
+                                                                        <p:outputLabel for="grado" style="font-size: inherit;text-align: right;" value="Grado:" />
+                                                                        <p:inputText id="grado" class="form-control" value="#{credencializacionSE.rol.estudiante.grupo.grado}" readonly="true"/>
+                                                                    </div>
+                                                                    <div class="col-sm-1 col-md-1 col-lg-1">
+                                                                        <p:outputLabel for="grupo" style="font-size: inherit;text-align: right;" value="Grupo:" />
+                                                                        <p:inputText id="grupo" class="form-control" value="#{credencializacionSE.rol.estudiante.grupo.literal}" readonly="true"/>
+                                                                    </div>
+
+                                                                </div>
                                                             </div>
-                                                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                                                <p:outputLabel for="matricula" style="font-size: inherit;text-align: left;" value="Matricula:" />
-                                                                <p:inputText id="matricula" class="form-control" value="#{credencializacionSE.rol.matricula}" required="true" requiredMessage="Ingrese la matricula del estudiante"  >
-                                                                    <p:ajax event="change" listener="#{credencializacionSE.buscaEstudiante()}" update="@form"/>
-                                                                </p:inputText>
-                                                                <p:message for="matricula"><p:autoUpdate/></p:message>
-                                                            </div>
-                                                            <div class="col-sm-6 col-md-6 col-lg-6">
-                                                                <p:outputLabel for="nombre" style="font-size: inherit;text-align: right;" value="Nombre:" />
-                                                                <p:inputText id="nombre" class="form-control" value="#{credencializacionSE.rol.nombreC}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                <p:outputLabel for="curp" style="font-size: inherit;text-align: right;" value="CURP:" />
-                                                                <p:inputText id="curp" class="form-control" value="#{credencializacionSE.rol.estudiante.aspirante.idPersona.curp}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                                                <p:outputLabel for="ts" style="font-size: inherit;text-align: right;" value="Tipo de sangre:" />
-                                                                <p:inputText id="ts" class="form-control" value="#{credencializacionSE.rol.estudiante.aspirante.idPersona.datosMedicos.cveTipoSangre.nombre}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-7 col-md-7 col-lg-7">
-                                                                <p:outputLabel for="carrera" style="font-size: inherit;text-align: right;" value="Carrera:" />
-                                                                <p:inputText id="carrera" class="form-control" value="#{credencializacionSE.rol.carrera.nombre}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                <p:outputLabel for="s" style="font-size: inherit;text-align: right;" value="Sistema:" />
-                                                                <p:inputText id="s" class="form-control" value="#{credencializacionSE.rol.estudiante.grupo.idSistema.nombre}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                                                <p:outputLabel for="grado" style="font-size: inherit;text-align: right;" value="Grado:" />
-                                                                <p:inputText id="grado" class="form-control" value="#{credencializacionSE.rol.estudiante.grupo.grado}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                                                <p:outputLabel for="grupo" style="font-size: inherit;text-align: right;" value="Grupo:" />
-                                                                <p:inputText id="grupo" class="form-control" value="#{credencializacionSE.rol.estudiante.grupo.literal}" readonly="true"/>
-                                                            </div>
-                                                            
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
-                                    
-                                </div>
-                            </div>
-                        </h:form>
-                        
-                    </section>
-            </p:tab>
-        </p:tabView>
-        
-        </c:if>
-        <c:if test="#{credencializacionSE.tieneAcceso}">
-                <!-- zona de importación de enums -->
-                <c:if test="#{!empty credencializacionSE.alertas || true}">
-                    <div class="box box-info">
-                        <div class="box-header">
-                            <ui:include src="/includes/alertas.xhtml">
-                                <ui:param name="alertas" value="#{credencializacionSE.alertas}"></ui:param>
-                            </ui:include>
-                        </div>
-                    </div>
+                                </h:form>
+
+                            </section>
+                        </p:tab>
+                    </p:tabView>
+
                 </c:if>
-                <!-- Zona de cuadros de diálogo -->
-                <p:dialog id="modalAyuda"
-                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
-                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
-                    <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para credencialización</h3></div>
-                        <div class="box-body">
-                            <ul class="todo-list">
-                                <c:forEach items="#{credencializacionSE.rol.instrucciones}" var="instruccion">
-                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
-                                </c:forEach>
-                            </ul>
+                <c:if test="#{credencializacionSE.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+                    <c:if test="#{!empty credencializacionSE.alertas || true}">
+                        <div class="box box-info">
+                            <div class="box-header">
+                                <ui:include src="/includes/alertas.xhtml">
+                                    <ui:param name="alertas" value="#{credencializacionSE.alertas}"></ui:param>
+                                </ui:include>
+                            </div>
                         </div>
-                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
-                    </div>
-                </p:dialog>
-       </c:if>
-        <c:if test="#{!credencializacionSE.tieneAcceso}">
-                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a personal de Servicios Escolares."/>
-                    </h:panelGrid>
-                    <f:facet name="footer"></f:facet>
-                </p:panel>
+                    </c:if>
+                    <!-- Zona de cuadros de diálogo -->
+                    <p:dialog id="modalAyuda"
+                              widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                              modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                        <div class="box box-primary">
+                            <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para credencialización</h3></div>
+                            <div class="box-body">
+                                <ul class="todo-list">
+                                    <c:forEach items="#{credencializacionSE.rol.instrucciones}" var="instruccion">
+                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                            <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                        </div>
+                    </p:dialog>
+                </c:if>
+                <c:if test="#{!credencializacionSE.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="El acceso solo está autorizado a personal de Servicios Escolares."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+
+            </div>
+
+
+
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
         </c:if>
-            
-        </div>
-        
-        
-        
-        <script>
-            //collapseSidebar(); activar para colapsar barra lateral
-        </script>
     </ui:define>
 </ui:composition>

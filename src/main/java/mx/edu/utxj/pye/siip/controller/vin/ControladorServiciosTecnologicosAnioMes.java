@@ -79,12 +79,16 @@ public class ControladorServiciosTecnologicosAnioMes implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 30);
-        if (areaRegistro == null) {
-            dtoServicioTecnologico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        } else {
-            dtoServicioTecnologico.setArea(areaRegistro);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 30);
+            if (areaRegistro == null) {
+                dtoServicioTecnologico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            } else {
+                dtoServicioTecnologico.setArea(areaRegistro);
+            }
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorServiciosTecnologicosAnioMes.consultaAreaRegistro(): " + e.getMessage());
         }
     }
     

@@ -1,7 +1,6 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.Collections;
 import java.util.List;
 import lombok.Getter;
@@ -10,10 +9,8 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.CredencializacionRolServiciosE;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ProcesoInscripcionRolServiciosEscolares;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCredencializacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
@@ -22,15 +19,17 @@ import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-import javax.faces.event.ValueChangeEvent;
-import javax.xml.transform.Result;
 
 import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 
 @Named(value = "credencializacionSE")
 @ViewScoped
@@ -41,8 +40,15 @@ public class credencializacionSE  extends ViewScopedRol implements Desarrollable
     @EJB private EjbCredencializacion ejb;
     @Inject LogonMB logonMB;
     @Getter Boolean tieneAcceso = false;
-    @PostConstruct
+    
+
+
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         try{
             setVistaControlador(ControlEscolarVistaControlador.CREDENCIALIZACION);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validaSE(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares

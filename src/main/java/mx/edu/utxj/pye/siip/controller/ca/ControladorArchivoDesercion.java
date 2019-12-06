@@ -68,19 +68,23 @@ public class ControladorArchivoDesercion implements Serializable{
         consultaAreaRegistro();
         setEtapa(RegistroSiipEtapa.MOSTRAR);
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 13);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 41);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 13);
             if (areaRegistro == null) {
-                area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 41);
+                if (areaRegistro == null) {
+                    area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                } else {
+                    area = areaRegistro;
+                }
             } else {
                 area = areaRegistro;
             }
-        } else {
-            area = areaRegistro;
+        } catch (Exception ex) {
+            System.out.println("ControladorArchivoDesercion.consultaAreaRegistro " + ex.getMessage());
         }
     }
     

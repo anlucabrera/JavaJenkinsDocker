@@ -23,7 +23,7 @@
     <ui:define name="title"/>
 
     <ui:define name="body">
-
+        <c:if test="#{controladorEstadisticaPersonal.cargado}">
         <adm:sidebar collapsed="true"/>
         <p:panel id="informacion">
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 148}">
@@ -127,6 +127,7 @@
                 </h1>
             </c:if>
         </p:panel>
+        </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

@@ -93,6 +93,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{cuadroMandoIntegralPlaneacion.cargado}">
 
         <adm:sidebar collapsed="true"/>
         <h:form id="frmAreasCmi" prependId="false" class="form-inline">
@@ -259,5 +260,6 @@
                 </div>
             </div>
         </h:form>
+        </c:if>
     </ui:define>
 </ui:composition>

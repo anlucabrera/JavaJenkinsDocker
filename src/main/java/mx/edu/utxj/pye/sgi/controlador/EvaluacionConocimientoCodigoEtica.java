@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.controlador;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import edu.mx.utxj.pye.seut.util.preguntas.Pregunta;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,12 +27,16 @@ import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 /**
  *
@@ -51,9 +54,16 @@ public class EvaluacionConocimientoCodigoEtica extends ViewScopedRol implements 
     @Inject
     LogonMB logonMB;
     
+
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init() {
         try{
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.EVALUACION_CONOCIMIENTO_CUMPLIMIENTO);
 //            System.out.println(logonMB.getPersonal().getClave());
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarPersonal(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares

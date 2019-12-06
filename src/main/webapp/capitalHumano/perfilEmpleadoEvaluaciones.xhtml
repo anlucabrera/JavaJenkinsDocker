@@ -27,135 +27,136 @@
     <ui:define name="title"/>
 
     <ui:define name="body">
+        <c:if test="#{controladorResultadosEvaluaciones.cargado}">
+            <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+                <h1>
+                    Esta página está disponible solo para pantallas superiores a 1024px.
+                </h1>
+            </p:panel>
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link outcome="perfilEmpleado">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>
+                                    <p:tab title="Resultado de evaluaciones">
+                                        <h:form id="frmresEva">            
+                                            <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
+                                                Deficiente
+                                            </div>
+                                            <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
+                                                Regular
+                                            </div>
+                                            <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
+                                                Bueno
+                                            </div>
+                                            <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
+                                                Excelente
+                                            </div>
+                                            <p:outputPanel deferred="true" >
 
-        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
-            <h1>
-                Esta página está disponible solo para pantallas superiores a 1024px.
-            </h1>
-        </p:panel>
-        <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <section class="content">
-                <div class="row">
-                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                    <div class="col-md-10">
-                        <div class="nav-tabs-custom">
-                            <div class="row">
-                                <div class="col-lg-10 col-xs-10"/>
-                                <div class="col-lg-2 col-xs-2">
-                                    <p:link outcome="perfilEmpleado">
-                                        <i class="fa fa-reply"></i>
-                                        <span>Regresar a mi perfil</span>
-                                    </p:link>
-                                </div>      
+                                                <p:dataTable id="tblActividades"  value="#{controladorResultadosEvaluaciones.listaResultadoEva}"  var="resultadoEva"
+                                                             paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30"
+                                                             emptyMessage="No se encontraron Registros." rendered="true">                                               
+
+                                                    <p:column headerText="Evaluación" 
+                                                              sortBy="#{resultadoEva.tipoEvaluacion}" 
+                                                              filterBy="#{resultadoEva.tipoEvaluacion}" 
+                                                              filterMatchMode="contains"
+                                                              style="width: 25%">
+                                                        <h:outputText value="#{resultadoEva.tipoEvaluacion}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Periodo" 
+                                                              sortBy="#{resultadoEva.inicio}" 
+                                                              filterBy="#{resultadoEva.inicio}" 
+                                                              filterMatchMode="contains"
+                                                              style="width: 25%">
+                                                        <h:outputText value="#{resultadoEva.inicio} - #{resultadoEva.fin} #{resultadoEva.anio}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Promedio" 
+                                                              sortBy="#{resultadoEva.promedio}" 
+                                                              filterBy="#{resultadoEva.promedio}" 
+                                                              filterMatchMode="contains"
+                                                              style="width: 50%">
+
+                                                        <div class="progress" style=" #{resultadoEva.tipoEvaluacion eq 'Evaluación 360°'?'visibility: visible; ':'display:none;'}">
+
+                                                            <div style=" #{resultadoEva.tipoClas eq 'success'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                    #{resultadoEva.promedio} de 4
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'info'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                    #{resultadoEva.promedio} de 4
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'warning'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                    #{resultadoEva.promedio} de 4
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'danger'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                    #{resultadoEva.promedio} de 4
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'proceso'?'visibility: visible; ':'display:none;'}">
+                                                                En proceso de evaluación
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="progress" style="#{resultadoEva.tipoEvaluacion eq 'Evaluación Desempeño'?'visibility: visible; ':'display:none;'}">
+                                                            <div style=" #{resultadoEva.tipoClas eq 'success'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                    #{resultadoEva.promedio} de 5
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'info'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                    #{resultadoEva.promedio} de 5
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'warning'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                    #{resultadoEva.promedio} de 5
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'danger'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                    #{resultadoEva.promedio} de 5
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'proceso'?'visibility: visible; ':'display:none;'}">
+                                                                En proceso de evaluación
+                                                            </div>                                                        
+                                                        </div>
+                                                    </p:column>    
+                                                </p:dataTable>  
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
                             </div>
-                            <p:tabView>
-                                <p:tab title="Resultado de evaluaciones">
-                                    <h:form id="frmresEva">            
-                                        <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
-                                            Deficiente
-                                        </div>
-                                        <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
-                                            Regular
-                                        </div>
-                                        <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
-                                            Bueno
-                                        </div>
-                                        <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
-                                            Excelente
-                                        </div>
-                                        <p:outputPanel deferred="true" >
-
-                                            <p:dataTable id="tblActividades"  value="#{controladorResultadosEvaluaciones.listaResultadoEva}"  var="resultadoEva"
-                                                         paginator="true" rows="10"
-                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                         rowsPerPageTemplate="5,10,15,20,25,30"
-                                                         emptyMessage="No se encontraron Registros." rendered="true">                                               
-
-                                                <p:column headerText="Evaluación" 
-                                                          sortBy="#{resultadoEva.tipoEvaluacion}" 
-                                                          filterBy="#{resultadoEva.tipoEvaluacion}" 
-                                                          filterMatchMode="contains"
-                                                          style="width: 25%">
-                                                    <h:outputText value="#{resultadoEva.tipoEvaluacion}" />
-                                                </p:column>
-
-                                                <p:column headerText="Periodo" 
-                                                          sortBy="#{resultadoEva.inicio}" 
-                                                          filterBy="#{resultadoEva.inicio}" 
-                                                          filterMatchMode="contains"
-                                                          style="width: 25%">
-                                                    <h:outputText value="#{resultadoEva.inicio} - #{resultadoEva.fin} #{resultadoEva.anio}" />
-                                                </p:column>
-
-                                                <p:column headerText="Promedio" 
-                                                          sortBy="#{resultadoEva.promedio}" 
-                                                          filterBy="#{resultadoEva.promedio}" 
-                                                          filterMatchMode="contains"
-                                                          style="width: 50%">
-
-                                                    <div class="progress" style=" #{resultadoEva.tipoEvaluacion eq 'Evaluación 360°'?'visibility: visible; ':'display:none;'}">
-
-                                                        <div style=" #{resultadoEva.tipoClas eq 'success'?'visibility: visible; ':'display:none;'}">
-                                                            <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
-                                                                #{resultadoEva.promedio} de 4
-                                                            </div>
-                                                        </div>
-                                                        <div style=" #{resultadoEva.tipoClas eq 'info'?'visibility: visible; ':'display:none;'}">
-                                                            <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
-                                                                #{resultadoEva.promedio} de 4
-                                                            </div>
-                                                        </div>
-                                                        <div style=" #{resultadoEva.tipoClas eq 'warning'?'visibility: visible; ':'display:none;'}">
-                                                            <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
-                                                                #{resultadoEva.promedio} de 4
-                                                            </div>
-                                                        </div>
-                                                        <div style=" #{resultadoEva.tipoClas eq 'danger'?'visibility: visible; ':'display:none;'}">
-                                                            <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
-                                                                #{resultadoEva.promedio} de 4
-                                                            </div>
-                                                        </div>
-                                                        <div style=" #{resultadoEva.tipoClas eq 'proceso'?'visibility: visible; ':'display:none;'}">
-                                                            En proceso de evaluación
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="progress" style="#{resultadoEva.tipoEvaluacion eq 'Evaluación Desempeño'?'visibility: visible; ':'display:none;'}">
-                                                        <div style=" #{resultadoEva.tipoClas eq 'success'?'visibility: visible; ':'display:none;'}">
-                                                            <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
-                                                                #{resultadoEva.promedio} de 5
-                                                            </div>
-                                                        </div>
-                                                        <div style=" #{resultadoEva.tipoClas eq 'info'?'visibility: visible; ':'display:none;'}">
-                                                            <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
-                                                                #{resultadoEva.promedio} de 5
-                                                            </div>
-                                                        </div>
-                                                        <div style=" #{resultadoEva.tipoClas eq 'warning'?'visibility: visible; ':'display:none;'}">
-                                                            <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
-                                                                #{resultadoEva.promedio} de 5
-                                                            </div>
-                                                        </div>
-                                                        <div style=" #{resultadoEva.tipoClas eq 'danger'?'visibility: visible; ':'display:none;'}">
-                                                            <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
-                                                                #{resultadoEva.promedio} de 5
-                                                            </div>
-                                                        </div>
-                                                        <div style=" #{resultadoEva.tipoClas eq 'proceso'?'visibility: visible; ':'display:none;'}">
-                                                            En proceso de evaluación
-                                                        </div>                                                        
-                                                    </div>
-                                                </p:column>    
-                                            </p:dataTable>  
-                                        </p:outputPanel>    
-                                    </h:form>
-                                </p:tab>
-                            </p:tabView>
                         </div>
                     </div>
-                </div>
-            </section>
-        </p:panel>
+                </section>
+            </p:panel>
+        </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

@@ -1,6 +1,5 @@
 package mx.edu.utxj.pye.sgi.controlador;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.PremioCategoriaDto;
@@ -14,12 +13,15 @@ import org.omnifaces.cdi.ViewScoped;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import org.omnifaces.util.Faces;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named
 @ViewScoped
@@ -32,8 +34,15 @@ public class Premios extends ScopedRol {
     @EJB Facade f;
     @Inject LogonMB logonMB;
 
+
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         //System.out.println("mx.edu.utxj.pye.sgi.controlador.Premios.init()" + FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath());
         aplica = false;
         Evaluaciones evaluacion = ejbPremios.getEvaluacionActiva();

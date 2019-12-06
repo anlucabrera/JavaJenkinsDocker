@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -46,6 +47,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
@@ -111,8 +113,13 @@ public class ControladorPersonal implements Serializable {
     @Inject    UtilidadesCH utilidadesCH;    
     @Inject    ControladorResultadosEvaluaciones cre;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;
         estatus.clear();
         estatus.add("Aceptado");
         estatus.add("Denegado");

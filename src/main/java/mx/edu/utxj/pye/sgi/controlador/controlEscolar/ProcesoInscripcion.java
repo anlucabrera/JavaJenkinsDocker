@@ -1,7 +1,6 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import com.itextpdf.text.DocumentException;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,15 +26,19 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named(value = "procesoInscripcion")
 @ViewScoped
@@ -75,9 +78,15 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     
     @Inject LogonMB login;
     
-    @PostConstruct
+    
+
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
         try{
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.INSCRIPCION);
             aspirante = new Aspirante();
             persona = new Persona();

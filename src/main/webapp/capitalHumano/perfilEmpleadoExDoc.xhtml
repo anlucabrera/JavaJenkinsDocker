@@ -22,72 +22,73 @@
     <ui:define name="title"/>
 
     <ui:define name="body">
-        
-        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
-            <h1>
-                Esta página está disponible solo para pantallas superiores a 1024px.
-            </h1>
-        </p:panel>
-        <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.listaDocencias.size() != 0}">
-                <section class="content">
-                    <div class="row">
-                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                        <div class="col-md-10">
-                            <div class="nav-tabs-custom">
-                                <div class="row">
-                                    <div class="col-lg-10 col-xs-10"/>
-                                    <div class="col-lg-2 col-xs-2">
-                                        <p:link outcome="perfilEmpleado">
-                                            <i class="fa fa-reply"></i>
-                                            <span>Regresar a mi perfil</span>
-                                        </p:link>
-                                    </div>      
+        <c:if test="#{controladorEmpleado.cargado}">
+            <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+                <h1>
+                    Esta página está disponible solo para pantallas superiores a 1024px.
+                </h1>
+            </p:panel>
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <c:if test="#{controladorEmpleado.listaDocencias.size() != 0}">
+                    <section class="content">
+                        <div class="row">
+                            <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                            <div class="col-md-10">
+                                <div class="nav-tabs-custom">
+                                    <div class="row">
+                                        <div class="col-lg-10 col-xs-10"/>
+                                        <div class="col-lg-2 col-xs-2">
+                                            <p:link outcome="perfilEmpleado">
+                                                <i class="fa fa-reply"></i>
+                                                <span>Regresar a mi perfil</span>
+                                            </p:link>
+                                        </div>      
+                                    </div>
+                                    <p:tabView>
+                                        <p:tab title="Docencias">
+                                            <h:form id="frmExLab">                                               
+                                                <p:outputPanel>
+                                                    <p:dataTable id="tblActividades"  value="#{controladorEmpleado.listaDocencias}"  var="docencia"
+                                                                 paginator="true" rows="10"
+                                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                 rowsPerPageTemplate="5,10,15,20,25,30"
+                                                                 emptyMessage="No se encontraron registros." rendered="true">
+                                                        <p:column headerText="Programa" 
+                                                                  sortBy="#{docencia.programa}" 
+                                                                  filterBy="#{docencia.programa}" 
+                                                                  filterMatchMode="contains">
+                                                            <h:outputText value="#{docencia.programa}" />
+                                                        </p:column>
+                                                        <p:column headerText="Asignatura" 
+                                                                  sortBy="#{docencia.materia}" 
+                                                                  filterBy="#{docencia.materia}" 
+                                                                  filterMatchMode="contains">
+                                                            <h:outputText value="#{docencia.materia}" />
+                                                        </p:column>                                                
+                                                        <p:column headerText="Periodo escolar" 
+                                                                  sortBy="#{docencia.anio}" 
+                                                                  filterBy="#{docencia.anio}" 
+                                                                  filterMatchMode="contains"
+                                                                  width="200">
+                                                            <h:outputText value="#{docencia.anio}, #{docencia.mesInicio} -#{docencia.msFin}" />
+                                                        </p:column>  
+                                                    </p:dataTable>  
+                                                </p:outputPanel>    
+                                            </h:form>
+                                        </p:tab>
+                                    </p:tabView>
                                 </div>
-                                <p:tabView>
-                                    <p:tab title="Docencias">
-                                        <h:form id="frmExLab">                                               
-                                            <p:outputPanel>
-                                                <p:dataTable id="tblActividades"  value="#{controladorEmpleado.listaDocencias}"  var="docencia"
-                                                             paginator="true" rows="10"
-                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                             rowsPerPageTemplate="5,10,15,20,25,30"
-                                                             emptyMessage="No se encontraron registros." rendered="true">
-                                                    <p:column headerText="Programa" 
-                                                              sortBy="#{docencia.programa}" 
-                                                              filterBy="#{docencia.programa}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{docencia.programa}" />
-                                                    </p:column>
-                                                    <p:column headerText="Asignatura" 
-                                                              sortBy="#{docencia.materia}" 
-                                                              filterBy="#{docencia.materia}" 
-                                                              filterMatchMode="contains">
-                                                        <h:outputText value="#{docencia.materia}" />
-                                                    </p:column>                                                
-                                                    <p:column headerText="Periodo escolar" 
-                                                              sortBy="#{docencia.anio}" 
-                                                              filterBy="#{docencia.anio}" 
-                                                              filterMatchMode="contains"
-                                                              width="200">
-                                                        <h:outputText value="#{docencia.anio}, #{docencia.mesInicio} -#{docencia.msFin}" />
-                                                    </p:column>  
-                                                </p:dataTable>  
-                                            </p:outputPanel>    
-                                        </h:form>
-                                    </p:tab>
-                                </p:tabView>
                             </div>
                         </div>
-                    </div>
-                </section> 
-            </c:if>
-            <c:if test="#{controladorEmpleado.listaDocencias.size() eq 0}">
-                <h1>
-                    Esta página está disponible solo para docentes.
-                </h1>
-            </c:if>
-        </p:panel>
+                    </section> 
+                </c:if>
+                <c:if test="#{controladorEmpleado.listaDocencias.size() eq 0}">
+                    <h1>
+                        Esta página está disponible solo para docentes.
+                    </h1>
+                </c:if>
+            </p:panel>
+        </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

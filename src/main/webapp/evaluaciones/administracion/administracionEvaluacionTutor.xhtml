@@ -73,6 +73,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{administracionEncuesta.cargado}">
         <div id="main-buttons"  >
             <p:toolbar id="tb">
                 <f:facet name="left">
@@ -336,5 +337,6 @@
                 </p:tab>
             </c:if>
         </p:tabView>
+            </c:if>
     </ui:define>
 </ui:composition>

@@ -39,6 +39,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{reincorporacionServiciosEscolares.cargado}">
         <adm:breadcrumb title="Reincorporaciones"/>
         <adm:sidebar collapsed="true"/>
         <div class="contenedor">
@@ -1684,5 +1685,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if> 
     </ui:define>
 </ui:composition>

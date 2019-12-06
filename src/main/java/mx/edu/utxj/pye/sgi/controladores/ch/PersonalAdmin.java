@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
 import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import lombok.Getter;
@@ -26,6 +28,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.shiro.User;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.saiiut.ejb.EjbLogin;
 import mx.edu.utxj.pye.sgi.util.Encrypted;
 import org.omnifaces.util.Messages;
@@ -59,8 +62,13 @@ public class PersonalAdmin implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo areasLogeo;
     @EJB private EjbLogin el;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;
         nuevOBJPersonalSubordinado = new Personal();
         mostrarSubordinados();
     }

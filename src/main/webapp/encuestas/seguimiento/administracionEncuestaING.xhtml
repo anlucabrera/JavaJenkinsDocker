@@ -73,6 +73,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{administracionEncuesta.cargado}">
         <!--adm:breadcrumb title="Grupo : tutorado"/-->
         <div id="main-buttons"  >
             <p:toolbar id="tb">
@@ -93,5 +94,6 @@
                 </h:form>
             </p:tab>   
         </p:tabView>
+        </c:if>
     </ui:define>
 </ui:composition>

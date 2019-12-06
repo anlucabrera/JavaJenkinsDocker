@@ -25,7 +25,7 @@
     <ui:define name="title"/>
 
     <ui:define name="body">
-
+        <c:if test="#{cvPremios.cargado}">
         <h:outputScript>
             PrimeFaces.locales['es'] = {
             closeText: 'Cerrar',
@@ -313,6 +313,7 @@
                 </div>
             </section>
         </p:panel>
+        </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

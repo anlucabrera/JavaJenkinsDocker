@@ -1,7 +1,6 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
@@ -31,15 +30,18 @@ import javax.el.ELException;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named(value = "cedulaIdentificacionPsicopedagogia")
 @ViewScoped
@@ -55,8 +57,15 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
     @Getter Boolean tieneAcceso = false;
     @Getter @Setter String valor;
 
-    @PostConstruct
+    
+
+
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         try{
             setVistaControlador(ControlEscolarVistaControlador.CEDULA_IDENTIFICACION);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejbCedulaIdentificacion.validarPsicopedagogia(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares

@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import lombok.Getter;
@@ -30,6 +29,10 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 @Named
 @ManagedBean
@@ -56,8 +59,16 @@ public class AdminPoaValidacionProgramacion implements Serializable {
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA utilidadesPOA;
 
-    @PostConstruct
+    
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+@PostConstruct
     public void init() {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         ejercicioFiscal=controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         buscarAreasQueTienenPOA();
 

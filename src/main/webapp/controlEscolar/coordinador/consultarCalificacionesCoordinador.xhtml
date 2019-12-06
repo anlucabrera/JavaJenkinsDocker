@@ -34,6 +34,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{consultaCalificacionesCoordinadorAD.cargado}">
         <style type="text/css">
             body .ui-datatable .ui-datatable-header{
                 background: #D9F0FC !important;
@@ -303,5 +304,6 @@
                 </p:panel>
             </c:if>
         </div>
+        </c:if>
     </ui:define>
 </ui:composition>

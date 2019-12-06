@@ -104,19 +104,23 @@ public class ControladorDesercionReprobacion implements Serializable {
         /*FIN DEL INIT FILTRADO*/
 
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 13);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 41);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 13);
             if (areaRegistro == null) {
-                dto.setArea((ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa())).getArea());
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 41);
+                if (areaRegistro == null) {
+                    dto.setArea((ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa())).getArea());
+                } else {
+                    dto.setArea(areaRegistro.getArea());
+                }
             } else {
                 dto.setArea(areaRegistro.getArea());
             }
-        } else {
-            dto.setArea(areaRegistro.getArea());
+        } catch (Exception ex) {
+            System.out.println("ControladorDesercionReprobacion.consultaAreaRegistro: " + ex.getMessage());
         }
     }
     

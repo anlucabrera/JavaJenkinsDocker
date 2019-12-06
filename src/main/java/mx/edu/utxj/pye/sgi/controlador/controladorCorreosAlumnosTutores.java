@@ -5,29 +5,29 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mail.Message;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoAlumnosCorreosTutor;
-import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestas;
 import mx.edu.utxj.pye.sgi.ejb.EjbTutoresCorreosAlumnos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AlumnosCorreoinstitucional;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 /**
  *
@@ -54,12 +54,17 @@ public class controladorCorreosAlumnosTutores extends ViewScopedRol implements S
     @Getter @Setter List<dtoAlumnosCorreosTutor> listCorreosAlumnosporTutor = new ArrayList<>();
     @Getter @Setter String correo;
     
+
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         esTutor();
-        System.out.println("Ejecuto ES TUTOR");
-        listCorreosAlumnosporTutor= getListaCorreosAlumnos();
-        System.out.println("Ejecuto getLusta"+ listAlumnosporTutor.size()); 
+        listCorreosAlumnosporTutor= getListaCorreosAlumnos(); 
     }
     
     public boolean esTutor(){

@@ -86,15 +86,16 @@ public class ControladorEmpleado implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbNotificacionesIncidencias ejbNotificacionesIncidencias;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     
-    @Inject    LogonMB logonMB;
     @Inject    UtilidadesCH uch;
 
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;
         try {
-            if(logonMB.getUsuarioTipo() != UsuarioTipo.TRABAJADOR){
-                return;
-            }
 // Comentar la siguiente asignación cuando saiiut falle//
             if (logonMB.getPersonal().getStatus().equals('B')) {
                 nuevoOBJListaPersonal = null;

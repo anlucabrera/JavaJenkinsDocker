@@ -68,17 +68,21 @@ public class ControladorArchivoFerias implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 27);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 64);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 27);
             if (areaRegistro == null) {
-                area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 64);
+                if (areaRegistro == null) {
+                    area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                } else {
+                    area = areaRegistro;
+                }
             } else {
                 area = areaRegistro;
             }
-        } else {
-            area = areaRegistro;
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorArchivoFerias.consultaAreaRegistro(): " + e.getMessage());
         }
     }
 

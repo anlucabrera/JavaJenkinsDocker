@@ -24,6 +24,12 @@ import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestaIng;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
 import org.omnifaces.util.Messages;
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
+
 /**
  *
  * @author Planeacion
@@ -37,8 +43,16 @@ public class AdministracionEncuestaIng implements Serializable{
     @Getter @Setter private DtoEvaluaciones dto = new DtoEvaluaciones();
     @EJB private EjbAdministracionEncuestaIng ejbAdmEI;
     
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         dto.listaEvaCompleta = new ArrayList<>();
         dto.listaEvaIncompleta = new ArrayList<>();
         dto.listaEvaNA = new ArrayList<>();

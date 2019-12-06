@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +25,12 @@ import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuestaTsu;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
 import org.omnifaces.util.Messages;
+
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 
 /**
  *
@@ -41,8 +46,16 @@ public class AdministracionEncuestaTsu implements Serializable{
     @EJB private EjbAdministracionEncuestaServicios ejbES;
     @Inject AdministracionEncuesta controlerAE;
 
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init() {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
 
     }
     

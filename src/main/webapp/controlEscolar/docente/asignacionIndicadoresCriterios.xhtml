@@ -35,315 +35,317 @@
     </ui:define>
 
     <ui:define name="body">
-        <adm:breadcrumb title="Asignación de Indicadores por Criterio"/>
-        <div class="contenedor">
-            <c:if test="#{asignacionIndicadoresCriteriosDocente.tieneAcceso}">
-                <!-- zona de importación de enums -->
-                <h:form id="frm" prependId="false" class="form-inline">
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
-                            <div id="main-buttons" class="hidden-sm hidden-xs">
-                                <p:toolbar id="tb">
-                                    <f:facet name="left">
-                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(asignacionIndicadoresCriteriosDocente.rol.periodoActivo)}" />
-                                        <p:spacer width="5" />
+        <c:if test="#{asignacionIndicadoresCriteriosDocente.cargado}">
+            <adm:breadcrumb title="Asignación de Indicadores por Criterio"/>
+            <div class="contenedor">
+                <c:if test="#{asignacionIndicadoresCriteriosDocente.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+                    <h:form id="frm" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(asignacionIndicadoresCriteriosDocente.rol.periodoActivo)}" />
+                                            <p:spacer width="5" />
 
-                                    </f:facet>
-                                    <f:facet name="right">
-                                        <p:commandLink
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandLink
                                                 class="btn btn-info"
                                                 rendered="#{true}"
                                                 disabled="#{false}"
                                                 onclick="PF('modalAyuda').show();"
                                                 title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
-                                                class="fa fa-question"/>
-                                        </p:commandLink>
-                                    </f:facet>
-                                </p:toolbar>
-                            </div>
-                            <div class="box box-solid">
-                                <div class="box-body">
-                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
-                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
-                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="#{asignacionIndicadoresCriteriosDocente.actualizarCargaAcademica}" update="@form" />
-                                    <div class="row margin-bottom" style="margin-top: 20px;">
-                                        <div class="#{casilla}">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="periodo" value="#{asignacionIndicadoresCriteriosDocente.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarPeriodo}">
-                                                    <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, carga"/>
-                                                    <p:autoUpdate />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Periodo" for="periodo"/>
-                                                <p:message for="periodo" />
+                                                    class="fa fa-question"/>
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                                <div class="box box-solid">
+                                    <div class="box-body">
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                        <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="#{asignacionIndicadoresCriteriosDocente.actualizarCargaAcademica}" update="@form" />
+                                        <div class="row margin-bottom" style="margin-top: 20px;">
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="periodo" value="#{asignacionIndicadoresCriteriosDocente.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarPeriodo}">
+                                                        <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                        <p:ajax process="@this, carga"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Periodo" for="periodo"/>
+                                                    <p:message for="periodo" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="carga" value="#{asignacionIndicadoresCriteriosDocente.rol.carga}" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarCarga}">
+                                                        <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.cargas}" var="carga"
+                                                                       itemValue="#{carga}" itemLabel="#{carga.materia.nombre} (#{carga.planEstudioMateria.claveMateria}) #{carga.grupo.grado}° #{carga.grupo.literal} de #{carga.programa.nombre}"/>
+                                                        <p:ajax update="@this" process="@this"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Materia - Grupo - Programa Educativo" for="carga"/>
+                                                    <p:message for="carga" />
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="#{casilla2}">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="carga" value="#{asignacionIndicadoresCriteriosDocente.rol.carga}" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarCarga}">
-                                                    <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.cargas}" var="carga"
-                                                                   itemValue="#{carga}" itemLabel="#{carga.materia.nombre} (#{carga.planEstudioMateria.claveMateria}) #{carga.grupo.grado}° #{carga.grupo.literal} de #{carga.programa.nombre}"/>
-                                                    <p:ajax update="@this" process="@this"/>
-                                                    <p:autoUpdate />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Materia - Grupo - Programa Educativo" for="carga"/>
-                                                <p:message for="carga" />
-                                            </div>
+                                        <div class="row">
+                                            <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
+                                                <center>
+                                                    <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{asignacionIndicadoresCriteriosDocente.rol.listaAsignacionCargaAcademica}" sortBy="#{asignacionIndCA.unidadMateria.noUnidad}"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                        <f:facet name="header">
+                                                            #{asignacionIndicadoresCriteriosDocente.rol.carga.materia.nombre}
+                                                        </f:facet>
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column headerText="No. Unidad" /> 
+                                                                <p:column headerText="Unidad" /> 
+                                                                <p:column headerText="Criterio" />
+                                                                <p:column headerText="Indicador" />
+                                                                <p:column headerText="Porcentaje" />
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{asignacionIndCA.unidadMateria.noUnidad}" style="text-align: center;"/>
+                                                        </p:column>
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{asignacionIndCA.unidadMateria.nombre}" style="text-align: center;" />
+                                                        </p:column>
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{asignacionIndCA.criterio.tipo}" style="text-align: center;"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{asignacionIndCA.indicador.nombre}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{asignacionIndCA.configuracionDetalle.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                    <p></p>
+                                                    <p></p>
+                                                    <p></p>
+                                                    <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{asignacionIndicadoresCriteriosDocente.eliminarAsignacionIndicadores}" class="btn-primary" process="@this" update="@form" icon="fa fa-trash" >
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la asignación de indicadores por criterio?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                    </p:confirmDialog>  
+                                                </center>
+                                            </c:if>
+                                            <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
+                                                <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
+                                                    <center>
+                                                        <p:outputLabel value="¿Cómo desea realizar la asignación de indicadores por criterios?" />
+                                                        <p></p>
+                                                        <p:selectOneRadio id="opcAsignacion" value="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion}" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarOpcionAsignacion}">
+                                                            <f:selectItem itemLabel="Masiva (Aplicar asignación a todas las unidades)" itemValue="masiva" />
+                                                            <f:selectItem itemLabel="Por Unidad (Asignación por unidad)" itemValue="individual" />
+                                                            <p:ajax update="@this" process="@this"/>
+                                                            <p:autoUpdate />
+                                                        </p:selectOneRadio>
+                                                    </center>
+                                                    <p></p>  
+                                                    <p></p>  
+
+                                                    <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion eq 'individual'}">
+                                                        <center>
+                                                            <p:outputLabel value="Seleccione Unidad a la que aplicará asignación de indicadores" />
+                                                            <p></p>
+                                                            <p:selectOneRadio id="unidad" value="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.validarAsignacionUnidad}" >
+                                                                <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.listaDtoConfUniMat}" var="c" itemLabel="#{c.unidadMateria.noUnidad}. #{c.unidadMateria.nombre}" itemValue="#{c}"/>
+                                                                <p:ajax update="@this" process="@this"/>
+                                                                <p:autoUpdate />
+                                                            </p:selectOneRadio>
+                                                            <p></p>
+                                                            <p></p>
+                                                        </center>
+                                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat ne null}">
+                                                            <p:growl id="msgs" showDetail="true" />
+                                                            <p:accordionPanel widgetVar="accordion">
+                                                                <p:tab title="Ser" titleStyleClass="box-solid" >
+                                                                    <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" layout="grid" id="indSer">
+                                                                        <f:facet name="header">
+                                                                            <p:outputLabel value="Ser #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
+                                                                        </f:facet>
+                                                                        <p:panel header="#{indSer.indicador}" style="text-align:center">
+                                                                            <h:panelGrid columns="1" style="width:100%">
+                                                                                <p:inputText value="#{indSer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
+                                                                            </h:panelGrid>
+                                                                        </p:panel>
+                                                                    </p:dataGrid>
+                                                                </p:tab>
+                                                                <p:tab title="Saber" titleStyleClass="box-solid">
+                                                                    <p:dataGrid var="indSaber" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaber}" layout="grid" id="indSaber">
+                                                                        <f:facet name="header">
+                                                                            <p:outputLabel value="Saber #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaber}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
+                                                                        </f:facet>
+                                                                        <p:panel header="#{indSaber.indicador}" style="text-align:center">
+                                                                            <h:panelGrid columns="1" style="width:100%">
+                                                                                <p:inputText value="#{indSaber.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
+                                                                            </h:panelGrid>
+                                                                        </p:panel>
+                                                                    </p:dataGrid>
+                                                                </p:tab>
+                                                                <p:tab title="Saber - Hacer" titleStyleClass="box-solid">
+                                                                    <p:dataGrid var="indSaberHacer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaberHacer}" layout="grid" id="indSaberHacer">
+                                                                        <f:facet name="header">
+                                                                            <p:outputLabel value="Saber - Hacer #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaberHacer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
+                                                                        </f:facet>
+                                                                        <p:panel header="#{indSaberHacer.indicador}" style="text-align:center">
+                                                                            <h:panelGrid columns="1" style="width:100%">
+                                                                                <p:inputText value="#{indSaberHacer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
+                                                                            </h:panelGrid>
+                                                                        </p:panel>
+                                                                    </p:dataGrid>
+                                                                </p:tab>
+                                                            </p:accordionPanel>
+                                                            <p></p>
+                                                            <p></p>
+                                                            <center>
+                                                                <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterio}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                                                <p:autoUpdate />
+                                                            </center>
+                                                        </c:if>
+                                                    </c:if>
+                                                    <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion eq 'masiva'}">
+                                                        <p:growl id="msgs" showDetail="true" />
+                                                        <p:accordionPanel widgetVar="accordion">
+                                                            <p:tab title="Ser" titleStyleClass="box-solid" >
+                                                                <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" layout="grid" id="indSer">
+                                                                    <f:facet name="header">
+                                                                        <p:outputLabel value="Ser #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
+                                                                    </f:facet>
+                                                                    <p:panel header="#{indSer.indicador}" style="text-align:center">
+                                                                        <h:panelGrid columns="1" style="width:100%">
+                                                                            <p:inputText value="#{indSer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
+                                                                        </h:panelGrid>
+                                                                    </p:panel>
+                                                                </p:dataGrid>
+                                                            </p:tab>
+                                                            <p:tab title="Saber" titleStyleClass="box-solid">
+                                                                <p:dataGrid var="indSaber" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaber}" layout="grid" id="indSaber">
+                                                                    <f:facet name="header">
+                                                                        <p:outputLabel value="Saber #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaber}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
+                                                                    </f:facet>
+                                                                    <p:panel header="#{indSaber.indicador}" style="text-align:center">
+                                                                        <h:panelGrid columns="1" style="width:100%">
+                                                                            <p:inputText value="#{indSaber.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
+                                                                        </h:panelGrid>
+                                                                    </p:panel>
+                                                                </p:dataGrid>
+                                                            </p:tab>
+                                                            <p:tab title="Saber - Hacer" titleStyleClass="box-solid">
+                                                                <p:dataGrid var="indSaberHacer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaberHacer}" layout="grid" id="indSaberHacer">
+                                                                    <f:facet name="header">
+                                                                        <p:outputLabel value="Saber - Hacer #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaberHacer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
+                                                                    </f:facet>
+                                                                    <p:panel header="#{indSaberHacer.indicador}" style="text-align:center">
+                                                                        <h:panelGrid columns="1" style="width:100%">
+                                                                            <p:inputText value="#{indSaberHacer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
+                                                                        </h:panelGrid>
+                                                                    </p:panel>
+                                                                </p:dataGrid>
+                                                            </p:tab>
+                                                        </p:accordionPanel>
+                                                        <p></p>
+                                                        <p></p>
+                                                        <center>
+                                                            <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterioMasivamente}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                                            <p:autoUpdate />
+                                                        </center>
+                                                    </c:if>
+                                                    <p></p>
+                                                    <p></p>
+                                                    <p></p>
+                                                    <p></p>
+                                                    <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionUnidad}">
+                                                        <center>
+                                                            <p:outputLabel value="Asignación registrada de la Unidad" />
+                                                            <p></p>
+                                                            <p></p>
+                                                            <p></p>
+                                                            <p:dataTable id="tbAsigIndUnidad" var="asignacionIndUnidad" value="#{asignacionIndicadoresCriteriosDocente.rol.listaConfiguracionDetalles}" sortBy="#{asignacionIndUnidad.criterio.criterio}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                                <f:facet name="header">
+                                                                    Unidad: #{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat.unidadMateria.nombre}
+                                                                </f:facet>
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Criterio" /> 
+                                                                        <p:column headerText="Indicador" /> 
+                                                                        <p:column headerText="Porcentaje" />
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column groupRow="true">
+                                                                    <h:outputText value="#{asignacionIndUnidad.criterio.tipo}" style="text-align: center;"/>
+                                                                </p:column>
+                                                                <p:column>
+                                                                    <h:outputText value="#{asignacionIndUnidad.indicador.nombre}" />
+                                                                </p:column>
+                                                                <p:column>
+                                                                    <h:outputText value="#{asignacionIndUnidad.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                        </center>
+                                                    </c:if>
+                                                </c:if>
+                                                <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
+                                                    <p:panel id="box-colors-panel" header="No existe configuración de la unidad materia" styleClass="box-fatal box-solid">
+                                                        <h:panelGrid columns="2" cellpadding="10">
+                                                            <h:outputText value="Para realizar la Asignación de Indicadores por Criterio, deberá realizar la Configuración por Unidad de la Materia"/>
+                                                        </h:panelGrid>
+                                                    </p:panel>
+                                                </c:if>
+                                            </c:if>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
-                                            <center>
-                                                <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{asignacionIndicadoresCriteriosDocente.rol.listaAsignacionCargaAcademica}" sortBy="#{asignacionIndCA.unidadMateria.noUnidad}"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
-                                                    <f:facet name="header">
-                                                        #{asignacionIndicadoresCriteriosDocente.rol.carga.materia.nombre}
-                                                    </f:facet>
-                                                    <p:columnGroup type="header">
-                                                        <p:row class="success">
-                                                            <p:column headerText="No. Unidad" /> 
-                                                            <p:column headerText="Unidad" /> 
-                                                            <p:column headerText="Criterio" />
-                                                            <p:column headerText="Indicador" />
-                                                            <p:column headerText="Porcentaje" />
-                                                        </p:row>
-                                                    </p:columnGroup>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{asignacionIndCA.unidadMateria.noUnidad}" style="text-align: center;"/>
-                                                    </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{asignacionIndCA.unidadMateria.nombre}" style="text-align: center;" />
-                                                    </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{asignacionIndCA.criterio.tipo}" style="text-align: center;"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{asignacionIndCA.indicador.nombre}" />
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{asignacionIndCA.configuracionDetalle.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
-                                                    </p:column>
-                                                </p:dataTable>
-                                                <p></p>
-                                                <p></p>
-                                                <p></p>
-                                                <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{asignacionIndicadoresCriteriosDocente.eliminarAsignacionIndicadores}" class="btn-primary" process="@this" update="@form" icon="fa fa-trash" >
-                                                    <p:confirm header="Confirmación" message="¿Confirma la eliminación de la asignación de indicadores por criterio?" icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                                </p:confirmDialog>  
-                                            </center>
-                                        </c:if>
-                                        <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
-                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
-                                        <center>
-                                        <p:outputLabel value="¿Cómo desea realizar la asignación de indicadores por criterios?" />
-                                        <p></p>
-                                        <p:selectOneRadio id="opcAsignacion" value="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion}" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarOpcionAsignacion}">
-                                            <f:selectItem itemLabel="Masiva (Aplicar asignación a todas las unidades)" itemValue="masiva" />
-                                            <f:selectItem itemLabel="Por Unidad (Asignación por unidad)" itemValue="individual" />
-                                            <p:ajax update="@this" process="@this"/>
-                                            <p:autoUpdate />
-                                        </p:selectOneRadio>
-                                        </center>
-                                        <p></p>  
-                                        <p></p>  
-                                        
-                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion eq 'individual'}">
-                                        <center>
-                                        <p:outputLabel value="Seleccione Unidad a la que aplicará asignación de indicadores" />
-                                        <p></p>
-                                        <p:selectOneRadio id="unidad" value="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.validarAsignacionUnidad}" >
-                                            <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.listaDtoConfUniMat}" var="c" itemLabel="#{c.unidadMateria.noUnidad}. #{c.unidadMateria.nombre}" itemValue="#{c}"/>
-                                            <p:ajax update="@this" process="@this"/>
-                                            <p:autoUpdate />
-                                        </p:selectOneRadio>
-                                        <p></p>
-                                        <p></p>
-                                        </center>
-                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat ne null}">
-                                        <p:growl id="msgs" showDetail="true" />
-                                        <p:accordionPanel widgetVar="accordion">
-                                                <p:tab title="Ser" titleStyleClass="box-solid" >
-                                                        <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" layout="grid" id="indSer">
-                                                        <f:facet name="header">
-                                                        <p:outputLabel value="Ser #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
-                                                        </f:facet>
-                                                        <p:panel header="#{indSer.indicador}" style="text-align:center">
-                                                            <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
-                                                            </h:panelGrid>
-                                                        </p:panel>
-                                                    </p:dataGrid>
-                                                </p:tab>
-                                                <p:tab title="Saber" titleStyleClass="box-solid">
-                                                    <p:dataGrid var="indSaber" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaber}" layout="grid" id="indSaber">
-                                                        <f:facet name="header">
-                                                        <p:outputLabel value="Saber #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaber}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
-                                                        </f:facet>
-                                                        <p:panel header="#{indSaber.indicador}" style="text-align:center">
-                                                            <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSaber.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
-                                                            </h:panelGrid>
-                                                        </p:panel>
-                                                    </p:dataGrid>
-                                                </p:tab>
-                                                <p:tab title="Saber - Hacer" titleStyleClass="box-solid">
-                                                    <p:dataGrid var="indSaberHacer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaberHacer}" layout="grid" id="indSaberHacer">
-                                                        <f:facet name="header">
-                                                        <p:outputLabel value="Saber - Hacer #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaberHacer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
-                                                        </f:facet>
-                                                        <p:panel header="#{indSaberHacer.indicador}" style="text-align:center">
-                                                            <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSaberHacer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
-                                                            </h:panelGrid>
-                                                        </p:panel>
-                                                    </p:dataGrid>
-                                                </p:tab>
-                                        </p:accordionPanel>
-                                        <p></p>
-                                        <p></p>
-                                        <center>
-                                            <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterio}" icon="fa fa-pencil-square-o" class="btn-primary"/>
-                                            <p:autoUpdate />
-                                        </center>
-                                        </c:if>
-                                        </c:if>
-                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.opcAsignacion eq 'masiva'}">
-                                        <p:growl id="msgs" showDetail="true" />
-                                        <p:accordionPanel widgetVar="accordion">
-                                                <p:tab title="Ser" titleStyleClass="box-solid" >
-                                                        <p:dataGrid var="indSer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSer}" layout="grid" id="indSer">
-                                                        <f:facet name="header">
-                                                        <p:outputLabel value="Ser #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
-                                                        </f:facet>
-                                                        <p:panel header="#{indSer.indicador}" style="text-align:center">
-                                                            <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
-                                                            </h:panelGrid>
-                                                        </p:panel>
-                                                    </p:dataGrid>
-                                                </p:tab>
-                                                <p:tab title="Saber" titleStyleClass="box-solid">
-                                                    <p:dataGrid var="indSaber" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaber}" layout="grid" id="indSaber">
-                                                        <f:facet name="header">
-                                                        <p:outputLabel value="Saber #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaber}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
-                                                        </f:facet>
-                                                        <p:panel header="#{indSaber.indicador}" style="text-align:center">
-                                                            <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSaber.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
-                                                            </h:panelGrid>
-                                                        </p:panel>
-                                                    </p:dataGrid>
-                                                </p:tab>
-                                                <p:tab title="Saber - Hacer" titleStyleClass="box-solid">
-                                                    <p:dataGrid var="indSaberHacer" value="#{asignacionIndicadoresCriteriosDocente.rol.listaCriteriosSaberHacer}" layout="grid" id="indSaberHacer">
-                                                        <f:facet name="header">
-                                                        <p:outputLabel value="Saber - Hacer #{asignacionIndicadoresCriteriosDocente.rol.porcentajeSaberHacer}%" style="font-weight: bold; font-size: 18px; text-align: center;"/>
-                                                        </f:facet>
-                                                        <p:panel header="#{indSaberHacer.indicador}" style="text-align:center">
-                                                            <h:panelGrid columns="1" style="width:100%">
-                                                                <p:inputText value="#{indSaberHacer.porcentajeIndicador}" onkeypress="return soloNumeros(event)"/>
-                                                            </h:panelGrid>
-                                                        </p:panel>
-                                                    </p:dataGrid>
-                                                </p:tab>
-                                        </p:accordionPanel>
-                                        <p></p>
-                                        <p></p>
-                                        <center>
-                                            <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarIndicadoresCriterioMasivamente}" icon="fa fa-pencil-square-o" class="btn-primary"/>
-                                            <p:autoUpdate />
-                                        </center>
-                                        </c:if>
-                                        <p></p>
-                                        <p></p>
-                                        <p></p>
-                                        <p></p>
-                                        <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionUnidad}">
-                                            <center>
-                                            <p:outputLabel value="Asignación registrada de la Unidad" />
-                                            <p></p>
-                                            <p></p>
-                                            <p></p>
-                                            <p:dataTable id="tbAsigIndUnidad" var="asignacionIndUnidad" value="#{asignacionIndicadoresCriteriosDocente.rol.listaConfiguracionDetalles}" sortBy="#{asignacionIndUnidad.criterio.criterio}"
-                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
-                                                <f:facet name="header">
-                                                            Unidad: #{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat.unidadMateria.nombre}
-                                                </f:facet>
-                                                <p:columnGroup type="header">
-                                                    <p:row class="success">
-                                                        <p:column headerText="Criterio" /> 
-                                                        <p:column headerText="Indicador" /> 
-                                                        <p:column headerText="Porcentaje" />
-                                                    </p:row>
-                                                </p:columnGroup>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{asignacionIndUnidad.criterio.tipo}" style="text-align: center;"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{asignacionIndUnidad.indicador.nombre}" />
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{asignacionIndUnidad.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
-                                                    </p:column>
-                                            </p:dataTable>
-                                            </center>
-                                        </c:if>
-                                        </c:if>
-                                        <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
-                                            <p:panel id="box-colors-panel" header="No existe configuración de la unidad materia" styleClass="box-fatal box-solid">
-                                                <h:panelGrid columns="2" cellpadding="10">
-                                                    <h:outputText value="Para realizar la Asignación de Indicadores por Criterio, deberá realizar la Configuración por Unidad de la Materia"/>
-                                                </h:panelGrid>
-                                            </p:panel>
-                                        </c:if>
-                                       </c:if>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </h:form>
-                <c:if test="#{!empty asignacionIndicadoresCriteriosDocente.alertas || true}">
-                    <div class="box box-info">
-                        <div class="box-header">
-                            <ui:include src="/includes/alertas.xhtml">
-                                <ui:param name="alertas" value="#{asignacionIndicadoresCriteriosDocente.alertas}"></ui:param>
-                            </ui:include>
+                    </h:form>
+                    <c:if test="#{!empty asignacionIndicadoresCriteriosDocente.alertas || true}">
+                        <div class="box box-info">
+                            <div class="box-header">
+                                <ui:include src="/includes/alertas.xhtml">
+                                    <ui:param name="alertas" value="#{asignacionIndicadoresCriteriosDocente.alertas}"></ui:param>
+                                </ui:include>
+                            </div>
                         </div>
-                    </div>
+                    </c:if>
+                    <!-- Zona de cuadros de diálogo -->
+                    <p:dialog id="modalAyuda"
+                              widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                              modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                        <div class="box box-primary">
+                            <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación de indicadores por criterio</h3></div>
+                            <div class="box-body">
+                                <ul class="todo-list">
+                                    <c:forEach items="#{asignacionIndicadoresCriteriosDocente.rol.instrucciones}" var="instruccion">
+                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                            <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                        </div>
+                    </p:dialog>
                 </c:if>
-                <!-- Zona de cuadros de diálogo -->
-                <p:dialog id="modalAyuda"
-                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
-                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
-                    <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación de indicadores por criterio</h3></div>
-                        <div class="box-body">
-                            <ul class="todo-list">
-                                <c:forEach items="#{asignacionIndicadoresCriteriosDocente.rol.instrucciones}" var="instruccion">
-                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
-                                </c:forEach>
-                            </ul>
-                        </div>
-                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
-                    </div>
-                </p:dialog>
-            </c:if>
-            <c:if test="#{!asignacionIndicadoresCriteriosDocente.tieneAcceso}">
-                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a personal docente."/>
-                    </h:panelGrid>
-                    <f:facet name="footer"></f:facet>
-                </p:panel>
-            </c:if>
-        </div>
-        <script>
-            //collapseSidebar(); activar para colapsar barra lateral
-        </script>
+                <c:if test="#{!asignacionIndicadoresCriteriosDocente.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="El acceso solo está autorizado a personal docente."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
+        </c:if>
     </ui:define>
 </ui:composition>

@@ -29,6 +29,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{utilToolAcademicas.cargado}">
         <adm:breadcrumb title="Cédula de identificación"/>
         <p:panel styleClass="card no-border" header="Cédula de identificación">
             <h:form id="frm" prependId="false" class="form-inline">
@@ -252,5 +253,6 @@
                 </p:panel>
             </h:form>
         </p:panel>
+        </c:if>
     </ui:define>
 </ui:composition>

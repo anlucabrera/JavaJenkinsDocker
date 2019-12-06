@@ -85,12 +85,16 @@ public class ControladorProductosAcademicos implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 19);
-        if (areaRegistro == null) {
-            dtoProductoAcademico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        } else {
-            dtoProductoAcademico.setArea(areaRegistro);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 19);
+            if (areaRegistro == null) {
+                dtoProductoAcademico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            } else {
+                dtoProductoAcademico.setArea(areaRegistro);
+            }
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorProductosAcademicos.consultaAreaRegistro(): " + e.getMessage());
         }
     }
     

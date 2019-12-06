@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
 import mx.edu.utxj.pye.sgi.entity.pye2.CapitulosTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.util.Ajax;
@@ -80,8 +82,13 @@ public class AdministracionControl implements Serializable {
     @Inject    UtilidadesCH utilidadesCH;
     @Inject    UtilidadesPOA utilidadesPOA;
 
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;
         estatus.clear();
         estatus.add("Aceptado");
         estatus.add("Denegado");

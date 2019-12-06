@@ -1,7 +1,6 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
@@ -10,7 +9,6 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.FusionGruposRolDirector;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFusionGrupo;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -22,11 +20,16 @@ import org.primefaces.model.DualListModel;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Map;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named
 @ViewScoped
@@ -37,9 +40,16 @@ public class FusionGruposDirector extends ViewScopedRol implements Desarrollable
     @Inject LogonMB logonMB;
     @Getter Boolean tieneAcceso = false;
 
-    @PostConstruct
+    
+
+
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
         try{
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.FUSION_GRUPOS_DIRECTOR);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logonMB.getPersonal().getClave());//validar si es director
 //            System.out.println("resAcceso = " + resAcceso);

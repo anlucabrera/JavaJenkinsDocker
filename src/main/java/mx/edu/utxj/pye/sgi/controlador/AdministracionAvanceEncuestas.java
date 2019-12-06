@@ -8,11 +8,8 @@ package mx.edu.utxj.pye.sgi.controlador;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -20,16 +17,14 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
-import mx.edu.utxj.pye.sgi.dto.ListaAlumnosEncuestaServicios;
-import mx.edu.utxj.pye.sgi.dto.ListaDatosAvanceEncuestaServicio;
-import mx.edu.utxj.pye.sgi.dto.ListadoGraficaEncuestaServicios;
 import mx.edu.utxj.pye.sgi.ejb.*;
-import mx.edu.utxj.pye.sgi.entity.ch.*;
-import mx.edu.utxj.pye.sgi.funcional.Comparador;
-import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstudioSocioEconomico;
-import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
-import mx.edu.utxj.pye.sgi.saiiut.entity.ViewEstudianteAsesorAcademico;
 import org.omnifaces.util.Messages;
+
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 
 /**
  *
@@ -48,8 +43,16 @@ public class AdministracionAvanceEncuestas implements Serializable{
     @EJB private EjbAdministracionEstudioSocioeconomico ejbAESE;
 
 
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
 
 
 

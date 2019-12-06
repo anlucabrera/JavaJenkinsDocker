@@ -1,7 +1,6 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -20,7 +19,6 @@ import org.omnifaces.cdi.ViewScoped;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -45,6 +43,12 @@ import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.timeline.TimelineSelectEvent;
 import org.primefaces.model.timeline.TimelineEvent;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 /**
  * La selección del grupo, docente y del periodo deben ser directos de un control de entrada
@@ -74,9 +78,17 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
      *      La lista de periodos escolares en forma descendente por medio de operación segura antierror<br/>
      *      EL mapa de programas con grupos por medio de operación segura antierror ordenando programas por areas, niveles y nombre del programa y los grupos por grado y letra
      */
-    @PostConstruct
+    
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init() {
         try {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.VALIDACION_PLANEACION_CUATRIMESTRAL);
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = evr.validarDirector(logon.getPersonal().getClave());
             ResultadoEJB<Filter<PersonalActivo>> resValidaEnc = evr.validarEncargadoDireccion(logon.getPersonal().getClave());//validar si es director                        

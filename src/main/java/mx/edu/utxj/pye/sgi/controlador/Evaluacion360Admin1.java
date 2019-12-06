@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 
@@ -41,6 +39,12 @@ import mx.edu.utxj.pye.sgi.util.ExcelWritter;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 /**
  *
@@ -78,9 +82,15 @@ public class Evaluacion360Admin1 implements Serializable {
     @Inject private LogonMB logonMB;
     private EntityManager em;
 
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init() {
         try {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             em = f.getEntityManager();
             respuestasPosibles = ejbEvaluacion360.getRespuestasPosibles();
             apartados = ejbEvaluacion360.getApartados();

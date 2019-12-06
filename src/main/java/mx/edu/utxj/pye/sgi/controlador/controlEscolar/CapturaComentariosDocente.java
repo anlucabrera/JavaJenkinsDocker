@@ -1,7 +1,6 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
@@ -22,12 +21,17 @@ import org.omnifaces.cdi.ViewScoped;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named
 @ViewScoped
@@ -48,8 +52,16 @@ public class CapturaComentariosDocente extends ViewScopedRol implements Desarrol
         return mostrar(request, map.containsValue(valor));
     }
 
-    @PostConstruct
+    
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         setVistaControlador(ControlEscolarVistaControlador.CAPTURA_COMENTARIOS_DOCENTE);
         ResultadoEJB<Filter<PersonalActivo>> validarDocente = ejbCapturaCalificaciones.validarDocente(logon.getPersonal().getClave());
         if(!validarDocente.getCorrecto()){ mostrarMensajeResultadoEJB(validarDocente);return;}

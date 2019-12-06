@@ -61,14 +61,18 @@ public class ControladorArchivoServicioEnfermeriaCP implements Serializable{
         consultaAreaRegistro();
         setEtapa(RegistroSiipEtapa.MOSTRAR);
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 22);
-        if (areaRegistro == null) {
-            area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        } else {
-            area = areaRegistro;
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 22);
+            if (areaRegistro == null) {
+                area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            } else {
+                area = areaRegistro;
+            }
+        } catch (Exception ex) {
+            System.out.println("ControladorArchivoServicioEnfermeriaCP.consultaAreaRegistro: " + ex.getMessage());
         }
     }
     

@@ -110,17 +110,21 @@ public class ControladorFeriasProfesiograficas implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 27);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 64);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 27);
             if (areaRegistro == null) {
-                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 64);
+                if (areaRegistro == null) {
+                    dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                } else {
+                    dto.setArea(areaRegistro);
+                }
             } else {
                 dto.setArea(areaRegistro);
             }
-        } else {
-            dto.setArea(areaRegistro);
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorFeriasProfesiograficas.consultaAreaRegistro(): " + e.getMessage());
         }
     }
     

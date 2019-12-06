@@ -35,6 +35,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{administracionPlanEstudioDirector.cargado}">
         <adm:breadcrumb title="Administración de Planes de Estudio"/>
         <div class="contenedor">
             <c:if test="#{administracionPlanEstudioDirector.tieneAcceso}">
@@ -671,5 +672,6 @@
             </c:if>
 
         </div>
+        </c:if>
     </ui:define>
 </ui:composition>

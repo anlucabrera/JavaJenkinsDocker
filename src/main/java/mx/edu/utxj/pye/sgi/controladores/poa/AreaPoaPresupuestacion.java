@@ -31,6 +31,10 @@ import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 @Named
 @ManagedBean
 @ViewScoped
@@ -70,8 +74,16 @@ public class AreaPoaPresupuestacion implements Serializable {
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA pOAUtilidades;
 
-    @PostConstruct
+    
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+@PostConstruct
     public void init() {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         numPm1 = null;        numPm2 = null;        numPm3 = null;        numPm4 = null;        numPm5 = null;        numPm6 = null;
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;

@@ -82,13 +82,18 @@ public class ControladorDistribucionEquipamiento implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 42);
-        if (areaRegistro == null) {
-            dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        } else {
-            dto.setAreaPOA(areaRegistro);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 42);
+            if (areaRegistro == null) {
+                dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            } else {
+                dto.setAreaPOA(areaRegistro);
+            }
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.eb.ControladorDistribucionEquipamiento.consultaAreaRegistro(): " + e.getMessage());
         }
+
     }
     
     public void cargarListaPorEvento(){

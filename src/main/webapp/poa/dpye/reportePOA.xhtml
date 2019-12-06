@@ -47,6 +47,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{consultarPOAReportePYE.cargado}">
         <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
@@ -356,5 +357,6 @@
                 </div>
             </p:panel>
         </h:form>
+        </c:if>
     </ui:define>
 </ui:composition>

@@ -1,19 +1,16 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.CedulaIdetificacionRolDirector;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.CedulaIdetificacionRolTutor;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalificacionEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCedulaIdentificacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
@@ -23,13 +20,11 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import org.omnifaces.cdi.ViewScoped;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -38,6 +33,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named
 @ViewScoped
@@ -52,9 +53,15 @@ public class CedulaIdentificacionDirector extends ViewScopedRol implements Desar
     @Getter Boolean tieneAcceso = false;
 
 
-    @PostConstruct
+   
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+ @PostConstruct
     public void init(){
         try {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.CEDULA_IDENTIFICACION_DIRECTOR);
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejbCedulaIdentificacion.validarDirector(logon.getPersonal().getClave());
             ResultadoEJB<Filter<PersonalActivo>> resValidaEnc = ejbCedulaIdentificacion.validarEncargadoDireccion(logon.getPersonal().getClave());//validar si es director

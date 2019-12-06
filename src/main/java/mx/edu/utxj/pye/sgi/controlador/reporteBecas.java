@@ -1,8 +1,5 @@
 package mx.edu.utxj.pye.sgi.controlador;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
@@ -18,7 +15,6 @@ import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.EstudiantesPye;
@@ -27,6 +23,12 @@ import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaAlumnosPye;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named
 @ViewScoped
@@ -42,8 +44,15 @@ public class reporteBecas extends ViewScopedRol{
     @Getter @Setter List<PeriodosEscolares> periodos ;
     @Getter @Setter Personal director;
 
+
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         setVistaControlador(ControlEscolarVistaControlador.REPORTE_BECAS);
         getPeriodosBecas() ;
         getPersona();

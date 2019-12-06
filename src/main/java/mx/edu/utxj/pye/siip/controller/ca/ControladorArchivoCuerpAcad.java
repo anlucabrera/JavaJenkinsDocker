@@ -62,13 +62,18 @@ public class ControladorArchivoCuerpAcad implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
         areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 12);
         if (areaRegistro == null) {
             area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         } else {
             area = areaRegistro;
         }
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorArchivoCuerpAcad.consultaAreaRegistro()" + e.getMessage());
+        }
+        
     }
     
     public void recibirArchivo(ValueChangeEvent e){

@@ -36,6 +36,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{registroTutoriaGrupal.cargado}">
         <adm:breadcrumb title="Registro de Tutorías Grupales"/>
 
         <div class="contenedor">
@@ -897,5 +898,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

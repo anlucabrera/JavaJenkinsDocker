@@ -89,14 +89,18 @@ public class ControladorComAcadParticipantes implements Serializable{
             Logger.getLogger(ControladorComAcadParticipantes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 1);
-        if (areaRegistro == null) {
-            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
-        } else {
-            dto.setArea(areaRegistro.getArea());
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 1);
+            if (areaRegistro == null) {
+                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+            } else {
+                dto.setArea(areaRegistro.getArea());
+            }
+        } catch (Exception ex) {
+            System.out.println("ControladorComAcadParticipantes.consultaAreaRegistro: " + ex.getMessage());
         }
     }
   

@@ -85,15 +85,19 @@ public class ControladorMovilidadDocente implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 18);
-        if (areaRegistro == null) {
-            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
-        } else {
-            dto.setArea(areaRegistro.getArea());
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 18);
+            if (areaRegistro == null) {
+                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+            } else {
+                dto.setArea(areaRegistro.getArea());
+            }
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorMovilidadDocente.consultaAreaRegistro(): " + e.getMessage());
         }
     }
-    
+
     public void listaMovilidadDocentePrevia(String rutaArchivo) {
        try {
             if(rutaArchivo != null){

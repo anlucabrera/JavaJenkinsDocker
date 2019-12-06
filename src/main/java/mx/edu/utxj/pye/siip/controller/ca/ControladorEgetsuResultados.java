@@ -106,19 +106,23 @@ public class ControladorEgetsuResultados implements Serializable{
         consultarPermiso();
 
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 14);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 45);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 14);
             if (areaRegistro == null) {
-                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 45);
+                if (areaRegistro == null) {
+                    dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                } else {
+                    dto.setArea(areaRegistro);
+                }
             } else {
                 dto.setArea(areaRegistro);
             }
-        } else {
-            dto.setArea(areaRegistro);
+        } catch (Exception ex) {
+            System.out.println("ControladorEgetsuResultados.consultaAreaRegistro: " + ex.getMessage());
         }
     }
     

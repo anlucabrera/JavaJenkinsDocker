@@ -40,6 +40,7 @@
     </ui:define>
 
     <ui:define id="bodyy" name="body">
+        <c:if test="#{areaPoaProgramacion.cargado}">
         <adm:sidebar collapsed="true"/>
         <c:if test="#{controladorEmpleado.tienePOA}">
             <!-- Formulario para geracion de reportes y mostrar cuadro de dialogo de sinbologia -->
@@ -564,6 +565,7 @@
                     </div>
                 </div>
             </div>
+        </c:if>
         </c:if>
     </ui:define>
 </ui:composition>

@@ -45,6 +45,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{fusionGruposDirector.cargado}">
         <adm:breadcrumb title="Fusion de grupos"/>
         <div class="contenedor">
             <c:if test="#{fusionGruposDirector.tieneAcceso}">
@@ -224,5 +225,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

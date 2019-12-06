@@ -5,32 +5,28 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
 import mx.edu.utxj.pye.sgi.dto.ListadoEvaluacionEgresados;
-import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEvaluacionEstadia;
-import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionTutores;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstadiaResultados;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import mx.edu.utxj.pye.sgi.funcional.Comparador;
-import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstadia;
-import mx.edu.utxj.pye.sgi.saiiut.entity.ViewEstudianteAsesorAcademico;
 import org.omnifaces.util.Messages;
+
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 
 /**
  *
@@ -45,9 +41,17 @@ public class AdministracionEvaluacionEstadia implements Serializable{
     @Getter @Setter private DtoEvaluaciones dto = new DtoEvaluaciones();
     @EJB private EjbAdministracionEvaluacionEstadia ejbAdminAES;
     @Inject AdministracionEncuesta controlerAE;
-    
+   
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+ 
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         dto.listaEvaCompleta = new ArrayList<>();
         dto.listaEvaIncompleta = new ArrayList<>();
         dto.listaEvaNA = new ArrayList<>();

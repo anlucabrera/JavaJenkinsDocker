@@ -14,7 +14,7 @@
             <f:viewParam name="activa" value="#{cvTecnologia.pestaniaActiva}"/>
         </f:metadata>
         <!-- Inicio estilos par proceso electoral -->
-         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
         <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
@@ -26,869 +26,869 @@
     <ui:define name="title"/>
 
     <ui:define name="body">
-
-        <h:outputScript>
-            PrimeFaces.locales['es'] = {
-            closeText: 'Cerrar',
-            prevText: 'Anterior',
-            nextText: 'Siguiente',
-            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
-            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
-            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-            dayNamesMin: ['D','L','M','M','J','V','S'],
-            weekHeader: 'Semana',
-            firstDay: 1,
-            isRTL: false,
-            showMonthAfterYear: false,
-            yearSuffix: '',
-            timeOnlyTitle: 'Sólo hora',
-            timeText: 'Tiempo',
-            hourText: 'Hora',
-            minuteText: 'Minuto',
-            secondText: 'Segundo',
-            currentText: 'Fecha actual',
-            ampm: false,
-            month: 'Mes',
-            week: 'Semana',
-            day: 'Día',
-            allDayText : 'Todo el día'
-            };
-        </h:outputScript>
-        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
-            <h1>
-                Esta página está disponible solo para pantallas superiores a 1024px.
-            </h1>
-        </p:panel>
-        <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'otro'}">
-                <div class="box box-primary">
-                    <div class="box box-solid">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">Fecha límite</h3>
-                            <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                </button>
+        <c:if test="#{cvTecnologia.cargado}">
+            <h:outputScript>
+                PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+                dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D','L','M','M','J','V','S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText : 'Todo el día'
+                };
+            </h:outputScript>
+            <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+                <h1>
+                    Esta página está disponible solo para pantallas superiores a 1024px.
+                </h1>
+            </p:panel>
+            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'otro'}">
+                    <div class="box box-primary">
+                        <div class="box box-solid">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Fecha límite</h3>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="box-body">  
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12 col-xs-12">
-                                    <div class="info-box">
-                                        <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+                            <div class="box-body">  
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="info-box">
+                                            <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
 
-                                        <div class="info-box-content">
-                                            <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                            <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>                
+                                </div>                
+                            </div>
                         </div>
                     </div>
-                </div>
+                </c:if>
             </c:if>
-        </c:if>
-        <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <section class="content">
-                <div class="row">
-                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                    <div class="col-md-10">
-                        <div class="nav-tabs-custom">
-                            <div class="row">
-                                <div class="col-lg-10 col-xs-10"/>
-                                <div class="col-lg-2 col-xs-2">
-                                    <p:link outcome="perfilEmpleado">
-                                        <i class="fa fa-reply"></i>
-                                        <span>Regresar a mi perfil</span>
-                                    </p:link>
-                                </div>      
-                            </div>
-                            <p:tabView activeIndex="#{cvTecnologia.pestaniaActiva}">
-                                <p:tab title="Desarrollo tecnológico">
-                                    <o:form id="frmHbInf" enctype="multipart/form-data"> 
-                                        <p:outputPanel>
-                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                                    <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de desarrollo" />
-                                                                                    <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     value="#{cvTecnologia.nuevoOBJDesarrolloTecnologico.tipoDesarrollo}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Mejora de Proceso" itemLabel="Mejora de proceso"/>
-                                                                                        <f:selectItem itemValue="Mejora de Producto" itemLabel="Mejora de producto"/>
-                                                                                        <f:selectItem itemValue="Mejora de Servicio" itemLabel="Mejora de servicio"/>
-                                                                                        <f:selectItem itemValue="Nuevo Proceso" itemLabel="Nuevo proceso"/>
-                                                                                        <f:selectItem itemValue="Nuevo Producto" itemLabel="Nuevo producto"/>
-                                                                                        <f:selectItem itemValue="Nuevo Servicio" itemLabel="Nuevo servicio"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="tipo" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                                    <p:outputLabel for="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo por parte de la institución?" />
-                                                                                    <p:selectOneMenu id="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     value="#{cvTecnologia.nuevoOBJDesarrolloTecnologico.apoyoRecibido}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Si" itemLabel="Si"/>
-                                                                                        <f:selectItem itemValue="No" itemLabel="No"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="apoyo" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
-                                                                                    <p:outputLabel for="obetivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Objetivo" />
-                                                                                    <p:inputTextarea id="obetivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     placeholder="Objetivo" value="#{cvTecnologia.nuevoOBJDesarrolloTecnologico.objetivoDesarrollo}"/>
-                                                                                    <p:message for="obetivo" display="tooltip"/>                                                                         
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
-                                                                                    <p:outputLabel for="resumen" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Resumen" />
-                                                                                    <p:inputTextarea id="resumen" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Resumen" 
-                                                                                                     value="#{cvTecnologia.nuevoOBJDesarrolloTecnologico.resumenDesarrollo}"/>
-                                                                                    <p:message for="resumen" display="tooltip"/>          
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12"> 
-                                                                                    <p:outputPanel>            
-                                                                                        <p:autoUpdate/>
-                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia #{cvTecnologia.nuevoOBJDesarrolloTecnologico.documentoRespaldo eq null?'':'(ya cuenta con el archivo cargado)'}" />
-                                                                                    </p:outputPanel>
-                                                                                    <o:inputFile id="file" value="#{cvTecnologia.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                                                                                    <br/>
-                                                                                    <h:message id="messageForFile" for="file" />
-                                                                                    <br/>
-                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cvTecnologia.agregarEvidenciaDesTec}" />
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link outcome="perfilEmpleado">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView activeIndex="#{cvTecnologia.pestaniaActiva}">
+                                    <p:tab title="Desarrollo tecnológico">
+                                        <o:form id="frmHbInf" enctype="multipart/form-data"> 
+                                            <p:outputPanel>
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                        <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de desarrollo" />
+                                                                                        <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         value="#{cvTecnologia.nuevoOBJDesarrolloTecnologico.tipoDesarrollo}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Mejora de Proceso" itemLabel="Mejora de proceso"/>
+                                                                                            <f:selectItem itemValue="Mejora de Producto" itemLabel="Mejora de producto"/>
+                                                                                            <f:selectItem itemValue="Mejora de Servicio" itemLabel="Mejora de servicio"/>
+                                                                                            <f:selectItem itemValue="Nuevo Proceso" itemLabel="Nuevo proceso"/>
+                                                                                            <f:selectItem itemValue="Nuevo Producto" itemLabel="Nuevo producto"/>
+                                                                                            <f:selectItem itemValue="Nuevo Servicio" itemLabel="Nuevo servicio"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="tipo" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                        <p:outputLabel for="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo por parte de la institución?" />
+                                                                                        <p:selectOneMenu id="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         value="#{cvTecnologia.nuevoOBJDesarrolloTecnologico.apoyoRecibido}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Si" itemLabel="Si"/>
+                                                                                            <f:selectItem itemValue="No" itemLabel="No"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="apoyo" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="obetivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Objetivo" />
+                                                                                        <p:inputTextarea id="obetivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         placeholder="Objetivo" value="#{cvTecnologia.nuevoOBJDesarrolloTecnologico.objetivoDesarrollo}"/>
+                                                                                        <p:message for="obetivo" display="tooltip"/>                                                                         
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="resumen" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Resumen" />
+                                                                                        <p:inputTextarea id="resumen" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Resumen" 
+                                                                                                         value="#{cvTecnologia.nuevoOBJDesarrolloTecnologico.resumenDesarrollo}"/>
+                                                                                        <p:message for="resumen" display="tooltip"/>          
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-12"> 
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia #{cvTecnologia.nuevoOBJDesarrolloTecnologico.documentoRespaldo eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                        </p:outputPanel>
+                                                                                        <o:inputFile id="file" value="#{cvTecnologia.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFile" for="file" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cvTecnologia.agregarEvidenciaDesTec}" />
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <hr/>
+                                                                            <div class="row">
+                                                                                <p:outputPanel>            
+                                                                                    <p:autoUpdate/>
+                                                                                    <div class="form-group">
+                                                                                        <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                        <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                                            <p:commandButton id="btnBuscarActiuvidades" oncomplete="PF('frmListaDesarrolloTecnologicos')update();" 
+                                                                                                             disabled="#{cvTecnologia.direccionInt.toString() eq '0' ?true:false}"
+                                                                                                             value="Guardar información" actionListener="#{cvTecnologia.guardarDesarrolloTec()}" icon="fa fa-pencil-square-o" 
+                                                                                                             class="btn-primary btn-block col-md-3" update="@form" process="@form" /> 
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </p:outputPanel>
+                                                                            </div>
                                                                         </div>
-                                                                        <hr/>
-                                                                        <div class="row">
-                                                                            <p:outputPanel>            
-                                                                                <p:autoUpdate/>
+                                                                    </div>
+                                                                </div>                                               
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                                                <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="box-body">  
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="info-box">
+                                                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+                                                                    <div class="info-box-content">
+                                                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                        <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                
+                                                    </div>
+                                                </c:if>
+                                            </p:outputPanel>
+                                        </o:form>
+                                        <h:form id="frmListaDesarrolloTecnologicos">
+                                            <p:outputPanel>
+                                                <p:remoteCommand name="actualizarTabla" actionListener="#{cvTecnologia.metodoBase()}" update="tbldesarrollosTec" />
+                                                <p:dataTable id="tbldesarrollosTec" value="#{cvTecnologia.nuevaListaDesarrolloTecnologico}" var="desaTec" 
+                                                             emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{desaTec.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                             editable="true" editMode="row">
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                            <p:column rowspan="2" headerText="Tipo desarrollo" style="width: 200px;" />
+                                                            <p:column rowspan="2" headerText="apoyo por parte de la institución" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Objetivo" style="width: 400px;"/>
+                                                            <p:column rowspan="2" headerText="Resumen" style="width: 400px;"/> 
+                                                            <p:column rowspan="2" headerText="Evidencia" style="width:50px; "/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+                                                    <p:ajax event="rowEdit" listener="#{cvTecnologia.updateDesarrolloTecnologico}" update="@this" oncomplete="actualizarTabla()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+
+                                                    <p:column >
+                                                        <p:commandButton actionListener="#{cvTecnologia.eliminarDesTec(desaTec)}" update="tbldesarrollosTec" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación del desarrollo tecnológico como #{desaTec.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                            <a href="#" class="ui-row-editor-pencil">
+                                                                <span class="ui-icon ui-icon-pencil"></span>
+                                                            </a>
+                                                            <a href="#" class="ui-row-editor-check">
+                                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                                            </a>
+                                                            <p:spacer width="20px"/>
+                                                            <a href="#" class="ui-row-editor-close">
+                                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                                            </a>
+                                                        </div>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaTec.tipoDesarrollo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{desaTec.tipoDesarrollo}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Mejora de Proceso'}" itemLabel="#{'Mejora de proceso'}"/>
+                                                                    <f:selectItem itemValue="#{'Mejora de Producto'}" itemLabel="#{'Mejora de producto'}"/>
+                                                                    <f:selectItem itemValue="#{'Mejora de Servicio'}" itemLabel="#{'Mejora de servicio'}"/>
+                                                                    <f:selectItem itemValue="#{'Nuevo Proceso'}" itemLabel="#{'Nuevo proceso'}"/>
+                                                                    <f:selectItem itemValue="#{'Nuevo Producto'}" itemLabel="#{'Nuevo producto'}"/>
+                                                                    <f:selectItem itemValue="#{'Nuevo Servicio'}" itemLabel="#{'Nuevo servicio'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>    
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaTec.apoyoRecibido}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{desaTec.apoyoRecibido}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                    <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
+                                                                    <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaTec.objetivoDesarrollo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputTextarea value="#{desaTec.objetivoDesarrollo}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaTec.resumenDesarrollo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputTextarea value="#{desaTec.resumenDesarrollo}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(desaTec.documentoRespaldo)}" target="_blank" style="color: #000000">
+                                                            <i class="fa fa-search"></i>
+                                                            <span>Ver</span>
+                                                        </p:link>
+                                                    </p:column>   
+                                                </p:dataTable>                                            
+
+                                            </p:outputPanel>
+
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Innovaciones">
+                                        <h:form id="frmTraInv"> 
+                                            <p:outputPanel id="innovacion">
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de innovación" />
+                                                                                        <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         required="true" value="#{cvTecnologia.nuevoOBJInnovaciones.tipoInnovacion}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Disruptiva" itemLabel="Disruptiva"/>
+                                                                                            <f:selectItem itemValue="Incremental" itemLabel="Incremental"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="tipo" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4"> 
+                                                                                        <p:outputLabel for="cobertura" style="height:100%; width: 100%; object-fit: contain; font-size: large"  value="Cobertura" />
+                                                                                        <p:selectOneMenu id="cobertura" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         required="true" value="#{cvTecnologia.nuevoOBJInnovaciones.potencialCobertura}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Internacional" itemLabel="Internacional"/>
+                                                                                            <f:selectItem itemValue="Nacional" itemLabel="Nacional"/>
+                                                                                            <f:selectItem itemValue="Local" itemLabel="Local"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="cobertura" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4"> 
+                                                                                        <p:outputLabel for="aplicacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Aplicación de innovación" />
+                                                                                        <p:selectOneMenu id="aplicacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         required="true" value="#{cvTecnologia.nuevoOBJInnovaciones.aplicacionInnovacion}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Proceso" itemLabel="Proceso"/>
+                                                                                            <f:selectItem itemValue="Producto" itemLabel="Producto"/>
+                                                                                            <f:selectItem itemValue="Servicio" itemLabel="Servicio"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="aplicacion" display="tooltip" />                                                                 
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo por parte de la institución?" />
+                                                                                        <p:selectOneMenu id="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         required="true" value="#{cvTecnologia.nuevoOBJInnovaciones.apoyoRecibidoo}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Si" itemLabel="Si"/>
+                                                                                            <f:selectItem itemValue="No" itemLabel="No"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="apoyo" display="tooltip" />
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="proteccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Protección" />
+                                                                                        <p:selectOneMenu id="proteccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         required="true" value="#{cvTecnologia.nuevoOBJInnovaciones.mecanismoProteccion}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Patentes" itemLabel="Patentes"/>
+                                                                                            <f:selectItem itemValue="Diseño Industrial" itemLabel="Diseño industrial"/>
+                                                                                            <f:selectItem itemValue="Marcas Comerciales" itemLabel="Marcas comerciales"/>
+                                                                                            <f:selectItem itemValue="Derechos de Autor" itemLabel="Derechos de autor"/>
+                                                                                            <f:selectItem itemValue="Acuerdos de Confidencialidad" itemLabel="Acuerdos de confidencialidad"/>
+                                                                                            <f:selectItem itemValue="Secreto Industrial" itemLabel="Secreto Industrial"/>
+                                                                                            <f:selectItem itemValue="Complejidad del Diseño" itemLabel="Complejidad del diseño"/>
+                                                                                            <f:selectItem itemValue="Adelanto en el Mercado del Innovador" itemLabel="Adelanto en el mercado del innovador"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="proteccion" display="tooltip" />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr/>
+                                                                            <div class="row">
                                                                                 <div class="form-group">
                                                                                     <div class="col-sm-12 col-md-4 col-lg-4"/>
                                                                                     <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnBuscarActiuvidades" oncomplete="PF('frmListaDesarrolloTecnologicos')update();" 
-                                                                                                         disabled="#{cvTecnologia.direccionInt.toString() eq '0' ?true:false}"
-                                                                                                         value="Guardar información" actionListener="#{cvTecnologia.guardarDesarrolloTec()}" icon="fa fa-pencil-square-o" 
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" oncomplete="PF('frmlistaInnocaciones')update();" value="Guardar información" 
+                                                                                                         actionListener="#{cvTecnologia.guardarInnovacion()}" icon="fa fa-pencil-square-o" 
                                                                                                          class="btn-primary btn-block col-md-3" update="@form" process="@form" /> 
                                                                                     </div>
                                                                                 </div>
-                                                                            </p:outputPanel>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>                                               
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </c:if>
-                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
-                                                <div class="box-body">  
-                                                    <div class="row">
-                                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="info-box">
-                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
-                                                                <div class="info-box-content">
-                                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>                
-                                                </div>
-                                            </c:if>
-                                        </p:outputPanel>
-                                    </o:form>
-                                    <h:form id="frmListaDesarrolloTecnologicos">
-                                        <p:outputPanel>
-                                            <p:remoteCommand name="actualizarTabla" actionListener="#{cvTecnologia.metodoBase()}" update="tbldesarrollosTec" />
-                                            <p:dataTable id="tbldesarrollosTec" value="#{cvTecnologia.nuevaListaDesarrolloTecnologico}" var="desaTec" 
-                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
-                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{desaTec.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         editable="true" editMode="row">
-
-                                                <p:columnGroup type="header">
-                                                    <p:row class="success">
-                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
-                                                        <p:column rowspan="2" headerText="Tipo desarrollo" style="width: 200px;" />
-                                                        <p:column rowspan="2" headerText="apoyo por parte de la institución" style="width: 100px;"/>
-                                                        <p:column rowspan="2" headerText="Objetivo" style="width: 400px;"/>
-                                                        <p:column rowspan="2" headerText="Resumen" style="width: 400px;"/> 
-                                                        <p:column rowspan="2" headerText="Evidencia" style="width:50px; "/>
-                                                    </p:row>
-                                                </p:columnGroup>
-
-                                                <p:ajax event="rowEdit" listener="#{cvTecnologia.updateDesarrolloTecnologico}" update="@this" oncomplete="actualizarTabla()"/>
-                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
-
-                                                <p:column >
-                                                    <p:commandButton actionListener="#{cvTecnologia.eliminarDesTec(desaTec)}" update="tbldesarrollosTec" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del desarrollo tecnológico como #{desaTec.tipoDesarrollo}?" icon="ui-icon-alert" />
-                                                    </p:commandButton>
-                                                </p:column>
-
-                                                <p:column >
-                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
-                                                        <a href="#" class="ui-row-editor-pencil">
-                                                            <span class="ui-icon ui-icon-pencil"></span>
-                                                        </a>
-                                                        <a href="#" class="ui-row-editor-check">
-                                                            <span class="ui-icon ui-icon-check ui-c"></span>
-                                                        </a>
-                                                        <p:spacer width="20px"/>
-                                                        <a href="#" class="ui-row-editor-close">
-                                                            <span class="ui-icon ui-icon-close ui-c"></span>
-                                                        </a>
-                                                    </div>
-                                                </p:column>
-
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaTec.tipoDesarrollo}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{desaTec.tipoDesarrollo}" style="width:100%">
-                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
-                                                                <f:selectItem itemValue="#{'Mejora de Proceso'}" itemLabel="#{'Mejora de proceso'}"/>
-                                                                <f:selectItem itemValue="#{'Mejora de Producto'}" itemLabel="#{'Mejora de producto'}"/>
-                                                                <f:selectItem itemValue="#{'Mejora de Servicio'}" itemLabel="#{'Mejora de servicio'}"/>
-                                                                <f:selectItem itemValue="#{'Nuevo Proceso'}" itemLabel="#{'Nuevo proceso'}"/>
-                                                                <f:selectItem itemValue="#{'Nuevo Producto'}" itemLabel="#{'Nuevo producto'}"/>
-                                                                <f:selectItem itemValue="#{'Nuevo Servicio'}" itemLabel="#{'Nuevo servicio'}"/>
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>    
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaTec.apoyoRecibido}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{desaTec.apoyoRecibido}" style="width:100%">
-                                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
-                                                                <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column>
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaTec.objetivoDesarrollo}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <p:inputTextarea value="#{desaTec.objetivoDesarrollo}"/>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaTec.resumenDesarrollo}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <p:inputTextarea value="#{desaTec.resumenDesarrollo}"/>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column>
-                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(desaTec.documentoRespaldo)}" target="_blank" style="color: #000000">
-                                                        <i class="fa fa-search"></i>
-                                                        <span>Ver</span>
-                                                    </p:link>
-                                                </p:column>   
-                                            </p:dataTable>                                            
-
-                                        </p:outputPanel>
-
-                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                        </p:confirmDialog>   
-                                    </h:form>
-                                </p:tab>
-                                <p:tab title="Innovaciones">
-                                    <h:form id="frmTraInv"> 
-                                        <p:outputPanel id="innovacion">
-                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                    <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de innovación" />
-                                                                                    <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     required="true" value="#{cvTecnologia.nuevoOBJInnovaciones.tipoInnovacion}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Disruptiva" itemLabel="Disruptiva"/>
-                                                                                        <f:selectItem itemValue="Incremental" itemLabel="Incremental"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="tipo" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-4"> 
-                                                                                    <p:outputLabel for="cobertura" style="height:100%; width: 100%; object-fit: contain; font-size: large"  value="Cobertura" />
-                                                                                    <p:selectOneMenu id="cobertura" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     required="true" value="#{cvTecnologia.nuevoOBJInnovaciones.potencialCobertura}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Internacional" itemLabel="Internacional"/>
-                                                                                        <f:selectItem itemValue="Nacional" itemLabel="Nacional"/>
-                                                                                        <f:selectItem itemValue="Local" itemLabel="Local"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="cobertura" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-4"> 
-                                                                                    <p:outputLabel for="aplicacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Aplicación de innovación" />
-                                                                                    <p:selectOneMenu id="aplicacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     required="true" value="#{cvTecnologia.nuevoOBJInnovaciones.aplicacionInnovacion}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Proceso" itemLabel="Proceso"/>
-                                                                                        <f:selectItem itemValue="Producto" itemLabel="Producto"/>
-                                                                                        <f:selectItem itemValue="Servicio" itemLabel="Servicio"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="aplicacion" display="tooltip" />                                                                 
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
-                                                                                    <p:outputLabel for="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo por parte de la institución?" />
-                                                                                    <p:selectOneMenu id="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     required="true" value="#{cvTecnologia.nuevoOBJInnovaciones.apoyoRecibidoo}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Si" itemLabel="Si"/>
-                                                                                        <f:selectItem itemValue="No" itemLabel="No"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="apoyo" display="tooltip" />
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
-                                                                                    <p:outputLabel for="proteccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Protección" />
-                                                                                    <p:selectOneMenu id="proteccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     required="true" value="#{cvTecnologia.nuevoOBJInnovaciones.mecanismoProteccion}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Patentes" itemLabel="Patentes"/>
-                                                                                        <f:selectItem itemValue="Diseño Industrial" itemLabel="Diseño industrial"/>
-                                                                                        <f:selectItem itemValue="Marcas Comerciales" itemLabel="Marcas comerciales"/>
-                                                                                        <f:selectItem itemValue="Derechos de Autor" itemLabel="Derechos de autor"/>
-                                                                                        <f:selectItem itemValue="Acuerdos de Confidencialidad" itemLabel="Acuerdos de confidencialidad"/>
-                                                                                        <f:selectItem itemValue="Secreto Industrial" itemLabel="Secreto Industrial"/>
-                                                                                        <f:selectItem itemValue="Complejidad del Diseño" itemLabel="Complejidad del diseño"/>
-                                                                                        <f:selectItem itemValue="Adelanto en el Mercado del Innovador" itemLabel="Adelanto en el mercado del innovador"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="proteccion" display="tooltip" />
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <hr/>
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-4 col-lg-4"/>
-                                                                                <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                                    <p:commandButton id="btnBuscarActiuvidades" oncomplete="PF('frmlistaInnocaciones')update();" value="Guardar información" 
-                                                                                                     actionListener="#{cvTecnologia.guardarInnovacion()}" icon="fa fa-pencil-square-o" 
-                                                                                                     class="btn-primary btn-block col-md-3" update="@form" process="@form" /> 
-                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>                                               
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </c:if>
-                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
-                                                <div class="box-body">  
-                                                    <div class="row">
-                                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="info-box">
-                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
-
-                                                                <div class="info-box-content">
-                                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
-                                                                </div>
+                                                                </div>                                               
                                                             </div>
                                                         </div>
-                                                    </div>                
-                                                </div>
-                                            </c:if>
-                                        </p:outputPanel>
-                                    </h:form>
-                                    <h:form id="frmlistaInnocaciones">
-                                        <p:outputPanel>
-                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{cvTecnologia.metodoBase()}" update="tblInnovacion" />
-                                            <p:dataTable id="tblInnovacion" value="#{cvTecnologia.nuevaListaInnovaciones}" var="InnovacionesRegistro" 
-                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
-                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{InnovacionesRegistro.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         editable="true" editMode="row">
-
-                                                <p:columnGroup type="header">
-                                                    <p:row class="success">
-                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
-                                                        <p:column rowspan="2" headerText="Tipo innovación" style="width: 100px;" />
-                                                        <p:column rowspan="2" headerText="Cobertura" style="width: 100px;"/>
-                                                        <p:column rowspan="2" headerText="Aplicación" style="width: 100px;"/>
-                                                        <p:column rowspan="2" headerText="poyo por parte de la institución" style="width: 100px;"/> 
-                                                        <p:column rowspan="2" headerText="Protección" style="width:100px; "/>
-                                                    </p:row>
-                                                </p:columnGroup>
-
-                                                <p:ajax event="rowEdit" listener="#{cvTecnologia.updateInnovaciones}" update="@this" oncomplete="actualizarTabla2()"/>
-                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
-
-                                                <p:column >
-                                                    <p:commandButton actionListener="#{cvTecnologia.eliminarInnovacion(InnovacionesRegistro)}" update="tblInnovacion" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la innovacion: #{InnovacionesRegistro.tipoInnovacion}?" icon="ui-icon-alert" />
-                                                    </p:commandButton>
-                                                </p:column>
-
-                                                <p:column >
-                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
-                                                        <a href="#" class="ui-row-editor-pencil">
-                                                            <span class="ui-icon ui-icon-pencil"></span>
-                                                        </a>
-                                                        <a href="#" class="ui-row-editor-check">
-                                                            <span class="ui-icon ui-icon-check ui-c"></span>
-                                                        </a>
-                                                        <p:spacer width="20px"/>
-                                                        <a href="#" class="ui-row-editor-close">
-                                                            <span class="ui-icon ui-icon-close ui-c"></span>
-                                                        </a>
                                                     </div>
-                                                </p:column>
+                                                </c:if>
+                                                <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="box-body">  
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="info-box">
+                                                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
 
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{InnovacionesRegistro.tipoInnovacion}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{InnovacionesRegistro.tipoInnovacion}" style="width:100%">
-                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
-                                                                <f:selectItem itemValue="#{'Disruptiva'}" itemLabel="#{'Disruptiva'}"/>
-                                                                <f:selectItem itemValue="#{'Incremental'}" itemLabel="#{'Incremental'}"/>
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>  
-                                                <p:column>
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{InnovacionesRegistro.potencialCobertura}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{InnovacionesRegistro.tipoInnovacion}" style="width:100%">
-                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
-                                                                <f:selectItem itemValue="#{'Internacional'}" itemLabel="#{'Internacional'}"/>
-                                                                <f:selectItem itemValue="#{'Nacional'}" itemLabel="#{'Nacional'}"/>
-                                                                <f:selectItem itemValue="#{'Local'}" itemLabel="#{'Local'}"/>
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{InnovacionesRegistro.aplicacionInnovacion}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{InnovacionesRegistro.aplicacionInnovacion}" style="width:100%">
-                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
-                                                                <f:selectItem itemValue="#{'Proceso'}" itemLabel="#{'Proceso'}"/>
-                                                                <f:selectItem itemValue="#{'Producto'}" itemLabel="#{'Producto'}"/>
-                                                                <f:selectItem itemValue="#{'Servicio'}" itemLabel="#{'Servicio'}"/>
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{InnovacionesRegistro.apoyoRecibidoo}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{InnovacionesRegistro.apoyoRecibidoo}" style="width:100%">
-                                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
-                                                                <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{InnovacionesRegistro.mecanismoProteccion}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{InnovacionesRegistro.mecanismoProteccion}" style="width:100%">
-                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
-                                                                <f:selectItem itemValue="#{'Patentes'}" itemLabel="#{'Patentes'}"/>
-                                                                <f:selectItem itemValue="#{'Diseño Industrial'}" itemLabel="#{'Diseño industrial'}"/>
-                                                                <f:selectItem itemValue="#{'Marcas Comerciales'}" itemLabel="#{'Marcas comerciales'}"/>
-                                                                <f:selectItem itemValue="#{'Derechos de Autor'}" itemLabel="#{'Derechos de autor'}"/>
-                                                                <f:selectItem itemValue="#{'Acuerdos de Confidencialidad'}" itemLabel="#{'Acuerdos de confidencialidad'}"/>
-                                                                <f:selectItem itemValue="#{'Secreto Industrial'}" itemLabel="#{'Secreto Industrial'}"/>
-                                                                <f:selectItem itemValue="#{'Complejidad del Diseño'}" itemLabel="#{'Complejidad del diseño'}"/>
-                                                                <f:selectItem itemValue="#{'Adelanto en el Mercado del Innovador'}" itemLabel="#{'Adelanto en el mercado del innovador'}"/>
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                            </p:dataTable>
-                                        </p:outputPanel>
+                                                                    <div class="info-box-content">
+                                                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                        <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                
+                                                    </div>
+                                                </c:if>
+                                            </p:outputPanel>
+                                        </h:form>
+                                        <h:form id="frmlistaInnocaciones">
+                                            <p:outputPanel>
+                                                <p:remoteCommand name="actualizarTabla2" actionListener="#{cvTecnologia.metodoBase()}" update="tblInnovacion" />
+                                                <p:dataTable id="tblInnovacion" value="#{cvTecnologia.nuevaListaInnovaciones}" var="InnovacionesRegistro" 
+                                                             emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{InnovacionesRegistro.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                             editable="true" editMode="row">
 
-                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                        </p:confirmDialog>   
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                            <p:column rowspan="2" headerText="Tipo innovación" style="width: 100px;" />
+                                                            <p:column rowspan="2" headerText="Cobertura" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Aplicación" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="poyo por parte de la institución" style="width: 100px;"/> 
+                                                            <p:column rowspan="2" headerText="Protección" style="width:100px; "/>
+                                                        </p:row>
+                                                    </p:columnGroup>
 
-                                    </h:form>
-                                </p:tab>
-                                <p:tab title="Desarrollo de software">
-                                    <h:form id="frmIdiom"> 
-                                        <p:outputPanel>
-                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                    <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo" />
-                                                                                    <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.tipoDesarrollo}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Software basado en Web" itemLabel="Software basado en Web"/>
-                                                                                        <f:selectItem itemValue="Software de computadoras personales" itemLabel="Software de computadoras personales"/>
-                                                                                        <f:selectItem itemValue="Software de gestión" itemLabel="Software de gestión"/>
-                                                                                        <f:selectItem itemValue="Software de ingeniería y científico" itemLabel="Software de ingeniería y científico"/>
-                                                                                        <f:selectItem itemValue="Software de inteligencia artificial" itemLabel="Software de inteligencia artificial"/>
-                                                                                        <f:selectItem itemValue="Software de sistemas" itemLabel="Software de sistemas"/>
-                                                                                        <f:selectItem itemValue="Software de tiempo real" itemLabel="Software de tiempo real"/>
-                                                                                        <f:selectItem itemValue="Software de videojuegos" itemLabel="Software de videojuegos"/>
-                                                                                        <f:selectItem itemValue="Software empotrado" itemLabel="Software empotrado"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="tipo" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-4"> 
-                                                                                    <p:outputLabel for="apoyoR" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo por parte de la institución?" />
-                                                                                    <p:selectOneMenu id="apoyoR" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.apoyoRecibido}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Si" itemLabel="Si"/>
-                                                                                        <f:selectItem itemValue="No" itemLabel="No"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="apoyoR" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-4"> 
-                                                                                    <p:outputLabel for="derechosA" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Cuenta con derechos de autor?" />
-                                                                                    <p:selectOneMenu id="derechosA" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.derechosAutor}" >
-                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                                                        <f:selectItem itemValue="Si" itemLabel="Si"/>
-                                                                                        <f:selectItem itemValue="No" itemLabel="No"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="derechosA" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-6">                                                                               
-                                                                                    <p:outputLabel for="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lugar de desarrollo" />
-                                                                                    <p:inputText id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                 placeholder="Lugar de desarrollo" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.lugar}"/>
-                                                                                    <p:message for="lugar" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
-                                                                                    <p:outputLabel for="nombreB" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre beneficiario" />
-                                                                                    <p:inputText id="nombreB" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                 placeholder="Nombre beneficiario" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.nombreBeneficiario}"/>
-                                                                                    <p:message for="nombreB" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-6 col-lg-3">                                                                             
-                                                                                    <p:outputLabel for="horash" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Horas persona" />
-                                                                                    <p:inputText id="horash" type="number" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                 placeholder="Horas persona" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.horasHombre}"/>
-                                                                                    <p:message for="horash" display="tooltip"/>                                                                         
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-4 col-lg-3"> 
-                                                                                    <p:outputLabel for="costo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Costo" />
-                                                                                    <p:inputText id="costo" type="number" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                 placeholder="Costo" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.costo}"/>
-                                                                                    <p:message for="costo" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-4 col-lg-3"> 
-                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
-                                                                                    <p:calendar navigator="true" locale="es" id="fechaIn" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
-                                                                                    <p:message for="fechaIn" display="tooltip" />                                                                                
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-4 col-lg-3"> 
-                                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin" />
-                                                                                    <p:calendar navigator="true" locale="es" id="fechaFin" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
-                                                                                    <p:message for="fechaFin" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-6"> 
-                                                                                    <p:outputLabel for="logros" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Logros" />
-                                                                                    <p:inputTextarea id="logros" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
-                                                                                                     placeholder="Logros" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.logros}"/>
-                                                                                    <p:message for="logros" display="tooltip" />
+                                                    <p:ajax event="rowEdit" listener="#{cvTecnologia.updateInnovaciones}" update="@this" oncomplete="actualizarTabla2()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
+
+                                                    <p:column >
+                                                        <p:commandButton actionListener="#{cvTecnologia.eliminarInnovacion(InnovacionesRegistro)}" update="tblInnovacion" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación de la innovacion: #{InnovacionesRegistro.tipoInnovacion}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                            <a href="#" class="ui-row-editor-pencil">
+                                                                <span class="ui-icon ui-icon-pencil"></span>
+                                                            </a>
+                                                            <a href="#" class="ui-row-editor-check">
+                                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                                            </a>
+                                                            <p:spacer width="20px"/>
+                                                            <a href="#" class="ui-row-editor-close">
+                                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                                            </a>
+                                                        </div>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{InnovacionesRegistro.tipoInnovacion}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{InnovacionesRegistro.tipoInnovacion}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Disruptiva'}" itemLabel="#{'Disruptiva'}"/>
+                                                                    <f:selectItem itemValue="#{'Incremental'}" itemLabel="#{'Incremental'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{InnovacionesRegistro.potencialCobertura}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{InnovacionesRegistro.tipoInnovacion}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Internacional'}" itemLabel="#{'Internacional'}"/>
+                                                                    <f:selectItem itemValue="#{'Nacional'}" itemLabel="#{'Nacional'}"/>
+                                                                    <f:selectItem itemValue="#{'Local'}" itemLabel="#{'Local'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{InnovacionesRegistro.aplicacionInnovacion}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{InnovacionesRegistro.aplicacionInnovacion}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Proceso'}" itemLabel="#{'Proceso'}"/>
+                                                                    <f:selectItem itemValue="#{'Producto'}" itemLabel="#{'Producto'}"/>
+                                                                    <f:selectItem itemValue="#{'Servicio'}" itemLabel="#{'Servicio'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{InnovacionesRegistro.apoyoRecibidoo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{InnovacionesRegistro.apoyoRecibidoo}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                    <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
+                                                                    <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{InnovacionesRegistro.mecanismoProteccion}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{InnovacionesRegistro.mecanismoProteccion}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Patentes'}" itemLabel="#{'Patentes'}"/>
+                                                                    <f:selectItem itemValue="#{'Diseño Industrial'}" itemLabel="#{'Diseño industrial'}"/>
+                                                                    <f:selectItem itemValue="#{'Marcas Comerciales'}" itemLabel="#{'Marcas comerciales'}"/>
+                                                                    <f:selectItem itemValue="#{'Derechos de Autor'}" itemLabel="#{'Derechos de autor'}"/>
+                                                                    <f:selectItem itemValue="#{'Acuerdos de Confidencialidad'}" itemLabel="#{'Acuerdos de confidencialidad'}"/>
+                                                                    <f:selectItem itemValue="#{'Secreto Industrial'}" itemLabel="#{'Secreto Industrial'}"/>
+                                                                    <f:selectItem itemValue="#{'Complejidad del Diseño'}" itemLabel="#{'Complejidad del diseño'}"/>
+                                                                    <f:selectItem itemValue="#{'Adelanto en el Mercado del Innovador'}" itemLabel="#{'Adelanto en el mercado del innovador'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </p:outputPanel>
+
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Desarrollo de software">
+                                        <h:form id="frmIdiom"> 
+                                            <p:outputPanel>
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo" />
+                                                                                        <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.tipoDesarrollo}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Software basado en Web" itemLabel="Software basado en Web"/>
+                                                                                            <f:selectItem itemValue="Software de computadoras personales" itemLabel="Software de computadoras personales"/>
+                                                                                            <f:selectItem itemValue="Software de gestión" itemLabel="Software de gestión"/>
+                                                                                            <f:selectItem itemValue="Software de ingeniería y científico" itemLabel="Software de ingeniería y científico"/>
+                                                                                            <f:selectItem itemValue="Software de inteligencia artificial" itemLabel="Software de inteligencia artificial"/>
+                                                                                            <f:selectItem itemValue="Software de sistemas" itemLabel="Software de sistemas"/>
+                                                                                            <f:selectItem itemValue="Software de tiempo real" itemLabel="Software de tiempo real"/>
+                                                                                            <f:selectItem itemValue="Software de videojuegos" itemLabel="Software de videojuegos"/>
+                                                                                            <f:selectItem itemValue="Software empotrado" itemLabel="Software empotrado"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="tipo" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4"> 
+                                                                                        <p:outputLabel for="apoyoR" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo por parte de la institución?" />
+                                                                                        <p:selectOneMenu id="apoyoR" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.apoyoRecibido}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Si" itemLabel="Si"/>
+                                                                                            <f:selectItem itemValue="No" itemLabel="No"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="apoyoR" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4"> 
+                                                                                        <p:outputLabel for="derechosA" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Cuenta con derechos de autor?" />
+                                                                                        <p:selectOneMenu id="derechosA" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.derechosAutor}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Si" itemLabel="Si"/>
+                                                                                            <f:selectItem itemValue="No" itemLabel="No"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="derechosA" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-6">                                                                               
+                                                                                        <p:outputLabel for="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lugar de desarrollo" />
+                                                                                        <p:inputText id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                     placeholder="Lugar de desarrollo" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.lugar}"/>
+                                                                                        <p:message for="lugar" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="nombreB" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre beneficiario" />
+                                                                                        <p:inputText id="nombreB" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                     placeholder="Nombre beneficiario" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.nombreBeneficiario}"/>
+                                                                                        <p:message for="nombreB" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3">                                                                             
+                                                                                        <p:outputLabel for="horash" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Horas persona" />
+                                                                                        <p:inputText id="horash" type="number" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                     placeholder="Horas persona" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.horasHombre}"/>
+                                                                                        <p:message for="horash" display="tooltip"/>                                                                         
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-3"> 
+                                                                                        <p:outputLabel for="costo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Costo" />
+                                                                                        <p:inputText id="costo" type="number" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                     placeholder="Costo" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.costo}"/>
+                                                                                        <p:message for="costo" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-3"> 
+                                                                                        <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
+                                                                                        <p:calendar navigator="true" locale="es" id="fechaIn" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                        <p:message for="fechaIn" display="tooltip" />                                                                                
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-3"> 
+                                                                                        <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin" />
+                                                                                        <p:calendar navigator="true" locale="es" id="fechaFin" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                        <p:message for="fechaFin" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="logros" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Logros" />
+                                                                                        <p:inputTextarea id="logros" style="height:100%; width: 100%; object-fit: contain; font-size: large" 
+                                                                                                         placeholder="Logros" value="#{cvTecnologia.nuevoOBJDesarrolloSoftware.logros}"/>
+                                                                                        <p:message for="logros" display="tooltip" />
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <hr/>
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-4 col-lg-4"/>
-                                                                                <div class="col-sm-12 col-md-4 col-lg-4">
-                                                                                    <p:commandButton id="btnBuscarActiuvidades" oncomplete="PF('frmListaDesarrolloSoft')update();" value="Guardar información" 
-                                                                                                     actionListener="#{cvTecnologia.guardarDesaSoft()}" icon="fa fa-pencil-square-o" 
-                                                                                                     class="btn-primary btn-block col-md-3" update="@form" process="@form" /> 
+                                                                            <hr/>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" oncomplete="PF('frmListaDesarrolloSoft')update();" value="Guardar información" 
+                                                                                                         actionListener="#{cvTecnologia.guardarDesaSoft()}" icon="fa fa-pencil-square-o" 
+                                                                                                         class="btn-primary btn-block col-md-3" update="@form" process="@form" /> 
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </c:if>
-                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
-                                                <div class="box-body">  
-                                                    <div class="row">
-                                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="info-box">
-                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
-
-                                                                <div class="info-box-content">
-                                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
-                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
-                                                                </div>
+                                                                </div>                                            
                                                             </div>
                                                         </div>
-                                                    </div>                
-                                                </div>
-                                            </c:if>
-                                        </p:outputPanel>
-                                    </h:form>
-                                    <h:form id="frmListaDesarrolloSoft"> 
-                                        <p:outputPanel>
-                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{cvTecnologia.metodoBase()}" update="tbldesarrollosSoft" />
-                                            <p:dataTable id="tbldesarrollosSoft" value="#{cvTecnologia.nuevaListaDesarrolloSoftware}" var="desaSof" 
-                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
-                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{desaSof.estatus eq 'Aceptado'?'aceptado':'denegado'}"
-                                                         editable="true" editMode="row">
-
-                                                <p:columnGroup type="header">
-                                                    <p:row class="success">
-                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
-                                                        <p:column rowspan="2" headerText="Tipo" style="width: 250px;" />
-                                                        <p:column rowspan="2" headerText="apoyo por parte de la institución" style="width: 100px;"/>
-                                                        <p:column rowspan="2" headerText="Derechos de autor" style="width: 100px;"/>
-                                                        <p:column rowspan="2" headerText="Lugar de dasarrollo" style="width: 250px;"/> 
-                                                        <p:column rowspan="2" headerText="Nombre del beneficiario" style="width:250px; "/>
-                                                        <p:column rowspan="2" headerText="Horas persona" style="width:50px; "/>
-                                                        <p:column rowspan="2" headerText="Costo" style="width:50px; "/>
-                                                        <p:column rowspan="2" headerText="Fecha inicio" style="width:100px; "/>
-                                                        <p:column rowspan="2" headerText="Fecha fin" style="width:100px; "/>
-                                                        <p:column rowspan="2" headerText="Logros" style="width:300px; "/>
-                                                    </p:row>
-                                                </p:columnGroup>
-
-                                                <p:ajax event="rowEdit" listener="#{cvTecnologia.updateDesarrolloSoftware}" update="@this" oncomplete="actualizarTabla3()"/>
-                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla3()"/>
-
-                                                <p:column >
-                                                    <p:commandButton actionListener="#{cvTecnologia.eliminarDesSoft(desaSof)}" update="tbldesarrollosSoft" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del desarrollo de  #{desaSof.tipoDesarrollo}?" icon="ui-icon-alert" />
-                                                    </p:commandButton>
-                                                </p:column>
-
-                                                <p:column >
-                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
-                                                        <a href="#" class="ui-row-editor-pencil">
-                                                            <span class="ui-icon ui-icon-pencil"></span>
-                                                        </a>
-                                                        <a href="#" class="ui-row-editor-check">
-                                                            <span class="ui-icon ui-icon-check ui-c"></span>
-                                                        </a>
-                                                        <p:spacer width="20px"/>
-                                                        <a href="#" class="ui-row-editor-close">
-                                                            <span class="ui-icon ui-icon-close ui-c"></span>
-                                                        </a>
                                                     </div>
-                                                </p:column>
+                                                </c:if>
+                                                <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="box-body">  
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="info-box">
+                                                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
 
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaSof.tipoDesarrollo}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{desaSof.tipoDesarrollo}" style="width:100%">
-                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
-                                                                <f:selectItem itemValue="#{'Software basado en Web'}" itemLabel="#{'Software basado en Web'}"/>
-                                                                <f:selectItem itemValue="#{'Software de computadoras personales'}" itemLabel="#{'Software de computadoras personales'}"/>
-                                                                <f:selectItem itemValue="#{'Software de gestión'}" itemLabel="#{'Software de gestión'}"/>
-                                                                <f:selectItem itemValue="#{'Software de ingeniería y científico'}" itemLabel="#{'Software de ingeniería y científico'}"/>
-                                                                <f:selectItem itemValue="#{'Software de inteligencia artificial'}" itemLabel="#{'Software de inteligencia artificial'}"/>
-                                                                <f:selectItem itemValue="#{'Software de sistemas'}" itemLabel="#{'Software de sistemas'}"/>
-                                                                <f:selectItem itemValue="#{'Software de tiempo real'}" itemLabel="#{'Software de tiempo real'}"/>
-                                                                <f:selectItem itemValue="#{'Software de videojuegos'}" itemLabel="#{'Software de videojuegos'}"/>
-                                                                <f:selectItem itemValue="#{'Software empotrado'}" itemLabel="#{'Software empotrado'}"/>
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>       
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaSof.apoyoRecibido}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{desaSof.apoyoRecibido}" style="width:100%">
-                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
-                                                                <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
-                                                                <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>        
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaSof.derechosAutor}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <h:selectOneMenu value="#{desaSof.derechosAutor}" style="width:100%">
-                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
-                                                                <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
-                                                                <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
-                                                            </h:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column> 
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaSof.lugar}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <p:inputText value="#{desaSof.lugar}"/>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaSof.nombreBeneficiario}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <p:inputText value="#{desaSof.nombreBeneficiario}"/>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>    
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaSof.horasHombre}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <p:inputText value="#{desaSof.horasHombre}"/>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column >
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="$ #{desaSof.costo}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <p:inputText value="#{desaSof.costo}"/>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>   
-                                                <p:column>
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaSof.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <p:calendar locale="es" value="#{desaSof.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column>
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaSof.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <p:calendar locale="es" value="#{desaSof.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column>
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{desaSof.logros}" />
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <p:inputTextarea value="#{desaSof.logros}"/>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                            </p:dataTable>
-                                        </p:outputPanel>
+                                                                    <div class="info-box-content">
+                                                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                        <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                
+                                                    </div>
+                                                </c:if>
+                                            </p:outputPanel>
+                                        </h:form>
+                                        <h:form id="frmListaDesarrolloSoft"> 
+                                            <p:outputPanel>
+                                                <p:remoteCommand name="actualizarTabla3" actionListener="#{cvTecnologia.metodoBase()}" update="tbldesarrollosSoft" />
+                                                <p:dataTable id="tbldesarrollosSoft" value="#{cvTecnologia.nuevaListaDesarrolloSoftware}" var="desaSof" 
+                                                             emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{desaSof.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                             editable="true" editMode="row">
 
-                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                        </p:confirmDialog>   
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                            <p:column rowspan="2" headerText="Tipo" style="width: 250px;" />
+                                                            <p:column rowspan="2" headerText="apoyo por parte de la institución" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Derechos de autor" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Lugar de dasarrollo" style="width: 250px;"/> 
+                                                            <p:column rowspan="2" headerText="Nombre del beneficiario" style="width:250px; "/>
+                                                            <p:column rowspan="2" headerText="Horas persona" style="width:50px; "/>
+                                                            <p:column rowspan="2" headerText="Costo" style="width:50px; "/>
+                                                            <p:column rowspan="2" headerText="Fecha inicio" style="width:100px; "/>
+                                                            <p:column rowspan="2" headerText="Fecha fin" style="width:100px; "/>
+                                                            <p:column rowspan="2" headerText="Logros" style="width:300px; "/>
+                                                        </p:row>
+                                                    </p:columnGroup>
 
-                                    </h:form>
-                                </p:tab>
+                                                    <p:ajax event="rowEdit" listener="#{cvTecnologia.updateDesarrolloSoftware}" update="@this" oncomplete="actualizarTabla3()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla3()"/>
 
-                                <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
-                                    Cargando archivo espere por favor.<br />
-                                </p:blockUI>
-                            </p:tabView>
+                                                    <p:column >
+                                                        <p:commandButton actionListener="#{cvTecnologia.eliminarDesSoft(desaSof)}" update="tbldesarrollosSoft" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación del desarrollo de  #{desaSof.tipoDesarrollo}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                            <a href="#" class="ui-row-editor-pencil">
+                                                                <span class="ui-icon ui-icon-pencil"></span>
+                                                            </a>
+                                                            <a href="#" class="ui-row-editor-check">
+                                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                                            </a>
+                                                            <p:spacer width="20px"/>
+                                                            <a href="#" class="ui-row-editor-close">
+                                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                                            </a>
+                                                        </div>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaSof.tipoDesarrollo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{desaSof.tipoDesarrollo}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Software basado en Web'}" itemLabel="#{'Software basado en Web'}"/>
+                                                                    <f:selectItem itemValue="#{'Software de computadoras personales'}" itemLabel="#{'Software de computadoras personales'}"/>
+                                                                    <f:selectItem itemValue="#{'Software de gestión'}" itemLabel="#{'Software de gestión'}"/>
+                                                                    <f:selectItem itemValue="#{'Software de ingeniería y científico'}" itemLabel="#{'Software de ingeniería y científico'}"/>
+                                                                    <f:selectItem itemValue="#{'Software de inteligencia artificial'}" itemLabel="#{'Software de inteligencia artificial'}"/>
+                                                                    <f:selectItem itemValue="#{'Software de sistemas'}" itemLabel="#{'Software de sistemas'}"/>
+                                                                    <f:selectItem itemValue="#{'Software de tiempo real'}" itemLabel="#{'Software de tiempo real'}"/>
+                                                                    <f:selectItem itemValue="#{'Software de videojuegos'}" itemLabel="#{'Software de videojuegos'}"/>
+                                                                    <f:selectItem itemValue="#{'Software empotrado'}" itemLabel="#{'Software empotrado'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>       
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaSof.apoyoRecibido}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{desaSof.apoyoRecibido}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
+                                                                    <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>        
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaSof.derechosAutor}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{desaSof.derechosAutor}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
+                                                                    <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaSof.lugar}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{desaSof.lugar}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaSof.nombreBeneficiario}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{desaSof.nombreBeneficiario}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>    
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaSof.horasHombre}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{desaSof.horasHombre}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="$ #{desaSof.costo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{desaSof.costo}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>   
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaSof.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{desaSof.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaSof.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{desaSof.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{desaSof.logros}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputTextarea value="#{desaSof.logros}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </p:outputPanel>
+
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+
+                                        </h:form>
+                                    </p:tab>
+
+                                    <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
+                                        Cargando archivo espere por favor.<br />
+                                    </p:blockUI>
+                                </p:tabView>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </p:panel>
-
+                </section>
+            </p:panel>
+        </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

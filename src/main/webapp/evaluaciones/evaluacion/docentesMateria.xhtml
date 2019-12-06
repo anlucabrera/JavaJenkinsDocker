@@ -38,6 +38,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{evaluacionDoncenteMateriaControler.cargada}">
         <adm:breadcrumb title="Evaluación de docentes - Formulario"/>
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
@@ -192,5 +193,6 @@
                 </div>
             </div>
         </h:form>
+        </c:if>
     </ui:define>
 </ui:composition>

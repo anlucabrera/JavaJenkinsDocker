@@ -1,7 +1,6 @@
 package mx.edu.utxj.pye.sgi.controlador.finanzas;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
@@ -22,10 +21,14 @@ import org.omnifaces.util.Faces;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 
 @Named
 @ViewScoped
@@ -38,8 +41,14 @@ public class TramitesSuperior extends ViewScopedRol {
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso;
 
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         Short area = logon.getPersonal().getAreaOperativa();
         Filter<PersonalActivo> filtro = new Filter<>();
         filtro.addParam(PersonalFiltro.TIENE_POA.getLabel(),"1");

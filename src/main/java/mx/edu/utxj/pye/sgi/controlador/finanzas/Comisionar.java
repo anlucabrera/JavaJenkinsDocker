@@ -5,13 +5,11 @@
  */
 package mx.edu.utxj.pye.sgi.controlador.finanzas;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.faces.context.FacesContext;
@@ -19,16 +17,13 @@ import javax.faces.event.ComponentSystemEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.Comision;
-import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbDocumentosInternos;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
-import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
@@ -37,9 +32,13 @@ import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.enums.GastoTipo;
 import mx.edu.utxj.pye.sgi.enums.TramiteTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import org.omnifaces.cdi.Param;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 
 /**
  *
@@ -64,9 +63,15 @@ public class Comisionar extends ViewScopedRol implements Serializable{
     @EJB EjbDocumentosInternos ejbDocumentosInternos;
     @EJB Facade f;
     @Getter @Setter private Integer tramiteid;
-    
+   
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+ 
     //@PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         comision = ejb.inicializarComision(logon.getPersonal());
         comision.setAreaPOA(ejb.getAreaConPOA(logon.getPersonal().getAreaOperativa()));
         comision.setClavesAreasSubordinadas(ejb.getAreasSubordinadasSinPOA(comision.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));

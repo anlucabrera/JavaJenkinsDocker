@@ -36,6 +36,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{registroTutoriaIndividual.cargado}">
         <adm:breadcrumb title="Registro de Tutorías Individuales"/>
         <p:importEnum type="mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado" var="casoCriticoEstado" allSuffix="ESTADOS" />
         <div class="contenedor">
@@ -948,5 +949,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

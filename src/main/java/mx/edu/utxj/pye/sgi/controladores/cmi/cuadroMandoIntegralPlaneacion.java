@@ -28,6 +28,10 @@ import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.model.chart.MeterGaugeChartModel;
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 @Named
 @SessionScoped
 public class cuadroMandoIntegralPlaneacion implements Serializable {
@@ -63,8 +67,16 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA poau;
 
-    @PostConstruct
+    
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
+@PostConstruct
     public void init() {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         au = new AreasUniversidad(Short.parseShort("0"), "Institucional", "Institucional", "1", false);
         numeroMes = fechaActual.getMonth();
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();

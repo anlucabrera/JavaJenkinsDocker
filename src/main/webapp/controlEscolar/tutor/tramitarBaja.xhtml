@@ -36,6 +36,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{tramitarBajaTutor.cargado}">
         <adm:breadcrumb title="Tramitar Baja"/>
         <div class="contenedor">
             <c:if test="#{tramitarBajaTutor.tieneAcceso}">
@@ -362,5 +363,6 @@
         <script>
             //collapseSidebar(); activar para colapsar barra lateral
         </script>
+        </c:if>
     </ui:define>
 </ui:composition>

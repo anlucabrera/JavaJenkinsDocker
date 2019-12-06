@@ -28,6 +28,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
+
 @Named(value = "utilToolAcademicas")
 @ViewScoped
 public class UtileriasAcademicas implements Serializable {
@@ -50,8 +56,16 @@ public class UtileriasAcademicas implements Serializable {
     @EJB EjbSelectItemCE ejbSelectItemCE;
     @EJB EJBSelectItems eJBSelectItems;
 
-    @PostConstruct
+    
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         grupo = new Grupo();
         noGrupos = 0;
         listaTurno = ejbSelectItemCE.itemTurno();

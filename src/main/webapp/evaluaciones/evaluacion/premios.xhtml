@@ -30,6 +30,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{premios.cargado}">
         <adm:breadcrumb title="Comisionar a personal"/>
         <adm:sidebar collapsed="true"/>
         <h:form id="frmAgregarTramite" class="form-horizontal" prependId="true">
@@ -76,5 +77,6 @@
                 </div>
             </div>
         </h:form>
+        </c:if>
     </ui:define>
 </ui:composition>

@@ -35,6 +35,7 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 /**
  *
@@ -58,8 +59,16 @@ public class ReporteBajasServiciosEscolares extends ViewScopedRol implements Des
      *      El periodo activo<br/>
      *      Las instrucciones de operación de la herramienta<br/>
      */
-    @PostConstruct
+    
+
+
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+@PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
         try{
             setVistaControlador(ControlEscolarVistaControlador.REPORTE_BAJAS);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logon.getPersonal().getClave());//validar si es personal de servicios escolares

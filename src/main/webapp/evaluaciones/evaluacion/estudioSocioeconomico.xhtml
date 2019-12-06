@@ -56,6 +56,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <c:if test="#{estudioSocioeconomicoOperativo.cargada}">
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
@@ -355,5 +356,6 @@
                 </div>
             </div>
         </h:form>
+            </c:if>
     </ui:define>
 </ui:composition>

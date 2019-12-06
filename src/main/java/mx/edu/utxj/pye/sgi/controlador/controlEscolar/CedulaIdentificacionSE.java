@@ -2,7 +2,6 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
@@ -25,7 +24,6 @@ import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -34,6 +32,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named(value = "cedulaIdentificacionSE")
 @ViewScoped
@@ -48,9 +52,16 @@ public class CedulaIdentificacionSE extends ViewScopedRol implements Desarrollab
 
     @EJB private EjbPropiedades ep;
 
+
+
+@Getter private Boolean cargado = false;
+
+
     @PostConstruct
     public void init(){
         try{
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.CEDULA_IDENTIFICACION_SE);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejbAdministracionEstudiantesSE.validaSE(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso

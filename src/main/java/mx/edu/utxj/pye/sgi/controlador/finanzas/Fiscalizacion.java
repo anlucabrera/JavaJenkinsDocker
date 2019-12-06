@@ -1,6 +1,5 @@
 package mx.edu.utxj.pye.sgi.controlador.finanzas;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +35,11 @@ import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.RowEditEvent;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 
 /**
  *
@@ -91,8 +94,14 @@ public class Fiscalizacion implements Serializable {
     @Inject Caster caster;
     @EJB EjbFiscalizacion ejb;
 
+@Inject LogonMB logonMB;
+@Getter private Boolean cargado = false;
+
+
     @PostConstruct
     public void init(){
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.finanzas.Fiscalizacion.init() 1");
         tramitesACargo = ejb.getTramitesAcargo(logon.getPersonal());
         etapa = FiscalizacionEtapa.CONSULTA;

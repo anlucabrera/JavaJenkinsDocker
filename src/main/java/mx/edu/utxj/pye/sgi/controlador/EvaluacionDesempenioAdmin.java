@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import edu.mx.utxj.pye.seut.util.util.Cuestionario;
 import java.io.IOException;
 import java.io.Serializable;
@@ -20,7 +19,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 
@@ -41,6 +39,12 @@ import mx.edu.utxj.pye.sgi.util.ExcelWritter;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 /**
  *
@@ -79,9 +83,16 @@ public class EvaluacionDesempenioAdmin implements Serializable {
     private EntityManager em;
     @Inject private LogonMB logonMB;
 
+
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init() {
         try {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             em = f.getEntityManager();
             respuestasPosibles = evaluacionDesempenioEJB.getRespuestasPosibles();
             apartados = evaluacionDesempenioEJB.getApartados(cuestionario);

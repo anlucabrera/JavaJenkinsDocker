@@ -24,6 +24,7 @@
     <ui:define name="title"/>
 
     <ui:define name="body">
+        <c:if test="#{organigrama.cargado}">
         <adm:sidebar collapsed="true"/>
         <h:form id="frmParametros"> 
             <p:panel id="informacion" class="hidden-xs hidden-sm">
@@ -312,6 +313,7 @@
             }); //]]>  
 
         </script>
+        </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

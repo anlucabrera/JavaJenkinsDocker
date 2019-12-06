@@ -1,6 +1,5 @@
 package mx.edu.utxj.pye.sgi.controlador;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -11,7 +10,6 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.EjbClimaLaboral;
@@ -19,8 +17,13 @@ import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionesClimaLaboralResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 @Named(value = "climaLaboral")
 @SessionScoped
@@ -40,9 +43,16 @@ public class ClimaLaboral implements Serializable {
     @EJB private Facade facade;
     @Inject LogonMB logonMB;
     
+
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init() {
         try {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             if (logonMB.getUsuarioTipo() != UsuarioTipo.ESTUDIANTE) {
                 respuestas = new HashMap<>();
 

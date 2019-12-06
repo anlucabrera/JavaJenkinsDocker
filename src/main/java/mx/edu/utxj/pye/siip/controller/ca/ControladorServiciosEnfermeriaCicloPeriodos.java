@@ -73,14 +73,18 @@ public class ControladorServiciosEnfermeriaCicloPeriodos implements Serializable
             Logger.getLogger(ControladorServiciosEnfermeriaCicloPeriodos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 22);
-        if (areaRegistro == null) {
-            dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        } else {
-            dto.setArea(areaRegistro);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 22);
+            if (areaRegistro == null) {
+                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            } else {
+                dto.setArea(areaRegistro);
+            }
+        } catch (Exception ex) {
+            System.out.println("ControladorServiciosEnfermeriaCicloPeriodos.consultaAreaRegistro: " + ex.getMessage());
         }
     }
     

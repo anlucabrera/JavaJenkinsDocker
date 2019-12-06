@@ -64,18 +64,23 @@ public class ControladorArchivoProgPertCal implements Serializable{
     }
     
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 20);
-        if (areaRegistro == null) {
-            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 57);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 20);
             if (areaRegistro == null) {
-                area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 57);
+                if (areaRegistro == null) {
+                    area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                } else {
+                    area = areaRegistro;
+                }
             } else {
                 area = areaRegistro;
             }
-        } else {
-            area = areaRegistro;
+        } catch (Exception e) {
+            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorArchivoProgPertCal.consultaAreaRegistro()" + e.getMessage());
         }
+
     }
     
     public void recibirArchivo(ValueChangeEvent e){

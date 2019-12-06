@@ -5,20 +5,23 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
+
+import javax.inject.Inject;
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
+
 
 /**
  *
@@ -35,9 +38,16 @@ public class AdministracionEncuesta implements Serializable{
     @EJB private EjbAdministracionEncuesta ejbAdmEncuesta;
     
     
+
+@Getter private Boolean cargado = false;
+
+
+
     @PostConstruct
     public void init() {
         try {
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ cargado = true;
             if(logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)){
                 dto.usuarioNomina=Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
                 dto.cveTrabajador= logonMB.getListaUsuarioClaveNomina().getCvePersona();

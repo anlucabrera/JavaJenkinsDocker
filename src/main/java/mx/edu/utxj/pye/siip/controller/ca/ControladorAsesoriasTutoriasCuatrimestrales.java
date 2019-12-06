@@ -75,14 +75,18 @@ public class ControladorAsesoriasTutoriasCuatrimestrales implements Serializable
         }
         initFiltros();
     }
-    
+
     public void consultaAreaRegistro() {
-        AreasUniversidad areaRegistro = new AreasUniversidad();
-        areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 89);
-        if (areaRegistro == null) {
-            dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        } else {
-            dto.setAreaPOA(areaRegistro);
+        try {
+            AreasUniversidad areaRegistro = new AreasUniversidad();
+            areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 89);
+            if (areaRegistro == null) {
+                dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+            } else {
+                dto.setAreaPOA(areaRegistro);
+            }
+        } catch (Exception ex) {
+            System.out.println("ControladorAsesoriasTutoriasCuatrimestrales.consultaAreaRegistro: " + ex.getMessage());
         }
     }
     
