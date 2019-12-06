@@ -25,7 +25,6 @@
     <ui:define name="title"/>
 
     <ui:define name="body">
-        <c:if test="#{controladorTitSegGen.cargado}">
 
         <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
@@ -145,7 +144,7 @@
                                                              </p:column>
                                                              
                                                              <p:column headerText="Carta de No Adeudo" style="width: 200px; text-align: center;" sortBy="#{ExpTit.pagosFinanzas.valcartanoadueudoTSU}">
-                                                                 <h:outputText value="#{ExpTit.pagosFinanzas.valcartanoadueudoTSU?'Si':'No'}"/>
+                                                                 <h:outputText value="#{ExpTit.pagosFinanzas.valcartanoadueudoTSU == 1?'Si':'No'}"/>
                                                              </p:column>
                                                              
                                                              <p:column headerText="Documentos" style="width: 200px; text-align: center;" sortBy="#{controladorTitSegGen.numDocs} de #{controladorTitSegGen.numTotalDocs}">
@@ -225,7 +224,6 @@
                                     </h:form>
                     </p:dialog>
         </p:panel>
-        </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

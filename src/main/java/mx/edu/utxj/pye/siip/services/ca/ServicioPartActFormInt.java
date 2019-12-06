@@ -205,14 +205,13 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
 
     @Override
     public List<DTODatosEstudiante> getListaParticipantesPorActividad(String actividad) {
-        if(actividad == null){
+        if(actividad == null || actividad.isEmpty()){
             return Collections.EMPTY_LIST;
         }
-         
+           
         List<ParticipantesActividadesFormacionIntegral> entities = new ArrayList<>();
         List<DTODatosEstudiante> l = new ArrayList<>();
        
-         
         entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p JOIN p.actividadFormacionIntegral a WHERE a.actividadFormacionIntegral = :actividadFormacionIntegral ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
                 .setParameter("actividadFormacionIntegral", actividad)
                 .getResultList();
@@ -232,7 +231,6 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
                 l.add(new DTODatosEstudiante(mat, carrera.getNombre(), sexo));
             });
         });
-
         return l;
     }
 

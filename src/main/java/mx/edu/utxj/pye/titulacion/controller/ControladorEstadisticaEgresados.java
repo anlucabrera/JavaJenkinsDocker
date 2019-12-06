@@ -22,12 +22,6 @@ import mx.edu.utxj.pye.titulacion.interfaces.EjbEstadisticaEgresados;
 import javax.enterprise.context.SessionScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
-
-import javax.inject.Inject;
-import com.github.adminfaces.starter.infra.security.LogonMB;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-
-
 /**
  *
  * @author UTXJ
@@ -51,15 +45,8 @@ public class ControladorEstadisticaEgresados implements Serializable{
     // Para totales
     @Getter @Setter private Integer totalInscritos, totalEgresados, totalAcredEstadia, totalExpInt, totalExpVal;
    
-
-@Inject LogonMB logonMB;
-@Getter private Boolean cargado = false;
-
-
     @PostConstruct
     public void init() {
-        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
 
         generacionesExpedientesRegistrados();
     }

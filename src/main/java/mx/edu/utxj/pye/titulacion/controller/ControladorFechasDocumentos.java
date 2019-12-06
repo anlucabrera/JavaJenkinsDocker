@@ -26,12 +26,6 @@ import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
-import javax.inject.Inject;
-import com.github.adminfaces.starter.infra.security.LogonMB;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-
-
-
 /**
  *
  * @author UTXJ
@@ -64,15 +58,8 @@ public class ControladorFechasDocumentos implements Serializable{
     
    @EJB private EjbFechasDocumentos ejbFechasDocumentos;
   
-
-@Inject LogonMB logonMB;
-@Getter private Boolean cargado = false;
-
-
    @PostConstruct
     public void init() {
-        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
 //       cargarListaFecDocs();
        aperturaDialogoEdicion = Boolean.FALSE;
        aperturaDialogoNuevo = Boolean.FALSE;

@@ -6,12 +6,6 @@
 package mx.edu.utxj.pye.titulacion.services;
 
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +25,7 @@ import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
@@ -53,7 +48,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
@@ -176,7 +170,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         FechasDocumentos fecDoc = buscarFechasDocumentos(exp, prog);
         
         //Dependiendo del nivel del egresado se asignada el grado académico y se obtienen los pagos para determinar si ha realizado pago de titulo
-        ArrayList<dtoPagosFinanzas> listaPagos = getListaDtoPagosFinanzas(exp.getMatricula().getMatricula());
+        List<dtoPagosFinanzas> listaPagos = getListaDtoPagosFinanzas(exp.getMatricula().getMatricula());
         dtoPagosFinanzas pagoFinanzas = new dtoPagosFinanzas();
         
         if (exp.getNivel()== 2 || exp.getNivel()== 4) {
@@ -654,45 +648,60 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         return l;
     }
 
+//    @Override
+//    public ArrayList<dtoPagosFinanzas> getListaDtoPagosFinanzas(String matricula) {
+//        ArrayList<dtoPagosFinanzas> arrayDeJson = new ArrayList<>();
+//        try {
+//
+//            Client client = Client.create();
+////            WebResource webResource = client.resource("http://siip.utxicotepec.edu.mx/micro/webresources/pagoAlumno/matricula/" + matricula);
+//            WebResource webResource = client.resource("http://150.140.1.26/micro/webresources/pagoAlumno/matricula/" + matricula);
+//           
+//            ClientResponse response = webResource.accept("application/json").get(ClientResponse.class);
+//
+//            if (response.getStatus() != 200) {
+//                throw new RuntimeException("Failed : HTTP error code : "
+//                        + response.getStatus());
+//            }
+//
+//            String output = response.getEntity(String.class);
+//
+//            // Creamos el objeto Gson que se encargara de las conversiones
+//            Gson gson = new Gson();
+//
+//            Type listType = new TypeToken<ArrayList<dtoPagosFinanzas>>() {
+//            }.getType();
+//            arrayDeJson = gson.fromJson(output, listType);
+//           
+//        } catch (Throwable ex) {
+//            arrayDeJson = null;
+//        }
+//        return arrayDeJson;
+//    }
+
     @Override
-    public ArrayList<dtoPagosFinanzas> getListaDtoPagosFinanzas(String matricula) {
-        ArrayList<dtoPagosFinanzas> arrayDeJson = new ArrayList<>();
-        try {
+    public List<dtoPagosFinanzas> getListaDtoPagosFinanzas(String matricula) {
+        List<Viewregalumnosnoadeudo> listaPagosNoAdeudo = facade.getEntityManager().createQuery("select v from Viewregalumnosnoadeudo v where v.matricula = :matricula", Viewregalumnosnoadeudo.class)
+                .setParameter("matricula", matricula)
+                .getResultList();
 
-            Client client = Client.create();
-//            WebResource webResource = client.resource("http://siip.utxicotepec.edu.mx/micro/webresources/pagoAlumno/matricula/" + matricula);
-            WebResource webResource = client.resource("http://150.140.1.26/micro/webresources/pagoAlumno/matricula/" + matricula);
-           
-            ClientResponse response = webResource.accept("application/json").get(ClientResponse.class);
+        List<dtoPagosFinanzas> listaDtoEstudiantes = new ArrayList<>();
 
-            if (response.getStatus() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : "
-                        + response.getStatus());
-            }
-
-            String output = response.getEntity(String.class);
-
-            // Creamos el objeto Gson que se encargara de las conversiones
-            Gson gson = new Gson();
-
-            Type listType = new TypeToken<ArrayList<dtoPagosFinanzas>>() {
-            }.getType();
-            arrayDeJson = gson.fromJson(output, listType);
-           
-        } catch (Throwable ex) {
-            arrayDeJson = null;
-        }
-        return arrayDeJson;
+        listaPagosNoAdeudo.forEach(pago -> {
+            dtoPagosFinanzas dto = new dtoPagosFinanzas(pago.getConcepto(), pago.getCveRegistro(), pago.getDescripcion(), pago.getFechaPago(), pago.getIdCatalogoConceptoPago(), pago.getMatricula(), pago.getMonto(), pago.getSiglas(), pago.getValcartanoadueudoTSU(), pago.getValcartanoadedudoIng());
+            listaDtoEstudiantes.add(dto);
+        });
+        return listaDtoEstudiantes;
     }
-
+    
     @Override
-    public dtoPagosFinanzas getDtoPagosFinanzasTSU(ArrayList<dtoPagosFinanzas> listaDtoPagosFinanzas) {
-        Boolean validacion;
-        Long existeValidacion  = listaDtoPagosFinanzas.stream().filter(p -> p.getValcartanoadueudoTSU()== true).count();
+    public dtoPagosFinanzas getDtoPagosFinanzasTSU(List<dtoPagosFinanzas> listaDtoPagosFinanzas) {
+        Short validacion;
+        Long existeValidacion  = listaDtoPagosFinanzas.stream().filter(p -> p.getValcartanoadueudoTSU()== 1).count();
         if(existeValidacion == 0){
-            validacion = false;
+            validacion = 0;
         }else{
-            validacion = true;
+            validacion = 1;
         }
         dtoPagosFinanzas dto = new dtoPagosFinanzas();
         listaDtoPagosFinanzas.forEach((pagoFinanzas) -> {
@@ -717,13 +726,13 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
     
     @Override
-    public dtoPagosFinanzas getDtoPagosFinanzasING(ArrayList<dtoPagosFinanzas> listaDtoPagosFinanzas) {
-        Boolean validacion;
-        Long existeValidacion  = listaDtoPagosFinanzas.stream().filter(p -> p.getValcartanoadedudoIng()== true).count();
+    public dtoPagosFinanzas getDtoPagosFinanzasING(List<dtoPagosFinanzas> listaDtoPagosFinanzas) {
+        Short validacion;
+        Long existeValidacion  = listaDtoPagosFinanzas.stream().filter(p -> p.getValcartanoadedudoIng()== 1).count();
         if(existeValidacion == 0){
-            validacion = false;
+            validacion = 0;
         }else{
-            validacion = true;
+            validacion = 1;
         }
         dtoPagosFinanzas dto = new dtoPagosFinanzas();
         listaDtoPagosFinanzas.forEach((pagoFinanzas) -> {

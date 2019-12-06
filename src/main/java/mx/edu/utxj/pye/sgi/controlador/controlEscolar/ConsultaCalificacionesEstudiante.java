@@ -54,8 +54,10 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
 
                 rol.setEstudiante(estudiante);
 
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////
                 if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
-                if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
+                if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
+                if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
                 rol.setNivelRol(NivelRol.OPERATIVO);
 
@@ -75,7 +77,9 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
                 obtenerNivelacionesPorMateria();
                 obtenerPromediosFinales();
                 obtenerPromedioCuatrimestral();
-                //obtenerPromedioAcumulado();
+                obtenerPromedioAcumulado();
+            }else{
+                return;
             }
         }catch (Exception e){
             mostrarExcepcion(e);

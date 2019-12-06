@@ -3,8 +3,10 @@ package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 import lombok.*;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class DtoCalificacionEstudiante {
 
@@ -166,6 +168,14 @@ public class DtoCalificacionEstudiante {
         @Getter @Setter @NonNull BigDecimal promedio;
     }
 
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class DtoCargaAcademica{
+        @Getter @Setter @NonNull CargaAcademica carga;
+    }
 
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class DtoPeriodosEscolares{
+        @Getter @Setter @NonNull PeriodosEscolares periodosEscolares;
+    }
 }
 

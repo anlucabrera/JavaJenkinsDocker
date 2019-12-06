@@ -16,6 +16,7 @@ import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,12 +35,7 @@ import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import java.io.IOException;
 import javax.enterprise.context.SessionScoped;
-
-import javax.inject.Inject;
-import com.github.adminfaces.starter.infra.security.LogonMB;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-
-
+import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
 /**
  *
  * @author UTXJ
@@ -59,7 +55,7 @@ public class ControladorTitSegGeneracion implements Serializable{
     @Getter @Setter private DatosTitulacion datosTitulacion;
     @Getter @Setter private Boolean aperturaDialogo, aperturaPagos;
     @Getter @Setter private Boolean valorValidacion;
-    @Getter @Setter private ArrayList<dtoPagosFinanzas> listaDtoPagosFinanzas;
+    @Getter @Setter private List<dtoPagosFinanzas> listaDtoPagosFinanzas;
     @Getter @Setter private dtoPagosFinanzas nuevoDtoPagosFinanzas;
     @Getter @Setter private ExpedientesTitulacion expedientesTitulacion;
     
@@ -84,15 +80,8 @@ public class ControladorTitSegGeneracion implements Serializable{
     
     @Inject ControladorFotoExpediente controladorFotoExpediente;
     
-
-@Inject LogonMB logonMB;
-@Getter private Boolean cargado = false;
-
-
     @PostConstruct
     public void init() {
-        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
        
         aperturaDialogo = Boolean.FALSE;
         aperturaPagos = Boolean.FALSE;

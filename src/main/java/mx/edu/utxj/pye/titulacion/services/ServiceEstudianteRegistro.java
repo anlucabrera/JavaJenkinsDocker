@@ -271,7 +271,11 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         c.setParameter("activo", true);
         c.setMaxResults(1);
         
-        celular = c.getSingleResult();
+        try {
+            celular = c.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            celular = null;
+        }
         
         return celular;
     }
@@ -290,7 +294,11 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         c.setParameter("activo", true);
         c.setMaxResults(1);
         
-        email = c.getSingleResult();
+        try {
+            email = c.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            email = null;
+        }
         
         return email;
     }
@@ -341,7 +349,11 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         c.setParameter("activo", true);
         c.setMaxResults(1);
         
-        domicilio = c.getSingleResult();
+        try {
+            domicilio = c.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            domicilio = null;
+        }
         
         return domicilio;
     }
@@ -455,7 +467,14 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
                 .setParameter("generacion", generacion)
                 .getSingleResult();
         
-        String gen = g.getInicio() + "-" + g.getFin();
+        String gen;
+        
+        try {
+            gen = g.getInicio() + "-" + g.getFin();
+        
+        } catch (NoResultException | NonUniqueResultException ex) {
+            gen = null;
+        }
         
         return gen;
     }

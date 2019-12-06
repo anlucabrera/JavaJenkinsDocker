@@ -31,12 +31,6 @@ import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.omnifaces.cdi.ViewScoped;
-
-import javax.inject.Inject;
-import com.github.adminfaces.starter.infra.security.LogonMB;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-
-
 /**
  *
  * @author UTXJ
@@ -72,15 +66,9 @@ public class ControladorTitSegMatricula implements Serializable{
     
     @Inject ControladorFotoExpediente controladorFotoExpediente;
     
-
-@Inject LogonMB logonMB;
-@Getter private Boolean cargado = false;
-
-
     @PostConstruct
     public void init() {
-        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
+       
         consultaListaExpedientes();
         aperturaDialogo = Boolean.FALSE;
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();

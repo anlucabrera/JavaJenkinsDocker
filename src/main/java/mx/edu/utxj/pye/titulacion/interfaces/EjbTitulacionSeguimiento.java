@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.titulacion.interfaces;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 //import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
@@ -200,21 +201,21 @@ public interface EjbTitulacionSeguimiento {
      * @param matricula
      * @return Lista de dtoPagosFinanzas
      */
-    public ArrayList<dtoPagosFinanzas> getListaDtoPagosFinanzas(String matricula);
+    public List<dtoPagosFinanzas> getListaDtoPagosFinanzas(String matricula);
     
      /**
      * Obtiene dtoPagosFinanzas nivel T.S.U.
      * @param listaDtoPagosFinanzas
      * @return dtoPagosFinanzas
      */
-    public dtoPagosFinanzas getDtoPagosFinanzasTSU(ArrayList<dtoPagosFinanzas> listaDtoPagosFinanzas);
+    public dtoPagosFinanzas getDtoPagosFinanzasTSU(List<dtoPagosFinanzas> listaDtoPagosFinanzas);
     
     /**
      * Obtiene dtoPagosFinanzas nivel Ing. y Lic.
      * @param listaDtoPagosFinanzas
      * @return dtoPagosFinanzas
      */
-    public dtoPagosFinanzas getDtoPagosFinanzasING(ArrayList<dtoPagosFinanzas> listaDtoPagosFinanzas);
+    public dtoPagosFinanzas getDtoPagosFinanzasING(List<dtoPagosFinanzas> listaDtoPagosFinanzas);
     
     /**
      * Obtiene status del egresado en SAIIUT

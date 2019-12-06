@@ -32,8 +32,8 @@ public class dtoPagosFinanzas implements Serializable{
     @Getter @Setter private Date fechaPago;
     @Getter @Setter private String idCataloogoConceptoPago;
     @Getter @Setter private String matricula;
-    @Getter @Setter private Double monto;
+    @Getter @Setter private Integer monto;
     @Getter @Setter private String siglas;
-    @Getter @Setter private Boolean valcartanoadueudoTSU; 
-    @Getter @Setter private Boolean valcartanoadedudoIng;
+    @Getter @Setter private Short valcartanoadueudoTSU; 
+    @Getter @Setter private Short valcartanoadedudoIng;
 }

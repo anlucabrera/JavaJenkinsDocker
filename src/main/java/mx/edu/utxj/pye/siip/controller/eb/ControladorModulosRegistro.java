@@ -93,13 +93,17 @@ public class ControladorModulosRegistro implements Serializable {
         eventosRegistros = ejbModulos.getEventoRegistro();
     }
    
-    public AreasUniversidad consultaAreaRegistro(Short claveModuloRegistroEspecifico){
+    public AreasUniversidad consultaAreaRegistro(Short claveModuloRegistroEspecifico) {
         try {
             List<ModulosRegistrosUsuarios> mr = ejbModulos.getListaPermisoPorRegistro(personal, claveModuloRegistroEspecifico);
-            if (mr.get(0).getAreaRegistro() != null) {
-                return (ejbModulos.getAreaUniversidadPrincipalRegistro((short) mr.get(0).getAreaRegistro()));
+            if (mr != null || !mr.isEmpty()) {
+                if (mr.get(0).getAreaRegistro() != null) {
+                    return (ejbModulos.getAreaUniversidadPrincipalRegistro((short) mr.get(0).getAreaRegistro()));
+                } else {
+                    return new AreasUniversidad();
+                }
             } else {
-                return null;
+                return new AreasUniversidad();
             }
         } catch (Throwable ex) {
             Logger.getLogger(ControladorActFormacionIntegral.class.getName()).log(Level.SEVERE, null, ex);
