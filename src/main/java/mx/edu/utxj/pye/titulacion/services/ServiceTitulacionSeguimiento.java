@@ -904,7 +904,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         List<dtoExpedientesActuales> listaDtoExpedientes = new ArrayList<>();
 
         expedientes.forEach(expediente -> {
-            String nombre = expediente.getMatricula().getApellidoPaterno() + " " + expediente.getMatricula().getApellidoPaterno() + " " + expediente.getMatricula().getNombre();
+            String nombre = expediente.getMatricula().getApellidoPaterno() + " " + expediente.getMatricula().getApellidoMaterno()+ " " + expediente.getMatricula().getNombre();
             AreasUniversidad programa = facade.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.siglas =:siglas", AreasUniversidad.class)
                 .setParameter("siglas", expediente.getProgramaEducativo())
                 .getResultStream().findFirst().orElse(null);

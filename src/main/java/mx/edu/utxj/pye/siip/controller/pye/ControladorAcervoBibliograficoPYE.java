@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -28,6 +29,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.siip.controller.ca.ControladorAcervoBibliografico;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.escolar.DTOAcervoBibliograficoPeriodosEscolares;
@@ -67,8 +69,16 @@ public class ControladorAcervoBibliograficoPYE implements Serializable{
     @Getter @Setter private Integer clavePersonal;
     @Getter @Setter private Short claveRegistro;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
-    public void init(){
+    public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dto = new DtoAcervoBibliografico();  
         dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
     
@@ -79,6 +89,10 @@ public class ControladorAcervoBibliograficoPYE implements Serializable{
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
         claveRegistro = 84;
         consultarPermiso();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorAcervoBibliograficoPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
    

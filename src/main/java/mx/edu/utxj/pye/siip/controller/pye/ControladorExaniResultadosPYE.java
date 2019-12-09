@@ -5,7 +5,9 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +27,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.siip.controller.ca.ControladorExaniResultados;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
@@ -74,8 +77,16 @@ public class ControladorExaniResultadosPYE implements Serializable{
     @Getter @Setter private List<SelectItem> selectCiclos;
     @Getter @Setter private List<DTOExani> listaDTOExani;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
-    public void init(){
+    public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         selectCiclos = eJBSelectItems.itemCiclos();
         
         dto = new DtoExani();  
@@ -87,6 +98,10 @@ public class ControladorExaniResultadosPYE implements Serializable{
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
         claveRegistro = 86 ;
         consultarPermiso();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorExaniResultadosPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
     public void consultarPermiso(){

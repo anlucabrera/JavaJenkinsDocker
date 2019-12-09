@@ -5,9 +5,11 @@
  */
 package mx.edu.utxj.pye.siip.controller.ca;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -31,6 +33,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.OtrosTiposSesionesPsicopedagogia;
 import mx.edu.utxj.pye.sgi.entity.pye2.SesionIndividualMensualPsicopedogia;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DTOSesionesPsicopedagogia;
 import mx.edu.utxj.pye.siip.dto.ca.DtoSesionPsicopedagogia;
@@ -63,8 +66,16 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
     @Inject ControladorEmpleado         controladorEmpleado;
     @Inject ControladorModulosRegistro  controladorModulosRegistro;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init(){
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dto = new DtoSesionPsicopedagogia();
         consultaAreaRegistro(); 
         dto.setLstAreasConflicto(ejbSesionesPsicopedagogia.getListaAreasDeConflicto());
@@ -75,6 +86,10 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
         Faces.setSessionAttribute("otroTipoSesion", dto.getLstOtrosTiposSesionesPsicopedagogia());
         Faces.setSessionAttribute("programasEducativos", dto.getLstProgramasEducativos());
         filtros();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorSesionesPsicopedagogia.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void consultaAreaRegistro() {

@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.pa;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,6 +34,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.IngresosPropiosCaptados;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -82,8 +84,16 @@ public class ControladorIngPropios implements Serializable{
     
     @Getter @Setter private IngresosPropiosCaptados nuevoIngPropios;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
-    public void init(){
+    public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         //        Variables que se obtendrán mediante un método
         dto = new DtoIngresosPropios();  
         
@@ -102,6 +112,10 @@ public class ControladorIngPropios implements Serializable{
         claveRegistroPA = 4;
         claveRegistroEB = 50;
         consultarPermiso();
+         } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorIngPropios.class.getName()).log(Level.SEVERE, null, ex);
+        }
        
     }
     

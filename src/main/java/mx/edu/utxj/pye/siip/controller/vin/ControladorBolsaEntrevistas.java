@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.vin;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -29,6 +30,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
@@ -71,8 +73,16 @@ public class ControladorBolsaEntrevistas implements Serializable{
     
     @Getter @Setter private BolsaTrabajoEntrevistas nuevaEntBolTrab;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
-    public void init(){
+    public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dto = new DtoBolsaEntrevistas();        
         
         consultaAreaRegistro(); 
@@ -82,6 +92,10 @@ public class ControladorBolsaEntrevistas implements Serializable{
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
         } catch (EventoRegistroNoExistenteException ex) {
+            Logger.getLogger(ControladorBolsaEntrevistas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorBolsaEntrevistas.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

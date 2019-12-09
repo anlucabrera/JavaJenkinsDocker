@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.ch;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,6 +34,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.entity.pye2.PersonalCapacitado;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -82,8 +84,16 @@ public class ControladorPersonalCapacitado implements Serializable{
     
     @Getter @Setter private PersonalCapacitado nuevoPerCap;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+
     @PostConstruct
     public void init(){
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dto = new DtoPersonalCapacitado();  
         dtopart = new  DtoParticipantesPerCap();
         
@@ -101,6 +111,10 @@ public class ControladorPersonalCapacitado implements Serializable{
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
         claveRegistro = 2;
         consultarPermiso();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorPersonalCapacitado.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void consultaAreaRegistro() {

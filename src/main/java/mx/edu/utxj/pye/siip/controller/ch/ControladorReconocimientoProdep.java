@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.ch;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +34,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
@@ -76,8 +78,16 @@ public class ControladorReconocimientoProdep implements Serializable{
     @Getter @Setter private Integer clavePersonal;
     @Getter @Setter private Short claveRegistro;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
-    public void init(){
+    public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dto = new DtoReconocimientoProdep();  
         dto.setRegistroTipo(new RegistrosTipo());
         dto.getRegistroTipo().setRegistroTipo((short)50);
@@ -101,6 +111,10 @@ public class ControladorReconocimientoProdep implements Serializable{
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
         claveRegistro = 21;
         consultarPermiso();
+         } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorReconocimientoProdep.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 

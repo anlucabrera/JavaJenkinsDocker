@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.ca;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +34,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
@@ -74,8 +76,16 @@ public class ControladorAcervoBibliografico implements Serializable{
     @Getter @Setter private Short claveRegistroCA;
     @Getter @Setter private Short claveRegistroEB;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init(){
+         if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dto = new DtoAcervoBibliografico();  
         consultaAreaRegistro(); 
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
@@ -91,6 +101,10 @@ public class ControladorAcervoBibliografico implements Serializable{
         claveRegistroCA = 6;
         claveRegistroEB = 32;
         consultarPermiso();
+         } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorAcervoBibliografico.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 

@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -43,6 +44,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoCuerposAcademicos;
 import mx.edu.utxj.pye.siip.dto.ca.DTOCuerpAcadIntegrantes;
@@ -78,8 +80,16 @@ public class ControladorCuerposAcademicosPYE implements Serializable{
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
-    public void init(){
+    public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dtoCuerposAcademicos = new DtoCuerposAcademicos();
         dtoCuerposAcademicos.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         filtros();
@@ -91,6 +101,10 @@ public class ControladorCuerposAcademicosPYE implements Serializable{
             dtoCuerposAcademicos.setListaDisciplinas(ejbCuerposAcademicos.getCuerpacadDisciplinas());
             Faces.setSessionAttribute("caDisciplinas", dtoCuerposAcademicos.getListaDisciplinas());
         } catch (Throwable ex) {
+            Logger.getLogger(ControladorCuerposAcademicosPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorCuerposAcademicosPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

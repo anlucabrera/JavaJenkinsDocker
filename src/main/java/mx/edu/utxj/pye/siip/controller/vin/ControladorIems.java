@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.vin;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -26,6 +27,7 @@ import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.siip.entity.prontuario.list.ListaIemsPrevia;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.siip.dto.vin.DtoIems;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbIems;
@@ -65,8 +67,16 @@ public class ControladorIems implements Serializable{
     
     @Getter @Setter private Iems nuevoIems;
   
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dto = new DtoIems();
         selectEstados = eJBSelectItems.itemEstados();
 //        registroIems = ejbIems.getRegistroIemsMensual();
@@ -79,6 +89,10 @@ public class ControladorIems implements Serializable{
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
         claveRegistro = 28;
         consultarPermiso();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorIems.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
      public void descargarPlantilla() throws IOException, Throwable{
