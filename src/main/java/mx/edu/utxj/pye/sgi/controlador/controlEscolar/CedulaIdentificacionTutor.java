@@ -130,14 +130,14 @@ public class CedulaIdentificacionTutor extends ViewScopedRol implements Desarrol
                 rol.setCedulaIdentificacion(resCedula.getValor());
                 // System.out.println(resCedula.getValor());
                 getPeriodoEstudiante();
-               obtenerMateriasPorEstudiante();
-                obtenerUnidadesPorMateria();
-                obtenerCalificaciones();
-                obtenerPromedioMateria();
-                obtenerTareaIntegradoraPorMateria();
-                obtenerNivelacionesPorMateria();
-                obtenerPromediosFinales();
-                obtenerPromedioCuatrimestral();
+//               obtenerMateriasPorEstudiante();
+//                obtenerUnidadesPorMateria();
+//                obtenerCalificaciones();
+//                obtenerPromedioMateria();
+//                obtenerTareaIntegradoraPorMateria();
+//                obtenerNivelacionesPorMateria();
+//                obtenerPromediosFinales();
+//                obtenerPromedioCuatrimestral();
                 //obtenerPromedioAcumulado();
             }else{
                 mostrarMensajeResultadoEJB(resCedula);

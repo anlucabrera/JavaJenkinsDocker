@@ -32,7 +32,6 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsistencias;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConsultaCalificacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
@@ -71,7 +70,6 @@ public class AvanceProgramaticoSecAca extends ViewScopedRol implements Desarroll
     @EJB EjbPropiedades ep;
     @EJB EjbValidacionRol evr;
     @EJB EjbRegistroPlanEstudio ejb;
-    @EJB EjbConsultaCalificacion ecc;
     @EJB EjbAsistencias ea;
     @EJB EjbPacker packer;    
     @EJB EjbCapturaCalificaciones calificaciones;

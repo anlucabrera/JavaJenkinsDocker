@@ -71,7 +71,7 @@ public class AdministracionEncuesta implements Serializable{
                         dto.tutor = true;
                         aperturarEncuestas();
                     }
-                    if(ejbAdmEncuesta.esTutorCE(dto.cveTrabajador)!=null){
+                    if(ejbAdmEncuesta.esTutorCE(dto.usuarioNomina)!=null){
                         dto.tutorCe = true;
                         aperturarEncuestas();
                     }
