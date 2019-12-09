@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.siip.controller.eb.*;
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +38,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.siip.dto.eb.DTOEquiposComputoCPE;
@@ -70,8 +72,16 @@ public class ControladorDistribucionEquipamientoPYE implements Serializable{
     @Inject ControladorEmpleado         controladorEmpleado;
     @Inject ControladorModulosRegistro  controladorModulosRegistro;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
-    public void init(){
+    public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dto = new DtoDistribucionEquipamiento();
         dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
@@ -81,6 +91,10 @@ public class ControladorDistribucionEquipamientoPYE implements Serializable{
             Logger.getLogger(ControladorDistribucionEquipamientoPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
         initFiltros();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorDistribucionEquipamientoPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void actualizaPeriodosEscolares(ValueChangeEvent e){

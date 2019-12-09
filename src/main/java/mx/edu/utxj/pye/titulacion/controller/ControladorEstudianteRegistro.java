@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.titulacion.controller;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -70,6 +71,7 @@ public class ControladorEstudianteRegistro implements Serializable{
     @Getter @Setter private Egresados nuevoOBJegresado;
     @Getter @Setter private ExpedientesTitulacion nuevoOBJexpediente;
     @Getter @Setter private dtoDatosTitulacion nuevoDTOdatTit;
+    @Getter @Setter private List<String> listaGeneros;
     
     /* Objetos para Datos de Contacto y Domicilio */
     @Getter @Setter private Comunicaciones consultaOBJcelular, consultaOBJemail;
@@ -108,6 +110,7 @@ public class ControladorEstudianteRegistro implements Serializable{
         try {
             matricula = logonMB.getCurrentUser();
             estudiante = ejbEstudianteRegistro.obtenerInformacionAlumno(matricula);
+            selectGeneros();
 //            if (estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11) {
 //                procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
 //
@@ -232,6 +235,11 @@ public class ControladorEstudianteRegistro implements Serializable{
         if(listaDocsPorNivel == null || listaDocsPorNivel.isEmpty()){
             Messages.addGlobalWarn("No se han definido documentos relacionados a tu nivel Educativo");
         }
+    }
+    
+    /* Combos para lista de Géneros */
+    public void selectGeneros(){
+        listaGeneros = Arrays.asList("M", "F");
     }
     
     /* Combos para domicilio */

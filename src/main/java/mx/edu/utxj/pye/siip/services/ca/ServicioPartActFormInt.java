@@ -203,35 +203,39 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
         return participantesActividadesFormacionIntegral;
     }
 
-    @Override
+   @Override
     public List<DTODatosEstudiante> getListaParticipantesPorActividad(String actividad) {
         if(actividad == null || actividad.isEmpty()){
             return Collections.EMPTY_LIST;
         }
-           
-        List<ParticipantesActividadesFormacionIntegral> entities = new ArrayList<>();
-        List<DTODatosEstudiante> l = new ArrayList<>();
-       
-        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p JOIN p.actividadFormacionIntegral a WHERE a.actividadFormacionIntegral = :actividadFormacionIntegral ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
-                .setParameter("actividadFormacionIntegral", actividad)
-                .getResultList();
-        //construir la lista de dto's para mostrar en tabla
-        entities.forEach(e -> {
-            Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
-            MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, e.getMatriculaPeriodosEscolares().getRegistro());
-           
-            List<MatriculaPeriodosEscolares> datosSII = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.matricula = :matricula AND m.periodo = :periodo", MatriculaPeriodosEscolares.class)
-            .setParameter("matricula", mat.getMatricula())
-            .setParameter("periodo", e.getActividadFormacionIntegral().getPeriodo())
-            .getResultList();
-            
-            datosSII.forEach(sii -> {
-                String sexo = sii.getCurp().substring(10, 11);
-                AreasUniversidad carrera = f.getEntityManager().find(AreasUniversidad.class, sii.getProgramaEducativo());
-                l.add(new DTODatosEstudiante(mat, carrera.getNombre(), sexo));
+        try {
+            List<ParticipantesActividadesFormacionIntegral> entities = new ArrayList<>();
+            List<DTODatosEstudiante> l = new ArrayList<>();
+
+            entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p JOIN p.actividadFormacionIntegral a WHERE a.actividadFormacionIntegral = :actividadFormacionIntegral ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
+                    .setParameter("actividadFormacionIntegral", actividad)
+                    .getResultList();
+            //construir la lista de dto's para mostrar en tabla
+            entities.forEach(e -> {
+                Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
+                MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, e.getMatriculaPeriodosEscolares().getRegistro());
+
+                List<MatriculaPeriodosEscolares> datosSII = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.matricula = :matricula AND m.periodo = :periodo", MatriculaPeriodosEscolares.class)
+                        .setParameter("matricula", mat.getMatricula())
+                        .setParameter("periodo", e.getActividadFormacionIntegral().getPeriodo())
+                        .getResultList();
+
+                datosSII.forEach(sii -> {
+                    String sexo = sii.getCurp().substring(10, 11);
+                    AreasUniversidad carrera = f.getEntityManager().find(AreasUniversidad.class, sii.getProgramaEducativo());
+                    l.add(new DTODatosEstudiante(mat, carrera.getNombre(), sexo));
+                });
             });
-        });
-        return l;
+
+            return l;
+        } catch (Exception e) {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @Override

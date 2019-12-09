@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -41,6 +42,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicos;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAcademicosPersonal;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoProductoAcademico;
 import mx.edu.utxj.pye.siip.dto.ca.DTOProductosAcademicos;
@@ -74,8 +76,16 @@ public class ControladorProductosAcademicosPYE implements Serializable{
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
-    public void init(){
+    public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dtoProductoAcademico = new DtoProductoAcademico();
         dtoProductoAcademico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         
@@ -83,6 +93,10 @@ public class ControladorProductosAcademicosPYE implements Serializable{
         Faces.setSessionAttribute("programasEducativos", dtoProductoAcademico.getListaAreasAcademicas());
         
         filtros();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorProductosAcademicosPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void filtros(){

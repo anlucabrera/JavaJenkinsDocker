@@ -5,10 +5,12 @@
  */
 package mx.edu.utxj.pye.siip.controller.pye;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -47,6 +49,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacionPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.vin.DtoOrganismosVinculados;
 import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
@@ -82,8 +85,16 @@ public class ControladorOrganismosVinculadosPYE implements Serializable {
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject ControladorModulosRegistro controladorModulosRegistro;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         dtoOrganismosVinculado = new DtoOrganismosVinculados();
         dtoOrganismosVinculado.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
         inicializarUbicacion();
@@ -91,6 +102,10 @@ public class ControladorOrganismosVinculadosPYE implements Serializable {
         try {
             dtoOrganismosVinculado.setListaProgramasEducativosBeneficiadosV(ejbOrganismosVinculados.getProgramasBeneficiadosVinculacion());
         } catch (Throwable ex) {
+            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

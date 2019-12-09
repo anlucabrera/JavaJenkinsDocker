@@ -111,8 +111,10 @@
                                                                             <br/><br/><br/><br/>
                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
                                                                                 <p:outputLabel for="genero" style="font-size: medium" value="Género*"/>
-                                                                                <p:inputText id="genero" class="form-control" value="#{controladorEstReg.nuevoOBJpersona.sexo}" required="true" requiredMessage="Es necesario que ingrese su género"/>
-                                                                                <p:message for="genero" display="tooltip" />
+                                                                                <p:selectOneMenu id="genero" value="#{controladorEstReg.nuevoOBJpersona.sexo}" required="true" requiredMessage="Es necesario que ingrese su género">
+                                                                                    <f:selectItems value="#{controladorEstReg.listaGeneros}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="genero"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
                                                                                 <p:outputLabel for="fechaNac" style="height: 100%; width: 100%; object-fit: contain; font-size: medium" value="Fecha de Nacimiento*"/>
@@ -193,8 +195,10 @@
                                                                             <br/><br/><br/><br/>
                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
                                                                                 <p:outputLabel for="generoE" style="font-size: medium" value="Género*"/>
-                                                                                <p:inputText id="generoE" class="form-control" value="#{controladorEstReg.nuevoOBJegresado.genero}" required="true" requiredMessage="Es necesario que ingrese su género"/>
-                                                                                <p:message for="generoE" display="tooltip" />
+                                                                                <p:selectOneMenu id="generoE" value="#{controladorEstReg.nuevoOBJegresado.genero}" required="true" requiredMessage="Es necesario que ingrese su género">
+                                                                                    <f:selectItems value="#{controladorEstReg.listaGeneros}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="generoE"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
                                                                                 <p:outputLabel for="fechaNacE" style="height: 100%; width: 100%; object-fit: contain; font-size: medium" value="Fecha de Nacimiento*"/>

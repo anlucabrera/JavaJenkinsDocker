@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.siip.controller.ca;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -29,6 +30,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
@@ -65,8 +67,16 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     @Inject ControladorEmpleado                 controladorEmpleado;
     @Inject ControladorModulosRegistro          controladorModulosRegistro;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init(){
+         if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         //System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.init()");
 
         dto = new DtoAsesoriasTutorias();
@@ -79,6 +89,10 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
             Logger.getLogger(ControladorAsesoriasTutoriasCicloEscolar.class.getName()).log(Level.SEVERE, null, ex);
         }
         initFiltros();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorAsesoriasTutoriasCicloEscolar.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void consultaAreaRegistro() {

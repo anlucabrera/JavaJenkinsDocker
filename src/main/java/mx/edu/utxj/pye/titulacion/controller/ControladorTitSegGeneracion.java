@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.titulacion.controller;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ import org.omnifaces.util.Messages;
 import java.io.IOException;
 import javax.enterprise.context.SessionScoped;
 import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+
 /**
  *
  * @author UTXJ
@@ -80,14 +83,25 @@ public class ControladorTitSegGeneracion implements Serializable{
     
     @Inject ControladorFotoExpediente controladorFotoExpediente;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
-       
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         aperturaDialogo = Boolean.FALSE;
         aperturaPagos = Boolean.FALSE;
         initFiltrosING();
         initFiltrosTSU();
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
   
     public void editarRegistro(DocumentosExpediente documento){

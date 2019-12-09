@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.siip.controller.ca;
 
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -34,6 +35,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.exception.EventoRegistroNoExistenteException;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.ca.DtoBecas;
@@ -77,8 +79,16 @@ public class ControladorBecasPeriodo implements Serializable{
     @Getter @Setter private Short claveRegistroCA;
     @Getter @Setter private Short claveRegistroEB;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init(){
+         if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         //        Variables que se obtendrán mediante un método
         dto = new DtoBecas();
         dto.setRegistroTipo(new RegistrosTipo());
@@ -109,6 +119,10 @@ public class ControladorBecasPeriodo implements Serializable{
         claveRegistroCA = 10;
         claveRegistroEB = 36;
         consultarPermiso();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorBecasPeriodo.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void consultaAreaRegistro() {

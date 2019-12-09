@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.titulacion.controller;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +24,7 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DatosTitulacion;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 //import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
 import mx.edu.utxj.pye.titulacion.dto.dtoExpedientesActuales;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
@@ -66,12 +68,23 @@ public class ControladorTitSegMatricula implements Serializable{
     
     @Inject ControladorFotoExpediente controladorFotoExpediente;
     
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
-       
-        consultaListaExpedientes();
-        aperturaDialogo = Boolean.FALSE;
-        clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
+            consultaListaExpedientes();
+            aperturaDialogo = Boolean.FALSE;
+            clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorTitSegMatricula.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
    
     public void consultaListaExpedientes() {

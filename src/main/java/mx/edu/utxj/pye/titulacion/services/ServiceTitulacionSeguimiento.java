@@ -175,10 +175,18 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         
         if (exp.getNivel()== 2 || exp.getNivel()== 4) {
             gradoAcademico = "INGENIERIA/LICENCIATURA";
-            pagoFinanzas = getDtoPagosFinanzasING(listaPagos);
+            if (listaPagos == null || listaPagos.isEmpty()) {
+                pagoFinanzas = null;
+            } else {
+                pagoFinanzas = getDtoPagosFinanzasING(listaPagos);
+            }
         } else {
             gradoAcademico = "TÉCNICO SUPERIOR UNIVERSITARIO";
+            if (listaPagos == null || listaPagos.isEmpty()) {
+                pagoFinanzas = null;
+            } else {
             pagoFinanzas = getDtoPagosFinanzasTSU(listaPagos);
+            }
         }
        
         //Obtener nombre del personal que validó o invalidó el expediente de titulación
@@ -896,7 +904,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         List<dtoExpedientesActuales> listaDtoExpedientes = new ArrayList<>();
 
         expedientes.forEach(expediente -> {
-            String nombre = expediente.getMatricula().getApellidoPaterno() + " " + expediente.getMatricula().getApellidoPaterno() + " " + expediente.getMatricula().getNombre();
+            String nombre = expediente.getMatricula().getApellidoPaterno() + " " + expediente.getMatricula().getApellidoMaterno()+ " " + expediente.getMatricula().getNombre();
             AreasUniversidad programa = facade.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.siglas =:siglas", AreasUniversidad.class)
                 .setParameter("siglas", expediente.getProgramaEducativo())
                 .getResultStream().findFirst().orElse(null);

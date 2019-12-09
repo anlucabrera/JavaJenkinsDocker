@@ -5,10 +5,14 @@
  */
 package mx.edu.utxj.pye.titulacion.controller;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -20,8 +24,11 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.titulacion.dto.dtoEstadisticaEgresados;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbEstadisticaEgresados;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
+import org.omnifaces.util.Messages;
 /**
  *
  * @author UTXJ
@@ -45,10 +52,21 @@ public class ControladorEstadisticaEgresados implements Serializable{
     // Para totales
     @Getter @Setter private Integer totalInscritos, totalEgresados, totalAcredEstadia, totalExpInt, totalExpVal;
    
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
-
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
         generacionesExpedientesRegistrados();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorEstadisticaEgresados.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
  
     public void descargarReporteGeneracionNivel() throws IOException, Throwable{

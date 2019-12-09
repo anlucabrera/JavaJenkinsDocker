@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.siip.controller.eb;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +24,7 @@ import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.siip.controller.ca.ControladorActFormacionIntegral;
 //import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistroUsuario;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
@@ -55,13 +57,25 @@ public class ControladorModulosRegistro implements Serializable {
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaModulosRegistroPA = new ArrayList<>();
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaModulosRegistroVIN = new ArrayList<>();
     @Getter @Setter private List<ModulosRegistrosUsuarios> listaModulosRegistroCA = new ArrayList<>();
-
+    
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
+    
     @PostConstruct
     public void init() {
-        personal = controladorEmpleado.getEmpleadoLogeado();
-        mostrarEjes();
-        mostrarRegistros();
-        iniciarEventoRegistro();
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
+            personal = controladorEmpleado.getEmpleadoLogeado();
+            mostrarEjes();
+            mostrarRegistros();
+            iniciarEventoRegistro();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorModulosRegistro.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void mostrarEjes() {
