@@ -175,10 +175,18 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         
         if (exp.getNivel()== 2 || exp.getNivel()== 4) {
             gradoAcademico = "INGENIERIA/LICENCIATURA";
-            pagoFinanzas = getDtoPagosFinanzasING(listaPagos);
+            if (listaPagos == null || listaPagos.isEmpty()) {
+                pagoFinanzas = null;
+            } else {
+                pagoFinanzas = getDtoPagosFinanzasING(listaPagos);
+            }
         } else {
             gradoAcademico = "TÉCNICO SUPERIOR UNIVERSITARIO";
+            if (listaPagos == null || listaPagos.isEmpty()) {
+                pagoFinanzas = null;
+            } else {
             pagoFinanzas = getDtoPagosFinanzasTSU(listaPagos);
+            }
         }
        
         //Obtener nombre del personal que validó o invalidó el expediente de titulación
