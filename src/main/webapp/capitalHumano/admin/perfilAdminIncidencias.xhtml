@@ -99,12 +99,12 @@
                                 </h:form>
 
                                 <p:tabView id="reportes">
-                                    <p:tab title="Reporte Incidencias" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?false:true}">       
+                                    <p:tab title="Reporte Incidencias">       
                                         <h:form id="frmInciGeneral"> 
 
                                             <p:outputPanel>
                                                 <div class="col-sm-2 border-right">
-                                                    <p:commandButton value="Imprimir reporte" icon="fa fa-print" class="btn-success">                                        
+                                                    <p:commandButton value="Imprimir reporte" icon="fa fa-print" class="btn-success" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?false:true}">                                        
                                                         <p:printer target="incidenciasReporteIncidencias" />
                                                     </p:commandButton>
                                                 </div>
@@ -186,7 +186,7 @@
                                                         <p:column headerText="Tiempo" style="width: 5%;text-align: center;">
                                                             <h:outputLabel value="0#{incidencias.tiempo.hours}:#{incidencias.tiempo.minutes}" />
                                                         </p:column>  
-                                                        <p:column style="width:5%;" class="noprint" >
+                                                        <p:column style="width:5%;" class="noprint" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 647?false:true}">
                                                             <p:rowEditor />
                                                         </p:column>
                                                     </p:dataTable>  

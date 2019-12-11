@@ -93,9 +93,11 @@ public class ControladorEmpleado implements Serializable {
     
     @PostConstruct
     public void init() {
-        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
-        cargado = true;
         try {
+            if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+                return;
+            }
+            cargado = true;
 // Comentar la siguiente asignación cuando saiiut falle//
             if (logonMB.getPersonal().getStatus().equals('B')) {
                 nuevoOBJListaPersonal = null;
@@ -118,6 +120,8 @@ public class ControladorEmpleado implements Serializable {
             informacionComplementariaAEmpleadoLogeado();
             areaPoa();
             crearMenuAdministrador();
+        } catch (NullPointerException npe) {
+            Messages.addGlobalFatal("No se tiene acceso al Logon");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);

@@ -114,10 +114,10 @@ public class ControladorModulosRegistro implements Serializable {
                 if (mr.get(0).getAreaRegistro() != null) {
                     return (ejbModulos.getAreaUniversidadPrincipalRegistro((short) mr.get(0).getAreaRegistro()));
                 } else {
-                    return new AreasUniversidad();
+                    return null;
                 }
             } else {
-                return new AreasUniversidad();
+                return null;
             }
         } catch (Throwable ex) {
             Logger.getLogger(ControladorActFormacionIntegral.class.getName()).log(Level.SEVERE, null, ex);

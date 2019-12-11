@@ -99,7 +99,7 @@ public class ControladorVisitasIndustriales implements Serializable {
         /*INIT FILTRADO*/
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 30));
         
-        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
+        dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(Short.valueOf("5")));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         if (dto.getSelectItemEjercicioFiscal() == null) {
 //            Messages.addGlobalInfo("No existen registros");
