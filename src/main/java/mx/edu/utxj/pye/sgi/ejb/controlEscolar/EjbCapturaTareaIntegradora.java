@@ -1,0 +1,185 @@
+package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
+
+import lombok.NonNull;
+import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedioPK;
+import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
+import mx.edu.utxj.pye.sgi.facade.Facade;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+@Stateless(name = "EjbCapturaTareaIntegradoraEJB")
+public class EjbCapturaTareaIntegradora {
+    @EJB Facade f;
+    @EJB EjbEventoEscolar ejbEventoEscolar;
+    @EJB EjbValidacionRol ejbValidacionRol;
+    private EntityManager em;
+
+    @PostConstruct
+    public void init(){
+        em = f.getEntityManager();
+    }
+
+    /**
+     * Permite vertificar si hay un evento de captura de calificaciones activo para el docente
+     * @param docente Instacia del docente validado
+     * @return Regresa el evento escolar detectado para el docente o código de error de lo contrario
+     */
+    public ResultadoEJB<EventoEscolar> verificarEvento(PersonalActivo docente){
+        try{
+            return ejbEventoEscolar.verificarEventoEnCascada(EventoEscolarTipo.CAPTURA_TAREA_INTEGRADORA, docente);
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para captura de calificaciones por el docente (EjbCapturaTareaIntegradora.verificarEvento).", e, EventoEscolar.class);
+        }
+    }
+
+    /**
+     * Permite vertificar si hay un evento de captura de calificaciones extemporanea activo para el docente
+     * @param docente Instacia del docente validado
+     * @return Regresa el evento escolar detectado para el docente o código de error de lo contrario
+     */
+    public ResultadoEJB<EventoEscolar> verificarEventoExtemporaneo(PersonalActivo docente){
+        try{
+            return ejbEventoEscolar.verificarEventoEnCascada(EventoEscolarTipo.CAPTURA_TAREA_INTEGRADORA_EXTERMPORANEA, docente);
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para captura de calificaciones extemporánea por el docente (EjbCapturaTareaIntegradora.verificarEventoExtemporaneo).", e, EventoEscolar.class);
+        }
+    }
+
+    /**
+     * Permite el calcular el promedio que obtiene un estudiante en una materia
+     * @param dtoUnidadesCalificacion Empaquetado de las calificaciones de una carga académica
+     * @param dtoCargaAcademica Empaquetado de la carga académica de la cual se obtienen las calificaciones
+     * @param dtoEstudiante Empaquetado del estudiante del que se desea obtener su promedio
+     * @return Regresa el valor del promedio del estudiante o código de error en caso de no poder calcularlo
+     */
+    public ResultadoEJB<BigDecimal> promediarAsignatura(@NonNull DtoUnidadesCalificacion dtoUnidadesCalificacion, @NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
+        try{
+            //
+            BigDecimal suma = dtoUnidadesCalificacion.getCalificacionMap().entrySet().stream()
+                    .map(entrada -> entrada.getValue())
+                    .filter(dtoCapturaCalificacion -> Objects.equals(dtoCapturaCalificacion.getDtoCargaAcademica().getCargaAcademica(), dtoCargaAcademica.getCargaAcademica()))
+                    .filter(dtoCapturaCalificacion -> Objects.equals(dtoCapturaCalificacion.getDtoEstudiante().getPersona(), dtoEstudiante.getPersona()))
+                    .map(dtoCapturaCalificacion -> {
+                        BigDecimal porcentaje = new BigDecimal(dtoCapturaCalificacion.getDtoUnidadConfiguracion().getUnidadMateriaConfiguracion().getPorcentaje());
+                        BigDecimal promedio = dtoCapturaCalificacion.getPromedio();
+                        return promedio.multiply(porcentaje).divide(new BigDecimal(100));
+                    })
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            ResultadoEJB<TareaIntegradora> tareaIntegradoraResultadoEJB = verificarTareaIntegradora(dtoCargaAcademica);
+            if(tareaIntegradoraResultadoEJB.getCorrecto()){
+                TareaIntegradora tareaIntegradora = tareaIntegradoraResultadoEJB.getValor();
+                TareaIntegradoraPromedioPK pk = new TareaIntegradoraPromedioPK(tareaIntegradora.getIdTareaIntegradora(), dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante());
+                TareaIntegradoraPromedio tareaIntegradoraPromedio = em.createQuery("select tip from TareaIntegradoraPromedio tip where tip.tareaIntegradoraPromedioPK=:pk", TareaIntegradoraPromedio.class)
+                        .setParameter("pk", pk)
+                        .getResultStream()
+                        .findFirst().orElse(null);
+
+                if(tareaIntegradoraPromedio != null) {
+                    BigDecimal calificacion = new BigDecimal(tareaIntegradoraPromedio.getValor());
+                    BigDecimal porcentaje = new BigDecimal(tareaIntegradora.getPorcentaje());
+                    suma = suma.add(calificacion.multiply(porcentaje).divide(new BigDecimal(100)));
+                }
+            }
+
+            if(!tareaIntegradoraResultadoEJB.getCorrecto() && tareaIntegradoraResultadoEJB.getResultado() != 2) return ResultadoEJB.crearErroneo(2, tareaIntegradoraResultadoEJB.getMensaje(), BigDecimal.class);
+            return ResultadoEJB.crearCorrecto(suma, "Promedio por materia");
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo calcular el promedio de la asignatura (EjbCapturaTareaIntegradora.promediarAsignatura).", e, BigDecimal.class);
+        }
+    }
+
+    /**
+     * Permite verificar si una carga académica tiene tarea integradora
+     * @param dtoCargaAcademica EMpaquetado de la carga académica de la cual se requiere verificar si tiene tarea integradora
+     * @return Devueleve la tarea integradora, código de error 2 si no la tiene y código de error 1 para un error desconocido.
+     */
+    public ResultadoEJB<TareaIntegradora> verificarTareaIntegradora(@NonNull DtoCargaAcademica dtoCargaAcademica){
+        try{
+            TareaIntegradora tareaIntegradora = em.createQuery("select ti from TareaIntegradora ti where ti.carga=:carga", TareaIntegradora.class)
+                    .setParameter("carga", dtoCargaAcademica.getCargaAcademica())
+                    .getResultStream()
+                    .findFirst().orElse(null);
+            if(tareaIntegradora == null) return ResultadoEJB.crearErroneo(2, "La carga académica no tiene tarea integradora asignada.", TareaIntegradora.class);
+            return ResultadoEJB.crearCorrecto(tareaIntegradora, "La carga académica tiene tarea integradora");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar si la carga académica tiene tarea integradora (EjbCapturaTareaIntegradora.verificarTareaIntegradora).", e, TareaIntegradora.class);
+        }
+    }
+
+    /**
+     * Permite generar un mapa de estudiante y calificacion como contendor de calificaciones para la tarea integradora de la carga académica.
+     * @param dtoEstudiantes
+     * @param tareaIntegradora
+     * @return
+     */
+    public ResultadoEJB<Map<DtoEstudiante, TareaIntegradoraPromedio>> generarContenedorCalificaciones(@NonNull  List<DtoEstudiante> dtoEstudiantes, @NonNull TareaIntegradora tareaIntegradora){
+        try{
+            Map<DtoEstudiante, TareaIntegradoraPromedio> map = new HashMap<>();
+            List<TareaIntegradoraPromedio> tareaIntegradoraPromedios = em.createQuery("select tip from TareaIntegradoraPromedio tip where tip.tareaIntegradora=:tareaIntegradora", TareaIntegradoraPromedio.class)
+                    .setParameter("tareaIntegradora", tareaIntegradora)
+                    .getResultList();
+//            System.out.println("tareaIntegradoraPromedios = " + tareaIntegradoraPromedios);
+
+            dtoEstudiantes.forEach(dtoEstudiante -> {
+                TareaIntegradoraPromedioPK pk = new TareaIntegradoraPromedioPK(tareaIntegradora.getIdTareaIntegradora(), dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante());
+//                System.out.println("pk = " + pk);
+                TareaIntegradoraPromedio tareaIntegradoraPromedio = new TareaIntegradoraPromedio(pk);
+//                System.out.println("tareaIntegradoraPromedio = " + tareaIntegradoraPromedio);
+
+//                System.out.println("!tareaIntegradoraPromedios.contains(tareaIntegradoraPromedio) = " + !tareaIntegradoraPromedios.contains(tareaIntegradoraPromedio));
+                if(!tareaIntegradoraPromedios.contains(tareaIntegradoraPromedio)){
+                    em.persist(tareaIntegradoraPromedio);
+                    em.flush();
+                }else tareaIntegradoraPromedio = tareaIntegradoraPromedios.get(tareaIntegradoraPromedios.indexOf(tareaIntegradoraPromedio));
+
+                map.put(dtoEstudiante, tareaIntegradoraPromedio);
+            });
+
+            return ResultadoEJB.crearCorrecto(map, "Contenedor de calificaciones para tarea integradora");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo construir el contenedor de calificaciones para tarea integradora (EjbCapturaTareaIntegradora.generarContenedorCalificaciones).", e, null);
+        }
+    }
+
+    /**
+     * Permite guardar la calificación de una tarea integradora
+     * @param tareaIntegradora Tarea integradora configurada por el docente
+     * @param dtoUnidadesCalificacion Empaquetado de las calificaciones por materia
+     * @param dtoEstudiante Empaquetado del estudiante del cual se guarda su calificación
+     * @return Devuelve la entity de la calificación o código de error en caso de no poder guardar
+     */
+    public ResultadoEJB<TareaIntegradoraPromedio> guardarCalificacion(@NonNull TareaIntegradora tareaIntegradora, @NonNull DtoUnidadesCalificacion dtoUnidadesCalificacion, @NonNull DtoEstudiante dtoEstudiante){
+        try{
+            @NonNull Map<DtoEstudiante, TareaIntegradoraPromedio> tareaIntegradoraPromedioMap = dtoUnidadesCalificacion.getTareaIntegradoraPromedioMap();
+            TareaIntegradoraPromedio tareaIntegradoraPromedio = tareaIntegradoraPromedioMap.get(dtoEstudiante);
+
+            if(tareaIntegradoraPromedio == null) return ResultadoEJB.crearErroneo(2, "El estudiante indicado no pertenece al grupo de la carga académica seleccionada", TareaIntegradoraPromedio.class);
+
+            if(em.contains(tareaIntegradoraPromedio)) em.persist(tareaIntegradoraPromedio);
+            else em.merge(tareaIntegradoraPromedio);
+            em.flush();
+
+            return ResultadoEJB.crearCorrecto(tareaIntegradoraPromedio, "Calificación guardada correctamente.");
+        }catch (Exception e){
+            System.err.println("EjbCapturaTareaIntegradora.guardarCalificacion");
+            System.err.println("Error: tareaIntegradora = [" + tareaIntegradora + "], dtoUnidadesCalificacion = [" + dtoUnidadesCalificacion + "], dtoEstudiante = [" + dtoEstudiante + "]");
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardar la calificación de la tarea integradora (EjbCapturaTareaIntegradora.generarContenedorCalificaciones)", e, TareaIntegradoraPromedio.class);
+        }
+    }
+}

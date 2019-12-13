@@ -17,6 +17,8 @@ public enum EventoEscolarTipo {
     INSCRIPCIONES("Inscripciones"),
     ASIGNACION_INDICADORES_CRITERIOS("Asignación_indicadores_criterios"),
     VALIDACION_ASIGNACION_INDICADORES_CRITERIOS("Validacion_Asignación_indicadores_criterios"),
-    FUSION_GRUPOS("Fusión_de_grupos");
+    FUSION_GRUPOS("Fusión_de_grupos"),
+    CAPTURA_TAREA_INTEGRADORA("Captura_tarea_integradora"),
+    CAPTURA_TAREA_INTEGRADORA_EXTERMPORANEA("Captura_tarea_integradora_extemporánea");
     @Getter @NonNull private final String label;
 }
