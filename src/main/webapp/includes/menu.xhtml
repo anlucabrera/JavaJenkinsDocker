@@ -36,7 +36,7 @@
             <c:if test="#{cuestionarioPsicopedagogicoEstudiante.mostrarEnDesarrollo(request) and cuestionarioPsicopedagogicoEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/cuestionarioPsicopedagogico.xhtml"><i class="fa fa-id-badge"></i><span>Cuestionario Psicopedagógico</span><span class="pull-right-container"></span></p:link></li></c:if>
             <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/docentesMateriaIndex.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
             <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
-            
+
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Asesorías y Tutorías</li>
             <c:if test="#{validacionTutoriaGrupalEstudiante.mostrarEnDesarrollo(request) and validacionTutoriaGrupalEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/tutorias_grupales.xhtml"><i class="fa fa-slideshare"></i><span>Tutorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
@@ -123,7 +123,7 @@
                 <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-calendar"></i><span>Apertura Extemporánea</span></p:link></li></c:if>
 
                 <!-- Secretaría Académica -->
-                <c:if test="#{concentradoCalificacionesSecAca.mostrarEnDesarrollo(request) and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <!--c:if test="# {concentradoCalificacionesSecAca.mostrarEnDesarrollo(request) and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if-->
                 <c:if test="#{avanceProgramaticoSecAca.mostrarEnDesarrollo(request) and avanceProgramaticoSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                 <!-- Director Área Académica -->
@@ -150,6 +150,7 @@
                 <c:if test="#{historialMovEstServiciosEscolares.mostrarEnDesarrollo(request) and historialMovEstServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/historialMovEstudiante.xhtml"><i class="fa fa-folder"></i><span>Historial Movimientos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{fusionGruposServiciosEscolares.mostrarEnDesarrollo(request) and fusionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{cedulaIdentificacionSE.mostrarEnDesarrollo(request) and cedulaIdentificacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cedulaIdentificacionSE.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{prestamoDocumentoServiciosEscolares.mostrarEnDesarrollo(request) and prestamoDocumentoServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/prestamoDocumentos.xhtml"><i class="fa fa-folder-open"></i><span>Préstamo de documentos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                 <!-- Psicopedagogía -->
                 <c:if test="#{dictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and dictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/dictamenBaja.xhtml"><i class="fa fa-edit"></i><span>Dictamen Baja</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
@@ -180,7 +181,7 @@
                 <c:if test="#{registroPlanTutoriaTutor.mostrarEnDesarrollo(request) and registroPlanTutoriaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/plan_accion_tutorial.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{registroTutoriaGrupal.mostrarEnDesarrollo(request) and registroTutoriaGrupal.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_grupal.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Grupales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{registroTutoriaIndividual.mostrarEnDesarrollo(request) and registroTutoriaIndividual.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_individual.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Individuales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                
+
                 <!-- Especialista -->
                 <c:if test="#{seguimientoCasoCriticoEspecialista.mostrarEnDesarrollo(request) and seguimientoCasoCriticoEspecialista.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Caso Crítico Especialista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
             </c:if>
@@ -434,7 +435,7 @@
                     </ul>
                 </li>
             </c:if>
-            
+
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 60}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Titulación</li>
                 <li class="treeview">
@@ -473,7 +474,7 @@
                     </ul>
                 </li>
             </c:if>
-            
+
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Justificación de asistencias</li>
             <li class="treeview">
                 <a href="#">

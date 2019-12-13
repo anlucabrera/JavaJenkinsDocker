@@ -118,20 +118,25 @@ public class ControladorAsesoriasTutoriasCicloEscolar implements Serializable{
     }
     
     public void initFiltros(){
-        dto.setPeriodos(ejb.getPeriodosConregistro(dto.getRegistroTipo(),dto.getEventoActual()));
-        dto.setEventosPorPeriodo(ejbModulos.getEventosPorPeriodo(dto.getPeriodo()));
-        
-        if (dto.getAreaPOA().getArea().equals(23)) {
-            dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
-        } else {
-            dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos()
-                    .stream()
-                    .filter((area) -> (short) dto.getAreaPOA().getArea() == area.getAreaSuperior())
-                    .collect(Collectors.toList())
-            );
-        }
+        try {
+            dto.setPeriodos(ejb.getPeriodosConregistro(dto.getRegistroTipo(), dto.getEventoActual()));
+            dto.setEventosPorPeriodo(ejbModulos.getEventosPorPeriodo(dto.getPeriodo()));
 
-        Faces.setSessionAttribute("programasEducativos", dto.getProgramasEducativos());
+            if (dto.getAreaPOA().getArea().equals(23)) {
+                dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+            } else {
+                dto.setProgramasEducativos(ejbCatalogos.getProgramasEducativos()
+                        .stream()
+                        .filter((area) -> (short) dto.getAreaPOA().getArea() == area.getAreaSuperior())
+                        .collect(Collectors.toList())
+                );
+            }
+
+            Faces.setSessionAttribute("programasEducativos", dto.getProgramasEducativos());
+        } catch (Exception e) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + e.getMessage());
+            Logger.getLogger(ControladorAsesoriasTutoriasCicloEscolar.class.getName()).log(Level.SEVERE, null, e);
+        }
         try {
             Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> entrada = ejb.comprobarEventoActual(dto.getPeriodos(), dto.getEventosPorPeriodo(), dto.getEventoActual(), dto.getRegistroTipo());
 //            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorAsesoriasTutoriasCicloEscolar.initFiltros() entrada: " + entrada);
