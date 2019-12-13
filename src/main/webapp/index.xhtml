@@ -13,28 +13,54 @@
 
     <ui:define name="head-end">
         <script type="text/javascript">
-            function myconfig() {
-            console.log("ejemplo");
+            function myconfig1() {
+                console.log("myconfig1");
                 this.yAxis = {
                     type: 'double',
                     min: 0,
-                    max: 115,
+                    max: 150,
                     tickAmount: 7,
-                    plotBands: [{
-                    from: 0.0,
-                            to: 89.99,
-                            color: '#FF0000'
-                    },
-                    {
-                    from: 90.0,
-                            to: 94.99,
-                            color: '#ffff00'
-                    },
-                    {
-                    from: 95.0,
-                            to: 115.99,
-                            color: '#66ff33'
-                    }]
+                    plotBands: [{from: 0.0, to: 89.99, color: '#FF0000'}, {from: 90.0, to: 94.99, color: '#ffff00'}, {from: 95.0, to: 200.99, color: '#66ff33'}]
+                };
+            }
+            function myconfig2() {
+                console.log("myconfig2");
+                this.yAxis = {
+                    type: 'double',
+                    min: 0,
+                    max: 250,
+                    tickAmount: 7,
+                    plotBands: [{from: 0.0, to: 89.99, color: '#FF0000'}, {from: 90.0, to: 94.99, color: '#ffff00'}, {from: 95.0, to: 300.99, color: '#66ff33'}]
+                };
+            }
+            function myconfig3() {
+                console.log("myconfig3");
+                this.yAxis = {
+                    type: 'double',
+                    min: 0,
+                    max: 350,
+                    tickAmount: 7,
+                    plotBands: [{from: 0.0, to: 89.99, color: '#FF0000'}, {from: 90.0, to: 94.99, color: '#ffff00'}, {from: 95.0, to: 400.99, color: '#66ff33'}]
+                };
+            }
+            function myconfig4() {
+                console.log("myconfig4");
+                this.yAxis = {
+                    type: 'double',
+                    min: 0,
+                    max: 450,
+                    tickAmount: 7,
+                    plotBands: [{from: 0.0, to: 89.99, color: '#FF0000'}, {from: 90.0, to: 94.99, color: '#ffff00'}, {from: 95.0, to: 500.99, color: '#66ff33'}]
+                };
+            }
+            function myconfig5() {
+                console.log("myconfig5");
+                this.yAxis = {
+                    type: 'double',
+                    min: 0,
+                    max: 550,
+                    tickAmount: 7,
+                    plotBands: [{from: 0.0, to: 89.99, color: '#FF0000'}, {from: 90.0, to: 94.99, color: '#ffff00'}, {from: 95.0, to: 600.99, color: '#66ff33'}]
                 };
             }
         </script>
@@ -412,14 +438,15 @@
                                             <p:row>
                                                 <p:column style="font-weight: bold;">Actividades Programadas</p:column>
                                                 <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.programadas}</p:column>
-                                                <p:column rowspan="3" style="font-weight: bold;">
+                                                <p:column rowspan="4" style="font-weight: bold;">
                                                     <!--# {cuadroMandoIntegralArea.datosGraica(cuadroMandoIntegralArea.cmiEJe1.avanceGraf)}-->
-                                                    <hf:chart type="line" height="400px" extender="myconfig" render="true" updateMethod="true"
-                                                              xaxisLabel="Mes" yaxisLabel="% avance" stacking="none" colors="black">
-                                                        <hf:chartSerie name="Avances" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                    <hf:chart type="line" height="400px" extender="myconfig3" render="true" updateMethod="true"
+                                                              xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                        <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGrafSP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                        <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                     </hf:chart>
                                                 </p:column>
-                                                <p:column rowspan="3" style="font-weight: bold;">
+                                                <p:column rowspan="4" style="font-weight: bold;">
                                                     <p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiGeneral.gaugeChartModel}" responsive="true" />                                            
                                                 </p:column>
                                             </p:row>
@@ -429,7 +456,11 @@
                                                 <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.realizadas}</p:column>
                                             </p:row>
                                             <p:row>
-                                                <p:column style="font-weight: bold;">Porcentaje Avance</p:column>
+                                                <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
+                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiGeneral.avanceSP)}%</p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
                                                 <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiGeneral.avance)}%</p:column>
                                             </p:row>
                                         </p:panelGrid>
@@ -845,7 +876,7 @@
                     </div>
                 </div>
             </c:if-->
-            
+
             <h:form>
                 <p:dialog id="dlgDelate4" header="Nota" width="500" modal="true" position="center" visible="#{controladorEmpleado.mensajeVisiblePOA}">
                     <p:clock />
@@ -860,9 +891,9 @@
             var cookie = '#{cookie["JSESSIONID"].value}';
             var session = '#{session.id}';
             var coincide = cookie === session;
-            if (!coincide){
-            $.removeCookie('JSESSIONID', { path: '/' });
-            location.reload();
+            if (!coincide) {
+                $.removeCookie('JSESSIONID', {path: '/'});
+                location.reload();
             }
         </script>
     </ui:define>

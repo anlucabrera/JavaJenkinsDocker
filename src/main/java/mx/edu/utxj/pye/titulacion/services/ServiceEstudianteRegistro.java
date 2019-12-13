@@ -274,7 +274,7 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         try {
             celular = c.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
-            celular = null;
+            celular = new Comunicaciones();
         }
         
         return celular;
@@ -297,7 +297,7 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         try {
             email = c.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
-            email = null;
+            email = new Comunicaciones();
         }
         
         return email;

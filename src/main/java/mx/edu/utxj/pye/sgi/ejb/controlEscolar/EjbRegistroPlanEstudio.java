@@ -26,6 +26,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.AreaConocimiento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Competencia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
@@ -528,13 +529,17 @@ public class EjbRegistroPlanEstudio {
     public ResultadoEJB<List<Listaalumnosca>> getListaAlumnosPorGrupo(Grupo grupo) {
         try {
             List<Listaalumnosca> listaalumnoscas = new ArrayList<>();
-            List<CargaAcademica> cas = em.createQuery("select c from CargaAcademica c INNER JOIN c.cveGrupo g where g.idGrupo=:idGrupo", CargaAcademica.class)
+            List<Estudiante> cas = em.createQuery("select c from Estudiante c INNER JOIN c.grupo g INNER JOIN c.tipoEstudiante t where g.idGrupo=:idGrupo AND t.idTipoEstudiante=:idTipoEstudiante", Estudiante.class)
                     .setParameter("idGrupo", grupo.getIdGrupo())
+                    .setParameter("idTipoEstudiante", Short.parseShort("1"))
                     .getResultList();
             if (!cas.isEmpty()) {
-                CargaAcademica ca=cas.get(0);
-                listaalumnoscas = em.createQuery("select a from Listaalumnosca a WHERE a.carga=:carga ORDER BY a.esApePat,a.esApeMat,a.esNombre", Listaalumnosca.class)
-                        .setParameter("carga", ca.getCarga())
+                List<Integer> matriculas=new ArrayList<>();
+                cas.forEach((t) -> {
+                    matriculas.add(t.getMatricula());
+                });
+                listaalumnoscas = em.createQuery("select a from Listaalumnosca a WHERE a.matricula in :matriculas GROUP BY a.matricula ORDER BY a.esApePat,a.esApeMat,a.esNombre", Listaalumnosca.class)
+                        .setParameter("matriculas", matriculas)
                         .getResultList();
             }
             return ResultadoEJB.crearCorrecto(listaalumnoscas, "Listado de Alumnos registrados para este grupo");
