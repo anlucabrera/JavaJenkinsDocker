@@ -292,25 +292,12 @@ public class EjbPacker {
      */
     public ResultadoEJB<DtoGrupoEstudiante> packGrupoEstudiante(DtoCargaAcademica dtoCargaAcademica, DtoUnidadConfiguracion dtoUnidadConfiguracion){
         try{
-            Grupo grupo = em.find(Grupo.class, dtoCargaAcademica.getGrupo().getIdGrupo());
-            List<DtoCapturaCalificacion> dtoCapturaCalificaciones = em.createQuery("select e from Estudiante e where e.grupo=:grupo and e.tipoEstudiante.idTipoEstudiante=1 order by e.aspirante.idPersona.apellidoPaterno, e.aspirante.idPersona.apellidoMaterno, e.aspirante.idPersona.nombre", Estudiante.class)
-                    .setParameter("grupo", grupo)
-                    .getResultStream()
-                    .distinct()
-                    .map(estudiante -> packEstudiante(estudiante))
-                    .filter(ResultadoEJB::getCorrecto)
-                    .map(ResultadoEJB::getValor)
-                    .distinct()
-                    .sorted(Comparator.comparing(dtoEstudiante -> {
-                        String res = "";
-                        String paterno = dtoEstudiante.getAspirante().getIdPersona().getApellidoPaterno();
-                        String materno = dtoEstudiante.getAspirante().getIdPersona().getApellidoMaterno();
-                        String nombre = dtoEstudiante.getAspirante().getIdPersona().getNombre();
-                        if(paterno!=null) res = res.concat(paterno);
-                        if(materno!=null) res = res.concat(materno);
-                        if(nombre!=null) res = res.concat(nombre);
-                        return res;
-                    }))
+            ResultadoEJB<List<DtoEstudiante>> res = packDtoEstudiantesGrupo(dtoCargaAcademica);
+            if(!res.getCorrecto()) {
+                return ResultadoEJB.crearErroneo(2, res.getMensaje(), DtoGrupoEstudiante.class);
+            }
+
+            List<DtoCapturaCalificacion> dtoCapturaCalificaciones = res.getValor().stream()
                     .map(dtoEstudiante -> packCapturaCalificacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion))
                     .filter(ResultadoEJB::getCorrecto)
                     .map(ResultadoEJB::getValor)
@@ -487,6 +474,70 @@ public class EjbPacker {
         }catch (Exception e){
             e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "", e, DtoCasoCritico.class);
+        }
+    }
+
+    /**
+     * Permite empaquetar un mapeo de calificiones para estudiantes de una misma carga académica.
+     * @param dtoCargaAcademica Empaquetado de la carga académica de la que se requiere reunir las calificaciones
+     * @param dtoUnidadConfiguraciones Lista de empaquetados de las configuraciones de las unidades que conforman la materia de la carga académica
+     * @return
+     */
+    public ResultadoEJB<DtoUnidadesCalificacion> packDtoUnidadesCalificacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones){
+        try{
+            ResultadoEJB<List<DtoEstudiante>> res = packDtoEstudiantesGrupo(dtoCargaAcademica);
+            if(res.getCorrecto()) {
+                List<DtoEstudiante> dtoEstudiantes = res.getValor();
+                DtoUnidadesCalificacion dtoUnidadesCalificacion = new DtoUnidadesCalificacion(dtoCargaAcademica, dtoEstudiantes, dtoUnidadConfiguraciones);
+                dtoEstudiantes.forEach(dtoEstudiante -> {
+                    dtoUnidadConfiguraciones.forEach(dtoUnidadConfiguracion -> {
+                        ResultadoEJB<DtoCapturaCalificacion> dtoCapturaCalificacionResultadoEJB = packCapturaCalificacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion);
+                        if(dtoCapturaCalificacionResultadoEJB.getCorrecto()){
+                            try {
+                                dtoUnidadesCalificacion.agregarCapturaCalificacion(dtoEstudiante, dtoUnidadConfiguracion, dtoCapturaCalificacionResultadoEJB.getValor());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                });
+                return ResultadoEJB.crearCorrecto(dtoUnidadesCalificacion, "Empaqueta de calificaciones por unidad de un grupo.");
+            }else return ResultadoEJB.crearErroneo(2, res.getMensaje(), DtoUnidadesCalificacion.class);
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetas las calificaciones de todas la unidades de una materia(EjbPacker.packCapturaCalificacion).", e, DtoUnidadesCalificacion.class);
+        }
+    }
+
+    /**
+     * Permite empaquetar la lista de estudiantes de un grupo, segun su carga académica
+     * @param dtoCargaAcademica Carga académica que determina grupo, docente y materia que se imparte
+     * @return Lista de empaquetados de estudiantes pertenecientes al grupo de la carga académica o código de error de lo contrario
+     */
+    public ResultadoEJB<List<DtoEstudiante>> packDtoEstudiantesGrupo(DtoCargaAcademica dtoCargaAcademica){
+        try{
+            Grupo grupo = em.find(Grupo.class, dtoCargaAcademica.getGrupo().getIdGrupo());
+            List<DtoEstudiante> dtoEstudiantes = em.createQuery("select e from Estudiante e where e.grupo=:grupo and e.tipoEstudiante.idTipoEstudiante=1 order by e.aspirante.idPersona.apellidoPaterno, e.aspirante.idPersona.apellidoMaterno, e.aspirante.idPersona.nombre", Estudiante.class)
+                    .setParameter("grupo", grupo)
+                    .getResultStream()
+                    .distinct()
+                    .map(estudiante -> packEstudiante(estudiante))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .distinct()
+                    .sorted(Comparator.comparing(dtoEstudiante -> {
+                        String res = "";
+                        String paterno = dtoEstudiante.getAspirante().getIdPersona().getApellidoPaterno();
+                        String materno = dtoEstudiante.getAspirante().getIdPersona().getApellidoMaterno();
+                        String nombre = dtoEstudiante.getAspirante().getIdPersona().getNombre();
+                        if (paterno != null) res = res.concat(paterno);
+                        if (materno != null) res = res.concat(materno);
+                        if (nombre != null) res = res.concat(nombre);
+                        return res;
+                    }))
+                    .collect(Collectors.toList());
+            return ResultadoEJB.crearCorrecto(dtoEstudiantes, "Lista de estudiantes de un grupo ordenados por apellido y nombre");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar las lista de estudiantes de un grupo ordenados por apellido y nombre(EjbPacker.packCapturaCalificacion).", e, null);
         }
     }
 }

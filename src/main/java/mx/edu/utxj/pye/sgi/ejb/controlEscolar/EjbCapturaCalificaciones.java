@@ -200,8 +200,9 @@ public class EjbCapturaCalificaciones {
     public ResultadoEJB<List<DtoCargaAcademica>> getCargasAcadémicasPorPeriodo(PersonalActivo docente, PeriodosEscolares periodo){
         try {
             //obtener la lista de cargas académicas del docente
-            List<DtoCargaAcademica> cargas = em.createQuery("select ca from CargaAcademica  ca where ca.docente=:docente", CargaAcademica.class)
+            List<DtoCargaAcademica> cargas = em.createQuery("select ca from CargaAcademica ca inner join ca.evento e where ca.docente=:docente and e.periodo=:periodo", CargaAcademica.class)
                     .setParameter("docente", docente.getPersonal().getClave())
+                    .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream()
                     .distinct()
                     .map(cargaAcademica -> ejbAsignacionAcademica.pack(cargaAcademica))
