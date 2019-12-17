@@ -14,11 +14,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "cuestionario_psicopedagogico_resultados", catalog = "control_escolar", schema = "")
@@ -90,110 +91,163 @@ public class CuestionarioPsicopedagogicoResultados implements Serializable {
     protected CuestionarioPsicopedagogicoResultadosPK cuestionarioPsicopedagogicoResultadosPK;
     @Column(name = "clave")
     private Integer clave;
+    @Size(max = 5)
     @Column(name = "r1")
     private String r1;
+    @Size(max = 1000)
     @Column(name = "r2")
     private String r2;
+    @Size(max = 1000)
     @Column(name = "r3")
     private String r3;
+    @Size(max = 1000)
     @Column(name = "r4")
     private String r4;
+    @Size(max = 1000)
     @Column(name = "r5")
     private String r5;
+    @Size(max = 1000)
     @Column(name = "r6")
     private String r6;
+    @Size(max = 1000)
     @Column(name = "r7")
     private String r7;
+    @Size(max = 5)
     @Column(name = "r8")
     private String r8;
+    @Size(max = 5)
     @Column(name = "r9")
     private String r9;
+    @Size(max = 1000)
     @Column(name = "r10")
     private String r10;
+    @Size(max = 1000)
     @Column(name = "r11")
     private String r11;
+    @Size(max = 1000)
     @Column(name = "r12")
     private String r12;
+    @Size(max = 1000)
     @Column(name = "r13")
     private String r13;
+    @Size(max = 1000)
     @Column(name = "r14")
     private String r14;
+    @Size(max = 1000)
     @Column(name = "r15")
     private String r15;
+    @Size(max = 50)
     @Column(name = "r16")
     private String r16;
+    @Size(max = 50)
     @Column(name = "r17")
     private String r17;
+    @Size(max = 1000)
     @Column(name = "r18")
     private String r18;
+    @Size(max = 5)
     @Column(name = "r19")
     private String r19;
+    @Size(max = 50)
     @Column(name = "r20")
     private String r20;
+    @Size(max = 5)
     @Column(name = "r21")
     private String r21;
+    @Size(max = 1000)
     @Column(name = "r22")
     private String r22;
+    @Size(max = 5)
     @Column(name = "r23")
     private String r23;
+    @Size(max = 500)
     @Column(name = "r24")
     private String r24;
+    @Size(max = 5)
     @Column(name = "r25")
     private String r25;
+    @Size(max = 50)
     @Column(name = "r26")
     private String r26;
+    @Size(max = 50)
     @Column(name = "r27")
     private String r27;
+    @Size(max = 50)
     @Column(name = "r28")
     private String r28;
+    @Size(max = 50)
     @Column(name = "r29")
     private String r29;
+    @Size(max = 50)
     @Column(name = "r30")
     private String r30;
+    @Size(max = 50)
     @Column(name = "r31")
     private String r31;
+    @Size(max = 50)
     @Column(name = "r32")
     private String r32;
+    @Size(max = 50)
     @Column(name = "r33")
     private String r33;
+    @Size(max = 50)
     @Column(name = "r34")
     private String r34;
+    @Size(max = 50)
     @Column(name = "r35")
     private String r35;
+    @Size(max = 50)
     @Column(name = "r36")
     private String r36;
+    @Size(max = 50)
     @Column(name = "r37")
     private String r37;
+    @Size(max = 50)
     @Column(name = "r38")
     private String r38;
+    @Size(max = 50)
     @Column(name = "r39")
     private String r39;
+    @Size(max = 50)
     @Column(name = "r40")
     private String r40;
+    @Size(max = 50)
     @Column(name = "r41")
     private String r41;
+    @Size(max = 50)
     @Column(name = "r42")
     private String r42;
+    @Size(max = 5)
     @Column(name = "r43")
     private String r43;
+    @Size(max = 500)
     @Column(name = "r44")
     private String r44;
+    @Size(max = 5)
     @Column(name = "r45")
     private String r45;
+    @Size(max = 5)
     @Column(name = "r46")
     private String r46;
+    @Size(max = 5)
     @Column(name = "r47")
     private String r47;
+    @Size(max = 5)
     @Column(name = "r48")
     private String r48;
+    @Size(max = 5)
     @Column(name = "r49")
     private String r49;
+    @Size(max = 5)
     @Column(name = "r50")
     private String r50;
+    @Size(max = 5)
     @Column(name = "r51")
     private String r51;
+    @Size(max = 5)
     @Column(name = "r52")
     private String r52;
+    @Size(max = 500)
     @Column(name = "r53")
     private String r53;
     @Column(name = "completo")

@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "estudiante", catalog = "control_escolar", schema = "")
@@ -82,6 +82,8 @@ public class Estudiante implements Serializable {
     private List<Calificacion> calificacionList;
     @OneToMany(mappedBy = "estudiante")
     private List<Asistenciasacademicas> asistenciasacademicasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<PrestamosDocumentos> prestamosDocumentosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<Baja> bajaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
@@ -213,6 +215,15 @@ public class Estudiante implements Serializable {
 
     public void setAsistenciasacademicasList(List<Asistenciasacademicas> asistenciasacademicasList) {
         this.asistenciasacademicasList = asistenciasacademicasList;
+    }
+
+    @XmlTransient
+    public List<PrestamosDocumentos> getPrestamosDocumentosList() {
+        return prestamosDocumentosList;
+    }
+
+    public void setPrestamosDocumentosList(List<PrestamosDocumentos> prestamosDocumentosList) {
+        this.prestamosDocumentosList = prestamosDocumentosList;
     }
 
     @XmlTransient

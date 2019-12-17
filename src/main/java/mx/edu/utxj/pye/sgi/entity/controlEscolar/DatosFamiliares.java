@@ -16,11 +16,13 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "datos_familiares", catalog = "control_escolar", schema = "")
@@ -37,16 +39,23 @@ public class DatosFamiliares implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "aspirante")
     private Integer aspirante;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 450)
     @Column(name = "nombre_padre")
     private String nombrePadre;
+    @Size(max = 20)
     @Column(name = "telefono_padre")
     private String telefonoPadre;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 450)
     @Column(name = "nombre_madre")
     private String nombreMadre;
+    @Size(max = 20)
     @Column(name = "telefono_madre")
     private String telefonoMadre;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
