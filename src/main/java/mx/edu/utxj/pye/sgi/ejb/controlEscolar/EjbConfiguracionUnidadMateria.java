@@ -53,10 +53,21 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<Filter<PersonalActivo>> validarDocente(Integer clave){
         try{
+            System.err.println("validarDocente - clave " + clave);
             PersonalActivo p = ejbPersonalBean.pack(clave);
+            System.err.println("validarDocente - p " + p.getCargaAcademicas().size());
             Filter<PersonalActivo> filtro = new Filter<>();
-            filtro.setEntity(p);
-            filtro.addParam(PersonalFiltro.ACTIIVIDAD.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalDocenteActividad").orElse(3)));
+            if (p.getPersonal().getActividad().equals(3)) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.ACTIIVIDAD.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalDocenteActividad").orElse(3)));
+                System.err.println("validarDocente - doc ");
+            }
+            else if (!p.getPersonal().getActividad().equals(3) && !p.getCargaAcademicas().isEmpty()) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+                System.err.println("validarDocente - adm ");
+            }
+            System.err.println("validarDocente - filtro " + filtro);
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal docente.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar. (EjbUnidadMateriaConfiguracion.validarDocente)", e, null);

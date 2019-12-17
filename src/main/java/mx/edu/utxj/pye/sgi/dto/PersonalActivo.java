@@ -18,6 +18,7 @@ public class PersonalActivo implements Serializable {
     @Getter @Setter private AreasUniversidad areaOficial;
     @Getter @Setter private AreasUniversidad areaPOA;
     @Getter @Setter private List<Grupo> gruposTutorados;
+    @Getter @Setter private List<CargaAcademica> cargaAcademicas;
 
     public PersonalActivo() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

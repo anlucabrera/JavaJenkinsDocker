@@ -65,7 +65,7 @@ public class ReincorporacionRolServiciosEscolares extends AbstractRol {
      * Variables que representa la busqueda por curp de la Persona
      */
     @Getter @Setter private String nombre, primerAp, segundoAp, estadoCivil, curp, url;
-    @Getter @Setter private Integer paisItem, estadoItem, municipioItem, localidadItem;
+    @Getter @Setter private Integer paisItem, estadoItem, municipioItem, localidadItem,folioAspirante;
     @Getter @Setter private Date fechaNacimiento = new Date();
     @Getter @Setter private Generos genero;
 

@@ -315,8 +315,12 @@ public class EjbReincorporacion {
                 case PERSISTIR:
                     if(a1 == null){
                         System.out.println("Llego hasta acá");
+                        a1 = new Aspirante();
                         a1 = a;
-                        a1.setIdPersona(p);
+                        a1.setIdProcesoInscripcion(new ProcesosInscripcion());
+                        a1.setTipoAspirante(new TipoAspirante());
+                        
+                        
                         a1.getIdProcesoInscripcion().setIdProcesosInscripcion(2);
                         a1.getTipoAspirante().setIdTipoAspirante(Short.parseShort("2"));
                         a1.setEstatus(true);

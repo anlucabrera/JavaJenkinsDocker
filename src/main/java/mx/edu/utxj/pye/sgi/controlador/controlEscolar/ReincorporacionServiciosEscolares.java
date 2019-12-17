@@ -300,17 +300,19 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             mostrarMensajeResultadoEJB(res);
         }else {
             res = ejb.guardarDatosPersonales(rol.getPersona(), Operacion.ACTUALIZAR);
+            ejecutarMetodos();
             mostrarMensajeResultadoEJB(res);
         }
     }
 
-    public void guardarAspirante(Persona p){
+    public void guardarAspirante(Persona p) {
         ResultadoEJB<Aspirante> resA;
-        if(rol.getAspirante().getIdPersona().getIdpersona() == null){
-            rol.getAspirante().getIdPersona().setIdpersona(p.getIdpersona());
-            resA = ejb.guardarAspirantePorReincorporacion(rol.getAspirante(), rol.getPersona(), Operacion.PERSISTIR);
-            mostrarMensajeResultadoEJB(resA);
-        }
+        rol.setAspirante(new Aspirante());
+        rol.getAspirante().setIdPersona(new Persona());
+        rol.getAspirante().setIdPersona(p);        
+        rol.getAspirante().setFolioAspirante(rol.getFolioAspirante());
+        resA = ejb.guardarAspirantePorReincorporacion(rol.getAspirante(), rol.getPersona(), Operacion.PERSISTIR);
+        mostrarMensajeResultadoEJB(resA);
     }
 
     public void guardarDatosMedicosPersona(){
@@ -340,10 +342,25 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     public void ejecutarMetodos(){
         guardarDatosMedicosPersona();
         guardarMediosComunicacionPersona();
+        guardaDatosResidenciayProcedencia();
     }
 
-    public void guardaDatosResidenciayProcedencia(){
+    public void guardaDatosResidenciayProcedencia() {
+        ResultadoEJB<Domicilio> res;
+        if (rol.getDomicilio().getAspirante() == null) {
 
+            rol.getDomicilio().setAspirante1(new Aspirante());
+            rol.getDomicilio().setAspirante1(rol.getAspirante());
+
+            
+            
+            rol.getMedioComunicacion().setPersona(rol.getPersona().getIdpersona());
+            res = ejb.guardarMedioComunicacion(rol.getMedioComunicacion(), rol.getPersona(), Operacion.PERSISTIR);
+            mostrarMensajeResultadoEJB(res);
+        } else {
+            res = ejb.guardarMedioComunicacion(rol.getMedioComunicacion(), rol.getPersona(), Operacion.ACTUALIZAR);
+            mostrarMensajeResultadoEJB(res);
+        }
     }
 
     @Override

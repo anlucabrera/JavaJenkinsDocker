@@ -68,11 +68,17 @@ public class EjbAsignacionIndicadoresCriterios {
         try{
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
-            filtro.setEntity(p);
-            filtro.addParam(PersonalFiltro.ACTIIVIDAD.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalDocenteActividad").orElse(3)));
+            if (p.getPersonal().getActividad().equals(3)) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.ACTIIVIDAD.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalDocenteActividad").orElse(3)));
+            }
+            else if (!p.getPersonal().getActividad().equals(3) && !p.getCargaAcademicas().isEmpty()) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal docente.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar. (EjbAsignacionIndicadoresCriterios.validarDocente)", e, null);
+            return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar. (EjbUnidadMateriaConfiguracion.validarDocente)", e, null);
         }
     }
 
