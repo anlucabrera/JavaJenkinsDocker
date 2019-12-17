@@ -135,6 +135,16 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         }
     }
 
+// Validaciones Acceso
+    @Override
+    public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
+        String valor = "reincorporaciones";
+        Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
+//        map.entrySet().forEach(System.out::println);
+        return mostrar(request, map.containsValue(valor));
+    }
+
+//Busquedea datos    
     public void obtenerDatosQR() throws IOException{
         if(rol.getFile() != null){
             //System.out.println("Nombre del archivo:"+ rol.getFile().getSubmittedFileName());
@@ -185,15 +195,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             Messages.addGlobalError("Es necesario seleccionar un archivo !");
         }
     }
-
-    public void seleccionarEstado(){
-        rol.setSelectItemEstados(ejbSI.itemEstadoByClave(rol.getPaisItem()));
-    }
-
-    public void seleccionarLocalidad(){
-        rol.setSelectItemLocalidades(ejbSI.itemLocalidadesByClave(rol.getPersona().getEstado(), rol.getPersona().getMunicipio()));
-    }
-
+    
     public void buscasDatosPersonaPorCurp(){
         ResultadoEJB<Persona> res = ejb.buscarDatosPersonalesEstudiante(rol.getBuscquedaCurp().toUpperCase());
         if(res.getCorrecto()){
@@ -255,6 +257,14 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             selectAsentamientoTutor();
         }
     }
+    
+    public void seleccionarEstado(){
+        rol.setSelectItemEstados(ejbSI.itemEstadoByClave(rol.getPaisItem()));
+    }
+
+    public void seleccionarLocalidad(){
+        rol.setSelectItemLocalidades(ejbSI.itemLocalidadesByClave(rol.getPersona().getEstado(), rol.getPersona().getMunicipio()));
+    }
 
     public void selectMunicipio(){
         rol.setSelectItemMunicipios(ejbSI.itemMunicipiosByClave(rol.getDomicilio().getIdEstado()));
@@ -291,6 +301,97 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     public void selectAsentamientoTutor(){
         rol.setSelectItemAsentamientoTutor(ejbSI.itemAsentamientoByClave(rol.getTutorFamiliar().getEstado(), rol.getTutorFamiliar().getMunicipio()));
     }
+    
+
+// Metodos de Eventos
+//Agregar
+    public void guardarPersona() {
+        ResultadoEJB<Persona> res;
+        res = ejb.guardarDatosPersonales(rol.getPersona(), Operacion.PERSISTIR);
+        guardarAspirante(rol.getPersona());
+        mostrarMensajeResultadoEJB(res);
+    }
+    public void guardarAspirante() {
+        ResultadoEJB<Aspirante> resA;
+        rol.setAspirante(new Aspirante());
+        rol.getAspirante().setIdPersona(new Persona());
+        rol.getAspirante().setIdPersona(p);
+        rol.getAspirante().setFolioAspirante(rol.getFolioAspirante());
+        resA = ejb.guardarAspirantePorReincorporacion(rol.getAspirante(), rol.getPersona(), Operacion.PERSISTIR);
+        mostrarMensajeResultadoEJB(resA);
+    }
+    
+    public void ejecutarMetodos(){
+        guardarDatosMedicosMediosC();
+        guardarDatosFamiliares();
+        guardarDomicilios();
+        guardarDatosAcademicos();
+    }
+    
+    public void guardarDatosMedicosC() {
+        ResultadoEJB<DatosMedicos> res;
+        if (rol.getDatosMedicos().getCvePersona() == null) {
+            rol.getDatosMedicos().setCvePersona(rol.getPersona().getIdpersona());
+            res = ejb.guardarDatosMedicos(rol.getDatosMedicos(), rol.getPersona(), Operacion.PERSISTIR);
+            mostrarMensajeResultadoEJB(res);
+        } else {
+            res = ejb.guardarDatosMedicos(rol.getDatosMedicos(), rol.getPersona(), Operacion.ACTUALIZAR);
+            mostrarMensajeResultadoEJB(res);
+        }
+    }
+    
+    public void guardarMediosC() {
+        ResultadoEJB<MedioComunicacion> res;
+        if (rol.getMedioComunicacion().getPersona() == null) {
+            rol.getMedioComunicacion().set(rol.getPersona().getIdpersona());
+            res = ejb.guardarMedioComunicacion(rol.getMedioComunicacion(), rol.getPersona(), Operacion.PERSISTIR);
+            mostrarMensajeResultadoEJB(res);
+        } else {
+            res = ejb.guardarDatosMedicos(rol.getDatosMedicos(), rol.getPersona(), Operacion.ACTUALIZAR);
+            mostrarMensajeResultadoEJB(res);
+        }
+    }
+    
+    public void guardarDatosFamiliares() {
+        ResultadoEJB<DatosFamiliares> res;
+        if (rol.getDatosFamiliares().getAspirante()== null) {
+            rol.getDatosFamiliares().setCvePersona(rol.getPersona().getIdpersona());
+            res = ejb.guar(rol.getDatosFamiliares(), rol.getPersona(), Operacion.PERSISTIR);
+            mostrarMensajeResultadoEJB(res);
+        } else {
+            res = ejb.guardarDatosMedicos(rol.getDatosMedicos(), rol.getPersona(), Operacion.ACTUALIZAR);
+            mostrarMensajeResultadoEJB(res);
+        }
+    }
+    
+    public void guardarDomicilios() {
+        ResultadoEJB<DatosMedicos> res;
+        if (rol.getDatosMedicos().getCvePersona() == null) {
+            rol.getDatosMedicos().setCvePersona(rol.getPersona().getIdpersona());
+            res = ejb.guardarDatosMedicos(rol.getDatosMedicos(), rol.getPersona(), Operacion.PERSISTIR);
+            mostrarMensajeResultadoEJB(res);
+        } else {
+            res = ejb.guardarDatosMedicos(rol.getDatosMedicos(), rol.getPersona(), Operacion.ACTUALIZAR);
+            mostrarMensajeResultadoEJB(res);
+        }
+    }
+        
+    public void guardarDatosAcademicos() {
+        ResultadoEJB<DatosMedicos> res;
+        if (rol.getDatosMedicos().getCvePersona() == null) {
+            rol.getDatosMedicos().setCvePersona(rol.getPersona().getIdpersona());
+            res = ejb.guardarDatosMedicos(rol.getDatosMedicos(), rol.getPersona(), Operacion.PERSISTIR);
+            mostrarMensajeResultadoEJB(res);
+        } else {
+            res = ejb.guardarDatosMedicos(rol.getDatosMedicos(), rol.getPersona(), Operacion.ACTUALIZAR);
+            mostrarMensajeResultadoEJB(res);
+        }
+    }
+    
+    
+    
+    
+//Actualizar    
 
     public void guardarDatosPersona(){
         ResultadoEJB<Persona> res;
@@ -303,16 +404,6 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             ejecutarMetodos();
             mostrarMensajeResultadoEJB(res);
         }
-    }
-
-    public void guardarAspirante(Persona p) {
-        ResultadoEJB<Aspirante> resA;
-        rol.setAspirante(new Aspirante());
-        rol.getAspirante().setIdPersona(new Persona());
-        rol.getAspirante().setIdPersona(p);        
-        rol.getAspirante().setFolioAspirante(rol.getFolioAspirante());
-        resA = ejb.guardarAspirantePorReincorporacion(rol.getAspirante(), rol.getPersona(), Operacion.PERSISTIR);
-        mostrarMensajeResultadoEJB(resA);
     }
 
     public void guardarDatosMedicosPersona(){
@@ -339,11 +430,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         }
     }
 
-    public void ejecutarMetodos(){
-        guardarDatosMedicosPersona();
-        guardarMediosComunicacionPersona();
-        guardaDatosResidenciayProcedencia();
-    }
+    
 
     public void guardaDatosResidenciayProcedencia() {
         ResultadoEJB<MedioComunicacion> res;
@@ -363,13 +450,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         }
     }
 
-    @Override
-    public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
-        String valor = "reincorporaciones";
-        Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
-//        map.entrySet().forEach(System.out::println);
-        return mostrar(request, map.containsValue(valor));
-    }
+    
 
     public void actualizarOpciones(){
         if(rol.getOpcion().equals("Buscar")){

@@ -41,6 +41,7 @@ import org.primefaces.event.CellEditEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CordinadoresTutores;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -122,6 +123,7 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
             rol.getInstrucciones().add("Para asignar al tutor deberá dar clic en el campo vacío de la tabla y usted podrá escribir parte del nombre o número de nómina y elegir al docente en la lista desplegable que aparecerá después de una pausa de un segundo.");
             rol.getInstrucciones().add("En caso de reasignar o modificar al tutor de grupo usted deberá repetir el paso anterior cuantas veces sean necesarias");
             validaPeriodoRegistro();
+            inicializarCoordinadorTutores();
         } catch (Exception e) {
             mostrarExcepcion(e);
         }
@@ -132,6 +134,20 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
         String valor = "Asignación Tutor de Grupo";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
+    }
+    
+    public void inicializarCoordinadorTutores(){
+        ResultadoEJB<CordinadoresTutores> cordinadorTutores = ejb.buscarCordinadorTutorActual(rol.getPeriodo().getPeriodo(), rol.getDirector().getAreaPOA().getArea());
+        if (!cordinadorTutores.getCorrecto()) {
+            mostrarMensajeResultadoEJB(cordinadorTutores);
+            rol.setCoordinadorTutor(new CordinadoresTutores());
+            rol.getCoordinadorTutor().setPeriodo(rol.getPeriodo().getPeriodo());
+            rol.getCoordinadorTutor().setAreaAcademica(rol.getDirector().getAreaPOA().getArea());
+            rol.getCoordinadorTutor().setPersonal(0);
+        }else{
+            mostrarMensajeResultadoEJB(cordinadorTutores);
+            rol.setCoordinadorTutor(cordinadorTutores.getValor());
+        }
     }
     
     /**
@@ -226,5 +242,27 @@ public class AsignacionTutorAcademicoDirector extends ViewScopedRol implements D
             rol.setTutoresGruposMap(resProgramas.getValor());
             alertas();
             Ajax.update("grupo");//actualizaría al selector de grupos si lleva el id especificado
+    }
+    
+    public List<PersonalActivo> completeCoordinadorTutores(String pista){
+        ResultadoEJB<List<PersonalActivo>> res = ejb.buscarDocente(pista);
+        if(res.getCorrecto()){
+            return res.getValor();
+        }else{
+            mostrarMensajeResultadoEJB(res);
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
+    public void seleccionarCoordinadorTutor(ValueChangeEvent event){
+        if(event.getNewValue() instanceof PersonalActivo){
+            PersonalActivo personalActivo = (PersonalActivo) event.getNewValue();
+            rol.getCoordinadorTutor().setPersonal(personalActivo.getPersonal().getClave());
+            ResultadoEJB<CordinadoresTutores> res = ejb.guardaActualizaCordinadorTutor(rol.getCoordinadorTutor());
+            if(res.getCorrecto()){
+                mostrarMensajeResultadoEJB(res);
+                rol.setCoordinadorTutor(res.getValor());
+            }else mostrarMensajeResultadoEJB(res);
+        }else mostrarMensaje("El valor seleccionado no es valido");
     }
 }

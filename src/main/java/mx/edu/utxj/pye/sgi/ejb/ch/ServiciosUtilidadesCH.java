@@ -124,7 +124,7 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         facade.setEntityClass(EventosAreas.class);
         List<EventosAreas> es = facade.findAll();
         if (es.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         } else {
             return es;
         }

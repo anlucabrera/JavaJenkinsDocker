@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionTutorRolDirector;
@@ -22,6 +23,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoListadoTutores;
 import mx.edu.utxj.pye.sgi.dto.vista.DtoAlerta;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CordinadoresTutores;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -220,4 +222,45 @@ public class EjbAsignacionTutores {
             return ResultadoEJB.crearErroneo(1, "No se pudieron identificar mensajes de asignación (EjbAsignacionTutores.identificarMensajes)", e, null);
         }
     }
+    
+    /**
+     * Método que permite la búsqueda de coordinadores de tutor para evitar duplicidad de información, en caso de encontrar un coordinador asignado en el periodo y área seleccionada se toma ese registro.
+     * @param periodoEscolar
+     * @param area
+     * @return 
+     */
+    public ResultadoEJB<CordinadoresTutores> buscarCordinadorTutorActual(@NonNull Integer periodoEscolar, @NonNull Short area){
+        try {
+            List<CordinadoresTutores> lista = em.createQuery("SELECT c FROM CordinadoresTutores c WHERE c.periodo = :periodo AND c.areaAcademica = :areaAcademica")
+                    .setParameter("periodo", periodoEscolar)
+                    .setParameter("areaAcademica", area)
+                    .getResultList();
+            if(!lista.isEmpty()){
+                if(lista.size() <= 1){
+                    return ResultadoEJB.crearCorrecto(lista.get(0), "Coordinador de tutores encontrado.");
+                }else{
+                    return ResultadoEJB.crearErroneo(3, "Se ha encontrado más de un coordinador de tutores asignado en este periodo.", CordinadoresTutores.class);
+                }
+            }else{
+                return ResultadoEJB.crearErroneo(2, "No se ha encontrado coordinador de tutores asignado en este periodo.", CordinadoresTutores.class);
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar coordinador de tutores actual (EjbAsignacionTutores.buscarCordinadorTutorActual).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<CordinadoresTutores> guardaActualizaCordinadorTutor(CordinadoresTutores cordinadorTutor){
+        try {
+            if(!(buscarCordinadorTutorActual(cordinadorTutor.getPeriodo(),cordinadorTutor.getAreaAcademica()).getCorrecto())){
+                em.persist(cordinadorTutor);
+                return ResultadoEJB.crearCorrecto(cordinadorTutor, "El registro del coordinador de tutores ha sido guardado correctamente en el sistema.");
+            }else{
+                em.merge(cordinadorTutor);
+                return ResultadoEJB.crearCorrecto(cordinadorTutor, "El registro del coordinador de tutores ha sido actualizado correctamente en el sistema.");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardar o actualizar el coordinador de tutores (EjbAsignacionTutores.guardaActualizaCordinadorTutor).", e, null);
+        }
+    }
+    
 }

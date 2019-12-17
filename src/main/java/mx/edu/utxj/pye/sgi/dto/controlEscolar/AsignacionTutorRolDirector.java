@@ -17,6 +17,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CordinadoresTutores;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -90,6 +91,10 @@ public class AsignacionTutorRolDirector extends AbstractRol{
     
     @Getter @Setter private Boolean validaPeriodoRegistro;
         
+    @Getter @Setter private CordinadoresTutores coordinadorTutor;
+    
+    @Getter @Setter private PersonalActivo personalCoordinadorTutores;
+    
     public AsignacionTutorRolDirector(Filter<PersonalActivo> filtro,PersonalActivo director, AreasUniversidad programa) {
         super(filtro);
         this.director = director;

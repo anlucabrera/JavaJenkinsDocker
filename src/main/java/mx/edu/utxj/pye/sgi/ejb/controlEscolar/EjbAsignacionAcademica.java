@@ -27,6 +27,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -376,7 +377,7 @@ public class EjbAsignacionAcademica {
 //            System.out.println("semanasBD = " + semanasBD);
             BigDecimal horasBD = BigDecimal.valueOf(totalHorasAsignadas);
 //            System.out.println("horasBD = " + horasBD);
-            BigDecimal cociente = horasBD.divide(semanasBD);
+            BigDecimal cociente = horasBD.divide(semanasBD,8,RoundingMode.HALF_UP);
 //            System.out.println("cociente = " + cociente);
             BigDecimal horas = NumberUtils.redondear(cociente, 0);
 //            System.out.println("horas = " + horas);

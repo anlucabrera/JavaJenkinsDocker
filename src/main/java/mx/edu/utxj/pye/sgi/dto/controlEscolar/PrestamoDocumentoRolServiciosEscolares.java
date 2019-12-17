@@ -38,7 +38,7 @@ public class PrestamoDocumentoRolServiciosEscolares extends AbstractRol{
     
     @Getter             private                 Documentosentregadosestudiante              documentosentregadosestudiante;
     
-    public PrestamoDocumentoRolServiciosEscolares(@NonNull Filter<PersonalActivo> filtro, PersonalActivo personal) {
+    public PrestamoDocumentoRolServiciosEscolares(@NonNull Filter<PersonalActivo> filtro) {
         super(filtro);
         this.personal = filtro.getEntity();
     }

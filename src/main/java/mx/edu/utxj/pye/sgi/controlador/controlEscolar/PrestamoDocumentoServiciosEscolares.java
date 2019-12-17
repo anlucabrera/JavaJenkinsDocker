@@ -51,7 +51,7 @@ public class PrestamoDocumentoServiciosEscolares extends ViewScopedRol implement
     
     @Inject             LogonMB                         logonMB;
     
-    @PostConstruct
+     @PostConstruct
     public void init(){
         try {
             if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
@@ -60,18 +60,13 @@ public class PrestamoDocumentoServiciosEscolares extends ViewScopedRol implement
             setVistaControlador(ControlEscolarVistaControlador.PRESTAMO_DOCUMENTOS);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logonMB.getPersonal().getClave());//validar si es personal de servicios escolares
             if(!resAcceso.getCorrecto()){mostrarMensajeResultadoEJB(resAcceso);return;}
-            
-            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarServiciosEscolares(logonMB.getPersonal().getClave());
-            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
-            
-            Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
-            PersonalActivo serviciosEscolares = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-            rol = new PrestamoDocumentoRolServiciosEscolares(filtro, serviciosEscolares);
-            tieneAcceso = rol.tieneAcceso(serviciosEscolares);
+
+            Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
+//            PersonalActivo serviciosEscolares = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
+            rol = new PrestamoDocumentoRolServiciosEscolares(filtro);
+            tieneAcceso = rol.tieneAcceso(rol.getPersonal());
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-            
-            rol.setPersonal(serviciosEscolares);
-            
+
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             if(!validarIdentificacion()) return;
             rol.setNivelRol(NivelRol.OPERATIVO);
