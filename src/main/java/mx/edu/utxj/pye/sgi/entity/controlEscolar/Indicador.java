@@ -55,6 +55,8 @@ public class Indicador implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador1")
     private List<CriterioIndicadorPeriodo> criterioIndicadorPeriodoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador")
+    private List<CalificacionNivelacion> calificacionNivelacionList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador")
     private List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList;
 
     public Indicador() {
@@ -101,6 +103,15 @@ public class Indicador implements Serializable {
 
     public void setCriterioIndicadorPeriodoList(List<CriterioIndicadorPeriodo> criterioIndicadorPeriodoList) {
         this.criterioIndicadorPeriodoList = criterioIndicadorPeriodoList;
+    }
+
+    @XmlTransient
+    public List<CalificacionNivelacion> getCalificacionNivelacionList() {
+        return calificacionNivelacionList;
+    }
+
+    public void setCalificacionNivelacionList(List<CalificacionNivelacion> calificacionNivelacionList) {
+        this.calificacionNivelacionList = calificacionNivelacionList;
     }
 
     @XmlTransient

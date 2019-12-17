@@ -494,6 +494,9 @@ public class EjbPacker {
                         ResultadoEJB<DtoCapturaCalificacion> dtoCapturaCalificacionResultadoEJB = packCapturaCalificacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion);
                         if(dtoCapturaCalificacionResultadoEJB.getCorrecto()){
                             try {
+                                /*if(dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula() == 190575){
+                                    System.out.println("dtoCapturaCalificacionResultadoEJB.getValor() = " + dtoCapturaCalificacionResultadoEJB.getValor().getPromedio());
+                                }*/
                                 dtoUnidadesCalificacion.agregarCapturaCalificacion(dtoEstudiante, dtoUnidadConfiguracion, dtoCapturaCalificacionResultadoEJB.getValor());
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -538,6 +541,32 @@ public class EjbPacker {
             return ResultadoEJB.crearCorrecto(dtoEstudiantes, "Lista de estudiantes de un grupo ordenados por apellido y nombre");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar las lista de estudiantes de un grupo ordenados por apellido y nombre(EjbPacker.packCapturaCalificacion).", e, null);
+        }
+    }
+
+    /**
+     * Permite empaquetar la calificación de nivelación con entities sincronizadas si es que exoste el registro en la base de datos o transientes de lo contrario
+     * @param dtoCargaAcademica Empaquetado de la carga académica de la nivelación deseada
+     * @param dtoEstudiante Empaquetado del estudiante de la nivelación deseada
+     * @param indicador Indicador de la nivelación deseada
+     * @return Regresa el empaquetado o código de error si ocurre error.
+     */
+    public ResultadoEJB<DtoCalificacionNivelacion> packDtoCalificacionNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante, @NonNull Indicador indicador){
+        try{
+            CalificacionNivelacionPK pk = new CalificacionNivelacionPK(dtoCargaAcademica.getCargaAcademica().getCarga(), dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante());
+            CalificacionNivelacion calificacionNivelacion = em.find(CalificacionNivelacion.class, pk);
+            if(calificacionNivelacion == null){
+                calificacionNivelacion = new CalificacionNivelacion(pk);
+                calificacionNivelacion.setEstudiante(dtoEstudiante.getInscripcionActiva().getInscripcion());
+                calificacionNivelacion.setCargaAcademica(dtoCargaAcademica.getCargaAcademica());
+                calificacionNivelacion.setIndicador(indicador);
+                calificacionNivelacion.setValor(0d);
+            }
+
+            DtoCalificacionNivelacion dtoCalificacionNivelacion = new DtoCalificacionNivelacion(calificacionNivelacion, indicador);
+            return ResultadoEJB.crearCorrecto(dtoCalificacionNivelacion, "Empaquetado de nivelación.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la calificación de nivelación (EjbPacker.packDtoCalificacionNivelacion).", e, DtoCalificacionNivelacion.class);
         }
     }
 }

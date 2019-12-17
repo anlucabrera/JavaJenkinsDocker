@@ -64,6 +64,8 @@ public class CargaAcademica implements Serializable {
     @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
     @ManyToOne(optional = false)
     private PlanEstudioMateria idPlanMateria;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica")
+    private List<CalificacionNivelacion> calificacionNivelacionList;
     @OneToMany(mappedBy = "carga")
     private List<CasoCritico> casoCriticoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
@@ -146,6 +148,15 @@ public class CargaAcademica implements Serializable {
 
     public void setIdPlanMateria(PlanEstudioMateria idPlanMateria) {
         this.idPlanMateria = idPlanMateria;
+    }
+
+    @XmlTransient
+    public List<CalificacionNivelacion> getCalificacionNivelacionList() {
+        return calificacionNivelacionList;
+    }
+
+    public void setCalificacionNivelacionList(List<CalificacionNivelacion> calificacionNivelacionList) {
+        this.calificacionNivelacionList = calificacionNivelacionList;
     }
 
     @XmlTransient
