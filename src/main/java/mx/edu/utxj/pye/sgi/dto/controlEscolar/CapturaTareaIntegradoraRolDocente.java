@@ -7,10 +7,13 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Indicador;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CapturaTareaIntegradoraRolDocente  extends AbstractRol {
     @Getter private PersonalActivo docenteLogueado;
@@ -23,10 +26,19 @@ public class CapturaTareaIntegradoraRolDocente  extends AbstractRol {
     @Getter private DtoCargaAcademica cargaAcademicaSeleccionada;
     @Getter private List<DtoCargaAcademica> cargasDocente;
 
-    @Getter private List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones;
-    @Getter private DtoUnidadesCalificacion dtoUnidadesCalificacion;
-    @Getter @Setter private Boolean tieneIntegradora = false;
-    @Getter @Setter private TareaIntegradora tareaIntegradora;
+//    @Getter private List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones;
+    @Getter private Map<DtoCargaAcademica, List<DtoUnidadConfiguracion>> dtoUnidadConfiguracionesMap = new HashMap<>();
+
+//    @Getter private DtoUnidadesCalificacion dtoUnidadesCalificacion;
+    @Getter private Map<DtoCargaAcademica, DtoUnidadesCalificacion> dtoUnidadesCalificacionMap = new HashMap<>();
+
+//    @Getter @Setter private Boolean tieneIntegradora = false;
+    @Getter @Setter private Map<DtoCargaAcademica, Boolean> tieneIntegradoraMap = new HashMap<>();
+
+//    @Getter @Setter private TareaIntegradora tareaIntegradora;
+    @Getter @Setter private Map<DtoCargaAcademica, TareaIntegradora> tareaIntegradoraMap = new HashMap<>();
+
+    @Getter @Setter private List<Indicador> indicadores;
 
     public CapturaTareaIntegradoraRolDocente(@NonNull Filter<PersonalActivo> filtro) {
         super(filtro);
@@ -51,7 +63,7 @@ public class CapturaTareaIntegradoraRolDocente  extends AbstractRol {
 
     public void setPeriodosConCarga(List<PeriodosEscolares> periodosConCarga) {
         this.periodosConCarga = periodosConCarga;
-        if(!periodosConCarga.isEmpty()){
+        if(!periodosConCarga.isEmpty() && periodoSeleccionado == null){
             periodoSeleccionado = periodosConCarga.get(0);
         }
     }
@@ -62,16 +74,16 @@ public class CapturaTareaIntegradoraRolDocente  extends AbstractRol {
 
     public void setCargasDocente(List<DtoCargaAcademica> cargasDocente) {
         this.cargasDocente = cargasDocente;
-        if(!cargasDocente.isEmpty()){
+        if(!cargasDocente.isEmpty() && cargaAcademicaSeleccionada == null){
             cargaAcademicaSeleccionada = cargasDocente.get(0);
         }
     }
 
-    public void setDtoUnidadConfiguraciones(List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones) {
+    /*public void setDtoUnidadConfiguraciones(List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones) {
         this.dtoUnidadConfiguraciones = dtoUnidadConfiguraciones;
     }
 
     public void setDtoUnidadesCalificacion(DtoUnidadesCalificacion dtoUnidadesCalificacion) {
         this.dtoUnidadesCalificacion = dtoUnidadesCalificacion;
-    }
+    }*/
 }

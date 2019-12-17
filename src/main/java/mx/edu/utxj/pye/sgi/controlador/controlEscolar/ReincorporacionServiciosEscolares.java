@@ -346,7 +346,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     }
 
     public void guardaDatosResidenciayProcedencia() {
-        ResultadoEJB<Domicilio> res;
+        ResultadoEJB<MedioComunicacion> res;
         if (rol.getDomicilio().getAspirante() == null) {
 
             rol.getDomicilio().setAspirante1(new Aspirante());

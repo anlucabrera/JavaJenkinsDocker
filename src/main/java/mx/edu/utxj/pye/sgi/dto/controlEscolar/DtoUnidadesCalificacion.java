@@ -18,6 +18,7 @@ public class DtoUnidadesCalificacion implements Serializable {
     @Getter @Setter @NonNull private List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones;
     @Getter @Setter @NonNull private Map<DtoUnidadesCalificacionPK, DtoCapturaCalificacion> calificacionMap;
     @Getter @Setter @NonNull private Map<DtoEstudiante, TareaIntegradoraPromedio> tareaIntegradoraPromedioMap;
+    @Getter @Setter @NonNull private Map<DtoNivelacionPK, DtoCalificacionNivelacion> nivelacionMap;
 
     public DtoUnidadesCalificacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull List<DtoEstudiante> dtoEstudiantes, @NonNull List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones) {
         this.dtoCargaAcademica = dtoCargaAcademica;
@@ -25,6 +26,7 @@ public class DtoUnidadesCalificacion implements Serializable {
         this.dtoUnidadConfiguraciones = dtoUnidadConfiguraciones;
         this.calificacionMap = new HashMap<>();
         this.tareaIntegradoraPromedioMap = new HashMap<>();
+        this.nivelacionMap = new HashMap<>();
     }
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
@@ -32,6 +34,12 @@ public class DtoUnidadesCalificacion implements Serializable {
         @Getter @Setter @NonNull DtoCargaAcademica dtoCargaAcademica;
         @Getter @Setter @NonNull DtoEstudiante dtoEstudiante;
         @Getter @Setter @NonNull DtoUnidadConfiguracion dtoUnidadConfiguracion;
+    }
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class DtoNivelacionPK{
+        @Getter @Setter @NonNull DtoCargaAcademica dtoCargaAcademica;
+        @Getter @Setter @NonNull DtoEstudiante dtoEstudiante;
     }
 
     public void agregarCapturaCalificacion(DtoEstudiante dtoEstudiante, DtoUnidadConfiguracion dtoUnidadConfiguracion, DtoCapturaCalificacion dtoCapturaCalificacion) throws Exception{
@@ -46,7 +54,11 @@ public class DtoUnidadesCalificacion implements Serializable {
 
     public BigDecimal getPromedioUnidad(@NonNull DtoUnidadConfiguracion dtoUnidadConfiguracion, @NonNull DtoEstudiante dtoEstudiante){
         DtoUnidadesCalificacionPK pk = new DtoUnidadesCalificacionPK(dtoCargaAcademica, dtoEstudiante, dtoUnidadConfiguracion);
-        if(calificacionMap.containsKey(pk)) return calificacionMap.get(pk).getPromedio();
+        if(calificacionMap.containsKey(pk)) {
+//            if(dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula() == 190575)
+//                System.out.println("calificacionMap = " + calificacionMap.get(pk).getPromedio());
+            return calificacionMap.get(pk).getPromedio();
+        }
         else return BigDecimal.ZERO;
     }
 }
