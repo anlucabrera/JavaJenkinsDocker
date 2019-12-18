@@ -5,6 +5,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 
 /**

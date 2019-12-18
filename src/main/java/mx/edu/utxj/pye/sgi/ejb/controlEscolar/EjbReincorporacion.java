@@ -34,6 +34,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.CalificacionesSaiiutDto;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.QrNssDto;
 import static mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioFichaAdmision.ucFirst;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
+import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
@@ -487,6 +488,11 @@ public class EjbReincorporacion {
         }
     }
    
+    public EncuestaAspirante getResultado(Integer cve_aspirante){
+        return em.createQuery("SELECT ea FROM EncuestaAspirante ea WHERE ea.cveAspirante = :aspirante", EncuestaAspirante.class)
+                .setParameter("aspirante", cve_aspirante)
+                .getResultList().stream().findFirst().orElse(null);
+    }
     /**
      * Permite la asignación de materias que cursará el estudiante
      * @param estudiante Estudiante al que se le asignarán las materias
@@ -700,6 +706,16 @@ public class EjbReincorporacion {
         }
     }
     
+    
+    public Iems buscaIemsByClave(Integer id) {
+        return em.find(Iems.class,id);
+    }
+    
+    public AreasUniversidad buscaPEByClave(Short clave) {
+        return em.createNamedQuery("AreasUniversidad.findByArea",AreasUniversidad.class)
+                .setParameter("area",clave)
+                .getSingleResult();
+    }
      /**
      * Permite la asignación de calificaciones directas de cuatrimestres previos al estudiante que no tiene historial académico en sistema
      * @param materia Clave de la materia a la que se le asignará calificación

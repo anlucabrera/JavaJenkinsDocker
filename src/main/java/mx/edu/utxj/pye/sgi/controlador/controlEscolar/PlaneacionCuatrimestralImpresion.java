@@ -99,18 +99,26 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
             
-            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosCargaAcademica(rol.getDocente());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
             rol.setPeriodo(ejb.getPeriodoActual());
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.init()"+rol.getPeriodos().size());
             
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
-            if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
-            if(resCarga.getValor().isEmpty()) tieneAcceso = Boolean.FALSE;
+            ResultadoEJB<List<DtoCargaAcademica>> resCarga2 = ejb.getCargaAcademicaDocente(docente, rol.getPeriodos().get(0));
+            
+            if(!resCarga.getCorrecto() || !resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);            
+            if(resCarga.getValor().isEmpty() && resCarga2.getValor().isEmpty()) tieneAcceso = Boolean.FALSE;
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-            rol.setCargas(resCarga.getValor());
-            rol.setCarga(resCarga.getValor().get(0));
+            if (!resCarga.getValor().isEmpty()) {
+                rol.setCargas(resCarga.getValor());
+                rol.setCarga(resCarga.getValor().get(0));
+            } else {
+                rol.setCargas(resCarga2.getValor());
+                rol.setCarga(resCarga2.getValor().get(0));
+            }
             existeAsignacion();
             rol.setFechaInpresion(new Date());
 //            existeConfiguracion();
@@ -133,14 +141,14 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             rol.setCarga(null);
             return;
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo()"+rol.getPeriodo());
         ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(rol.getDocente(), rol.getPeriodo());
         rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
         rol.setCargas(Collections.EMPTY_LIST);
         rol.setCronograma(Collections.EMPTY_LIST);
+        
         if (!resCarga.getValor().isEmpty()) {
             rol.setCargas(resCarga.getValor());
-            rol.setCarga(null);
+            rol.setCarga(rol.getCargas().get(0));
             existeAsignacion();
             crearCronograma(rol.getCarga());
         }

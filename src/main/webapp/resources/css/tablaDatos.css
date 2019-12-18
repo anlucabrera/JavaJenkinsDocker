@@ -57,6 +57,10 @@ table[role="grid"]{
    width: 30em;
 }
 
+.campoAutocompleteCT input {
+   width: 50em;
+}
+
 .campo3Partes input {
    width: 14em;
 }

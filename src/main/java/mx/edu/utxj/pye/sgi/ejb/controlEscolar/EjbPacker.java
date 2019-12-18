@@ -38,7 +38,7 @@ public class EjbPacker {
     @EJB EjbPropiedades ep;
     private EntityManager em;
 
-    @PostConstruct
+     @PostConstruct
     public  void init(){
         em = f.getEntityManager();
     }
@@ -571,7 +571,12 @@ public class EjbPacker {
                 calificacionNivelacion.setValor(0d);
             }
 
+//            if(calificacionNivelacion.getCargaAcademica().getCarga() == 161 && calificacionNivelacion.getEstudiante().getIdEstudiante() == 194)
+//                System.out.println("calificacionNivelacion.getIndicador() = " + calificacionNivelacion.getIndicador());
+
             DtoCalificacionNivelacion dtoCalificacionNivelacion = new DtoCalificacionNivelacion(calificacionNivelacion, indicador);
+            dtoCalificacionNivelacion.setIndicador(calificacionNivelacion.getIndicador());
+//            System.out.println("dtoCalificacionNivelacion.getIndicador() = " + dtoCalificacionNivelacion.getIndicador());
             return ResultadoEJB.crearCorrecto(dtoCalificacionNivelacion, "Empaquetado de nivelación.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la calificación de nivelación (EjbPacker.packDtoCalificacionNivelacion).", e, DtoCalificacionNivelacion.class);

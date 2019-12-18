@@ -97,7 +97,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
             
             rol.setEventoActivo(resEvento.getValor());
 
-            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosCargaAcademica(rol.getDocente());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
             
@@ -138,7 +138,6 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
         setAlertas(Collections.EMPTY_LIST);
         if(rol.getPeriodo() == null) return;
         if(rol.getDocente()== null) return;
-
         ResultadoEJB<List<DtoCargaAcademica>> res = ejb.getCargaAcademicaPorDocente(rol.getDocente(), rol.getPeriodo());
         if(res.getCorrecto()){
             rol.setCargas(res.getValor());
@@ -146,7 +145,7 @@ public class ConfiguracionUnidadMateriaDocente extends ViewScopedRol implements 
         }else mostrarMensajeResultadoEJB(res);
        
     }
-    
+   
     public void alertas(){
         System.err.println("alertas");
 //        ResultadoEJB<List<DtoAlerta>> resMensajes = ejb.identificarMensajes(rol, porcentaje);

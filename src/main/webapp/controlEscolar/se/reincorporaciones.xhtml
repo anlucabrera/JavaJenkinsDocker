@@ -101,7 +101,7 @@
                                                                                 <br/>
                                                                                 <h:message id="messageForFile" for="file" />
                                                                                 <br/>
-                                                                                <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{reincorporacionServiciosEscolares.rol.desencriptarCURP()}">
+                                                                                <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{reincorporacionServiciosEscolares.obtenerDatosQR()}">
                                                                                 </h:commandButton>
                                                                             </div>
                                                                         </div>
@@ -173,9 +173,9 @@
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="paisN" style="font-size: large" value="País Nacimiento*"/>
                                                                                 <p:selectOneMenu id="paisN" value="#{reincorporacionServiciosEscolares.rol.pais}" required="true" requiredMessage="El País de nacimiento es requerido" disabled="#{reincorporacionServiciosEscolares.rol.estado}">
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectEstado()}" update=":tabw1:frmDP:estadoN"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.seleccionarEstado()}" update=":tabw1:frmDP:estadoN"/>
                                                                                     <f:selectItem itemValue="" itemLabel=""/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaPaises}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemPaises}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="paisN"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -183,30 +183,47 @@
                                                                                 <p:outputLabel for="estadoN" style="font-size: large" value="Estado Nacimiento*"/>
                                                                                 <p:selectOneMenu id="estadoN" value="#{reincorporacionServiciosEscolares.rol.persona.estado}" required="true" requiredMessage="El estado de nacimiento es requerido" disabled="#{reincorporacionServiciosEscolares.rol.estado}">
                                                                                     <f:selectItem itemValue="" itemLabel=""/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaEstados}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstados}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="estadoN"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="municipioN" style="font-size: large" value="Municipio Nacimiento*"/>
-                                                                                <p:selectOneMenu id="municipioN" value="#{reincorporacionServiciosEscolares.rol.persona.municipio}" disabled="#{reincorporacionServiciosEscolares.rol.estadoExtr}" required="true" requiredMessage="El municipio de nacimiento es requerido">
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectLocalidad()}" update=":tabw1:frmDP:localidadN"/>
+                                                                                <p:selectOneMenu id="municipioN" value="#{reincorporacionServiciosEscolares.rol.persona.municipio}" disabled="#{reincorporacionServiciosEscolares.rol.estadoExt}" required="true" requiredMessage="El municipio de nacimiento es requerido">
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.seleccionarLocalidad()}" update=":tabw1:frmDP:localidadN"/>
                                                                                     <f:selectItem itemValue="" itemLabel=""/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaMunicipios}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipios}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="municipioN"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="localidadN" style="font-size: large" value="Localidad Nacimiento*"/>
-                                                                                <p:selectOneMenu id="localidadN" value="#{reincorporacionServiciosEscolares.rol.persona.localidad}" disabled="#{reincorporacionServiciosEscolares.rol.estadoExtr}" required="true" requiredMessage="La localidad de nacimiento es requerido">
+                                                                                <p:selectOneMenu id="localidadN" value="#{reincorporacionServiciosEscolares.rol.persona.localidad}" disabled="#{reincorporacionServiciosEscolares.rol.estadoExt}" required="true" requiredMessage="La localidad de nacimiento es requerido">
                                                                                     <f:selectItem itemValue="" itemLabel=""/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaLocalidad}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemLocalidades}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="localidadN"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <hr/>                                                                    
+                                                                    <hr/>        
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <c:if test="#{FichaAdmision.persona.idpersona != null}">
+                                                                                    <p:commandButton id="bt-destroyR" value="Guarda Información" styleClass="btn-primary btn-block col-md-3"
+                                                                                                     actionListener="#{reincorporacionServiciosEscolares.guardaDatosPesonales()}" icon="fa fa-pencil-square-o" update="@form,:tabw1" process="@form" oncomplete="true">
+                                                                                    </p:commandButton>
+                                                                                </c:if>
+                                                                                <c:if test="#{FichaAdmision.persona.idpersona == null}">
+                                                                                    <p:commandButton id="bt-destroySR" value="Guarda Información" styleClass="btn-primary btn-block col-md-3"
+                                                                                                     actionListener="#{reincorporacionServiciosEscolares.guardaDatosPesonales()}" icon="fa fa-pencil-square-o" update="@form,:tabw1" process="@form" oncomplete="true">
+                                                                                    </p:commandButton>
+                                                                                </c:if>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>                                                            
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -248,7 +265,7 @@
                                                                                 <p:outputLabel for="tipoS" style="font-size: large" value="Tipo Sangre*"/>
                                                                                 <p:selectOneMenu id="tipoS" required="true" value="#{reincorporacionServiciosEscolares.rol.datosMedicos.cveTipoSangre}" converter="entidadCEConverter" requiredMessage="Es nesesario que ingrese su tipo de sangre">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaTipoSangre}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemTipoSangre}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="tipoS"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -256,13 +273,13 @@
                                                                                 <p:outputLabel for="tipoDiscapacidad" style="font-size: large" value="Discapacidad*"/>
                                                                                 <p:selectOneMenu id="tipoDiscapacidad" required="true" value="#{reincorporacionServiciosEscolares.rol.datosMedicos.cveDiscapacidad}" converter="entidadCEConverter" requiredMessage="Es importante que mencione si tiene alguna discapacidad">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaTipoDiscapacidad}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemDiscapacidades}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="tipoDiscapacidad"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="amf" style="font-size: large" value="Antecedentes Médicos Familiares"/>
-                                                                                <p:selectManyCheckbox id="amf" value="#{reincorporacionServiciosEscolares.rol.selectAM}">
+                                                                                <p:selectManyCheckbox id="amf" value="#{reincorporacionServiciosEscolares.rol.selectDM}">
                                                                                     <f:selectItem itemValue="Dia" itemLabel="Diabetico"/>
                                                                                     <f:selectItem itemValue="Hip" itemLabel="Hipertenso" />
                                                                                     <f:selectItem itemValue="Car" itemLabel="Cardiaco" />
@@ -321,7 +338,7 @@
                                                                             <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:commandButton id="btnDatosMedicos" value="Guardar información" icon="fa fa-pencil-square-o"
-                                                                                                 class="btn-primary btn-block col-md-3" update="@form,:tabw1" process="@form" actionListener="#{reincorporacionServiciosEscolares.rol.guardaDatosMedicos()}"/>
+                                                                                                 class="btn-primary btn-block col-md-3" update="@form,:tabw1" process="@form" actionListener="#{reincorporacionServiciosEscolares.guardaDatosMedicos()}"/>
                                                                             </div>
                                                                         </div>
                                                                     </div>

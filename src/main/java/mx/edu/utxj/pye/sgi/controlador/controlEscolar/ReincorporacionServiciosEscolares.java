@@ -30,6 +30,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Objects;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -159,6 +162,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
                         //System.out.println("Es igual a nulo");
                         if(rol.getPersona().getEstado() == null){
                             rol.setSelectItemPaises(ejbSI.itemPaises());
+                            clearInformacion();
                             rol.setEstado(true);
                             rol.setEstadoExt(false);
                         }else
@@ -167,6 +171,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
                             rol.setSelectItemMunicipios(ejbSI.itemMunicipiosByClave(rol.getPersona().getEstado()));
                             rol.setSelectItemEstados(ejbSI.itemEstados());
                             rol.setSelectItemPaises(ejbSI.itemPaisMexico());
+                            clearInformacion();
                             rol.setEstado(true);
                             rol.setEstadoExt(false);
                         }
@@ -194,8 +199,100 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         }else{
             Messages.addGlobalError("Es necesario seleccionar un archivo !");
         }
-    } 
+    }     
     
+     public  void clearInformacion(){
+        rol.setDatosMedicos(new DatosMedicos());
+        rol.setSelectDM(new ArrayList<>());
+        rol.setMedioComunicacion(new MedioComunicacion());
+        rol.setDomicilio(new Domicilio());
+        rol.setDatosFamiliares(new DatosFamiliares());
+        rol.setTutorFamiliar(new TutorFamiliar());
+        rol.setDatosAcademicos(new DatosAcademicos());
+        rol.setDm(Boolean.TRUE);
+        rol.setCom(Boolean.TRUE);
+        rol.setDf(Boolean.TRUE);
+        rol.setDa(Boolean.TRUE);
+        rol.setEvif(Boolean.TRUE);
+    }
+    
+     public void verificarRegistros(Persona persona){
+        if (persona.getDatosMedicos() != null) {
+            rol.setSelectDM(new ArrayList<>());
+            rol.setDatosMedicos(persona.getDatosMedicos());
+            rol.setMedioComunicacion(persona.getMedioComunicacion());
+            if(rol.getDatosMedicos().getFDiabetes() == true){
+                rol.getSelectDM().add("Dia");
+            }
+            if(rol.getDatosMedicos().getFHipertenso() == true){
+                rol.getSelectDM().add("Hip");
+            }
+            if(rol.getDatosMedicos().getFCardiaco() == true){
+                rol.getSelectDM().add("Car");
+            }
+            if(rol.getDatosMedicos().getFCancer() == true){
+                rol.getSelectDM().add("Can");
+            }
+            rol.setDm(Boolean.FALSE);
+            rol.setCom(Boolean.FALSE);
+
+            ResultadoEJB<Aspirante> res = ejb.buscarAspirantePorPersona(persona.getIdpersona());
+            if (res.getCorrecto()) {
+                rol.setAspirante(res.getValor());
+            } else {
+                rol.setAspirante(new Aspirante());
+            }
+        }
+        if(rol.getAspirante() != null){
+            if(rol.getAspirante() != null && rol.getAspirante().getDomicilio() != null){
+                rol.setDomicilio(rol.getAspirante().getDomicilio());
+                selectMunicipio();
+                selectAsentamiento();
+                selectMunicipioProcedencia();
+                selectAsentamientoProcedencia();
+                rol.setCom(Boolean.FALSE);
+                rol.setDf(Boolean.FALSE);
+            }
+        }
+        if(rol.getAspirante().getDatosFamiliares() != null) {
+            rol.setDatosFamiliares(rol.getAspirante().getDatosFamiliares());
+            rol.setTutorFamiliar(rol.getDatosFamiliares().getTutor());
+            selectMunicipioTutor();
+            selectAsentamientoTutor();
+            rol.setDf(Boolean.FALSE);
+            rol.setDa(Boolean.FALSE);
+
+        }
+        if(rol.getAspirante().getDatosAcademicos() != null){
+            rol.setDatosAcademicos(rol.getAspirante().getDatosAcademicos());
+            Iems iems = new Iems();
+            AreasUniversidad p1 = new AreasUniversidad();
+            AreasUniversidad p2 = new AreasUniversidad();
+            iems = ejb.buscaIemsByClave(rol.getDatosAcademicos().getInstitucionAcademica());
+            rol.setEstadoItem(iems.getLocalidad().getLocalidadPK().getClaveEstado());
+            rol.setMunicipioItem(iems.getLocalidad().getLocalidadPK().getClaveMunicipio());
+            rol.setLocalidadItem(iems.getLocalidad().getLocalidadPK().getClaveLocalidad());
+            p1 = ejb.buscaPEByClave(rol.getDatosAcademicos().getPrimeraOpcion());
+            p2 = ejb.buscaPEByClave(rol.getDatosAcademicos().getSegundaOpcion());
+            rol.setAreaAcademicaPO(p1.getAreaSuperior());
+            rol.setAreaAcademicaSO(p2.getAreaSuperior());
+            selectMunicipioIems();
+            selectLocalidadIems();
+            selectIems();
+            selectPEPrincipal();
+            selectPEOpcional();
+            rol.setResultado(ejb.getResultado(rol.getAspirante().getIdAspirante()));
+            if(rol.getResultado() == null){
+                rol.setResultado(new EncuestaAspirante());
+                rol.setFinalizado(Boolean.FALSE);
+            }else{
+                comprobar();
+            }
+            rol.setDa(Boolean.FALSE);
+            rol.setEvif(Boolean.FALSE);
+        }
+    }               
+     
     public void verificarExistenciaRegistro(){
         ResultadoEJB<Persona> res = ejb.buscarDatosPersonalesEstudiante(rol.getBuscquedaCurp().toUpperCase());
         if(res.getCorrecto()){
@@ -256,6 +353,41 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             selectMunicipioTutor();
             selectAsentamientoTutor();
         }
+    }    
+    
+    public void comprobar(){
+        if(Objects.equals(rol.getResultado().getR1Lenguaindigena(), "Sí") && (rol.getResultado().getR2tipoLenguaIndigena() == null && rol.getResultado().getR3comunidadIndigena()== null)) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR4programaBienestar() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR5ingresoMensual() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR6dependesEconomicamnete() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR7ingresoFamiliar() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR8primerEstudiar() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR9nivelMaximoEstudios() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR10numeroDependientes() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR11situacionEconomica() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR12hijoPemex() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR13utxjPrimeraOpcion() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR14examenAdmisionOU() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR15medioImpacto() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR16segundaCarrera() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR17Alergia()  == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR18padecesEnfermedad() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        if(rol.getResultado().getR19tratamientoMedico() == null) {rol.setFinalizado(Boolean.FALSE); return;}
+        
+        rol.setMostrar(!rol.getResultado().getR1Lenguaindigena().equals("Sí"));
+        rol.setFinalizado(Boolean.TRUE);
+    }    
+    
+    public void selectIems(){
+//        rol.setlistaIems = ejbSI.itemIems(rol.getEstadoItem(), rol.getMunicipioItem(), rol.getLocalidadItem());
+    }
+    
+    public void selectPEPrincipal(){
+//        rol.setlistaPEP = ejbSI.itemProgramEducativoPorArea(rol.getAreaAcademicaPO());
+    }
+    
+    public void selectPEOpcional(){
+//        listaPES = ejbSI.itemProgramEducativoPorArea(rol.getAreaAcademicaSO());       
     }
     
     public void seleccionarEstado(){
@@ -301,6 +433,80 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     public void selectAsentamientoTutor(){
         rol.setSelectItemAsentamientoTutor(ejbSI.itemAsentamientoByClave(rol.getTutorFamiliar().getEstado(), rol.getTutorFamiliar().getMunicipio()));
     }
+    
+    public void guardaDatosPesonales() {
+        if (ejb.buscarDatosPersonalesEstudiante(rol.getPersona().getCurp()).getCorrecto()) {
+            ResultadoEJB<Persona> res;
+            res = ejb.guardarDatosPersonales(rol.getPersona(), Operacion.ACTUALIZAR);
+            mostrarMensajeResultadoEJB(res);
+            rol.setPersona(res.getValor());
+            rol.setDm(Boolean.FALSE);
+            rol.setIndex(1);
+        } else {
+            ResultadoEJB<Persona> res;
+            res = ejb.guardarDatosPersonales(rol.getPersona(), Operacion.PERSISTIR);
+            mostrarMensajeResultadoEJB(res);
+            rol.setIndex(0);
+            rol.setDm(Boolean.FALSE);
+            rol.setIndex(1);
+        }
+    }
+    
+    public void guardaDatosMedicos(){
+        if(rol.getDatosMedicos().getCvePersona() == null){
+            rol.getSelectDM().stream()
+                    .forEach(s -> {
+                        switch (s) {
+                            case "Dia":
+                                rol.getDatosMedicos().setFDiabetes(Boolean.TRUE);
+                                break;
+                            case "Hip":
+                                rol.getDatosMedicos().setFHipertenso(Boolean.TRUE);
+                                break;
+                            case "Car":
+                                rol.getDatosMedicos().setFCardiaco(Boolean.TRUE);
+                                break;
+                            case "Can":
+                                rol.getDatosMedicos().setFCancer(Boolean.TRUE);
+                                break;
+                        }
+                    });
+            rol.getDatosMedicos().setCvePersona(rol.getPersona().getIdpersona());
+            ejb.guardarDatosMedicos(rol.getDatosMedicos(),rol.getPersona(),Operacion.PERSISTIR);
+//            medioComunicacion.setPersona(persona.getIdpersona());
+//            ejbFichaAdmision.guardaComunicacion(medioComunicacion);
+//            com = false;
+//            index =2;
+        }else{
+//            selectAM.stream()
+//                    .forEach(s -> {
+//                        switch (s) {
+//                            case "Dia":
+//                                datosMedicos.setFDiabetes(true);
+//                                break;
+//                            case "Hip":
+//                                datosMedicos.setFHipertenso(true);
+//                                break;
+//                            case "Car":
+//                                datosMedicos.setFCardiaco(true);
+//                                break;
+//                            case "Can":
+//                                datosMedicos.setFCancer(true);
+//                                break;
+//                        }
+//                    });
+//            ejbFichaAdmision.actualizaDatosMedicos(datosMedicos);
+//            ejbFichaAdmision.actualizaComunicacion(medioComunicacion);
+//            com = false;
+//            index =2;
+        }
+    }
+    
+    
+    
+    
+    
+    
     
 
 // Metodos de Eventos

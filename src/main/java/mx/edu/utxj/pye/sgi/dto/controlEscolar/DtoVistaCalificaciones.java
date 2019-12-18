@@ -27,15 +27,17 @@ public class DtoVistaCalificaciones implements Serializable{
     @Getter @Setter private Materia materia;
     @Getter @Setter private List<BigDecimal> promedios;
     @Getter @Setter private String tareaI;
+    @Getter @Setter private BigDecimal promedioFinalO;
     @Getter @Setter private BigDecimal nivelacion;
-    @Getter @Setter private BigDecimal promedioFinal;
+    @Getter @Setter private BigDecimal promedioFinalN;
 
-    public DtoVistaCalificaciones(Materia materia, List<BigDecimal> promedios, String tareaI, BigDecimal nivelacion, BigDecimal promedioFinal) {
+    public DtoVistaCalificaciones(Materia materia, List<BigDecimal> promedios, String tareaI, BigDecimal promedioFinalO, BigDecimal nivelacion, BigDecimal promedioFinalN) {
         this.materia = materia;
         this.promedios = promedios;
         this.tareaI = tareaI;
+        this.promedioFinalO = promedioFinalO;
         this.nivelacion = nivelacion;
-        this.promedioFinal = promedioFinal;
+        this.promedioFinalN = promedioFinalN;
     }
-
+    
 }

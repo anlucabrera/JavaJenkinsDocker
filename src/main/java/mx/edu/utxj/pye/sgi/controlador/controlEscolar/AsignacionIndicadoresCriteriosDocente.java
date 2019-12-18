@@ -97,7 +97,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
 
             rol.setEventoActivo(resEvento.getValor());
 
-            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosCargaAcademica(rol.getDocente());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
             
@@ -343,9 +343,21 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
     }
      
     public void eliminarAsignacionIndicadores(){
-        ResultadoEJB<Integer> resEliminar = ejb.eliminarAsignacionIndicadores(rol.getCarga().getCargaAcademica());
-        mostrarMensajeResultadoEJB(resEliminar);
-        existeAsignacion();
+        ResultadoEJB<UnidadMateriaConfiguracion> configuracion = ejb.verificarValidacionConfiguracion(rol.getCarga().getCargaAcademica());
+        if (configuracion.getCorrecto()) {
+            rol.setDirectorValido(configuracion.getValor().getDirector());
+            if (rol.getDirectorValido() == null){
+                ResultadoEJB<Integer> resEliminar = ejb.eliminarAsignacionIndicadores(rol.getCarga().getCargaAcademica());
+                existeAsignacion();
+                mostrarMensajeResultadoEJB(resEliminar);
+                
+            } else {
+               Messages.addGlobalWarn("La Configuración ya ha sido validada por el director, por lo que no puede eliminarla");
+            }
+            
+        } else {
+            mostrarMensajeResultadoEJB(configuracion);
+        }
     }
     
      public void guardarIndicadoresCriterioMasivamente(){

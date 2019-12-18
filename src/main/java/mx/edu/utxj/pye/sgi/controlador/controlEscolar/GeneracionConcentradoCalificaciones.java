@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.awt.*;
 import java.io.*;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.nio.file.Files;
@@ -168,7 +169,12 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
             table.addCell(mat);
             table.addCell(new Paragraph(x.getNombre(), fontMateria));
             x.getMaterias().forEach(y -> {
-                PdfPCell cal = new PdfPCell(new Paragraph(y.getPromedioFinal().setScale(2, RoundingMode.HALF_UP).toString(), fontMateria));
+                PdfPCell cal;
+                if(y.getPromedioFinalN().equals(BigDecimal.ZERO)){
+                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalO().setScale(2, RoundingMode.HALF_UP).toString(), fontMateria));
+                }else{
+                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalN().setScale(2, RoundingMode.HALF_UP).toString(), fontMateria));
+                }                
                 cal.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.addCell(cal);
             });

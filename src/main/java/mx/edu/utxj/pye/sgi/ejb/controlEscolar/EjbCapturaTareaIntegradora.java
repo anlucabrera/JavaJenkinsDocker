@@ -31,7 +31,7 @@ public class EjbCapturaTareaIntegradora {
     public void init(){
         em = f.getEntityManager();
     }
-
+    
     /**
      * Permite vertificar si hay un evento de captura de calificaciones activo para el docente
      * @param docente Instacia del docente validado
@@ -195,7 +195,7 @@ public class EjbCapturaTareaIntegradora {
                 @NonNull DtoCalificacionNivelacion dtoCalificacionNivelacion = dtoUnidadesCalificacion.getNivelacionMap().get(pk);
                 @NonNull CalificacionNivelacion calificacionNivelacion = dtoCalificacionNivelacion.getCalificacionNivelacion();
                 @NonNull Indicador indicador = dtoCalificacionNivelacion.getIndicador();
-                System.out.println("indicador = " + indicador);
+//                System.out.println("indicador = " + indicador);
                 CalificacionNivelacionPK calificacionNivelacionPK = new CalificacionNivelacionPK(dtoCargaAcademica.getCargaAcademica().getCarga(), dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante());
                 CalificacionNivelacion calificacionNivelacionBD = em.find(CalificacionNivelacion.class, calificacionNivelacionPK);
                 if(calificacionNivelacionBD != null) {
@@ -206,12 +206,17 @@ public class EjbCapturaTareaIntegradora {
                 calificacionNivelacion.setIndicador(indicador);
                 calificacionNivelacion.setCargaAcademica(dtoCargaAcademica.getCargaAcademica());
                 calificacionNivelacion.setEstudiante(dtoEstudiante.getInscripcionActiva().getInscripcion());
+//                System.out.println("calificacionNivelacion = " + calificacionNivelacion.getIndicador());
                 if(em.contains(calificacionNivelacion)){
+//                    System.out.println(1);
                     em.merge(calificacionNivelacion);
                 }else {
+//                    System.out.println(2);
                     em.persist(calificacionNivelacion);
                 }
                 em.flush();
+//                System.out.println("calificacionNivelacionPK = " + calificacionNivelacion.getCalificacionNivelacionPK());
+//                System.out.println("calificacionNivelacionEM = " + calificacionNivelacion.getIndicador());
                 return ResultadoEJB.crearCorrecto(calificacionNivelacion, "Calificación de nivelación guardada correctamente.");
             }else return ResultadoEJB.crearErroneo(2, "No se encontró la calificación de nivelación a guardar del estudiante indicado en el contenedor.", CalificacionNivelacion.class);
         }catch (Exception e){

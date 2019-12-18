@@ -233,7 +233,7 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             }
         }else if(event.getNewValue() instanceof  Indicador){
             Indicador indicador = (Indicador)event.getNewValue();
-            System.out.println("indicador controller = " + indicador);
+//            System.out.println("indicador controller = " + indicador);
             if(getNivelacion(dtoCargaAcademica, dtoEstudiante) != null) {
                 getNivelacion(dtoCargaAcademica, dtoEstudiante).setIndicador(indicador);
                 ResultadoEJB<CalificacionNivelacion> guardarNivelacion = ejb.guardarNivelacion(getContenedor(dtoCargaAcademica), dtoEstudiante);
@@ -302,6 +302,8 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
         ResultadoEJB<DtoCalificacionNivelacion> packDtoCalificacionNivelacion = packer.packDtoCalificacionNivelacion(dtoCargaAcademica, dtoEstudiante, indicadores.get(0));
         if(packDtoCalificacionNivelacion.getCorrecto()){
             @NonNull DtoCalificacionNivelacion dtoCalificacionNivelacion = packDtoCalificacionNivelacion.getValor();
+//            if(dtoCalificacionNivelacion.getCalificacionNivelacion().getCargaAcademica().getCarga() == 161 && dtoCalificacionNivelacion.getCalificacionNivelacion().getEstudiante().getIdEstudiante() == 194)
+//                System.out.println("dtoCalificacionNivelacion = " + dtoCalificacionNivelacion.getIndicador());
             getContenedor(dtoCargaAcademica).getNivelacionMap().put(pk, dtoCalificacionNivelacion);
             return getContenedor(dtoCargaAcademica).getNivelacionMap().get(pk);
         }else {

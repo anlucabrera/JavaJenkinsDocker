@@ -59,6 +59,7 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -86,6 +87,7 @@ public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements De
     private CargaAcademica academica = new CargaAcademica();
     private List<DtoVistaCalificaciones> dvcs = new ArrayList<>();
     private Integer tasis=0;
+    private Boolean niv=Boolean.FALSE;
     private UnidadMateriaConfiguracion umc = new UnidadMateriaConfiguracion();
     @Inject LogonMB logon;
     
@@ -203,10 +205,9 @@ public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements De
         });
         rol.setDcts(new ArrayList<>());
         rol.getDcts().clear();
-        
+
         rol.setDvcs(new ArrayList<>());
         rol.getDvcs().clear();
-        
 
         rol.getEstudiantes().forEach((t) -> {
             List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad = obtenerCalificaciones(t);
@@ -218,47 +219,57 @@ public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements De
 
         });
         rol.getDcts().forEach((t) -> {
-            dvcs=new ArrayList<>();
+            dvcs = new ArrayList<>();
             dvcs.clear();
-            Collections.sort(t.getCalificacionePorMateria(),  (x, y) -> Integer.compare(x.getMateria().getIdMateria(), y.getMateria().getIdMateria()));                    
+            Collections.sort(t.getCalificacionePorMateria(), (x, y) -> Integer.compare(x.getMateria().getIdMateria(), y.getMateria().getIdMateria()));
             t.getCalificacionePorMateria().forEach((cm) -> {
-                proUni=new ArrayList<>();
+                proUni = new ArrayList<>();
                 proUni.clear();
-                List<DtoCalificacionEstudiante.CalificacionePorUnidad> cpus=t.getCalificacionePorUnidad().stream().filter(c -> Objects.equals(c.getMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
-                Collections.sort(cpus,  (x, y) -> Integer.compare(x.getUnidadMateria().getNoUnidad(), y.getUnidadMateria().getNoUnidad()));    
-                
-                List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tips=t.getTareaIntegradoraPresentacion().stream().filter(c -> Objects.equals(c.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
-                List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> cnpms=t.getCalificacionesNivelacionPorMateria().stream().filter(c -> Objects.equals(c.getMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
-                
-                DtoCalificacionEstudiante.TareaIntegradoraPresentacion tip=tips.get(0);
-                DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria cnpm=cnpms.get(0);
-                
+                List<DtoCalificacionEstudiante.CalificacionePorUnidad> cpus = t.getCalificacionePorUnidad().stream().filter(c -> Objects.equals(c.getMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
+                Collections.sort(cpus, (x, y) -> Integer.compare(x.getUnidadMateria().getNoUnidad(), y.getUnidadMateria().getNoUnidad()));
+
+                List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tips = t.getTareaIntegradoraPresentacion().stream().filter(c -> Objects.equals(c.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
+                List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> cnpms = t.getCalificacionesNivelacionPorMateria().stream().filter(c -> Objects.equals(c.getMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
+
+                DtoCalificacionEstudiante.TareaIntegradoraPresentacion tip = tips.get(0);
+                DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria cnpm = cnpms.get(0);
+
+                if (cnpms.isEmpty()) {
+                    niv = Boolean.FALSE;
+                } else {
+                    niv = Boolean.TRUE;
+                }
+
                 if (cpus.size() == cm.getMateria().getUnidadMateriaList().size()) {
                     cpus.forEach((p) -> {
                         proUni.add(p.getPromedioUnidad());
-                    });                    
+                    });
                 } else {
                     cm.getMateria().getUnidadMateriaList().forEach((p) -> {
                         List<DtoCalificacionEstudiante.CalificacionePorUnidad> l = cpus.stream().filter(u -> Objects.equals(u.getUnidadMateria().getIdUnidadMateria(), p.getIdUnidadMateria())).collect(Collectors.toList());
                         if (l.isEmpty()) {
                             proUni.add(BigDecimal.ZERO);
                         } else {
-                            DtoCalificacionEstudiante.CalificacionePorUnidad cpu=l.get(0);
+                            DtoCalificacionEstudiante.CalificacionePorUnidad cpu = l.get(0);
                             proUni.add(cpu.getPromedioUnidad());
                         }
                     });
                 }
-                dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni,tip.getPromedio(),cnpm.getPromedio(), cm.getPromedio()));
-            });   
+                if (niv) {
+                    dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), cnpm.getPromedio(), cnpm.getPromedio()));
+                } else {
+                    dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio()));
+                }
+            });
             rol.getDvcs().add(new DtoPresentacionCalificacionesReporte(
-                    t.getEstudiante().getMatricula(), 
-                    t.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getNombre(), 
+                    t.getEstudiante().getMatricula(),
+                    t.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getNombre(),
                     dvcs,
                     t.getPromedioF()));
         });
         rol.setTitulos(new ArrayList<>());
         rol.getTitulos().clear();
-        DtoPresentacionCalificacionesReporte dpcr=rol.getDvcs().get(0);
+        DtoPresentacionCalificacionesReporte dpcr = rol.getDvcs().get(0);
         dpcr.getMaterias().forEach((t) -> {
             List<DtoCargaAcademica> dcas = academicas.stream().filter(c -> Objects.equals(c.getMateria().getIdMateria(), t.getMateria().getIdMateria())).collect(Collectors.toList());
             if (!dcas.isEmpty()) {
@@ -266,23 +277,23 @@ public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements De
                 Boolean b = Boolean.FALSE;
                 if (dc.getCargaAcademica().getTareaIntegradora() != null) {
                     b = Boolean.TRUE;
-                }                
+                }
                 rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(dc.getDocente().getPersonal().getNombre(), dc.getMateria().getNombre(), dc.getMateria().getUnidadMateriaList().size(), b));
                 rol.setPrograma(dc.getPrograma());
                 rol.setPlanEstudio(dc.getPlanEstudio());
-            }else{
+            } else {
                 t.getMateria().getPlanEstudioMateriaList().forEach((pem) -> {
                     pem.getCargaAcademicaList().forEach((ca) -> {
-                        academica=ca;
+                        academica = ca;
                     });
                 });
                 Boolean b = Boolean.FALSE;
                 if (academica.getTareaIntegradora() != null) {
                     b = Boolean.TRUE;
                 }
-                rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(buscarPersonal(academica.getDocente()), t.getMateria().getNombre(), t.getMateria().getUnidadMateriaList().size(),b));
+                rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(buscarPersonal(academica.getDocente()), t.getMateria().getNombre(), t.getMateria().getUnidadMateriaList().size(), b));
             }
-        });           
+        });
     }
 
     public List<DtoCalificacionEstudiante.CalificacionePorUnidad> obtenerCalificaciones(Estudiante e) {

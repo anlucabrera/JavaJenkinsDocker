@@ -86,10 +86,22 @@ public class EjbConfiguracionUnidadMateria {
      * Permite obtener la lista de periodos escolares a elegir en el configurador de unidades por materia
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosDescendentes(){
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosCargaAcademica(PersonalActivo docente){
         try{
-            final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo >=52 order by p.periodo desc", PeriodosEscolares.class)
-                    .getResultList();
+             List<Integer> claves = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente=:docente", CargaAcademica.class)
+                .setParameter("docente", docente.getPersonal().getClave())
+                .getResultStream()
+                .map(a -> a.getEvento().getPeriodo())
+                .collect(Collectors.toList());
+        
+            if (claves.isEmpty()) {
+                claves.add(0, 52);
+            }
+            List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
+                    .setParameter("periodos", claves)
+                    .getResultStream()
+                    .distinct()
+                    .collect(Collectors.toList());
             
             return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
         }catch (Exception e){

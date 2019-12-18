@@ -153,6 +153,11 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
      */
     @Getter @NonNull private List<UnidadMateriaConfiguracion> listaUnidadMateriaConfiguracion;
     
+     /**
+     * Parametro que guardar valor si la configuración se encuentra validada por el director
+     */
+    @Getter private Integer directorValido;
+    
     public AsignacionIndicadoresCriteriosRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
         this.docente = docente;
@@ -273,5 +278,8 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
         this.listaUnidadMateriaConfiguracion = listaUnidadMateriaConfiguracion;
     }
     
-    
+    public void setDirectorValido(Integer directorValido) {
+        this.directorValido = directorValido;
+    }
+   
 }

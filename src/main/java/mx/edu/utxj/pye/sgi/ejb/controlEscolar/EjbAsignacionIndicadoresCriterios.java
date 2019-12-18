@@ -99,10 +99,48 @@ public class EjbAsignacionIndicadoresCriterios {
      * Permite obtener la lista de periodos escolares a elegir en el apartado de asignación de indicadores por criterio
      * @return Resultado del proceso
      */
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosCargaAcademica(PersonalActivo docente){
+        try{
+             List<Integer> claves = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente=:docente", CargaAcademica.class)
+                .setParameter("docente", docente.getPersonal().getClave())
+                .getResultStream()
+                .map(a -> a.getEvento().getPeriodo())
+                .collect(Collectors.toList());
+        
+            if (claves.isEmpty()) {
+                claves.add(0, 52);
+            }
+            List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
+                    .setParameter("periodos", claves)
+                    .getResultStream()
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionIndicadoresCriterios.getPeriodosDescendentes)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de periodos escolares a elegir en el apartado de asignación de indicadores por criterio
+     * @return Resultado del proceso
+     */
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosDescendentes(){
         try{
-            final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo >=52 order by p.periodo desc", PeriodosEscolares.class)
-                    .getResultList();
+             List<Integer> claves = em.createQuery("SELECT c FROM CargaAcademica c WHERE", CargaAcademica.class)
+                .getResultStream()
+                .map(a -> a.getEvento().getPeriodo())
+                .collect(Collectors.toList());
+        
+            if (claves.isEmpty()) {
+                claves.add(0, 52);
+            }
+            List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
+                    .setParameter("periodos", claves)
+                    .getResultStream()
+                    .distinct()
+                    .collect(Collectors.toList());
             
             return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
         }catch (Exception e){
@@ -993,5 +1031,32 @@ public class EjbAsignacionIndicadoresCriterios {
         }
         em.merge(configuracion);
         f.flush();
+    }
+    
+    /**
+     * Permite verificar si la configuracion se encuentra validada por el director de carrera
+     * @param cargaAcademica Materia de la que se obtendrá configuración
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<UnidadMateriaConfiguracion> verificarValidacionConfiguracion(CargaAcademica cargaAcademica){
+        try {
+            UnidadMateriaConfiguracion unidadMateriaConfiguracion = new UnidadMateriaConfiguracion();
+            
+            List<UnidadMateriaConfiguracion> listaConfiguracion = em.createQuery("SELECT u FROM UnidadMateriaConfiguracion u WHERE u.carga.carga =:carga", UnidadMateriaConfiguracion.class)
+                    .setParameter("carga", cargaAcademica.getCarga())
+                    .getResultList();
+            
+            if(listaConfiguracion.size() >0 && !listaConfiguracion.isEmpty()){
+            
+                unidadMateriaConfiguracion = listaConfiguracion.get(0);
+            } else{
+            
+                unidadMateriaConfiguracion = null;
+            }
+            return ResultadoEJB.crearCorrecto(unidadMateriaConfiguracion, "Configuración encontrada de la materia seleccionada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la configuracioón de la materia seleccionada. (EjbAsignacionIndicadoresCriterios.verificarValidacionConfiguracion)", e, null);
+        }
+       
     }
 }
