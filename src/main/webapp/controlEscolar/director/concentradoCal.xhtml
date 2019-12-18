@@ -125,112 +125,114 @@
                                                 <p:dataExporter type="xls" target="tbAsigInd1" fileName="# {concentradoCalificaciones.rol.grupoSelec.grado}-# {concentradoCalificaciones.rol.grupoSelec.literal}-# {concentradoCalificaciones.rol.grupoSelec.plan.idPe}" />
                                             </h:commandLink-->
                                             <p:panel id="CV" >
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row hidden-sm hidden-xs" style="align-content:  center">
-                                                                <div class="col-sm-3 pull-left">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <img src="../../resources/img/logoSep.jpg" alt="" height="80px"/>
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row hidden-sm hidden-xs" style="align-content:  center">
+                                                                    <div class="col-sm-3 pull-left">
+                                                                        <div class="description-block" style="text-align: center">
+                                                                            <img src="../../resources/img/logoSep.jpg" alt="" height="80px"/>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-sm-6 pull-left" >
-                                                                    <div class="row">
+                                                                    <div class="col-sm-6 pull-left" >
                                                                         <div class="row">
-                                                                            <div id="tituloCV" class="col-sm-12">
-                                                                                <div class="description-block" style="text-align: center">
-                                                                                    <h3><strong>Universidad Tecnológica De</strong></h3>
-                                                                                    <h3><strong>Xicotepec de Juárez</strong></h3>
-                                                                                    <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>       
-                                                                                    <h4><strong>Calificaciones</strong></h4>
+                                                                            <div class="row">
+                                                                                <div id="tituloCV" class="col-sm-12">
+                                                                                    <div class="description-block" style="text-align: center">
+                                                                                        <h3><strong>Universidad Tecnológica De</strong></h3>
+                                                                                        <h3><strong>Xicotepec de Juárez</strong></h3>
+                                                                                        <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>       
+                                                                                        <h4><strong>Calificaciones</strong></h4>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-sm-3">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <img src="../../resources/img/utxj.png" alt="" height="80px"/>
+                                                                    <div class="col-sm-3">
+                                                                        <div class="description-block" style="text-align: center">
+                                                                            <img src="../../resources/img/utxj.png" alt="" height="80px"/>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <br/>
-                                                            <div class="row hidden-sm hidden-xs">
-                                                                <div class="col-sm-12">
-                                                                    <div class="description-block" style="text-align: right">
+                                                                <br/>
+                                                                <div class="row hidden-sm hidden-xs">
+                                                                    <div class="col-sm-12">
+                                                                        <div class="description-block" style="text-align: right">
                                                                         <h:outputLabel value="Fecha de Reporte" style="font-weight: bold;"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.rol.fechaInpresion}"><f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/></h:outputLabel><p:spacer width="10px"/>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm-12">
-                                                                    <div class="description-block" style="text-align: left">
-                                                                        <h:outputLabel value="ÁREA ACADEMICA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.rol.programa.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
-                                                                        <h:outputLabel value="CARRERA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.rol.planEstudio.descripcion}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
-                                                                        <h:outputLabel value="PERIODO:"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.rol.periodo.mesInicio.mes} - #{concentradoCalificacionesDirector.rol.periodo.mesFin.mes} #{concentradoCalificacionesDirector.rol.periodo.anio}" style="font-weight: bold;"/><p:spacer width="10px"/> <h:outputLabel value="GRUPO:"/> <p:spacer width="10px"/> 
-                                                                        <h:outputLabel value="#{concentradoCalificacionesDirector.rol.grupoSelec.grado}° #{concentradoCalificacionesDirector.rol.grupoSelec.literal}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
-                                                                        <h:outputLabel value="NOMBRE DEL TUTOR"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.buscarPersonal(concentradoCalificacionesDirector.rol.grupoSelec.tutor)}" style="font-weight: bold;"/><p:spacer width="10px"/>
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <div class="description-block" style="text-align: left">
+                                                                            <h:outputLabel value="ÁREA ACADEMICA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.rol.programa.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                            <h:outputLabel value="CARRERA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.rol.planEstudio.descripcion}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                            <h:outputLabel value="PERIODO:"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.rol.periodo.mesInicio.mes} - #{concentradoCalificacionesDirector.rol.periodo.mesFin.mes} #{concentradoCalificacionesDirector.rol.periodo.anio}" style="font-weight: bold;"/><p:spacer width="10px"/> <h:outputLabel value="GRUPO:"/> <p:spacer width="10px"/> 
+                                                                            <h:outputLabel value="#{concentradoCalificacionesDirector.rol.grupoSelec.grado}° #{concentradoCalificacionesDirector.rol.grupoSelec.literal}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                            <h:outputLabel value="NOMBRE DEL TUTOR"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.buscarPersonal(concentradoCalificacionesDirector.rol.grupoSelec.tutor)}" style="font-weight: bold;"/><p:spacer width="10px"/>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <br/>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <div class="description-block">
-                                                            <p:outputPanel>            
-                                                                <p:autoUpdate/>
-                                                                #{concentradoCalificacionesDirector.rol.drpls.size()}
-                                                                <p:panelGrid style="width: 100%">
-                                                                    <f:facet name="header">
-                                                                        <p:row>
-                                                                            <p:column rowspan="3" style="background: #00a7d0">Matricula</p:column>
-                                                                            <p:column rowspan="3" style="background: #00a7d0">Nombre</p:column>
-                                                                            <c:forEach var="i" begin="0" end="#{concentradoCalificacionesDirector.rol.titulos.size()-1}">
-                                                                                <c:set var="t" value="#{concentradoCalificacionesDirector.rol.titulos.get(i)}"/>
-                                                                                <p:column colspan="#{t.ti eq true?t.tunidades+3:t.tunidades+2}" style="font-size: smaller;background: #00D8D8 ">#{t.unidad}<hr/> #{t.docente}</p:column>
-                                                                            </c:forEach> 
-                                                                            <p:column rowspan="3" style="background: #00a7d0">General</p:column>
-                                                                        </p:row>
-                                                                        <p:row>
-                                                                            <c:forEach var="i" begin="0" end="#{concentradoCalificacionesDirector.rol.titulos.size()-1}">
-                                                                                <c:set var="t" value="#{concentradoCalificacionesDirector.rol.titulos.get(i)}"/>
-                                                                                <c:forEach var="g" begin="0" end="#{t.tunidades-1}">
-                                                                                    <p:column style="font-size: smaller;background: #00C853">#{g+1}</p:column>
+                                                    <br/>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="description-block">
+                                                                <p:outputPanel>            
+                                                                    <p:autoUpdate/>
+                                                                    #{concentradoCalificacionesDirector.rol.drpls.size()}
+                                                                    <p:panelGrid style="width: 100%">
+                                                                        <f:facet name="header">
+                                                                            <p:row>
+                                                                                <p:column rowspan="3" style="background: #00a7d0">Matricula</p:column>
+                                                                                <p:column rowspan="3" style="background: #00a7d0">Nombre</p:column>
+                                                                                <c:forEach var="i" begin="0" end="#{concentradoCalificacionesDirector.rol.titulos.size()-1}">
+                                                                                    <c:set var="t" value="#{concentradoCalificacionesDirector.rol.titulos.get(i)}"/>
+                                                                                    <p:column colspan="#{t.ti eq true?t.tunidades+3:t.tunidades+3}" style="font-size: smaller;background: #00D8D8 ">#{t.unidad}<hr/> #{t.docente}</p:column>
+                                                                                </c:forEach> 
+                                                                                <p:column rowspan="3" style="background: #00a7d0">General</p:column>
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <c:forEach var="i" begin="0" end="#{concentradoCalificacionesDirector.rol.titulos.size()-1}">
+                                                                                    <c:set var="t" value="#{concentradoCalificacionesDirector.rol.titulos.get(i)}"/>
+                                                                                    <c:forEach var="g" begin="0" end="#{t.tunidades-1}">
+                                                                                        <p:column style="font-size: smaller;background: #00C853">#{g+1}</p:column>
+                                                                                    </c:forEach>
+                                                                                    <p:column style="font-size: x-small;background: #00C853" rendered="#{t.ti}">T.I</p:column>
+                                                                                    <p:column style="font-size: x-small;background: #00C853">P.O.</p:column>
+                                                                                    <p:column style="font-size: x-small;background: #00C853">Niv.</p:column>
+                                                                                    <p:column style="font-size: x-small;background: #00C853">P.F.</p:column>
                                                                                 </c:forEach>
-                                                                                <p:column style="font-size: x-small;background: #00C853" rendered="#{t.ti}">T.I</p:column>
-                                                                                <p:column style="font-size: x-small;background: #00C853">Niv.</p:column>
-                                                                                <p:column style="font-size: x-small;background: #00C853">P</p:column>
-                                                                            </c:forEach>
-                                                                        </p:row>
-                                                                    </f:facet>
+                                                                            </p:row>
+                                                                        </f:facet>
 
-                                                                    <c:forEach var="a" begin="0" end="#{concentradoCalificacionesDirector.rol.dvcs.size()-1}">
-                                                                        <c:set var="b" value="#{concentradoCalificacionesDirector.rol.dvcs.get(a)}"/>
-                                                                        <p:row >
-                                                                            <p:column style="font-size: small">#{b.matricula}</p:column>
-                                                                            <p:column style="text-align: justify; font-size: small">#{b.nombre}</p:column>                                                                            
-                                                                            <c:forEach var="c" begin="0" end="#{b.materias.size()-1}">
-                                                                                <c:set var="d" value="#{b.materias.get(c)}"/> 
-                                                                                <c:forEach var="e" begin="0" end="#{d.promedios.size()-1}">
-                                                                                    <c:set var="f" value="#{d.promedios.get(e)}"/> 
-                                                                                    <p:column style="font-size: smaller;#{f ge 8 ? 'color: #000000':'color: #E53935;font-weight: bold;' or f gt 0 ? 'color: #E53935;font-weight: bold;':'color: #000000'}">#{f gt 0?concentradoCalificacionesDirector.rol.df.format(f):0}</p:column>
+                                                                        <c:forEach var="a" begin="0" end="#{concentradoCalificacionesDirector.rol.dvcs.size()-1}">
+                                                                            <c:set var="b" value="#{concentradoCalificacionesDirector.rol.dvcs.get(a)}"/>
+                                                                            <p:row >
+                                                                                <p:column style="font-size: small">#{b.matricula}</p:column>
+                                                                                <p:column style="text-align: justify; font-size: small">#{b.nombre}</p:column>                                                                            
+                                                                                <c:forEach var="c" begin="0" end="#{b.materias.size()-1}">
+                                                                                    <c:set var="d" value="#{b.materias.get(c)}"/> 
+                                                                                    <c:forEach var="e" begin="0" end="#{d.promedios.size()-1}">
+                                                                                        <c:set var="f" value="#{d.promedios.get(e)}"/> 
+                                                                                        <p:column style="font-size: smaller;#{f ge 8 ? 'color: #000000':'color: #E53935;font-weight: bold;' or f gt 0 ? 'color: #E53935;font-weight: bold;':'color: #000000'}">#{f gt 0?concentradoCalificacionesDirector.rol.df.format(f):0}</p:column>
+                                                                                    </c:forEach>
+                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.tareaI gt 0 ? 'color: #E53935':'color: #000000'}" rendered="#{d.tareaI ne ''}">#{d.tareaI}</p:column>
+                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalO gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalO gt 0?concentradoCalificacionesDirector.rol.df.format(d.promedioFinalO):0}</p:column>                                                                                
+                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.nivelacion gt 0 ? 'color: #E53935':'color: #000000'}">#{d.nivelacion gt 0?concentradoCalificacionesDirector.rol.df.format(d.nivelacion):0}</p:column>
+                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalN gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalN gt 0?concentradoCalificacionesDirector.rol.df.format(d.promedioFinalN):0}</p:column>                                                                                
                                                                                 </c:forEach>
-                                                                                <p:column style="font-size: smaller; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or d.tareaI gt 0 ? 'color: #E53935':'color: #000000'}" rendered="#{d.tareaI ne ''}">#{d.tareaI}</p:column>
-                                                                                <p:column style="font-size: smaller; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or d.nivelacion gt 0 ? 'color: #E53935':'color: #000000'}">#{d.nivelacion gt 0?concentradoCalificacionesDirector.rol.df.format(d.nivelacion):0}</p:column>
-                                                                                <p:column style="font-size: smaller; #{d.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinal gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinal gt 0?concentradoCalificacionesDirector.rol.df.format(d.promedioFinal):0}</p:column>                                                                                
-                                                                            </c:forEach>
-                                                                            <p:column style="font-size: smaller; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or b.promedioFinal gt 0 ? 'color: #E53935':'color: #000000'}">#{b.promedioFinal gt 0?concentradoCalificacionesDirector.rol.df.format(b.promedioFinal):0}</p:column>
-                                                                        </p:row>
-                                                                    </c:forEach>
-                                                                </p:panelGrid>
-                                                            </p:outputPanel>     
+                                                                                <p:column style="font-size: smaller; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or b.promedioFinal gt 0 ? 'color: #E53935':'color: #000000'}">#{b.promedioFinal gt 0?concentradoCalificacionesDirector.rol.df.format(b.promedioFinal):0}</p:column>
+                                                                            </p:row>
+                                                                        </c:forEach>
+                                                                    </p:panelGrid>
+                                                                </p:outputPanel>     
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </div>    
-                                            </p:panel>
+                                                    </div>    
+                                                </p:panel>
                                         </center>
                                     </div>
                                 </div>

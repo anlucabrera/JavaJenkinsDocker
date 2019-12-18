@@ -84,7 +84,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
  if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
  cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.REPORTE_PLANEACION_CUATRIMESTRAL);
-            ResultadoEJB<Filter<PersonalActivo>> resValidacion = evr.validarDocente(logon.getPersonal().getClave());
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarDocente(logon.getPersonal().getClave());
             if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
