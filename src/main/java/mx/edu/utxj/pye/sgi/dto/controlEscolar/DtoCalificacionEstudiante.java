@@ -22,14 +22,8 @@ public class DtoCalificacionEstudiante {
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class UnidadesPorMateria{
-        @Getter @Setter @NonNull Grupo grupo;
         @Getter @Setter @NonNull CargaAcademica cargaAcademica;
-        @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
-        @Getter @Setter @NonNull Materia materia;
-        @Getter @Setter @NonNull UnidadMateria unidadMateria;
-        @Getter @Setter @NonNull UnidadMateriaConfiguracion configuracion;
-        @Getter @Setter @NonNull BigDecimal porcentaje;
-        @Getter @Setter @NonNull Integer noUnidad;
+        @Getter @Setter @NonNull List<UnidadMateriaConfiguracion> unidadMateriaConfiguracion;
     }
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode

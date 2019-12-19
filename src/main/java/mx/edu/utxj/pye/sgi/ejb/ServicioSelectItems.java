@@ -586,5 +586,52 @@ public class ServicioSelectItems implements EJBSelectItems {
         }
         return lpe;
     }
+    
+    public List<Iems> getIemsByEstadoMunicipioLocalidad(Integer estado, Integer municipio, Integer localidad){
+        return f.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.localidad.localidadPK.claveEstado = :estado AND i.localidad.localidadPK.claveMunicipio = :municipio AND i.localidad.localidadPK.claveLocalidad = :localidad", Iems.class)
+                .setParameter("estado", estado)
+                .setParameter("municipio", municipio)
+                .setParameter("localidad", localidad)
+                .getResultList();
+    }
+    
+    @Override
+    public List<SelectItem> itemIems(Integer estado, Integer municipio, Integer localidad) {
+        List<SelectItem> lsi = new ArrayList<>();
+        getIemsByEstadoMunicipioLocalidad(estado, municipio, localidad).stream()
+                .map(iem -> new SelectItem(iem.getIems(), iem.getTurno().concat("-").concat(iem.getNombre())))
+                .forEachOrdered(selectItem -> {
+                    lsi.add(selectItem);
+                });
+        return lsi;
+    }
+    
+     public List<AreasUniversidad> getProgramasEducativosByArea(Short area){
+        return f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.areaSuperior = :idArea AND au.nivelEducativo.nivel = 'TSU' AND au.vigente = 1",AreasUniversidad.class)
+                .setParameter("idArea", area)
+                .getResultList();
+    }
+
+    @Override
+    public List<SelectItem> itemProgramEducativoPorArea(Short area) {
+        List<SelectItem> slpe = new ArrayList<>();
+        getProgramasEducativosByArea(area).stream()
+                .map(programasEducativos -> new SelectItem(programasEducativos.getArea(),programasEducativos.getNombre()))
+                .forEachOrdered(selectItem -> {
+                    slpe.add(selectItem);
+                });
+        return slpe;
+    }
+    
+    @Override
+    public List<SelectItem> itemAreaAcademica() {
+        List<SelectItem> lsaa = new ArrayList<>();
+        getProgramasEducativos().stream()
+                .map(a -> new SelectItem(a.getArea(),a.getNombre()))
+                .forEachOrdered(selectItem -> {
+                    lsaa.add(selectItem);
+                });
+        return lsaa;
+    }
 
 }

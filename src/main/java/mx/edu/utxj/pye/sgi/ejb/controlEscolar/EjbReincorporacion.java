@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import com.google.zxing.NotFoundException;
+import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
+import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -26,10 +28,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.dto.TipoCuestionario;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.CalificacionesSaiiutDto;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.QrNssDto;
 import static mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioFichaAdmision.ucFirst;
@@ -369,6 +374,36 @@ public class EjbReincorporacion {
         }
     }
 
+    public void guardaTutorFamiliar(TutorFamiliar tutorFamiliar) {
+        tutorFamiliar.setNombre(ucFirst(tutorFamiliar.getNombre().trim()));
+        tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno().trim()));
+        tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno().trim()));
+        tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
+        em.persist(tutorFamiliar);
+    }
+    
+    public void actualizaTutorFamiliar(TutorFamiliar tutorFamiliar) {
+        tutorFamiliar.setNombre(ucFirst(tutorFamiliar.getNombre().trim()));
+        tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno().trim()));
+        tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno().trim()));
+        tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
+        tutorFamiliar.setParentesco(ucFirst(tutorFamiliar.getParentesco().trim()));
+        em.merge(tutorFamiliar);
+    }
+    
+    public void guardaDatosFamiliares(DatosFamiliares datosFamiliares) {
+        datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre().trim()));
+        datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre().trim()));
+        em.persist(datosFamiliares);
+    }
+
+    public void actualizaDatosFamiliares(DatosFamiliares datosFamiliares) {
+        datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre().trim()));
+        datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre().trim()));
+        em.merge(datosFamiliares);
+    }
+
+    
     public ResultadoEJB<DatosAcademicos> guardarDatosAcademicos(DatosAcademicos da, Aspirante a, Operacion o){
         try {
             if(da == null) return ResultadoEJB.crearErroneo(2, "Los datos no puede ser nulo", DatosAcademicos.class);
@@ -488,11 +523,59 @@ public class EjbReincorporacion {
         }
     }
    
+     public List<Apartado> getApartados() {
+        List<Apartado> l = new SerializableArrayList<>();
+        Apartado a1 = new Apartado(1F, "", new ArrayList<>());
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,1.0f, "¿Hablas alguna lengua indígena?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,2.0f, "¿Qué lengua indígena practicas?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,3.0f, "¿Provienes de alguna comunidad indigena?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,4.0f, "¿Cuentas con beca del Programa Bienestar (Prospera)?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,5.0f, "¿Cuál es tu ingreso mensual aproximado?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,6.0f, "¿De quien dependes Económicamente?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,7.0f, "¿Cuál es el ingreso mensual famliar aproximado?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,8.0f, "¿Eres el primer miembro de tu familia en estudiar una carrera universitaria?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,9.0f, "¿Cuál es el nivel máximo de estudios que aspiras tener?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,10.0f, "Número de hermanos (dependientes económicamente del gasto familiar)", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,11.0f, "De acuerdo con el ingreso mensual total de tu hogar ¿cuál es tu situación socioeconómica?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,12.0f, "¿Eres hijo o trabajador de PEMEX y pertenence a la Sección 39?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,13.0f, "¿Consideraste a la UTXJ como primera opción para realizar tus estudios profesionales?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,14.0f, "¿Realizaste exámenes de admisión en otras universidades?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,15.0f, "De la siguiente lista, elige la opción que más influyó para que te decidieras a inscribirte en la UTXJ", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,16.0f, "¿Estudias una segunda carrera a través de la modalidad 2x3?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,17.0f, "¿Eres alérgica(o) a algún medicamento o alimento?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,18.0f, "¿Padeces alguna enfermedad?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,19.0f, "¿Estás en tratamiento médico?", ""));
+        l.add(a1);
+        
+        return l;
+    }
+     
+     
+    public List<SelectItem> getDependientesEconomico() {
+        List<SelectItem> l = new ArrayList<>();
+        l.add(new SelectItem("Padres", "Padres", "Padres"));  
+        l.add(new SelectItem("hermanas o hermanos", "hermanas o hermanos", "hermanas o hermanos"));
+        l.add(new SelectItem("otro familiar", "otro familiar", "otro familiar"));
+        l.add(new SelectItem("Ninguno", "Ninguno", "Ninguno"));
+        return l;
+    }
+    
     public EncuestaAspirante getResultado(Integer cve_aspirante){
         return em.createQuery("SELECT ea FROM EncuestaAspirante ea WHERE ea.cveAspirante = :aspirante", EncuestaAspirante.class)
                 .setParameter("aspirante", cve_aspirante)
                 .getResultList().stream().findFirst().orElse(null);
+    }    
+    
+    public List<SelectItem> getNivelEducacion() {
+        List<SelectItem> l = new ArrayList<>();
+        l.add(new SelectItem("TSU", "TSU", "TSU"));  
+        l.add(new SelectItem("Licenciatura", "Licenciatura", "Licenciatura"));
+        l.add(new SelectItem("Especialidad", "Especialidad", "Especialidad"));
+        l.add(new SelectItem("Maestría", "Maestría", "Maestría"));
+        l.add(new SelectItem("Doctorado", "Doctorado", "Doctorado"));
+        return l;
     }
+    
     /**
      * Permite la asignación de materias que cursará el estudiante
      * @param estudiante Estudiante al que se le asignarán las materias

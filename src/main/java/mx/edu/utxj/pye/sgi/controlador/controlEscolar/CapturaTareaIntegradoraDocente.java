@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Named
 @ViewScoped
@@ -95,7 +96,12 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
 //            rol.setCargaAcademicaSeleccionada(cargaAcademica);
 
             rol.setPeriodosConCarga(resPeriodos.getValor());
-
+            if(!rol.getPeriodosConCarga().isEmpty()){
+                PeriodosEscolares periodoActivo = rol.getPeriodosConCarga().stream()
+                        .filter(periodosEscolares -> Objects.equals(periodosEscolares.getPeriodo(), rol.getPeriodoActivo()))
+                        .findFirst().orElse(null);
+                if(periodoActivo != null) rol.setPeriodoSeleccionado(periodoActivo);
+            }
             cambiarPeriodo();
         }catch (Exception e){
             System.out.println("CapturaTareaIntegradoraDocente.init: Error controlado en método inicializador");

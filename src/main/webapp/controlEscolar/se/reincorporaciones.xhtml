@@ -146,7 +146,7 @@
                                                                                 <p:outputLabel for="genero" style="font-size: large" value="Género"/>
                                                                                 <p:selectOneMenu id="genero" disabled="true" value="#{reincorporacionServiciosEscolares.rol.persona.genero}">
                                                                                     <f:selectItem value="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaGenero}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemGeneros}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="genero"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -172,7 +172,7 @@
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="paisN" style="font-size: large" value="País Nacimiento*"/>
-                                                                                <p:selectOneMenu id="paisN" value="#{reincorporacionServiciosEscolares.rol.pais}" required="true" requiredMessage="El País de nacimiento es requerido" disabled="#{reincorporacionServiciosEscolares.rol.estado}">
+                                                                                <p:selectOneMenu id="paisN" value="#{reincorporacionServiciosEscolares.rol.paisItem}" required="true" requiredMessage="El País de nacimiento es requerido" disabled="#{reincorporacionServiciosEscolares.rol.estado}">
                                                                                     <p:ajax listener="#{reincorporacionServiciosEscolares.seleccionarEstado()}" update=":tabw1:frmDP:estadoN"/>
                                                                                     <f:selectItem itemValue="" itemLabel=""/>
                                                                                     <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemPaises}"/>
@@ -375,8 +375,8 @@
                                                                                 <p:outputLabel for="estadoR" style="font-size: large" value="Estado*"/>
                                                                                 <p:selectOneMenu id="estadoR" value="#{reincorporacionServiciosEscolares.rol.domicilio.idEstado}" required="true" requiredMessage="El estado de recidencia es requerido">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaEstadosDomicilioRadica}"/>
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectMunicipio()}" update="municipioR"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstadosDomicilioRadica}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectMunicipio()}" update="municipioR"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="estadoR"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -384,8 +384,8 @@
                                                                                 <p:outputLabel for="municipioR" style="font-size: large" value="Municipio*"/>
                                                                                 <p:selectOneMenu id="municipioR" value="#{reincorporacionServiciosEscolares.rol.domicilio.idMunicipio}" required="true" requiredMessage="El municipio de recidencia es requerido">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaMunicipiosRadica}"/>
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectAsentamiento()}" update="asentamientoR"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipiosProcedencia}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectAsentamiento()}" update="asentamientoR"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="municipioR"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -393,7 +393,7 @@
                                                                                 <p:outputLabel for="asentamientoR" style="font-size: large" value="Asentamiento*"/>
                                                                                 <p:selectOneMenu id="asentamientoR" value="#{reincorporacionServiciosEscolares.rol.domicilio.idAsentamiento}" filter="true" filterMatchMode="startsWith" style="width:  375px" required="true" requiredMessage="El asentamiento de recidencia es requerido">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaAsentamientos}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAsentamientos}"/>
                                                                                     <p:ajax/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="asentamientoR"><p:autoUpdate/></p:message>
@@ -406,7 +406,7 @@
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="tiempoResidencoa" style="font-size: large" value="¿Deseas utilizar la dirección de residencia como de procedencia?"/>
                                                                                 <p:selectBooleanButton id="value2" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px">
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.usoMismaDireccion()}" update="@form" process="@this,tiempoResidencoa,calle,numero"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.usarDireccionResidencia()}" update="@form" process="@this,tiempoResidencoa,calle,numero"/>
                                                                                 </p:selectBooleanButton>
                                                                             </div>
                                                                         </div>
@@ -434,8 +434,8 @@
                                                                                 <p:outputLabel for="estadoP" style="font-size: large" value="Estado*"/>
                                                                                 <p:selectOneMenu id="estadoP" value="#{reincorporacionServiciosEscolares.rol.domicilio.estadoProcedencia}" required="true" requiredMessage="El estado de procedencia es requerido">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaEstadoProcedencia}"/>
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectMunicipioProcedencia()}" update="municipioP"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstadosProcedencia}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectMunicipioProcedencia()}" update="municipioP"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="estadoP"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -443,8 +443,8 @@
                                                                                 <p:outputLabel for="municipioP" style="font-size: large" value="Municipio*"/>
                                                                                 <p:selectOneMenu id="municipioP" value="#{reincorporacionServiciosEscolares.rol.domicilio.municipioProcedencia}" required="true" requiredMessage="El municipio de procedencia es requerido">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaMunicipiosProdecencia}"/>
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectAsentamientoProcedencia()}" update="asentamientoP"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipiosProcedencia}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectAsentamientoProcedencia()}" update="asentamientoP"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="municipioP"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -452,7 +452,7 @@
                                                                                 <p:outputLabel for="asentamientoP" style="font-size: large" value="Asentamiento*"/>
                                                                                 <p:selectOneMenu id="asentamientoP" value="#{reincorporacionServiciosEscolares.rol.domicilio.asentamientoProcedencia}" filter="true" filterMatchMode="startsWith" style="width:  375px" required="true" requiredMessage="El asentamiento de procedencia es requerido">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaAsentamientoP}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAsentamientosProcedencia}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="asentamientoP"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -469,7 +469,7 @@
                                                                             <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:commandButton id="btnDomCom" value="Guardar información" icon="fa fa-pencil-square-o"
-                                                                                                 class="btn-primary btn-block col-md-3" update="@form,:tabw1" process="@form" actionListener="#{reincorporacionServiciosEscolares.rol.guardaComunicacionDomicilio()}"/>
+                                                                                                 class="btn-primary btn-block col-md-3" update="@form,:tabw1" process="@form" actionListener="#{reincorporacionServiciosEscolares.guardaComunicacionDomicilio()}"/>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -521,8 +521,8 @@
                                                                                 <p:outputLabel for="estadoT" style="font-size: large" value="Estado*"/>
                                                                                 <p:selectOneMenu id="estadoT" value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.estado}" required="true" requiredMessage="Debe de indicar el estado de recidencia de su tutor familiar">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaEstadosTutor}"/>
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectMunicipioTutor()}" update="municipioT"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstadosTutor}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectMunicipioTutor()}" update="municipioT"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="estadoT"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -530,8 +530,8 @@
                                                                                 <p:outputLabel for="municipioT" style="font-size: large" value="Municipio*"/>
                                                                                 <p:selectOneMenu id="municipioT" value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.municipio}" required="true" requiredMessage="Debe de indicar el municipio de recidencia de su tutor familiar">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaMunicipioTutor}"/>
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectAsentamientoTutor()}" update="asentamientoT"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipios}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectAsentamientoTutor()}" update="asentamientoT"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="municipioT"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -539,7 +539,7 @@
                                                                                 <p:outputLabel for="asentamientoT" style="font-size: large" value="Asentamiento*"/>
                                                                                 <p:selectOneMenu id="asentamientoT" value="#{reincorporacionServiciosEscolares.rol.tutorFamiliar.asentamiento}" filter="true" filterMatchMode="startsWith" style="width:  375px" required="true" requiredMessage="Debe de indicar el asentamiento de recidencia de su tutor familiar">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaAsentamientosTutor}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAsentamientoTutor}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="asentamientoT"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -572,7 +572,7 @@
                                                                                 <p:outputLabel for="ocupacionPadre" style="font-size: large" value="Ocupación*"/>
                                                                                 <p:selectOneMenu id="ocupacionPadre" value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.ocupacionPadre}" converter="entidadCEConverter" style="width:375px" required="true" requiredMessage="Debe de indicar la ocupación de tu padre">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaOcupacion}" var="oc" itemValue="#{oc}" itemLabel="#{oc.descripcion}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.ocupacion}" var="oc" itemValue="#{oc}" itemLabel="#{oc.descripcion}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="ocupacionPadre"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -580,7 +580,7 @@
                                                                                 <p:outputLabel for="escolaridadPadre" style="font-size: large" value="Escolaridad*"/>
                                                                                 <p:selectOneMenu id="escolaridadPadre" value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.escolaridadPadre}" converter="entidadCEConverter" required="true" requiredMessage="Debe de indicar la escolaridad de tu padre">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaEscolaridad}" var="esp" itemValue="#{esp}" itemLabel="#{esp.descripcion}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.escolaridad}" var="esp" itemValue="#{esp}" itemLabel="#{esp.descripcion}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="escolaridadPadre"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -604,7 +604,7 @@
                                                                                 <p:outputLabel for="ocupacionMadre" style="font-size: large" value="Ocupación*" />
                                                                                 <p:selectOneMenu id="ocupacionMadre" value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.ocupacionMadre}" converter="entidadCEConverter" style="width:  375px" required="true" requiredMessage="Debe de indicar la ocupación de tu madre">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaOcupacion}" var="ocm" itemValue="#{ocm}" itemLabel="#{ocm.descripcion}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.ocupacion}" var="ocm" itemValue="#{ocm}" itemLabel="#{ocm.descripcion}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="ocupacionPadre"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -612,7 +612,7 @@
                                                                                 <p:outputLabel for="escolaridadMadre" style="font-size: large" value="Escolaridad*"/>
                                                                                 <p:selectOneMenu id="escolaridadMadre" value="#{reincorporacionServiciosEscolares.rol.datosFamiliares.escolaridadMadre}" converter="entidadCEConverter" required="true" requiredMessage="Debe de indicar la escolaridad de tu madre">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaEscolaridad}" var="esm" itemValue="#{esm}" itemLabel="#{esm.descripcion}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.escolaridad}" var="esm" itemValue="#{esm}" itemLabel="#{esm.descripcion}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="escolaridadPadre"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -624,7 +624,7 @@
                                                                             <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:commandButton id="btnGuardaDatosFamiliares" value="Guardar información" icon="fa fa-pencil-square-o"
-                                                                                                 class="btn-primary btn-block col-md-3" update="@form,:tabw1" process="@form" actionListener="#{reincorporacionServiciosEscolares.rol.guardaDatosFamiliares()}"/>
+                                                                                                 class="btn-primary btn-block col-md-3" update="@form,:tabw1" process="@form" actionListener="#{reincorporacionServiciosEscolares.guardaDatosFamiliares()}"/>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -649,28 +649,28 @@
                                                                         <div class="form-group">
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="estado" style="font-size: large" value="Estado*"/>
-                                                                                <p:selectOneMenu id="estado" value="#{reincorporacionServiciosEscolares.rol.estado_iems}" required="true" requiredMessage="Debe de indicar el Estado donde se encuentra su bachillerato">
+                                                                                <p:selectOneMenu id="estado" value="#{reincorporacionServiciosEscolares.rol.estadoItem}" required="true" requiredMessage="Debe de indicar el Estado donde se encuentra su bachillerato">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaEstadoIEMS}"/>
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectMunicipioIems()}" update="municipioB,localidadB,iems"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemEstadosIEMS}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectMunicipioIems()}" update="municipioB,localidadB,iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="estado"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="municipioB" style="font-size: large" value="Municipio*"/>
-                                                                                <p:selectOneMenu id="municipioB" required="true" value="#{reincorporacionServiciosEscolares.rol.municipio_iems}" style="width:  375px" requiredMessage="Debe de indicar el Municipio donde se encuentra su bachillerato">
+                                                                                <p:selectOneMenu id="municipioB" required="true" value="#{reincorporacionServiciosEscolares.rol.municipioItem}" style="width:  375px" requiredMessage="Debe de indicar el Municipio donde se encuentra su bachillerato">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaMunicipioIEMS}"/>
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectLocalidadIems()}" update="localidadB"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemMunicipiosIEMS}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectLocalidadIems()}" update="localidadB"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="municipioB"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="localidadB" style="font-size: large" value="Localidad*"/>
-                                                                                <p:selectOneMenu id="localidadB" required="true" value="#{reincorporacionServiciosEscolares.rol.localidad_iems}" requiredMessage="Debe de indicar la Localidad donde se encuentra su bachillerato">
+                                                                                <p:selectOneMenu id="localidadB" required="true" value="#{reincorporacionServiciosEscolares.rol.localidadItem}" requiredMessage="Debe de indicar la Localidad donde se encuentra su bachillerato">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaLocalidadIEMS}"/>
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectIems()}" update="iems"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemLocalidadesIEMS}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectIems()}" update="iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="localidadB"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -688,7 +688,7 @@
                                                                                 <p:outputLabel for="eb" style="font-size: large" value="Especialidad Bachillerato*"/>
                                                                                 <p:selectOneMenu id="eb" required="true" value="#{reincorporacionServiciosEscolares.rol.datosAcademicos.especialidadIems}" converter="entidadCEConverter" requiredMessage="Debe de indicar la especialidad de su bachillerato">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaEspecialidades}" var="espe" itemValue="#{espe}" itemLabel="#{espe.nombre}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.especialidades}" var="espe" itemValue="#{espe}" itemLabel="#{espe.nombre}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="eb"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -715,7 +715,7 @@
                                                                                 <p:outputLabel for="da1" style="font-size: large" value="División Académica*"/>
                                                                                 <p:selectOneMenu id="da1" value="#{reincorporacionServiciosEscolares.rol.areaAcademicaPO}" required="true" requiredMessage="Debe de indicar la división academica de la carrera de primera opción">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaAreasSO}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAreasSO}"/>
                                                                                     <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectPEPrincipal()}" update="pe1,sistema1"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="da1"><p:autoUpdate/></p:message>
@@ -751,8 +751,8 @@
                                                                                 <p:outputLabel for="da2" style="font-size: large" value="División Académica*"/>
                                                                                 <p:selectOneMenu id="da2" value="#{reincorporacionServiciosEscolares.rol.areaAcademicaSO}" required="true" requiredMessage="Debe de indicar la división academica de la carrera de segunda opción">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.listaAreasSO}"/>
-                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.rol.selectPEOpcional()}" update="pe2,sistema2"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.selectItemAreasSO}"/>
+                                                                                    <p:ajax listener="#{reincorporacionServiciosEscolares.selectPEOpcional()}" update="pe2,sistema2"/>
                                                                                 </p:selectOneMenu>  
                                                                                 <p:message for="da2"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -780,7 +780,7 @@
                                                                             <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:commandButton id="btnDatosAca" value="Guardar información" icon="fa fa-pencil-square-o"
-                                                                                                 class="btn-primary btn-block col-md-3" update="@form,:tabw1" actionListener="#{reincorporacionServiciosEscolares.rol.guardaDatosAcademicos}"/>
+                                                                                                 class="btn-primary btn-block col-md-3" update="@form,:tabw1" actionListener="#{reincorporacionServiciosEscolares.guardaDatosAcademicos}"/>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -852,7 +852,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r1Lenguaindigena}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -879,7 +879,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r3comunidadIndigena}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}" disabled="#{reincorporacionServiciosEscolares.rol.mostrar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -892,7 +892,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r4programaBienestar}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -940,7 +940,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r8primerEstudiar}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -992,7 +992,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r12hijoPemex}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -1005,7 +1005,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r13utxjPrimeraOpcion}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -1018,7 +1018,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r14examenAdmisionOU}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -1045,7 +1045,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r16segundaCarrera}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -1058,7 +1058,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r17Alergia}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -1071,7 +1071,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r18padecesEnfermedad}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -1084,7 +1084,7 @@
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <f:ajax execute="p#{index}">
                                                                                     <p:selectOneButton id="p#{index}" value="#{reincorporacionServiciosEscolares.rol.resultado.r19tratamientoMedico}" valueChangeListener="#{reincorporacionServiciosEscolares.rol.guardar}">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.siNo}" />
+                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.siNo}" />
                                                                                     </p:selectOneButton>
                                                                                 </f:ajax>
                                                                                 <c:set var="index" value="#{index+1}" />
@@ -1097,12 +1097,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <c:if test="#{reincorporacionServiciosEscolares.rol.finalizado}">
+                                            <!--c:if test="# {reincorporacionServiciosEscolares.rol.finalizado}">
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                         <div class="col-sm-4 col-md-4 col-lg-4">
-                                                            <p>Estimado(a) #{reincorporacionServiciosEscolares.rol.persona.nombre}</p>
+                                                            <p>Estimado(a) # {reincorporacionServiciosEscolares.rol.persona.nombre}</p>
 
                                                             <p style="text-align:  justify">Gracias por elegir a la Universidad Tecnológica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior.</p>
                                                             <p style="text-align:  justify">Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entrega la documentación necesaria</p>
@@ -1115,15 +1115,15 @@
                                                                 <li>Referencia bancaria del pago de ficha y examen de admisión.</li>
                                                             </ul>
                                                             <br/>
-                                                            <p style="text-align:  justify">Se enviará su ficha de admisión al correo <strong>#{reincorporacionServiciosEscolares.rol.medioComunicacion.email}</strong> al dar clic en el botón Descargar Formato de Ficha</p>
+                                                            <p style="text-align:  justify">Se enviará su ficha de admisión al correo <strong># {reincorporacionServiciosEscolares.rol.medioComunicacion.email}</strong> al dar clic en el botón Descargar Formato de Ficha</p>
                                                             <p:commandButton id="btnDatosAca" value="Descargar Formato de Ficha" icon="fa fa-download"
-                                                                             class="btn-primary btn-block col-md-3" update=":tabw1" action="#{reincorporacionServiciosEscolares.rol.downloadFichaAdmin()}" ajax="false"/>
+                                                                             class="btn-primary btn-block col-md-3" update=":tabw1" action="# {reincorporacionServiciosEscolares.rol.downloadFichaAdmin()}" ajax="false"/>
                                                             <p:commandButton id="btnDatoClear" value="Nuevo Registro" icon="fa fa-address-card"
-                                                                             class="btn-primary btn-block col-md-3" update=":tabw1" action="#{reincorporacionServiciosEscolares.rol.nuevoRegistro()}"/>
+                                                                             class="btn-primary btn-block col-md-3" update=":tabw1" action="# {reincorporacionServiciosEscolares.rol.nuevoRegistro()}"/>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </c:if>
+                                            </c:if-->
                                         </h:form>
                                     </p:tab>
                                 </p:tabView>

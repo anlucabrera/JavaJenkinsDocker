@@ -85,4 +85,10 @@ public interface EJBSelectItems {
     
     public List<SelectItem> itemProgramasEducativos();
     
+    public List<SelectItem> itemProgramEducativoPorArea(Short area);
+    
+    public List<SelectItem> itemIems(Integer estado, Integer municipio, Integer localidad);
+    
+    public List<SelectItem> itemAreaAcademica();
+    
 }

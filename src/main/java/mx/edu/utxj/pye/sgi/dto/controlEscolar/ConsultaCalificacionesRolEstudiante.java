@@ -5,13 +5,16 @@ import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConsultaCalificacionesRolEstudiante{
 
@@ -20,19 +23,22 @@ public class ConsultaCalificacionesRolEstudiante{
     @Getter @NonNull private Estudiante estudiante;
     @Getter @NonNull private PeriodosEscolares periodoActivo;
     @Getter @NonNull private List<PeriodosEscolares> periodosEscolares;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante, promedioMateria;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.UnidadesPorMateria> unidadesPorMateria;
     @Getter @NonNull private List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionePorMateria, calificacionesFinalesPorMateria;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria;
-    @Getter @NonNull private List<Calificacion> calificacion;
     @Getter @NonNull private List<BigDecimal> promediosAcumulados;
     @Getter @NonNull private Integer periodo, periodoSeleccionado, idMateria;
     @Getter @NonNull private BigDecimal promedio = BigDecimal.ZERO;
     @Getter @NonNull private BigDecimal promedioAcumluado = BigDecimal.ZERO;
     @Getter @NonNull private DtoCapturaCalificacion captura;
+
+    @Getter @NonNull private List<DtoCargaAcademica> cargasEstudiante;
+    @Getter private Map<DtoCargaAcademica, List<DtoUnidadConfiguracion>> dtoUnidadConfiguracionesMap = new HashMap<>();
+    @Getter @NonNull private DtoUnidadesCalificacionEstudiante dtoUnidadesCalificacionEstudiante;
+    @Getter private Map<DtoCargaAcademica, DtoUnidadesCalificacionEstudiante> dtoUnidadesCalificacionMap = new HashMap<>();
+    @Getter @NonNull private List<DtoCalificacionEstudiante.UnidadesPorMateria> unidadesPorMateria;
+    @Getter @Setter private Boolean tieneIntegradora = false;
+    @Getter @Setter private Map<DtoCargaAcademica, Boolean> tieneIntegradoraMap = new HashMap<>();
+    @Getter @Setter private Map<DtoCargaAcademica, TareaIntegradora> tareaIntegradoraMap = new HashMap<>();
+
 
     public Boolean tieneAcceso(Estudiante estudiante, UsuarioTipo usuarioTipo){
         if(estudiante == null) return false;
@@ -52,24 +58,12 @@ public class ConsultaCalificacionesRolEstudiante{
         this.periodosEscolares = periodosEscolares;
     }
 
-    public void setMateriasPorEstudiante(List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante) {
-        this.materiasPorEstudiante = materiasPorEstudiante;
-    }
-
-    public void setUnidadesPorMateria(List<DtoCalificacionEstudiante.UnidadesPorMateria> unidadesPorMateria) {
-        this.unidadesPorMateria = unidadesPorMateria;
-    }
-
     public void setMapUnidadesTematicas(List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas) {
         this.mapUnidadesTematicas = mapUnidadesTematicas;
     }
 
     public void setPeriodo(Integer periodo) {
         this.periodo = periodo;
-    }
-
-    public void setCalificacion(List<Calificacion> calificacion) {
-        this.calificacion = calificacion;
     }
 
     public void setCaptura(DtoCapturaCalificacion captura) {
@@ -84,20 +78,8 @@ public class ConsultaCalificacionesRolEstudiante{
         this.periodoSeleccionado = periodoSeleccionado;
     }
 
-    public void setCalificacionePorUnidad(List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad) {
-        this.calificacionePorUnidad = calificacionePorUnidad;
-    }
-
-    public void setCalificacionePorMateria(List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionePorMateria) {
-        this.calificacionePorMateria = calificacionePorMateria;
-    }
-
     public void setIdMateria(Integer idMateria) {
         this.idMateria = idMateria;
-    }
-
-    public void setPromedioMateria(List<DtoCalificacionEstudiante.MateriasPorEstudiante> promedioMateria) {
-        this.promedioMateria = promedioMateria;
     }
 
     public void setPromediosAcumulados(List<BigDecimal> promediosAcumulados) {
@@ -108,19 +90,23 @@ public class ConsultaCalificacionesRolEstudiante{
         this.promedioAcumluado = promedioAcumluado;
     }
 
-    public void setCalificacionesNivelacionPorMateria(List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria) {
-        this.calificacionesNivelacionPorMateria = calificacionesNivelacionPorMateria;
-    }
-
-    public void setCalificacionesFinalesPorMateria(List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionesFinalesPorMateria) {
-        this.calificacionesFinalesPorMateria = calificacionesFinalesPorMateria;
-    }
-
     public void setInstrucciones(List<String> instrucciones) {
         this.instrucciones = instrucciones;
     }
 
-    public void setTareaIntegradoraPresentacion(List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion) {
-        this.tareaIntegradoraPresentacion = tareaIntegradoraPresentacion;
+    public void setCargasEstudiante(List<DtoCargaAcademica> cargasEstudiante) {
+        this.cargasEstudiante = cargasEstudiante;
+    }
+
+    public void setDtoUnidadConfiguracionesMap(Map<DtoCargaAcademica, List<DtoUnidadConfiguracion>> dtoUnidadConfiguracionesMap) {
+        this.dtoUnidadConfiguracionesMap = dtoUnidadConfiguracionesMap;
+    }
+
+    public void setDtoUnidadesCalificacionEstudiante(DtoUnidadesCalificacionEstudiante dtoUnidadesCalificacionEstudiante) {
+        this.dtoUnidadesCalificacionEstudiante = dtoUnidadesCalificacionEstudiante;
+    }
+
+    public void setUnidadesPorMateria(List<DtoCalificacionEstudiante.UnidadesPorMateria> unidadesPorMateria) {
+        this.unidadesPorMateria = unidadesPorMateria;
     }
 }

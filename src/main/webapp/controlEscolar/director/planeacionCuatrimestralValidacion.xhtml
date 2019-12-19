@@ -77,7 +77,7 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="periodo" value="#{planeacionCuatrimestralValidacion.rol.periodo}" converter="entityConverter" styleClass="form-control" >
                                                     <f:selectItems value="#{planeacionCuatrimestralValidacion.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, carga" listener="#{planeacionCuatrimestralValidacion.cambiarPeriodo}"/>
+                                                    <p:ajax process="@this, carga, :CV" listener="#{planeacionCuatrimestralValidacion.cambiarPeriodo}"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>

@@ -167,6 +167,12 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         if (!resCarga.getCorrecto()) {
             mostrarMensajeResultadoEJB(resCarga);
         }
+        if (resCarga.getValor().isEmpty()) {
+            rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setCargas(Collections.EMPTY_LIST);
+            rol.setCronograma(Collections.EMPTY_LIST);
+            return;
+        }
         rol.setCargas(resCarga.getValor());
         rol.setCarga(resCarga.getValor().get(0));
         existeAsignacion();
@@ -183,8 +189,14 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         rol.setGrupoSelec(rol.getGrupos().get(0));
         ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());            
         if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
+        if (resCarga.getValor().isEmpty()) {
+            rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setCargas(Collections.EMPTY_LIST);
+            rol.setCronograma(Collections.EMPTY_LIST);
+            return;
+        }
         rol.setCargas(resCarga.getValor());
-        rol.setCarga(resCarga.getValor().get(0));  
+        rol.setCarga(resCarga.getValor().get(0));
         existeAsignacion();
         crearCronograma(rol.getCarga());
     }    
@@ -194,8 +206,14 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         rol.setGrupoSelec((Grupo) event.getNewValue());
         ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());            
         if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
+        if (resCarga.getValor().isEmpty()) {
+            rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setCargas(Collections.EMPTY_LIST);
+            rol.setCronograma(Collections.EMPTY_LIST);
+            return;
+        }
         rol.setCargas(resCarga.getValor());
-        rol.setCarga(resCarga.getValor().get(0));  
+        rol.setCarga(resCarga.getValor().get(0));
         existeAsignacion();
         crearCronograma(rol.getCarga());
     }

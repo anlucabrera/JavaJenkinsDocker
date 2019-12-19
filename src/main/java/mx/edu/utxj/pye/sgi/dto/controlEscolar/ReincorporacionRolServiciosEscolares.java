@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import mx.edu.utxj.pye.sgi.dto.Apartado;
 
 public class ReincorporacionRolServiciosEscolares extends AbstractRol {
 
@@ -72,6 +73,7 @@ public class ReincorporacionRolServiciosEscolares extends AbstractRol {
     @Getter @Setter private Short areaAcademicaSO;
     @Getter @Setter private Boolean dm = true,com = true,df = true,da = true,evif = true, estatusFicha = null,finalizado,mostrar;
     @Getter @Setter protected EncuestaAspirante resultado;
+    @Getter @Setter private List<LenguaIndigena> listaLenguasIndigenas;
 
     /**
      * Variable que representa la apertura de los selectOneMenu para saber el estado de nacimiento
@@ -90,6 +92,10 @@ public class ReincorporacionRolServiciosEscolares extends AbstractRol {
             selectItemDiscapacidades, selectItemMunicipiosProcedencia, selectItemAsentamientos, selectItemAsentamientosProcedencia, selectItemEstadosDomicilioRadica,
             selectItemEstadosProcedencia, selectItemEstadosTutor, selectItemEstadosIEMS, selectItemLocalidadesIEMS, selectItemAsentamientoTutor;
 
+    @Getter @Setter @NonNull private List<SelectItem> listaIems,listaPEP,listaPES,selectItemAreasPO,selectItemAreasSO,respuestasDependientesEconomicos,respuestasPosiblesNivelEstudios;
+    @Getter @Setter private List<Sistema> listaSistema;
+    @Getter @Setter protected List<Apartado> apartados;
+    @Getter @Setter private List<MedioDifusion> listaMedioDifusion;
     /**
      * Variables de apoyo
      */

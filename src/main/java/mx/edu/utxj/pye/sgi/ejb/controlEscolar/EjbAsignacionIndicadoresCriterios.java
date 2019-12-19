@@ -94,7 +94,7 @@ public class EjbAsignacionIndicadoresCriterios {
             return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para asignación de indicadores por criterio del personal docente (EjbAsignacionIndicadoresCriterios.verificarEvento)", e, EventoEscolar.class);
         }
     }
-
+    
     /**
      * Permite obtener la lista de periodos escolares a elegir en el apartado de asignación de indicadores por criterio
      * @return Resultado del proceso
@@ -108,7 +108,7 @@ public class EjbAsignacionIndicadoresCriterios {
                 .collect(Collectors.toList());
         
             if (claves.isEmpty()) {
-                claves.add(0, 52);
+                claves.add(0, ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.ASIGNACION_TUTORES).getValor().getPeriodo());
             }
             List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
                     .setParameter("periodos", claves)
@@ -128,13 +128,13 @@ public class EjbAsignacionIndicadoresCriterios {
      */
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosDescendentes(){
         try{
-             List<Integer> claves = em.createQuery("SELECT c FROM CargaAcademica c WHERE", CargaAcademica.class)
+             List<Integer> claves = em.createQuery("SELECT c FROM CargaAcademica c", CargaAcademica.class)
                 .getResultStream()
                 .map(a -> a.getEvento().getPeriodo())
                 .collect(Collectors.toList());
         
             if (claves.isEmpty()) {
-                claves.add(0, 52);
+                claves.add(0, ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.ASIGNACION_TUTORES).getValor().getPeriodo());
             }
             List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
                     .setParameter("periodos", claves)

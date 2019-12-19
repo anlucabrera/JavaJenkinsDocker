@@ -95,7 +95,7 @@ public class EjbConfiguracionUnidadMateria {
                 .collect(Collectors.toList());
         
             if (claves.isEmpty()) {
-                claves.add(0, 52);
+                claves.add(0, ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.ASIGNACION_TUTORES).getValor().getPeriodo());
             }
             List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
                     .setParameter("periodos", claves)

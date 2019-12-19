@@ -31,9 +31,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -166,12 +164,14 @@ public class CedulaIdentificacionTutor extends ViewScopedRol implements Desarrol
     public void obtenerUnidadesPorMateria() {
         List<DtoCalificacionEstudiante.MapUnidadesTematicas> resMap = new ArrayList<>();
         ResultadoEJB<List<DtoCalificacionEstudiante.UnidadesPorMateria>> resUnidadesPorMateria = ejbCalificaiones.packUnidadesmateria(rol.getEstudiante());
-        rol.setUnidadesPorMateria(resUnidadesPorMateria.getValor().stream().filter(x -> x.getGrupo().getPeriodo() == rol.getPeriodoE()).collect(Collectors.toList()));
-        Map<Integer, Long> map = rol.getUnidadesPorMateria().stream().collect(Collectors.groupingBy(DtoCalificacionEstudiante.UnidadesPorMateria::getNoUnidad, Collectors.counting()));
-        map.forEach((k, v) -> {
-            resMap.add(new DtoCalificacionEstudiante.MapUnidadesTematicas(k, v.intValue()));
+        rol.setUnidadesPorMateria(resUnidadesPorMateria.getValor());
+        rol.getUnidadesPorMateria().forEach(x -> {
+            x.getUnidadMateriaConfiguracion().forEach(y -> {
+                resMap.add(new DtoCalificacionEstudiante.MapUnidadesTematicas(y.getIdUnidadMateria().getNoUnidad(), y.getIdUnidadMateria().getNoUnidad()));
+            });
         });
-        rol.setMapUnidadesTematicas(resMap);
+        rol.setMapUnidadesTematicas(new ArrayList<>(new HashSet<>(resMap)));
+        rol.getMapUnidadesTematicas().sort(Comparator.comparingInt(DtoCalificacionEstudiante.MapUnidadesTematicas::getNoUnidad));
     }
     public void obtenerCalificaciones() {
         ResultadoEJB<List<DtoCalificacionEstudiante.CalificacionePorUnidad>> resCalificaciones = ejbCalificaiones.packCalificacionesPorUnidadyMateria1(rol.getEstudiante());

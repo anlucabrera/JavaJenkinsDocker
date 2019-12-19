@@ -63,7 +63,7 @@ public class CapturaTareaIntegradoraRolDocente  extends AbstractRol {
 
     public void setPeriodosConCarga(List<PeriodosEscolares> periodosConCarga) {
         this.periodosConCarga = periodosConCarga;
-        if(!periodosConCarga.isEmpty() && periodoSeleccionado == null){
+        if(!periodosConCarga.isEmpty()){
             periodoSeleccionado = periodosConCarga.get(0);
         }
     }
@@ -74,7 +74,7 @@ public class CapturaTareaIntegradoraRolDocente  extends AbstractRol {
 
     public void setCargasDocente(List<DtoCargaAcademica> cargasDocente) {
         this.cargasDocente = cargasDocente;
-        if(!cargasDocente.isEmpty() && cargaAcademicaSeleccionada == null){
+        if(!cargasDocente.isEmpty()){
             cargaAcademicaSeleccionada = cargasDocente.get(0);
         }
     }
