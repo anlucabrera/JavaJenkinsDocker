@@ -320,6 +320,29 @@
         <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE19'}">
             <div class="box box-primary">
                 <div class="box box-solid">
+                    <!-- Reinscripcion Autónoma-->
+                    <c:if test="#{reinscripcionAutonomaEstudiante.tieneAcceso}">
+                        <c:if test="#{reinscripcionAutonomaEstudiante.rol.reinscrito!=true}">
+                            <div class="#{claseResumen}" style="max-height: 154px;">
+                                <div class="small-box bg-aqua-active">
+                                    <div class="inner" style="cursor: pointer;" onclick="cambio();">
+                                        <h3>
+                                            <h:outputLabel value="Reinscripción Autónoma" style="cursor: pointer;" onclick="cambio();" />
+                                            <sup style="font-size: 20px"></sup>
+                                        </h3>
+                                        <p>Periodo: #{caster.clavePeriodoToString(reinscripcionAutonomaEstudiante.rol.eventoReinscripcion.periodo)}<br/></p>
+                                        <p>¡No haz realizado tu reinscripción!. Ingresa aqui para realizarlo.<br/></p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fa fa-user-check"></i>
+                                    </div>
+                                    <p:link  outcome="controlEscolar/estudiante/reinscripcionAutonoma" class="small-box-footer">
+                                        Entrar <i class="fa fa-arrow-circle-right"></i>
+                                    </p:link>
+                                </div>
+                            </div>
+                        </c:if>
+                    </c:if>
                     <!--Cuestionario Psicopedagogico -->
                     <div class="box-body">
                         <div class="row">

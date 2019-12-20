@@ -100,8 +100,8 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
     @PostConstruct
     public void init(){
         try {
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
+            if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+            cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.CONCENTRADO_CALIFICACIONES_TUTOR);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = evr.validarTutor(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
@@ -170,7 +170,7 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
         rol.setDrpls(new ArrayList<>());
         rol.setDplrs(new ArrayList<>());
         rol.setEstudiantes(new ArrayList<>());
-        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());
+        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());        
         academicas = new ArrayList<>();
         academicas = rejb.getValor().stream().filter(a -> Objects.equals(a.getGrupo().getIdGrupo(), rol.getGrupoSelec().getIdGrupo())).collect(Collectors.toList());
         DtoCargaAcademica dca = academicas.get(0);

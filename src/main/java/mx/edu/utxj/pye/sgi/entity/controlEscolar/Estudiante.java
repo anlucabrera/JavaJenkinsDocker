@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -44,7 +45,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Estudiante.findByCarrera", query = "SELECT e FROM Estudiante e WHERE e.carrera = :carrera")
     , @NamedQuery(name = "Estudiante.findByOpcionIncripcion", query = "SELECT e FROM Estudiante e WHERE e.opcionIncripcion = :opcionIncripcion")
     , @NamedQuery(name = "Estudiante.findByFechaAlta", query = "SELECT e FROM Estudiante e WHERE e.fechaAlta = :fechaAlta")
-    , @NamedQuery(name = "Estudiante.findByTrabajadorInscribe", query = "SELECT e FROM Estudiante e WHERE e.trabajadorInscribe = :trabajadorInscribe")})
+    , @NamedQuery(name = "Estudiante.findByTrabajadorInscribe", query = "SELECT e FROM Estudiante e WHERE e.trabajadorInscribe = :trabajadorInscribe")
+    , @NamedQuery(name = "Estudiante.findByTipoRegistro", query = "SELECT e FROM Estudiante e WHERE e.tipoRegistro = :tipoRegistro")})
 public class Estudiante implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,10 +74,13 @@ public class Estudiante implements Serializable {
     @Column(name = "fecha_alta")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaAlta;
+    @Column(name = "trabajador_inscribe")
+    private Integer trabajadorInscribe;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "trabajador_inscribe")
-    private int trabajadorInscribe;
+    @Size(min = 1, max = 22)
+    @Column(name = "tipo_registro")
+    private String tipoRegistro;
     @ManyToMany(mappedBy = "estudianteList")
     private List<Asesoria> asesoriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
@@ -95,7 +100,7 @@ public class Estudiante implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
     private Documentosentregadosestudiante documentosentregadosestudiante;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Aspirante aspirante;
     @JoinColumn(name = "tipo_estudiante", referencedColumnName = "id_tipo_estudiante")
     @ManyToOne(optional = false)
@@ -125,13 +130,13 @@ public class Estudiante implements Serializable {
         this.idEstudiante = idEstudiante;
     }
 
-    public Estudiante(Integer idEstudiante, int matricula, int periodo, short carrera, boolean opcionIncripcion, int trabajadorInscribe) {
+    public Estudiante(Integer idEstudiante, int matricula, int periodo, short carrera, boolean opcionIncripcion, String tipoRegistro) {
         this.idEstudiante = idEstudiante;
         this.matricula = matricula;
         this.periodo = periodo;
         this.carrera = carrera;
         this.opcionIncripcion = opcionIncripcion;
-        this.trabajadorInscribe = trabajadorInscribe;
+        this.tipoRegistro = tipoRegistro;
     }
 
     public Integer getIdEstudiante() {
@@ -182,12 +187,20 @@ public class Estudiante implements Serializable {
         this.fechaAlta = fechaAlta;
     }
 
-    public int getTrabajadorInscribe() {
+    public Integer getTrabajadorInscribe() {
         return trabajadorInscribe;
     }
 
-    public void setTrabajadorInscribe(int trabajadorInscribe) {
+    public void setTrabajadorInscribe(Integer trabajadorInscribe) {
         this.trabajadorInscribe = trabajadorInscribe;
+    }
+
+    public String getTipoRegistro() {
+        return tipoRegistro;
+    }
+
+    public void setTipoRegistro(String tipoRegistro) {
+        this.tipoRegistro = tipoRegistro;
     }
 
     @XmlTransient

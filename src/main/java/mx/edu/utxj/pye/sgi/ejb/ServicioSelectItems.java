@@ -626,12 +626,17 @@ public class ServicioSelectItems implements EJBSelectItems {
     @Override
     public List<SelectItem> itemAreaAcademica() {
         List<SelectItem> lsaa = new ArrayList<>();
-        getProgramasEducativos().stream()
+        getProgramasEducativos2().stream()
                 .map(a -> new SelectItem(a.getArea(),a.getNombre()))
                 .forEachOrdered(selectItem -> {
                     lsaa.add(selectItem);
                 });
         return lsaa;
+    }
+    
+     public List<AreasUniversidad> getProgramasEducativos2(){
+        return f.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.categoria.categoria = 8",AreasUniversidad.class)
+                .getResultList();
     }
 
 }

@@ -74,7 +74,8 @@ public enum ControlEscolarVistaControlador {
     CAMBIO_PWD("/controlEscolar/estudiante/CambioPwdEstudiante.xhtml",CambioPwdEstudiante.class),
     PERFIL_ESTUDIANTE("/controlEscolar/estudiante/modificacionDatosEstudiante.xhtml",PerfilEstudiante.class),        
     TUTORIAS_GRUPALES_ESTUDIANTE("/controlEscolar/estudiante/tutorias_grupales.xhtml",ValidacionTutoriaGrupalEstudiante.class),
-    
+    REINSCRIPCION_AUTONOMA("/controlEscolar/estudiante/reinscripcionAutonoma.xhtml",ReinscripcionAutonomaEstudiante.class),
+
     SEGUIMIENTO_CASO_CRITICO_ESPECIALISTA("/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml", SeguimientoCasoCriticoEspecialista.class),
 
     CONSULTA_CALIFICACION_COORDINADOR("/controlEscolar/coordinador/consultarCalificacionesCoordinador.xhtml", ConsultaCalificacionesCoordinadorAD.class),

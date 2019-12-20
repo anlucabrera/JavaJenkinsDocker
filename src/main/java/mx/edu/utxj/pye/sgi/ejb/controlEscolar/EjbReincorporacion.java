@@ -374,12 +374,13 @@ public class EjbReincorporacion {
         }
     }
 
-    public void guardaTutorFamiliar(TutorFamiliar tutorFamiliar) {
+    public TutorFamiliar guardaTutorFamiliar(TutorFamiliar tutorFamiliar) {
         tutorFamiliar.setNombre(ucFirst(tutorFamiliar.getNombre().trim()));
         tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno().trim()));
         tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno().trim()));
         tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
         em.persist(tutorFamiliar);
+        return tutorFamiliar;
     }
     
     public void actualizaTutorFamiliar(TutorFamiliar tutorFamiliar) {
@@ -548,6 +549,43 @@ public class EjbReincorporacion {
         l.add(a1);
         
         return l;
+    }
+     public ResultadoEJB<EncuestaAspirante> actualizar(String id, Object valor, EncuestaAspirante resultado){
+        try {
+            switch (id){
+                case "p0": resultado.setR1Lenguaindigena(valor.toString()); break;
+                case "p1": resultado.setR2tipoLenguaIndigena((LenguaIndigena) valor); break;
+                case "p2": resultado.setR3comunidadIndigena(valor.toString()); break;
+                case "p3": resultado.setR4programaBienestar(valor.toString()); break;
+                case "p4": resultado.setR5ingresoMensual(Double.parseDouble(valor.toString())); break;
+                case "p5": resultado.setR6dependesEconomicamnete(valor.toString()); break;
+                case "p6": resultado.setR7ingresoFamiliar(Double.parseDouble(valor.toString())); break;
+                case "p7": resultado.setR8primerEstudiar(valor.toString()); break;
+                case "p8": resultado.setR9nivelMaximoEstudios(valor.toString()); break;
+                case "p9": resultado.setR10numeroDependientes(Short.valueOf(valor.toString())); break;
+                case "p10": resultado.setR11situacionEconomica(valor.toString()); break;
+                case "p11": resultado.setR12hijoPemex(valor.toString()); break;
+                case "p12": resultado.setR13utxjPrimeraOpcion(valor.toString()); break;
+                case "p13": resultado.setR14examenAdmisionOU(valor.toString()); break;
+                case "p14": resultado.setR15medioImpacto((MedioDifusion) valor); break;
+                case "p15": resultado.setR16segundaCarrera(valor.toString()); break;
+                case "p16": resultado.setR17Alergia(valor.toString()); break;
+                case "p17": resultado.setR18padecesEnfermedad(valor.toString()); break;
+                case "p18": resultado.setR19tratamientoMedico(valor.toString()); break;
+            }
+            return ResultadoEJB.crearCorrecto(resultado, "Valor guardado en memoria");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error: ", e, EncuestaAspirante.class);
+        }
+    }
+    
+     public ResultadoEJB<EncuestaAspirante> guardar(EncuestaAspirante resultado){
+        try{
+            em.merge(resultado);
+            return ResultadoEJB.crearCorrecto(resultado, "Valor guardado en base de datos");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error: ", e, EncuestaAspirante.class);
+        }
     }
      
      

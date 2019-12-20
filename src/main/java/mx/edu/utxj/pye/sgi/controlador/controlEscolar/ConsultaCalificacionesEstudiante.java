@@ -74,7 +74,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
                 ResultadoEJB<List<PeriodosEscolares>> resPeriodosEscolares = ejb.obtenerListaPeriodosEscolares();
                 rol.setPeriodosEscolares(resPeriodosEscolares.getValor());
 
-                ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcadémicas(rol.getEstudiante());
+                ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(rol.getEstudiante());
                 if(!resCargas.getCorrecto()) mostrarMensajeResultadoEJB(resCargas);
                 else rol.setCargasEstudiante(resCargas.getValor().stream().filter(x -> x.getPeriodo().getPeriodo().equals(rol.getPeriodoSeleccionado())).collect(Collectors.toList()));
                 obtenerUnidadesPorMateria();
@@ -189,7 +189,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
 
     public BigDecimal getPromedioCuatrimestral(){
         BigDecimal promedioCuatrimestral = BigDecimal.ZERO;
-        ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcadémicas(rol.getEstudiante());
+        ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(rol.getEstudiante());
         List<BigDecimal> lista = new ArrayList<>();
         if(!resCargas.getCorrecto()) mostrarMensajeResultadoEJB(resCargas);
         else rol.setCargasEstudiante(resCargas.getValor().stream().filter(x -> x.getPeriodo().getPeriodo().equals(rol.getPeriodoSeleccionado())).collect(Collectors.toList()));

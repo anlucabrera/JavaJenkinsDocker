@@ -75,6 +75,8 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         Font fontBold = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
         Font fontNormal = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL);
         Font fontMateria = new Font(Font.FontFamily.HELVETICA, 7, Font.NORMAL);
+        Font fontMateria2 = new Font(Font.FontFamily.HELVETICA, 5, Font.NORMAL);
+        Font fontMateria1 = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD);
         Font fontBolder = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8, Font.UNDERLINE);
         Font fontCursive = new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC);
         String base = ServicioArchivos.carpetaRaiz.concat("acta_final").concat(File.separator);
@@ -84,10 +86,11 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         OutputStream out = new FileOutputStream(new File(base.concat(nombrePdf)));
 
         PdfWriter.getInstance(document, out);
-        //PdfWriter.getInstance(document, new FileOutputStream("C:\\archivos\\acta_final\\acta_final_"+grupo.getLiteral()+"_"+grupo.getTutor()+".pdf"));
+        PdfWriter.getInstance(document, new FileOutputStream("C:\\archivos\\acta_final\\acta_final_"+grupo.getLiteral()+"_"+grupo.getTutor()+".pdf"));
         //PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\"+usuario+"\\Downloads\\acta_final_"+grupo.getLiteral()+"_"+grupo.getTutor()+".pdf"));
         PdfPTable table = new PdfPTable(2 + titulos.size());
         PdfPTable tableFirma = new PdfPTable(3);
+        PdfPTable tableEscalas = new PdfPTable(5);
         Caster caster = new Caster();
 
 
@@ -119,14 +122,12 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         gradoGrupo = new Paragraph("Grado, Grupo:", fontNormal);
         gradoGrupo.setLeading(0, 0);
         gradoGrupo.setIndentationLeft(20f);
-        //grado = new Paragraph(String.valueOf("1°'A'"), fontBolder);
         grado = new Paragraph(String.valueOf(grupo.getGrado()+"°'"+grupo.getLiteral().toString()+"'"), fontBolder);
         grado.setLeading(0, 0);
         grado.setIndentationLeft(75f);
         carrera = new Paragraph("Carrera:", fontNormal);
         carrera.setLeading(0, 0);
         carrera.setIndentationLeft(100f);
-        //programaEducativo = new Paragraph("T.S.U en Tecnologías de la Información Área Desarrollo de Software Multiplataforma", fontBolder);
         programaEducativo = new Paragraph(grupo.getPlan().getDescripcion(), fontBolder);
         programaEducativo.setLeading(0, 0);
         programaEducativo.setIndentationLeft(130f);
@@ -134,7 +135,6 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         periodo.setLeading(0, 0);
         periodo.setIndentationLeft(460f);
         periodoEscolar = new Paragraph(caster.periodoToString(periodoSelect), fontBolder);
-        //periodoEscolar = new Paragraph("Septiembre - Diciembre de 2019", fontBolder);
         periodoEscolar.setLeading(0, 0);
         periodoEscolar.setIndentationLeft(493f);
 
@@ -173,13 +173,13 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
                 if(y.getPromedioFinalN().equals(BigDecimal.ZERO)){
                     cal = new PdfPCell(new Paragraph(y.getPromedioFinalO().setScale(2, RoundingMode.HALF_UP).toString(), fontMateria));
                 }else{
-                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalN().setScale(2, RoundingMode.HALF_UP).toString(), fontMateria));
+                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalN().setScale(2, RoundingMode.HALF_UP).toString().concat(" *"), fontMateria));
                 }                
                 cal.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.addCell(cal);
             });
         });
-        PdfPCell docentes = new PdfPCell(new Paragraph("Docentes", fontMateria));
+        PdfPCell docentes = new PdfPCell(new Paragraph("Docentes", fontMateria1));
         docentes.setHorizontalAlignment(Element.ALIGN_CENTER);
         docentes.setColspan(2);
         table.addCell(docentes);
@@ -188,20 +188,34 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
             docente.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(docente);
         });
+        final PdfPCell[] leyenda = new PdfPCell[1];
+        calificaciones.forEach(x -> {
+            x.getMaterias().forEach(y -> {
+                if(!y.getPromedioFinalN().equals(BigDecimal.ZERO)){
+                    leyenda[0] = new PdfPCell(new Paragraph("* Resultado obtenido en nivelación final", fontMateria1));
+                    leyenda[0].setHorizontalAlignment(Element.ALIGN_LEFT);
+                    leyenda[0].setColspan(2 + titulos.size());
+                    leyenda[0].setBorder(Rectangle.NO_BORDER);
+                }
+            });
+        });
+        table.addCell(leyenda[0]);
+
+
         if(calificaciones.size() > 15 && calificaciones.size() <= 20){
-            tableFirma.setSpacingBefore(190);
+            tableFirma.setSpacingBefore(180);
         }
         if(calificaciones.size() >= 21 && calificaciones.size() <= 25){
-            tableFirma.setSpacingBefore(150);
+            tableFirma.setSpacingBefore(140);
         }
         if(calificaciones.size() >= 26 && calificaciones.size() <= 30){
-            tableFirma.setSpacingBefore(60);
+            tableFirma.setSpacingBefore(50);
         }
         if(calificaciones.size() >= 31 && calificaciones.size() <= 35){
-            tableFirma.setSpacingBefore(60);
+            tableFirma.setSpacingBefore(50);
         }
         if(calificaciones.size() >= 32 && calificaciones.size() <= 40){
-            tableFirma.setSpacingBefore(60);
+            tableFirma.setSpacingBefore(50);
         }
 
         tableFirma.setWidthPercentage(60);
@@ -228,6 +242,43 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         textoDir.setBorder(0);
         tableFirma.addCell(textoDir);
 
+        tableEscalas.setSpacingBefore(10);
+        tableEscalas.setWidthPercentage(70);
+        PdfPCell descripcion = new PdfPCell(new Paragraph("DESCRIPCIÓN DE LA ESCALA", fontMateria2));
+        descripcion.setColspan(5);
+        descripcion.setHorizontalAlignment(Element.ALIGN_CENTER);
+        tableEscalas.addCell(descripcion);
+        PdfPCell asigNoInt = new PdfPCell(new Paragraph("Asignatura No Integradora", fontMateria2));
+        asigNoInt.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tableEscalas.addCell(asigNoInt);
+        PdfPCell autonomo = new PdfPCell(new Paragraph("AU = Autónomo 10", fontMateria2));
+        autonomo.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tableEscalas.addCell(autonomo);
+        PdfPCell destacado = new PdfPCell(new Paragraph("DE = Destacado 9", fontMateria2));
+        destacado.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tableEscalas.addCell(destacado);
+        PdfPCell satisfactorio = new PdfPCell(new Paragraph("DE = Satisfactorio 8", fontMateria2));
+        satisfactorio.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tableEscalas.addCell(satisfactorio);
+        PdfPCell noAcreditado = new PdfPCell(new Paragraph("NA = No Acreditado menor a 8", fontMateria2));
+        noAcreditado.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tableEscalas.addCell(noAcreditado);
+
+        PdfPCell asigInt = new PdfPCell(new Paragraph("Asignatura Integradora", fontMateria2));
+        asigInt.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tableEscalas.addCell(asigInt);
+        PdfPCell competente = new PdfPCell(new Paragraph("CA = Competente Autónomo 10", fontMateria2));
+        competente.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tableEscalas.addCell(competente);
+        PdfPCell cdestacado = new PdfPCell(new Paragraph("CD = Competente Destacado 9", fontMateria2));
+        cdestacado.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tableEscalas.addCell(cdestacado);
+        PdfPCell comp = new PdfPCell(new Paragraph("CO = Competente 8", fontMateria2));
+        comp.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tableEscalas.addCell(comp);
+        PdfPCell noAcreditadoA = new PdfPCell(new Paragraph("NA = No Acreditado menor a 8", fontMateria2));
+        noAcreditadoA.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tableEscalas.addCell(noAcreditadoA);
 
 
         //Tabla de firma por tutor y director
@@ -248,6 +299,7 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         document.add(periodoEscolar);
         document.add(table);
         document.add(tableFirma);
+        document.add(tableEscalas);
         //Se cierra el documento
         document.close();
         FacesContext.getCurrentInstance()
