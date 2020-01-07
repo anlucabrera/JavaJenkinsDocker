@@ -82,9 +82,9 @@
                                         </div>
                                         <div class="col-sm-12 col-md-12 col-lg-2">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="periodo" value="#{permisoAperturaExtemporaneaAdministrador.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cargasAcademicas}">
+                                                <p:selectOneMenu id="periodo" value="#{permisoAperturaExtemporaneaAdministrador.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarPeriodo}">
                                                     <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, carga"/>
+                                                    <p:ajax process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>
@@ -96,7 +96,7 @@
                                                 <p:selectOneMenu id="carga" value="#{permisoAperturaExtemporaneaAdministrador.rol.carga}" converter="entityConverter" valueChangeListener="#{permisoAperturaExtemporaneaAdministrador.cambiarCargaAcademica}">
                                                     <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.cargasPeriodo}" var="carga"
                                                                    itemValue="#{carga}" itemLabel="#{carga.materia.nombre} (#{carga.planEstudioMateria.claveMateria}) #{carga.grupo.grado}° #{carga.grupo.literal} de #{carga.programa.nombre}"/>
-                                                    <p:ajax update="@this, unidad" process="@this, unidad"/>
+                                                    <p:ajax update="@this" process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Materia - Grupo - Programa Educativo" for="carga"/>

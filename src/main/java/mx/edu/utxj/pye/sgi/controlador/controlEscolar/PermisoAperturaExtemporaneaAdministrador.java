@@ -208,6 +208,16 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     }
     
     /**
+     * Permite que al cambiar el periodo escolar se actualicen las cargas académicas asignadas en ese periodo
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarPeriodo(ValueChangeEvent e){
+       rol.setPeriodo((PeriodosEscolares)e.getNewValue());
+       cargasAcademicas();
+       Ajax.update("frm");
+    }
+    
+    /**
      * Permite que al cambiar el tipo de evaluación se pueda habilitar o deshabilitar la opción de unidad de la materia
      * @param e Evento del cambio de valor
      */
