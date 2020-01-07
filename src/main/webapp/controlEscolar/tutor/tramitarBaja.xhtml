@@ -73,7 +73,7 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="periodo" value="#{tramitarBajaTutor.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{tramitarBajaTutor.cambiarPeriodo}">
                                                     <f:selectItems value="#{tramitarBajaTutor.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, grupo"/>
+                                                    <p:ajax process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>
