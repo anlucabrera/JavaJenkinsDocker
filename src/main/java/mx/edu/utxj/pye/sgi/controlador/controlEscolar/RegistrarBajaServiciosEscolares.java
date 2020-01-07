@@ -226,7 +226,7 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
      * en tipo de evaluacion "Ordinaria"
      */
     public void guardarRegistroBaja(){
-        ResultadoEJB<Baja> res = ejb.guardarRegistroBaja(rol.getPeriodoActivo(), rol.getDatosEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getPersonal(), rol.getFechaBaja());
+        ResultadoEJB<Baja> res = ejb.guardarRegistroBaja(rol.getDatosEstudiante().getPeriodoEscolar().getPeriodo(), rol.getDatosEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getPersonal(), rol.getFechaBaja());
         if(res.getCorrecto()){
             rol.setBajaRegistrada(res.getValor());
             mostrarMensajeResultadoEJB(res);

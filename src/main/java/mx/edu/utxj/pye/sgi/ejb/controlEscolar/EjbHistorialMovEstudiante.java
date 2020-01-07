@@ -155,12 +155,14 @@ public class EjbHistorialMovEstudiante {
             if(aspirante.getIdAspirante()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar un registro de aspirante con clave nula.", DtoHistorialMovEstudiante.class);
 
             Aspirante aspiranteBD = em.find(Aspirante.class, aspirante.getIdAspirante());
+            
             if(aspiranteBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar un registro de aspirante no registrado previamente en base de datos.", DtoHistorialMovEstudiante.class);
            
-            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante =:aspirante AND e.grupo.grado=:grado", Estudiante.class)
+            List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante =:aspirante ORDER BY e.periodo ASC", Estudiante.class)
                     .setParameter("aspirante", aspiranteBD.getIdAspirante())
-                    .setParameter("grado", (int)1)
-                    .getSingleResult();
+                    .getResultList();
+            
+            Estudiante estudiante = listaEstudiante.get(0);
             
             List<DtoMovimientoEstudiante> listaMovimientos = new ArrayList<>();
             
@@ -185,7 +187,7 @@ public class EjbHistorialMovEstudiante {
                     .sorted(Comparator.comparing(DtoMovimientoEstudiante::getFecha))
                     .collect(Collectors.toList());
 
-            DtoHistorialMovEstudiante dto = new DtoHistorialMovEstudiante(aspirante, estudiante, programaEducativo, listaOrdenada);
+            DtoHistorialMovEstudiante dto = new DtoHistorialMovEstudiante(aspirante.getIdProcesoInscripcion(), aspirante, estudiante, programaEducativo, listaOrdenada);
            
             return ResultadoEJB.crearCorrecto(dto, "Información de historial de movimiento del estudiante empaquetado.");
         }catch (Exception e){
@@ -216,21 +218,21 @@ public class EjbHistorialMovEstudiante {
         }
     }
     
-    /**
+   /**
      * Permite obtener los datos de inscripción del estudiante seleccionado
      * @param aspirante Registro de aspirante
      * @return Resultado del proceso
      */
     public ResultadoEJB<DtoMovimientoEstudiante> getDatosInscripcion(Aspirante aspirante){
         try{
-            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante =:aspirante AND e.grupo.grado=:grado", Estudiante.class)
+            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante =:aspirante AND e.tipoRegistro =:tipoRegistro", Estudiante.class)
                     .setParameter("aspirante", aspirante.getIdAspirante())
-                    .setParameter("grado", (int) 1)
+                    .setParameter("tipoRegistro", "Inscripción")
                     .getSingleResult();
             
             PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
             String periodoEscolar = periodo.getMesInicio().getMes()+ " - " + periodo.getMesFin().getMes()+ " " + periodo.getAnio();
-            String tipoMovimiento = "Inscripción";
+            String tipoMovimiento = estudiante.getTipoRegistro();
             Personal personal = em.find(Personal.class, estudiante.getTrabajadorInscribe());
             AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
             Grupo grupo = em.find(Grupo.class, estudiante.getGrupo().getIdGrupo());
@@ -251,9 +253,17 @@ public class EjbHistorialMovEstudiante {
      */
     public ResultadoEJB<List<DtoMovimientoEstudiante>> getDatosReinscripcion(Integer matricula){
         try{
-            List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula AND e.grupo.grado >:grado", Estudiante.class)
+            List<String> listaTiposMovimientos = new ArrayList();
+            listaTiposMovimientos.add("Reinscripcion Autónoma");
+            listaTiposMovimientos.add("Reinscripcion");
+            listaTiposMovimientos.add("Reinscripcion otra UT");
+            listaTiposMovimientos.add("Reinscripcion misma UT");
+            listaTiposMovimientos.add("Regularización");
+            
+            
+            List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula AND e.tipoRegistro IN :tipoRegistro", Estudiante.class)
                     .setParameter("matricula", matricula)
-                    .setParameter("grado", (int) 1)
+                    .setParameter("tipoRegistro", listaTiposMovimientos)
                     .getResultList();
            
             List<DtoMovimientoEstudiante> listaDtoEstudiantes = new ArrayList<>();
@@ -261,13 +271,20 @@ public class EjbHistorialMovEstudiante {
             listaEstudiante.forEach(est -> {
                 PeriodosEscolares periodo = em.find(PeriodosEscolares.class, est.getPeriodo());
                 String periodoEscolar = periodo.getMesInicio().getMes() + " - " + periodo.getMesFin().getMes() + " " + periodo.getAnio();
-                String tipoMovimiento = "Reinscripción";
-                Personal personal = em.find(Personal.class, est.getTrabajadorInscribe());
+                String tipoMovimiento = est.getTipoRegistro();
+                String reinscribio;
+                if(est.getTrabajadorInscribe() == null){
+                    reinscribio = "Proceso Autónomo";
+                }else{
+                    Personal personal = em.find(Personal.class, est.getTrabajadorInscribe());
+                    reinscribio = personal.getNombre();
+                }
+                
                 AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, est.getCarrera());
                 Grupo grupo = em.find(Grupo.class, est.getGrupo().getIdGrupo());
                 String informacionMovimiento = "Grupo: " + grupo.getGrado() + "° " + grupo.getLiteral() + " " + grupo.getIdSistema().getNombre() + " de " + programaEducativo.getNombre();
 
-                DtoMovimientoEstudiante dto = new DtoMovimientoEstudiante(est.getFechaAlta(), periodoEscolar, tipoMovimiento, informacionMovimiento, personal.getNombre());
+                DtoMovimientoEstudiante dto = new DtoMovimientoEstudiante(est.getFechaAlta(), periodoEscolar, tipoMovimiento, informacionMovimiento, reinscribio);
                 listaDtoEstudiantes.add(dto);
             });
             
