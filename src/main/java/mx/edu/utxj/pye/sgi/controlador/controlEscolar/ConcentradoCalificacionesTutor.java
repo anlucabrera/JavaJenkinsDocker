@@ -239,11 +239,12 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
                         }
                     });
                 }
-                if (niv) {
+                if (cnpm.getPromedio()!=BigDecimal.ZERO) {
                     dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), cnpm.getPromedio(), cnpm.getPromedio()));
                 } else {
                     dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio()));
                 }
+                niv=Boolean.FALSE;
             });
             rol.getDvcs().add(new DtoPresentacionCalificacionesReporte(
                     t.getEstudiante().getMatricula(),

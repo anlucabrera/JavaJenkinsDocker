@@ -207,7 +207,7 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
            }
            //System.out.println("Lista ---> "+listAproboMateria.size());
            // System.out.println("Lista filtrada por materias que reprobo---> "+materiasReprobadas.size());
-           if(materiasReprobadas.size()>1){
+           if(materiasReprobadas.size()>0){
                aprobo =false;
            }else {aprobo= true;}
            //System.out.println("Aprobo -->" +aprobo);
@@ -389,7 +389,7 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
         BigDecimal promedioOrdinario = getPromedioAsignaturaEstudiante(dtoCargaAcademica);
         BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal promedioFinal = BigDecimal.ZERO;
-        if(promedioOrdinario.compareTo(BigDecimal.valueOf(8)) >= 0){
+        if(nivelacion.compareTo(BigDecimal.valueOf(0)) == 0){
             promedioFinal = promedioFinal.add(promedioOrdinario);
         }else {
             promedioFinal = promedioFinal.add(nivelacion);

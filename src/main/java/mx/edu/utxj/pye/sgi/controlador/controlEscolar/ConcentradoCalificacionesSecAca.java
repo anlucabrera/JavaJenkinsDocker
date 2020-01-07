@@ -115,10 +115,10 @@ public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements De
             if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
             rol.setNivelRol(NivelRol.CONSULTA);
             
-            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosRegistros(rol.getSecAca());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
-            rol.setPeriodo(ea.getPeriodoActual());
+            rol.setPeriodo(rol.getPeriodos().get(0));
                         
                 ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = ejb.getProgramasEducativostotal();
                 if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
@@ -255,7 +255,7 @@ public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements De
                         }
                     });
                 }
-                if (niv) {
+                if (cnpm.getPromedio()!=BigDecimal.ZERO) {
                     dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), cnpm.getPromedio(), cnpm.getPromedio()));
                 } else {
                     dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio()));

@@ -54,20 +54,21 @@ public class controladorDirectorioCorreos implements Serializable {
     public List<dtoCorreosAreas> correosAreas(){
         listCorrreosAreas = new ArrayList<>();
         listCorrreosAreas.add(new dtoCorreosAreas("Rectoría","rectoria@utxicotepec.edu.mx","gerardo.vargas@utxicotepec.edu.mx"));
-        listCorrreosAreas.add(new dtoCorreosAreas("Administración y Finanzas","administracion.finanzas@utxicotepec.edu.mx","gema.melo@utxicotepec.edu.mx"));
+        listCorrreosAreas.add(new dtoCorreosAreas("Administración y Finanzas","administracion.finanzas@utxicotepec.edu.mx","alba.maldonado@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Área Jurídica","area.juridica@utxicotepec.edu.mx","zoila.salazar@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Planeación y Evaluación","planeacion.evaluacion@utxicotepec.edu.mx","miguel.sanchez@utxicotepec.edu.mx"));
-        listCorrreosAreas.add(new dtoCorreosAreas("Recursos Financieros","recursos.financieros@utxicotepec.edu.mx","arantxa.rivera@utxicotepec.edu.mx"));
+        listCorrreosAreas.add(new dtoCorreosAreas("Recursos Financieros","recursos.financieros@utxicotepec.edu.mx","gisela.velasco@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Secretaría Académica","secretaria.academica@utxicotepec.edu.mx","altagracia.carrillo@utxicotepec.edu.mx"));
-        listCorrreosAreas.add(new dtoCorreosAreas("Extensión  y Vinculación","vinculacion@utxicotepec.edu.mx","alba.maldonado@utxicotepec.edu.mx"));
-        listCorrreosAreas.add(new dtoCorreosAreas("Tecnologías de la Infomación","tecnologias.informacion@utxicotepec.edu.mx","raul.chirinos@utxicotepec.edu.mx"));
+        listCorrreosAreas.add(new dtoCorreosAreas("Extensión  y Vinculación","vinculacion@utxicotepec.edu.mx","raul.chirinos@utxicotepec.edu.mx"));
+        listCorrreosAreas.add(new dtoCorreosAreas("Tecnologías de la Infomación","tecnologias.informacion@utxicotepec.edu.mx","marco.ramirez@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Terapia Física y Rehabilitación","terapia.rehabilitacion@utxicotepec.edu.mx","concepcion.garcia@utxicotepec.edu.mx"));
-        listCorrreosAreas.add(new dtoCorreosAreas("Mecatrónica","mecatronica@utxicotepec.edu.mx","joseantonio.martinez@utxicotepec.edu.mx"));
-        listCorrreosAreas.add(new dtoCorreosAreas("Mantenimiento Industrial","mantenimiento.industrial@utxicotepec.edu.mx","javier.ortega@utxicotepec.edu.mx"));
+        listCorrreosAreas.add(new dtoCorreosAreas("Mecatrónica","mecatronica@utxicotepec.edu.mx","irasema.carrera@utxicotepec.edu.mx"));
+        listCorrreosAreas.add(new dtoCorreosAreas("Mantenimiento Industrial","mantenimiento.industrial@utxicotepec.edu.mx","adolfo.quiroz@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Agro-Industrial Alimentaria","agroindustrial.alimentaria@utxicotepec.edu.mx","victor.morales@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Económico Administrativa","economica.administrativa@utxicotepec.edu.mx","juancarlos.carmona@utxicotepec.edu.mx"));
+        listCorrreosAreas.add(new dtoCorreosAreas("Coodinación de Gastronomía","","mariajose.gonzalez@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Personal","personal@utxicotepec.edu.mx","claudia.santamaria@utxicotepec.edu.mx"));
-        listCorrreosAreas.add(new dtoCorreosAreas("Prensa, Difusión y Actividades Culturales","prensa.difusion@utxicotepec.edu.mx","rodrigo.cruz@utxicotepec.edu.mx"));
+        listCorrreosAreas.add(new dtoCorreosAreas("Prensa, Difusión y Actividades Culturales","prensa.difusion@utxicotepec.edu.mx","yasmin.hernandez@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Programación y Contabilidad","programacion.contabilidad@utxicotepec.edu.mx","gisela.velasco@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Servicios Escolares","servicios.escolares@utxicotepec.edu.mx","juan.sanchez@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Servicios Estudiantiles","servicios.estudiantiles@utxicotepec.edu.mx","julio.lopez@utxicotepec.edu.mx"));

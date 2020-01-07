@@ -68,7 +68,7 @@ public class EjbPrestamoDocumentos {
      */
     public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(@NonNull String pista){
         try{
-            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo, e.carrera", Estudiante.class)
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Documentosentregadosestudiante d INNER JOIN d.estudiante1 e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo, e.carrera", Estudiante.class)
                     .setParameter("pista", pista)
                     .getResultList();
             List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();

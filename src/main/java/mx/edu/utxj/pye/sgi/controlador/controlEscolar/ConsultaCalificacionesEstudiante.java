@@ -179,7 +179,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         BigDecimal promedioOrdinario = getPromedioAsignaturaEstudiante(dtoCargaAcademica);
         BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal promedioFinal = BigDecimal.ZERO;
-        if(promedioOrdinario.compareTo(BigDecimal.valueOf(8)) >= 0){
+        if(nivelacion.compareTo(BigDecimal.valueOf(0)) == 0){
             promedioFinal = promedioFinal.add(promedioOrdinario);
         }else {
             promedioFinal = promedioFinal.add(nivelacion);
