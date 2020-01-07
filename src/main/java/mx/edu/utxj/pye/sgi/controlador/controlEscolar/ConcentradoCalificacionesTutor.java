@@ -113,18 +113,21 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
             if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
             rol.setNivelRol(NivelRol.CONSULTA);
             
-            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosRegistros(rol.getTutor());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
-            rol.setPeriodos(resPeriodos.getValor());
-            rol.setPeriodo(ea.getPeriodoActual());
+            if(resPeriodos.getValor().isEmpty()) return;
             
+            rol.setPeriodos(resPeriodos.getValor());
+            rol.setPeriodo(rol.getPeriodos().get(0));
             ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
+            if(resgrupos.getValor().isEmpty())return;
             rol.setGrupos(resgrupos.getValor());   
             rol.setGrupoSelec(rol.getGrupos().get(0));
         
             ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
             if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+            if(rejb.getValor().isEmpty())return;
             rol.setListaalumnoscas(rejb.getValor());  
             
             creareporte();
@@ -172,6 +175,10 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
         rol.setEstudiantes(new ArrayList<>());
         ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());        
         academicas = new ArrayList<>();
+       
+        if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+        if(rejb.getValor().isEmpty())return;
+            
         academicas = rejb.getValor().stream().filter(a -> Objects.equals(a.getGrupo().getIdGrupo(), rol.getGrupoSelec().getIdGrupo())).collect(Collectors.toList());
         DtoCargaAcademica dca = academicas.get(0);
         UnidadMateriaConfiguracion umc = dca.getCargaAcademica().getUnidadMateriaConfiguracionList().get(0);

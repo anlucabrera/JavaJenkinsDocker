@@ -47,6 +47,7 @@ public class EjbRegistroPlanEstudio {
 
     @EJB
     EjbAsignacionAcademica ejbAsignacionAcademica;
+    @EJB EjbEventoEscolar ejbEventoEscolar;
     @EJB
     EjbPropiedades ep;
     @EJB
@@ -553,6 +554,31 @@ public class EjbRegistroPlanEstudio {
             final List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p order by p.periodo desc", PeriodosEscolares.class)
                     .getResultList();
 
+            return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionIndicadoresCriterios.getPeriodosDescendentes)", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosRegistros(PersonalActivo docente) {
+        try {
+//            List<Integer> claves = em.createQuery("SELECT g FROM Grupo g WHERE g.tutor =:tutor", Grupo.class)
+//                    .setParameter("tutor", docente.getPersonal().getClave())
+//                    .getResultStream()
+//                    .map(a -> a.getPeriodo())
+//                    .collect(Collectors.toList());
+            List<PeriodosEscolares> periodos = new ArrayList<>();
+            
+            List<Integer> claves=new ArrayList<>();
+            claves.add(52);
+                    
+            if (!claves.isEmpty()) {
+                periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
+                        .setParameter("periodos", claves)
+                        .getResultStream()
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
             return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionIndicadoresCriterios.getPeriodosDescendentes)", e, null);

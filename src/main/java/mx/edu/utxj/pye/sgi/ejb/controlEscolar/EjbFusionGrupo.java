@@ -175,10 +175,11 @@ public class EjbFusionGrupo {
         }
     }
 
-    public ResultadoEJB<List<Grupo>> getGrupos(AreasUniversidad areasUniversidad){
+    public ResultadoEJB<List<Grupo>> getGrupos(AreasUniversidad areasUniversidad, Integer periodoActivo){
         try{
-            List<Grupo> grupos = em.createQuery("select g from Grupo as g where g.idPe = :programa", Grupo.class)
+            List<Grupo> grupos = em.createQuery("select g from Grupo as g where g.idPe = :programa and g.periodo = :periodo", Grupo.class)
                     .setParameter("programa", Short.parseShort(areasUniversidad.getArea().toString()))
+                    .setParameter("periodo", periodoActivo)
                     .getResultStream().collect(Collectors.toList());
             System.out.println("Grupos:"+grupos);
             return ResultadoEJB.crearCorrecto(grupos, "Los estudiantes fueron cambiados satisfactoriamente de grupo");

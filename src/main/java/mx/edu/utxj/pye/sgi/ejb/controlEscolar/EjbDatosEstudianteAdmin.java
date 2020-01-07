@@ -54,8 +54,8 @@ public class EjbDatosEstudianteAdmin {
     }
     
     public List<Estudiante> buscaEstudiantes(Integer periodo) {
-        List<Estudiante> es = em.createQuery("SELECT es FROM Estudiante es WHERE es.periodo =:periodo", Estudiante.class)
-                .setParameter("periodo", periodo)
+        List<Estudiante> es = em.createQuery("SELECT es FROM Estudiante es GROUP BY es.matricula ", Estudiante.class)
+//                .setParameter("periodo", periodo)
                 .getResultList();
         
         if (es == null || es.isEmpty()) {

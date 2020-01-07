@@ -98,7 +98,7 @@ public class FusionGruposDirector extends ViewScopedRol implements Desarrollable
     }
 
     public void obtenerGruposProgramaEducativo(){
-        rol.setGrupos(ejb.getGrupos(rol.getPrograma()).getValor());
+        rol.setGrupos(ejb.getGrupos(rol.getPrograma(), rol.getPeriodoActivo()).getValor());
         if(rol.getGrupos().isEmpty()){
             rol.setGrupos(new ArrayList<>());
             obtenerEstudiatesGrupoSeleccionado();

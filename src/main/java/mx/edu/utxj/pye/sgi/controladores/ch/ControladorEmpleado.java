@@ -253,7 +253,9 @@ public class ControladorEmpleado implements Serializable {
                         } else {
                             evaluable = true;
                         }
-                        eventosRegistro();
+                        if (procesopoa.getEvaluacion() != null) {
+                            eventosRegistro();
+                        }
                     }
                     if (Objects.equals(procesopoa.getActivaEtapa1(), Boolean.TRUE)) {
                         tienePOA = true;
