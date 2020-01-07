@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
@@ -22,12 +23,14 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
  */
 @RequiredArgsConstructor @ToString
 public class DtoHistorialMovEstudiante implements Serializable{
+    @Getter @Setter @NonNull ProcesosInscripcion procesoInscripcion;
     @Getter @Setter @NonNull Aspirante aspirante;
     @Getter @Setter @NonNull Estudiante estudiante;
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
     @Getter @Setter List<DtoMovimientoEstudiante> listaDatosMovimiento;
 
-    public DtoHistorialMovEstudiante(Aspirante aspirante, Estudiante estudiante, AreasUniversidad programaEducativo, List<DtoMovimientoEstudiante> listaDatosMovimiento) {
+    public DtoHistorialMovEstudiante(ProcesosInscripcion procesoInscripcion, Aspirante aspirante, Estudiante estudiante, AreasUniversidad programaEducativo, List<DtoMovimientoEstudiante> listaDatosMovimiento) {
+        this.procesoInscripcion = procesoInscripcion;
         this.aspirante = aspirante;
         this.estudiante = estudiante;
         this.programaEducativo = programaEducativo;

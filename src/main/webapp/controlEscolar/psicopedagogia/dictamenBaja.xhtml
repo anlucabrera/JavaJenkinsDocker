@@ -73,7 +73,7 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="periodo" value="#{dictamenBajaPsicopedagogia.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{dictamenBajaPsicopedagogia.cambiarPeriodo}">
                                                     <f:selectItems value="#{dictamenBajaPsicopedagogia.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, programa"/>
+                                                    <p:ajax process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>

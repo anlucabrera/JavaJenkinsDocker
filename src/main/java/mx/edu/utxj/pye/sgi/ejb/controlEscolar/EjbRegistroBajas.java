@@ -408,9 +408,9 @@ public class EjbRegistroBajas {
                 Personal director = em.find(Personal.class, areaSuperior.getResponsable());
                 
                 Personal tutor = em.find(Personal.class, registro.getEstudiante().getGrupo().getTutor());
-            
-                DtoFormatoBaja dtoFormatoBaja = new DtoFormatoBaja(dtoRegistroBajaEstudiante, listaDtoMateriaReprobada, listaDocumentosEstudiante, director, tutor);
                 
+                DtoFormatoBaja dtoFormatoBaja = new DtoFormatoBaja(dtoRegistroBajaEstudiante, listaDtoMateriaReprobada, listaDocumentosEstudiante, director, tutor);
+               
             return ResultadoEJB.crearCorrecto(dtoFormatoBaja, "Información de para generar formato de baja.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la información para generar formato de baja. (EjbRegistroBajas.generarFormatoBaja)", e, null);
@@ -426,8 +426,19 @@ public class EjbRegistroBajas {
         try{
             List<DtoDocumentosEstudiante> listaDocumentosEstudiante = new ArrayList<>();
             
-            Documentosentregadosestudiante documentosEstudiante = em.createQuery("SELECT de FROM Documentosentregadosestudiante de WHERE de.estudiante =:estudiante", Documentosentregadosestudiante.class)
-                    .setParameter("estudiante", estudiante)
+//            Estudiante estudianteDoc = buscarClaveEstudiante(estudiante).getValor();
+
+            Estudiante estudianteBD = em.find(Estudiante.class, estudiante);
+            
+            List<Integer> listaEstudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.aspirante.idAspirante =:aspirante", Estudiante.class)
+                     .setParameter("matricula", estudianteBD.getMatricula())
+                     .setParameter("aspirante", estudianteBD.getAspirante().getIdAspirante())
+                     .getResultStream()
+                     .map(l -> l.getIdEstudiante())
+                     .collect(Collectors.toList());
+            
+            Documentosentregadosestudiante documentosEstudiante = em.createQuery("SELECT de FROM Documentosentregadosestudiante de WHERE de.estudiante IN :estudiante", Documentosentregadosestudiante.class)
+                    .setParameter("estudiante", listaEstudiantes)
                     .getSingleResult();
            
             if (documentosEstudiante.getActaNacimiento()) {
@@ -445,9 +456,9 @@ public class EjbRegistroBajas {
             DtoDocumentosEstudiante copias = new DtoDocumentosEstudiante(estudiante, "Copias Varias");
             listaDocumentosEstudiante.add(copias);
             
-            return ResultadoEJB.crearCorrecto(listaDocumentosEstudiante, "Lista de materias reprobadas.");
+            return ResultadoEJB.crearCorrecto(listaDocumentosEstudiante, "Lista de documento del estudiante.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias reprobadas. (EjbRegistroBajas.buscarMateriasReprobadas)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de documentos del estudiante. (EjbRegistroBajas.buscarDocumentosEstudiante)", e, null);
         }
     }
     
