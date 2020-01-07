@@ -256,9 +256,9 @@ public class EjbHistorialMovEstudiante {
             List<String> listaTiposMovimientos = new ArrayList();
             listaTiposMovimientos.add("Reinscripcion Autónoma");
             listaTiposMovimientos.add("Reinscripcion");
-            listaTiposMovimientos.add("Reinscripcion otra UT");
-            listaTiposMovimientos.add("Reinscripcion misma UT");
-            listaTiposMovimientos.add("Regularización");
+            listaTiposMovimientos.add("Reincorporación otra UT");
+            listaTiposMovimientos.add("Reincorporación misma UT");
+            listaTiposMovimientos.add("Regularización de calificaciones por reincoporación");
             
             
             List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula AND e.tipoRegistro IN :tipoRegistro", Estudiante.class)

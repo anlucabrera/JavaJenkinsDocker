@@ -46,6 +46,7 @@ public class GeneracionFormatoBaja implements Serializable{
        ResultadoEJB<DtoFormatoBaja> res = ejb.generarFormatoBaja(registro);
        if(res.getCorrecto()){
             formatoBaja = res.getValor();
+            System.err.println("generarFormatoBajaCorrecto - formatoBaja " + formatoBaja);
             Ajax.update("frmFormatoBaja");
         }
     }

@@ -248,14 +248,14 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     public void guardarTramitarBaja(){
         if(rol.getExisteRegistroBaja() == null)
         {  
-            ResultadoEJB<Baja> res = ejb.guardarTramitarBaja(rol.getPeriodoActivo(), rol.getEstudiante().getDtoEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
+            ResultadoEJB<Baja> res = ejb.guardarTramitarBaja(rol.getEstudiante().getDtoEstudiante().getPeriodoEscolar().getPeriodo(), rol.getEstudiante().getDtoEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
             if(res.getCorrecto()){
                 rol.setBajaRegistrada(res.getValor());
                 mostrarMensajeResultadoEJB(res);
             }else mostrarMensajeResultadoEJB(res);
              
         }else{
-            ResultadoEJB<Baja> res = ejb.actualizarTramitarBaja(rol.getPeriodoActivo(), rol.getRegistroBajaEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
+            ResultadoEJB<Baja> res = ejb.actualizarTramitarBaja(rol.getEstudiante().getDtoEstudiante().getPeriodoEscolar().getPeriodo(), rol.getRegistroBajaEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
             if(res.getCorrecto()){
                 rol.setBajaRegistrada(res.getValor());
                 mostrarMensajeResultadoEJB(res);
