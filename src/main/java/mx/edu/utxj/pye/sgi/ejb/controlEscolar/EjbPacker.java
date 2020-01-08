@@ -491,12 +491,23 @@ public class EjbPacker {
      * @param dtoUnidadConfiguraciones Lista de empaquetados de las configuraciones de las unidades que conforman la materia de la carga académica
      * @return
      */
-    public ResultadoEJB<DtoUnidadesCalificacion> packDtoUnidadesCalificacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones){
+    public ResultadoEJB<DtoUnidadesCalificacion> packDtoUnidadesCalificacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones, EventoEscolar eventoEscolar){
         try{
             ResultadoEJB<List<DtoEstudiante>> res = packDtoEstudiantesGrupo(dtoCargaAcademica);
             if(res.getCorrecto()) {
                 List<DtoEstudiante> dtoEstudiantes = res.getValor();
-                DtoUnidadesCalificacion dtoUnidadesCalificacion = new DtoUnidadesCalificacion(dtoCargaAcademica, dtoEstudiantes, dtoUnidadConfiguraciones);
+
+                Boolean activaPorFecha = eventoEscolar == null?false:DateUtils.isBetweenWithRange(new Date(), eventoEscolar.getInicio(), eventoEscolar.getFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
+                PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia", PermisosCapturaExtemporaneaGrupal.class)
+                        .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                        .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
+                        .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
+                        .getResultStream()
+                        .findAny()
+                        .orElse(null);
+                Boolean activaPorPermiso = permiso != null;
+
+                DtoUnidadesCalificacion dtoUnidadesCalificacion = new DtoUnidadesCalificacion(dtoCargaAcademica, dtoEstudiantes, dtoUnidadConfiguraciones, activaPorFecha, activaPorPermiso);
                 dtoEstudiantes.forEach(dtoEstudiante -> {
                     dtoUnidadConfiguraciones.forEach(dtoUnidadConfiguracion -> {
                         ResultadoEJB<DtoCapturaCalificacion> dtoCapturaCalificacionResultadoEJB = packCapturaCalificacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion);
