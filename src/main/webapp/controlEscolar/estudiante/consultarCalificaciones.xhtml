@@ -69,7 +69,7 @@
                                                                                  title="Seleccionar periodo, para ver calificaciones históricas" style="font-weight: bold">
                                                                     <f:selectItems value="#{consultaCalificacionesEstudiante.rol.periodosEscolares}"
                                                                                    var="periodo" itemValue="#{periodo.periodo}" itemLabel="#{caster.clavePeriodoToString(periodo.periodo)}"/>
-                                                                    <p:ajax update="contenedor" process="@this"/>
+                                                                    <p:ajax update="contenedor" process="@this" listener="#{consultaCalificacionesEstudiante.obtenerCalificacionesAnteriores()}"/>
                                                                 </p:selectOneMenu>
                                                                 <p:outputLabel for="periodo" style="font-weight: bold" value="Seleccionar periodo"/>
                                                                 <p:message for="periodo"/>
@@ -84,7 +84,6 @@
                                                     <!--Zona de la tabla de calificaciones-->
                                                     <c:if test="#{consultaCalificacionesEstudiante.rol.estudiante.periodo eq consultaCalificacionesEstudiante.rol.periodoSeleccionado}" var="estudiante">
                                                         <p:outputPanel>
-                                                            <p:autoUpdate />
                                                             <table class="table table-condensed table-bordered table-hover table-responsive tabla ui-datatable">
                                                                 <thead>
                                                                 <tr role="row">

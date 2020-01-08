@@ -10,10 +10,8 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaTareaIntegradora;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConsultaCalificacion;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Indicador;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -179,9 +177,9 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         BigDecimal promedioOrdinario = getPromedioAsignaturaEstudiante(dtoCargaAcademica);
         BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal promedioFinal = BigDecimal.ZERO;
-        if(nivelacion.compareTo(BigDecimal.valueOf(0)) == 0){
+        if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
             promedioFinal = promedioFinal.add(promedioOrdinario);
-        }else {
+        }else{
             promedioFinal = promedioFinal.add(nivelacion);
         }
         return promedioFinal;
@@ -200,6 +198,13 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         BigDecimal suma = lista.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         promedioCuatrimestral = suma.divide(totalMaterias, RoundingMode.HALF_UP);
         return promedioCuatrimestral.setScale(1, RoundingMode.HALF_UP);
+    }
+
+    public void obtenerCalificacionesAnteriores(){
+        ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(rol.getEstudiante());
+        if(!resCargas.getCorrecto()) mostrarMensajeResultadoEJB(resCargas);
+        else rol.setCargasEstudiante(resCargas.getValor().stream().filter(x -> x.getPeriodo().getPeriodo().equals(rol.getPeriodoSeleccionado())).collect(Collectors.toList()));
+        obtenerUnidadesPorMateria();
     }
 
     @Override

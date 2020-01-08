@@ -52,6 +52,7 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -66,6 +67,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 public class AvanceProgramaticoDocente extends ViewScopedRol implements Desarrollable{
     @Getter @Setter ConsultaAvanceProgramaticoDocente rol;
     
+    @EJB EjbAsignacionIndicadoresCriterios ejbAsignacionIndicadoresCriterios;
     @EJB EjbPropiedades ep;
     @EJB EjbValidacionRol evr;
     @EJB EjbRegistroPlanEstudio ejb;
@@ -106,7 +108,7 @@ public class AvanceProgramaticoDocente extends ViewScopedRol implements Desarrol
  if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
  cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.AVANCE_PROGRAMATICO_DOCENTE);
-           ResultadoEJB<Filter<PersonalActivo>> resValidacion = evr.validarDocente(logon.getPersonal().getClave());
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejbAsignacionIndicadoresCriterios.validarDocente(logon.getPersonal().getClave());
             if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación

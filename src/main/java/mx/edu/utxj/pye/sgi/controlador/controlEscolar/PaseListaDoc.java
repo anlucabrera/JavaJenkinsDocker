@@ -66,6 +66,7 @@ import org.primefaces.model.timeline.TimelineEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -79,6 +80,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
 
     @Getter    @Setter    PaseDeListaDocente rol;
 
+    @EJB EjbAsignacionIndicadoresCriterios ejbAsignacionIndicadoresCriterios;
     @EJB EjbAsistencias ejb;
     @EJB EjbValidacionRol evr;
     @EJB EjbCapturaCalificaciones calificaciones;
@@ -113,7 +115,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
  if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
  cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.PASE_DE_LISTA);
-            ResultadoEJB<Filter<PersonalActivo>> resValidacion = evr.validarDocente(logon.getPersonal().getClave());
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejbAsignacionIndicadoresCriterios.validarDocente(logon.getPersonal().getClave());
             if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación

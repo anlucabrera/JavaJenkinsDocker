@@ -39,6 +39,11 @@
     </ui:define>
 
     <ui:define name="body">
+        <style>
+            .ui-panelgrid .ui-panelgrid-cell {
+                padding: 4px 2px;
+            }
+        </style>
         <c:if test="#{concentradoCalificacionesSecAca.cargado}">
             <adm:breadcrumb title="Pase de lista"/>
             <adm:sidebar collapsed="true"/>
@@ -182,7 +187,6 @@
                                                             <div class="description-block">
                                                                 <p:outputPanel>            
                                                                     <p:autoUpdate/>
-                                                                    #{concentradoCalificacionesSecAca.rol.drpls.size()}
                                                                     <p:panelGrid style="width: 100%">
                                                                         <f:facet name="header">
                                                                             <p:row>
@@ -222,9 +226,9 @@
                                                                                     <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.tareaI gt 0 ? 'color: #E53935':'color: #000000'}" rendered="#{d.tareaI ne ''}">#{d.tareaI}</p:column>
                                                                                     <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalO gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalO gt 0?concentradoCalificacionesSecAca.rol.df.format(d.promedioFinalO):0}</p:column>                                                                                
                                                                                     <p:column style="font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.nivelacion gt 0 ? 'color: #E53935':'color: #000000'}">#{d.nivelacion gt 0?concentradoCalificacionesSecAca.rol.df.format(d.nivelacion):0}</p:column>
-                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalN gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalN gt 0?concentradoCalificacionesSecAca.rol.df.format(d.promedioFinalN):0}</p:column>                                                                                
+                                                                                    <p:column style="background: #cccccc; font-weight: bold; font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalN gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalN gt 0?concentradoCalificacionesSecAca.rol.df.format(d.promedioFinalN):0}</p:column>                                                                                
                                                                                 </c:forEach>
-                                                                                <p:column style="font-size: smaller; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or b.promedioFinal gt 0 ? 'color: #E53935':'color: #000000'}">#{b.promedioFinal gt 0?concentradoCalificacionesSecAca.rol.df.format(b.promedioFinal):0}</p:column>
+                                                                                <p:column style="font-size: smaller; font-weight: bold; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or b.promedioFinal gt 0 ? 'color: #E53935':'color: #000000'}">#{b.promedioFinal gt 0?concentradoCalificacionesSecAca.rol.df.format(b.promedioFinal):0}</p:column>
                                                                             </p:row>
                                                                         </c:forEach>
                                                                     </p:panelGrid>
