@@ -97,7 +97,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
 
             rol.setEventoActivo(resEvento.getValor());
 
-            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosCargaAcademica(rol.getDocente());
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosCargaAcademica(rol.getDocente(), rol.getPeriodoActivo());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
             

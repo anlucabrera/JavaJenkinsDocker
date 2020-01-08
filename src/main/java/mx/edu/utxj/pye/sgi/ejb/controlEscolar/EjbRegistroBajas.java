@@ -40,7 +40,9 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRangoFechasPermiso;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroBajaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
+import net.sf.jxls.transformer.XLSTransformer;
 /**
  *
  * @author UTXJ
@@ -52,6 +54,9 @@ public class EjbRegistroBajas {
     @EJB EjbPropiedades ep;
     @EJB Facade f;
     private EntityManager em;
+    
+    @EJB EjbCarga ejbCarga;
+    public static final String ACTUALIZADO_BAJAS = "desercionAcademica.xlsx";
 
     @PostConstruct
     public  void init(){
@@ -1113,5 +1118,27 @@ public class EjbRegistroBajas {
                         .setParameter("estudiante", dtoRegistroBajaEstudiante.getRegistroBaja().getEstudiante().getIdEstudiante())
                         .executeUpdate();
         }
+    }
+    
+    public String getReportePeriodo(PeriodosEscolares periodo) throws Throwable {
+        String cicloEscolar = periodo.getCiclo().getInicio()+ "-" + periodo.getCiclo().getFin();
+        Integer cveCiclo = periodo.getCiclo().getCiclo();
+        String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
+        Integer cvePeriodo = periodo.getPeriodo();
+        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteDesercionAcademica.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReporteDesercion(periodoEscolar);
+
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_BAJAS);
+        
+        Map beans = new HashMap();
+        beans.put("desAcad", obtenerListaBajasPeriodo(periodo).getValor());
+        beans.put("cicloEscolar", cicloEscolar);
+        beans.put("cveCiclo", cveCiclo);
+        beans.put("periodoEscolar", periodoEscolar);
+        beans.put("cvePeriodo", cvePeriodo);
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
     }
 }

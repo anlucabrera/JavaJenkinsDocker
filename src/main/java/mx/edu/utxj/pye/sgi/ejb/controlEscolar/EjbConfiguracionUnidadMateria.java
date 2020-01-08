@@ -84,18 +84,21 @@ public class EjbConfiguracionUnidadMateria {
 
     /**
      * Permite obtener la lista de periodos escolares a elegir en el configurador de unidades por materia
+     * @param docente
+     * @param periodoActivo
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosCargaAcademica(PersonalActivo docente){
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosCargaAcademica(PersonalActivo docente, Integer periodoActivo){
         try{
-             List<Integer> claves = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente=:docente", CargaAcademica.class)
+             List<Integer> claves = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente=:docente AND c.evento.periodo <=:periodo", CargaAcademica.class)
                 .setParameter("docente", docente.getPersonal().getClave())
+                .setParameter("periodo", periodoActivo)
                 .getResultStream()
                 .map(a -> a.getEvento().getPeriodo())
                 .collect(Collectors.toList());
         
             if (claves.isEmpty()) {
-                claves.add(0, ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.ASIGNACION_TUTORES).getValor().getPeriodo());
+                claves.add(0, ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.CONFIGURACION_DE_MATERIA).getValor().getPeriodo());
             }
             List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
                     .setParameter("periodos", claves)

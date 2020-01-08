@@ -7,6 +7,8 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -36,6 +38,7 @@ import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Faces;
 
 /**
  *
@@ -251,5 +254,9 @@ public class ReporteBajasServiciosEscolares extends ViewScopedRol implements Des
         Ajax.update("tblModalMatRep");
     }
     
+     public void descargarReportePeriodo() throws IOException, Throwable{
+        File f = new File(ejb.getReportePeriodo(rol.getPeriodo()));
+        Faces.sendFile(f, true);
+    }
     
 }
