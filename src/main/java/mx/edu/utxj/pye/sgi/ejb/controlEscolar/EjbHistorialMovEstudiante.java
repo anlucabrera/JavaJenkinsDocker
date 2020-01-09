@@ -164,6 +164,14 @@ public class EjbHistorialMovEstudiante {
             
             Estudiante estudiante = listaEstudiante.get(0);
             
+            Integer lista = listaEstudiante.size();
+            
+            Estudiante estudianteActual = listaEstudiante.get(lista-1);
+            
+            AreasUniversidad programaActual = em.find(AreasUniversidad.class, estudianteActual.getCarrera());
+            
+            PeriodosEscolares periodoActual = em.find(PeriodosEscolares.class, estudianteActual.getPeriodo());
+            
             List<DtoMovimientoEstudiante> listaMovimientos = new ArrayList<>();
             
             AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
@@ -186,8 +194,8 @@ public class EjbHistorialMovEstudiante {
             List<DtoMovimientoEstudiante> listaOrdenada = listaMovimientos.stream()
                     .sorted(Comparator.comparing(DtoMovimientoEstudiante::getFecha))
                     .collect(Collectors.toList());
-
-            DtoHistorialMovEstudiante dto = new DtoHistorialMovEstudiante(aspirante.getIdProcesoInscripcion(), aspirante, estudiante, programaEducativo, listaOrdenada);
+           
+            DtoHistorialMovEstudiante dto = new DtoHistorialMovEstudiante(aspirante.getIdProcesoInscripcion(), aspirante, estudiante, programaEducativo, listaOrdenada, estudianteActual.getTipoEstudiante().getDescripcion(), programaActual.getNombre(), periodoActual);
            
             return ResultadoEJB.crearCorrecto(dto, "Información de historial de movimiento del estudiante empaquetado.");
         }catch (Exception e){

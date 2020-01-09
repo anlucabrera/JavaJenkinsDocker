@@ -132,6 +132,7 @@ public class ServicioCarga implements EjbCarga {
     private static final String carpetaW = "C:\\archivos\\";
     private static final String carpetaL = "/home/admin/archivos/";
     public static String carpetaRaiz;
+    public static final String formatosEscolares = "formatosEscolares";
 
 //    Método que se encarga de crear la carpeta raíz en caso de que no exista para poder almacenar el archivo
     static {
@@ -311,6 +312,13 @@ public class ServicioCarga implements EjbCarga {
     @Override
     public String crearDirectorioReporteCompletoTit(String generacion) {
         String rutaRelativa = genCarpetaRelativa(formatosTitulacion, reportes, generacion);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+
+    @Override
+    public String crearDirectorioReporteDesercion(String periodoEscolar) {
+        String rutaRelativa = genCarpetaRelativa(formatosEscolares, reportes, periodoEscolar);
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
     }

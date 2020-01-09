@@ -112,4 +112,11 @@ public interface EjbCarga extends Serializable {
      * @return Retorna la ruta del directorio
      */
     public String crearDirectorioReporteCompletoTit(String generacion);
+    
+     /**
+     * Método que crea o comprueba si el directorio de los reportes de deserción académica en control escolar
+     * @param periodoEscolar Es ocupado para crear o comprobar de que periodo escolar es el reporte que se está generando
+     * @return Retorna la ruta del directorio
+     */
+    public String crearDirectorioReporteDesercion(String periodoEscolar);
 }
