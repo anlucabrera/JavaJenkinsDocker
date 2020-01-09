@@ -120,7 +120,7 @@ public class FichaAdmision implements Serializable, Guardable{
 
 @PostConstruct
     public void init(){
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+ if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.ASPIRANTE)) return;
  cargado = true;
         persona = new Persona();
         datosMedicos = new DatosMedicos();

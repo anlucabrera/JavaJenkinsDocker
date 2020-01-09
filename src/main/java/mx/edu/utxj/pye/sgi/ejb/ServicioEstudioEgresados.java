@@ -500,9 +500,8 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
     @Override
     public Evaluaciones getLastEvaluacion() {
         Evaluaciones e = new Evaluaciones();
-       return e = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
+       return e = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo ORDER BY e.evaluacion desc", Evaluaciones.class)
                 .setParameter("tipo", "Estudio egresados")
-                .setParameter("fecha", new Date())
                .getResultStream()
                .findFirst()
                .orElse(null);

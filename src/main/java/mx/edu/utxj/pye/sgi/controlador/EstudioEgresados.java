@@ -215,6 +215,9 @@ public class EstudioEgresados implements Serializable {
     public void validaReporte() {
         Integer evaluacion1;
         evaluacion1 = ejb.geteEvaluacionActiva().getEvaluacion();
+        if(evaluacion1==null){
+        evaluacion1 = ejb.getLastEvaluacion().getEvaluacion();
+        }
 
         listaResultadosReporte = new ArrayList<>();
         listaResultadosReporte.clear();
