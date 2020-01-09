@@ -251,6 +251,7 @@ public class EjbPacker {
             DtoInscripcion dtoInscripcionActiva = dtoInscripciones.stream()
                     .filter(DtoInscripcion::getActivo).max(Comparator.comparingInt(value -> value.getPeriodo().getPeriodo()))
                     .orElse(null);
+            if(dtoInscripcionActiva == null) return ResultadoEJB.crearErroneo(2, "El estudiante no tiene inscripción activa.", DtoEstudiante.class);
             DtoEstudiante dtoEstudiante = new DtoEstudiante(persona, aspirante, dtoInscripciones, dtoInscripcionActiva);
 //            System.out.println("dtoEstudiante = " + dtoEstudiante);
             return ResultadoEJB.crearCorrecto(dtoEstudiante, "Estudiante empaquetado");
@@ -330,7 +331,7 @@ public class EjbPacker {
                     .values()
                     .stream()
                     .flatMap(detalles -> detalles.stream())
-                    .map(detalle -> packDtoCapturaCalificacionCaptura(detalle, dtoEstudiante))
+                    .map(detalle -> packDtoCapturaCalificacionCaptura(detalle, dtoEstudiante, dtoCargaAcademica.getPeriodo().getPeriodo()))
                     .filter(ResultadoEJB::getCorrecto)
                     .map(ResultadoEJB::getValor)
                     .collect(Collectors.toList());
@@ -387,19 +388,26 @@ public class EjbPacker {
      * @param dtoEstudiante Empaqueta del estudiante que contiene la lista de inscripciones de la cual se obtendría la inscripcón activa
      * @return
      */
-    public ResultadoEJB<DtoCapturaCalificacion.Captura> packDtoCapturaCalificacionCaptura(DtoUnidadConfiguracion.Detalle detalle, DtoEstudiante dtoEstudiante){
+    public ResultadoEJB<DtoCapturaCalificacion.Captura> packDtoCapturaCalificacionCaptura(DtoUnidadConfiguracion.Detalle detalle, DtoEstudiante dtoEstudiante, Integer periodo){
         try{
 //            System.out.println("detalle = [" + detalle + "], dtoEstudiante = [" + dtoEstudiante + "]");
-            Estudiante inscripcionActiva = dtoEstudiante.getInscripciones()
+            /*Estudiante inscripcionActiva = dtoEstudiante.getInscripciones()
                     .stream()
                     .filter(DtoInscripcion::getActivo)
                     .map(DtoInscripcion::getInscripcion)
                     .max(Comparator.comparing(Estudiante::getPeriodo))
-                    .orElse(null);
+                    .orElse(null);*/
+//            Estudiante inscripcionActiva = dtoEstudiante.getInscripcionActiva().getInscripcion();
 //            System.out.println("inscripcionActiva = " + inscripcionActiva);
-            if(inscripcionActiva == null) return ResultadoEJB.crearErroneo(2, "No se tiene una inscripción activa del estudiante a un grupo", DtoCapturaCalificacion.Captura.class);
+//            if(inscripcionActiva == null) return ResultadoEJB.crearErroneo(2, "No se tiene una inscripción activa del estudiante a un grupo", DtoCapturaCalificacion.Captura.class);
+            DtoInscripcion inscripcion = dtoEstudiante.getInscripciones()
+                    .stream()
+                    .filter(dtoInscripcion -> dtoInscripcion.getInscripcion().getPeriodo() == periodo)
+                    .findFirst()
+                    .orElse(null);
+            if(inscripcion == null) return ResultadoEJB.crearErroneo(2, "No se tiene una inscripción del estudiante a un grupo en el periodo del evento escolar especificado.", DtoCapturaCalificacion.Captura.class);
             Calificacion calificacion = em.createQuery("select c from Calificacion  c where c.idEstudiante=:estudiante and c.configuracionDetalle=:detalle", Calificacion.class)
-                    .setParameter("estudiante", inscripcionActiva)
+                    .setParameter("estudiante", inscripcion.getInscripcion())
                     .setParameter("detalle", detalle.getDetalle())
                     .getResultStream()
                     .findFirst()
@@ -408,7 +416,7 @@ public class EjbPacker {
             if(calificacion == null){//si no existe calificación se crea con valor nulo
                 calificacion = new Calificacion();
                 calificacion.setConfiguracionDetalle(detalle.getDetalle());
-                calificacion.setIdEstudiante(inscripcionActiva);
+                calificacion.setIdEstudiante(inscripcion.getInscripcion());
                 calificacion.setValor(null);
                 em.persist(calificacion);
             }
