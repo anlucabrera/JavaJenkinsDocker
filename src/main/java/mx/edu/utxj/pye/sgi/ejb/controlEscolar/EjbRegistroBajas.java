@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
@@ -41,6 +42,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroBajaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
 import net.sf.jxls.transformer.XLSTransformer;
 /**
@@ -294,6 +296,10 @@ public class EjbRegistroBajas {
      */
     public ResultadoEJB<DtoRegistroBajaEstudiante> buscarRegistroBajaEstudiante(Integer claveEstudiante) {
         try{
+            String anioInicio ="", anioFin="", cicloEscolar ="", fechaBaja="";
+            
+            DateTimeFormatter formatterAnio = DateTimeFormatter.ofPattern("yyyy");
+            DateTimeFormatter formatterFecha = DateTimeFormatter.ofPattern("dd-MM-yyyy");
            
             Estudiante estudiante = em.find(Estudiante.class, claveEstudiante);
             
@@ -306,8 +312,15 @@ public class EjbRegistroBajas {
                 Personal personal = em.find(Personal.class, registroBaja.getEmpleadoRegistro());
                 AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
                 PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
-            
-                DtoRegistroBajaEstudiante dtoRegistroBajaEstudiante = new DtoRegistroBajaEstudiante(registroBaja, tipoBaja, causaBaja, personal, programaEducativo, periodoEscolar);
+                LocalDate inicio = convertirDateALocalDate(periodoEscolar.getCiclo().getInicio());
+                LocalDate fin = convertirDateALocalDate(periodoEscolar.getCiclo().getFin());
+                anioInicio = inicio.format(formatterAnio);
+                anioFin = fin.format(formatterAnio);
+                cicloEscolar = anioInicio.concat("-").concat(anioFin);
+                LocalDate fecha = convertirDateALocalDate(registroBaja.getFechaBaja());
+                fechaBaja = fecha.format(formatterFecha);
+                
+                DtoRegistroBajaEstudiante dtoRegistroBajaEstudiante = new DtoRegistroBajaEstudiante(registroBaja, tipoBaja, causaBaja, personal, programaEducativo, periodoEscolar, cicloEscolar, fechaBaja);
                 
             return ResultadoEJB.crearCorrecto(dtoRegistroBajaEstudiante, "Información de la baja registrada.");
         }catch (Exception e){
@@ -1120,7 +1133,7 @@ public class EjbRegistroBajas {
         }
     }
     
-    /**
+     /**
      * Permite generar reporte de bajas registradas en el periodo escolar seleccionado
      * @param periodo Periodo Escolar
      * @return Resultado del proceso
