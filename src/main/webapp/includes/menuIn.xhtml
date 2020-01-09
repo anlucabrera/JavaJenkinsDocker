@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ul class="sidebar-menu" data-widget="tree">
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.UsuarioTipo" var="usuarioTipo" />
+        <c:if test="#{logonMB.usuarioTipo ne 'INVITADO'}">
+            <li>
+                <p:link href="#{request.contextPath}/index.xhtml" onclick="clearBreadCrumbs()">
+                    <i class="fa fa-home"></i>
+                    <span>Inicio</span>
+                </p:link>
+            </li>
+        </c:if>
+    </ul>
+</ui:composition>

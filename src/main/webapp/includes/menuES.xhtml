@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ul class="sidebar-menu" data-widget="tree">
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.UsuarioTipo" var="usuarioTipo" />
+        <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
+            <li class="header" style="color: #040404;background: #ffffff">Encuestas</li>
+            <h4>Menú estudiante</h4>
+            <li class="treeview ">
+                <a href="#">
+                    <i class="fa fa-list-alt"></i> <span>Evaluaciones Estudiante</span>
+                    <span class="pull-right-container">
+                        <i class=""></i>
+                    </span>
+                </a>
+                <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/docentesMateriaIndex.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
+                <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
+                <c:if test="#{estudioEgresados.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/estudioEgresados.xhtml"><i class="fa fa-graduation-cap"></i><span>Estudio egresado</span></p:link></li></c:if>
+                <c:if test="#{encuestaSatisfaccionEgresadosIng.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción ING.</span></p:link></li></c:if>
+                <c:if test="#{encuestaSatisfaccionEgresadosTsu.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
+                <c:if test="#{encuestaServicios.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
+                <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
+                <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
+            </li>
+            <c:if test="#{controladorEstReg.cargada}">
+                <li class="header" style="color: #040404;background: #ffffff">Titulación</li>
+                <li class="treeview ">
+                    <a href="#">
+                        <i class="fa fa-list-alt"></i> <span>Expediente Titulación</span>
+                        <span class="pull-right-container">
+                            <i class=""></i>
+                        </span>
+                    </a>
+                    <li><p:link href="#{request.contextPath}/expedienteTitulacion/estudiante/registroExpediente.xhtml"><i class="fa fa-pencil-square-o"></i><span>Registro e Integración</span></p:link></li>
+                </li>
+            </c:if>
+        </c:if>
+    </ul>
+</ui:composition>

@@ -95,6 +95,7 @@ public class EstudioEgresados implements Serializable {
                     generaciones = new ArrayList<>();
                     generaciones = ejb.getGeneraciones();
                     evaluacion = ejb.geteEvaluacionActiva();
+                    if(evaluacion==null){return;}
                     evaluador = Integer.parseInt(logonMB.getCurrentUser());
                     resultados = ejb.getResultados(evaluacion, evaluador);
                     finalizado = ejb.actualizarResultado(resultados);
@@ -213,15 +214,15 @@ public class EstudioEgresados implements Serializable {
     }
 
     public void validaReporte() {
-        Integer evaluacion1;
-        evaluacion1 = ejb.geteEvaluacionActiva().getEvaluacion();
+        Evaluaciones evaluacion1 = new Evaluaciones();
+        evaluacion1 = ejb.geteEvaluacionActiva();
         if(evaluacion1==null){
-        evaluacion1 = ejb.getLastEvaluacion().getEvaluacion();
+        evaluacion1 = ejb.getLastEvaluacion();
         }
 
         listaResultadosReporte = new ArrayList<>();
         listaResultadosReporte.clear();
-        listaResultadosGeneralesReporte = ejb.getResultadosEvActiva(evaluacion1);
+        listaResultadosGeneralesReporte = ejb.getResultadosEvActiva(evaluacion1.getEvaluacion());
         listaResultadosGeneralesReporte.forEach(x -> {
             Comparador<EvaluacionEstudioEgresadosResultados> comparador = new ComparadorEvaluacionEstudioEgresados();
             if (comparador.isCompleto(x)) {

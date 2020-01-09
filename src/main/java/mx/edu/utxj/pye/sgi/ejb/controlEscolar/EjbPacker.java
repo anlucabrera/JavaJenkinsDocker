@@ -251,6 +251,7 @@ public class EjbPacker {
             DtoInscripcion dtoInscripcionActiva = dtoInscripciones.stream()
                     .filter(DtoInscripcion::getActivo).max(Comparator.comparingInt(value -> value.getPeriodo().getPeriodo()))
                     .orElse(null);
+            if(dtoInscripcionActiva == null) return ResultadoEJB.crearErroneo(2, "El estudiante no tiene inscripción activa.", DtoEstudiante.class);
             DtoEstudiante dtoEstudiante = new DtoEstudiante(persona, aspirante, dtoInscripciones, dtoInscripcionActiva);
 //            System.out.println("dtoEstudiante = " + dtoEstudiante);
             return ResultadoEJB.crearCorrecto(dtoEstudiante, "Estudiante empaquetado");

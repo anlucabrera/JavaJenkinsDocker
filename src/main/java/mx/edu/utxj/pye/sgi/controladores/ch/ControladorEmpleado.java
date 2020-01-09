@@ -267,7 +267,6 @@ public class ControladorEmpleado implements Serializable {
                                 anio=Integer.parseInt(df.format(new Date()))-1;
                             }
                             ejeFE=Short.parseShort(anio.toString());
-                            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.areaPoa()"+anio);
                             periodoEvaluacion=new Calendarioevaluacionpoa(13, new Date(), new Date(), "Diciembre", Boolean.FALSE);
                             procesopoa=new Procesopoa(0, nuevoOBJListaPersonal.getAreaOperativa(),nuevoOBJListaPersonal.getClave(), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, ejeFE, ejeFE, Boolean.TRUE, Boolean.TRUE, periodoEvaluacion);
                         }
@@ -345,13 +344,13 @@ public class ControladorEmpleado implements Serializable {
 //////////////////////////////////////////////////////////////////////////////// Menú dinamico
     public void crearMenuAdministrador() {
         try {
-//            List<MenuDinamico> msN1 = new ArrayList<>();
-//            msN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, "Administrador","Trabajador");
-//            if (!msN1.isEmpty()) {
-//                msN1.forEach((n1) -> {
+            List<MenuDinamico> msN1 = new ArrayList<>();
+            msN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, "Administrador","Trabajador");
+            if (!msN1.isEmpty()) {
+                msN1.forEach((n1) -> {
                     List<MenuDinamico> msN2 = new ArrayList<>();
-//                    msN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, n1.getTituloNivel1(),"Trabajador");
-                    msN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, "Administrador","Trabajador");
+                    msN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, n1.getTituloNivel1(),"Trabajador");
+//                    msN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, "Administrador","Trabajador");
                     List<Nivel2> nivel2s = new ArrayList<>();
                     if (!msN2.isEmpty()) {
                         msN2.forEach((n2) -> {
@@ -374,10 +373,10 @@ public class ControladorEmpleado implements Serializable {
                             nivel2s.add(new Nivel2(n2.getTituloNivel2(), n2.getIconoNivel2(), n2.getEnlaceNivel2(),n2.getEstatus(), nivel3s));
                         });
                     }
-                    menus.add(new Menu("Administrador", nivel2s));
-//                    menus.add(new Menu(n1.getTituloNivel1(), nivel2s));
-//                });
-//            }
+//                    menus.add(new Menu("Administrador", nivel2s));
+                    menus.add(new Menu(n1.getTituloNivel1(), nivel2s));
+                });
+            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);

@@ -128,6 +128,22 @@ public class AdminPoaEvaluacion implements Serializable {
             }
 
     // ---------------------------------------------------------------- Listas -------------------------------------------------------------
+    
+    public void numeroAnioAsiganado(ValueChangeEvent event) {
+        if (Short.parseShort(event.getNewValue().toString()) <= 17) {
+            listaListaEjeEstrategia.clear();
+            actividadesPoasAreas.clear();
+
+            ejesEsLaAp = new ArrayList<>();
+            ejesEsLaAp.clear();
+            Messages.addGlobalWarn("Ocurrió un error (No existen Programas de Trabajo de este año)");
+        } else {
+            ejercicioFiscal = 0;
+            ejercicioFiscal = Short.parseShort(event.getNewValue().toString());
+            consultarListasValidacionFinal();
+        }
+    }
+    
     public void consultarListas() {
         try{
         actividadesPoasAreasConRegistros.clear();

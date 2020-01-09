@@ -30,6 +30,7 @@ import org.primefaces.model.chart.MeterGaugeChartModel;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 @Named
@@ -123,6 +124,21 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
         Faces.refresh();
     }
 
+    public void numeroAnioAsiganado(ValueChangeEvent event) {
+        if (Short.parseShort(event.getNewValue().toString()) <= 17) {
+            reseteador();
+            Faces.refresh();
+            Messages.addGlobalWarn("Ocurrió un error (No existen Programas de Trabajo de este año)");
+        } else {
+            ejercicioFiscal = 0;
+            ejercicioFiscal = Short.parseShort(event.getNewValue().toString());
+            cmiEnGeneral();
+            cmiPorEje();
+            Faces.refresh();
+        }
+    }
+    
+    
     public void reseteador() {
         cmiGeneral = new ResultadosCMI("", 0, 0, 0D, 0D, extender, new ArrayList<>(), new ArrayList<>(), new MeterGaugeChartModel(), false);
         cmiEJe1 = new ResultadosCMI("", 0, 0, 0D, 0D, extender, new ArrayList<>(), new ArrayList<>(), new MeterGaugeChartModel(), false);

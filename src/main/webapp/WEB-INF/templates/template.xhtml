@@ -27,7 +27,12 @@
     </ui:define>
 
     <ui:define name="menu">
-        <ui:include src="/includes/menu.xhtml"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.UsuarioTipo" var="usuarioTipo" />
+        <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.INVITADO}"  ><ui:include src="/includes/menuIn.xhtml"/></c:if>
+        <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.ASPIRANTE}"  ><ui:include src="/includes/menuA.xhtml"/></c:if>
+        <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.ESTUDIANTE}"  ><ui:include src="/includes/menuES.xhtml"/></c:if>
+        <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.ESTUDIANTE19}"  ><ui:include src="/includes/menuE19.xhtml"/></c:if>
+        <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.TRABAJADOR}"  ><ui:include src="/includes/menuT.xhtml"/></c:if>                        
     </ui:define>
 
     <ui:define name="top-menu">
