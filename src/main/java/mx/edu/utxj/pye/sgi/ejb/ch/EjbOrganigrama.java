@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,6 +18,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ch.PersonalOrganigrama;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -69,8 +71,18 @@ public class EjbOrganigrama {
         aus.add(au2);
         aus.forEach((ar) -> {
             ListaPersonal l = new ListaPersonal();
+            Personal p = new Personal();
             if (ar.getResponsable() != 0) {
-                l = emch.find(ListaPersonal.class, ar.getResponsable());
+                p=emch.find(Personal.class, ar.getResponsable());
+                if(!p.getStatus().equals('B')){
+                    l = emch.find(ListaPersonal.class, ar.getResponsable());
+                }else{
+                    l=new ListaPersonal();
+                    l.setClave(0);
+                    l.setNombre("Pendiente por reasignar");
+                    l.setCategoriaOperativa(Short.valueOf("48"));
+                    l.setCategoriaOperativaNombre("Encargado/a de Área");
+                }
                 direcPersonals.add(l);
             }
             String color = "";

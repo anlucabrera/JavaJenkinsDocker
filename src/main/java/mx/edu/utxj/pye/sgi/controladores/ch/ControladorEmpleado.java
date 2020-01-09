@@ -255,6 +255,21 @@ public class ControladorEmpleado implements Serializable {
                         }
                         if (procesopoa.getEvaluacion() != null) {
                             eventosRegistro();
+                        }else if(nuevoOBJListaPersonal.getAreaOperativa()==9 || nuevoOBJListaPersonal.getAreaOperativa()==6 || nuevoOBJListaPersonal.getAreaOperativa()==7){
+                            procesopoa=new Procesopoa();  
+                            Calendarioevaluacionpoa periodoEvaluacion = new Calendarioevaluacionpoa();
+                            Short ejeFE=0;
+                            Integer anio=0;
+                            DateFormat df = new SimpleDateFormat("yy");
+                            if(fechaActual.getMonth()==Month.JANUARY){
+                                anio=Integer.parseInt(df.format(new Date()))-2;
+                            }else{
+                                anio=Integer.parseInt(df.format(new Date()))-1;
+                            }
+                            ejeFE=Short.parseShort(anio.toString());
+                            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.areaPoa()"+anio);
+                            periodoEvaluacion=new Calendarioevaluacionpoa(13, new Date(), new Date(), "Diciembre", Boolean.FALSE);
+                            procesopoa=new Procesopoa(0, nuevoOBJListaPersonal.getAreaOperativa(),nuevoOBJListaPersonal.getClave(), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, ejeFE, ejeFE, Boolean.TRUE, Boolean.TRUE, periodoEvaluacion);
                         }
                     }
                     if (Objects.equals(procesopoa.getActivaEtapa1(), Boolean.TRUE)) {

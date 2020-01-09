@@ -170,7 +170,7 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
             table.addCell(new Paragraph(x.getNombre(), fontMateria));
             x.getMaterias().forEach(y -> {
                 PdfPCell cal;
-                if(y.getPromedioFinalN().equals(BigDecimal.ZERO)){
+                if(y.getNivelacion().compareTo(BigDecimal.ZERO) == 0){
                     cal = new PdfPCell(new Paragraph(y.getPromedioFinalO().setScale(2, RoundingMode.HALF_UP).toString(), fontMateria));
                 }else{
                     cal = new PdfPCell(new Paragraph(y.getPromedioFinalN().setScale(2, RoundingMode.HALF_UP).toString().concat(" *"), fontMateria));

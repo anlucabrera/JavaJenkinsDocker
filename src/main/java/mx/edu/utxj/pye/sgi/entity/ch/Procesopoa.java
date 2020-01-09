@@ -103,9 +103,10 @@ public class Procesopoa implements Serializable {
         this.procesoPOA = procesoPOA;
     }
 
-    public Procesopoa(Integer procesoPOA, short area, boolean registroAFinalizado, boolean validacionRegistroA, boolean asiganacionRFinalizado, boolean validacionRFFinalizado, boolean registroJustificacionFinalizado, boolean validacionJustificacion, short ejercicioFiscalEtapa1, short ejercicioFiscalEtapa2) {
+    public Procesopoa(Integer procesoPOA, short area, Integer responsable, boolean registroAFinalizado, boolean validacionRegistroA, boolean asiganacionRFinalizado, boolean validacionRFFinalizado, boolean registroJustificacionFinalizado, boolean validacionJustificacion, short ejercicioFiscalEtapa1, short ejercicioFiscalEtapa2, Boolean activaEtapa1, Boolean activaEtapa2, Calendarioevaluacionpoa evaluacion) {
         this.procesoPOA = procesoPOA;
         this.area = area;
+        this.responsable = responsable;
         this.registroAFinalizado = registroAFinalizado;
         this.validacionRegistroA = validacionRegistroA;
         this.asiganacionRFinalizado = asiganacionRFinalizado;
@@ -114,6 +115,9 @@ public class Procesopoa implements Serializable {
         this.validacionJustificacion = validacionJustificacion;
         this.ejercicioFiscalEtapa1 = ejercicioFiscalEtapa1;
         this.ejercicioFiscalEtapa2 = ejercicioFiscalEtapa2;
+        this.activaEtapa1 = activaEtapa1;
+        this.activaEtapa2 = activaEtapa2;
+        this.evaluacion = evaluacion;
     }
 
     public Integer getProcesoPOA() {
