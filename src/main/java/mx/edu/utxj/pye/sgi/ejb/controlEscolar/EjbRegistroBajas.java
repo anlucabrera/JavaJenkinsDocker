@@ -1134,8 +1134,6 @@ public class EjbRegistroBajas {
         beans.put("desAcad", obtenerListaBajasPeriodo(periodo).getValor());
         beans.put("cicloEscolar", cicloEscolar);
         beans.put("cveCiclo", cveCiclo);
-        beans.put("periodoEscolar", periodoEscolar);
-        beans.put("cvePeriodo", cvePeriodo);
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 
