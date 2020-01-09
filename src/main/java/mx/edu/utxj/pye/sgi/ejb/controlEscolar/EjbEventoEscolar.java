@@ -59,7 +59,7 @@ public class EjbEventoEscolar {
     public ResultadoEJB<EventoEscolar> verificarAventoAperturadoPorArea(EventoEscolarTipo tipo, AreasUniversidad area){
         try{
             //verificar apertura del evento contemplando al area como filtro
-            EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar e inner join e.eventoEscolarDetalleList ed where e.tipo=:tipo and ed.area=:area and current_timestamp between ed.inicio and ed.fin", EventoEscolar.class)
+            EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar e inner join e.eventoEscolarDetalleList ed where e.tipo=:tipo and ed.area=:area and current_timestamp between ed.inicio and ed.fin order by e.periodo asc", EventoEscolar.class)
                     .setParameter("tipo", tipo.getLabel())
                     .setParameter("area", area.getArea())
                     .getResultStream()
@@ -84,12 +84,19 @@ public class EjbEventoEscolar {
     public ResultadoEJB<EventoEscolar> verificarEventoAperturadoPorPersona(EventoEscolarTipo tipo, PersonalActivo persona){
         try{
             //TODO: verificar apertura del evento contemplando al area como filtro
-            EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar e inner join e.eventoEscolarDetalleList ed where e.tipo=:tipo and ed.persona=:persona and current_time between ed.inicio and ed.fin", EventoEscolar.class)
+            EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar e inner join e.eventoEscolarDetalleList ed where e.tipo=:tipo and ed.persona=:persona and current_timestamp between ed.inicio and ed.fin", EventoEscolar.class)
                     .setParameter("tipo", tipo.getLabel())
                     .setParameter("persona", persona.getPersonal().getClave())
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
+            if(tipo.equals(EventoEscolarTipo.CAPTURA_TAREA_INTEGRADORA)){
+//                System.out.println("EjbEventoEscolar.verificarEventoAperturadoPorPersona");
+//                System.out.println("tipo = " + tipo + ", persona = " + persona);
+//                System.out.println("tipo.getLabel() = " + tipo.getLabel());
+//                System.out.println("persona.getPersonal().getClave() = " + persona.getPersonal().getClave());
+//                System.out.println("eventoEscolar = " + eventoEscolar);
+            }
             if(eventoEscolar == null){
                 return ResultadoEJB.crearErroneo(2, eventoEscolar, "No existe evento aperturado para el tipo y persona solicitados.");
             }else{
@@ -108,6 +115,7 @@ public class EjbEventoEscolar {
      */
     public ResultadoEJB<EventoEscolar> verificarEventoEnCascada(EventoEscolarTipo tipo, PersonalActivo persona){
         ResultadoEJB<EventoEscolar> res = verificarEventoAperturado(tipo);
+//        System.out.println("res = " + res);
         if(!res.getCorrecto()) res = verificarAventoAperturadoPorArea(tipo, persona.getAreaPOA());
         if(!res.getCorrecto()) res = verificarEventoAperturadoPorPersona(tipo, persona);
 

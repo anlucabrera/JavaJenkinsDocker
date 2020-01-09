@@ -71,16 +71,17 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
             ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento(rol.getDocenteLogueado());
+//            System.out.println("resEvento1 = " + resEvento);
             if(!resEvento.getCorrecto()) resEvento = ejb.verificarEventoExtemporaneo(rol.getDocenteLogueado());
 
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejbCapturaCalificaciones.getPeriodosConCaptura(rol.getDocenteLogueado());
             rol.setNivelRol(NivelRol.OPERATIVO);
-//            System.out.println("resEvento = " + resEvento);
+//            System.out.println("resEvento2 = " + resEvento);
             if(resEvento.getCorrecto()) {//verificar si la apertura es por evento
                 rol.setEventoActivo(resEvento.getValor());
                 rol.setPeriodoActivo(resEvento.getValor().getPeriodo());
             }else {
-
+                mostrarMensajeResultadoEJB(resAcceso);
             }
 
             ResultadoEJB<List<Indicador>> consultarIndicadores = ejb.consultarIndicadores();
@@ -286,7 +287,7 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     public DtoUnidadesCalificacion getContenedor(@NonNull DtoCargaAcademica dtoCargaAcademica){
         if(rol.getDtoUnidadesCalificacionMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
 
-        ResultadoEJB<DtoUnidadesCalificacion> resDtoUnidadesCalificacion = packer.packDtoUnidadesCalificacion(dtoCargaAcademica, getUnidades(dtoCargaAcademica));
+        ResultadoEJB<DtoUnidadesCalificacion> resDtoUnidadesCalificacion = packer.packDtoUnidadesCalificacion(dtoCargaAcademica, getUnidades(dtoCargaAcademica), rol.getEventoActivo());
         if(!resDtoUnidadesCalificacion.getCorrecto()){
             mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
             return null;
@@ -315,6 +316,16 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
         }else {
             mostrarMensajeResultadoEJB(packDtoCalificacionNivelacion);
             return null;
+        }
+    }
+
+    public Boolean deshabilitarCaptura(@NonNull DtoCargaAcademica dtoCargaAcademica, BigDecimal promedio){
+        try {
+            DtoUnidadesCalificacion contenedor = getContenedor(dtoCargaAcademica);
+            Boolean activa = contenedor.getActivaPorFecha() || contenedor.getActivaPorAperturaExtemporanea();
+            return !(promedio.compareTo(new BigDecimal(8)) < 0 && activa);
+        }catch (NullPointerException e){
+            return Boolean.TRUE;
         }
     }
 }

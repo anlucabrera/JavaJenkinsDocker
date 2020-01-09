@@ -52,7 +52,9 @@ public class EjbCapturaTareaIntegradora {
      */
     public ResultadoEJB<EventoEscolar> verificarEventoExtemporaneo(PersonalActivo docente){
         try{
-            return ejbEventoEscolar.verificarEventoEnCascada(EventoEscolarTipo.CAPTURA_TAREA_INTEGRADORA_EXTERMPORANEA, docente);
+//            System.out.println("EjbCapturaTareaIntegradora.verificarEventoExtemporaneo");
+//            System.out.println("docente = " + docente);
+            return ejbEventoEscolar.verificarEventoEnCascada(EventoEscolarTipo.CAPTURA_TAREA_INTEGRADORA, docente);
         }catch (Exception e){
             return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para captura de calificaciones extemporánea por el docente (EjbCapturaTareaIntegradora.verificarEventoExtemporaneo).", e, EventoEscolar.class);
         }
