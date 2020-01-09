@@ -1120,11 +1120,14 @@ public class EjbRegistroBajas {
         }
     }
     
+    /**
+     * Permite generar reporte de bajas registradas en el periodo escolar seleccionado
+     * @param periodo Periodo Escolar
+     * @return Resultado del proceso
+     */
+    
     public String getReportePeriodo(PeriodosEscolares periodo) throws Throwable {
-        String cicloEscolar = periodo.getCiclo().getInicio()+ "-" + periodo.getCiclo().getFin();
-        Integer cveCiclo = periodo.getCiclo().getCiclo();
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
-        Integer cvePeriodo = periodo.getPeriodo();
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteDesercionAcademica.xlsx";
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteDesercion(periodoEscolar);
 
@@ -1132,11 +1135,36 @@ public class EjbRegistroBajas {
         
         Map beans = new HashMap();
         beans.put("desAcad", obtenerListaBajasPeriodo(periodo).getValor());
-        beans.put("cicloEscolar", cicloEscolar);
-        beans.put("cveCiclo", cveCiclo);
+        beans.put("matRep", obtenerMateriasReprobadas(periodo).getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 
         return plantillaC;
+    }
+    
+     /**
+     * Permite obtener la lista de materias reprobadas del periodo escolar seleccionado
+     * @param periodo Periodo Escolar
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoMateriaReprobada>> obtenerMateriasReprobadas(PeriodosEscolares periodo) {
+        try{
+            List<DtoMateriaReprobada> listaMateriasReprobadas = new ArrayList<>();
+            
+            List<BajaReprobacion> listaBajaReprobacion = em.createQuery("SELECT br FROM BajaReprobacion br WHERE br.registroBaja.periodoEscolar =:periodo", BajaReprobacion.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .getResultList();
+            
+            listaBajaReprobacion.forEach(bajaReprobacion -> {
+                Personal personal = em.find(Personal.class, bajaReprobacion.getCargaAcademica().getDocente());
+                DtoMateriaReprobada dtoMateriaReprobada = new DtoMateriaReprobada(bajaReprobacion, personal);
+                listaMateriasReprobadas.add(dtoMateriaReprobada);
+                
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaMateriasReprobadas, "Lista de materias reprobadas por periodo escolar.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias reprobadas por periodo escolar. (EjbRegistroBajas.obtenerMateriasReprobadas)", e, null);
+        }
     }
 }
