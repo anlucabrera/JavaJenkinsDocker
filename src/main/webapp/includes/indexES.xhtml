@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:hf="http://highfaces.org"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+        <!-- inicio de estilos para campañas electorales-->
+        <style>
+            .bg-aqua-active{
+                background:#374850 !important;
+            }
+            box-primary{
+                background:#374850 !important;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        <!-- Fin de estilos para campañas electorales-->
+    </c:if>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
+
+
+    <div class="col-md-12">
+        <p:outputPanel id="panelDatos">
+            <p:autoUpdate/>
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Avisos</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">  
+                        <div class="row">
+                            <c:if test="#{true}">
+                                <div class="col-lg-6 col-md-12 col-sm-12" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="window.open('https://www.becaseducacionsuperior.sep.gob.mx/files/Comunicacion/Convocatorias/2019/Resultados_PDF/RESULTADOS_Manutencion_Federal_2019.pdf', '_blank');">
+                                            <h3>
+                                                <h:outputLabel value="Beca de Manutención Puebla 2019" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p><br/>No olviden tener a la mano su número de folio generado en su acuse de SUBES o visiten la plataforma en el apartado de mensajes donde recibirán una notificación si fueron aceptados o no.</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa  fa-graduation-cap "></i>
+                                        </div>
+                                        <p:link href="https://www.becaseducacionsuperior.sep.gob.mx/files/Comunicacion/Convocatorias/2019/Resultados_PDF/RESULTADOS_Manutencion_Federal_2019.pdf" target="_blank" class="small-box-footer">
+                                            Consulta resultados <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="estudioEgr" action="evaluaciones/evaluacion/estudioEgresados" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Evaluaciones por estudiantes:</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">  
+                        <div class="row">
+                            <c:if test="#{estudioEgresados.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="estudioEgresados();">
+                                            <h3>
+                                                <h:outputLabel value="#{estudioEgresados.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="estudioEgresados();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluación de seguimiento a egresados de las universidades tecnológicas<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa  fa-graduation-cap "></i>
+                                        </div>
+                                        <p:link  outcome="evaluaciones/evaluacion/estudioEgresados" class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <c:if test="#{evaluacionTutor2.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="tutores();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionTutor2.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="tutores();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluación al tutor<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-legal"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/tutores2"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="tutores" action="evaluaciones/evaluacion/tutores2" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <c:if test="#{encuestaSatisfaccionEgresadosIng.dto.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="satisfaccionEgresadosIng();">
+                                            <h3>
+                                                <h:outputLabel value="#{encuestaSatisfaccionEgresadosIng.dto.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="satisfaccionEgresadosIng();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Satisfacción de egresados de ingeniería<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-graduation-cap"></i>
+                                        </div>
+                                        <p:link outcome="encuestas/Estudiantes/satisfaccionEgresadosIng"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="satisfaccionEgresadosIng" action="encuestas/Estudiantes/satisfaccionEgresadosIng" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <c:if test="#{evaluacionEstadia.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="evaluacionEstadia();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionEstadia.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" 
+                                                               onclick="evaluacionEstadia();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluacion Estadía<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-user"></i>
+                                        </div>
+                                        <p:link outcome="encuestas/Estudiantes/evaluacionEstadia"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="evaluacionEstadia" action="encuestas/Estudiantes/evaluacionEstadia" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <c:if test="#{evaluacionDoncenteMateriaControler.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="docentes();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionDoncenteMateriaControler.porcentaje}">
+                                                    <f:convertNumber pattern="###,###.##" />
+                                                </h:outputLabel>
+                                                <sup style="font-size: 20px">%</sup>
+                                            </h3>
+                                            <p>Evaluación al desempeño docente<br/></p>
+                                        </div>
+                                        <div class="icon"><i class="fa fa-cubes"></i></div>
+                                        <p:link outcome="evaluaciones/evaluacion/docentesMateriaIndex"  class="small-box-footer">
+                                            Mas información <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="docentes" action="evaluaciones/evaluacion/docentesMateriaIndex" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <c:if test="#{encuestaServicios.dto.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="servicios();">
+                                            <h3>
+                                                <h:outputLabel value="#{encuestaServicios.dto.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="servicios();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Satisfacción de servicios<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-tty"></i>
+                                        </div>
+                                        <p:link outcome="encuestas/Estudiantes/servicios"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="servicios" action="encuestas/Estudiantes/servicios" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <!--c:if test="#{estudioEgresados.cargada eq false}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="estudioEgresados();">
+                                            <h3>
+                                                <h:outputLabel value="#{estudioEgresados.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="servicios();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Estudio de egresados<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-tty"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/estudioEgresados"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="estudioEgresados" action="evaluaciones/evaluacion/estudioEgresados" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if-->
+                            <c:if test="#{encuestaSatisfaccionEgresadosTsu.dto.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="satisfaccionEgresadosTsu();">
+                                            <h3>
+                                                <h:outputLabel value="#{encuestaSatisfaccionEgresadosTsu.dto.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;"
+                                                               onclick="satisfaccionEgresadosTsu();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Encuesta satisfacción de egresados de TSU<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-graduation-cap"></i>
+                                        </div>
+                                        <!--Cuando se haga la actualizacion quitar la parte //encuestasEstudiantes/\\ -->
+                                        <p:link outcome="encuestas/Estudiantes/satisfaccionEgresadosTsu"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="satisfaccionEgresadosTsu" action="satisfaccionEgresadosTsu" /></h:form>
+                                    </div>
+                                </div>                                
+                            </c:if>
+                            <c:if test="#{estudioSocioeconomicoOperativo.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="estudioSocioeconomico();">
+                                            <h3>
+                                                <h:outputLabel value="#{estudioSocioeconomicoOperativo.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="estudioSocioeconomico();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Estudio socioeconómico<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-legal"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/estudioSocioeconomico"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="estudioSocioeconomico" action="evaluaciones/evaluacion/estudioSocioeconomico" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </p:outputPanel>
+    </div>
+
+</ui:composition>

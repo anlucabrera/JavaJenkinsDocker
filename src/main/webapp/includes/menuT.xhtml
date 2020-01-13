@@ -6,6 +6,18 @@
 
     <ul class="sidebar-menu" data-widget="tree">
         <p:importEnum type="mx.edu.utxj.pye.sgi.enums.UsuarioTipo" var="usuarioTipo" />
+        <li>
+            <p:link href="#{request.contextPath}/index.xhtml" onclick="clearBreadCrumbs()">
+                <i class="fa fa-home"></i>
+                <span>Inicio</span>
+            </p:link>
+        </li>
+        <li>
+            <p:link href="http://siip.utxicotepec.edu.mx/prontuario-service2" target="_blank">
+                <i class="fa fa-bar-chart-o"></i>
+                <span>Prontuario</span>
+            </p:link>
+        </li>
         <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.TRABAJADOR}">  
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Perfil del personal</li>
             <li>
@@ -33,8 +45,8 @@
                 <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-calendar"></i><span>Apertura Extemporánea</span></p:link></li></c:if>
 
                 <!-- Secretaría Académica -->
-                <c:if test="#{concentradoCalificacionesSecAca.mostrarEnDesarrollo(request) and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{avanceProgramaticoSecAca.mostrarEnDesarrollo(request) and avanceProgramaticoSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{concentradoCalificacionesSecAca.mostrarEnDesarrollo(request) and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span></p:link></li></c:if>
+                <c:if test="#{avanceProgramaticoSecAca.mostrarEnDesarrollo(request) and avanceProgramaticoSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
 
                 <!-- Director Área Académica -->
                 <c:if test="#{administracionPlanEstudioDirector.mostrarEnDesarrollo(request) and administracionPlanEstudioDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/plan_estudio.xhtml"><i class="fa fa-users"></i><span>Admin Plan Estudio</span></p:link></li></c:if>
@@ -44,27 +56,27 @@
                 <c:if test="#{listasAsistenciaDirector.mostrarEnDesarrollo(request) and listasAsistenciaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/ListasAsistencias.xhtml"><i class="fa fa-users"></i><span>Listas de Asistencia</span></p:link></li></c:if>
                 <c:if test="#{reporteAsistenciasDirector.mostrarEnDesarrollo(request) and reporteAsistenciasDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/reporteAsistenciasDirector.xhtml"><i class="fa fa-file-text-o"></i><span>Concentrado Asistencias</span></p:link></li></c:if>
                 <c:if test="#{validacionBajaDirector.mostrarEnDesarrollo(request) and validacionBajaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacionBaja.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Baja</span></p:link></li></c:if>
-                <c:if test="#{concentradoCalificacionesDirector.mostrarEnDesarrollo(request) and concentradoCalificacionesDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{concentradoCalificacionesDirector.mostrarEnDesarrollo(request) and concentradoCalificacionesDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span></p:link></li></c:if>
                 <c:if test="#{fusionGruposDirector.mostrarEnDesarrollo(request) and fusionGruposDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{avanceProgramaticoDirector.mostrarEnDesarrollo(request) and avanceProgramaticoDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{cedulaIdentificacionDirector.mostrarEnDesarrollo(request) and cedulaIdentificacionDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cedulaIdentificacionDirector.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{avanceProgramaticoDirector.mostrarEnDesarrollo(request) and avanceProgramaticoDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
+                <c:if test="#{cedulaIdentificacionDirector.mostrarEnDesarrollo(request) and cedulaIdentificacionDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cedulaIdentificacionDirector.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
                 <c:if test="#{validacionPlanAccionTutorialDirector.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacion_plan_accion_tutorial.xhtml"><i class="fa fa-check-square-o"></i><span>Validación de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                 <!-- Servicios Escolares -->
                 <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
                 <c:if test="#{procesoInscripcion.mostrarEnDesarrollo(request) and procesoInscripcion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-users"></i><span>Inscripciones</span></p:link></li></c:if>
                 <c:if test="#{reincorporacionServiciosEscolares.mostrarEnDesarrollo(request) and reincorporacionServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reincorporaciones.xhtml"><i class="fa fa-user-plus"></i><span>Reincorporaciones</span></p:link></li></c:if>
-                <c:if test="#{credencializacionSE.mostrarEnDesarrollo(request) and credencializacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/credencializacion.xhtml"><i class="fa fa-address-card"></i><span>Credencialización</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{registrarBajaServiciosEscolares.mostrarEnDesarrollo(request) and registrarBajaServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registrarBajas.xhtml"><i class="fa fa-user-times"></i><span>Registrar Bajas</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{reporteBajasServiciosEscolares.mostrarEnDesarrollo(request) and reporteBajasServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reporteBajas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte Bajas</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{historialMovEstServiciosEscolares.mostrarEnDesarrollo(request) and historialMovEstServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/historialMovEstudiante.xhtml"><i class="fa fa-folder"></i><span>Historial Movimientos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{credencializacionSE.mostrarEnDesarrollo(request) and credencializacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/credencializacion.xhtml"><i class="fa fa-address-card"></i><span>Credencialización</span></p:link></li></c:if>
+                <c:if test="#{registrarBajaServiciosEscolares.mostrarEnDesarrollo(request) and registrarBajaServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registrarBajas.xhtml"><i class="fa fa-user-times"></i><span>Registrar Bajas</span></p:link></li></c:if>
+                <c:if test="#{reporteBajasServiciosEscolares.mostrarEnDesarrollo(request) and reporteBajasServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reporteBajas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte Bajas</span><span class="pull-right-container"><small class="label pull-right bg-green">Actualizado</small></span></p:link></li></c:if>
+                <c:if test="#{historialMovEstServiciosEscolares.mostrarEnDesarrollo(request) and historialMovEstServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/historialMovEstudiante.xhtml"><i class="fa fa-folder"></i><span>Historial Movimientos</span><span class="pull-right-container"><small class="label pull-right bg-green">Actualizado</small></span></p:link></li></c:if>
                 <c:if test="#{fusionGruposServiciosEscolares.mostrarEnDesarrollo(request) and fusionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{cedulaIdentificacionSE.mostrarEnDesarrollo(request) and cedulaIdentificacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cedulaIdentificacionSE.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{cedulaIdentificacionSE.mostrarEnDesarrollo(request) and cedulaIdentificacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cedulaIdentificacionSE.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
                 <c:if test="#{prestamoDocumentoServiciosEscolares.mostrarEnDesarrollo(request) and prestamoDocumentoServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/prestamoDocumentos.xhtml"><i class="fa fa-folder-open"></i><span>Préstamo de documentos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                 <!-- Psicopedagogía -->
-                <c:if test="#{dictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and dictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/dictamenBaja.xhtml"><i class="fa fa-edit"></i><span>Dictamen Baja</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{cedulaIdentificacionPsicopedagogia.mostrarEnDesarrollo(request) and cedulaIdentificacionPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{dictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and dictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/dictamenBaja.xhtml"><i class="fa fa-edit"></i><span>Dictamen Baja</span></p:link></li></c:if>
+                <c:if test="#{cedulaIdentificacionPsicopedagogia.mostrarEnDesarrollo(request) and cedulaIdentificacionPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
 
                 <!-- Docente -->
                 <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
@@ -77,7 +89,7 @@
                 <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral</span></p:link></li></c:if>
                 <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/paseLista.xhtml"><i class="fa fa-list"></i><span>Lista de asistencia</span></p:link></li></c:if>
                 <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de <br/>Lista Docente</span></p:link></li></c:if>
-                <c:if test="#{avanceProgramaticoDocente.mostrarEnDesarrollo(request) and avanceProgramaticoDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{avanceProgramaticoDocente.mostrarEnDesarrollo(request) and avanceProgramaticoDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
                 <c:if test="#{registroAsesoriaDocente.mostrarEnDesarrollo(request) and registroAsesoriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/registro_asesorias.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Asesorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                 <!-- Tutor -->
@@ -86,8 +98,8 @@
                 </c:if>
                 <c:if test="#{reporteAsistenciasTutor.mostrarEnDesarrollo(request) and reporteAsistenciasTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/reporteAsistenciasTutor.xhtml"><i class="fa fa-file-text-o"></i><span>Concentrado Asistencias</span></p:link></li></c:if>
                 <c:if test="#{tramitarBajaTutor.mostrarEnDesarrollo(request) and tramitarBajaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/tramitarBaja.xhtml"><i class="fa fa-user-times"></i><span>Tramitar Baja</span></p:link></li></c:if>
-                <c:if test="#{concentradoCalificacionesTutor.mostrarEnDesarrollo(request) and concentradoCalificacionesTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{cedulaIdentificacionTutor.mostrarEnDesarrollo(request) and cedulaIdentificacionTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/cedulaIdentificacionTutor.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{concentradoCalificacionesTutor.mostrarEnDesarrollo(request) and concentradoCalificacionesTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span></p:link></li></c:if>
+                <c:if test="#{cedulaIdentificacionTutor.mostrarEnDesarrollo(request) and cedulaIdentificacionTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/cedulaIdentificacionTutor.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
                 <c:if test="#{registroPlanTutoriaTutor.mostrarEnDesarrollo(request) and registroPlanTutoriaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/plan_accion_tutorial.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{registroTutoriaGrupal.mostrarEnDesarrollo(request) and registroTutoriaGrupal.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_grupal.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Grupales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{registroTutoriaIndividual.mostrarEnDesarrollo(request) and registroTutoriaIndividual.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_individual.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Individuales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
@@ -105,7 +117,7 @@
                         </span>
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <c:if test="#{evaluacionConocimientoCodigoEtica.mostrarEnDesarrollo(request) and evaluacionConocimientoCodigoEtica.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Ética</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                        <c:if test="#{evaluacionConocimientoCodigoEtica.mostrarEnDesarrollo(request) and evaluacionConocimientoCodigoEtica.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Ética</span></p:link></li></c:if>
                     </ul>
                 </li>
             </c:if>
@@ -418,7 +430,7 @@
                     <span>Organigrama operativo</span>
                 </p:link>
             </li>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador'}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' or controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador'}">
                 <li>
                     <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoFun.xhtml"><i class="fa fa-list-alt"></i>
                         <span>Consulta</span>
@@ -449,7 +461,7 @@
                                 <span>Incidencias Subordinados</span>
                             </p:link>
                         </li>
-                                            </ul>
+                    </ul>
                 </li>  
             </c:if>
 
@@ -550,7 +562,7 @@
                             </li>
                         </ul>
                     </li>  
-                    <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) || (controladorEmpleado.nuevoOBJListaPersonal.clave eq 43 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 394 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                    <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71)or (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 582 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 394 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-file-o"></i> <span>Estadía</span>
@@ -560,48 +572,48 @@
                             </a>
                             <ul class="treeview-menu" style="display: none;">
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/1. ESPACIOS CONCERTADOS DE ESTADÍA (1).xlsx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/1_ESPACIOS_CONCERTADOS_DE_ESTADIA_2020.xlsx">
                                         <span>1. Espacios concertados</span>
                                     </p:link>
                                 </li>      
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/2. CONCENTRADO DE ESTADÍAS (1).xlsx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/2_CONCENTRADO_DE_ESTADIAS_2020.xlsx">
                                         <span>2. Concentrado de estadías</span>
                                     </p:link>
                                 </li>       
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/3. CARTA DE PRESENTACIÓN (1).docx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/3_CARTA_DE_PRESENTACION_2020.docx">
                                         <span>3. Carta de presentación</span>
                                     </p:link>
                                 </li>       
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/4. CARTA DE ACEPTACIÓN (1).docx">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/4_CARTA_DE_ACEPTACION_2020.docx">
                                         <span>4. Carta de aceptación</span>
                                     </p:link>
                                 </li>   
-                                <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29) || (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
+                                <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) or (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/5. Seguimiento de la Estadía Técnica (1).xls">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/5_Seguimiento_Estadia_Tecnica_2020.xls">
                                             <span>5. Seguimiento de la estadía</span>
                                         </p:link>
                                     </li>       
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/6. Informe_Mensual.doc">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/6_Informe_Mensual_2020.doc">
                                             <span>6. Informe mensual</span>
                                         </p:link>
                                     </li>       
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/7. EVALUACIÓN POR ASESOR EMPRESARIAL.xls">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/7_EVALUACION_POR_ASESOR_EMPRESARIAL_2020.docx">
                                             <span>7. Evaluación asesor <br/>empresarial</span>
                                         </p:link>
                                     </li>       
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/8. CARTA DE LIBERACIÓN (2).docx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/8_CARTA_DE_LIBERACION_2020.docx">
                                             <span>8. Carta de liberación <br/>empresarial</span>
                                         </p:link>
                                     </li>       
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/9. Carta de evaluación y acreditación de estadia.doc">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/9_Carta_de_evaluacion_y_acreditacion_de_estadia_2020.doc">
                                             <span>9. Evaluación, acreditación <br/>estadía</span>
                                         </p:link>
                                     </li> 
@@ -609,7 +621,7 @@
                             </ul>
                         </li>
                     </c:if>
-                    <c:if test="#{(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) || (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 18 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 227)}">
+                    <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 18 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 227)}">
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-file-text-o"></i> <span>Tutorías y Asesorías</span>
@@ -687,10 +699,9 @@
                         </li>
                     </c:if>
                     <c:if test="#{
-                          (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29 ) 
-                              || (controladorEmpleado.nuevoOBJListaPersonal.areaSuperior ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaSuperior le 29 ) 
-                              || (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 5 || controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9)
-                              || (controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                          (controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) 
+                              or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 5 or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9)
+                              or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-file-text-o"></i> <span>Visitas</span>
@@ -930,7 +941,7 @@
                     </c:forEach>
                 </c:if>
             </c:forEach> 
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                 <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
                     <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Personal</li>
                 </c:if>
@@ -942,7 +953,7 @@
                         </span>
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 501 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 501 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                             <li> 
                                 <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonal.xhtml"><i class="fa fa-user-circle-o"></i>
                                     <span>Activo</span>
@@ -962,7 +973,7 @@
                                 </p:link>
                             </li>
                         </c:if>
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 647}">
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 647}">
                             <li>
                                 <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalIn.xhtml">
                                     <i class="fa fa-folder-open"></i>
@@ -1007,7 +1018,7 @@
                     </ul>
                 </li>
             </c:if>
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Fortalecimiento</li>
                 <li>
                     <p:link href="#{request.contextPath}/capitalHumano/fda/perfilPersonalDocente.xhtml">

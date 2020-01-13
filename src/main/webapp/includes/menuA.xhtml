@@ -6,7 +6,12 @@
 
     <ul class="sidebar-menu" data-widget="tree">
         <p:importEnum type="mx.edu.utxj.pye.sgi.enums.UsuarioTipo" var="usuarioTipo" />
-        
+        <li>
+            <p:link href="#{request.contextPath}/index.xhtml" onclick="clearBreadCrumbs()">
+                <i class="fa fa-home"></i>
+                <span>Inicio</span>
+            </p:link>
+        </li>
         <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.ASPIRANTE}">
             <li>
                 <p:link href="#{request.contextPath}/controlEscolar/fichaAdmision.xhtml">
@@ -21,6 +26,12 @@
                 </p:link>
             </li>
         </c:if>
-        
+        <li>
+            <p:link href="#{request.contextPath}/soporteTecnico.xhtml">
+                <i class="fa fa-wrench"></i>
+                <span>Soporte técnico</span>
+            </p:link>
+        </li>
+
     </ul>
 </ui:composition>

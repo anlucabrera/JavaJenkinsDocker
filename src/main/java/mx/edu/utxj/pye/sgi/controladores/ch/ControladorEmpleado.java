@@ -67,13 +67,15 @@ public class ControladorEmpleado implements Serializable {
     @Getter    @Setter    private List<Modulosregistro> nuevaListaModulosregistro = new ArrayList<>();
 
     @Getter    @Setter    private EventosAreas nuevaEventosAreas = new EventosAreas();
-
+    
     @Getter    @Setter    private AreasUniversidad nuevaAreasUniversidad = new AreasUniversidad();
+    @Getter    @Setter    private AreasUniversidad nuevaAreasUniversidadPOA = new AreasUniversidad();
+    @Getter    @Setter    private AreasUniversidad nuevaAreasUniversidadLogeado = new AreasUniversidad();
     @Getter    @Setter    private List<MenuDinamico> moduloses = new ArrayList();
     
     @Getter    @Setter    private List<Menu> menus = new ArrayList();
     @Getter    @Setter    private Nivel3 menu;
-
+    
     @Getter    @Setter    private LocalDate fechaActual = LocalDate.now();
     @Getter    @Setter    private LocalDateTime fechaActualHora = LocalDateTime.now();
     @Getter    @Setter    private DateFormat dateFormat = new SimpleDateFormat("EEEE d MMMM yyyy");
@@ -130,7 +132,6 @@ public class ControladorEmpleado implements Serializable {
 
     public void mostrarPerfilLogeado() {
         try {
-
             nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(empleadoLogeado);
             nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(empleadoLogeado);
             if (nuevoOBJListaPersonal == null) {
@@ -149,6 +150,7 @@ public class ControladorEmpleado implements Serializable {
             if (nuevoOBJListaPersonal == null) {
                 Messages.addGlobalFatal("Sin datos para la clave " + empleadoLogeado);
             }
+            nuevaAreasUniversidadLogeado=ejbAreasLogeo.mostrarAreasUniversidad(nuevoOBJListaPersonal.getAreaOperativa());
             fechasModulos();
 
         } catch (Throwable ex) {
@@ -236,6 +238,7 @@ public class ControladorEmpleado implements Serializable {
                     evaluable = false;
                 } else {
                     nuevaAreasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(procesopoa.getArea());
+                    nuevaAreasUniversidadPOA = ejbAreasLogeo.mostrarAreasUniversidad(procesopoa.getArea());
                     if (Objects.equals(procesopoa.getActivaEtapa2(), Boolean.TRUE)) {
                         if (procesopoa.getEvaluacion() == null) {
                             procesopoa.setEvaluacion(new Calendarioevaluacionpoa());

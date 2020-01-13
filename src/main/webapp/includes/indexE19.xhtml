@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:hf="http://highfaces.org"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+        <!-- inicio de estilos para campañas electorales-->
+        <style>
+            .bg-aqua-active{
+                background:#374850 !important;
+            }
+            box-primary{
+                background:#374850 !important;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        <!-- Fin de estilos para campañas electorales-->
+    </c:if>
+
+    <div class="col-md-12">
+        <p:outputPanel id="panelDatos">
+            <p:autoUpdate/>
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h2 class="box-title"></h2>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>   
+                    <!-- Reinscripcion Autónoma-->
+                    <c:if test="#{reinscripcionAutonomaEstudiante.tieneAcceso}">
+                        <c:if test="#{reinscripcionAutonomaEstudiante.rol.reinscrito!=true}">
+                            <div class="#{claseResumen}" style="max-height: 154px;">
+                                <div class="small-box bg-aqua-active">
+                                    <div class="inner" style="cursor: pointer;" onclick="cambio();">
+                                        <h3>
+                                            <h:outputLabel value="Reinscripción Autónoma" style="cursor: pointer;" onclick="cambio();" />
+                                            <sup style="font-size: 20px"></sup>
+                                        </h3>
+                                        <p>Periodo: #{caster.clavePeriodoToString(reinscripcionAutonomaEstudiante.rol.eventoReinscripcion.periodo)}<br/></p>
+                                        <p>¡No haz realizado tu reinscripción!. Ingresa aqui para realizarlo.<br/></p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fa fa-user-check"></i>
+                                    </div>
+                                    <p:link  outcome="controlEscolar/estudiante/reinscripcionAutonoma" class="small-box-footer">
+                                        Entrar <i class="fa fa-arrow-circle-right"></i>
+                                    </p:link>
+                                </div>
+                            </div>
+                        </c:if>
+                    </c:if>
+                    <!--Cuestionario Psicopedagogico -->
+                    <div class="box-body">
+                        <div class="row">
+                            <c:if test="#{cuestionarioPsicopedagogicoEstudiante.tieneAcceso}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-yellow">
+                                        <div class="inner" style="cursor: pointer;" onclick="cuestionario();">
+                                            <h3>
+                                                <h:outputLabel value="#{cuestionarioPsicopedagogicoEstudiante.finalizo?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="cuestionario();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Cuestionario Psicopedagógico<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-id-badge"></i>
+                                        </div>
+                                        <p:link  outcome="controlEscolar/estudiante/cuestionarioPsicopedagogico" class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <!--Evaluacion Tutor -->
+                            <c:if test="#{evaluacionTutor2.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="tutores();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionTutor2.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="tutores();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluación al tutor<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-legal"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/tutores2"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="tutores" action="evaluaciones/evaluacion/tutores2" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <!-- Evaluacion a Desempeño Docente-->
+                            <c:if test="#{evaluacionDoncenteMateriaControler.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="docentes();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionDoncenteMateriaControler.porcentaje}">
+                                                    <f:convertNumber pattern="###,###.##" />
+                                                </h:outputLabel>
+                                                <sup style="font-size: 20px">%</sup>
+                                            </h3>
+                                            <p>Evaluación al desempeño docente<br/></p>
+                                        </div>
+                                        <div class="icon"><i class="fa fa-book"></i></div>
+                                        <p:link outcome="evaluaciones/evaluacion/docentesMateriaIndex"  class="small-box-footer">
+                                            Mas información <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="docentes" action="evaluaciones/evaluacion/docentesMateriaIndex" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                        </div>
+                    </div>
+                    <!--Aviso de cambio de contraseña -->
+                    <div class="box-body">
+                        <div class="row">
+                            <c:if test="#{cambioPwdEstudiante.tieneAcceso}">
+                                <c:if test="#{cambioPwdEstudiante.rol.estudiante.aspirante.idPersona.login.modificado ==false}">
+                                    <div class="#{claseResumen}" style="max-height: 154px;">
+                                        <div class="small-box bg-yellow">
+                                            <div class="inner" style="cursor: pointer;" onclick="cambio();">
+                                                <h3>
+                                                    <h:outputLabel value="Cambio de contraseña" style="cursor: pointer;" onclick="cambio();" />
+                                                    <sup style="font-size: 20px"></sup>
+                                                </h3>
+                                                <p>¡No haz realizado el cambio de tu contraseña!. Ingresa aqui para hacer el cambio.<br/></p>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fa fa-key"></i>
+                                            </div>
+                                            <p:link  outcome="controlEscolar/estudiante/CambioPwdEstudiante" class="small-box-footer">
+                                                Entrar <i class="fa fa-arrow-circle-right"></i>
+                                            </p:link>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </p:outputPanel>
+    </div>
+
+</ui:composition>

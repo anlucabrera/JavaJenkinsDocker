@@ -6,6 +6,12 @@
 
     <ul class="sidebar-menu" data-widget="tree">
         <p:importEnum type="mx.edu.utxj.pye.sgi.enums.UsuarioTipo" var="usuarioTipo" />
+        <li>
+            <p:link href="#{request.contextPath}/index.xhtml" onclick="clearBreadCrumbs()">
+                <i class="fa fa-home"></i>
+                <span>Inicio</span>
+            </p:link>
+        </li>
         <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.ESTUDIANTE19}">
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Control escolar</li>
             <c:if test="#{cambioPwdEstudiante.mostrarEnDesarrollo(request) and cambioPwdEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/modificacionDatosEstudiante.xhtml"><i class="fa fa-user-circle"></i><span>Mi perfil</span><span class="pull-right-container"></span></p:link></li></c:if>
@@ -22,5 +28,11 @@
             <c:if test="#{validacionTutoriaGrupalEstudiante.mostrarEnDesarrollo(request) and validacionTutoriaGrupalEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/tutorias_grupales.xhtml"><i class="fa fa-slideshare"></i><span>Tutorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
         </c:if>
+        <li>
+            <p:link href="#{request.contextPath}/soporteTecnico.xhtml">
+                <i class="fa fa-wrench"></i>
+                <span>Soporte técnico</span>
+            </p:link>
+        </li>
     </ul>
 </ui:composition>
