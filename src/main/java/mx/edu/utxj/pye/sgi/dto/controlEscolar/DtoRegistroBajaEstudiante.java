@@ -30,6 +30,8 @@ public class DtoRegistroBajaEstudiante implements Serializable{
     @Getter @Setter @NonNull Personal personalRegistro;
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
     @Getter @Setter @NonNull PeriodosEscolares periodoEscolar;
+    @Getter @Setter @NonNull String cicloEscolar;
+    @Getter @Setter @NonNull String fechaBaja;
 
     public DtoRegistroBajaEstudiante() {
     }
