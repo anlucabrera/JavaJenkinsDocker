@@ -952,6 +952,27 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         facade.flush();
         return expedienteTitulacion;
     }
+    
+    
+    @Override
+    public DatosContacto guardarDatosContacto(DatosContacto datContacto, ExpedientesTitulacion expediente) throws Throwable {
+        facade.setEntityClass(DatosContacto.class);
+        datContacto.setExpediente(expediente);
+        facade.edit(datContacto);
+        Messages.addGlobalInfo("<b>Se agregó Datos de Contacto correctamente </b> " + expediente);
+        facade.flush();
+        return datContacto;
+    }
+   
+    @Override
+    public DomiciliosExpediente guardarDomicilio(DomiciliosExpediente domExpediente, ExpedientesTitulacion expediente) throws Throwable {
+        facade.setEntityClass(DomiciliosExpediente.class);
+        domExpediente.setExpediente(expediente);
+        facade.edit(domExpediente);
+        Messages.addGlobalInfo("<b>Se agregó Domicilio correctamente </b> " + expediente);
+        facade.flush();
+        return domExpediente;
+    }
 
 
     @Override
@@ -1072,5 +1093,5 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         
         return nivel;
     }
-   
+
 }

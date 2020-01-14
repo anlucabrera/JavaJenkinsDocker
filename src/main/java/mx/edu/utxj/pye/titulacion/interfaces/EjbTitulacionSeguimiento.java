@@ -15,8 +15,10 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.titulacion.dto.dtoExpedientesActuales;
 import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
 import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DatosContacto;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DatosTitulacion;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.Egresados;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
 import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
@@ -287,10 +289,32 @@ public interface EjbTitulacionSeguimiento {
      /**
      * Guarda nuevo expediente de titulación (expedienteTitulacion)
      * @param expedienteTitulacion
+     * @param procesoIntegracion
+     * @param egresado
+     * @param progEdu
+     * @param generacion
      * @return 
      * @throws java.lang.Throwable
      */
     public ExpedientesTitulacion guardarExpedienteTitulacion(ExpedientesTitulacion expedienteTitulacion, dtoProcesosIntegracion procesoIntegracion, Egresados egresado, AreasUniversidad progEdu, Generaciones generacion) throws Throwable;
+    
+     /**
+     * Guarda datos de contacto (datosContacto)
+     * @param datContacto
+     * @param expediente
+     * @return entity DatosContacto
+     * @throws java.lang.Throwable
+     */
+    public DatosContacto guardarDatosContacto(DatosContacto datContacto, ExpedientesTitulacion expediente) throws Throwable;
+    
+     /**
+     * Guarda domicilio (domicilioExpediente)
+     * @param domExpediente
+     * @param expediente
+     * @return entity DatosContacto
+     * @throws java.lang.Throwable
+     */
+    public DomiciliosExpediente guardarDomicilio(DomiciliosExpediente domExpediente, ExpedientesTitulacion expediente) throws Throwable;
     
      /**
      * Obtiene el número de expediente de titulación

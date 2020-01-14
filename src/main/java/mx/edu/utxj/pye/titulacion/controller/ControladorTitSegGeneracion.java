@@ -37,7 +37,13 @@ import org.omnifaces.util.Messages;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
+import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
 import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DatosContacto;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.Egresados;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.titulacion.dto.dtoProcesosIntegracion;
@@ -69,6 +75,7 @@ public class ControladorTitSegGeneracion implements Serializable{
     //Variables para registrar expediente
     @Getter @Setter private Egresados egresado;
     @Getter @Setter private ExpedientesTitulacion expTitulacion;
+    @Getter @Setter private AntecedentesAcademicos antAcademicos;
     @Getter @Setter private Integer numExpediente;
     @Getter @Setter private List<dtoProcesosIntegracion> listaProcesos;
     @Getter @Setter private dtoProcesosIntegracion procesoIntegracion;
@@ -77,6 +84,15 @@ public class ControladorTitSegGeneracion implements Serializable{
     @Getter @Setter private List<Generaciones> listaGeneraciones;
     @Getter @Setter private Generaciones generacion;
     @Getter @Setter private List<String> listaGeneros;
+    
+    @Getter @Setter private List<SelectItem> listaEstadosDomicilioRadica, listaMunicipiosRadica, listaAsentamientos, listaEstadosIEMS, listaMunicipiosIEMS, listaLocalidadesIEMS, listaIEMS;
+    @EJB EJBSelectItems eJBSelectItems;
+    @Getter @Setter private Integer estadoIEMS, municipioIEMS, localidadIEMS;
+    @EJB EjbSelectItemCE ejbItemCE;
+    @EJB EjbFichaAdmision ejbFichaAdmision;
+    @Getter @Setter private DatosContacto datContacto;
+    @Getter @Setter private DomiciliosExpediente domExpediente;
+    
     
     @EJB private EjbTitulacionSeguimiento ejbTitulacionSeguimiento;
     
@@ -110,6 +126,9 @@ public class ControladorTitSegGeneracion implements Serializable{
         cargado = true;
         egresado = new  Egresados();
         expTitulacion = new ExpedientesTitulacion();
+        antAcademicos = new AntecedentesAcademicos();
+        datContacto = new DatosContacto();
+        domExpediente = new DomiciliosExpediente();
         try {
         aperturaDialogo = Boolean.FALSE;
         aperturaPagos = Boolean.FALSE;
@@ -119,7 +138,8 @@ public class ControladorTitSegGeneracion implements Serializable{
         selectNumExp();
         selectProcesos();
         selectGeneros();
-        
+        listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+        listaEstadosIEMS = eJBSelectItems.itemEstados();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
@@ -347,6 +367,11 @@ public class ControladorTitSegGeneracion implements Serializable{
         try {
             egresado = ejbTitulacionSeguimiento.guardarEgresado(egresado);
             expTitulacion = ejbTitulacionSeguimiento.guardarExpedienteTitulacion(expTitulacion, procesoIntegracion, egresado, progEdu, generacion);
+            antAcademicos.setGradoAcademico("Bachillerato");
+            antAcademicos.setMatricula(egresado);
+            antAcademicos = ejbTitulacionSeguimiento.guardarAntAcadInd(antAcademicos, expTitulacion.getExpediente());
+            datContacto = ejbTitulacionSeguimiento.guardarDatosContacto(datContacto, expTitulacion);
+            domExpediente = ejbTitulacionSeguimiento.guardarDomicilio(domExpediente, expTitulacion);
             Ajax.update("formGuardarExpediente");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
@@ -433,5 +458,28 @@ public class ControladorTitSegGeneracion implements Serializable{
             setGeneracion(gen);
             Ajax.update("formGuardarExpediente");
         }
+    }
+    
+     /* Combos para domicilio */
+    public void selectMunicipio(){
+        listaMunicipiosRadica = eJBSelectItems.itemMunicipiosByClave(this.domExpediente.getEstado());
+    }
+    
+    public void selectAsentamiento(){
+        listaAsentamientos = eJBSelectItems.itemAsentamientoByClave(domExpediente.getEstado(), domExpediente.getMunicipio());
+    }
+    
+    /* Combos para IEMS */
+    public void selectMunicipioIems(){
+        listaMunicipiosIEMS = eJBSelectItems.itemMunicipiosByClave(this.estadoIEMS);
+    }
+    
+
+    public void selectLocalidadIems(){
+        listaLocalidadesIEMS = eJBSelectItems.itemLocalidadesByClave(this.estadoIEMS,this.municipioIEMS);
+    }
+    
+    public void selectIems(){
+        listaIEMS = ejbItemCE.itemIems(this.estadoIEMS, this.municipioIEMS, this.localidadIEMS);
     }
 }
