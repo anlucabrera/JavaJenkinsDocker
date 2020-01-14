@@ -92,6 +92,7 @@ public class ControladorTitSegGeneracion implements Serializable{
     @EJB EjbFichaAdmision ejbFichaAdmision;
     @Getter @Setter private DatosContacto datContacto;
     @Getter @Setter private DomiciliosExpediente domExpediente;
+    @Getter @Setter private DatosTitulacion datTitulacion;
     
     
     @EJB private EjbTitulacionSeguimiento ejbTitulacionSeguimiento;
@@ -129,6 +130,7 @@ public class ControladorTitSegGeneracion implements Serializable{
         antAcademicos = new AntecedentesAcademicos();
         datContacto = new DatosContacto();
         domExpediente = new DomiciliosExpediente();
+        datTitulacion = new DatosTitulacion();
         try {
         aperturaDialogo = Boolean.FALSE;
         aperturaPagos = Boolean.FALSE;
@@ -372,6 +374,7 @@ public class ControladorTitSegGeneracion implements Serializable{
             antAcademicos = ejbTitulacionSeguimiento.guardarAntAcadInd(antAcademicos, expTitulacion.getExpediente());
             datContacto = ejbTitulacionSeguimiento.guardarDatosContacto(datContacto, expTitulacion);
             domExpediente = ejbTitulacionSeguimiento.guardarDomicilio(domExpediente, expTitulacion);
+            datTitulacion = ejbTitulacionSeguimiento.guardarDatosTitulacion(datTitulacion, expTitulacion);
             Ajax.update("formGuardarExpediente");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());

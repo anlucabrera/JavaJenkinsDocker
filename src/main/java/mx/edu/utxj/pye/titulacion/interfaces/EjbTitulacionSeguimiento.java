@@ -317,6 +317,15 @@ public interface EjbTitulacionSeguimiento {
     public DomiciliosExpediente guardarDomicilio(DomiciliosExpediente domExpediente, ExpedientesTitulacion expediente) throws Throwable;
     
      /**
+     * Guarda datos de titulación (datosTitulacion)
+     * @param datTitulacion
+     * @param expediente
+     * @return entity DatosContacto
+     * @throws java.lang.Throwable
+     */
+    public DatosTitulacion guardarDatosTitulacion(DatosTitulacion datTitulacion, ExpedientesTitulacion expediente) throws Throwable;
+    
+     /**
      * Obtiene el número de expediente de titulación
      * @return número de expediente
      * @throws java.lang.Throwable

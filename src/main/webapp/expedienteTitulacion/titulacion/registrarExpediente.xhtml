@@ -349,6 +349,44 @@
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos de Titulación</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Promedio Final</strong>
+                                                                                            <p class="text-muted">
+                                                                                                <p:inputNumber id="promedio" decimalPlaces="1"  required="true" decimalSeparator="." style="border: none;" size="5" value="#{controladorTitSegGen.datTitulacion.promedioFinal}"/> 
+                                                                                            </p>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-8">
+                                                                                            <strong>¿Cumplió Servicio Social?</strong>
+                                                                                            <p class="text-muted">
+                                                                                                <p:selectOneMenu id="servSoc" value="#{controladorTitSegGen.datTitulacion.servicioSocial}" required="true" requiredMessage="Es necesario que seleccione una opción">
+                                                                                                    <f:selectItem itemLabel="Si" itemValue="true" />
+                                                                                                    <f:selectItem itemLabel="No" itemValue="false" />
+                                                                                                </p:selectOneMenu>
+                                                                                                <p:message for="servSoc"><p:autoUpdate/></p:message>
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
                                                                         <strong></strong>
                                                                         <p class="text-muted"></p>

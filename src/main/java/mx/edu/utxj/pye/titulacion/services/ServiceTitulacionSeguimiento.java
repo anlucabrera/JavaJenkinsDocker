@@ -973,6 +973,19 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         facade.flush();
         return domExpediente;
     }
+    
+    
+    @Override
+    public DatosTitulacion guardarDatosTitulacion(DatosTitulacion datTitulacion, ExpedientesTitulacion expediente) throws Throwable {
+        facade.setEntityClass(DatosTitulacion.class);
+        datTitulacion.setExpediente(expediente);
+        datTitulacion.setModalidadTitulacion("Por Reporte de Estadía");
+        facade.edit(datTitulacion);
+        Messages.addGlobalInfo("<b>Se agregó Datos de Titulación correctamente </b> " + expediente);
+        facade.flush();
+        return datTitulacion;
+    }
+
 
 
     @Override
