@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utxj.pye.sgi.controlador.*;
+import mx.edu.utxj.pye.sgi.controlador.consulta.ServiciosConsulta;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaCalificacionesRolCoordinadorAD;
@@ -80,7 +81,10 @@ public enum ControlEscolarVistaControlador {
 
     CONSULTA_CALIFICACION_COORDINADOR("/controlEscolar/coordinador/consultarCalificacionesCoordinador.xhtml", ConsultaCalificacionesCoordinadorAD.class),
 
-    EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class);
+    EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class),
+    /////////////////////////////////////////////////////////////////////////////
+    SATISFACCION_SERVICIOS_CONSULTA("/encuestas/consulta/servicios.xhtml", ServiciosConsulta.class);
+    /////////////////////////////////////////////////////////////////////////////
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
 }
