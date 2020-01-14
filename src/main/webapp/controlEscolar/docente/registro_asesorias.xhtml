@@ -137,8 +137,8 @@
                                                                         readonlyInput="true"
                                                                         disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
                                                                         mask="true"
-                                                                        mindate="#{registroAsesoriaDocente.rol.periodoSeleccionado.periodoEscolarFechas.inicio}"
-                                                                        maxdate="#{registroAsesoriaDocente.rol.periodoSeleccionado.periodoEscolarFechas.fin}"
+                                                                        mindate="#{caster.fechaMinina(registroAsesoriaDocente.rol.eventoSeleccionado.ejercicioFiscal.anio, registroAsesoriaDocente.rol.eventoSeleccionado.mes)}"
+                                                                        maxdate="#{caster.fechaMaxima(registroAsesoriaDocente.rol.eventoSeleccionado.ejercicioFiscal.anio, registroAsesoriaDocente.rol.eventoSeleccionado.mes)}"
                                                                         >
                                                             </p:calendar>
                                                         </div>
