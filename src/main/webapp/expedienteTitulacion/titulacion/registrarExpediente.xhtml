@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputScript library="js" name="calendario.js" />
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="index.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div> 
+                                    <br />
+                                    <br />
+                                          <div class="col-lg-12 col-xs-12">
+                                            </div> 
+                                </div>
+                                        <p:panel id="ET" >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <h:form id="formGuardarExpediente">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h1><strong>Nuevo Expediente de Titulación</strong></h1>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos personales</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                            <strong>Número de Expediente</strong>
+                                                                                                <p class="text-muted">                              
+                                                                                                    <p:inputText id="numExpedienteET" class="form-control" value="#{controladorTitSegGen.numExpediente}" disabled="true"/>
+                                                                                                    <p:message for="numExpedienteET" display="tooltip"><p:autoUpdate/></p:message>    
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-8">
+                                                                                            <strong>Proceso de Integración</strong>
+                                                                                                <p class="text-muted">                              
+                                                                                                    <p:selectOneMenu id="procesoIntegracion" value="#{controladorTitSegGen.procesoIntegracion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{controladorTitSegGen.cambiarProcesoIntegracion}">
+                                                                                                        <f:selectItems value="#{controladorTitSegGen.listaProcesos}" var="procesoIntegracion" itemValue="#{procesoIntegracion}" itemLabel="#{procesoIntegracion.procesosGeneraciones.procesosGeneracionesPK.proceso}. #{caster.generacionToString(procesoIntegracion.generacion)} #{procesoIntegracion.nivel}" />
+                                                                                                        <p:ajax process="@this"/>
+                                                                                                        <p:autoUpdate />
+                                                                                                    </p:selectOneMenu>
+                                                                                                    <p:message for="procesoIntegracion" />
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-8">
+                                                                                            <strong>Fecha</strong>
+                                                                                                <p class="text-muted">                              
+                                                                                                    <p:calendar style="object-fit: contain; font-size: medium" locale="es" id="fechaET" value="#{controladorTitSegGen.expTitulacion.fecha}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese fecha"/>
+                                                                                                    <p:message for="fechaET" display="tooltip" />    
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        
+                                                                                        
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Matricula</strong>
+                                                                                                <p class="text-muted">                              
+                                                                                                    <p:inputText id="matriculaE" class="form-control" value="#{controladorTitSegGen.egresado.matricula}" required="true" requiredMessage="Es necesario que ingrese su matricula"/>
+                                                                                                    <p:message for="matriculaE" display="tooltip"><p:autoUpdate/></p:message>    
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Programa Educativo</strong>
+                                                                                                <p class="text-muted">                              
+                                                                                                    <p:selectOneMenu id="progEdu" value="#{controladorTitSegGen.progEdu}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{controladorTitSegGen.cambiarProgramaEducativo}">
+                                                                                                        <f:selectItems value="#{controladorTitSegGen.listaProgramasEducativos}" var="progEdu" itemValue="#{progEdu}" itemLabel="#{progEdu.nombre}" />
+                                                                                                        <p:ajax process="@this"/>
+                                                                                                        <p:autoUpdate />
+                                                                                                    </p:selectOneMenu>
+                                                                                                    <p:message for="progEdu" />
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Generación</strong>
+                                                                                                <p class="text-muted">                              
+                                                                                                    <p:selectOneMenu id="generacion" value="#{controladorTitSegGen.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{controladorTitSegGen.cambiarGeneracion}">
+                                                                                                        <f:selectItems value="#{controladorTitSegGen.listaGeneraciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                                                                        <p:ajax process="@this"/>
+                                                                                                        <p:autoUpdate />
+                                                                                                    </p:selectOneMenu>
+                                                                                                    <p:message for="generacion" />  
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Nombre</strong>
+                                                                                                <p class="text-muted">                              
+                                                                                                    <p:inputText id="nombreE" class="form-control" value="#{controladorTitSegGen.egresado.nombre}" required="true" requiredMessage="Es necesario que ingrese su nombre"/>
+                                                                                                    <p:message for="nombreE" display="tooltip"><p:autoUpdate/></p:message>    
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Apellido Paterno</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <p:inputText id="apellidoPatE" class="form-control" value="#{controladorTitSegGen.egresado.apellidoPaterno}" required="true" requiredMessage="Es necesario que ingrese su apellido paterno"/>
+                                                                                                    <p:message for="apellidoPatE" display="tooltip"><p:autoUpdate/></p:message>    
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Apellido Materno</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <p:inputText id="apellidoMatE" class="form-control" value="#{controladorTitSegGen.egresado.apellidoMaterno}" required="true" requiredMessage="Es necesario que ingrese su apellido materno"/>
+                                                                                                    <p:message for="apellidoMatE" display="tooltip"><p:autoUpdate/></p:message>    
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>CURP</strong>
+                                                                                                <p class="text-muted">                            
+                                                                                                    <p:inputText id="curpE" class="form-control" value="#{controladorTitSegGen.egresado.curp}" required="true" requiredMessage="Es necesario que ingrese su curp"/>
+                                                                                                    <p:message for="curpE" display="tooltip" ><p:autoUpdate/></p:message>    
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Fecha de Nacimiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <p:calendar style="object-fit: contain; font-size: medium" locale="es" id="fechaNacE" value="#{controladorTitSegGen.egresado.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese su fecha de nacimiento"/>
+                                                                                                    <p:message for="fechaNacE" display="tooltip"> <p:autoUpdate/></p:message>    
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Género</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <p:selectOneMenu id="generoE" value="#{controladorTitSegGen.egresado.genero}" required="true" requiredMessage="Es necesario que ingrese su género">
+                                                                                                        <f:selectItems value="#{controladorTitSegGen.listaGeneros}"/>
+                                                                                                    </p:selectOneMenu>
+                                                                                                    <p:message for="generoE"><p:autoUpdate/></p:message>
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <p:commandButton id="btnGuardarExpediente" value="Guardar expediente" actionListener="#{controladorTitSegGen.guardarExpediente}" 
+                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  update="@form"  process="@form" />
+                                                                    </div>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            </h:form>
+                                                            <hr/>
+
+                                                             </div>
+                                                                    </div>
+                                                                </div>
+                                        </p:panel>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

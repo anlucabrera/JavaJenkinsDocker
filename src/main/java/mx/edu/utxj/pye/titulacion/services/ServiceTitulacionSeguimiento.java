@@ -28,6 +28,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.StatusAlumno;
 import mx.edu.utxj.pye.sgi.entity.titulacion.Egresados;
@@ -51,6 +52,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
+import mx.edu.utxj.pye.titulacion.dto.dtoProcesosIntegracion;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbEstudianteRegistro;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.omnifaces.util.Messages;
@@ -926,4 +928,149 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         return descripcion;
     }
 
+    @Override
+    public Egresados guardarEgresado(Egresados egresado) throws Throwable {
+        facade.setEntityClass(Egresados.class);
+        facade.create(egresado);
+        Messages.addGlobalInfo("<b>Se agregó Egresado correctamente </b> ");
+        facade.flush();
+        return egresado;
+    }
+    
+    @Override
+    public ExpedientesTitulacion guardarExpedienteTitulacion(ExpedientesTitulacion expedienteTitulacion, dtoProcesosIntegracion procesoIntegracion, Egresados egresado, AreasUniversidad progEdu, Generaciones generacion) throws Throwable {
+        facade.setEntityClass(ExpedientesTitulacion.class);
+        ProcesosIntexp proceso = facade.getEntityManager().find(ProcesosIntexp.class, procesoIntegracion.getProcesosGeneraciones().getProcesosGeneracionesPK().getProceso());
+        expedienteTitulacion.setProceso(proceso);
+        expedienteTitulacion.setMatricula(egresado);
+        Integer nivel = obtenerNivelEducativo(progEdu);
+        expedienteTitulacion.setNivel(nivel);
+        expedienteTitulacion.setProgramaEducativo(progEdu.getSiglas());
+        expedienteTitulacion.setGeneracion(generacion.getGeneracion());
+        facade.create(expedienteTitulacion);
+        Messages.addGlobalInfo("<b>Se agregó Expediente de Titulción correctamente </b> ");
+        facade.flush();
+        return expedienteTitulacion;
+    }
+
+
+    @Override
+    public Integer obtenerNumeroExpediente() throws Throwable {
+        
+        Integer expedientesTitulacion = facade.getEntityManager().createQuery("SELECT MAX(e.expediente) FROM ExpedientesTitulacion e", Integer.class)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse((Integer)0);;
+        
+        Integer numero = expedientesTitulacion + 1;
+        
+        return numero;
+    }
+
+    @Override
+    public List<dtoProcesosIntegracion> obtenerListaProcesos() throws Throwable {
+        List<ProcesosGeneraciones> procesosGeneraciones = facade.getEntityManager().createQuery("SELECT pg FROM ProcesosGeneraciones pg", ProcesosGeneraciones.class)
+                .getResultList();
+
+        List<dtoProcesosIntegracion> listaDtoProcesosIntegracion = new ArrayList<>();
+
+        procesosGeneraciones.forEach(proceso -> {
+            Generaciones generaciones = facade.getEntityManager().find(Generaciones.class, proceso.getProcesosGeneracionesPK().getGeneracion());
+            PeriodosEscolares periodosEscolares = facade.getEntityManager().find(PeriodosEscolares.class, proceso.getProcesosGeneracionesPK().getPeriodo());
+            String nivel="";
+            if(proceso.getProcesosGeneracionesPK().getGrado()<7){
+                nivel ="T.S.U";
+            }else{
+                nivel ="Ing/Lic";
+            }
+            dtoProcesosIntegracion dtoProcInt = new dtoProcesosIntegracion(proceso, generaciones, periodosEscolares, nivel);
+            listaDtoProcesosIntegracion.add(dtoProcInt);
+        });
+        
+        return listaDtoProcesosIntegracion;
+    }
+
+    @Override
+    public List<AreasUniversidad> obtenerProgramasEducativos(String nivel) throws Throwable {
+        //verificar que el parametro no sea nulo
+        if (nivel == null) {
+            return null;
+        }
+        
+        List<AreasUniversidad> listaProgramasEducativos = new ArrayList<>();
+        if (nivel.equals("T.S.U")) {
+            listaProgramasEducativos = facade.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.categoria.categoria =:categoria AND a.vigente =:vigente AND a.nivelEducativo.nivel =:nivel", AreasUniversidad.class)
+                    .setParameter("categoria", 9)
+                    .setParameter("vigente", "1")
+                    .setParameter("nivel", "TSU")
+                    .getResultList();
+        } else {
+           listaProgramasEducativos = facade.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.categoria.categoria =:categoria AND a.vigente =:vigente AND a.nivelEducativo.nivel <>:nivel", AreasUniversidad.class)
+                    .setParameter("categoria", 9)
+                    .setParameter("vigente", "1")
+                    .setParameter("nivel", "TSU")
+                    .getResultList();
+        }
+        return listaProgramasEducativos;
+    }
+
+    @Override
+    public List<Generaciones> obtenerGeneraciones(String nivel) throws Throwable {
+        //verificar que el parametro no sea nulo
+        if (nivel == null) {
+            return null;
+        }
+        
+        Short tsu=6, ing=7;
+        
+        List<ProcesosGeneraciones> procesosGeneraciones = new ArrayList<>();
+        if (nivel.equals("T.S.U")) {
+           procesosGeneraciones = facade.getEntityManager().createQuery("SELECT pg FROM ProcesosGeneraciones pg WHERE pg.procesosGeneracionesPK.grado <=:grado", ProcesosGeneraciones.class)
+                .setParameter("grado", tsu)
+                .getResultList();
+        } else {
+            procesosGeneraciones = facade.getEntityManager().createQuery("SELECT pg FROM ProcesosGeneraciones pg WHERE pg.procesosGeneracionesPK.grado >=:grado", ProcesosGeneraciones.class)
+                .setParameter("grado", ing)
+                .getResultList();
+        }
+        List<Generaciones> listaGeneraciones = new ArrayList<>();
+
+        procesosGeneraciones.forEach(proceso -> {
+            Generaciones generaciones = facade.getEntityManager().find(Generaciones.class, proceso.getProcesosGeneracionesPK().getGeneracion());
+            listaGeneraciones.add(generaciones);
+        });
+        
+        return listaGeneraciones;
+    }
+
+    @Override
+    public Integer obtenerNivelEducativo(AreasUniversidad progEdu) throws Throwable {
+        //verificar que el parametro no sea nulo
+        if (progEdu == null) {
+            return null;
+        }
+        
+        Integer nivel = 0;
+        
+        switch (progEdu.getNivelEducativo().getNivel()) {
+            case "5A":
+                nivel = 2;
+                break;
+            case "5B":
+                nivel = 4;
+                break;
+            case "5B3":
+                nivel = 3;
+                break;
+            case "TSU":
+                nivel = 1;
+                break;
+            default:
+
+                break;
+        }
+        
+        return nivel;
+    }
+   
 }
