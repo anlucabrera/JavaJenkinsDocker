@@ -89,7 +89,7 @@
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="periodo" value="#{concentradoCalificacionesTutor.rol.periodo}" converter="entityConverter" styleClass="form-control" >
                                                         <f:selectItems value="#{concentradoCalificacionesTutor.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                        <p:ajax process="@this, unidad"/>
+                                                        <p:ajax process="@this, unidad" listener="#{concentradoCalificacionesTutor.cambiarPeriodo}"/>
                                                         <p:autoUpdate />
                                                     </p:selectOneMenu>
                                                     <p:outputLabel value="Periodo" for="periodo"/>
@@ -147,7 +147,7 @@
                                                                     </div>
                                                                     <div class="col-sm-3">
                                                                         <div class="description-block" style="text-align: center">
-                                                                            <img src="../../resources/img/utxj.png" alt="" height="80px"/>
+                                                                            <img src="../../resources/img/utxj.png" alt="" height="100px"/>
                                                                         </div>
                                                                     </div>
                                                                 </div>

@@ -562,14 +562,14 @@ public class EjbRegistroPlanEstudio {
 
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosRegistros(PersonalActivo docente) {
         try {
-//            List<Integer> claves = em.createQuery("SELECT g FROM Grupo g WHERE g.tutor =:tutor", Grupo.class)
-//                    .setParameter("tutor", docente.getPersonal().getClave())
-//                    .getResultStream()
-//                    .map(a -> a.getPeriodo())
-//                    .collect(Collectors.toList());
+            List<Integer> claves = em.createQuery("SELECT g FROM Grupo g WHERE g.tutor =:tutor", Grupo.class)
+                    .setParameter("tutor", docente.getPersonal().getClave())
+                    .getResultStream()
+                    .map(a -> a.getPeriodo())
+                    .collect(Collectors.toList());
             List<PeriodosEscolares> periodos = new ArrayList<>();
             
-            List<Integer> claves=new ArrayList<>();
+//            List<Integer> claves=new ArrayList<>();
             claves.add(52);
                     
             if (!claves.isEmpty()) {

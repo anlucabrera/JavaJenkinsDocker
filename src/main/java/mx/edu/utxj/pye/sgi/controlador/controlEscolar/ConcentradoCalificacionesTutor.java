@@ -59,6 +59,7 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Ajax;
 
 
 
@@ -144,6 +145,36 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
         return mostrar(request, map.containsValue(valor));
     }
 
+    public void cambiarPeriodo() {
+//        System.out.println("rol.getPeriodoSeleccionado() = " + caster.periodoToString(rol.getPeriodoSeleccionado()));
+        if (rol.getPeriodo() == null) {
+            mostrarMensaje("No hay periodo escolar seleccionado.");
+            rol.setDrpls(new ArrayList<>());
+            rol.setDplrs(new ArrayList<>());
+            rol.setEstudiantes(new ArrayList<>());
+            academicas = new ArrayList<>();
+            return;
+        }
+        ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
+        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
+        if(resgrupos.getValor().isEmpty())return;
+        rol.setGrupos(resgrupos.getValor());   
+        rol.setGrupoSelec(rol.getGrupos().get(0));
+        
+        ResultadoEJB<List<Listaalumnosca>> rejbA = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
+        if(!rejbA.getCorrecto()) mostrarMensajeResultadoEJB(rejbA);
+        if(rejbA.getValor().isEmpty())return;
+        rol.setListaalumnoscas(rejbA.getValor());  
+            
+        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());        
+        academicas = new ArrayList<>();
+        if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+        if(rejb.getValor().isEmpty())return;
+                
+        creareporte();
+        Ajax.update("frm");
+    }
+    
     public String buscarPersonal(Integer clave) {
         try {
             Personal p = new Personal();
@@ -194,13 +225,16 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
         rol.getDvcs().clear();
 
         rol.getEstudiantes().forEach((t) -> {
+            if(!obtenerCalificaciones(t).isEmpty()){
             List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad = obtenerCalificaciones(t);
             List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionePorMateria = obtenerPromedioMateria(t);
             List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion = obtenerTareaIntegradoraPorMateria(t);
             List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria = obtenerNivelacionesPorMateria(t);
             BigDecimal promedioF = obtenerPromedioCuatrimestral(t);
             rol.getDcts().add(new DtoCalificacionesTutor(t, calificacionePorUnidad, calificacionePorMateria, calificacionePorMateria, tareaIntegradoraPresentacion, calificacionesNivelacionPorMateria, promedioF));
-
+            }else{
+            rol.getDcts().add(new DtoCalificacionesTutor(t, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), BigDecimal.ZERO));
+            }
         });
         rol.getDcts().forEach((t) -> {
             dvcs = new ArrayList<>();
@@ -283,37 +317,62 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
 
     public List<DtoCalificacionEstudiante.CalificacionePorUnidad> obtenerCalificaciones(Estudiante e) {
         ResultadoEJB<List<DtoCalificacionEstudiante.CalificacionePorUnidad>> resCalificaciones = ecc.packCalificacionesPorUnidadyMateria1(e);
-        return resCalificaciones.getValor().stream().filter(a -> a.getEstudiante().getGrupo().getPeriodo() == rol.getPeriodo().getPeriodo()).collect(Collectors.toList());
+        if (resCalificaciones.getCorrecto()) {
+            return resCalificaciones.getValor().stream().filter(a -> a.getEstudiante().getGrupo().getPeriodo() == rol.getPeriodo().getPeriodo()).collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<DtoCalificacionEstudiante.CalificacionePorMateria> obtenerPromedioMateria(Estudiante e) {
         ResultadoEJB<List<DtoCalificacionEstudiante.CalificacionePorMateria>> resultadoEJB = ecc.packPromedioMateria(e);
-        return resultadoEJB.getValor().stream().filter(a -> a.getGrupo().getPeriodo() == rol.getPeriodo().getPeriodo()).collect(Collectors.toList());
+        if (resultadoEJB.getCorrecto()) {
+            return resultadoEJB.getValor().stream().filter(a -> a.getGrupo().getPeriodo() == rol.getPeriodo().getPeriodo()).collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<DtoCalificacionEstudiante.CalificacionePorMateria> obtenerPromediosFinales(Estudiante e) {
         ResultadoEJB<List<DtoCalificacionEstudiante.CalificacionePorMateria>> resultadoEJB = ecc.packCalificacionesFinales(e);
-        return resultadoEJB.getValor().stream().filter(a -> a.getGrupo().getPeriodo() == rol.getPeriodo().getPeriodo()).collect(Collectors.toList());
+        if (resultadoEJB.getCorrecto()) {
+            return resultadoEJB.getValor().stream().filter(a -> a.getGrupo().getPeriodo() == rol.getPeriodo().getPeriodo()).collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public BigDecimal obtenerPromedioCuatrimestral(Estudiante e) {
         ResultadoEJB<BigDecimal> promedio = ecc.obtenerPromedioCuatrimestral(e, rol.getPeriodo().getPeriodo());
-        BigDecimal valor = promedio.getValor();
-        rol.setMateriasPorEstudiante(new ArrayList<>());
-        rol.setMateriasPorEstudiante(ecc.packMaterias(e).getValor().stream().filter(a -> a.getGrupo().getPeriodo() == rol.getPeriodo().getPeriodo()).collect(Collectors.toList()));
-        BigDecimal numeroMaterias = new BigDecimal(rol.getMateriasPorEstudiante().size());
-        BigDecimal promedioCuatrimestral = valor.divide(numeroMaterias, RoundingMode.HALF_UP);
-        return promedioCuatrimestral.setScale(1, RoundingMode.HALF_UP);
+        if (promedio.getCorrecto()) {
+            BigDecimal valor = promedio.getValor();
+            rol.setMateriasPorEstudiante(new ArrayList<>());
+            rol.setMateriasPorEstudiante(ecc.packMaterias(e).getValor().stream().filter(a -> a.getGrupo().getPeriodo() == rol.getPeriodo().getPeriodo()).collect(Collectors.toList()));
+            BigDecimal numeroMaterias = new BigDecimal(rol.getMateriasPorEstudiante().size());
+            BigDecimal promedioCuatrimestral = valor.divide(numeroMaterias, RoundingMode.HALF_UP);
+
+            return promedioCuatrimestral.setScale(1, RoundingMode.HALF_UP);
+        } else {
+            return BigDecimal.ZERO;
+        }
     }
 
     public List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> obtenerTareaIntegradoraPorMateria(Estudiante e) {
         ResultadoEJB<List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion>> resultadoEJB = ecc.tareaIntegradoraPresentacion(e);
-        return resultadoEJB.getValor();
+        if (resultadoEJB.getCorrecto()) {
+            return resultadoEJB.getValor();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> obtenerNivelacionesPorMateria(Estudiante e) {
         ResultadoEJB<List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria>> resultadoEJB = ecc.packPromedioNivelacionPorMateria(e);
-        return resultadoEJB.getValor();
+        if (resultadoEJB.getCorrecto()) {
+            return resultadoEJB.getValor();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
 
