@@ -78,13 +78,7 @@
                                                                             <div class="box-header with-border">                                                                    
                                                                                 <div class="col-sm-12">
                                                                                     <div class="row">
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-2">
-                                                                                            <p:outputLabel for="numExpedienteET" style="font-size: medium" value="Número de Expediente"/>                 
-                                                                                                    <p:inputText id="numExpedienteET" class="form-control" value="#{controladorTitSegGen.numExpediente}" disabled="true"/>
-                                                                                                    <p:message for="numExpedienteET" display="tooltip"><p:autoUpdate/></p:message>  
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-8">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-6">
                                                                                             <p:outputLabel for="procesoIntegracion" style="font-size: medium" value="Proceso de Integración"/>  
                                                                                                     <p:selectOneMenu id="procesoIntegracion" value="#{controladorTitSegGen.procesoIntegracion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{controladorTitSegGen.cambiarProcesoIntegracion}">
                                                                                                         <f:selectItems value="#{controladorTitSegGen.listaProcesos}" var="procesoIntegracion" itemValue="#{procesoIntegracion}" itemLabel="#{procesoIntegracion.procesosGeneraciones.procesosGeneracionesPK.proceso}. Generación: #{caster.generacionToString(procesoIntegracion.generacion)} Nivel: #{procesoIntegracion.nivel}" />
@@ -92,22 +86,6 @@
                                                                                                         <p:autoUpdate />
                                                                                                     </p:selectOneMenu>
                                                                                                     <p:message for="procesoIntegracion" />
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-2">
-                                                                                            <p:outputLabel for="fechaET" style="font-size: medium" value="Fecha"/>  
-                                                                                            <p class="text-muted">
-                                                                                                <p:calendar locale="es" id="fechaET" value="#{controladorTitSegGen.expTitulacion.fecha}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese fecha"/>
-                                                                                                    <p:message for="fechaET" display="tooltip" />  
-                                                                                             </p>
-                                                                                            <hr/>
-                                                                                        </div>
-                                                                                        
-                                                                                        
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-2">
-                                                                                            <p:outputLabel for="matriculaE" style="font-size: medium" value="Matricula"/>                        
-                                                                                                    <p:inputText id="matriculaE" class="form-control" value="#{controladorTitSegGen.egresado.matricula}" required="true" requiredMessage="Es necesario que ingrese su matricula"/>
-                                                                                                    <p:message for="matriculaE" display="tooltip"><p:autoUpdate/></p:message> 
                                                                                                 <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-6">
@@ -120,6 +98,7 @@
                                                                                                     <p:message for="progEdu" />
                                                                                                 <hr/>
                                                                                         </div>
+                                                                                        
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                             <p:outputLabel for="generacion" style="font-size: medium" value="Generación"/>                     
                                                                                                     <p:selectOneMenu id="generacion" value="#{controladorTitSegGen.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{controladorTitSegGen.cambiarGeneracion}">
@@ -130,6 +109,21 @@
                                                                                                     <p:message for="generacion" />  
                                                                                                 <hr/>
                                                                                         </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="fechaET" style="font-size: medium" value="Fecha"/>  
+                                                                                            <p class="text-muted">
+                                                                                                <p:calendar locale="es" id="fechaET" value="#{controladorTitSegGen.expTitulacion.fecha}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese fecha"/>
+                                                                                                    <p:message for="fechaET" display="tooltip" />  
+                                                                                             </p>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="matriculaE" style="font-size: medium" value="Matricula"/>                        
+                                                                                                    <p:inputText id="matriculaE" class="form-control" value="#{controladorTitSegGen.egresado.matricula}" required="true" requiredMessage="Es necesario que ingrese su matricula"/>
+                                                                                                    <p:message for="matriculaE" display="tooltip"><p:autoUpdate/></p:message> 
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        
                                                                                         
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                              <p:outputLabel for="nombreE" style="font-size: medium" value="Nombre"/>                            
@@ -284,7 +278,7 @@
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                             <p:outputLabel for="calle" style="font-size: medium" value="Calle"/>
                                                                                             <p class="text-muted">
-                                                                                            <p:inputText size="75" maxlength="150" id="calle" placeholder="Calle" value="#{controladorTitSegGen.domExpediente.calle}" required="true" requiredMessage="Es necesario que ingrese el nombre de la calle"/>
+                                                                                            <p:inputText size="75" maxlength="150" id="calle" value="#{controladorTitSegGen.domExpediente.calle}" required="true" requiredMessage="Es necesario que ingrese el nombre de la calle"/>
                                                                                             <p:message for="calle"><p:autoUpdate/></p:message>
                                                                                             </p>
                                                                                             <hr/>
@@ -292,7 +286,7 @@
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                             <p:outputLabel for="colonia" style="font-size: medium" value="Colonia"/>
                                                                                             <p class="text-muted">
-                                                                                            <p:inputText size="75" maxlength="150" id="colonia" placeholder="Colonia" value="#{controladorTitSegGen.domExpediente.colonia}" required="true" requiredMessage="Es necesario que ingrese el nombre de la colonia"/>
+                                                                                            <p:inputText size="75" maxlength="150" id="colonia" value="#{controladorTitSegGen.domExpediente.colonia}" required="true" requiredMessage="Es necesario que ingrese el nombre de la colonia"/>
                                                                                             <p:message for="colonia"><p:autoUpdate/></p:message>
                                                                                             </p>
                                                                                             <hr/>
@@ -363,20 +357,20 @@
                                                                                 <div class="col-sm-12">
                                                                                     <div class="row">
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <strong>Promedio Final</strong>
+                                                                                            <p:outputLabel for="promedio" style="font-size: medium" value="Promedio*"/>
                                                                                             <p class="text-muted">
                                                                                                 <p:inputNumber id="promedio" decimalPlaces="1"  required="true" decimalSeparator="." style="border: none;" size="5" value="#{controladorTitSegGen.datTitulacion.promedioFinal}"/> 
                                                                                             </p>
+                                                                                            <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-8">
-                                                                                            <strong>¿Cumplió Servicio Social?</strong>
-                                                                                            <p class="text-muted">
+                                                                                            <p:outputLabel for="servSoc" style="font-size: medium" value="¿Cumplió Servicio Social?*"/>
                                                                                                 <p:selectOneMenu id="servSoc" value="#{controladorTitSegGen.datTitulacion.servicioSocial}" required="true" requiredMessage="Es necesario que seleccione una opción">
                                                                                                     <f:selectItem itemLabel="Si" itemValue="true" />
                                                                                                     <f:selectItem itemLabel="No" itemValue="false" />
                                                                                                 </p:selectOneMenu>
                                                                                                 <p:message for="servSoc"><p:autoUpdate/></p:message>
-                                                                                            </p>
+                                                                                            <hr/>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>

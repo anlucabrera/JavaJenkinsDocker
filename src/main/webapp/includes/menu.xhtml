@@ -480,6 +480,25 @@
                     </ul>
                 </li>
             </c:if>
+            
+             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 10}">
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Titulación</li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-folder"></i><span>Expedientes</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="#{request.contextPath}/expedienteTitulacion/escolares/seguimientoExpMatricula.xhtml" target="_blank"><i class="fa fa-user-o"></i>
+                                <span>Seguimiento por Matricula</span>
+                            </p:link>
+                        </li>
+                    </ul>
+                </li>
+            </c:if>
 
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Justificación de asistencias</li>
             <li class="treeview">

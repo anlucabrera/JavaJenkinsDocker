@@ -932,7 +932,6 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     public Egresados guardarEgresado(Egresados egresado) throws Throwable {
         facade.setEntityClass(Egresados.class);
         facade.create(egresado);
-        Messages.addGlobalInfo("<b>Se agregó Egresado correctamente </b> ");
         facade.flush();
         return egresado;
     }
@@ -948,7 +947,6 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         expedienteTitulacion.setProgramaEducativo(progEdu.getSiglas());
         expedienteTitulacion.setGeneracion(generacion.getGeneracion());
         facade.create(expedienteTitulacion);
-        Messages.addGlobalInfo("<b>Se agregó Expediente de Titulción correctamente </b> ");
         facade.flush();
         return expedienteTitulacion;
     }
@@ -959,7 +957,6 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         facade.setEntityClass(DatosContacto.class);
         datContacto.setExpediente(expediente);
         facade.edit(datContacto);
-        Messages.addGlobalInfo("<b>Se agregó Datos de Contacto correctamente </b> " + expediente);
         facade.flush();
         return datContacto;
     }
@@ -969,7 +966,6 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         facade.setEntityClass(DomiciliosExpediente.class);
         domExpediente.setExpediente(expediente);
         facade.edit(domExpediente);
-        Messages.addGlobalInfo("<b>Se agregó Domicilio correctamente </b> " + expediente);
         facade.flush();
         return domExpediente;
     }
@@ -981,7 +977,6 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         datTitulacion.setExpediente(expediente);
         datTitulacion.setModalidadTitulacion("Por Reporte de Estadía");
         facade.edit(datTitulacion);
-        Messages.addGlobalInfo("<b>Se agregó Datos de Titulación correctamente </b> " + expediente);
         facade.flush();
         return datTitulacion;
     }
