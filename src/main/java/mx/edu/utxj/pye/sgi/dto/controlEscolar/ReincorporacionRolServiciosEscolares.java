@@ -62,6 +62,7 @@ public class ReincorporacionRolServiciosEscolares extends AbstractRol {
      */
     @Getter @NonNull private Persona persona;
 
+    @Getter @Setter private DtoReincorporacion reincorporacion;
     /**
      * Variables que representa la busqueda por curp de la Persona
      */

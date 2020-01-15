@@ -11,6 +11,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.shiro.User;
 //import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
@@ -38,7 +39,9 @@ public interface EjbLogin {
     public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario);
 
     public List<VistaEvaluacionesTutores> getTutoresPeriodoActual();
-// Fin de métodos 
+// Fin de métodos
+    
+    public Personal buscaPersona(Integer numeroNomina);
 
     public String encriptarContrasena(String contrasena);
 

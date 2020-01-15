@@ -254,15 +254,19 @@ public class cuadroMandoIntegralUniversidad implements Serializable {
                             case 1:                            tR = tR + t.getNAFebrero();                            tP = tP + t.getNPFebrero();
                             case 0:                            tR = tR + t.getNAEnero();                            tP = tP + t.getNPEnero();                            break;
                         }
+                        Double porc = 0D;
                         if (tP != 0) {
-                            programadasMensual = programadasMensual + 1;
-                            prograRepoMensual = prograRepoMensual + 1;
+                            programadasCorte = programadasCorte + 1;
+                            prograRepoCorte = prograRepoCorte + 1;
+                            porc = (tR * 100D) / tP;
                         }
-                        if ((tR != 0) && (tR>=tP)) {
-                            realizadasMensual = realizadasMensual + 1;
+                        if ((tR != 0) && (tR >= tP)) {
+                            realizadasCorte = realizadasCorte + 1;
+                        } else if ((tR != 0) && (porc >= 95D)) {
+                            realizadasCorte = realizadasCorte + 1;
                         }
                         if (tR != 0 && Objects.equals(tR, tP)) {
-                            realRepoMensual = realRepoMensual + 1;
+                            realRepoCorte = realRepoCorte + 1;
                         }
                     }
                 }); 
