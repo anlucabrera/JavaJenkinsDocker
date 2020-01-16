@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Baja;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.RegistrarBajaRolServiciosEscolares;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
 
 
@@ -46,7 +45,6 @@ public class GeneracionFormatoBaja implements Serializable{
        ResultadoEJB<DtoFormatoBaja> res = ejb.generarFormatoBaja(registro);
        if(res.getCorrecto()){
             formatoBaja = res.getValor();
-            System.err.println("generarFormatoBajaCorrecto - formatoBaja " + formatoBaja);
             Ajax.update("frmFormatoBaja");
         }
     }
