@@ -37,12 +37,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "TipoEstudiante.findByActivo", query = "SELECT t FROM TipoEstudiante t WHERE t.activo = :activo")})
 public class TipoEstudiante implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_tipo_estudiante")
-    private Short idTipoEstudiante;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 45)
@@ -52,6 +46,13 @@ public class TipoEstudiante implements Serializable {
     @NotNull
     @Column(name = "activo")
     private boolean activo;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_tipo_estudiante")
+    private Short idTipoEstudiante;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoEstudiante")
     private List<Estudiante> estudianteList;
 
@@ -76,21 +77,6 @@ public class TipoEstudiante implements Serializable {
         this.idTipoEstudiante = idTipoEstudiante;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(boolean activo) {
-        this.activo = activo;
-    }
 
     @XmlTransient
     public List<Estudiante> getEstudianteList() {
@@ -124,6 +110,22 @@ public class TipoEstudiante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante[ idTipoEstudiante=" + idTipoEstudiante + " ]";
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
     
 }

@@ -159,94 +159,40 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row margin-bottom" style="margin-top: 30px;">
-                                    <center>
-                                        <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion eq 'Ordinaria'}">
-                                        <p:commandButton id="btnGuardar1" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCapturaOrdinaria()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
-                                        </c:if>
-                                        <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion eq 'Nivelación Final'}">
-                                        <p:commandButton id="btnGuardar2" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCapturaNivFinal()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
-                                        </c:if>
-                                    </center>   
-                                    </div>
-                                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas ne null and permisoAperturaExtemporaneaAdministrador.rol.docente ne null}">
+                                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.listaEstudiantes ne null and permisoAperturaExtemporaneaAdministrador.rol.docente ne null}">
                                     <div class="row margin-bottom" style="margin-top: 60px;">
                                             <center>
-                                                <p:dataTable id="tbAperExt" var="aperturasExt" value="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas}" sortBy="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.grado}° '#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.literal}' de #{aperturasExt.programaEducativo.nombre}"
+                                                <p:dataTable id="tbAperExt" var="aperturasExt" value="#{permisoAperturaExtemporaneaAdministrador.rol.listaEstudiantes}" sortBy="#{aperturasExt.aspirante.idPersona.apellidoPaterno} #{aperturasExt.aspirante.idPersona.apellidoMaterno} #{aperturasExt.aspirante.idPersona.nombre}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" expandableRowGroups="true" >
                                                     <f:facet name="header">
-                                                        <center>Permisos de Captura Extemporáneas Vigentes</center>
+                                                        <center>Lista de Estudiantes</center>
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column headerText="Opciones" />
-                                                            <p:column headerText="Grupo" /> 
-                                                            <p:column headerText="Materia" /> 
-                                                            <p:column headerText="Docente" />
-                                                            <p:column headerText="Unidad" />
-                                                            <p:column headerText="Tipo Evaluación" />
-                                                            <p:column headerText="Fecha Inicio" />
-                                                            <p:column headerText="Fecha Fin" />
-                                                            <p:column headerText="Justificación" />
+                                                            <p:column width="100px" headerText="Habilitar" />
+                                                            <p:column width="200px" headerText="Matricula" />
+                                                            <p:column width="600px" headerText="Nombre" /> 
                                                         </p:row>
                                                     </p:columnGroup>
-                                                    <p:ajax event="cellEdit" listener="#{permisoAperturaExtemporaneaAdministrador.onCellEdit}"/>
-                                                    <c:set var="clavePermiso" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.permisoGrupal}"/>
-                                                    <p:column>
+                                                    <c:set var="estudiante" value="#{aperturasExt}"/>
+                                                    <c:set var="permisoActivo" value="#{permisoAperturaExtemporaneaAdministrador.consultarPermisoActivo(estudiante)}" />
+                                                    <p:column width="100px">
                                                         <center>
                                                         <div class="btn-group">
-                                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{permisoAperturaExtemporaneaAdministrador.eliminarPermiso(clavePermiso)}" title="Eliminar registro.">
-                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del permiso?" icon="ui-icon-alert" />
-                                                            </p:commandButton>
+                                                         <p:commandButton class="btn btn-sm #{permisoActivo eq 'Si'?'btn-info':'btn-danger'}" icon="#{permisoActivo eq 'Si'?'fa fa-close':'fa fa-check'}" 
+                                                                          title="#{permisoActivo eq 'Si'?'Permiso Activo.':'Activar Permiso.'}" disabled="#{permisoActivo eq 'Si'}"
+                                                                          actionListener="#{permisoAperturaExtemporaneaAdministrador.aperturaExtEst(estudiante)}">
+                                                         </p:commandButton>
                                                         </div>
                                                         </center>
                                                     </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.grado}° '#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.literal}' de #{aperturasExt.programaEducativo.nombre}" style="text-align: center;"/>
+                                                    <p:column width="200px">
+                                                        <h:outputText value="#{aperturasExt.matricula}" style="text-align: center;" />
                                                     </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idPlanMateria.idMateria.nombre}" style="text-align: center;" />
-                                                    </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturasExt.personal.nombre}"/>
-                                                    </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.noUnidad}. #{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.nombre}" style="text-align: center;"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.tipoEvaluacion}" />
-                                                    </p:column>
-                                                    <p:column>
-                                                        <p:cellEditor>
-                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaInicio}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
-                                                             <f:facet name="input"><p:calendar id="fechaInicio" locale="es" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaInicio}" pattern="dd-MM-yyyy" mask="true"/></f:facet>
-                                                         </p:cellEditor>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <p:cellEditor>
-                                                            <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
-                                                             <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
-                                                         </p:cellEditor>
-                                                    </p:column>
-                                                     <p:column>
-                                                         <p:cellEditor>
-                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.justificacionPermiso.descripcion}" style="text-align: center;"/></f:facet>
-                                                             <f:facet name="input">
-                                                                 <p:selectOneMenu id="justificacion" value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.justificacionPermiso}" converter="entityConverter">
-                                                                     <f:selectItems value="#{permisoAperturaExtemporaneaAdministrador.rol.listaJustificaciones}" var="justificacion"
-                                                                                    itemValue="#{justificacion}" itemLabel="#{justificacion.descripcion}"/>
-                                                                 </p:selectOneMenu>
-                                                             </f:facet>
-                                                         </p:cellEditor>
+                                                    <p:column width="600px">
+                                                        <h:outputText value="#{aperturasExt.aspirante.idPersona.apellidoPaterno} #{aperturasExt.aspirante.idPersona.apellidoMaterno} #{aperturasExt.aspirante.idPersona.nombre}" style="text-align: center;" />
                                                     </p:column>
                                                 </p:dataTable>
-                                                <p></p>
-                                                <p></p>
-                                                <p></p>
-                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                                </p:confirmDialog> 
                                             </center>
                                     </div>
                                     </c:if>

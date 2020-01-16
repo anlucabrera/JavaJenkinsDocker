@@ -444,4 +444,98 @@ public class EjbPermisoAperturaExtemporanea {
         return calendar.getTime(); 
     }
     
+     /**
+     * Permite obtener la lista de justificaciones activas para solicitar el permiso de captura extemporánea
+     * @param cargaAcademica
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Estudiante>> getListaEstudiantes(DtoCargaAcademica cargaAcademica){
+        try{
+            List<Estudiante> listaEstudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.grupo.idGrupo=:grupo AND e.tipoEstudiante.idTipoEstudiante =:activo", Estudiante.class)
+                    .setParameter("grupo", cargaAcademica.getCargaAcademica().getCveGrupo().getIdGrupo())
+                    .setParameter("activo", Short.parseShort("1"))
+                    .getResultList();
+            
+            return ResultadoEJB.crearCorrecto(listaEstudiantes, "Lista de estudiantes que integran el grupo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes para permiso de apertura extemporánea. (EjbPermisoAperturaExtemporanea.getListaEstudiantes)", e, null);
+        }
+    }
+    
+     /**
+     * Permite guardar el permiso de captura extemporánea ordinaria de un estudiante
+     * @param cargaAcademica Carga Académica para obtener parametros como: periodo, grupo, plan materia y docente.
+     * @param estudiante Estudiante seleccionado
+     * @param unidadMateria Unidad materia que se registrará con el permiso
+     * @param tipoEvaluacion Tipo de evaluación a registrar en este caso Nivelación Final
+     * @param fechaInicio Fecha inicio para el permiso de captura
+     * @param fechaFin Fecha fin para el permiso de captura
+     * @param justificacion Justificación por la que el docente solicita el permiso
+     * @param administrador Personal administrador que registra el permiso
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<PermisosCapturaExtemporaneaEstudiante> guardarPermisoCapturaOrdinariaEstudiante(DtoCargaAcademica cargaAcademica, Estudiante estudiante, UnidadMateria unidadMateria, String tipoEvaluacion, Date fechaInicio, Date fechaFin, JustificacionPermisosExtemporaneos justificacion, PersonalActivo administrador){
+        try{   
+            Date fechaFinCompleta = obtenerFechaFin(fechaFin);
+            
+            PermisosCapturaExtemporaneaEstudiante permisosCapturaExtemporaneaEstudiante = new PermisosCapturaExtemporaneaEstudiante();
+            permisosCapturaExtemporaneaEstudiante.setPeriodo(cargaAcademica.getCargaAcademica().getEvento().getPeriodo());
+            permisosCapturaExtemporaneaEstudiante.setEstudiante(estudiante);
+            permisosCapturaExtemporaneaEstudiante.setIdGrupo(cargaAcademica.getGrupo());
+            permisosCapturaExtemporaneaEstudiante.setIdPlanMateria(cargaAcademica.getPlanEstudioMateria());
+            permisosCapturaExtemporaneaEstudiante.setDocente(cargaAcademica.getDocente().getPersonal().getClave());
+            permisosCapturaExtemporaneaEstudiante.setTipoEvaluacion(tipoEvaluacion);
+            permisosCapturaExtemporaneaEstudiante.setIdUnidadMateria(unidadMateria);
+            permisosCapturaExtemporaneaEstudiante.setFechaInicio(fechaInicio);
+            permisosCapturaExtemporaneaEstudiante.setFechaFin(fechaFinCompleta);
+            permisosCapturaExtemporaneaEstudiante.setJustificacionPermiso(justificacion);
+            permisosCapturaExtemporaneaEstudiante.setPersonalGrabaPermiso(administrador.getPersonal().getClave());
+            permisosCapturaExtemporaneaEstudiante.setFechaGrabaPermiso(new Date());
+            em.persist(permisosCapturaExtemporaneaEstudiante);
+            f.flush();
+            
+            return ResultadoEJB.crearCorrecto(permisosCapturaExtemporaneaEstudiante, "El permiso de captura extemporánea ordinaria del estudiante se ha registrado correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar el permiso de captura extemporánea ordinaria del estudiante. (EjbPermisoAperturaExtemporanea.guardarPermisoCapturaOrdinariaEstudiante)", e, null);
+        }
+    }
+    
+    /**
+     * Permite verificar si existe permiso de apertrua extemporanea activo
+     * @param estudiante
+     * @param cargaAcademica
+     * @param unidadMateria
+     * @param tipoEvaluacion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<String> buscarPermisoActivo(Estudiante estudiante, DtoCargaAcademica cargaAcademica, UnidadMateria unidadMateria, String tipoEvaluacion) {
+        try{
+            Date fechaActual = new Date();
+            
+            List<PermisosCapturaExtemporaneaEstudiante> listaPermisos = em.createQuery("SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.estudiante.idEstudiante =:estudiante AND p.idGrupo.idGrupo =:grupo AND p.idUnidadMateria.idUnidadMateria =:unidadMateria AND p.tipoEvaluacion =:tipoEvaluacion AND ((:fechaActual BETWEEN p.fechaInicio AND p.fechaFin) OR :fechaActual <= p.fechaInicio)", PermisosCapturaExtemporaneaEstudiante.class)
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .setParameter("grupo", cargaAcademica.getGrupo().getIdGrupo())
+                    .setParameter("unidadMateria", unidadMateria.getIdUnidadMateria())
+                    .setParameter("tipoEvaluacion", tipoEvaluacion)
+                    .setParameter("fechaActual", fechaActual)
+                    .getResultList();
+            
+            String valor = "";
+            
+            if(listaPermisos.size()>0)
+            {
+               valor="Si";
+                
+            }else{
+                
+                valor="No";
+            }
+            
+            
+            return ResultadoEJB.crearCorrecto(valor, "Existe permiso activo.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar si existe permiso activo. (EjbPermisoAperturaExtemporanea.buscarPermisoActivo)", e, null);
+        }
+    }
+    
 }
