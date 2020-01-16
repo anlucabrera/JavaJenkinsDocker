@@ -36,7 +36,7 @@
 
     <ui:define name="body">
         <c:if test="#{permisoAperturaExtemporaneaAdministrador.cargado}">
-        <adm:breadcrumb title="Permiso Apertura Extemporánea"/>
+        <adm:breadcrumb title="Permiso Apertura Extemporánea por Estudiante"/>
 
         <div class="contenedor">
             <c:if test="#{permisoAperturaExtemporaneaAdministrador.tieneAcceso}">
@@ -169,14 +169,14 @@
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column width="100px" headerText="Habilitar" />
-                                                            <p:column width="200px" headerText="Matricula" />
-                                                            <p:column width="600px" headerText="Nombre" /> 
+                                                            <p:column headerText="Habilitar" />
+                                                            <p:column headerText="Matricula" />
+                                                            <p:column headerText="Nombre" /> 
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <c:set var="estudiante" value="#{aperturasExt}"/>
                                                     <c:set var="permisoActivo" value="#{permisoAperturaExtemporaneaAdministrador.consultarPermisoActivo(estudiante)}" />
-                                                    <p:column width="100px">
+                                                    <p:column style="width: 100px;">
                                                         <center>
                                                         <div class="btn-group">
                                                          <p:commandButton class="btn btn-sm #{permisoActivo eq 'Si'?'btn-info':'btn-danger'}" icon="#{permisoActivo eq 'Si'?'fa fa-close':'fa fa-check'}" 
@@ -186,10 +186,10 @@
                                                         </div>
                                                         </center>
                                                     </p:column>
-                                                    <p:column width="200px">
-                                                        <h:outputText value="#{aperturasExt.matricula}" style="text-align: center;" />
+                                                    <p:column style="width: 200px; text-align: center;">
+                                                        <h:outputText value="#{aperturasExt.matricula}"/>
                                                     </p:column>
-                                                    <p:column width="600px">
+                                                    <p:column style="width: 400px;">
                                                         <h:outputText value="#{aperturasExt.aspirante.idPersona.apellidoPaterno} #{aperturasExt.aspirante.idPersona.apellidoMaterno} #{aperturasExt.aspirante.idPersona.nombre}" style="text-align: center;" />
                                                     </p:column>
                                                 </p:dataTable>
