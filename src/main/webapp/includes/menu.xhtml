@@ -139,7 +139,7 @@
                 <c:if test="#{fusionGruposDirector.mostrarEnDesarrollo(request) and fusionGruposDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{avanceProgramaticoDirector.mostrarEnDesarrollo(request) and avanceProgramaticoDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{cedulaIdentificacionDirector.mostrarEnDesarrollo(request) and cedulaIdentificacionDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cedulaIdentificacionDirector.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{validacionPlanAccionTutorialDirector.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacion_plan_accion_tutorial.xhtml"><i class="fa fa-check-square-o"></i><span>Validación de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{validacionPlanAccionTutorialDirector.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacion_plan_accion_tutorial.xhtml"><i class="fa fa-check-square-o"></i><span>Planes de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                 <!-- Servicios Escolares -->
                 <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
@@ -156,7 +156,8 @@
                 <!-- Psicopedagogía -->
                 <c:if test="#{dictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and dictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/dictamenBaja.xhtml"><i class="fa fa-edit"></i><span>Dictamen Baja</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{cedulaIdentificacionPsicopedagogia.mostrarEnDesarrollo(request) and cedulaIdentificacionPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-
+                <c:if test="#{validacionPlanAccionTutorialPsicopedagogia.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/validacion_plan_accion_tutorial_psicopedagogia.xhtml"><i class="fa fa-slideshare"></i><span>Validación de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                
                 <!-- Docente -->
                 <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
                     <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Docente</li>
@@ -182,7 +183,8 @@
                 <c:if test="#{registroPlanTutoriaTutor.mostrarEnDesarrollo(request) and registroPlanTutoriaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/plan_accion_tutorial.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{registroTutoriaGrupal.mostrarEnDesarrollo(request) and registroTutoriaGrupal.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_grupal.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Grupales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{registroTutoriaIndividual.mostrarEnDesarrollo(request) and registroTutoriaIndividual.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_individual.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Individuales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-
+                <c:if test="#{consultaPlanesAccionTutoralCoordinadorTutores.mostrarEnDesarrollo(request) and consultaPlanesAccionTutoralCoordinadorTutores.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/consulta_plan_accion_tutorial_tutores.xhtml"><i class="fa fa-slideshare"></i><span>Planes de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                
                 <!-- Especialista -->
                 <c:if test="#{seguimientoCasoCriticoEspecialista.mostrarEnDesarrollo(request) and seguimientoCasoCriticoEspecialista.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Caso Crítico Especialista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
             </c:if>
@@ -790,17 +792,17 @@
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_1.docx">
                                         <span>Propuesto 1°</span>
                                     </p:link>
-                                </li>      
+                                </li>     
                                 <li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_4.docx">
                                         <span>Propuesto 4°</span>
                                     </p:link>
-                                </li>       
+                                </li>
                                 <li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_7.docx">
                                         <span>Propuesto 7°</span>
                                     </p:link>
-                                </li>       
+                                </li>
                                 <li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_10.docx">
                                         <span>Propuesto 10°</span>

@@ -12,6 +12,7 @@ import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CordinadoresTutores;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -154,6 +155,36 @@ public class EjbValidacionRol {
             }
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El estudiate no se pudo validar. (EjbValidacionRol.validarEstudiante)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Filter<PersonalActivo>> validarCoordinadorTutor(Integer clave){
+        try{
+            List<CordinadoresTutores> ct = em.createQuery("SELECT c FROM CordinadoresTutores c WHERE c.personal = :clave", CordinadoresTutores.class)
+                    .setParameter("clave", clave)
+                    .getResultList();
+            if(!ct.isEmpty()){
+                PersonalActivo p = ejbPersonalBean.pack(clave);
+                Filter<PersonalActivo> filtro = new Filter<>();
+                filtro.setEntity(p);
+                return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido identificado como Coordinador de Tutores");
+            }else{
+                return ResultadoEJB.crearErroneo(2, null,"El usuario no ha sido en ninguna ocasión Coordinador de Tutores");
+            }
+        }catch(Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se ha podido comprobar si el usuario es o ha sido Coordinador de Tutores. (EjbValidacionRol.validarCoordinadorTutor)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Filter<PersonalActivo>> validarPsicopedagogia(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalPsicopedagogia").orElse(18)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal del área de psicopedagogía.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal del área no se pudo validar. (EjbValidacionRol.validarPsicopedagogia)", e, null);
         }
     }
     

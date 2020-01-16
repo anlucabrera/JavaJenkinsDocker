@@ -28,7 +28,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Planes de Acción Tutorial
+        Consulta de Planes de Acción Tutorial
     </ui:define>
 
     <ui:define name="description">
@@ -36,11 +36,11 @@
     </ui:define>
 
     <ui:define name="body">
-        <c:if test="#{validacionPlanAccionTutorialDirector.cargado}">
-            <adm:breadcrumb title="Planes de Acción Tutorial"/>
+        <c:if test="#{consultaPlanesAccionTutoralCoordinadorTutores.cargado}">
+            <adm:breadcrumb title="Consulta de Planes de Acción Tutorial"/>
             <adm:sidebar collapsed="true"/>
             <div class="contenedor">
-                <c:if test="#{validacionPlanAccionTutorialDirector.tieneAcceso}">
+                <c:if test="#{consultaPlanesAccionTutoralCoordinadorTutores.tieneAcceso}">
                     <!-- zona de importación de enums -->
                     <p:importEnum type="mx.edu.utxj.pye.sgi.enums.PlanAccionTutorialEstado" var="patEstado" allSuffix="ESTADOS" />
                     <div class="box box-primary">
@@ -49,7 +49,7 @@
                                 <div id="main-buttons" class="hidden-sm hidden-xs">
                                     <p:toolbar id="tb">
                                         <f:facet name="left">
-                                            <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(validacionPlanAccionTutorialDirector.rol.periodoActivo)} " />
+                                            <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(consultaPlanesAccionTutoralCoordinadorTutores.rol.periodoActivo)} " />
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
@@ -72,9 +72,9 @@
 
                                             <div class="#{casilla}">
                                                 <div class="ui-material">
-                                                    <p:selectOneMenu id="periodo" value="#{validacionPlanAccionTutorialDirector.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
-                                                        <f:selectItems value="#{validacionPlanAccionTutorialDirector.rol.periodosConPlanAccionTutorial}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                        <p:ajax process="@this" update="@this programaEducativo contenedor modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial" listener="#{validacionPlanAccionTutorialDirector.cambiarPeriodo}" />
+                                                    <p:selectOneMenu id="periodo" value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItems value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.periodosConPlanAccionTutorial}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                        <p:ajax process="@this" update="@this programaEducativo contenedor modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial" listener="#{consultaPlanesAccionTutoralCoordinadorTutores.cambiarPeriodo}" />
                                                     </p:selectOneMenu>
                                                     <p:outputLabel value="Periodo" for="periodo"/>
                                                     <p:message for="periodo" />
@@ -83,9 +83,9 @@
 
                                             <div class="#{casilla4}">
                                                 <div class="ui-material">
-                                                    <p:selectOneMenu id="programaEducativo" value="#{validacionPlanAccionTutorialDirector.rol.programaEducativo}" converter="entityConverter" styleClass="form-control" >
-                                                        <f:selectItems value="#{validacionPlanAccionTutorialDirector.rol.programasEducativos}" var="programaEducativo" itemValue="#{programaEducativo}" itemLabel="#{programaEducativo.nombre}" />
-                                                        <p:ajax process="@this" update="@this contenedor modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial" listener="#{validacionPlanAccionTutorialDirector.cambiarProgramaEducativo}" />
+                                                    <p:selectOneMenu id="programaEducativo" value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.programaEducativo}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItems value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.programasEducativos}" var="programaEducativo" itemValue="#{programaEducativo}" itemLabel="#{programaEducativo.nombre}" />
+                                                        <p:ajax process="@this" update="@this contenedor modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial" listener="#{consultaPlanesAccionTutoralCoordinadorTutores.cambiarProgramaEducativo}" />
                                                     </p:selectOneMenu>
                                                     <p:outputLabel value="Programa Educativo" for="programaEducativo"/>
                                                     <p:message for="programaEducativo" ><p:autoUpdate/></p:message>
@@ -95,7 +95,7 @@
                                         </div>
                                     </h:form>
                                     <h:form id="frmRegistro" prependId="false" class="form-inline">
-                                        <p:remoteCommand id="actualizarPlanesAccionTutorial" name="actualizarPlanesAccionTutorial" actionListener="#{validacionPlanAccionTutorialDirector.actualizar}" process="@this" update="contenedor modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial" />
+                                        <p:remoteCommand id="actualizarPlanesAccionTutorial" name="actualizarPlanesAccionTutorial" actionListener="#{consultaPlanesAccionTutoralCoordinadorTutores.actualizar}" process="@this" update="contenedor modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial" />
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 text-info">
 
@@ -111,7 +111,7 @@
                                                             </p:toolbar>
                                                             <p:dataTable id="dtPlanesAccionTutorial" 
                                                                          var="dtoPlanAccionTutorial" 
-                                                                         value="#{validacionPlanAccionTutorialDirector.rol.listaDtoPlanAccionTutorial}" 
+                                                                         value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.listaDtoPlanAccionTutorial}" 
                                                                          sortBy="#{dtoPlanAccionTutorial.planAccionTutorial.planAccionTutoria}"
                                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                          resizeMode="expand"
@@ -119,16 +119,16 @@
                                                                          >
                                                                 <p:columnGroup type="header">
                                                                     <p:row class="sucess">
-                                                                        <p:column headerText="Estatus"                                                          width="150"/>
-                                                                        <p:column headerText="Comentarios u observaciones del área de psicopedagogia"           width="500"/>
-                                                                        <p:column headerText="Metas de la función como tutor"                                   width="290"/>
-                                                                        <p:column headerText="Sesiones grupales de tutoría"                                     width="280"/>
-                                                                        <p:column headerText="Grupo"                                                            width="60"/>
-                                                                        <p:column headerText="Sistema"                                                          width="80"/>
-                                                                        <p:column headerText="Tutor"                                                            width="300"/>
-                                                                        <p:column headerText="Objetivo"                                                         width="500"/>
-                                                                        <p:column headerText="Comentarios"                                                      width="500"/>
-                                                                        <p:column headerText="Sugerencias"                                                      width="500"/>
+                                                                        <p:column headerText="Estatus"                                          width="150"/>
+                                                                        <p:column headerText="Comentarios u observaciones del director"         width="500"/>
+                                                                        <p:column headerText="Metas de la función como tutor"                   width="290"/>
+                                                                        <p:column headerText="Sesiones grupales de tutoría"                     width="280"/>
+                                                                        <p:column headerText="Grupo"                                            width="60"/>
+                                                                        <p:column headerText="Sistema"                                          width="80"/>
+                                                                        <p:column headerText="Tutor"                                            width="300"/>
+                                                                        <p:column headerText="Objetivo"                                         width="500"/>
+                                                                        <p:column headerText="Comentarios"                                      width="500"/>
+                                                                        <p:column headerText="Sugerencias"                                      width="500"/>
                                                                     </p:row>
                                                                 </p:columnGroup>
 
@@ -143,22 +143,14 @@
                                                                                      autoResize="true"
                                                                                      class="form-control"
                                                                                      value="#{dtoPlanAccionTutorial.planAccionTutorial.comentariosDirector}"
-                                                                                     valueChangeListener="#{validacionPlanAccionTutorialDirector.actualizarComentariosObservacionesDirector}"
                                                                                      readonly="true"
                                                                                      >
-                                                                        <p:ajax process="@this" 
-                                                                                update="dtPlanesAccionTutorial" 
-                                                                                global="false"
-                                                                                /> 
-                                                                        <f:attribute name="pat" 
-                                                                                     value="#{dtoPlanAccionTutorial}" 
-                                                                                     />
                                                                     </p:inputTextarea>
                                                                 </p:column>
 
                                                                 <p:column>
                                                                     <p:commandButton id="btnConsultarFunciones"
-                                                                                     actionListener="#{validacionPlanAccionTutorialDirector.consultarFunciones(dtoPlanAccionTutorial)}"
+                                                                                     actionListener="#{consultaPlanesAccionTutoralCoordinadorTutores.consultarFunciones(dtoPlanAccionTutorial)}"
                                                                                      class="btn btn-sm btn-info" 
                                                                                      icon="fa fa-search"
                                                                                      value="Consulta de Metas de la Función como tutor"
@@ -170,7 +162,7 @@
 
                                                                 <p:column>
                                                                     <p:commandButton id="btnConsultarSesiones"
-                                                                                     actionListener="#{validacionPlanAccionTutorialDirector.consultarSesiones(dtoPlanAccionTutorial)}"
+                                                                                     actionListener="#{consultaPlanesAccionTutoralCoordinadorTutores.consultarSesiones(dtoPlanAccionTutorial)}"
                                                                                      class="btn btn-sm btn-info" 
                                                                                      icon="fa fa-search"
                                                                                      value="Consulta de Sesiones Grupales de Tutoría"
@@ -207,7 +199,7 @@
                                                                 <f:facet name="footer">
                                                                     <div style="text-align: left">
                                                                         <p:column style="text-align: left;">
-                                                                            Existen un total de: #{fn:length(validacionPlanAccionTutorialDirector.rol.listaDtoPlanAccionTutorial)} plan(es) de acción tutorial registrado(s).
+                                                                            Existen un total de: #{fn:length(consultaPlanesAccionTutoralCoordinadorTutores.rol.listaDtoPlanAccionTutorial)} plan(es) de acción tutorial registrado(s).
                                                                         </p:column>
                                                                     </div>
                                                                 </f:facet>
@@ -252,7 +244,7 @@
                                                     <center>
                                                         <p:dataTable id="dtFuncionesTutor" 
                                                                      var="funcionTutor" 
-                                                                     value="#{validacionPlanAccionTutorialDirector.rol.listaFuncionesTutor}" 
+                                                                     value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.listaFuncionesTutor}" 
                                                                      sortBy="#{funcionTutor.noSesion}"
                                                                      tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                      resizeMode="expand"
@@ -273,7 +265,7 @@
                                                                 <h:outputText value="#{funcionTutor.metaFuncionTutor}" />
                                                             </p:column>
                                                             <f:facet name="footer">
-                                                                Se ha registrado un total de: #{fn:length(validacionPlanAccionTutorialDirector.rol.listaFuncionesTutor)} metas de función como tutor.
+                                                                Se ha registrado un total de: #{fn:length(consultaPlanesAccionTutoralCoordinadorTutores.rol.listaFuncionesTutor)} metas de función como tutor.
                                                             </f:facet>
                                                         </p:dataTable>
                                                     </center>
@@ -315,7 +307,7 @@
                                                     <center>
                                                         <p:dataTable id="dtSesionesGrupales" 
                                                                      var="sesionGrupal" 
-                                                                     value="#{validacionPlanAccionTutorialDirector.rol.listaSesionesGrupalesTutorias}" 
+                                                                     value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.listaSesionesGrupalesTutorias}" 
                                                                      sortBy="#{sesionGrupal.noSesion}"
                                                                      tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                      resizeMode="expand"
@@ -352,7 +344,7 @@
                                                             </p:column>
 
                                                             <f:facet name="footer">
-                                                                Se ha registrado un total de: #{fn:length(validacionPlanAccionTutorialDirector.rol.listaSesionesGrupalesTutorias)} sesiones grupales de tutoría.
+                                                                Se ha registrado un total de: #{fn:length(consultaPlanesAccionTutoralCoordinadorTutores.rol.listaSesionesGrupalesTutorias)} sesiones grupales de tutoría.
                                                             </f:facet>
                                                         </p:dataTable>
                                                     </center>
@@ -365,11 +357,11 @@
                             </div>
                         </div>
                     </div>
-                    <c:if test="#{!empty validacionPlanAccionTutorialDirector.alertas || true}">
+                    <c:if test="#{!empty consultaPlanesAccionTutoralCoordinadorTutores.alertas || true}">
                         <div class="box box-info">
                             <div class="box-header">
                                 <ui:include src="/includes/alertas.xhtml">
-                                    <ui:param name="alertas" value="#{validacionPlanAccionTutorialDirector.alertas}"></ui:param>
+                                    <ui:param name="alertas" value="#{consultaPlanesAccionTutoralCoordinadorTutores.alertas}"></ui:param>
                                 </ui:include>
                             </div>
                         </div>
@@ -382,7 +374,7 @@
                             <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para la validación del plan de acción tutorial</h3></div>
                             <div class="box-body">
                                 <ul class="todo-list">
-                                    <c:forEach items="#{validacionPlanAccionTutorialDirector.rol.instrucciones}" var="instruccion">
+                                    <c:forEach items="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.instrucciones}" var="instruccion">
                                         <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
                                     </c:forEach>
                                 </ul>
@@ -392,7 +384,7 @@
                     </p:dialog>
 
                 </c:if>
-                <c:if test="#{!validacionPlanAccionTutorialDirector.tieneAcceso}">
+                <c:if test="#{!consultaPlanesAccionTutoralCoordinadorTutores.tieneAcceso}">
                     <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                         <h:panelGrid columns="2" cellpadding="10">
                             <h:outputText value="El acceso solo está autorizado a docentes con cargas académicas."/>
