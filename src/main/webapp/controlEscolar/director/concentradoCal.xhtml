@@ -45,91 +45,91 @@
             }
         </style>
         <c:if test="#{concentradoCalificacionesDirector.cargado}">
-        <adm:breadcrumb title="Pase de lista"/>
-        <adm:sidebar collapsed="true"/>
-        <div class="contenedor">
-            <c:if test="#{concentradoCalificacionesDirector.tieneAcceso}">
-                <!-- zona de importación de enums -->
-                <h:form id="frm" prependId="false" class="form-inline">
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
-                            <div id="main-buttons" class="hidden-sm hidden-xs">
-                                <p:toolbar id="tb">
-                                    <f:facet name="left">
-                                    </f:facet>
-                                    <f:facet name="right">
-                                        <p:commandButton value="Generar pdf" icon="fa fa-download" styleClass="btn btn-primary" ajax="false"
-                                                         actionListener="#{generacionConcentradoCalificaciones
-                                                         .generarPdf(concentradoCalificacionesDirector.rol.grupoSelec,
-                                                         concentradoCalificacionesDirector.rol.titulos, concentradoCalificacionesDirector.rol.periodo,
-                                                         concentradoCalificacionesDirector.rol.dvcs, concentradoCalificacionesDirector.rol.programa)}">
-                                            <p:fileDownload value="#{generacionConcentradoCalificaciones.download}" />
-                                        </p:commandButton>
-                                        <!--p:link outcome="seguimientoPaseListaTutor">
-                                            <i class="fa fa-search"></i>
-                                            <span>Ver Reporte por materia</span>
-                                        </p:link-->
-                                    </f:facet>
-                                </p:toolbar>
-                            </div>
-                            <div class="box box-solid">
-                                <div class="box-body">
-                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
-                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
-                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
-                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {concentradoCalificacionesDirector.actualizarCargaAcademica}" update="@form" />
-                                    <div class="row margin-bottom" style="margin-top: 20px;">
-                                        <div class="#{casilla}">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="periodo" value="#{concentradoCalificacionesDirector.rol.periodo}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{concentradoCalificacionesDirector.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, planEstudio"/>
-                                                    <p:autoUpdate />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Periodo" for="periodo"/>
-                                                <p:message for="periodo" />
+            <adm:breadcrumb title="Pase de lista"/>
+            <adm:sidebar collapsed="true"/>
+            <div class="contenedor">
+                <c:if test="#{concentradoCalificacionesDirector.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+                    <h:form id="frm" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton value="Generar pdf" icon="fa fa-download" styleClass="btn btn-primary" ajax="false"
+                                                             actionListener="#{generacionConcentradoCalificaciones
+                                                                               .generarPdf(concentradoCalificacionesDirector.rol.grupoSelec,
+                                                                               concentradoCalificacionesDirector.rol.titulos, concentradoCalificacionesDirector.rol.periodo,
+                                                                               concentradoCalificacionesDirector.rol.dvcs, concentradoCalificacionesDirector.rol.programa)}">
+                                                <p:fileDownload value="#{generacionConcentradoCalificaciones.download}" />
+                                            </p:commandButton>
+                                            <!--p:link outcome="seguimientoPaseListaTutor">
+                                                <i class="fa fa-search"></i>
+                                                <span>Ver Reporte por materia</span>
+                                            </p:link-->
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                                <div class="box box-solid">
+                                    <div class="box-body">
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                        <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                        <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {concentradoCalificacionesDirector.actualizarCargaAcademica}" update="@form" />
+                                        <div class="row margin-bottom" style="margin-top: 20px;">
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="periodo" value="#{concentradoCalificacionesDirector.rol.periodo}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItems value="#{concentradoCalificacionesDirector.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                        <p:ajax process="@this, planEstudio" listener="#{concentradoCalificacionesDirector.cambiarPeriodo}"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Periodo" for="periodo"/>
+                                                    <p:message for="periodo" />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="#{casilla2}">
-                                            <div class="ui-material">
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
 
 
-                                                <p:selectOneMenu id="planEstudio" value="#{concentradoCalificacionesDirector.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{concentradoCalificacionesDirector.cambiarPlanestudio}">
-                                                    <f:selectItem itemValue="#{null}"/>
-                                                    <f:selectItems value="#{concentradoCalificacionesDirector.rol.planesEstudios}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
-                                                    <p:ajax update="@this,:unidad, :CV" process="@this"/>
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Programa Educativo" for="planEstudio"/>
-                                                <p:message for="planEstudio" />
+                                                    <p:selectOneMenu id="planEstudio" value="#{concentradoCalificacionesDirector.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{concentradoCalificacionesDirector.cambiarPlanestudio}">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{concentradoCalificacionesDirector.rol.planesEstudios}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                        <p:ajax update="@this,:unidad, :CV" process="@this"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Programa Educativo" for="planEstudio"/>
+                                                    <p:message for="planEstudio" />
+                                                </div>
+                                            </div>
+                                            <br/>
+                                            <br/>
+                                            <div class="row">
+                                                <center>
+
+                                                    <p:outputLabel value="Seleccione un Grupo para visualizar las Calificaciones" />
+                                                    <p></p>
+                                                    <p:selectOneRadio id="unidad" value="#{concentradoCalificacionesDirector.rol.grupoSelec}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{concentradoCalificacionesDirector.consultarAlumnos}" >
+                                                        <f:selectItems value="#{concentradoCalificacionesDirector.rol.grupos}" var="g" itemLabel="#{g.grado}°#{g.literal} -- #{g.idSistema.nombre}" itemValue="#{g}"/>
+                                                        <p:ajax update="@this,:CV" process="@this"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneRadio>
+                                                    <p></p>
+                                                    <p></p>
+                                                </center>      
+                                                <p></p>
+                                                <p></p>
+                                                <p></p>
                                             </div>
                                         </div>
-                                        <br/>
-                                        <br/>
                                         <div class="row">
                                             <center>
-
-                                                <p:outputLabel value="Seleccione un Grupo para visualizar las Calificaciones" />
-                                                <p></p>
-                                                <p:selectOneRadio id="unidad" value="#{concentradoCalificacionesDirector.rol.grupoSelec}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{concentradoCalificacionesDirector.consultarAlumnos}" >
-                                                    <f:selectItems value="#{concentradoCalificacionesDirector.rol.grupos}" var="g" itemLabel="#{g.grado}°#{g.literal} -- #{g.idSistema.nombre}" itemValue="#{g}"/>
-                                                    <p:ajax update="@this,:CV" process="@this"/>
-                                                    <p:autoUpdate />
-                                                </p:selectOneRadio>
-                                                <p></p>
-                                                <p></p>
-                                            </center>      
-                                            <p></p>
-                                            <p></p>
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <center>
-                                            <!--h:commandLink>
-                                                <i class="fa fa-file-excel-o"></i>
-                                                <p:dataExporter type="xls" target="tbAsigInd1" fileName="# {concentradoCalificaciones.rol.grupoSelec.grado}-# {concentradoCalificaciones.rol.grupoSelec.literal}-# {concentradoCalificaciones.rol.grupoSelec.plan.idPe}" />
-                                            </h:commandLink-->
-                                            <p:panel id="CV" >
+                                                <!--h:commandLink>
+                                                    <i class="fa fa-file-excel-o"></i>
+                                                    <p:dataExporter type="xls" target="tbAsigInd1" fileName="# {concentradoCalificaciones.rol.grupoSelec.grado}-# {concentradoCalificaciones.rol.grupoSelec.literal}-# {concentradoCalificaciones.rol.grupoSelec.plan.idPe}" />
+                                                </h:commandLink-->
+                                                <p:panel id="CV" >
                                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                         <div class="col-md-12">
                                                             <div class="box box-widget widget-user-2">
@@ -163,7 +163,7 @@
                                                                 <div class="row hidden-sm hidden-xs">
                                                                     <div class="col-sm-12">
                                                                         <div class="description-block" style="text-align: right">
-                                                                        <h:outputLabel value="Fecha de Reporte" style="font-weight: bold;"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.rol.fechaInpresion}"><f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/></h:outputLabel><p:spacer width="10px"/>
+                                                                            <h:outputLabel value="Fecha de Reporte" style="font-weight: bold;"/> <p:spacer width="10px"/> <h:outputLabel value="#{concentradoCalificacionesDirector.rol.fechaInpresion}"><f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/></h:outputLabel><p:spacer width="10px"/>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -185,9 +185,8 @@
                                                     <div class="row">
                                                         <div class="col-sm-12">
                                                             <div class="description-block">
-                                                                <p:outputPanel>            
+                                                                <p:outputPanel>     
                                                                     <p:autoUpdate/>
-                                                                    #{concentradoCalificacionesDirector.rol.drpls.size()}
                                                                     <p:panelGrid style="width: 100%">
                                                                         <f:facet name="header">
                                                                             <p:row>
@@ -195,7 +194,7 @@
                                                                                 <p:column rowspan="3" style="background: #00a7d0">Nombre</p:column>
                                                                                 <c:forEach var="i" begin="0" end="#{concentradoCalificacionesDirector.rol.titulos.size()-1}">
                                                                                     <c:set var="t" value="#{concentradoCalificacionesDirector.rol.titulos.get(i)}"/>
-                                                                                    <p:column colspan="#{t.ti eq true?t.tunidades+3:t.tunidades+3}" style="font-size: smaller;background: #00D8D8 ">#{t.unidad}<hr/> #{t.docente}</p:column>
+                                                                                    <p:column colspan="#{t.ti eq true?t.tunidades+4:t.tunidades+3}" style="font-size: smaller;background: #00D8D8 ">#{t.unidad}<hr/> #{t.docente}</p:column>
                                                                                 </c:forEach> 
                                                                                 <p:column rowspan="3" style="background: #00a7d0">General</p:column>
                                                                             </p:row>
@@ -227,40 +226,40 @@
                                                                                     <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.tareaI gt 0 ? 'color: #E53935':'color: #000000'}" rendered="#{d.tareaI ne ''}">#{d.tareaI}</p:column>
                                                                                     <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalO gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalO gt 0?concentradoCalificacionesDirector.rol.df.format(d.promedioFinalO):0}</p:column>                                                                                
                                                                                     <p:column style="font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.nivelacion gt 0 ? 'color: #E53935':'color: #000000'}">#{d.nivelacion gt 0?concentradoCalificacionesDirector.rol.df.format(d.nivelacion):0}</p:column>
-                                                                                    <p:column style="background: #cccccc; font-weight: bold; font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalN gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalN gt 0?concentradoCalificacionesDirector.rol.df.format(d.promedioFinalN):0}</p:column>                                                                                
+                                                                                    <p:column style="background: #cccccc; font-weight: bold; font-size: smaller;  #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalN gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalN gt 0?concentradoCalificacionesDirector.rol.df.format(d.promedioFinalN):0}</p:column>                                                                                
                                                                                 </c:forEach>
                                                                                 <p:column style="font-size: smaller; font-weight: bold; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or b.promedioFinal gt 0 ? 'color: #E53935':'color: #000000'}">#{b.promedioFinal gt 0?concentradoCalificacionesDirector.rol.df.format(b.promedioFinal):0}</p:column>
                                                                             </p:row>
                                                                         </c:forEach>
                                                                     </p:panelGrid>
-                                                                </p:outputPanel>     
+                                                                </p:outputPanel>      
                                                             </div>
                                                         </div>
                                                     </div>    
                                                 </p:panel>
-                                        </center>
+                                            </center>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </h:form>
-                <p:blockUI block="frm" widgetVar="bloqueoCargaFile">
-                    Cargando espere por favor.<br />
-                </p:blockUI>
-            </c:if>
-            <c:if test="#{!concentradoCalificacionesDirector.tieneAcceso}">
-                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a Directores."/>
-                    </h:panelGrid>
-                    <f:facet name="footer"></f:facet>
-                </p:panel>
-            </c:if>
-        </div>
-        <script>
-            //collapseSidebar(); activar para colapsar barra lateral
-        </script>
+                    </h:form>
+                    <p:blockUI block="frm" widgetVar="bloqueoCargaFile">
+                        Cargando espere por favor.<br />
+                    </p:blockUI>
+                </c:if>
+                <c:if test="#{!concentradoCalificacionesDirector.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="El acceso solo está autorizado a Directores."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
         </c:if>
     </ui:define>
 </ui:composition>

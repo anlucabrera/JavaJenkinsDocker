@@ -570,7 +570,32 @@ public class EjbRegistroPlanEstudio {
             List<PeriodosEscolares> periodos = new ArrayList<>();
             
 //            List<Integer> claves=new ArrayList<>();
-            claves.add(52);
+//            claves.add(52);
+                    
+            if (!claves.isEmpty()) {
+                periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
+                        .setParameter("periodos", claves)
+                        .getResultStream()
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
+            return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionIndicadoresCriterios.getPeriodosDescendentes)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosRegistrosPE(PlanEstudio progEdu) {
+        try {
+            List<Integer> claves = em.createQuery("SELECT g FROM Grupo g INNER JOIN g.plan p WHERE p.idPlanEstudio =:idPlanEstudio GROUP BY g.periodo", Grupo.class)
+                    .setParameter("idPlanEstudio", progEdu.getIdPlanEstudio())
+                    .getResultStream()
+                    .map(a -> a.getPeriodo())
+                    .collect(Collectors.toList());
+            List<PeriodosEscolares> periodos = new ArrayList<>();
+            
+//            List<Integer> claves=new ArrayList<>();
+//            claves.add(52);
                     
             if (!claves.isEmpty()) {
                 periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)

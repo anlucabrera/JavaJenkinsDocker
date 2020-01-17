@@ -148,7 +148,7 @@ public class LogonMB extends AdminSession implements Serializable {
 //                    listaUsuarioClaveNominaShiro = usuarioAutenticadoShiro;
 //                    acceso = true;
                     if (usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) {
-                        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(listaUsuarioClaveNomina)" + listaUsuarioClaveNomina);
+//                        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(listaUsuarioClaveNomina)" + listaUsuarioClaveNomina);
                         if (listaUsuarioClaveNomina == null) {
                             addDetailMessage("El usuario ingresado no existe.");
                             Faces.getExternalContext().getFlash().setKeepMessages(true);
@@ -157,9 +157,9 @@ public class LogonMB extends AdminSession implements Serializable {
                         } else {
 //                        personal = (Personal) f.find(Integer.parseInt(usuarioAutenticadoShiro.getClaveNomina()));
                             personal = ejbLogin.buscaPersona(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
-                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(personal)" + personal);
+//                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(personal)" + personal);
                             if (personal.getStatus().equals('B')) {
-                                System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(B)");
+//                                System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(B)");
                                 acceso = Boolean.FALSE;
                                 addDetailMessage("El usuario ingresado no existe.");
                                 Faces.getExternalContext().getFlash().setKeepMessages(true);
@@ -168,7 +168,7 @@ public class LogonMB extends AdminSession implements Serializable {
                                 acceso = Boolean.TRUE;
                             }
                             listaUsuarioClaveNomina.getNumeroNomina();
-                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+listaUsuarioClaveNomina.getNumeroNomina());
+//                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+listaUsuarioClaveNomina.getNumeroNomina());
 //                    agregaBitacora();
 //                    getPermisosAcceso();
                         }

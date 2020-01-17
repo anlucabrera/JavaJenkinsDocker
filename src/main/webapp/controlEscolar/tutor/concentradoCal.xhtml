@@ -122,6 +122,7 @@
                                                     <p:dataExporter type="xls" target="tbAsigInd1" fileName="# {concentradoCalificacionesTutor.rol.grupoSelec.grado}-# {concentradoCalificacionesTutor.rol.grupoSelec.literal}-# {concentradoCalificacionesTutor.rol.grupoSelec.plan.idPe}" />
                                                 </h:commandLink-->
                                                 <p:panel id="CV" >
+                                                    <p:autoUpdate/>
                                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                         <div class="col-md-12">
                                                             <div class="box box-widget widget-user-2">
@@ -177,9 +178,8 @@
                                                     <div class="row">
                                                         <div class="col-sm-12">
                                                             <div class="description-block">
-                                                                <p:outputPanel>            
+                                                                <p:outputPanel>     
                                                                     <p:autoUpdate/>
-                                                                    #{concentradoCalificacionesTutor.rol.drpls.size()}
                                                                     <p:panelGrid style="width: 100%">
                                                                         <f:facet name="header">
                                                                             <p:row>
@@ -187,7 +187,7 @@
                                                                                 <p:column rowspan="3" style="background: #00a7d0">Nombre</p:column>
                                                                                 <c:forEach var="i" begin="0" end="#{concentradoCalificacionesTutor.rol.titulos.size()-1}">
                                                                                     <c:set var="t" value="#{concentradoCalificacionesTutor.rol.titulos.get(i)}"/>
-                                                                                    <p:column colspan="#{t.ti eq true?t.tunidades+3:t.tunidades+3}" style="font-size: smaller;background: #00D8D8 ">#{t.unidad}<hr/> #{t.docente}</p:column>
+                                                                                    <p:column colspan="#{t.ti eq true?t.tunidades+4:t.tunidades+3}" style="font-size: smaller;background: #00D8D8 ">#{t.unidad}<hr/> #{t.docente}</p:column>
                                                                                 </c:forEach> 
                                                                                 <p:column rowspan="3" style="background: #00a7d0">General</p:column>
                                                                             </p:row>

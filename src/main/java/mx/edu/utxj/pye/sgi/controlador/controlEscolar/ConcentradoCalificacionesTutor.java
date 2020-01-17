@@ -57,6 +57,7 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInscripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Ajax;
@@ -147,31 +148,21 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
 
     public void cambiarPeriodo() {
 //        System.out.println("rol.getPeriodoSeleccionado() = " + caster.periodoToString(rol.getPeriodoSeleccionado()));
+        rol.setDrpls(new ArrayList<>());
+        rol.setDplrs(new ArrayList<>());
+        rol.setTitulos(new ArrayList<>());
+        rol.setDvcs(new ArrayList<>());
+        rol.setEstudiantes(new ArrayList<>());
+        academicas = new ArrayList<>();
+        rol.setGrupoSelec(new Grupo());
         if (rol.getPeriodo() == null) {
             mostrarMensaje("No hay periodo escolar seleccionado.");
-            rol.setDrpls(new ArrayList<>());
-            rol.setDplrs(new ArrayList<>());
-            rol.setEstudiantes(new ArrayList<>());
-            academicas = new ArrayList<>();
             return;
         }
         ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
         if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
         if(resgrupos.getValor().isEmpty())return;
         rol.setGrupos(resgrupos.getValor());   
-        rol.setGrupoSelec(rol.getGrupos().get(0));
-        
-        ResultadoEJB<List<Listaalumnosca>> rejbA = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
-        if(!rejbA.getCorrecto()) mostrarMensajeResultadoEJB(rejbA);
-        if(rejbA.getValor().isEmpty())return;
-        rol.setListaalumnoscas(rejbA.getValor());  
-            
-        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());        
-        academicas = new ArrayList<>();
-        if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
-        if(rejb.getValor().isEmpty())return;
-                
-        creareporte();
         Ajax.update("frm");
     }
     
@@ -209,14 +200,17 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
        
         if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
         if(rejb.getValor().isEmpty())return;
-            
         academicas = rejb.getValor().stream().filter(a -> Objects.equals(a.getGrupo().getIdGrupo(), rol.getGrupoSelec().getIdGrupo())).collect(Collectors.toList());
         DtoCargaAcademica dca = academicas.get(0);
         UnidadMateriaConfiguracion umc = dca.getCargaAcademica().getUnidadMateriaConfiguracionList().get(0);
         ResultadoEJB<DtoUnidadConfiguracion> ducB = packer.packUnidadConfiguracion(umc, dca);
         ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(dca, ducB.getValor());
         resGrupo.getValor().getEstudiantes().forEach((t) -> {
-            rol.getEstudiantes().add(t.getDtoEstudiante().getInscripcionActiva().getInscripcion());
+            List<DtoInscripcion> di = t.getDtoEstudiante().getInscripciones().stream().filter(a -> Objects.equals(a.getGrupo().getIdGrupo(), rol.getGrupoSelec().getIdGrupo())).collect(Collectors.toList());
+            if (!di.isEmpty()) {
+                DtoInscripcion inscripcion=di.get(0);
+                rol.getEstudiantes().add(inscripcion.getInscripcion());
+            }
         });
         rol.setDcts(new ArrayList<>());
         rol.getDcts().clear();
@@ -225,15 +219,15 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
         rol.getDvcs().clear();
 
         rol.getEstudiantes().forEach((t) -> {
-            if(!obtenerCalificaciones(t).isEmpty()){
-            List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad = obtenerCalificaciones(t);
-            List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionePorMateria = obtenerPromedioMateria(t);
-            List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion = obtenerTareaIntegradoraPorMateria(t);
-            List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria = obtenerNivelacionesPorMateria(t);
-            BigDecimal promedioF = obtenerPromedioCuatrimestral(t);
-            rol.getDcts().add(new DtoCalificacionesTutor(t, calificacionePorUnidad, calificacionePorMateria, calificacionePorMateria, tareaIntegradoraPresentacion, calificacionesNivelacionPorMateria, promedioF));
-            }else{
-            rol.getDcts().add(new DtoCalificacionesTutor(t, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), BigDecimal.ZERO));
+            if (!obtenerCalificaciones(t).isEmpty()) {
+                List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad = obtenerCalificaciones(t);
+                List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionePorMateria = obtenerPromedioMateria(t);
+                List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion = obtenerTareaIntegradoraPorMateria(t);
+                List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria = obtenerNivelacionesPorMateria(t);
+                BigDecimal promedioF = obtenerPromedioCuatrimestral(t);
+                rol.getDcts().add(new DtoCalificacionesTutor(t, calificacionePorUnidad, calificacionePorMateria, calificacionePorMateria, tareaIntegradoraPresentacion, calificacionesNivelacionPorMateria, promedioF));
+            } else {
+                rol.getDcts().add(new DtoCalificacionesTutor(t, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), BigDecimal.ZERO));
             }
         });
         rol.getDcts().forEach((t) -> {
@@ -309,10 +303,10 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
                 Boolean b = Boolean.FALSE;
                 if (academica.getTareaIntegradora() != null) {
                     b = Boolean.TRUE;
-                }
+                }                
                 rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(buscarPersonal(academica.getDocente()), t.getMateria().getNombre(), t.getMateria().getUnidadMateriaList().size(), b));
             }
-        });
+        });        
     }
 
     public List<DtoCalificacionEstudiante.CalificacionePorUnidad> obtenerCalificaciones(Estudiante e) {
