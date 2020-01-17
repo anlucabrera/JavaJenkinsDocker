@@ -44,6 +44,7 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PermisosCapturaExtemporaneaEstudiante;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Messages;
 
@@ -370,14 +371,12 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     }
     
      public void aperturaExtEst(Estudiante estudiante) {
-        try {
           rol.setEstudiante(estudiante);
-          ejb.guardarPermisoCapturaOrdinariaEstudiante(rol.getCarga(), rol.getEstudiante(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
-//            existeAsignacion();
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(PermisoAperturaExtemporaneaAdministrador.class.getName()).log(Level.SEVERE, null, ex);
-        }
+         ResultadoEJB<PermisosCapturaExtemporaneaEstudiante> resGuardar = ejb.guardarPermisoCapturaOrdinariaEstudiante(rol.getCarga(), rol.getEstudiante(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
+         if (resGuardar.getCorrecto()) {
+             consultarPermisoActivo(estudiante);
+             Ajax.update("frm");
+         } mostrarMensajeResultadoEJB(resGuardar);
     }
      
        /**

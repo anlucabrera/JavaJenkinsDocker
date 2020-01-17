@@ -166,6 +166,7 @@ public class EjbPermisoAperturaExtemporanea {
             });
             List<PeriodosEscolares> listaPeriodos = periodos.stream()
                     .distinct()
+                    .sorted(Comparator.comparingInt(PeriodosEscolares::getPeriodo).reversed())
                     .collect(Collectors.toList());
             
             return ResultadoEJB.crearCorrecto(listaPeriodos, "Lista de periodo escolares en los que el docente tiene cargas académicas asignadas.");
@@ -476,6 +477,8 @@ public class EjbPermisoAperturaExtemporanea {
      */
     public ResultadoEJB<PermisosCapturaExtemporaneaEstudiante> guardarPermisoCapturaOrdinariaEstudiante(DtoCargaAcademica cargaAcademica, Estudiante estudiante, UnidadMateria unidadMateria, String tipoEvaluacion, Date fechaInicio, Date fechaFin, JustificacionPermisosExtemporaneos justificacion, PersonalActivo administrador){
         try{   
+            if(cargaAcademica == null || estudiante == null || unidadMateria == null || tipoEvaluacion == null || fechaInicio == null || fechaFin == null || justificacion == null || administrador == null) return ResultadoEJB.crearErroneo(2, "No se guardar el permiso de apertura porque los datos están incompletos.", PermisosCapturaExtemporaneaEstudiante.class);
+            
             Date fechaFinCompleta = obtenerFechaFin(fechaFin);
             
             PermisosCapturaExtemporaneaEstudiante permisosCapturaExtemporaneaEstudiante = new PermisosCapturaExtemporaneaEstudiante();
@@ -485,7 +488,11 @@ public class EjbPermisoAperturaExtemporanea {
             permisosCapturaExtemporaneaEstudiante.setIdPlanMateria(cargaAcademica.getPlanEstudioMateria());
             permisosCapturaExtemporaneaEstudiante.setDocente(cargaAcademica.getDocente().getPersonal().getClave());
             permisosCapturaExtemporaneaEstudiante.setTipoEvaluacion(tipoEvaluacion);
-            permisosCapturaExtemporaneaEstudiante.setIdUnidadMateria(unidadMateria);
+            if (tipoEvaluacion.equals("Ordinaria")) {
+                permisosCapturaExtemporaneaEstudiante.setIdUnidadMateria(unidadMateria);
+            } else {
+                permisosCapturaExtemporaneaEstudiante.setIdUnidadMateria(null);
+            }
             permisosCapturaExtemporaneaEstudiante.setFechaInicio(fechaInicio);
             permisosCapturaExtemporaneaEstudiante.setFechaFin(fechaFinCompleta);
             permisosCapturaExtemporaneaEstudiante.setJustificacionPermiso(justificacion);
@@ -511,14 +518,24 @@ public class EjbPermisoAperturaExtemporanea {
     public ResultadoEJB<String> buscarPermisoActivo(Estudiante estudiante, DtoCargaAcademica cargaAcademica, UnidadMateria unidadMateria, String tipoEvaluacion) {
         try{
             Date fechaActual = new Date();
-            
-            List<PermisosCapturaExtemporaneaEstudiante> listaPermisos = em.createQuery("SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.estudiante.idEstudiante =:estudiante AND p.idGrupo.idGrupo =:grupo AND p.idUnidadMateria.idUnidadMateria =:unidadMateria AND p.tipoEvaluacion =:tipoEvaluacion AND ((:fechaActual BETWEEN p.fechaInicio AND p.fechaFin) OR :fechaActual <= p.fechaInicio)", PermisosCapturaExtemporaneaEstudiante.class)
-                    .setParameter("estudiante", estudiante.getIdEstudiante())
-                    .setParameter("grupo", cargaAcademica.getGrupo().getIdGrupo())
-                    .setParameter("unidadMateria", unidadMateria.getIdUnidadMateria())
-                    .setParameter("tipoEvaluacion", tipoEvaluacion)
-                    .setParameter("fechaActual", fechaActual)
-                    .getResultList();
+            List<PermisosCapturaExtemporaneaEstudiante> listaPermisos = new ArrayList<>();
+                    
+            if (tipoEvaluacion.equals("Ordinaria")) {
+                listaPermisos = em.createQuery("SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.estudiante.idEstudiante =:estudiante AND p.idGrupo.idGrupo =:grupo AND p.idUnidadMateria.idUnidadMateria =:unidadMateria AND p.tipoEvaluacion =:tipoEvaluacion AND ((:fechaActual BETWEEN p.fechaInicio AND p.fechaFin) OR :fechaActual <= p.fechaInicio)", PermisosCapturaExtemporaneaEstudiante.class)
+                        .setParameter("estudiante", estudiante.getIdEstudiante())
+                        .setParameter("grupo", cargaAcademica.getGrupo().getIdGrupo())
+                        .setParameter("unidadMateria", unidadMateria.getIdUnidadMateria())
+                        .setParameter("tipoEvaluacion", tipoEvaluacion)
+                        .setParameter("fechaActual", fechaActual)
+                        .getResultList();
+            } else {
+                listaPermisos = em.createQuery("SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.estudiante.idEstudiante =:estudiante AND p.idGrupo.idGrupo =:grupo AND p.tipoEvaluacion =:tipoEvaluacion AND ((:fechaActual BETWEEN p.fechaInicio AND p.fechaFin) OR :fechaActual <= p.fechaInicio)", PermisosCapturaExtemporaneaEstudiante.class)
+                        .setParameter("estudiante", estudiante.getIdEstudiante())
+                        .setParameter("grupo", cargaAcademica.getGrupo().getIdGrupo())
+                        .setParameter("tipoEvaluacion", tipoEvaluacion)
+                        .setParameter("fechaActual", fechaActual)
+                        .getResultList();
+            }
             
             String valor = "";
             
