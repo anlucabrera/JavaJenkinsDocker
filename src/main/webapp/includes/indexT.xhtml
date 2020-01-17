@@ -240,7 +240,7 @@
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                             </button>
                         </div>
-                    </div>       
+                    </div>
                     <div class="box-body">  
                         <div class="row">                                
                             <div class="col-lg-3 col-md-6 col-xs-12">
@@ -255,7 +255,24 @@
                                     </div>
                                     <a href="capitalHumano/contactoE.xhtml" class="small-box-footer">Registrar</a>
                                 </div>
-                            </div>       
+                            </div>
+                            <c:if test="#{fichaAdmisionReporte.tieneAcceso}">
+                                <div class="col-lg-3 col-md-6 col-xs-12">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner">
+                                            <h3>Aspirantes</h3>
+                                            <p>Reporte </p>
+                                            <p>Aspirantes por programa educativo </p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-clipboard"/>
+                                        </div>
+                                        <a href="controlEscolar/reporteFichaAdmision.xhtml" class="small-box-footer">Consultar</a>
+                                    </div>
+                                </div>
+                            </c:if>
+
+
                         </div>
                     </div>
                 </div>

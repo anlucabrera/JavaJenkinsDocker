@@ -82,6 +82,8 @@ public enum ControlEscolarVistaControlador {
 
     CONSULTA_CALIFICACION_COORDINADOR("/controlEscolar/coordinador/consultarCalificacionesCoordinador.xhtml", ConsultaCalificacionesCoordinadorAD.class),
 
+    FICHA_ADMISION_REPORTE("/controlEscolar/reporteFichaAdmision.xhtml",FichaAdmisionReporte.class),
+
     EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
