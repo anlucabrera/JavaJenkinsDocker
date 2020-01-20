@@ -81,7 +81,7 @@
                                                                                         <div class="col-sm-12 col-md-12 col-lg-6">
                                                                                             <p:outputLabel for="procesoIntegracion" style="font-size: medium" value="Proceso de Integración"/>  
                                                                                                     <p:selectOneMenu id="procesoIntegracion" value="#{controladorTitSegGen.procesoIntegracion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{controladorTitSegGen.cambiarProcesoIntegracion}">
-                                                                                                        <f:selectItems value="#{controladorTitSegGen.listaProcesos}" var="procesoIntegracion" itemValue="#{procesoIntegracion}" itemLabel="#{procesoIntegracion.procesosGeneraciones.procesosGeneracionesPK.proceso}. Generación: #{caster.generacionToString(procesoIntegracion.generacion)} Nivel: #{procesoIntegracion.nivel}" />
+                                                                                                        <f:selectItems value="#{controladorTitSegGen.listaProcesos}" var="procesoIntegracion" itemValue="#{procesoIntegracion}" itemLabel="#{procesoIntegracion.procesosGeneraciones.procesosGeneracionesPK.proceso}. #{caster.generacionToString(procesoIntegracion.generacion)} #{procesoIntegracion.nivel}" />
                                                                                                         <p:ajax process="@this"/>
                                                                                                         <p:autoUpdate />
                                                                                                     </p:selectOneMenu>
@@ -101,8 +101,8 @@
                                                                                         
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                             <p:outputLabel for="generacion" style="font-size: medium" value="Generación"/>                     
-                                                                                                    <p:selectOneMenu id="generacion" value="#{controladorTitSegGen.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{controladorTitSegGen.cambiarGeneracion}">
-                                                                                                        <f:selectItems value="#{controladorTitSegGen.listaGeneraciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                                                            <p:selectOneMenu id="generacion" value="#{controladorTitSegGen.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{controladorTitSegGen.cambiarGeneracion}" disabled="true">
+                                                                                                        <f:selectItems value="#{controladorTitSegGen.listaGeneraciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}"/>
                                                                                                         <p:ajax process="@this"/>
                                                                                                         <p:autoUpdate />
                                                                                                     </p:selectOneMenu>
