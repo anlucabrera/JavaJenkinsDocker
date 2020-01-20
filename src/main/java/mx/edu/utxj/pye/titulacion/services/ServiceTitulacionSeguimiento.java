@@ -998,7 +998,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
 
     @Override
     public List<dtoProcesosIntegracion> obtenerListaProcesos() throws Throwable {
-        List<ProcesosGeneraciones> procesosGeneraciones = facade.getEntityManager().createQuery("SELECT pg FROM ProcesosGeneraciones pg", ProcesosGeneraciones.class)
+        List<ProcesosGeneraciones> procesosGeneraciones = facade.getEntityManager().createQuery("SELECT pg FROM ProcesosGeneraciones pg ORDER BY pg.procesosGeneracionesPK.proceso DESC", ProcesosGeneraciones.class)
                 .getResultList();
 
         List<dtoProcesosIntegracion> listaDtoProcesosIntegracion = new ArrayList<>();
