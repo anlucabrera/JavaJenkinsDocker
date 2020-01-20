@@ -155,8 +155,6 @@ public class ControladorPerCapParticipantesPYE implements Serializable{
             Ajax.update("frmAlineacion");
             Ajax.oncomplete("skin();");
             Ajax.oncomplete("PF('modalAlineacion').show();");
-            
-            System.err.println("abrirAlineacionPOA reg - " + dto.getRegistro() + " alineacion - " + dto.getAlineacionActividad().getActividadPoa() + " actualizarEjes " + dto.getRegistro().getParticipantesPersonalCapacitado().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
         } catch (Throwable ex) {
             Logger.getLogger(ControladorPerCapParticipantesPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
