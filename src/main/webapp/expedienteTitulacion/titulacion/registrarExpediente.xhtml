@@ -119,7 +119,7 @@
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                             <p:outputLabel for="matriculaE" style="font-size: medium" value="Matricula"/>                        
-                                                                                                    <p:inputText id="matriculaE" class="form-control" value="#{controladorTitSegGen.egresado.matricula}" required="true" requiredMessage="Es necesario que ingrese su matricula"/>
+                                                                                                    <p:inputText id="matriculaE" class="form-control" value="#{controladorTitSegGen.egresado.matricula}" required="true" requiredMessage="Es necesario que ingrese matricula del estudiante"/>
                                                                                                     <p:message for="matriculaE" display="tooltip"><p:autoUpdate/></p:message> 
                                                                                                 <hr/>
                                                                                         </div>
@@ -127,40 +127,40 @@
                                                                                         
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                              <p:outputLabel for="nombreE" style="font-size: medium" value="Nombre"/>                            
-                                                                                                    <p:inputText id="nombreE" class="form-control" value="#{controladorTitSegGen.egresado.nombre}" required="true" requiredMessage="Es necesario que ingrese su nombre"/>
+                                                                                                    <p:inputText id="nombreE" class="form-control" value="#{controladorTitSegGen.egresado.nombre}" required="true" requiredMessage="Es necesario que ingrese nombre del estudiante"/>
                                                                                                     <p:message for="nombreE" display="tooltip"><p:autoUpdate/></p:message> 
                                                                                                 <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                              <p:outputLabel for="apellidoPatE" style="font-size: medium" value="Apellido Paterno"/>   
-                                                                                                    <p:inputText id="apellidoPatE" class="form-control" value="#{controladorTitSegGen.egresado.apellidoPaterno}" required="true" requiredMessage="Es necesario que ingrese su apellido paterno"/>
+                                                                                                    <p:inputText id="apellidoPatE" class="form-control" value="#{controladorTitSegGen.egresado.apellidoPaterno}" required="true" requiredMessage="Es necesario que ingrese su apellido paterno del estudiante"/>
                                                                                                     <p:message for="apellidoPatE" display="tooltip"><p:autoUpdate/></p:message>  
                                                                                                 <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                              <p:outputLabel for="apellidoMatE" style="font-size: medium" value="Apellido Materno"/>   
-                                                                                                    <p:inputText id="apellidoMatE" class="form-control" value="#{controladorTitSegGen.egresado.apellidoMaterno}" required="true" requiredMessage="Es necesario que ingrese su apellido materno"/>
+                                                                                                    <p:inputText id="apellidoMatE" class="form-control" value="#{controladorTitSegGen.egresado.apellidoMaterno}" required="true" requiredMessage="Es necesario que ingrese apellido materno del estudiante"/>
                                                                                                     <p:message for="apellidoMatE" display="tooltip"><p:autoUpdate/></p:message> 
                                                                                                 <hr/>
                                                                                         </div>
                                                                                         
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                              <p:outputLabel for="curpE" style="font-size: medium" value="CURP"/>                          
-                                                                                                    <p:inputText id="curpE" class="form-control" value="#{controladorTitSegGen.egresado.curp}" required="true" requiredMessage="Es necesario que ingrese su curp"/>
+                                                                                                    <p:inputText id="curpE" class="form-control" value="#{controladorTitSegGen.egresado.curp}" required="true" requiredMessage="Es necesario que ingrese CURP del estudiante"/>
                                                                                                     <p:message for="curpE" display="tooltip" ><p:autoUpdate/></p:message>  
                                                                                                 <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                              <p:outputLabel for="fechaNacE" style="font-size: medium" value="Fecha de Nacimiento"/>
                                                                                              <p class="text-muted">
-                                                                                             <p:calendar locale="es" id="fechaNacE" value="#{controladorTitSegGen.egresado.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese su fecha de nacimiento"/>
+                                                                                             <p:calendar locale="es" id="fechaNacE" value="#{controladorTitSegGen.egresado.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese fecha de nacimiento del estudiante"/>
                                                                                                     <p:message for="fechaNacE" display="tooltip"> <p:autoUpdate/></p:message> 
                                                                                               </p>  
                                                                                              <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                              <p:outputLabel for="generoE" style="font-size: medium" value="Género"/>
-                                                                                                    <p:selectOneMenu styleClass="form-control" id="generoE" value="#{controladorTitSegGen.egresado.genero}" required="true" requiredMessage="Es necesario que ingrese su género">
+                                                                                                    <p:selectOneMenu styleClass="form-control" id="generoE" value="#{controladorTitSegGen.egresado.genero}" required="true" requiredMessage="Es necesario que ingrese género del estudiante">
                                                                                                         <f:selectItems value="#{controladorTitSegGen.listaGeneros}"/>
                                                                                                     </p:selectOneMenu>
                                                                                                     <p:message for="generoE"><p:autoUpdate/></p:message>
@@ -189,8 +189,8 @@
                                                                                 <div class="col-sm-12">
                                                                                     <div class="row">
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <p:outputLabel for="estado" style="font-size: medium" value="Estado*"/>
-                                                                                            <p:selectOneMenu id="estado" value="#{controladorTitSegGen.estadoIEMS}" required="true" requiredMessage="Es necesario que seleccione el estado">
+                                                                                            <p:outputLabel for="estado" style="font-size: medium" value="Estado"/>
+                                                                                            <p:selectOneMenu id="estado" value="#{controladorTitSegGen.estadoIEMS}" required="true" requiredMessage="Es necesario que seleccione el estado en donde se ubica el IEMS">
                                                                                                 <f:selectItem itemValue="#{null}"/>
                                                                                                 <f:selectItems value="#{controladorTitSegGen.listaEstadosIEMS}"/>
                                                                                                 <p:ajax listener="#{controladorTitSegGen.selectMunicipioIems()}" update="municipio"/>
@@ -199,8 +199,8 @@
                                                                                             <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <p:outputLabel for="municipio" style="font-size: medium" value="Municipio*"/>
-                                                                                            <p:selectOneMenu id="municipio" value="#{controladorTitSegGen.municipioIEMS}" required="true" requiredMessage="Es necesario que seleccione el municipio">
+                                                                                            <p:outputLabel for="municipio" style="font-size: medium" value="Municipio"/>
+                                                                                            <p:selectOneMenu id="municipio" value="#{controladorTitSegGen.municipioIEMS}" required="true" requiredMessage="Es necesario que seleccione el municipio en donde se ubica el IEMS">
                                                                                                 <f:selectItem itemValue="#{null}"/>
                                                                                                 <f:selectItems value="#{controladorTitSegGen.listaMunicipiosIEMS}"/>
                                                                                                 <p:ajax listener="#{controladorTitSegGen.selectLocalidadIems()}" update="localidad"/>
@@ -209,8 +209,8 @@
                                                                                             <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <p:outputLabel for="localidad" style="font-size: medium" value="Localidad*"/>
-                                                                                            <p:selectOneMenu id="localidad" value="#{controladorTitSegGen.localidadIEMS}" required="true" requiredMessage="Es necesario que seleccione la localidad">
+                                                                                            <p:outputLabel for="localidad" style="font-size: medium" value="Localidad"/>
+                                                                                            <p:selectOneMenu id="localidad" value="#{controladorTitSegGen.localidadIEMS}" required="true" requiredMessage="Es necesario que seleccione la localidad en donde se ubica el IEMS">
                                                                                                 <f:selectItem itemValue="#{null}"/>
                                                                                                 <f:selectItems value="#{controladorTitSegGen.listaLocalidadesIEMS}"/>
                                                                                                 <p:ajax listener="#{controladorTitSegGen.selectIems()}" update="iems"/>
@@ -220,7 +220,7 @@
                                                                                         </div>
                                                                                         <br/><br/><br/><br/>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-8">
-                                                                                            <p:outputLabel for="iems" style="font-size: medium" value="IEMS*"/>
+                                                                                            <p:outputLabel for="iems" style="font-size: medium" value="IEMS"/>
                                                                                             <p:selectOneMenu id="iems" value="#{controladorTitSegGen.antAcademicos.iems}" filter="true" filterMatchMode="startsWith" required="true" requiredMessage="Es necesario que seleccione el IEMS">
                                                                                                 <f:selectItem itemValue="#{null}"/>
                                                                                                 <f:selectItems value="#{controladorTitSegGen.listaIEMS}"/>
@@ -230,9 +230,9 @@
                                                                                             <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4"> 
-                                                                                            <p:outputLabel for="fecTer" style="font-size: medium" value="Fecha Terminación*"/>     
+                                                                                            <p:outputLabel for="fecTer" style="font-size: medium" value="Fecha Terminación"/>     
                                                                                             <p class="text-muted">
-                                                                                            <p:calendar locale="es" id="fecTer" value="#{controladorTitSegGen.antAcademicos.fechaTerminacion}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese la fecha de terminación"/>
+                                                                                            <p:calendar locale="es" id="fecTer" value="#{controladorTitSegGen.antAcademicos.fechaTerminacion}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese la fecha en que terminó el IEMS el estudiante"/>
                                                                                             <p:message for="fecTer" display="tooltip" />
                                                                                             </p>
                                                                                             <hr/>
@@ -262,7 +262,7 @@
                                                                                         <div class="col-sm-12 col-md-12 col-lg-6">
                                                                                             <p:outputLabel for="celular" style="font-size: medium" value="Celular"/>  
                                                                                             <p class="text-muted">
-                                                                                            <p:inputMask size="100" maxlength="10" id="celular" value="#{controladorTitSegGen.datContacto.celular}" mask="(999)999-9999" required="true" requiredMessage="Es necesario que ingrese un número de contacto"/>
+                                                                                            <p:inputMask size="100" maxlength="10" id="celular" value="#{controladorTitSegGen.datContacto.celular}" mask="(999)999-9999" required="true" requiredMessage="Es necesario que ingrese un número de contacto del estudiante"/>
                                                                                             <p:message for="celular" display="tooltip" />
                                                                                             </p>
                                                                                             <hr/>
@@ -270,7 +270,7 @@
                                                                                         <div class="col-sm-12 col-md-12 col-lg-6">
                                                                                             <p:outputLabel for="email" style="font-size: medium" value="Email"/>  
                                                                                             <p class="text-muted">
-                                                                                            <p:inputText size="100" maxlength="150" id="email" value="#{controladorTitSegGen.datContacto.email}" required="true" requiredMessage="Es necesario que ingrese un correo electrónico"/>
+                                                                                            <p:inputText size="100" maxlength="150" id="email" value="#{controladorTitSegGen.datContacto.email}" required="true" requiredMessage="Es necesario que ingrese un correo electrónico del estudiante"/>
                                                                                             <p:message for="email" display="tooltip" />
                                                                                             </p>
                                                                                             <hr/>
@@ -278,7 +278,7 @@
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                             <p:outputLabel for="calle" style="font-size: medium" value="Calle"/>
                                                                                             <p class="text-muted">
-                                                                                            <p:inputText size="75" maxlength="150" id="calle" value="#{controladorTitSegGen.domExpediente.calle}" required="true" requiredMessage="Es necesario que ingrese el nombre de la calle"/>
+                                                                                            <p:inputText size="75" maxlength="150" id="calle" value="#{controladorTitSegGen.domExpediente.calle}" required="true" requiredMessage="Es necesario que ingrese el nombre de la calle del domicilio del estudiante"/>
                                                                                             <p:message for="calle"><p:autoUpdate/></p:message>
                                                                                             </p>
                                                                                             <hr/>
@@ -286,14 +286,14 @@
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                             <p:outputLabel for="colonia" style="font-size: medium" value="Colonia"/>
                                                                                             <p class="text-muted">
-                                                                                            <p:inputText size="75" maxlength="150" id="colonia" value="#{controladorTitSegGen.domExpediente.colonia}" required="true" requiredMessage="Es necesario que ingrese el nombre de la colonia"/>
+                                                                                            <p:inputText size="75" maxlength="150" id="colonia" value="#{controladorTitSegGen.domExpediente.colonia}" required="true" requiredMessage="Es necesario que ingrese el nombre de la colonia del domicilio del estudiante"/>
                                                                                             <p:message for="colonia"><p:autoUpdate/></p:message>
                                                                                             </p>
                                                                                             <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-2">
                                                                                             <p:outputLabel for="numExt" style="font-size: medium" value="Número Exterior"/>
-                                                                                            <p:inputText id="numExt" placeholder="14,14-B"  value="#{controladorTitSegGen.domExpediente.numExterior}" required="true" requiredMessage="Es necesario que ingrese el número exterior"/>
+                                                                                            <p:inputText id="numExt" placeholder="14,14-B"  value="#{controladorTitSegGen.domExpediente.numExterior}" required="true" requiredMessage="Es necesario que ingrese el número exterior del domicilio del estudiante"/>
                                                                                             <p:message for="numExt"><p:autoUpdate/></p:message>
                                                                                             <hr/>
                                                                                         </div>
@@ -305,8 +305,8 @@
                                                                                         </div>
                                                                                         <br/><br/><br/><br/>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <p:outputLabel for="estadoR" style="font-size: medium" value="Estado*"/>
-                                                                                            <p:selectOneMenu id="estadoR" value="#{controladorTitSegGen.domExpediente.estado}" required="true" requiredMessage="Es necesario que seleccione el estado">
+                                                                                            <p:outputLabel for="estadoR" style="font-size: medium" value="Estado"/>
+                                                                                            <p:selectOneMenu id="estadoR" value="#{controladorTitSegGen.domExpediente.estado}" required="true" requiredMessage="Es necesario que seleccione el estado de residencia del estudiante">
                                                                                                 <f:selectItem itemValue="#{null}"/>
                                                                                                 <f:selectItems value="#{controladorTitSegGen.listaEstadosDomicilioRadica}"/>
                                                                                                 <p:ajax listener="#{controladorTitSegGen.selectMunicipio()}" update="municipioR"/>
@@ -315,8 +315,8 @@
                                                                                             <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <p:outputLabel for="municipioR" style="font-size: medium" value="Municipio*"/>
-                                                                                            <p:selectOneMenu id="municipioR" value="#{controladorTitSegGen.domExpediente.municipio}" required="true" requiredMessage="Es necesario que seleccione el municipio">
+                                                                                            <p:outputLabel for="municipioR" style="font-size: medium" value="Municipio"/>
+                                                                                            <p:selectOneMenu id="municipioR" value="#{controladorTitSegGen.domExpediente.municipio}" required="true" requiredMessage="Es necesario que seleccione el municipio de residencia del estudiante">
                                                                                                 <f:selectItem itemValue="#{null}"/>
                                                                                                 <f:selectItems value="#{controladorTitSegGen.listaMunicipiosRadica}"/>
                                                                                                 <p:ajax listener="#{controladorTitSegGen.selectAsentamiento()}" update="asentamientoR"/>
@@ -325,8 +325,8 @@
                                                                                             <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <p:outputLabel for="asentamientoR" style="font-size: medium" value="Localidad*"/>
-                                                                                            <p:selectOneMenu id="asentamientoR" value="#{controladorTitSegGen.domExpediente.localidad}" filter="true" filterMatchMode="startsWith" style="width:  375px" required="true" requiredMessage="Es necesario que seleccione la localidad">
+                                                                                            <p:outputLabel for="asentamientoR" style="font-size: medium" value="Localidad"/>
+                                                                                            <p:selectOneMenu id="asentamientoR" value="#{controladorTitSegGen.domExpediente.localidad}" filter="true" filterMatchMode="startsWith" style="width:  375px" required="true" requiredMessage="Es necesario que seleccione la localidad de residencia del estudiante">
                                                                                                 <f:selectItem itemValue="#{null}"/>
                                                                                                 <f:selectItems value="#{controladorTitSegGen.listaAsentamientos}"/>
                                                                                                 <p:ajax/>
@@ -357,14 +357,14 @@
                                                                                 <div class="col-sm-12">
                                                                                     <div class="row">
                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <p:outputLabel for="promedio" style="font-size: medium" value="Promedio*"/>
+                                                                                            <p:outputLabel for="promedio" style="font-size: medium" value="Promedio"/>
                                                                                             <p class="text-muted">
-                                                                                                <p:inputNumber id="promedio" decimalPlaces="1"  required="true" decimalSeparator="." style="border: none;" size="5" value="#{controladorTitSegGen.datTitulacion.promedioFinal}"/> 
+                                                                                                <p:inputNumber id="promedio" decimalPlaces="1"  required="true" decimalSeparator="." style="border: none;" size="5" value="#{controladorTitSegGen.datTitulacion.promedioFinal}" requiredMessage="Es necesario que ingrese el promedio final obtenido por el estudiante"/> 
                                                                                             </p>
                                                                                             <hr/>
                                                                                         </div>
                                                                                         <div class="col-sm-12 col-md-12 col-lg-8">
-                                                                                            <p:outputLabel for="servSoc" style="font-size: medium" value="¿Cumplió Servicio Social?*"/>
+                                                                                            <p:outputLabel for="servSoc" style="font-size: medium" value="¿Cumplió Servicio Social?"/>
                                                                                                 <p:selectOneMenu id="servSoc" value="#{controladorTitSegGen.datTitulacion.servicioSocial}" required="true" requiredMessage="Es necesario que seleccione una opción">
                                                                                                     <f:selectItem itemLabel="Si" itemValue="true" />
                                                                                                     <f:selectItem itemLabel="No" itemValue="false" />
