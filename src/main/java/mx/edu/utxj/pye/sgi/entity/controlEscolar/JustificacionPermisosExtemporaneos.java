@@ -37,12 +37,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "JustificacionPermisosExtemporaneos.findByActivo", query = "SELECT j FROM JustificacionPermisosExtemporaneos j WHERE j.activo = :activo")})
 public class JustificacionPermisosExtemporaneos implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "justificacion")
-    private Integer justificacion;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 500)
@@ -52,6 +46,15 @@ public class JustificacionPermisosExtemporaneos implements Serializable {
     @NotNull
     @Column(name = "activo")
     private boolean activo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "justificacionPermiso")
+    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "justificacion")
+    private Integer justificacion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "justificacionPermiso")
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
 
@@ -76,21 +79,6 @@ public class JustificacionPermisosExtemporaneos implements Serializable {
         this.justificacion = justificacion;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(boolean activo) {
-        this.activo = activo;
-    }
 
     @XmlTransient
     public List<PermisosCapturaExtemporaneaGrupal> getPermisosCapturaExtemporaneaGrupalList() {
@@ -124,6 +112,31 @@ public class JustificacionPermisosExtemporaneos implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.JustificacionPermisosExtemporaneos[ justificacion=" + justificacion + " ]";
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
+        return permisosCapturaExtemporaneaEstudianteList;
+    }
+
+    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
+        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
     }
     
 }

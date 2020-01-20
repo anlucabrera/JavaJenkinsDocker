@@ -416,18 +416,25 @@ public class EjbRegistroBajas {
     public ResultadoEJB<DtoFormatoBaja> generarFormatoBaja(Baja registro) {
         try{
                 DtoRegistroBajaEstudiante dtoRegistroBajaEstudiante = buscarRegistroBajaEstudiante(registro.getEstudiante().getIdEstudiante()).getValor();
-               
                 List<DtoMateriaReprobada> listaDtoMateriaReprobada = buscarMateriasReprobadas(registro).getValor();
-                
                 List<DtoDocumentosEstudiante> listaDocumentosEstudiante = buscarDocumentosEstudiante(registro.getEstudiante().getIdEstudiante()).getValor();
-                
                 AreasUniversidad areaSuperior = em.find(AreasUniversidad.class, dtoRegistroBajaEstudiante.getProgramaEducativo().getAreaSuperior());
-                
                 Personal director = em.find(Personal.class, areaSuperior.getResponsable());
-                
                 Personal tutor = em.find(Personal.class, registro.getEstudiante().getGrupo().getTutor());
                 
-                DtoFormatoBaja dtoFormatoBaja = new DtoFormatoBaja(dtoRegistroBajaEstudiante, listaDtoMateriaReprobada, listaDocumentosEstudiante, director, tutor);
+                AreasUniversidad areaPsic = em.find(AreasUniversidad.class, Short.parseShort("18"));
+                AreasUniversidad areaRecMat = em.find(AreasUniversidad.class, Short.parseShort("14"));
+                AreasUniversidad areaEsc = em.find(AreasUniversidad.class, Short.parseShort("10"));
+                AreasUniversidad areaBib = em.find(AreasUniversidad.class, Short.parseShort("11"));
+                AreasUniversidad areaAyF = em.find(AreasUniversidad.class, Short.parseShort("4"));
+                
+                Personal psic = em.find(Personal.class, areaPsic.getResponsable());
+                Personal recMat = em.find(Personal.class, areaRecMat.getResponsable());
+                Personal servEsc = em.find(Personal.class, areaEsc.getResponsable());
+                Personal servEst = em.find(Personal.class, areaBib.getResponsable());
+                Personal admFin = em.find(Personal.class, areaAyF.getResponsable());
+                
+                DtoFormatoBaja dtoFormatoBaja = new DtoFormatoBaja(dtoRegistroBajaEstudiante, listaDtoMateriaReprobada, listaDocumentosEstudiante, director, tutor, psic, recMat, servEsc, servEst, admFin);
                
             return ResultadoEJB.crearCorrecto(dtoFormatoBaja, "Información de para generar formato de baja.");
         }catch (Exception e){

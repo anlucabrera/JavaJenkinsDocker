@@ -95,6 +95,8 @@ public class Grupo implements Serializable {
     private List<Tutoria> tutoriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo")
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo")
+    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
 
     public Grupo() {
     }
@@ -244,7 +246,16 @@ public class Grupo implements Serializable {
     public void setPermisosCapturaExtemporaneaGrupalList(List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList) {
         this.permisosCapturaExtemporaneaGrupalList = permisosCapturaExtemporaneaGrupalList;
     }
+    
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
+        return permisosCapturaExtemporaneaEstudianteList;
+    }
 
+    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
+        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -269,5 +280,5 @@ public class Grupo implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo[ idGrupo=" + idGrupo + " ]";
     }
-    
+   
 }

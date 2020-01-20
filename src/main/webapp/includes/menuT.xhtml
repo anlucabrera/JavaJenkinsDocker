@@ -46,7 +46,21 @@
                     <c:if test="#{fichaAdmisionReporte.mostrarEnDesarrollo(request) and fichaAdmisionReporte.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reporteFichaAdmision.xhtml"><i class="fa fa-clipboard"></i><span>Reporte de Aspirantes <small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                     <!-- Administrador -->
-                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-calendar"></i><span>Apertura Extemporánea</span></p:link></li></c:if>
+                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}">
+                        
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-calendar"></i> <span>Apertura Extemporánea</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <li><p:link href="#{request.contextPath}/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-users"></i><span>Grupal</span></p:link></li>
+                            <li><p:link href="#{request.contextPath}/controlEscolar/pye/permisoAperturaExtemporaneaPorEstudiante.xhtml"><i class="fa fa-user-plus"></i><span>Estudiante</span></p:link></li>
+                        </ul>
+                    </li>
+                    </c:if>
 
                     <!-- Secretaría Académica -->
                     <c:if test="#{concentradoCalificacionesSecAca.mostrarEnDesarrollo(request) and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span></p:link></li></c:if>
