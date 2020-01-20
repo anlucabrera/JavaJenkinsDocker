@@ -162,6 +162,34 @@ public class EjbRegistroPlanEstudio {
         }
     }
     
+    public ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> getProgramasEducativosDocenteCargasAcademicas(PersonalActivo docente,PeriodosEscolares pe) {
+        try {
+
+            List<Short> planes = em.createQuery("select p from CargaAcademica ca INNER JOIN ca.idPlanMateria pem INNER JOIN pem.idPlan p where ca.docente=:docente  AND ca.evento.periodo=:periodo GROUP BY p.idPe", PlanEstudio.class)
+                    .setParameter("docente", docente.getPersonal().getClave())
+                    .setParameter("periodo", pe.getPeriodo())
+                    .getResultStream()
+                    .map(a -> a.getIdPe())
+                    .collect(Collectors.toList());
+            Map<AreasUniversidad, List<PlanEstudio>> programasPlanMap;
+            List<AreasUniversidad> programas = new ArrayList<>(); 
+            if (!planes.isEmpty()) {
+                programas = em.createQuery("select a from AreasUniversidad a where a.area IN :areas order by a.area desc", AreasUniversidad.class)
+                        .setParameter("areas", planes)
+                        .getResultStream()
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
+
+            programasPlanMap = programas.stream()
+                    .collect(Collectors.toMap(programa -> programa, programa -> generarPlanesEstudio(programa)));
+
+            return ResultadoEJB.crearCorrecto(programasPlanMap, "Listado de Programas Educativos");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No fue posible obtener el listado de programas educativos. (EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+
     public ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> getProgramasEducativostotal() {
         try {
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);

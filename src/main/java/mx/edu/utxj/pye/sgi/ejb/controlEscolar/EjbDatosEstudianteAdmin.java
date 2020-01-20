@@ -65,8 +65,7 @@ public class EjbDatosEstudianteAdmin {
         }
     }
     public Estudiante buscaEstudiante(Integer matricula) {
-        Estudiante e = new Estudiante();
-        e = em.createQuery("SELECT es FROM Estudiante es WHERE es.matricula =:matricula", Estudiante.class)
+        Estudiante e=em.createQuery("SELECT es FROM Estudiante es WHERE es.matricula =:matricula ORDER BY es.periodo DESC", Estudiante.class)
                 .setParameter("matricula", matricula)
                 .getResultList().get(0);
         if (e == null) {

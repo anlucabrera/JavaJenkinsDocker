@@ -336,9 +336,7 @@
                                                 <div class="col-sm-2 border-right">
                                                     <p:outputLabel for="anio" value="Año" />
                                                     <p:selectOneMenu  id="anio" value="#{controladorSubordinados.anioNumero}" valueChangeListener="#{controladorSubordinados.numeroAnioAsiganado}">
-                                                        <f:selectItem itemValue="17" itemLabel="2017" />
-                                                        <f:selectItem itemValue="18" itemLabel="2018" />
-                                                        <f:selectItem itemValue="19" itemLabel="2019" />
+                                                        <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.anio}" itemLabel="#{anio.anio}" />
                                                         <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="anio" update="tblActividades"/>
                                                     </p:selectOneMenu >
                                                 </div>
@@ -379,9 +377,7 @@
                                                 <div class="col-sm-2 border-right">
                                                     <p:outputLabel for="anio" value="Año" />
                                                     <p:selectOneMenu  id="anio" value="#{controladorSubordinados.anioNumero}" valueChangeListener="#{controladorSubordinados.numeroAnioAsiganado}">
-                                                        <f:selectItem itemValue="17" itemLabel="2017" />
-                                                        <f:selectItem itemValue="18" itemLabel="2018" />
-                                                        <f:selectItem itemValue="19" itemLabel="2019" />
+                                                        <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.anio}" itemLabel="#{anio.anio}" />
                                                         <p:ajax listener="#{controladorSubordinados.imprimirValores()}" process="anio" update="tblActividades"/>
                                                     </p:selectOneMenu >
                                                 </div>
