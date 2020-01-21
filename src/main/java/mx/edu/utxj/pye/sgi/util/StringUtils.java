@@ -14,10 +14,25 @@ public class StringUtils {
         String cadenaSinAcentos = cadenaNormalize.replaceAll("[^\\p{ASCII}]", "");
         return cadenaSinAcentos.trim();
     }
-    
+
+    /**
+     * Quita espacios y los reemplaza por guiones bajos
+     * @param cadena
+     * @return
+     */
     public static String quitarEspacios(String cadena){
         if(cadena == null) return "";
         return cadena.replace(' ', '_').trim();
+    }
+
+    /**
+     * Hace un trim a la cadena y previene si es nula
+     * @param cadena
+     * @return
+     */
+    public static String trim(String cadena){
+        if(cadena == null) return "";
+        return cadena.trim();
     }
 
     public static String prettyURL(String string) {

@@ -23,7 +23,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Satisfacción sobre los servicios que presta la insticución
+        Satisfacción sobre los servicios que presta la institución
     </ui:define>
 
     <ui:define name="description">
@@ -61,123 +61,24 @@
                                     <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
                                     <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
                                     <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
-                                    <p:remoteCommand id="cmdActualizarmaterias" name="actualizar" process="@this" actionListener="#{capturaCalificacionesDocente.actualizar}" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs) @(.btn)  @(.ui-commandlink) @(.promedio)" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="periodo" value="#{capturaTareaIntegradoraDocente.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{capturaTareaIntegradoraDocente.rol.periodosConCarga}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this" update="@this carga periodo contenedor" listener="#{capturaTareaIntegradoraDocente.cambiarPeriodo}" />
+                                                <p:selectOneMenu id="evaluacion" value="#{serviciosConsulta.dto.evaluacionSeleccionada}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{serviciosConsulta.dto.evaluaciones}" var="evaluacion" itemValue="#{evaluacion}" itemLabel="#{caster.clavePeriodoToString(evaluacion.periodo)}" />
+                                                    <p:ajax process="@this" update="@this contenedor" listener="#{serviciosConsulta.cambiarEvaluacion}" />
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="Periodo" for="periodo"/>
-                                                <p:message for="periodo" />
-                                            </div>
-                                        </div>
-                                        <div class="#{casilla4}">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="carga" value="#{capturaTareaIntegradoraDocente.rol.cargaAcademicaSeleccionada}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{capturaTareaIntegradoraDocente.rol.cargasDocente}" var="carga" itemValue="#{carga}" itemLabel="#{caster.dtoCargaAcademicaToString(carga)}" />
-                                                    <p:ajax process="@this" update="@this periodo contenedor" listener="#{capturaTareaIntegradoraDocente.cambiarCarga}"  />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Carga académica" for="carga"/>
-                                                <p:message for="carga" ><p:autoUpdate/></p:message>
+                                                <p:outputLabel value="Evaluación" for="evaluacion"/>
+                                                <p:message for="evaluacion" display="tooltip" />
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 text-info text-center">
-                                            <p:importEnum type="mx.edu.utxj.pye.sgi.enums.TareaIntegradoraParametro" allSuffix="parametros" var="tareaIntegradoraParametro" />
                                             <p:outputPanel id="contenedor">
-                                                <c:forEach items="#{capturaTareaIntegradoraDocente.rol.cargasDocente}" var="carga">
-                                                    <p:outputPanel rendered="#{carga eq capturaTareaIntegradoraDocente.rol.cargaAcademicaSeleccionada}">
-                                                        <p:autoUpdate />
-                                                        <c:if test="#{!empty capturaTareaIntegradoraDocente.getContenedor(carga)}">
-                                                            <table class="table table-condensed table-bordered table-hover table-responsive tabla ui-datatable">
-                                                                <thead>
-                                                                <tr role="row">
-                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Matrícula</span></th>
-                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Nombre</span></th>
-                                                                    <c:forEach items="#{capturaTareaIntegradoraDocente.getUnidades(carga)}" var="unidad">
-                                                                        <th role="columnheader" class="ui-state-default">
-                                                                    <span class="ui-column-title">
-                                                                        Unidad. #{unidad.unidadMateria.noUnidad}
-                                                                        (<h:outputLabel value="#{unidad.unidadMateriaConfiguracion.porcentaje / 100}">
-                                                                            <f:convertNumber type="percent" />
-                                                                        </h:outputLabel>)
-                                                                    </span>
-                                                                        </th>
-                                                                    </c:forEach>
-                                                                    <c:if test="#{capturaTareaIntegradoraDocente.tieneIntegradora(carga)}">
-                                                                        <th role="columnheader" class="ui-state-default">
-                                                                    <span class="ui-column-title">
-                                                                        Tarea integradora
-                                                                        (<h:outputLabel value="#{capturaTareaIntegradoraDocente.rol.tareaIntegradoraMap[carga].porcentaje / 100}">
-                                                                            <f:convertNumber type="percent" />
-                                                                        </h:outputLabel>)
-                                                                    </span>
-                                                                        </th>
-                                                                    </c:if>
-                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Promedio</span></th>
-                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Nivelación</span></th>
-                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Instrumento</span></th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                <c:forEach items="#{capturaTareaIntegradoraDocente.getContenedor(carga).dtoEstudiantes}" var="estudiante" varStatus="status">
-                                                                    <tr data-ri="#{status.index}" class="ui-widget-content #{status.index%2 eq 1?'ui-datatable-odd':'ui-datatable-even'}">
-                                                                        <td role="gridcell">#{estudiante.inscripcionActiva.inscripcion.matricula}</td>
-                                                                        <td role="gridcell" style="text-align: left;">#{estudiante.persona.apellidoPaterno} #{estudiante.persona.apellidoMaterno} #{estudiante.persona.nombre}</td>
-                                                                        <c:forEach items="#{capturaTareaIntegradoraDocente.getContenedor(carga).dtoUnidadConfiguraciones}" var="unidad">
-                                                                            <td role="gridcell" class="#{capturaTareaIntegradoraDocente.getContenedor(carga).getPromedioUnidad(unidad, estudiante) lt 8?'danger text-danger':''}">
-                                                                                <h:outputLabel value="#{capturaTareaIntegradoraDocente.getContenedor(carga).getPromedioUnidad(unidad, estudiante)}">
-                                                                                    <f:convertNumber pattern="#.##" />
-                                                                                </h:outputLabel>
-                                                                            </td>
-                                                                        </c:forEach>
-                                                                        <c:if test="#{capturaTareaIntegradoraDocente.tieneIntegradora(carga)}">
-                                                                            <td role="gridcell">
-                                                                                <p:selectOneMenu
-                                                                                        value="#{capturaTareaIntegradoraDocente.getContenedor(carga).tareaIntegradoraPromedioMap[estudiante].valor}"
-                                                                                        valueChangeListener="#{capturaTareaIntegradoraDocente.guardarCalificacion}">
-                                                                                    <f:selectItems value="#{tareaIntegradoraParametro.parametros}" var="par" itemLabel="#{par.label}" itemValue="#{par.valor}" />
-                                                                                    <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
-                                                                                    <f:attribute name="estudiante" value="#{estudiante}" />
-                                                                                    <f:attribute name="carga" value="#{carga}" />
-                                                                                </p:selectOneMenu>
-                                                                            </td>
-                                                                        </c:if>
-                                                                        <c:set var="valor" value="#{capturaTareaIntegradoraDocente.getPromedioAsignaturaEstudiante(estudiante, carga)}" />
-                                                                        <td role="gridcell" class="promedio #{valor lt 8?'danger text-danger':''}">
-                                                                            <h:outputLabel value="#{valor}" styleClass="promedio">
-                                                                                <f:convertNumber pattern="#.###" />
-                                                                            </h:outputLabel>
-                                                                        </td>
-                                                                        <td role="gridcell" class="promedio">
-                                                                            <p:selectOneMenu disabled="#{capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor)}" value="#{capturaTareaIntegradoraDocente.getNivelacion(carga, estudiante).calificacionNivelacion.valor}"
-                                                                                             valueChangeListener="#{capturaTareaIntegradoraDocente.guardarNivelacion}">
-                                                                                <f:selectItems value="#{tareaIntegradoraParametro.parametros}" var="par" itemLabel="#{par.label}" itemValue="#{par.valor}" />
-                                                                                <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
-                                                                                <f:attribute name="estudiante" value="#{estudiante}" />
-                                                                                <f:attribute name="carga" value="#{carga}" />
-                                                                            </p:selectOneMenu>
-                                                                        </td>
-                                                                        <td role="gridcell" class="promedio">
-                                                                            <p:selectOneMenu disabled="#{capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor)}" value="#{capturaTareaIntegradoraDocente.getNivelacion(carga, estudiante).indicador}" converter="entityConverter"
-                                                                                             valueChangeListener="#{capturaTareaIntegradoraDocente.guardarNivelacion}">
-                                                                                <f:selectItems value="#{capturaTareaIntegradoraDocente.rol.indicadores}" var="indicador" itemLabel="#{indicador.nombre}" itemValue="#{indicador}" />
-                                                                                <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
-                                                                                <f:attribute name="estudiante" value="#{estudiante}" />
-                                                                                <f:attribute name="carga" value="#{carga}" />
-                                                                            </p:selectOneMenu>
-                                                                        </td>
-                                                                    </tr>
-                                                                </c:forEach>
-                                                                </tbody>
-                                                            </table>
-                                                        </c:if>
-                                                        <c:if test="#{empty capturaTareaIntegradoraDocente.getContenedor(carga)}">
-                                                            No se detecaron calificaciones en la carga académica seleccionada.
-                                                        </c:if>
+                                                <c:forEach items="#{serviciosConsulta.dto.evaluaciones}" var="evaluacion2">
+                                                    <p:outputPanel rendered="#{evaluacion2 eq serviciosConsulta.dto.evaluacionSeleccionada}">
+                                                        -#{serviciosConsulta.getContenedor(evaluacion2).conteosInstitucional}-<br/>
                                                     </p:outputPanel>
                                                 </c:forEach>
                                             </p:outputPanel>
@@ -198,11 +99,11 @@
                         </div>
                     </div>
                 </h:form>
-                <c:if test="#{!empty capturaCalificacionesDocente.alertas || true}">
+                <c:if test="#{!empty serviciosConsulta.alertas || true}">
                     <div class="box box-info">
                         <div class="box-header">
                             <ui:include src="/includes/alertas.xhtml">
-                                <ui:param name="alertas" value="#{capturaTareaIntegradoraDocente.alertas}"></ui:param>
+                                <ui:param name="alertas" value="#{serviciosConsulta.alertas}"></ui:param>
                             </ui:include>
                         </div>
                     </div>
@@ -215,7 +116,7 @@
                         <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para capturar calificaciones</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
-                                <c:forEach items="#{capturaTareaIntegradoraDocente.rol.instrucciones}" var="instruccion">
+                                <c:forEach items="#{serviciosConsulta.dto.instrucciones}" var="instruccion">
                                     <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
                                 </c:forEach>
                             </ul>
@@ -224,10 +125,10 @@
                     </div>
                 </p:dialog>
             </c:if>
-            <c:if test="#{!capturaTareaIntegradoraDocente.tieneAcceso}">
+            <c:if test="#{!serviciosConsulta.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a docentes con cargas académicas."/>
+                        <h:outputText value="El acceso solo está autorizado a directivos."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

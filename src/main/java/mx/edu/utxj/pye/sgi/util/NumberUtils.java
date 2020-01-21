@@ -10,6 +10,19 @@ public class NumberUtils {
         return decimal.setScale(digitos, RoundingMode.HALF_UP);
     }
 
+    /**
+     * Convierte una cadena de texto en número
+     * @param s Cadena a procesar, se intenta eliminar espacios al inicio y fin
+     * @return Regresa el valor entero o cero si no se puede convertir
+     */
+    public static Integer stringToInt(String s){
+        try{
+            return Integer.parseInt(s.trim());
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println("redondear(3.2) = " + redondear(3.2, 0));
 

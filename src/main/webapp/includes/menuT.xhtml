@@ -424,45 +424,20 @@
                 </ul>
             </li>
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Funciones y organigrama</li>
-            <li>
-                <p:link href="#{request.contextPath}/capitalHumano/organigramaOperativo.xhtml">
-                    <i class="fa fa-sitemap"></i>
-                    <span>Organigrama operativo</span>
-                </p:link>
-            </li>
+            <li><p:link href="#{request.contextPath}/capitalHumano/organigramaOperativo.xhtml"><i class="fa fa-sitemap"></i><span>Organigrama operativo</span></p:link></li>
             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' or controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador'}">
-                <li>
-                    <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoFun.xhtml"><i class="fa fa-list-alt"></i>
-                        <span>Consulta</span>
-                    </p:link>
-                </li>
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Herramientas directivos</li>            
+                <li><p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoFun.xhtml"><i class="fa fa-list-alt"></i><span>Consulta</span></p:link></li>
+                <c:if test="#{serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/consulta/servicios.xhtml" title="Satisfacción de Servicios"><i class="fa fa-list-alt"></i><span>Satisfacción de Servicios</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Herramientas directivos</li>
                 <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-user"></i> <span>Directivo</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-
+                    <a href="#"><i class="fa fa-user"></i> <span>Directivo</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
                     <ul class="treeview-menu" style="display: none;">
-                        <li>
-                            <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoSubordinados.xhtml"><i class="fa fa-users"></i>
-                                <span>Perfil de subordinados(as)</span>
-                            </p:link>
-                        </li>   
-                        <li>
-                            <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
-                                <span>Reporte de Registros</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilSubordinadosIn.xhtml"><i class="fa fa-calendar-check-o"></i>
-                                <span>Incidencias Subordinados</span>
-                            </p:link>
-                        </li>
+                        <li><p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoSubordinados.xhtml"><i class="fa fa-users"></i><span>Perfil de subordinados(as)</span></p:link></li>
+                        <li><p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte de Registros</span></p:link></li>
+                        <li><p:link href="#{request.contextPath}/capitalHumano/directivos/perfilSubordinadosIn.xhtml"><i class="fa fa-calendar-check-o"></i><span>Incidencias Subordinados</span></p:link></li>
                     </ul>
-                </li>  
+                </li>
+                <c:if test="#{serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/consulta/servicios.xhtml" title="Satisfacción de servicios"><i class="fa fa-slideshare"></i><span>Satisfacción de servicios</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
             </c:if>
 
 

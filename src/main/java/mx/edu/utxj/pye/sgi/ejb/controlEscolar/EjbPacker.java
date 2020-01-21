@@ -1,28 +1,40 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import edu.mx.utxj.pye.seut.util.util.Cuestionario;
 import lombok.NonNull;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.consulta.DtoAreaUniversidadCategoria;
+import mx.edu.utxj.pye.sgi.dto.consulta.DtoEstudiantePeriodo;
+import mx.edu.utxj.pye.sgi.dto.consulta.DtoSatisfaccionServiciosCuestionario;
+import mx.edu.utxj.pye.sgi.dto.consulta.DtoSatisfaccionServiciosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.*;
+import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.converter.CasoCriticoEstadoConverter;
 import mx.edu.utxj.pye.sgi.enums.converter.CasoCriticoTipoConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.saiiut.ejb.EjbLogin;
 import mx.edu.utxj.pye.sgi.util.DateUtils;
+import mx.edu.utxj.pye.sgi.util.NumberUtils;
+import mx.edu.utxj.pye.sgi.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import java.awt.dnd.DragGestureEvent;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +48,7 @@ public class EjbPacker {
     @EJB EjbCasoCritico ejbCasoCritico;
     @EJB EjbValidacionComentarios ejbValidacionComentarios;
     @EJB EjbPropiedades ep;
+    @EJB EjbLogin ejbLogin;
     private EntityManager em;
 
      @PostConstruct
@@ -599,6 +612,103 @@ public class EjbPacker {
             return ResultadoEJB.crearCorrecto(dtoCalificacionNivelacion, "Empaquetado de nivelación.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la calificación de nivelación (EjbPacker.packDtoCalificacionNivelacion).", e, DtoCalificacionNivelacion.class);
+        }
+    }
+
+    /**
+     * Permite empaquetar un área institucional y su categoría
+     * @param area Clave del área requerida
+     * @return Regresa el empaquetado, código 1 para error desconocido, código 2  para indicar una clave incorrecta o código 3 para indicar que el área no tiene categoría
+     */
+    public ResultadoEJB<DtoAreaUniversidadCategoria> packDtoAreaUniversidadCategoria(@NonNull Short area){
+        try{
+            //
+            AreasUniversidad areasUniversidad = em.find(AreasUniversidad.class, area);
+            if(areasUniversidad == null) return ResultadoEJB.crearErroneo(2, "No se encontró un área institucional con la clave especificada.", DtoAreaUniversidadCategoria.class);
+            Categorias categoria = areasUniversidad.getCategoria();
+            if(categoria == null) return ResultadoEJB.crearErroneo(3, "No se encontró la categoría del área requerida.", DtoAreaUniversidadCategoria.class);
+            DtoAreaUniversidadCategoria dtoAreaUniversidadCategoria = new DtoAreaUniversidadCategoria(areasUniversidad, categoria);
+            return ResultadoEJB.crearCorrecto(dtoAreaUniversidadCategoria, "Area de la universidad y su categoría empaquetados.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar empaquetar un área intitucional con su clave.", e, DtoAreaUniversidadCategoria.class);
+        }
+    }
+
+    /**
+     * Empaqueta una asociación del estudiante con sus periodo escolar, en caso de ser un estudinate del nuevo sistema se inlcuye un empaquetado del estudiante
+     * @param matricula Valor de la matrícula
+     * @param periodo Valor del periodo a asociar
+     * @return Regresa el empaquetado, código 1 para error desconocido, código 2 para indicar que la matricula no está registrada en el epriodo, código 3 para indicar que el periodo no es válido
+     */
+    public ResultadoEJB<DtoEstudiantePeriodo> packDtoEstudiantePeriodo(String matricula, Integer periodo){
+        try{
+            PeriodosEscolares periodosEscolares = em.find(PeriodosEscolares.class, periodo);
+            if(periodosEscolares == null) return ResultadoEJB.crearErroneo(3, "El periodo no es válido", DtoEstudiantePeriodo.class);
+            CiclosEscolares ciclosEscolares = periodosEscolares.getCiclo();
+
+            MatriculaPeriodosEscolares matriculaPeriodosEscolares = em.createQuery("select m from MatriculaPeriodosEscolares m where m.periodo=:periodo and m.matricula=:matricula", MatriculaPeriodosEscolares.class)
+                    .setParameter("matricula", StringUtils.trim(matricula))
+                    .setParameter("periodo", periodo)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if(matriculaPeriodosEscolares == null) return ResultadoEJB.crearErroneo(2, "La matrícula no está asociada al period en la BD", DtoEstudiantePeriodo.class);
+
+            AreasUniversidad programa = em.find(AreasUniversidad.class, matriculaPeriodosEscolares.getProgramaEducativo());
+
+            DtoEstudiantePeriodo dtoEstudiantePeriodo = new DtoEstudiantePeriodo(matriculaPeriodosEscolares, programa, periodosEscolares, ciclosEscolares, UsuarioTipo.ESTUDIANTE);
+            ResultadoEJB<DtoEstudiante> packEstudiante = packEstudiante(NumberUtils.stringToInt(matricula));
+            if(packEstudiante.getCorrecto()) {
+                dtoEstudiantePeriodo.setDtoEstudiante(packEstudiante.getValor());
+                dtoEstudiantePeriodo.setUsuarioTipo(UsuarioTipo.ESTUDIANTE19);
+            }
+
+            return ResultadoEJB.crearCorrecto(dtoEstudiantePeriodo, "Asociación de estudiante con periodo empaquetada");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el estudiante con su periodo (EjbPacker.packDtoAreaUniversidadCategoria)", e, DtoEstudiantePeriodo.class);
+        }
+    }
+
+    /**
+     * Empaqueta los resultados obtenidos de la encuesta de satisfacción de servicios incluyendo el empaquetado del estudiante/periodo, el registro de los resultados de la encuesta y un mapa de preguntas y sus valores de respuestas
+     * de un estudiante
+     * @param encuestaServiciosResultados Registro de respuestas que dió el estudiante en su cuestionario
+     * @param evaluacion Instancia de la evaluación correspondiente de la que se desea obtener las
+     * @param cuestionario
+     * @return
+     */
+    public ResultadoEJB<DtoSatisfaccionServiciosEstudiante> packDtoSatisfaccionServiciosEstudiante(EncuestaServiciosResultados encuestaServiciosResultados, Evaluaciones evaluacion, DtoSatisfaccionServiciosCuestionario cuestionario){
+        try{
+//            System.out.println("EjbPacker.packDtoSatisfaccionServiciosEstudiante");
+//            System.out.println("evaluacion.getPeriodo() = " + evaluacion.getPeriodo());
+            ResultadoEJB<DtoEstudiantePeriodo> packDtoEstudiantePeriodo = packDtoEstudiantePeriodo(String.valueOf(encuestaServiciosResultados.getEncuestaServiciosResultadosPK().getEvaluador()), evaluacion.getPeriodo());
+            if(!packDtoEstudiantePeriodo.getCorrecto()) {
+//                System.out.println("EjbPacker.packDtoSatisfaccionServiciosEstudiante");
+//                System.out.println("encuestaServiciosResultados = " + encuestaServiciosResultados + ", evaluacion = " + evaluacion);
+                System.out.println("String.valueOf(encuestaServiciosResultados.getEncuestaServiciosResultadosPK().getEvaluador()) = " + String.valueOf(encuestaServiciosResultados.getEncuestaServiciosResultadosPK().getEvaluador()));
+                System.out.println("packDtoEstudiantePeriodo.getMensaje() = " + packDtoEstudiantePeriodo.getMensaje());
+                return ResultadoEJB.crearErroneo(2, "No se pudo empaquetar DtoSatisfaccionServiciosEstudiante. Mensaje: ".concat(packDtoEstudiantePeriodo.getMensaje()), DtoSatisfaccionServiciosEstudiante.class);
+            }else{
+//                System.out.println("packDtoEstudiantePeriodo.getValor().getMatriculaPeriodosEscolares().getMatricula() = " + packDtoEstudiantePeriodo.getValor().getMatriculaPeriodosEscolares().getMatricula());
+            }
+
+            DtoSatisfaccionServiciosEstudiante dtoSatisfaccionServiciosEstudiante = new DtoSatisfaccionServiciosEstudiante(packDtoEstudiantePeriodo.getValor(), encuestaServiciosResultados);
+            cuestionario.getPreguntas().forEach(pregunta -> {
+                Integer posicion = cuestionario.getPosiciones().get(pregunta.getNumero());
+//                System.out.println("posicion = " + posicion);
+                switch (posicion){
+                    case 0: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR1())); break;
+                    case 1: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR2())); break;
+                    case 2: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR3())); break;
+                    case 3: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR4())); break;
+                    case 4: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR5())); break;
+                }
+            });
+
+//            System.out.println("dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap() = " + dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap());
+            return ResultadoEJB.crearCorrecto(dtoSatisfaccionServiciosEstudiante, "dtoSatisfaccionServiciosEstudiante empaquetado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error al empaquetar DtoSatisfaccionServiciosEstudiante (EjbPacker.packDtoSatisfaccionServiciosEstudiante)", e, DtoSatisfaccionServiciosEstudiante.class);
         }
     }
 }
