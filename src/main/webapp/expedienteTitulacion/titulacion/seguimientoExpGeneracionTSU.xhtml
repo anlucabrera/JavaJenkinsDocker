@@ -107,7 +107,7 @@
                                                                                   icon="fa fa-usd"
                                                                                   title="Consultar Lista de Pagos"/>  
                                                              </p:column>
-                                                             <p:column headerText="No. Expediente" style="width: 150px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.expediente}">
+                                                             <p:column headerText="No. Expediente" style="width: 150px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.expediente}" filterBy="#{ExpTit.expedientesTitulacion.expediente}" filterMatchMode="contains">
                                                                  <h:outputText value="#{ExpTit.expedientesTitulacion.expediente}"/>
                                                              </p:column>
                                                              
@@ -119,11 +119,11 @@
                                                                  <h:outputText value="#{ExpTit.expedientesTitulacion.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                              </p:column>
 
-                                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;" sortBy="#{car.id}">
+                                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.matricula.matricula}" filterBy="#{ExpTit.expedientesTitulacion.matricula.matricula}" filterMatchMode="contains">
                                                                  <h:outputText value="#{ExpTit.expedientesTitulacion.matricula.matricula}"/>
                                                              </p:column>
 
-                                                             <p:column headerText="Nombre" style="width: 250px; text-align: center;" sortBy="#{ExpTit.egresados.apellidoPaterno} #{ExpTit.egresados.apellidoMaterno} #{ExpTit.egresados.nombre}">
+                                                             <p:column headerText="Nombre" style="width: 250px; text-align: center;" sortBy="#{ExpTit.egresados.apellidoPaterno} #{ExpTit.egresados.apellidoMaterno} #{ExpTit.egresados.nombre}" filterBy="#{ExpTit.egresados.apellidoPaterno} #{ExpTit.egresados.apellidoMaterno} #{ExpTit.egresados.nombre}" filterMatchMode="contains">
                                                                  <h:outputText value="#{ExpTit.egresados.apellidoPaterno} #{ExpTit.egresados.apellidoMaterno} #{ExpTit.egresados.nombre} "/>
                                                              </p:column>
 
