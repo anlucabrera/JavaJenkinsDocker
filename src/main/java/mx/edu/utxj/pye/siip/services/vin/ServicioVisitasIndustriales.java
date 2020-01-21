@@ -327,7 +327,6 @@ public class ServicioVisitasIndustriales implements EjbVisitasIndustriales{
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
         q.setParameter("areas", areas);
-        System.err.println("getVisitasIndustrialesRegistrosPorEjercicioMesArea " + q.getResultList());
         List<VisitasIndustriales> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;

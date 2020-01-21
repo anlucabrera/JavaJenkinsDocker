@@ -31,14 +31,8 @@
                 <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
             </li>
             <c:if test="#{controladorEstReg.cargada}">
-                <li class="header" style="color: #040404;background: #ffffff">Titulación</li>
+                <li class="header" style="color: #040404;background: #ffffff">Expediente Titulación</li>
                 <li class="treeview ">
-                    <a href="#">
-                        <i class="fa fa-list-alt"></i> <span>Expediente Titulación</span>
-                        <span class="pull-right-container">
-                            <i class=""></i>
-                        </span>
-                    </a>
                     <li><p:link href="#{request.contextPath}/expedienteTitulacion/estudiante/registroExpediente.xhtml"><i class="fa fa-pencil-square-o"></i><span>Registro e Integración</span></p:link></li>
                 </li>
             </c:if>

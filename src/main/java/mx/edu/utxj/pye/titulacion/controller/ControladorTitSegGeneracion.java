@@ -407,6 +407,7 @@ public class ControladorTitSegGeneracion implements Serializable{
             setProcesoIntegracion(listaProcesos.get(0));
             selectProgramasEducativos(getProcesoIntegracion().getNivel());
             selectGeneraciones(getProcesoIntegracion().getNivel());
+            setGeneracion(getProcesoIntegracion().getGeneracion());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
@@ -443,6 +444,7 @@ public class ControladorTitSegGeneracion implements Serializable{
             setProcesoIntegracion(procesoInt);
             selectProgramasEducativos(getProcesoIntegracion().getNivel());
             selectGeneraciones(getProcesoIntegracion().getNivel());
+            setGeneracion(getProcesoIntegracion().getGeneracion());
             Ajax.update("formGuardarExpediente");
         }
     }

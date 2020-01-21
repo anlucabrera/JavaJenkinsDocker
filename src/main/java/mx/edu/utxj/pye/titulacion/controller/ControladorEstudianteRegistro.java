@@ -151,7 +151,7 @@ public class ControladorEstudianteRegistro implements Serializable{
                     listaEstadosIEMS = eJBSelectItems.itemEstados();
                    
                 }
-            } else if (estudiante.getGradoActual() == 7) {
+            } else if (estudiante.getGradoActual() == 7 || estudiante.getGradoActual() == 8) {
                 estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
                 
                 if (estudiante == null) {
