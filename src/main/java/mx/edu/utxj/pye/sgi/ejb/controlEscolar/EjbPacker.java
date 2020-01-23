@@ -47,6 +47,7 @@ public class EjbPacker {
     @EJB EjbCapturaCalificaciones ejbCapturaCalificaciones;
     @EJB EjbCasoCritico ejbCasoCritico;
     @EJB EjbValidacionComentarios ejbValidacionComentarios;
+    @EJB EjbConverter ejbConverter;
     @EJB EjbPropiedades ep;
     @EJB EjbLogin ejbLogin;
     private EntityManager em;
@@ -58,7 +59,7 @@ public class EjbPacker {
 
     public PersonalActivo packPersonalActivo(Personal personal){
         if(personal == null) return null;
-        if(personal.getStatus().equals('B')) return null;
+//        if(personal.getStatus().equals('B')) return null;
         PersonalActivo activo = new PersonalActivo(personal);
         activo.setAreaOficial(em.find(AreasUniversidad.class, personal.getAreaOficial()));
         activo.setAreaOperativa(em.find(AreasUniversidad.class, personal.getAreaOperativa()));
@@ -117,6 +118,7 @@ public class EjbPacker {
 
             return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
         }catch (Exception e){
+            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la carga académica (EjbAsignacionAcademica. pack).", e, DtoCargaAcademica.class);
         }
     }
@@ -356,8 +358,9 @@ public class EjbPacker {
                 if(validarPromedioAprobatorio.getCorrecto()){
                     dtoCapturaCalificacion.setEstaAprobado(validarPromedioAprobatorio.getValor());
 
+                    ResultadoEJB<DtoInscripcion> dtoEstudianteToDtoInscripcionPorCargaAcademica = ejbConverter.dtoEstudianteToDtoInscripcionPorCargaAcademica(dtoEstudiante, dtoCargaAcademica);
                     UnidadMateriaComentario unidadMateriaComentario = em.createQuery("select c from UnidadMateriaComentario c where c.estudiante=:estudiante and c.unidadMateriaConfiguracion=:configuracion", UnidadMateriaComentario.class)
-                            .setParameter("estudiante", dtoEstudiante.getInscripcionActiva().getInscripcion())
+                            .setParameter("estudiante", dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion())
                             .setParameter("configuracion", dtoUnidadConfiguracion.getUnidadMateriaConfiguracion())
                             .getResultStream()
                             .findFirst()
@@ -593,11 +596,12 @@ public class EjbPacker {
      */
     public ResultadoEJB<DtoCalificacionNivelacion> packDtoCalificacionNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante, @NonNull Indicador indicador){
         try{
-            CalificacionNivelacionPK pk = new CalificacionNivelacionPK(dtoCargaAcademica.getCargaAcademica().getCarga(), dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante());
+            ResultadoEJB<DtoInscripcion> dtoEstudianteToDtoInscripcionPorCargaAcademica = ejbConverter.dtoEstudianteToDtoInscripcionPorCargaAcademica(dtoEstudiante, dtoCargaAcademica);
+            CalificacionNivelacionPK pk = new CalificacionNivelacionPK(dtoCargaAcademica.getCargaAcademica().getCarga(), dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion().getIdEstudiante());
             CalificacionNivelacion calificacionNivelacion = em.find(CalificacionNivelacion.class, pk);
             if(calificacionNivelacion == null){
                 calificacionNivelacion = new CalificacionNivelacion(pk);
-                calificacionNivelacion.setEstudiante(dtoEstudiante.getInscripcionActiva().getInscripcion());
+                calificacionNivelacion.setEstudiante(dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion());
                 calificacionNivelacion.setCargaAcademica(dtoCargaAcademica.getCargaAcademica());
                 calificacionNivelacion.setIndicador(indicador);
                 calificacionNivelacion.setValor(0d);

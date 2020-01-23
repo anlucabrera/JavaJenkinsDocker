@@ -98,12 +98,6 @@ public class EjbCasoCritico implements Serializable {
 //            Empaquetado de estudiantes:
             ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudiante(estudiante);
             if (dtoEstudiante.getCorrecto()) {
-                //lista de estados de casos críticos que indican que estén abiertos
-                List<CasoCriticoEstado> estadosAbiertos = Arrays.stream(CasoCriticoEstado.values())
-                        .filter(casoCriticoEstado -> casoCriticoEstado.getNivel() > 0D)
-                        .collect(Collectors.toList());
-
-                //lista de casos críticos abiertos del estudiante correspondientes a la carga académica
 //                List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante and cc.estado in :estadosAbiertos order by cc.fechaRegistro desc", CasoCritico.class)
                 List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante order by cc.fechaRegistro desc", CasoCritico.class)
                         .setParameter("estudiante", dtoEstudiante.getValor().getInscripcionActiva().getInscripcion())

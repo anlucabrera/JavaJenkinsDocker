@@ -52,8 +52,11 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Collections;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Ajax;
 
 
 
@@ -105,8 +108,8 @@ public class AvanceProgramaticoDocente extends ViewScopedRol implements Desarrol
 @PostConstruct
     public void init(){
         try {
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
+            if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+            cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.AVANCE_PROGRAMATICO_DOCENTE);
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejbAsignacionIndicadoresCriterios.validarDocente(logon.getPersonal().getClave());
             if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
@@ -122,10 +125,18 @@ public class AvanceProgramaticoDocente extends ViewScopedRol implements Desarrol
             rol.setDocente(docente);
             rol.setNivelRol(NivelRol.OPERATIVO);
             
-            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosRegistros(rol.getDocente());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
             rol.setPeriodo(ea.getPeriodoActual());
+            
+            ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = ejb.getProgramasEducativosDocenteCargasAcademicas(rol.getDocente(),rol.getPeriodo());
+            if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
+            rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());           
+
+            rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
+            
+            
             creareporte();
             rol.setFechaInpresion(new Date());
         } catch (Exception e) {
@@ -155,16 +166,38 @@ public class AvanceProgramaticoDocente extends ViewScopedRol implements Desarrol
             return "";
         }
     }
+    
+    public void cambiarPeriodo() {
+//        System.out.println("rol.getPeriodoSeleccionado() = " + caster.periodoToString(rol.getPeriodoSeleccionado()));
+        rol.setDvcs(new ArrayList<>());
+        rol.setDccs(new ArrayList<>());
+        academicas = new ArrayList<>();
+        if (rol.getPeriodo() == null) {
+            mostrarMensaje("No hay periodo escolar seleccionado.");
+            return;
+        }
+        ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = ejb.getProgramasEducativosDocenteCargasAcademicas(rol.getDocente(),rol.getPeriodo());
+        if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
+        
+        if (!resProgramaPlan.getValor().isEmpty()) {
+            rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());
+            rol.setPlanEstudio(new PlanEstudio());
+        }
+        
+        Ajax.update("frm");
+    }    
+    
     public void cambiarPlanestudio(ValueChangeEvent event) {
         rol.setGrupos(new ArrayList<>());
         rol.setGrupoSelec(new Grupo());
         rol.setDvcs(new ArrayList<>());
         rol.setPlanEstudio((PlanEstudio) event.getNewValue());
-        ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
-        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
-        rol.setGrupos(resgrupos.getValor());          
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AvanceProgramaticoDocente.cambiarPlanestudio()"+rol.getPlanEstudio());
+//        ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
+//        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
+//        rol.setGrupos(resgrupos.getValor());          
 //        rol.setGrupoSelec(rol.getGrupos().get(0));
-//        creareporte();     
+        creareporte();     
     }
     
     public void consultarAlumnos(ValueChangeEvent event) {

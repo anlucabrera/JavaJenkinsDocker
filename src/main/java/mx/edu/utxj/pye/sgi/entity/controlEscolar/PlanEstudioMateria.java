@@ -65,6 +65,8 @@ public class PlanEstudioMateria implements Serializable {
     private List<CargaAcademica> cargaAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
+    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
 
     public PlanEstudioMateria() {
     }
@@ -144,7 +146,16 @@ public class PlanEstudioMateria implements Serializable {
     public void setPermisosCapturaExtemporaneaGrupalList(List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList) {
         this.permisosCapturaExtemporaneaGrupalList = permisosCapturaExtemporaneaGrupalList;
     }
+    
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
+        return permisosCapturaExtemporaneaEstudianteList;
+    }
 
+    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
+        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -169,5 +180,5 @@ public class PlanEstudioMateria implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria[ idPlanMateria=" + idPlanMateria + " ]";
     }
-    
+
 }

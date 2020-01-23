@@ -21,7 +21,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Permiso Apertura Extemporánea
+        Permiso Apertura Extemporánea Grupal
     </ui:define>
 
     <ui:define name="description">
@@ -36,7 +36,7 @@
 
     <ui:define name="body">
         <c:if test="#{permisoAperturaExtemporaneaAdministrador.cargado}">
-        <adm:breadcrumb title="Permiso Apertura Extemporánea"/>
+        <adm:breadcrumb title="Permiso Apertura Extemporánea Grupal"/>
 
         <div class="contenedor">
             <c:if test="#{permisoAperturaExtemporaneaAdministrador.tieneAcceso}">
@@ -175,7 +175,7 @@
                                                 <p:dataTable id="tbAperExt" var="aperturasExt" value="#{permisoAperturaExtemporaneaAdministrador.rol.listaPermisosCapturasExtemporaneas}" sortBy="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.grado}° '#{aperturasExt.permisosCapturaExtemporaneaGrupal.idGrupo.literal}' de #{aperturasExt.programaEducativo.nombre}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" expandableRowGroups="true" >
                                                     <f:facet name="header">
-                                                        <center>Permisos de Captura Extemporaneas Vigentes</center>
+                                                        <center>Permisos de Captura Extemporáneas Vigentes</center>
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
@@ -184,10 +184,10 @@
                                                             <p:column headerText="Materia" /> 
                                                             <p:column headerText="Docente" />
                                                             <p:column headerText="Unidad" />
-                                                            <p:column headerText="Tipo Evaluacion" />
+                                                            <p:column headerText="Tipo Evaluación" />
                                                             <p:column headerText="Fecha Inicio" />
                                                             <p:column headerText="Fecha Fin" />
-                                                            <p:column headerText="Justificacion" />
+                                                            <p:column headerText="Justificación" />
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:ajax event="cellEdit" listener="#{permisoAperturaExtemporaneaAdministrador.onCellEdit}"/>

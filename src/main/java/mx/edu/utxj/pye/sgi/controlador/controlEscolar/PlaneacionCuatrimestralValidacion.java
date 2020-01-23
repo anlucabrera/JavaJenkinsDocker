@@ -312,7 +312,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             Informeplaneacioncuatrimestraldocenteprint ag = rol.getInformeplaneacioncuatrimestraldocenteprints().get(Integer.parseInt(id.split("tbAsigInd1:")[1].split(":validar")[0]));
             ag.setValidadoD((Boolean) e.getNewValue());
             ejb.validadConfigunracionUnidad(ag.getConfiguracion(), ag.getValidadoD(), rol.getDirector().getPersonal().getClave());
-            existeAsignacion();
+//            existeAsignacion();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(PlaneacionCuatrimestralValidacion.class.getName()).log(Level.SEVERE, null, ex);

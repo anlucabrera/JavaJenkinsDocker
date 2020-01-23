@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="../../index.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div> 
+                                    <br />
+                                    <br />
+                                          <div class="col-lg-12 col-xs-12">
+                                          <h:form id="frmExpedientes">
+                                                    <p:outputLabel value="Matricula del estudiante" for="clave" class="col-sm-2 control-label"/>
+                                                    <div class="col-sm-6">
+                                                        <p:selectOneMenu id="clave" value="#{controladorTitSegMat.expediente}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
+                                                            <f:selectItem itemValue="0" itemLabel=" Regresar " itemDescription="Descripción del valor." />
+                                                            <f:selectItems value="#{controladorTitSegMat.nuevaListaExpedientes}" var="expediente" itemValue="#{expediente.expediente}" itemLabel="#{expediente.matricula} - #{expediente.nombre} - #{expediente.programa}" />
+                                                        </p:selectOneMenu>  
+                                                        <p:message for="clave"/>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <p:commandButton id="btnBuscarExpediente" value="Cargar Expediente" actionListener="#{controladorTitSegMat.mostrarExpediente()}" icon="fa fa-paper-plane" class="btn-primary btn-block col-md-3" update="@form :frmExpedientes :informacion" process="@form :frmExpedientes" /> 
+                                                    </div>
+                                          </h:form>
+                                            </div> 
+                                </div>
+                                    <br />
+                                    <br />
+                                    <c:if test="#{controladorTitSegMat.expediente ne null}">
+                                        <p:panel id="ET" >
+                                        <h:form id="formMuestraExpediente">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h1><strong>Expediente Titulación</strong></h1>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div id="tituloCV" class="col-sm-12">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <c:set var="expTitExp" value="#{controladorTitSegMat.nuevoDtoExpMat.expedientesTitulacion.expediente}"/>
+                                                                        <c:set var="status" value="#{controladorTitSegMat.consultarStatus(expTitExp)}" />
+                                                                        <h4>No. Expediente: #{controladorTitSegMat.nuevoDtoExpMat.expedientesTitulacion.expediente}</h4>
+                                                                        <h4><p:commandButton actionListener="#{controladorTitSegMat.validarExpediente(expTitExp)}"
+                                                                                         class="btn btn-sm #{!empty status?'btn-info':'btn-danger'}" icon="#{!empty status?'fa fa-close':'fa fa-check'}"
+                                                                                         title="#{!empty status?'Invalidar expediente.':'Validar expediente.'}" 
+                                                                                         value="#{!empty status?'Invalidar expediente.':'Validar expediente.'}" disabled="true"/></h4>
+                                                                        <div class="description-block" style="text-align: center" >
+                                                                            <p:graphicImage cache="false" height="255" id="dimage" title="Fotografía expediente" value="#{controladorFotoExp.graphicImage}" width="170"></p:graphicImage>
+                                                                        </div> 
+                                                                        <h4>#{controladorTitSegMat.nuevoDtoExpMat.situacionAcademica}</h4>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos personales</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Nombre</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.egresados.nombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Apellido Paterno</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.egresados.apellidoPaterno}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Apellido Materno</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.egresados.apellidoMaterno}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>CURP</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.egresados.curp}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Fecha de Nacimiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <h:outputText value="#{controladorTitSegMat.nuevoDtoExpMat.egresados.fechaNacimiento}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Género</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.egresados.genero}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos de Contacto</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Teléfono Celular</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.datosContacto.celular}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Correo Electrónico</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.datosContacto.email}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Domicilio</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                             <strong>Calle</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.domiciliosExpediente.calle}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                             <strong>Colonia</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.domiciliosExpediente.colonia}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                            <strong>Número Exterior</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.domiciliosExpediente.numExterior}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                            <strong>Número Interior</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.domiciliosExpediente.numInterior}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Localidad</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.localidad}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Municipio</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.municipio}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Estado</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.estado}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Antecedentes Académicos</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                             <strong>Grado Académico</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.antecedentesAcademicos.gradoAcademico}
+                                                                                                </p>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                             <strong>Instituto de Educación Media Superior</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.iems.nombre}
+                                                                                                </p>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                            <strong>Estado</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.estadoIems}
+                                                                                                </p>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                            <strong>Fecha Terminación</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <p:calendar id="fechaTerminacion" locale="es" value="#{controladorTitSegMat.nuevoDtoExpMat.antecedentesAcademicos.fechaTerminacion}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                                </p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <p:commandButton id="btnGuardarAntAcad" value="Actualizar informacion" actionListener="#{controladorTitSegMat.guardarAntAcad()}" 
+                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  update="@form"  process="@form" disabled="true"/>
+                                                                    </div>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos de Titulación</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Grado Académico</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.gradoAcademico}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Programa Académico</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.programaAcademico}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Modalidad de Titulación</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorTitSegMat.nuevoDtoExpMat.datosTitulacion.modalidadTitulacion}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <c:set var="fecIni" value="#{controladorTitSegMat.nuevoDtoExpMat.fechasDocumentos.fechaInicio}" />
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Fecha Inicio</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <c:if test="#{fecIni ne null}">
+                                                                                                    <h:outputText value="#{controladorTitSegMat.nuevoDtoExpMat.fechasDocumentos.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                                    </c:if>
+                                                                                                    <c:if test="#{fecIni eq null}">
+                                                                                                    <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
+                                                                                                    </c:if>
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <c:set var="fecTer" value="#{controladorTitSegMat.nuevoDtoExpMat.fechasDocumentos.fechaFin}" />
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Fecha Terminación</strong>
+                                                                                            <p class="text-muted">
+                                                                                                <c:if test="#{fecTer ne null}">
+                                                                                                    <h:outputText value="#{controladorTitSegMat.nuevoDtoExpMat.fechasDocumentos.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                                </c:if>
+                                                                                                <c:if test="#{fecTer eq null}">
+                                                                                                    <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
+                                                                                                </c:if>
+                                                                                            </p>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        <c:set var="fecActa" value="#{controladorTitSegMat.nuevoDtoExpMat.fechasDocumentos.actaExencion}" />
+                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Fecha Acta Exención</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <c:if test="#{fecActa ne null}">
+                                                                                                        <h:outputText value="#{controladorTitSegMat.nuevoDtoExpMat.fechasDocumentos.actaExencion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                                    </c:if>
+                                                                                                    <c:if test="#{fecActa eq null}">
+                                                                                                        <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
+                                                                                                    </c:if>
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Promedio Final</strong>
+                                                                                               <p class="text-muted">
+                                                                                                   <h:inputText value="#{controladorTitSegMat.nuevoDtoExpMat.datosTitulacion.promedioFinal}" required="true" requiredMessage="Es necesario que ingrese el promedio"/>
+                                                                                               </p>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>¿Cumplió Servicio Social?</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <p:selectOneMenu id="servSoc" value="#{controladorTitSegMat.nuevoDtoExpMat.datosTitulacion.servicioSocial}" required="true" requiredMessage="Es necesario que seleccione una opción">
+                                                                                                        <f:selectItem itemLabel="Si" itemValue="true" />
+                                                                                                        <f:selectItem itemLabel="No" itemValue="false" />
+                                                                                                    </p:selectOneMenu>
+                                                                                                    <p:message for="servSoc"><p:autoUpdate/></p:message>
+                                                                                                </p>
+                                                                                        </div>
+                                                                                        <c:set var="promedio" value="#{controladorTitSegMat.nuevoDtoExpMat.datosTitulacion.promedioFinal}" />
+                                                                                        <c:if test="#{promedio eq 0}">
+                                                                                            <div class="col-sm-12 col-md-12 col-lg-4" style="background: red;">
+                                                                                            <strong>Aviso:</strong>
+                                                                                            <p class="text-muted" style="color: white;">
+                                                                                                Registre Promedio Final e indique si <br />cumplió con Servicio Social 
+                                                                                            </p>
+                                                                                            </div>
+                                                                                        </c:if>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <p:commandButton id="btnGuardarDatTit" value="Actualizar informacion" actionListener="#{controladorTitSegMat.guardarDatosTitulacion()}" 
+                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  update="@form"  process="@form" disabled="true"/>
+                                                                    </div>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Documentos</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <p:dataTable id="tblDocsExp" emptyMessage="Sin datos en el periodo seleccionado." value="#{controladorTitSegMat.listaDocsExp}" var="docsExp"
+                                                                                 resizeMode="expand"
+                                                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                                        <p:columnGroup type="header">
+                                                                            <p:row>
+                                                                                <p:column headerText="Opciones" width="120"/>
+                                                                                <p:column headerText="Archivo" width="200" />
+                                                                                <p:column headerText="Fecha de Carga" width="100" />
+                                                                                <p:column headerText="Validado" width="80" />
+                                                                                <p:column headerText="Observaciones" width="200" />
+                                                                                <p:column headerText="Fecha de Validación" width="100" />
+                                                                            </p:row>
+                                                                        </p:columnGroup>
+                                                                        <c:set var="status" value="#{controladorTitSegMat.consultarStatusDocumento(docsExp.docExpediente)}" />
+                                                                        <p:column style="text-align: center;">
+                                                                            <div class="btn-group">
+                                                                                <p:commandButton actionListener="#{controladorTitSegMat.editarRegistro(docsExp)}"
+                                                                                                 class="btn btn-sm btn-primary" 
+                                                                                                 icon="fa fa-edit"
+                                                                                                 title="Editar" disabled="true"/>
+                                                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorArchExp.descargarDocumento(docsExp)}" target="_blank" title="Descargar documento."><i class="fa fa-download" /></p:commandLink>
+                                                                            </div>
+                                                                        </p:column>
+                                                                        <p:column style="text-align: justify;"><h:outputText value="#{caster.rutaToArchivoNombre(docsExp.ruta)}" /></p:column>
+                                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
+                                                                        <p:column style="text-align: center;"><h:outputText value="#{!empty status?'Si':'No'}"/></p:column>
+                                                                        <p:column style="text-align: justify;"><h:outputText value="#{docsExp.observaciones}" /></p:column>
+                                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                                                        <f:facet name="footer">
+                                                                            <span style="font-size: smaller; font-weight: bold;">Total de Archivos cargados: #{fn:length(controladorTitSegMat.listaDocsExp)} de #{controladorTitSegMat.numTotalDocs}.</span>
+                                                                        </f:facet>
+                                                                    </p:dataTable>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </h:form>
+                                            </p:panel>
+                                    </c:if>
+                                </div>
+                        </div>
+                    </div>
+                </section>
+            <!-- Modal para editar registro seleccionado -->
+                    <p:dialog id="modalEdicion" 
+                              widgetVar="modalEdicion" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorTitSegMat.aperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Editar" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <h:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="claveDoc" value="Clave del Documento" style="text-align: center;"/>
+                                                                    <p:inputText id="claveDoc" class="form-control" disabled="true" value="#{controladorTitSegMat.documentoExp.docExpediente}"/>
+                                                                    <p:message for="claveDoc" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel value="Documento" for="documento" style="text-align: center;"/>
+                                                                    <p:inputText id="documento" disabled="true" class="form-control" value="#{controladorTitSegMat.documentoExp.documento.descripcion}"/>
+                                                                    <p:message for="documento" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="fechaCarga" value="Fecha de Carga" style="text-align: center;"/>
+                                                                    <p:inputText id="fechaCarga" class="form-control" disabled="true" value="#{controladorTitSegMat.documentoExp.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText> 
+                                                                    <p:message for="fechaCarga" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-8">
+                                                                    <p:outputLabel for="ruta" value="Ruta del documento" style="text-align: center;"/>
+                                                                    <p:inputText id="ruta" class="form-control" disabled="true" value="#{controladorTitSegMat.documentoExp.ruta}"/>
+                                                                    <p:message for="ruta" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="validado" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Validado"/>
+                                                                    <p:selectOneMenu id="validado" value="#{controladorTitSegMat.documentoExp.validadoTitulacion}" required="true" requiredMessage="Es necesario que seleccione una opción" style="height:100%; width: 100%; object-fit: contain;">
+                                                                        <f:selectItem itemLabel="Si" itemValue="true" />
+                                                                        <f:selectItem itemLabel="No" itemValue="false" />
+                                                                    </p:selectOneMenu>
+                                                                    <p:message for="validado"><p:autoUpdate/></p:message>
+                                                                    <hr/>
+                                                                </div>  
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:outputLabel for="fechaValicacion" value="Fecha de Validación" style="text-align: center;"/>
+                                                                    <p:inputText id="fechaValicacion" class="form-control" disabled="true" value="#{controladorTitSegMat.documentoExp.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText> 
+                                                                    <p:message for="fechaValicacion" display="tooltip" />
+                                                                    <hr/>
+                                                                </div>  
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-8">
+                                                                    <p:outputLabel for="observaciones" value="Observaciones" style="text-align: center;"/>
+                                                                    <p:inputText id="observaciones" class="form-control" value="#{controladorTitSegMat.documentoExp.observaciones}" maxlength="255"/> 
+                                                                    <p:message for="observaciones" display="tooltip" />
+                                                                    <hr/>
+                                                                </div> 
+                                                                 <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{controladorTitSegMat.guardarEdicion()}" 
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </h:form>
+                    </p:dialog>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

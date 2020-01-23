@@ -817,7 +817,7 @@ public class EjbAsistencias {
     public ResultadoEJB<List<Asistenciasacademicas>> buscarAsistenciasacademicas(CargaAcademica ca,Integer matricula) {
         try {
             List<Asistenciasacademicas> as = new ArrayList<>();
-            as = em.createQuery("SELECT ca FROM Asistenciasacademicas ca INNER JOIN ca.asistencia asis INNER JOIN ca.cargaAcademica cg INNER JOIN ca.estudiante es WHERE cg.carga=:carga AND es.matricula=:matricula", Asistenciasacademicas.class)
+            as = em.createQuery("SELECT ca FROM Asistenciasacademicas ca INNER JOIN ca.asistencia asis INNER JOIN ca.cargaAcademica cg INNER JOIN ca.estudiante es WHERE cg.carga=:carga AND es.matricula=:matricula ORDER BY asis.fechaHora", Asistenciasacademicas.class)
                     .setParameter("carga", ca.getCarga())
                     .setParameter("matricula", matricula)
                     .getResultList();
@@ -830,7 +830,7 @@ public class EjbAsistencias {
     public ResultadoEJB<List<Asistenciasacademicas>> buscarAsistenciasacademicasFechasMes(CargaAcademica ca) {
         try {
             List<Asistenciasacademicas> as = new ArrayList<>();
-            as = em.createQuery("SELECT ca FROM Asistenciasacademicas ca INNER JOIN ca.asistencia asis INNER JOIN ca.cargaAcademica cg WHERE cg.carga=:carga GROUP BY asis.fechaHora", Asistenciasacademicas.class)
+            as = em.createQuery("SELECT ca FROM Asistenciasacademicas ca INNER JOIN ca.asistencia asis INNER JOIN ca.cargaAcademica cg WHERE cg.carga=:carga GROUP BY ca.asistencia ORDER BY asis.fechaHora", Asistenciasacademicas.class)
                     .setParameter("carga", ca.getCarga())
                     .getResultList();
             return ResultadoEJB.crearCorrecto(as, "Pase de lista y seguimiento por docente y tutor.");

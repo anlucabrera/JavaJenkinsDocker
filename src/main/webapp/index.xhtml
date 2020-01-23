@@ -39,8 +39,10 @@
             <ui:include src="/includes/indexE19.xhtml"/>
         </c:if>
 
-        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">              
-            <ui:include src="/includes/indexT.xhtml"/>
+        <c:if test="#{logonMB.usuarioTipo eq 'TRABAJADOR'}">    
+            <c:if test="#{logonMB.acceso}">
+                <ui:include src="/includes/indexT.xhtml"/>
+            </c:if>
         </c:if>
         <script>
             var cookie = '#{cookie["JSESSIONID"].value}';

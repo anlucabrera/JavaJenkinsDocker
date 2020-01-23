@@ -35,9 +35,18 @@ import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import java.io.IOException;
+import java.util.Arrays;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
+import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
 import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DatosContacto;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
+import mx.edu.utxj.pye.sgi.entity.titulacion.Egresados;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import mx.edu.utxj.pye.titulacion.dto.dtoProcesosIntegracion;
 
 /**
  *
@@ -61,6 +70,30 @@ public class ControladorTitSegGeneracion implements Serializable{
     @Getter @Setter private List<dtoPagosFinanzas> listaDtoPagosFinanzas;
     @Getter @Setter private dtoPagosFinanzas nuevoDtoPagosFinanzas;
     @Getter @Setter private ExpedientesTitulacion expedientesTitulacion;
+    
+    
+    //Variables para registrar expediente
+    @Getter @Setter private Egresados egresado;
+    @Getter @Setter private ExpedientesTitulacion expTitulacion;
+    @Getter @Setter private AntecedentesAcademicos antAcademicos;
+    @Getter @Setter private Integer numExpediente;
+    @Getter @Setter private List<dtoProcesosIntegracion> listaProcesos;
+    @Getter @Setter private dtoProcesosIntegracion procesoIntegracion;
+    @Getter @Setter private List<AreasUniversidad> listaProgramasEducativos;
+    @Getter @Setter private AreasUniversidad progEdu;
+    @Getter @Setter private List<Generaciones> listaGeneraciones;
+    @Getter @Setter private Generaciones generacion;
+    @Getter @Setter private List<String> listaGeneros;
+    
+    @Getter @Setter private List<SelectItem> listaEstadosDomicilioRadica, listaMunicipiosRadica, listaAsentamientos, listaEstadosIEMS, listaMunicipiosIEMS, listaLocalidadesIEMS, listaIEMS;
+    @EJB EJBSelectItems eJBSelectItems;
+    @Getter @Setter private Integer estadoIEMS, municipioIEMS, localidadIEMS;
+    @EJB EjbSelectItemCE ejbItemCE;
+    @EJB EjbFichaAdmision ejbFichaAdmision;
+    @Getter @Setter private DatosContacto datContacto;
+    @Getter @Setter private DomiciliosExpediente domExpediente;
+    @Getter @Setter private DatosTitulacion datTitulacion;
+    
     
     @EJB private EjbTitulacionSeguimiento ejbTitulacionSeguimiento;
     
@@ -92,12 +125,24 @@ public class ControladorTitSegGeneracion implements Serializable{
             return;
         }
         cargado = true;
+        egresado = new  Egresados();
+        expTitulacion = new ExpedientesTitulacion();
+        expTitulacion.setFecha(new Date());
+        antAcademicos = new AntecedentesAcademicos();
+        datContacto = new DatosContacto();
+        domExpediente = new DomiciliosExpediente();
+        datTitulacion = new DatosTitulacion();
         try {
         aperturaDialogo = Boolean.FALSE;
         aperturaPagos = Boolean.FALSE;
         initFiltrosING();
         initFiltrosTSU();
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
+        selectNumExp();
+        selectProcesos();
+        selectGeneros();
+        listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+        listaEstadosIEMS = eJBSelectItems.itemEstados();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
@@ -315,5 +360,139 @@ public class ControladorTitSegGeneracion implements Serializable{
            aperturaPagos = Boolean.FALSE;
         }
     }
-       
+     
+    /* Combos para lista de Géneros */
+    public void selectGeneros(){
+        listaGeneros = Arrays.asList("M", "F");
+    }
+     
+    public void guardarExpediente() {
+        try {
+            egresado = ejbTitulacionSeguimiento.guardarEgresado(egresado);
+            expTitulacion = ejbTitulacionSeguimiento.guardarExpedienteTitulacion(expTitulacion, procesoIntegracion, egresado, progEdu, generacion);
+            antAcademicos.setGradoAcademico("Bachillerato");
+            antAcademicos.setMatricula(egresado);
+            antAcademicos = ejbTitulacionSeguimiento.guardarAntAcadInd(antAcademicos, expTitulacion.getExpediente());
+            datContacto = ejbTitulacionSeguimiento.guardarDatosContacto(datContacto, expTitulacion);
+            domExpediente = ejbTitulacionSeguimiento.guardarDomicilio(domExpediente, expTitulacion);
+            datTitulacion = ejbTitulacionSeguimiento.guardarDatosTitulacion(datTitulacion, expTitulacion);
+            Messages.addGlobalInfo("El expediente se ha guardado correctamente " + expTitulacion.getExpediente());
+            expTitulacion = new ExpedientesTitulacion();
+            expTitulacion.setFecha(new Date());
+            antAcademicos = new AntecedentesAcademicos();
+            datContacto = new DatosContacto();
+            domExpediente = new DomiciliosExpediente();
+            datTitulacion = new DatosTitulacion();
+            Ajax.update("formGuardarExpediente");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+     /* Combos para lista de Géneros */
+    public void selectNumExp(){
+        try {
+            numExpediente = ejbTitulacionSeguimiento.obtenerNumeroExpediente();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+      /* Combos para lista de Géneros */
+    public void selectProcesos(){
+        try {
+            listaProcesos = ejbTitulacionSeguimiento.obtenerListaProcesos();
+            setProcesoIntegracion(listaProcesos.get(0));
+            selectProgramasEducativos(getProcesoIntegracion().getNivel());
+            selectGeneraciones(getProcesoIntegracion().getNivel());
+            setGeneracion(getProcesoIntegracion().getGeneracion());
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /* Combos para lista de Géneros */
+    public void selectProgramasEducativos(String nivel){
+        try {
+            listaProgramasEducativos = ejbTitulacionSeguimiento.obtenerProgramasEducativos(nivel);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /* Combos para lista de Géneros */
+    public void selectGeneraciones(String nivel){
+        try {
+            listaGeneraciones = ejbTitulacionSeguimiento.obtenerGeneraciones(nivel);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorTitSegGeneracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Permite que al cambiar o seleccionar un proceso de integración se actualice el valor de la variable
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarProcesoIntegracion(ValueChangeEvent e){
+        if(e.getNewValue() instanceof dtoProcesosIntegracion){
+            dtoProcesosIntegracion procesoInt = (dtoProcesosIntegracion)e.getNewValue();
+            setProcesoIntegracion(procesoInt);
+            selectProgramasEducativos(getProcesoIntegracion().getNivel());
+            selectGeneraciones(getProcesoIntegracion().getNivel());
+            setGeneracion(getProcesoIntegracion().getGeneracion());
+            Ajax.update("formGuardarExpediente");
+        }
+    }
+    
+    /**
+     * Permite que al cambiar o seleccionar un proceso de integración se actualice el valor de la variable
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarProgramaEducativo(ValueChangeEvent e){
+        if(e.getNewValue() instanceof AreasUniversidad){
+            AreasUniversidad programaEdu = (AreasUniversidad)e.getNewValue();
+            setProgEdu(programaEdu);
+            Ajax.update("formGuardarExpediente");
+        }
+    }
+    
+    /**
+     * Permite que al cambiar o seleccionar un proceso de integración se actualice el valor de la variable
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarGeneracion(ValueChangeEvent e){
+        if(e.getNewValue() instanceof Generaciones){
+            Generaciones gen = (Generaciones)e.getNewValue();
+            setGeneracion(gen);
+            Ajax.update("formGuardarExpediente");
+        }
+    }
+    
+     /* Combos para domicilio */
+    public void selectMunicipio(){
+        listaMunicipiosRadica = eJBSelectItems.itemMunicipiosByClave(this.domExpediente.getEstado());
+    }
+    
+    public void selectAsentamiento(){
+        listaAsentamientos = eJBSelectItems.itemAsentamientoByClave(domExpediente.getEstado(), domExpediente.getMunicipio());
+    }
+    
+    /* Combos para IEMS */
+    public void selectMunicipioIems(){
+        listaMunicipiosIEMS = eJBSelectItems.itemMunicipiosByClave(this.estadoIEMS);
+    }
+    
+
+    public void selectLocalidadIems(){
+        listaLocalidadesIEMS = eJBSelectItems.itemLocalidadesByClave(this.estadoIEMS,this.municipioIEMS);
+    }
+    
+    public void selectIems(){
+        listaIEMS = ejbItemCE.itemIems(this.estadoIEMS, this.municipioIEMS, this.localidadIEMS);
+    }
 }

@@ -43,6 +43,14 @@
                             </div>
                                 <br/>
                                 <br/> 
+                                <c:if test="#{controladorEstReg.procesosIntexp eq null}">
+                                <br/>
+                                <h4 style="text-align: center;">
+                                            Por el momento no existe proceso de integración activo, para conocer las fechas en la que puedes realizar este procedimiento puedes comunicarte<br />
+                                            al teléfono <strong>764-764-5240 ext. 3215 </strong>o enviar un correo electrónico a la dirección: <strong>coordinacion.titulacion@utxicotepec.edu.mx</strong>
+                                </h4>
+                                </c:if>
+                                <c:if test="#{controladorEstReg.procesosIntexp ne null}">
                                 <c:if test="#{controladorEstReg.expValidado}">
                                 <h5 style="text-align: center;"><strong>Progreso Integración de Expediente</strong></h5>
                                 <br/>
@@ -54,7 +62,6 @@
                                             Si tienes alguna duda puedes comunicarte al teléfono <strong>764-764-5240 ext. 3215</strong>o enviar un correo electrónico a la dirección: <strong>coordinacion.titulacion@utxicotepec.edu.mx</strong>
                                 </h4>
                                 </c:if>
-                                
                                 <c:if test="#{!controladorEstReg.expValidado}">
                                 <h5 style="text-align: center;"><strong>Progreso Integración de Expediente</strong></h5>
                                 <br/>
@@ -928,6 +935,7 @@
                                             Cargando archivo espere por favor.<br />
                                         </p:blockUI>
                                     </p:tabView>
+                                </c:if>
                                 </c:if>
                         </div>
                     </div>

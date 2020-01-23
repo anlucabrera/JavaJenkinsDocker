@@ -71,7 +71,7 @@
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="periodo" value="#{avanceProgramaticoDocente.rol.periodo}" converter="entityConverter" styleClass="form-control" >
                                                         <f:selectItems value="#{avanceProgramaticoDocente.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                        <p:ajax process="@this, planEstudio"/>
+                                                        <p:ajax process="@this, planEstudio" listener="#{avanceProgramaticoDocente.cambiarPeriodo}"/>
                                                         <p:autoUpdate />
                                                     </p:selectOneMenu>
                                                     <p:outputLabel value="Periodo" for="periodo"/>
@@ -85,7 +85,7 @@
                                                     <p:selectOneMenu id="planEstudio" value="#{avanceProgramaticoDocente.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{avanceProgramaticoDocente.cambiarPlanestudio}">
                                                         <f:selectItem itemValue="#{null}"/>
                                                         <f:selectItems value="#{avanceProgramaticoDocente.rol.planesEstudios}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
-                                                        <p:ajax update="@this,:unidad, :CV" process="@this"/>
+                                                        <p:ajax update="@this,:CV" process="@this"/>
                                                     </p:selectOneMenu>
                                                     <p:outputLabel value="Programa Educativo" for="planEstudio"/>
                                                     <p:message for="planEstudio" />
@@ -93,23 +93,6 @@
                                             </div>
                                             <br/>
                                             <br/>
-                                            <div class="row">
-                                                <center>
-
-                                                    <p:outputLabel value="Seleccione un Grupo para visualizar las Calificaciones" />
-                                                    <p></p>
-                                                    <p:selectOneRadio id="unidad" value="#{avanceProgramaticoDocente.rol.grupoSelec}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{avanceProgramaticoDocente.consultarAlumnos}" >
-                                                        <f:selectItems value="#{avanceProgramaticoDocente.rol.grupos}" var="g" itemLabel="#{g.grado}°#{g.literal} -- #{g.idSistema.nombre}" itemValue="#{g}"/>
-                                                        <p:ajax update="@this,:CV" process="@this"/>
-                                                        <p:autoUpdate />
-                                                    </p:selectOneRadio>
-                                                    <p></p>
-                                                    <p></p>
-                                                </center>      
-                                                <p></p>
-                                                <p></p>
-                                                <p></p>
-                                            </div>
                                         </div>
                                         <div class="row">
                                             <center>
@@ -143,7 +126,7 @@
                                                                     </div>
                                                                     <div class="col-sm-3">
                                                                         <div class="description-block" style="text-align: center">
-                                                                            <img src="../../resources/img/utxj.png" alt="" height="80px"/>
+                                                                            <img src="../../resources/img/utxj.png" alt="" height="100px"/>
                                                                         </div>
                                                                     </div>
                                                                 </div>

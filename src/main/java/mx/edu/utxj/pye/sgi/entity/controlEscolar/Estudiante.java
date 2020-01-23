@@ -99,6 +99,8 @@ public class Estudiante implements Serializable {
     private List<UnidadMateriaComentario> unidadMateriaComentarioList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
     private Documentosentregadosestudiante documentosentregadosestudiante;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<CalificacionPromedio> calificacionPromedioList;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
     @ManyToOne
     private Aspirante aspirante;
@@ -122,6 +124,8 @@ public class Estudiante implements Serializable {
     private List<TutoriasGrupales> tutoriasGrupalesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<ParticipantesTutoria> participantesTutoriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
 
     public Estudiante() {
     }
@@ -283,6 +287,15 @@ public class Estudiante implements Serializable {
         this.documentosentregadosestudiante = documentosentregadosestudiante;
     }
 
+    @XmlTransient
+    public List<CalificacionPromedio> getCalificacionPromedioList() {
+        return calificacionPromedioList;
+    }
+
+    public void setCalificacionPromedioList(List<CalificacionPromedio> calificacionPromedioList) {
+        this.calificacionPromedioList = calificacionPromedioList;
+    }
+
     public Aspirante getAspirante() {
         return aspirante;
     }
@@ -370,6 +383,15 @@ public class Estudiante implements Serializable {
         this.participantesTutoriaList = participantesTutoriaList;
     }
 
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
+        return permisosCapturaExtemporaneaEstudianteList;
+    }
+
+    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
+        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

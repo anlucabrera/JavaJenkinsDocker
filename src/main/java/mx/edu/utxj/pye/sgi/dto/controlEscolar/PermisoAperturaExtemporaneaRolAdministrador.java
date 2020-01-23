@@ -136,6 +136,20 @@ public class PermisoAperturaExtemporaneaRolAdministrador extends AbstractRol{
      */
     @Getter @NonNull private List<DtoPermisoCapturaExtemporanea>  listaPermisosCapturasExtemporaneas;
     
+    /**
+     * Lista de estudiantes que integran el grupo seleccionado
+     */
+    @Getter @NonNull private List<Estudiante>  listaEstudiantes;
+    
+     /**
+     * Estudiante seleccionado
+     */
+    @Getter @NonNull private Estudiante estudiante;
+    
+     /**
+     * Valor permisoActivo (Si/No)
+     */
+    @Getter @NonNull private String permisoActivo; 
     
     public PermisoAperturaExtemporaneaRolAdministrador(Filter<PersonalActivo> filtro, PersonalActivo administrador) {
         super(filtro);
@@ -233,5 +247,16 @@ public class PermisoAperturaExtemporaneaRolAdministrador extends AbstractRol{
     public void setListaPermisosCapturasExtemporaneas(List<DtoPermisoCapturaExtemporanea> listaPermisosCapturasExtemporaneas) {
         this.listaPermisosCapturasExtemporaneas = listaPermisosCapturasExtemporaneas;
     }
-    
+
+    public void setListaEstudiantes(List<Estudiante> listaEstudiantes) {
+        this.listaEstudiantes = listaEstudiantes;
+    }
+
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
+    }
+
+    public void setPermisoActivo(String permisoActivo) {
+        this.permisoActivo = permisoActivo;
+    }
 }

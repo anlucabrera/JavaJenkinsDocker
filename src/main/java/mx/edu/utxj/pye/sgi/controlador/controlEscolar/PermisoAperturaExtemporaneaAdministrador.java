@@ -41,7 +41,12 @@ import org.primefaces.event.CellEditEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PermisosCapturaExtemporaneaEstudiante;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Messages;
 
 
 
@@ -175,6 +180,7 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         if(res.getCorrecto()){
             rol.setCargasPeriodo(res.getValor());
             rol.setCarga(rol.getCargasPeriodo().get(0));
+            actualizarListaEstudiantes();
             tiposEvaluaciones();
             actualizarUnidadesMateria();
             justificacionesPermiso();
@@ -207,6 +213,16 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         }else mostrarMensajeResultadoEJB(res);
     }
     
+     /**
+     * Permite actualizar las unidades materia dependiendo de la carga académica seleccionada
+     */
+    public void actualizarListaEstudiantes(){
+        ResultadoEJB<List<Estudiante>> res = ejb.getListaEstudiantes(rol.getCarga());
+        if(res.getCorrecto()){
+            rol.setListaEstudiantes(res.getValor());
+        }else mostrarMensajeResultadoEJB(res);
+    }
+    
     /**
      * Permite que al cambiar el periodo escolar se actualicen las cargas académicas asignadas en ese periodo
      * @param e Evento del cambio de valor
@@ -224,6 +240,7 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     public void cambiarCargaAcademica(ValueChangeEvent e){
        rol.setCarga((DtoCargaAcademica)e.getNewValue());
        actualizarUnidadesMateria();
+       actualizarListaEstudiantes();
        Ajax.update("frm");
     }
     
@@ -351,5 +368,24 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         DataTable dataTable = (DataTable) event.getSource();
         DtoPermisoCapturaExtemporanea permisoNew = (DtoPermisoCapturaExtemporanea) dataTable.getRowData();
         ejb.actualizarPermisoCaptura(permisoNew);
+    }
+    
+     public void aperturaExtEst(Estudiante estudiante) {
+          rol.setEstudiante(estudiante);
+         ResultadoEJB<PermisosCapturaExtemporaneaEstudiante> resGuardar = ejb.guardarPermisoCapturaOrdinariaEstudiante(rol.getCarga(), rol.getEstudiante(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
+         if (resGuardar.getCorrecto()) {
+             consultarPermisoActivo(estudiante);
+             Ajax.update("frm");
+         } mostrarMensajeResultadoEJB(resGuardar);
+    }
+     
+       /**
+     * Permite verificar si existe permiso activo para el estudiante
+     * @param estudiante Estudiante
+     * @return valor boolean según sea el caso
+     */
+    public String consultarPermisoActivo(Estudiante estudiante){
+        rol.setPermisoActivo(ejb.buscarPermisoActivo(estudiante, rol.getCarga(), rol.getUnidadMateria(), rol.getTipoEvaluacion()).getValor());
+        return rol.getPermisoActivo();
     }
 }

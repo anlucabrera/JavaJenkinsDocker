@@ -83,7 +83,7 @@
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="periodo" value="#{concentradoCalificacionesSecAca.rol.periodo}" converter="entityConverter" styleClass="form-control" >
                                                         <f:selectItems value="#{concentradoCalificacionesSecAca.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                        <p:ajax process="@this, planEstudio"/>
+                                                        <p:ajax process="@this, planEstudio" listener="#{concentradoCalificacionesSecAca.cambiarPeriodo}"/>
                                                         <p:autoUpdate />
                                                     </p:selectOneMenu>
                                                     <p:outputLabel value="Periodo" for="periodo"/>
@@ -155,7 +155,7 @@
                                                                     </div>
                                                                     <div class="col-sm-3">
                                                                         <div class="description-block" style="text-align: center">
-                                                                            <img src="../../resources/img/utxj.png" alt="" height="80px"/>
+                                                                            <img src="../../resources/img/utxj.png" alt="" height="100px"/>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -185,7 +185,7 @@
                                                     <div class="row">
                                                         <div class="col-sm-12">
                                                             <div class="description-block">
-                                                                <p:outputPanel>            
+                                                                <p:outputPanel>     
                                                                     <p:autoUpdate/>
                                                                     <p:panelGrid style="width: 100%">
                                                                         <f:facet name="header">
@@ -194,7 +194,7 @@
                                                                                 <p:column rowspan="3" style="background: #00a7d0">Nombre</p:column>
                                                                                 <c:forEach var="i" begin="0" end="#{concentradoCalificacionesSecAca.rol.titulos.size()-1}">
                                                                                     <c:set var="t" value="#{concentradoCalificacionesSecAca.rol.titulos.get(i)}"/>
-                                                                                    <p:column colspan="#{t.ti eq true?t.tunidades+3:t.tunidades+3}" style="font-size: smaller;background: #00D8D8 ">#{t.unidad}<hr/> #{t.docente}</p:column>
+                                                                                    <p:column colspan="#{t.ti eq true?t.tunidades+4:t.tunidades+3}" style="font-size: smaller;background: #00D8D8 ">#{t.unidad}<hr/> #{t.docente}</p:column>
                                                                                 </c:forEach> 
                                                                                 <p:column rowspan="3" style="background: #00a7d0">General</p:column>
                                                                             </p:row>
@@ -226,13 +226,13 @@
                                                                                     <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.tareaI gt 0 ? 'color: #E53935':'color: #000000'}" rendered="#{d.tareaI ne ''}">#{d.tareaI}</p:column>
                                                                                     <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalO gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalO gt 0?concentradoCalificacionesSecAca.rol.df.format(d.promedioFinalO):0}</p:column>                                                                                
                                                                                     <p:column style="font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.nivelacion gt 0 ? 'color: #E53935':'color: #000000'}">#{d.nivelacion gt 0?concentradoCalificacionesSecAca.rol.df.format(d.nivelacion):0}</p:column>
-                                                                                    <p:column style="background: #cccccc; font-weight: bold; font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalN gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalN gt 0?concentradoCalificacionesSecAca.rol.df.format(d.promedioFinalN):0}</p:column>                                                                                
+                                                                                    <p:column style="background: #cccccc; font-weight: bold; font-size: smaller;  #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalN gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalN gt 0?concentradoCalificacionesSecAca.rol.df.format(d.promedioFinalN):0}</p:column>                                                                                
                                                                                 </c:forEach>
                                                                                 <p:column style="font-size: smaller; font-weight: bold; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or b.promedioFinal gt 0 ? 'color: #E53935':'color: #000000'}">#{b.promedioFinal gt 0?concentradoCalificacionesSecAca.rol.df.format(b.promedioFinal):0}</p:column>
                                                                             </p:row>
                                                                         </c:forEach>
                                                                     </p:panelGrid>
-                                                                </p:outputPanel>     
+                                                                </p:outputPanel>    
                                                             </div>
                                                         </div>
                                                     </div>    

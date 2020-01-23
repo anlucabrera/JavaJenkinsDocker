@@ -17,6 +17,7 @@ public enum PersonalFiltro {
     TIENE_POA("Tiene_POA"),
     NO_TIENE_POA("No_tiene_POA"),
     ESPECIALISTA("Especialista"),
+    COORDINADOR_TUTORES("Coordinador_Tutores"),
     TUTOR("Tutor");
     @Getter @Setter @NonNull private String label;
 }

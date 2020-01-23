@@ -261,16 +261,20 @@ public class cuadroMandoIntegralPlaneacion implements Serializable {
                         case 1:                            tR = tR + t.getNAFebrero();                            tP = tP + t.getNPFebrero();
                         case 0:                            tR = tR + t.getNAEnero();                            tP = tP + t.getNPEnero();                            break;
                     }
+                    Double porc = 0D;
                     if (tP != 0) {
                         programadasCorte = programadasCorte + 1;
                         prograRepoCorte = prograRepoCorte + 1;
+                        porc = (tR * 100D) / tP;
                     }
-                    if ((tR != 0) && (tR>=tP)) {                
+                    if ((tR != 0) && (tR >= tP)) {
+                        realizadasCorte = realizadasCorte + 1;
+                    } else if ((tR != 0) && (porc >= 95D)) {
                         realizadasCorte = realizadasCorte + 1;
                     }
-                    if (tR != 0 && Objects.equals(tR, tP)) {                        
+                    if (tR != 0 && Objects.equals(tR, tP)) {
                         realRepoCorte = realRepoCorte + 1;
-                }
+                    }
                 }
             });
             for (incremento = 0; incremento <= numeroMes; incremento++) {

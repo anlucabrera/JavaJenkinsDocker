@@ -15,11 +15,15 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.titulacion.dto.dtoExpedientesActuales;
 import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
 import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DatosContacto;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DatosTitulacion;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
+import mx.edu.utxj.pye.sgi.entity.titulacion.Egresados;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
 import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
 import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
+import mx.edu.utxj.pye.titulacion.dto.dtoProcesosIntegracion;
 
 /**
  *
@@ -273,4 +277,89 @@ public interface EjbTitulacionSeguimiento {
      * @return descripción del status
      */
     public String obtenerSituacionCartaNoAdeudo (Boolean validada);
+    
+     /**
+     * Guarda nuevo expediente de titulación (egresado)
+     * @param egresado
+     * @return 
+     * @throws java.lang.Throwable
+     */
+    public Egresados guardarEgresado(Egresados egresado) throws Throwable;
+    
+     /**
+     * Guarda nuevo expediente de titulación (expedienteTitulacion)
+     * @param expedienteTitulacion
+     * @param procesoIntegracion
+     * @param egresado
+     * @param progEdu
+     * @param generacion
+     * @return 
+     * @throws java.lang.Throwable
+     */
+    public ExpedientesTitulacion guardarExpedienteTitulacion(ExpedientesTitulacion expedienteTitulacion, dtoProcesosIntegracion procesoIntegracion, Egresados egresado, AreasUniversidad progEdu, Generaciones generacion) throws Throwable;
+    
+     /**
+     * Guarda datos de contacto (datosContacto)
+     * @param datContacto
+     * @param expediente
+     * @return entity DatosContacto
+     * @throws java.lang.Throwable
+     */
+    public DatosContacto guardarDatosContacto(DatosContacto datContacto, ExpedientesTitulacion expediente) throws Throwable;
+    
+     /**
+     * Guarda domicilio (domicilioExpediente)
+     * @param domExpediente
+     * @param expediente
+     * @return entity DatosContacto
+     * @throws java.lang.Throwable
+     */
+    public DomiciliosExpediente guardarDomicilio(DomiciliosExpediente domExpediente, ExpedientesTitulacion expediente) throws Throwable;
+    
+     /**
+     * Guarda datos de titulación (datosTitulacion)
+     * @param datTitulacion
+     * @param expediente
+     * @return entity DatosContacto
+     * @throws java.lang.Throwable
+     */
+    public DatosTitulacion guardarDatosTitulacion(DatosTitulacion datTitulacion, ExpedientesTitulacion expediente) throws Throwable;
+    
+     /**
+     * Obtiene el número de expediente de titulación
+     * @return número de expediente
+     * @throws java.lang.Throwable
+     */
+    public Integer obtenerNumeroExpediente() throws Throwable;
+    
+     /**
+     * Obtiene lista de procesos de integración de expedientes de titulación
+     * @return lista de dtoProcesosIntegracion
+     * @throws java.lang.Throwable
+     */
+    public List<dtoProcesosIntegracion> obtenerListaProcesos() throws Throwable;
+    
+     /**
+     * Obtiene lista de programas educativos
+     * @param nivel
+     * @return lista de entity AreasUniversidad
+     * @throws java.lang.Throwable
+     */
+    public List<AreasUniversidad> obtenerProgramasEducativos(String nivel) throws Throwable;
+    
+     /**
+     * Obtiene lista de generaciones
+     * @param nivel
+     * @return lista de entity AreasUniversidad
+     * @throws java.lang.Throwable
+     */
+    public List<Generaciones> obtenerGeneraciones(String nivel) throws Throwable;
+    
+     /**
+     * Obtiene nivel del programa educativo
+     * @param progEdu
+     * @return número de expediente
+     * @throws java.lang.Throwable
+     */
+    public Integer obtenerNivelEducativo(AreasUniversidad progEdu) throws Throwable;
 }

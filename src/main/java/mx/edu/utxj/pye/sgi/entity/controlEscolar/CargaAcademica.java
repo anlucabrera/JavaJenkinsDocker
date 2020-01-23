@@ -66,6 +66,8 @@ public class CargaAcademica implements Serializable {
     private PlanEstudioMateria idPlanMateria;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica")
     private List<CalificacionNivelacion> calificacionNivelacionList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica")
+    private List<CalificacionPromedio> calificacionPromedioList;
     @OneToMany(mappedBy = "carga")
     private List<CasoCritico> casoCriticoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
@@ -157,6 +159,15 @@ public class CargaAcademica implements Serializable {
 
     public void setCalificacionNivelacionList(List<CalificacionNivelacion> calificacionNivelacionList) {
         this.calificacionNivelacionList = calificacionNivelacionList;
+    }
+
+    @XmlTransient
+    public List<CalificacionPromedio> getCalificacionPromedioList() {
+        return calificacionPromedioList;
+    }
+
+    public void setCalificacionPromedioList(List<CalificacionPromedio> calificacionPromedioList) {
+        this.calificacionPromedioList = calificacionPromedioList;
     }
 
     @XmlTransient

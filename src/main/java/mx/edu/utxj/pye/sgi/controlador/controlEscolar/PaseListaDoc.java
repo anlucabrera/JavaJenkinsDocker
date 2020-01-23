@@ -112,8 +112,8 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
 @PostConstruct
     public void init(){
         try{
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
+            if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+            cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.PASE_DE_LISTA);
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejbAsignacionIndicadoresCriterios.validarDocente(logon.getPersonal().getClave());
             if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
@@ -408,12 +408,14 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                                 rol.getDiasPaseLista().add(t.getAsistencia().getFechaHora().getDate());
                                 dateActual=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
                                 if(dateAnterior == null ? dateActual == null : dateAnterior.equals(dateActual)){
-                                    rol.getHorasPaseLista().add(noSesi+"° Sesion");
+                                    rol.getHorasPaseLista().add(noSesi + "° Sesion");
                                     noSesi++;
-                                }else{
+                                } else {
+                                    noSesi = 2;
                                     rol.getHorasPaseLista().add("1° Sesion");
                                 }
-                                dateAnterior=t.getAsistencia().getFechaHora().getYear()+"-"+t.getAsistencia().getFechaHora().getMonth()+"-"+t.getAsistencia().getFechaHora().getDate();
+                                dateAnterior=dateActual;
+                                dateActual="";
                             });
                             rol.getDplsReportesMes().add(new DtoPaseListaReporte("Enero", as.size()));
                         }

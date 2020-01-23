@@ -45,6 +45,7 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asesoria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CasoCritico;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CordinadoresTutores;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.FuncionesTutor;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
@@ -1380,7 +1381,7 @@ public class EjbRegistroAsesoriaTutoria {
                     .setParameter("areaSuperior", areaSuperior.get(0).getArea())
                     .getResultList();
             if(programasEducativos.isEmpty()){
-                return ResultadoEJB.crearErroneo(3, Collections.EMPTY_LIST, "El área superior no tiene asignado ninguna programa educativo");
+                return ResultadoEJB.crearErroneo(3, Collections.EMPTY_LIST, "El área superior no tiene asignado ningun programa educativo");
             }
             List<PeriodosEscolares> periodosEscolares = em.createQuery("SELECT g.periodo FROM PlanAccionTutorial p INNER JOIN p.grupo g WHERE g.idPe IN :programasEducativos", Integer.class)
                     .setParameter("programasEducativos", programasEducativos)
@@ -1400,6 +1401,44 @@ public class EjbRegistroAsesoriaTutoria {
         }
     }
     
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosConPlanAccionTutorialGeneralPsicopedagogia() {
+        try {
+            List<PeriodosEscolares> periodosEscolares = em.createQuery("SELECT g.periodo FROM PlanAccionTutorial p INNER JOIN p.grupo g", Integer.class)
+                    .getResultStream()
+                    .map(periodo -> em.find(PeriodosEscolares.class, periodo))
+                    .distinct()
+                    .sorted(Comparator.comparingInt(PeriodosEscolares::getPeriodo).reversed())
+                    .collect(Collectors.toList());
+
+            if(periodosEscolares.isEmpty()){
+                return ResultadoEJB.crearErroneo(4, Collections.EMPTY_LIST, "Los grupos aún no contienen planes de accion tutorial registrados");
+            }else{
+                return ResultadoEJB.crearCorrecto(periodosEscolares, "Lista de periodos escolares registrados con plan de acción tutorial generales");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares con planes de acción tutorial generales (EjbRegistroAsesoriaTutoria.getPeriodosConPlanAccionTutorialGeneralPsicopedagogia).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosConCoordinadoresTutor(PersonalActivo coordinadorTutores) {
+        try {
+            List<PeriodosEscolares> periodosEscolares = em.createQuery("SELECT c.periodo FROM CordinadoresTutores c WHERE c.personal = :personal", Integer.class)
+                    .setParameter("personal", coordinadorTutores.getPersonal().getClave())
+                    .getResultStream()
+                    .map(periodo -> em.find(PeriodosEscolares.class, periodo))
+                    .distinct()
+                    .sorted(Comparator.comparingInt(PeriodosEscolares::getPeriodo).reversed())
+                    .collect(Collectors.toList());
+            if (periodosEscolares.isEmpty()) {
+                return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST, "El usuario seleccionado no tiene historíco de ser coordinador de tutores");
+            } else {
+                return ResultadoEJB.crearCorrecto(periodosEscolares, "Lista de periodos escolares en los que el usuario ha sido coordinador de tutores");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares (EjbRegistroAsesoriaTutoria.getPeriodosConCoordinadoresTutor).", e, null);
+        }
+    }
+
     public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosConPlanAccionTutorial(PersonalActivo director, PeriodosEscolares periodoEscolar) {
         try {
             List<AreasUniversidad> areaSuperior = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.responsable = :director", AreasUniversidad.class)
@@ -1412,7 +1451,51 @@ public class EjbRegistroAsesoriaTutoria {
                     .setParameter("areaSuperior", areaSuperior.get(0).getArea())
                     .getResultList();
             if(programasEducativos.isEmpty()){
-                return ResultadoEJB.crearErroneo(3, Collections.EMPTY_LIST, "El área superior no tiene asignado ninguna programa educativo");
+                return ResultadoEJB.crearErroneo(3, Collections.EMPTY_LIST, "El área superior no tiene asignado ningun programa educativo");
+            }
+            List<AreasUniversidad> programasEducativosPAT = em.createQuery("SELECT g.idPe FROM PlanAccionTutorial p INNER JOIN p.grupo g WHERE g.idPe IN :programasEducativos AND g.periodo = :periodo", Short.class)
+                    .setParameter("programasEducativos", programasEducativos)
+                    .setParameter("periodo", periodoEscolar.getPeriodo())
+                    .getResultStream()
+                    .map(pe -> em.find(AreasUniversidad.class, pe))
+                    .distinct()
+                    .collect(Collectors.toList());
+            if(programasEducativosPAT.isEmpty()){
+                return ResultadoEJB.crearErroneo(4, Collections.EMPTY_LIST, "Los grupos aún no contienen planes de accion tutorial registrados");
+            }else{
+                return ResultadoEJB.crearCorrecto(programasEducativosPAT, "Lista de programas educativos registrados con plan de acción tutorial");
+            }      
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos con planes de acción tutorial (EjbRegistroAsesoriaTutoria.getProgramasEducativosConPlanAccionTutorial).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosConPlanAccionTutorialPsicopedagogia(PeriodosEscolares periodoEscolar) {
+        try {
+            List<AreasUniversidad> programasEducativosPAT = em.createQuery("SELECT g.idPe FROM PlanAccionTutorial p INNER JOIN p.grupo g WHERE g.periodo = :periodo", Short.class)
+                    .setParameter("periodo", periodoEscolar.getPeriodo())
+                    .getResultStream()
+                    .map(pe -> em.find(AreasUniversidad.class, pe))
+                    .distinct()
+                    .sorted(Comparator.comparingInt(AreasUniversidad::getAreaSuperior).reversed())
+                    .collect(Collectors.toList());
+            if(programasEducativosPAT.isEmpty()){
+                return ResultadoEJB.crearErroneo(4, Collections.EMPTY_LIST, "Los grupos aún no contienen planes de accion tutorial registrados");
+            }else{
+                return ResultadoEJB.crearCorrecto(programasEducativosPAT, "Lista de programas educativos registrados con plan de acción tutorial");
+            }      
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos con planes de acción tutorial (EjbRegistroAsesoriaTutoria.getProgramasEducativosConPlanAccionTutorial).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosConPlanAccionTutorialCoordinadorTutores(Short area, PeriodosEscolares periodoEscolar) {
+        try {
+            List<Short> programasEducativos = em.createQuery("SELECT a.area FROM AreasUniversidad a WHERE a.areaSuperior = :areaSuperior", Short.class)
+                    .setParameter("areaSuperior", area)
+                    .getResultList();
+            if(programasEducativos.isEmpty()){
+                return ResultadoEJB.crearErroneo(3, Collections.EMPTY_LIST, "El área superior no tiene asignado ningun programa educativo");
             }
             List<AreasUniversidad> programasEducativosPAT = em.createQuery("SELECT g.idPe FROM PlanAccionTutorial p INNER JOIN p.grupo g WHERE g.idPe IN :programasEducativos AND g.periodo = :periodo", Short.class)
                     .setParameter("programasEducativos", programasEducativos)
@@ -1491,6 +1574,22 @@ public class EjbRegistroAsesoriaTutoria {
             return ResultadoEJB.crearCorrecto(em.find(AreasUniversidad.class, carreraEstudiante), "Área Encontrada");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la participación de la tutoría grupal (EjbRegistroAsesoriaTutoria.getCarreraEstudiante)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<CordinadoresTutores> getCoordinadoresTutores(PeriodosEscolares periodoEscolar, Integer personal){
+        try {
+            List<CordinadoresTutores> ct = em.createQuery("SELECT ct FROM CordinadoresTutores ct WHERE ct.periodo = :periodo AND ct.personal = :personal", CordinadoresTutores.class)
+                    .setParameter("periodo", periodoEscolar.getPeriodo())
+                    .setParameter("personal", personal)
+                    .getResultList();
+            if(!ct.isEmpty()){
+                return ResultadoEJB.crearCorrecto(ct.get(0), "Coordinador de tutores encontrado");
+            }else{
+                return ResultadoEJB.crearErroneo(2, null, "No se ha podido consultar el coordinador de tutores en el periodo seleccionado");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar el coordinador de tutores", e, null);
         }
     }
 }

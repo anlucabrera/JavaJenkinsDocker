@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisos;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.shiro.User;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
@@ -132,6 +133,13 @@ public class ServicioLogin implements EjbLogin {
     }
 // Fin de métodos 
 
+    
+    @Override
+    public Personal buscaPersona(Integer numeroNomina){
+        f2.setEntityClass(Personal.class);
+        return (Personal) f2.find(numeroNomina);
+    }
+            
     @Override
     public String encriptarContrasena(String contrasena) {
         String original = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz1234567890!$%&/()=?¿¡,.-;:_ ";

@@ -24,5 +24,9 @@ public class DtoFormatoBaja implements Serializable{
     @Getter @Setter @NonNull List<DtoDocumentosEstudiante> documentosEstudiante;
     @Getter @Setter @NonNull Personal directorCarrera;
     @Getter @Setter @NonNull Personal tutorGrupo;
-    
+    @Getter @Setter @NonNull Personal psicopedagogia;
+    @Getter @Setter @NonNull Personal recMat;
+    @Getter @Setter @NonNull Personal escolares;
+    @Getter @Setter @NonNull Personal biblioteca;
+    @Getter @Setter @NonNull Personal admonFinanzas;
 }
