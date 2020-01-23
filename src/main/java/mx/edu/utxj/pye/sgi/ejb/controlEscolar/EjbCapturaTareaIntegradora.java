@@ -14,10 +14,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Stateless(name = "EjbCapturaTareaIntegradoraEJB")
@@ -25,6 +22,8 @@ public class EjbCapturaTareaIntegradora {
     @EJB Facade f;
     @EJB EjbEventoEscolar ejbEventoEscolar;
     @EJB EjbValidacionRol ejbValidacionRol;
+    @EJB EjbConverter ejbConverter;
+    @EJB EjbPacker ejbPacker;
     private EntityManager em;
 
     @PostConstruct
@@ -83,8 +82,10 @@ public class EjbCapturaTareaIntegradora {
 
             ResultadoEJB<TareaIntegradora> tareaIntegradoraResultadoEJB = verificarTareaIntegradora(dtoCargaAcademica);
             if(tareaIntegradoraResultadoEJB.getCorrecto()){
+                ResultadoEJB<DtoInscripcion> dtoEstudianteToDtoInscripcionPorCargaAcademica = ejbConverter.dtoEstudianteToDtoInscripcionPorCargaAcademica(dtoEstudiante, dtoCargaAcademica);
+                if(!dtoEstudianteToDtoInscripcionPorCargaAcademica.getCorrecto()) return ResultadoEJB.crearErroneo(2, "Se detectó configuración de tarea integradora, pero no se encontró inscripción del estudiante en el periodo de la carga. ".concat(dtoEstudianteToDtoInscripcionPorCargaAcademica.getMensaje()), BigDecimal.class);
                 TareaIntegradora tareaIntegradora = tareaIntegradoraResultadoEJB.getValor();
-                TareaIntegradoraPromedioPK pk = new TareaIntegradoraPromedioPK(tareaIntegradora.getIdTareaIntegradora(), dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante());
+                TareaIntegradoraPromedioPK pk = new TareaIntegradoraPromedioPK(tareaIntegradora.getIdTareaIntegradora(), dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion().getIdEstudiante());
                 TareaIntegradoraPromedio tareaIntegradoraPromedio = em.createQuery("select tip from TareaIntegradoraPromedio tip where tip.tareaIntegradoraPromedioPK=:pk", TareaIntegradoraPromedio.class)
                         .setParameter("pk", pk)
                         .getResultStream()
@@ -98,10 +99,46 @@ public class EjbCapturaTareaIntegradora {
             }
 
             if(!tareaIntegradoraResultadoEJB.getCorrecto() && tareaIntegradoraResultadoEJB.getResultado() != 2) return ResultadoEJB.crearErroneo(2, tareaIntegradoraResultadoEJB.getMensaje(), BigDecimal.class);
+            ResultadoEJB<Boolean> actualizarPromedioAsignatura = actualizarPromedioAsignatura(dtoCargaAcademica, dtoEstudiante, suma);
+            if(!actualizarPromedioAsignatura.getCorrecto()) System.out.println("actualizarPromedioAsignatura = " + actualizarPromedioAsignatura);
             return ResultadoEJB.crearCorrecto(suma, "Promedio por materia");
         }catch (Exception e){
             return  ResultadoEJB.crearErroneo(1, "No se pudo calcular el promedio de la asignatura (EjbCapturaTareaIntegradora.promediarAsignatura).", e, BigDecimal.class);
         }
+    }
+
+    public ResultadoEJB<Boolean> actualizarPromedioAsignatura(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante, BigDecimal promedio){
+        try{
+//            System.out.println("EjbCapturaTareaIntegradora.actualizarPromedioAsignatura");
+//            System.out.println("dtoCargaAcademica = " + dtoCargaAcademica + ", dtoEstudiante = " + dtoEstudiante + ", promedio = " + promedio);
+            ResultadoEJB<DtoInscripcion> dtoEstudianteToDtoInscripcionPorCargaAcademica = ejbConverter.dtoEstudianteToDtoInscripcionPorCargaAcademica(dtoEstudiante, dtoCargaAcademica);
+            if(!dtoEstudianteToDtoInscripcionPorCargaAcademica.getCorrecto()) return ResultadoEJB.crearErroneo(2, dtoEstudianteToDtoInscripcionPorCargaAcademica.getMensaje(), Boolean.TYPE);
+            CalificacionPromedioPK pk = new CalificacionPromedioPK(dtoCargaAcademica.getCargaAcademica().getCarga(), dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion().getIdEstudiante());
+//            System.out.println("pk = " + pk);
+            CalificacionPromedio calificacionPromedio = em.find(CalificacionPromedio.class, pk);
+//            System.out.println("calificacionPromedio = " + calificacionPromedio);
+            if(calificacionPromedio == null) {
+                CargaAcademica cargaAcademica = em.find(CargaAcademica.class, pk.getCarga());
+//                System.out.println("cargaAcademica = " + cargaAcademica);
+                Estudiante estudiante = em.find(Estudiante.class, pk.getIdEstudiante());
+//                System.out.println("estudiante = " + estudiante);
+                calificacionPromedio = new CalificacionPromedio(pk);
+                calificacionPromedio.setCargaAcademica(cargaAcademica);
+                calificacionPromedio.setEstudiante(estudiante);
+                calificacionPromedio.setValor(promedio.doubleValue());
+                calificacionPromedio.setFechaActualizacion(new Date());
+                em.persist(calificacionPromedio);
+            }else{
+                calificacionPromedio.setValor(promedio.doubleValue());
+                em.merge(calificacionPromedio);
+            }
+
+            em.flush();
+            return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Promedio actualizado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar actualizar el promedio de una asignatura (EjbCapturaTareaIntegradora.actualizarPromedioAsignatura)", e, Boolean.class);
+        }
+
     }
 
     /**
@@ -128,7 +165,7 @@ public class EjbCapturaTareaIntegradora {
      * @param tareaIntegradora
      * @return
      */
-    public ResultadoEJB<Map<DtoEstudiante, TareaIntegradoraPromedio>> generarContenedorCalificaciones(@NonNull  List<DtoEstudiante> dtoEstudiantes, @NonNull TareaIntegradora tareaIntegradora){
+    public ResultadoEJB<Map<DtoEstudiante, TareaIntegradoraPromedio>> generarContenedorCalificaciones(@NonNull  List<DtoEstudiante> dtoEstudiantes, @NonNull TareaIntegradora tareaIntegradora, DtoCargaAcademica dtoCargaAcademica){
         try{
             Map<DtoEstudiante, TareaIntegradoraPromedio> map = new HashMap<>();
             List<TareaIntegradoraPromedio> tareaIntegradoraPromedios = em.createQuery("select tip from TareaIntegradoraPromedio tip where tip.tareaIntegradora=:tareaIntegradora", TareaIntegradoraPromedio.class)
@@ -137,7 +174,10 @@ public class EjbCapturaTareaIntegradora {
 //            System.out.println("tareaIntegradoraPromedios = " + tareaIntegradoraPromedios);
 
             dtoEstudiantes.forEach(dtoEstudiante -> {
-                TareaIntegradoraPromedioPK pk = new TareaIntegradoraPromedioPK(tareaIntegradora.getIdTareaIntegradora(), dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante());
+//                TareaIntegradora tareaIntegradoraBD = em.find(TareaIntegradora.class, tareaIntegradora.getIdTareaIntegradora());
+//                ResultadoEJB<DtoCargaAcademica> packCargaAcademica = ejbPacker.packCargaAcademica(tareaIntegradoraBD.getCarga());
+                ResultadoEJB<DtoInscripcion> dtoEstudianteToDtoInscripcionPorCargaAcademica = ejbConverter.dtoEstudianteToDtoInscripcionPorCargaAcademica(dtoEstudiante, dtoCargaAcademica);
+                TareaIntegradoraPromedioPK pk = new TareaIntegradoraPromedioPK(tareaIntegradora.getIdTareaIntegradora(), dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion().getIdEstudiante());
 //                System.out.println("pk = " + pk);
                 TareaIntegradoraPromedio tareaIntegradoraPromedio = new TareaIntegradoraPromedio(pk);
 //                System.out.println("tareaIntegradoraPromedio = " + tareaIntegradoraPromedio);
@@ -198,7 +238,8 @@ public class EjbCapturaTareaIntegradora {
                 @NonNull CalificacionNivelacion calificacionNivelacion = dtoCalificacionNivelacion.getCalificacionNivelacion();
                 @NonNull Indicador indicador = dtoCalificacionNivelacion.getIndicador();
 //                System.out.println("indicador = " + indicador);
-                CalificacionNivelacionPK calificacionNivelacionPK = new CalificacionNivelacionPK(dtoCargaAcademica.getCargaAcademica().getCarga(), dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante());
+                ResultadoEJB<DtoInscripcion> dtoEstudianteToDtoInscripcionPorCargaAcademica = ejbConverter.dtoEstudianteToDtoInscripcionPorCargaAcademica(dtoEstudiante, dtoUnidadesCalificacion.getDtoCargaAcademica());
+                CalificacionNivelacionPK calificacionNivelacionPK = new CalificacionNivelacionPK(dtoCargaAcademica.getCargaAcademica().getCarga(), dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion().getIdEstudiante());
                 CalificacionNivelacion calificacionNivelacionBD = em.find(CalificacionNivelacion.class, calificacionNivelacionPK);
                 if(calificacionNivelacionBD != null) {
                     Double valor = calificacionNivelacion.getValor();
@@ -207,7 +248,7 @@ public class EjbCapturaTareaIntegradora {
                 }
                 calificacionNivelacion.setIndicador(indicador);
                 calificacionNivelacion.setCargaAcademica(dtoCargaAcademica.getCargaAcademica());
-                calificacionNivelacion.setEstudiante(dtoEstudiante.getInscripcionActiva().getInscripcion());
+                calificacionNivelacion.setEstudiante(dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion());
 //                System.out.println("calificacionNivelacion = " + calificacionNivelacion.getIndicador());
                 if(em.contains(calificacionNivelacion)){
 //                    System.out.println(1);

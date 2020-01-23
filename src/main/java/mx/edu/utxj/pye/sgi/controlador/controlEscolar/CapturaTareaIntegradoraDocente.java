@@ -14,6 +14,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaTareaIntegradora;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistraPromedioAsignatura;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -30,6 +31,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +44,7 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     @Getter @Setter private CapturaTareaIntegradoraRolDocente rol;
     @EJB EjbCapturaTareaIntegradora ejb;
     @EJB EjbCapturaCalificaciones ejbCapturaCalificaciones;
+    @EJB EjbRegistraPromedioAsignatura ejbRegistraPromedioAsignatura;
     @EJB EjbPacker packer;
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
@@ -106,6 +109,13 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             cambiarPeriodo();
         }catch (Exception e){
             System.out.println("CapturaTareaIntegradoraDocente.init: Error controlado en método inicializador");
+            e.printStackTrace();
+        }
+
+        try {
+            ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromedios();
+            System.out.println("registrarMasivamentePromedios = " + registrarMasivamentePromedios);
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -271,7 +281,7 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             rol.getTieneIntegradoraMap().put(dtoCargaAcademica, true);
             rol.getTareaIntegradoraMap().put(dtoCargaAcademica, tareaIntegradoraResultadoEJB.getValor());
 
-            ResultadoEJB<Map<DtoEstudiante, TareaIntegradoraPromedio>> generarContenedorCalificaciones = ejb.generarContenedorCalificaciones(getContenedor(dtoCargaAcademica).getDtoEstudiantes(), tareaIntegradoraResultadoEJB.getValor());
+            ResultadoEJB<Map<DtoEstudiante, TareaIntegradoraPromedio>> generarContenedorCalificaciones = ejb.generarContenedorCalificaciones(getContenedor(dtoCargaAcademica).getDtoEstudiantes(), tareaIntegradoraResultadoEJB.getValor(), dtoCargaAcademica);
             if(!generarContenedorCalificaciones.getCorrecto()){
                 mostrarMensajeResultadoEJB(generarContenedorCalificaciones);
             }
