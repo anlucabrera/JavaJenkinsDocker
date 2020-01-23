@@ -19,6 +19,8 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
+import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -35,6 +37,8 @@ public class ControladorIncidenciasAdministrador implements Serializable {
     private static final long serialVersionUID = -8842055922698338073L;
 
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
+    @Getter    @Setter    private List<Incapacidad> listaIncapacidads = new ArrayList<>();
+    @Getter    @Setter    private List<Cuidados> listaCuidadoses = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>();
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();    
     @Getter    @Setter    private Integer anioNumero = 0;
@@ -78,21 +82,33 @@ public class ControladorIncidenciasAdministrador implements Serializable {
     public void mostrarIncidencias() {
         try {
             listaIncidencias = new ArrayList<>();
+            listaIncapacidads = new ArrayList<>();
+            listaCuidadoses = new ArrayList<>();
             listaIncidencias.clear();
+            listaIncapacidads.clear();
+            listaCuidadoses.clear();
             List<Incidencias> is = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 01, 01)), utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 12, 31)));
             List<Incidencias> l =is.stream().filter(t-> t.getClavePersonal().getAreaOperativa()==au.getArea() || t.getClavePersonal().getAreaSuperior()==au.getArea()).collect(Collectors.toList());
+            
+            List<Incapacidad> iin = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 01, 01)), utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 12, 31)));
+            List<Incapacidad> lin =iin.stream().filter(t-> t.getClavePersonal().getAreaOperativa()==au.getArea() || t.getClavePersonal().getAreaSuperior()==au.getArea()).collect(Collectors.toList());
+            
+            List<Cuidados> icu = ejbNotificacionesIncidencias.mostrarCuidadosReporte(utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 01, 01)), utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 12, 31)));
+            List<Cuidados> lcu =icu.stream().filter(t-> t.getPersonal().getAreaOperativa()==au.getArea() || t.getPersonal().getAreaSuperior()==au.getArea()).collect(Collectors.toList());
+            
             if(!l.isEmpty()){
-                l.forEach((t) -> {
-                    if(!au.getNombre().equals("Rectoría")){
-                        if(!au.getResponsable().equals(t.getClavePersonal().getClave())){
-                            listaIncidencias.add(t);
-                        }
-                    }else{
-                        listaIncidencias.add(t);
-                    }
-                });
+                l.forEach((t) -> {if(!au.getNombre().equals("Rectoría")){if(!au.getResponsable().equals(t.getClavePersonal().getClave())){listaIncidencias.add(t);}}else{listaIncidencias.add(t);}});
             }
+            if(!lin.isEmpty()){
+                lin.forEach((t) -> {if(!au.getNombre().equals("Rectoría")){if(!au.getResponsable().equals(t.getClavePersonal().getClave())){listaIncapacidads.add(t);}}else{listaIncapacidads.add(t);}});
+            }
+            if(!lcu.isEmpty()){
+                lcu.forEach((t) -> {if(!au.getNombre().equals("Rectoría")){if(!au.getResponsable().equals(t.getPersonal().getClave())){listaCuidadoses.add(t);}}else{listaCuidadoses.add(t);}});
+            }
+            
             listaIncidencias.stream().forEachOrdered(t-> t.getClavePersonal().getClave());
+            listaIncapacidads.stream().forEachOrdered(t-> t.getClavePersonal().getClave());
+            listaCuidadoses.stream().forEachOrdered(t-> t.getPersonal().getClave());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
