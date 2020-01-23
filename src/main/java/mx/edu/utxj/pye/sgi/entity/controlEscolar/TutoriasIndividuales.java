@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "tutorias_individuales", catalog = "control_escolar", schema = "")
@@ -88,9 +88,6 @@ public class TutoriasIndividuales implements Serializable {
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
     private Estudiante estudiante;
-    @JoinColumn(name = "sesion_grupal", referencedColumnName = "sesion_grupal")
-    @ManyToOne(optional = false)
-    private SesionesGrupalesTutorias sesionGrupal;
 
     public TutoriasIndividuales() {
     }
@@ -188,14 +185,6 @@ public class TutoriasIndividuales implements Serializable {
 
     public void setEstudiante(Estudiante estudiante) {
         this.estudiante = estudiante;
-    }
-
-    public SesionesGrupalesTutorias getSesionGrupal() {
-        return sesionGrupal;
-    }
-
-    public void setSesionGrupal(SesionesGrupalesTutorias sesionGrupal) {
-        this.sesionGrupal = sesionGrupal;
     }
 
     @Override

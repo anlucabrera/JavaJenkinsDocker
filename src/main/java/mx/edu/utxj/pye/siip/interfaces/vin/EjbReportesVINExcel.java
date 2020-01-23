@@ -14,7 +14,7 @@ import javax.ejb.Local;
 @Local
 public interface EjbReportesVINExcel {
     
-    public String getReporteConvenios() throws Throwable;
+    public String getReporteConvenios(Short ejercicioFiscal) throws Throwable;
     
     public String getReporteServiciosTecnologicos() throws Throwable;
     

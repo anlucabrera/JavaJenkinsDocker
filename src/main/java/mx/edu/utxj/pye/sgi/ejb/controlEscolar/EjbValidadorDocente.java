@@ -60,14 +60,19 @@ public class EjbValidadorDocente {
      * @param clave Número de nómina del usuario logueado
      * @return Regresa la instancia del personal si es que cumple con ser docente o codigo de error de lo contrario
      */
-    public ResultadoEJB<Filter<PersonalActivo>> validarDocente(Integer clave){
-        try{
+    public ResultadoEJB<Filter<PersonalActivo>> validarDocente(Integer clave) {
+        try {
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
-            filtro.setEntity(p);
-            filtro.addParam(PersonalFiltro.ACTIIVIDAD.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalDocenteActividad").orElse(3)));
+            if (p.getPersonal().getActividad().equals(3)) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.ACTIIVIDAD.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalDocenteActividad").orElse(3)));
+            } else if (!p.getPersonal().getActividad().equals(3) && !p.getCargaAcademicas().isEmpty()) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como un docente.");
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "El docente no se pudo validar. (EjbValidadorDocente.validarDocente)", e, null);
         }
     }

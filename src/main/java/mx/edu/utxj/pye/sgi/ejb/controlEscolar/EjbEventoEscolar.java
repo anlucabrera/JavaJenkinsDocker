@@ -10,9 +10,12 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.StoredProcedureQuery;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  * Permite la interacción con las aperturas de los eventos escolares
@@ -120,5 +123,21 @@ public class EjbEventoEscolar {
         if(!res.getCorrecto()) res = verificarEventoAperturadoPorPersona(tipo, persona);
 
         return res;
+    }
+    
+    /**
+     * Permite obtener el periodo activo.
+     * @return Regresa la instancia del periodo activo
+     */
+    public PeriodosEscolares getPeriodoActual() {
+
+        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+        List<PeriodosEscolares> l = spq.getResultList();
+
+        if (l == null || l.isEmpty()) {
+            return new PeriodosEscolares();
+        } else {
+            return l.get(0);
+        }
     }
 }

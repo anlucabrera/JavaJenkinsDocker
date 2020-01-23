@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.siip.controller.ca;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -16,6 +17,7 @@ import mx.edu.utxj.pye.siip.interfaces.ca.EjbPlantillasCAExcel;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbReportesCAExcel;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -63,13 +65,13 @@ public class ControladorPlantillasCA implements Serializable{
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteActividadesVarias() throws IOException, Throwable{
-        File f = new File(ejbReportesCAExcel.getReporteActividadesVarias());
+    public void descargarReporteActividadesVarias(Short ejercicioFiscal) throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteActividadesVarias(ejercicioFiscal));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteAsesoriasTutorias() throws IOException, Throwable{
-        File f = new File(ejbReportesCAExcel.getReporteAsesoriasTutorias());
+    public void descargarReporteAsesoriasTutorias(Short ejercicio_fiscal) throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteAsesoriasTutorias(ejercicio_fiscal));
         Faces.sendFile(f, true);
     }
     

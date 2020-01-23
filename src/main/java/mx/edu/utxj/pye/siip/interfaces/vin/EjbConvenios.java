@@ -38,7 +38,7 @@ public interface EjbConvenios {
      */
     public List<Convenios> getFiltroConveniosEjercicioMesArea(Short ejercicio, String mes, Short area);    
     
-    public List<Convenios> getReporteGeneralConvenios();
+    public List<Convenios> getReporteGeneralConvenios(Short ejercicioFiscal);
     
     public Convenios editaConvenio(Convenios convenio);
     

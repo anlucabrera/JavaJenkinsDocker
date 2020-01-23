@@ -50,7 +50,7 @@
         <adm:breadcrumb title="Tutorías Grupales"/>
 
         <div class="contenedor">
-            <c:if test="#{consultaCalificacionesEstudiante.tieneAcceso}">
+            <c:if test="#{validacionTutoriaGrupalEstudiante.tieneAcceso}">
                 <!-- zona de importación de enums -->
                 <p:importEnum type="mx.edu.utxj.pye.sgi.enums.ParticipanteTutoriaGrupalAcuerdos" var="ptga" allSuffix="ALL" />
                 <div class="box box-primary">
@@ -307,7 +307,7 @@
                 </div>
                 <!-- Zona de cuadros de diálogo -->
             </c:if>
-            <c:if test="#{!consultaCalificacionesEstudiante.tieneAcceso}">
+            <c:if test="#{!validacionTutoriaGrupalEstudiante.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
                         <h:outputText value="El acceso solo está autorizado para estudiantes."/>

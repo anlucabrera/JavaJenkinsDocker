@@ -384,10 +384,10 @@ public class ServicioConvenios implements EjbConvenios {
     }
 
     @Override
-    public List<Convenios> getReporteGeneralConvenios() {
+    public List<Convenios> getReporteGeneralConvenios(Short ejercicioFiscal) {
         try {
             return f.getEntityManager().createQuery("SELECT c FROM Convenios c INNER JOIN c.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY c.registros.eventoRegistro.mes",Convenios.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicioFiscal)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;

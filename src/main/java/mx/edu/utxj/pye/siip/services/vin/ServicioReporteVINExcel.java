@@ -107,7 +107,7 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
     }
     
     @Override
-    public String getReporteConvenios() throws Throwable {
+    public String getReporteConvenios(Short ejercicioFiscal) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[2]).concat(REPORTE_CONVENIOS_PLANTILLA );
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_CONVENIOS_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_CONVENIOS_ACTUALIZADO);
@@ -123,7 +123,7 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
             XSSFCell celda;
             
 //            Vaciado de información proveniente de la consulta
-            List<Convenios> convenios = ejbConvenios.getReporteGeneralConvenios();
+            List<Convenios> convenios = ejbConvenios.getReporteGeneralConvenios(ejercicioFiscal);
             
             for(Integer listaC = 0; listaC < convenios.size(); listaC++){
                 Integer ubicacion = listaC + 3;

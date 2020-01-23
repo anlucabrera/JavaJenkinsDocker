@@ -15,9 +15,9 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 @Local
 public interface EjbReportesCAExcel {
     
-    public String getReporteActividadesVarias() throws Throwable;
+    public String getReporteActividadesVarias(Short ejercicioFiscal) throws Throwable;
     
-    public String getReporteAsesoriasTutorias() throws Throwable;
+    public String getReporteAsesoriasTutorias(Short ejercicio_fiscal) throws Throwable;
     
     public String getReporteServiciosEnfermeria() throws Throwable;
     

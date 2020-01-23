@@ -703,10 +703,10 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
     }
 
     @Override
-    public List<AsesoriasTutoriasMensualPeriodosEscolares> getListaReporteGeneralAsesoriasTutorias() {
+    public List<AsesoriasTutoriasMensualPeriodosEscolares> getListaReporteGeneralAsesoriasTutorias(Short ejercicio_fiscal) {
         try {
             return facadeEscolar.getEntityManager().createQuery("SELECT a FROM AsesoriasTutoriasMensualPeriodosEscolares a JOIN a.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY r.eventoRegistro.ejercicioFiscal,a.mes,a.programaEducativo,a.cuatrimestre,a.grupo,a.tipoActividad,a.tipo",AsesoriasTutoriasMensualPeriodosEscolares.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio_fiscal)
                     .getResultList();
         } catch (Exception e) {
             return Collections.EMPTY_LIST;

@@ -5,8 +5,10 @@
  */
 package mx.edu.utxj.pye.siip.controller.eb;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -31,6 +33,9 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 import mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
@@ -80,6 +85,54 @@ public class Ejemplo {
                 System.out.println("mx.edu.utxj.pye.siip.services.ca.Ejemplo.main() Aún no existen archivos en el directorio o bien el directorio no existe");
             }
 
+            System.out.println("----------------------------------------------------------------------------------------------------------------");
+            List<String> listarArchivosImagenesDocumentos = new ArrayList<>();
+            if (Files.exists(Paths.get("C:\\archivos\\e.castillo\\documentos\\"), LinkOption.NOFOLLOW_LINKS)) {
+                Files.list(Paths.get("C:\\archivos\\e.castillo\\documentos\\")).forEach((t) -> {
+//                    Condición para que sólo acepte archivos con la extensión especificada
+                    listarArchivosImagenesDocumentos.add(t.getParent().toString() + File.separator + t.getFileName());
+                });
+                listarArchivosImagenesDocumentos.forEach((t) -> {
+                    try {
+                        Path path = Paths.get(t);
+                        URI uri = path.toUri();
+//                        System.err.println("Nombre: " + path.getFileName());
+//                        System.err.println("Path: " + path.toString());
+//                        System.err.println("Uri: " + uri.toString());
+                        
+                        File imagen = new File(uri);
+                        BufferedImage img = ImageIO.read(imagen);
+                        
+                        int width = img.getWidth();
+                        boolean widthF = false;
+                        
+                        int height = img.getHeight();
+                        boolean heightF = false;
+                        
+                        if (width >= 400 && width <= 450){widthF = true;}
+                        if (height >= 400 && height <= 450){heightF = true;}
+                        
+//                        System.err.println("widthF: " + img.getWidth());
+//                        System.err.println("heightF: " + img.getHeight());
+                        
+                        if (!widthF && !heightF) {
+                            System.err.println("El Ancho de la imagen y el alto tienen que ser de 400 x 450 px.");
+                            System.err.println("Path: " + path.toString() + " Medidas- Ancho:" + width + " Alto: " + height);
+//                            FacesMessage message = new FacesMessage("Problemas", " El Ancho de la imagen y el alto tienen que ser de 400 x 450 px.");
+//                            FacesContext.getCurrentInstance().addMessage(null, message);
+//                            return;
+                        }else{
+                            System.err.println("El archivo es correcto");
+                            System.err.println("Path: " + path.toString() + " Medidas- Ancho:" + width + " Alto: " + height);
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(Ejemplo.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+            } else {
+                System.out.println("mx.edu.utxj.pye.siip.services.ca.Ejemplo.main() Aún no existen archivos en el directorio o bien el directorio no existe");
+            }
+            System.out.println("----------------------------------------------------------------------------------------------------------------");
         } catch (IOException ex) {
             Logger.getLogger(Ejemplo.class.getName()).log(Level.SEVERE, null, ex);
         }

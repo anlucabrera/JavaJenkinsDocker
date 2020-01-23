@@ -38,7 +38,7 @@
     <ui:define name="body">
         <c:if test="#{registroTutoriaGrupal.cargado}">
         <adm:breadcrumb title="Registro de Tutorías Grupales"/>
-
+        <adm:sidebar collapsed="true"/>
         <div class="contenedor">
             <c:if test="#{registroTutoriaGrupal.tieneAcceso}">
                 <!-- zona de importación de enums -->
@@ -129,16 +129,6 @@
                                                     <p:outputLabel value="Ingrese los datos de la tutoría grupal "/>
                                                 </div>
                                                 <div class="row margin-bottom" style="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'display: none':''}">
-
-                                                    <div class="col-sm-12 col-md-6 col-lg-3">
-                                                        <div class="ui-material">
-                                                            <p:inputText value="#{registroTutoriaGrupal.rol.sesionGrupalSeleccionada.actividadProgramada}"
-                                                                         style="width: 18em;"
-                                                                         disabled="true"
-                                                                         />
-                                                        </div>
-                                                        <p>Sesión grupal de tutoría</p>
-                                                    </div>
 
                                                     <div class="col-sm-12 col-md-6 col-lg-3">
                                                         <div class="ui-material">
@@ -251,7 +241,7 @@
                                                         <p>Hora de Cierre</p>  
                                                     </div>
 
-                                                    <div class="col-sm-12 col-md-12 col-lg-12"></div>
+                                                    <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;"></div>
 
                                                     <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
                                                         <div class="ui-material">
@@ -806,6 +796,7 @@
                                                      style="width: 16.5em"
                                                      process="@this"
                                                      global="false"
+                                                     disabled="#{registroTutoriaGrupal.rol.periodoActivo ne registroTutoriaGrupal.rol.periodoSeleccionado.periodo}"
                                                      />
                                 </div>
                             </div>

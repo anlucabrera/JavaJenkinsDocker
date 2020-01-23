@@ -62,13 +62,13 @@ public class DtoCasoCritico implements Serializable {
                     .concat(" - Descripción: - ")
                     .concat(dtoCasoCritico.getCasoCritico().getDescripcion())
                     .concat(" - Matricula - ")
-                    .concat(String.valueOf(dtoCasoCritico.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula()))
+                    .concat(String.valueOf(dtoCasoCritico.getCasoCritico().getIdEstudiante().getMatricula()))
                     .concat(" - Nombre - ")
-                    .concat(dtoCasoCritico.getDtoEstudiante().getPersona().getApellidoPaterno())
+                    .concat(dtoCasoCritico.getCasoCritico().getIdEstudiante().getAspirante().getIdPersona().getApellidoPaterno())
                     .concat(" ")
-                    .concat(dtoCasoCritico.getDtoEstudiante().getPersona().getApellidoMaterno())
+                    .concat(dtoCasoCritico.getCasoCritico().getIdEstudiante().getAspirante().getIdPersona().getApellidoMaterno())
                     .concat(" ")
-                    .concat(dtoCasoCritico.getDtoEstudiante().getPersona().getNombre());
+                    .concat(dtoCasoCritico.getCasoCritico().getIdEstudiante().getAspirante().getIdPersona().getNombre());
         } else {
             return String.valueOf(dtoCasoCritico.getCasoCritico().getCaso())
                     .concat("-")
@@ -82,13 +82,13 @@ public class DtoCasoCritico implements Serializable {
                             .concat(" - Materia: - ")
                             .concat(dtoCasoCritico.getCasoCritico().getConfiguracion().getIdUnidadMateria().getIdMateria().getNombre()))
                     .concat(" - Matricula - ")
-                    .concat(String.valueOf(dtoCasoCritico.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula()))
+                    .concat(String.valueOf(dtoCasoCritico.getCasoCritico().getIdEstudiante().getMatricula()))
                     .concat(" - Nombre - ")
-                    .concat(dtoCasoCritico.getDtoEstudiante().getPersona().getApellidoPaterno())
+                    .concat(dtoCasoCritico.getCasoCritico().getIdEstudiante().getAspirante().getIdPersona().getApellidoPaterno())
                     .concat(" ")
-                    .concat(dtoCasoCritico.getDtoEstudiante().getPersona().getApellidoMaterno())
+                    .concat(dtoCasoCritico.getCasoCritico().getIdEstudiante().getAspirante().getIdPersona().getApellidoMaterno())
                     .concat(" ")
-                    .concat(dtoCasoCritico.getDtoEstudiante().getPersona().getNombre());
+                    .concat(dtoCasoCritico.getCasoCritico().getIdEstudiante().getAspirante().getIdPersona().getNombre());
         }
     }
 }

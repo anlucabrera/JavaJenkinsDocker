@@ -76,7 +76,7 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="periodo" value="#{registroTutoriaIndividual.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
                                                     <f:selectItems value="#{registroTutoriaIndividual.rol.periodosConCargaGrupo}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this" update="@this grupo sesion mes contenedor" listener="#{registroTutoriaIndividual.cambiarPeriodo}" />
+                                                    <p:ajax process="@this" update="@this grupo mes frmRegistro contenedor" listener="#{registroTutoriaIndividual.cambiarPeriodo}"/>
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>
                                                 <p:message for="periodo" />
@@ -87,21 +87,10 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="grupo" value="#{registroTutoriaIndividual.rol.grupoTutorSeleccionado}" converter="entityConverter" styleClass="form-control" >
                                                     <f:selectItems value="#{registroTutoriaIndividual.rol.listadoGruposTutor}" var="grupo" itemValue="#{grupo}" itemLabel="#{grupo.grupo.grado}° #{grupo.grupo.literal} #{grupo.grupo.idSistema.nombre} de #{grupo.programaEducativo.nombre}" />
-                                                    <p:ajax process="@this" update="@this sesion contenedor" listener="#{registroTutoriaIndividual.cambiarGrupo}" />
+                                                    <p:ajax process="@this" update="@this mes frmRegistro contenedor" listener="#{registroTutoriaIndividual.cambiarGrupo}" />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Grupo Tutorado" for="grupo"/>
                                                 <p:message for="grupo" ><p:autoUpdate/></p:message>
-                                            </div>
-                                        </div>
-
-                                        <div class="#{casilla4}">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="sesion" value="#{registroTutoriaIndividual.rol.sesionGrupalSeleccionada}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{registroTutoriaIndividual.rol.listaSesionesGrupalesTutorias}" var="sesion" itemValue="#{sesion}" itemLabel="P.#{sesion.planAccionTutoria.planAccionTutoria}-S.#{sesion.sesionGrupal}-No.#{sesion.noSesion}- #{sesion.actividadProgramada}" />
-                                                    <p:ajax process="@this" update="@this contenedor" listener="#{registroTutoriaIndividual.cambiarSesiones()}" />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Sesión Grupal de Tutoría" for="sesion"/>
-                                                <p:message for="sesion" ><p:autoUpdate/></p:message>
                                             </div>
                                         </div>
 
@@ -109,7 +98,7 @@
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="mes" value="#{registroTutoriaIndividual.rol.eventoSeleccionado}" converter="entityConverter" styleClass="form-control" >
                                                     <f:selectItems value="#{registroTutoriaIndividual.rol.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" />
-                                                    <p:ajax process="@this" update="@this contenedor" listener="#{registroTutoriaIndividual.cambiarSesiones()}" />
+                                                    <p:ajax process="@this" update="@this frmRegistro contenedor" listener="#{registroTutoriaIndividual.cambiarGrupo()}" />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Mes" for="mes"/>
                                                 <p:message for="mes" />
@@ -172,18 +161,8 @@
                                                         <p>Estudiante</p>
                                                     </div>
 
-                                                    <div class="col-sm-12 col-md-6 col-lg-6">
-                                                        <div class="ui-material">
-                                                            <p:inputText value="#{registroTutoriaIndividual.rol.sesionGrupalSeleccionada.actividadProgramada}"
-                                                                         style="width: 18em;"
-                                                                         disabled="true"
-                                                                         />
-                                                        </div>
-                                                        <p>Sesión grupal de tutoría</p>
-                                                    </div>
-
                                                     <c:if test="#{!empty registroTutoriaIndividual.rol.listaCasosCriticos}">
-                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10p">
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px">
                                                             <p:separator/>
                                                             <p:outputLabel value="2.- Seguimiento de caso crítico - Seleccione un elemento de la lista de opciones (En caso de que aplique)"/>
                                                         </div>
