@@ -99,6 +99,8 @@ public class Estudiante implements Serializable {
     private List<UnidadMateriaComentario> unidadMateriaComentarioList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
     private Documentosentregadosestudiante documentosentregadosestudiante;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<CalificacionPromedio> calificacionPromedioList;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
     @ManyToOne
     private Aspirante aspirante;
@@ -283,6 +285,15 @@ public class Estudiante implements Serializable {
 
     public void setDocumentosentregadosestudiante(Documentosentregadosestudiante documentosentregadosestudiante) {
         this.documentosentregadosestudiante = documentosentregadosestudiante;
+    }
+
+    @XmlTransient
+    public List<CalificacionPromedio> getCalificacionPromedioList() {
+        return calificacionPromedioList;
+    }
+
+    public void setCalificacionPromedioList(List<CalificacionPromedio> calificacionPromedioList) {
+        this.calificacionPromedioList = calificacionPromedioList;
     }
 
     public Aspirante getAspirante() {
