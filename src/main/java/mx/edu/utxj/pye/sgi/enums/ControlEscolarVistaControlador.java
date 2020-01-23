@@ -85,7 +85,6 @@ public enum ControlEscolarVistaControlador {
 
     FICHA_ADMISION_REPORTE("/controlEscolar/reporteFichaAdmision.xhtml",FichaAdmisionReporte.class),
 
-    EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class);
     EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class),
     /////////////////////////////////////////////////////////////////////////////
     SATISFACCION_SERVICIOS_CONSULTA("/encuestas/consulta/servicios.xhtml", ServiciosConsulta.class);
