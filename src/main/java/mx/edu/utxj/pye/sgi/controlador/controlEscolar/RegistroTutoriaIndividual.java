@@ -115,7 +115,6 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
             rol.setEventoRegistroActivo(resEventoRegistro.getValor());
             rol.setPeriodoActivo(ejb.getPeriodoEscolarActivo().getValor().getPeriodo());
             rol.setPeriodosConCargaGrupo(resPeriodos.getValor());
-            cambiarPeriodo();
             initFiltros();
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -137,7 +136,7 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(RegistroAsesoriaDocente.class.getName()).log(Level.SEVERE, null, ex);
         }
-        cambiarSesiones();
+        cambiarPeriodo();
     }
     
     public void inicializarTutoriaIndividual(){
@@ -146,7 +145,6 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
         rol.setHoraInicio(new Date());
         
         TutoriasIndividuales tutoriaIndividual = new TutoriasIndividuales();
-        tutoriaIndividual.setSesionGrupal(rol.getSesionGrupalSeleccionada());
         tutoriaIndividual.setEventoRegistro(rol.getEventoSeleccionado().getEventoRegistro());
         rol.getDtoTutoriaIndividualCE().setTutoriaIndividual(tutoriaIndividual);
         
@@ -174,7 +172,6 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
         if(rol.getPeriodoSeleccionado() == null){
             mostrarMensaje("No hay periodo seleccionado.");
             rol.setListadoGruposTutor(Collections.EMPTY_LIST);
-            rol.setListaSesionesGrupalesTutorias(Collections.EMPTY_LIST);
             return;
         }
         ResultadoEJB<List<DtoListadoTutores>> resListadoGruposTutores = ejb.listarGruposTutor(rol.getPeriodoSeleccionado(), rol.getDocenteLogueado());
@@ -189,35 +186,22 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
     public void cambiarGrupo(){
         if(rol.getGrupoTutorSeleccionado() == null){
             mostrarMensaje("No hay un grupo tutorado seleccionado");
-            rol.setListaSesionesGrupalesTutorias(Collections.EMPTY_LIST);
-            return;
-        }
-        ResultadoEJB<List<SesionesGrupalesTutorias>> resSesiones = ejb.buscaSesionesGrupalesXPlanAT(rol.getGrupoTutorSeleccionado().getGrupo());
-        if(!resSesiones.getCorrecto())mostrarMensajeResultadoEJB(resSesiones);
-        else{
-            rol.setListaSesionesGrupalesTutorias(resSesiones.getValor());
-        }
-        cambiarSesiones();
-        actualizarListaTutoriasIndividuales();
-    }
-    
-    public void cambiarSesiones(){
-        if(rol.getSesionGrupalSeleccionada() == null){
-            mostrarMensaje("No hay sesion grupal de tutoría seleccionada.");
             return;
         }
         inicializarTutoriaIndividual();
         inicializarListaTutoriasIndividuales();
+        inicializarListaCasosCriticos();
         actualizarListaTutoriasIndividuales();
     }
     
-    public void cambiarSesionesDate(){
-        if(rol.getSesionGrupalSeleccionada() == null){
-            mostrarMensaje("No hay sesion grupal de tutoría seleccionada.");
+    public void cambiarGrupoDate(){
+        if(rol.getGrupoTutorSeleccionado() == null){
+            mostrarMensaje("No hay un grupo tutorado seleccionado");
             return;
         }
         inicializarTutoriaIndividual();
         inicializarListaTutoriasIndividuales();
+        inicializarListaCasosCriticos();
         actualizarListaTutoriasIndividuales();
     }
     
@@ -470,7 +454,7 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
     }
     
     public void actualizarListaTutoriasIndividuales(){
-        ResultadoEJB<List<DtoTutoriaIndividualCE>> res = ejb.buscaTutoriasIndividuales(rol.getSesionGrupalSeleccionada(), rol.getEventoSeleccionado());
+        ResultadoEJB<List<DtoTutoriaIndividualCE>> res = ejb.buscaTutoriasIndividuales(rol.getGrupoTutorSeleccionado().getGrupo(), rol.getEventoSeleccionado());
         if(res.getCorrecto()){
             rol.setListaDtoTutoriasIndividuales(res.getValor());
         }else{

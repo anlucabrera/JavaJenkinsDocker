@@ -50,8 +50,8 @@ public class ControladorPlantillasVIN implements Serializable {
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteConvenios() throws IOException, Throwable{
-        File f = new File(ejbReportesVINExcel.getReporteConvenios());
+    public void descargarReporteConvenios(Short ejercicioFiscal) throws IOException, Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteConvenios(ejercicioFiscal));
         Faces.sendFile(f, true);
     }
     

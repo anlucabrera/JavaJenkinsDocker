@@ -100,7 +100,6 @@ public class RegistroAsesoriaDocente extends ViewScopedRol implements Desarrolla
             rol.setEventoRegistroActivo(resEventoRegistro.getValor());
             rol.setPeriodoActivo(ejb.getPeriodoEscolarActivo().getValor().getPeriodo());
             rol.setPeriodosConCarga(resPeriodos.getValor());
-            cambiarPeriodo();
             initFiltros();
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -154,7 +153,7 @@ public class RegistroAsesoriaDocente extends ViewScopedRol implements Desarrolla
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(RegistroAsesoriaDocente.class.getName()).log(Level.SEVERE, null, ex);
         }
-        cambiarUnidad();
+        cambiarPeriodo();
     }
     
     /*************************************************************************************************************************/

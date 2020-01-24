@@ -113,7 +113,6 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
             rol.setEventoRegistroActivo(resEventoRegistro.getValor());
             rol.setPeriodoActivo(ejb.getPeriodoEscolarActivo().getValor().getPeriodo());
             rol.setPeriodosConCargaGrupo(resPeriodos.getValor());
-            cambiarPeriodo();
             initFiltros();
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -140,7 +139,7 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(RegistroAsesoriaDocente.class.getName()).log(Level.SEVERE, null, ex);
         }
-        cambiarSesiones();
+        cambiarPeriodo();
     }
     
     public void inicializarTutoriaGrupal(){
@@ -151,6 +150,7 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
         TutoriasGrupales tutoriasGrupales = new TutoriasGrupales();
         tutoriasGrupales.setSesionGrupal(rol.getSesionGrupalSeleccionada());
         tutoriasGrupales.setEventoRegistro(rol.getEventoSeleccionado().getEventoRegistro());
+        tutoriasGrupales.setOrdenDia(rol.getSesionGrupalSeleccionada().getActividadProgramada());
         rol.setTutoriaGrupal(tutoriasGrupales);
         
         Estudiante estudiantePye = new Estudiante();
@@ -179,11 +179,14 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
             return;
         }
         ResultadoEJB<List<DtoListadoTutores>> resListadoGruposTutores = ejb.listarGruposTutor(rol.getPeriodoSeleccionado(), rol.getDocenteLogueado());
-        if(!resListadoGruposTutores.getCorrecto()) mostrarMensajeResultadoEJB(resListadoGruposTutores);
-        else rol.setListadoGruposTutor(resListadoGruposTutores.getValor());
-        
+        if (!resListadoGruposTutores.getCorrecto()) {
+            mostrarMensajeResultadoEJB(resListadoGruposTutores);
+        } else {
+            rol.setListadoGruposTutor(resListadoGruposTutores.getValor());
+        }
+
         rol.setEventosPorPeriodo(ejb.getEventosRegistroPorPeriodo(rol.getPeriodoSeleccionado()).getValor());
-        
+
         cambiarGrupo();
     }
     

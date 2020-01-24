@@ -1063,7 +1063,6 @@ public class EjbRegistroAsesoriaTutoria {
             ti.setMotivo(tutoriaIndividual.getMotivo());
             ti.setAccionesObservaciones(tutoriaIndividual.getAccionesObservaciones());
             ti.setEventoRegistro(tutoriaIndividual.getEventoRegistro());
-            ti.setSesionGrupal(tutoriaIndividual.getSesionGrupal());
             if (tutoriaIndividual.getCasoCritico() == null) {
                 ti.setCasoCritico(null);
                 em.persist(ti);
@@ -1095,7 +1094,6 @@ public class EjbRegistroAsesoriaTutoria {
             ti.setMotivo(tutoriaIndividual.getMotivo());
             ti.setAccionesObservaciones(tutoriaIndividual.getAccionesObservaciones());
             ti.setEventoRegistro(tutoriaIndividual.getEventoRegistro());
-            ti.setSesionGrupal(tutoriaIndividual.getSesionGrupal());
             if (tutoriaIndividual.getCasoCritico() == null) {
                 ti.setCasoCritico(null);
                 em.merge(ti);
@@ -1159,11 +1157,11 @@ public class EjbRegistroAsesoriaTutoria {
         }
     }
     
-    public ResultadoEJB<List<DtoTutoriaIndividualCE>> buscaTutoriasIndividuales(SesionesGrupalesTutorias sesionGrupal, EventosRegistros eventoRegistro) {
+    public ResultadoEJB<List<DtoTutoriaIndividualCE>> buscaTutoriasIndividuales(Grupo grupo, EventosRegistros eventoRegistro) {
         try {
             List<TutoriasIndividuales> listaTutoriasIndividuales = new ArrayList<>();
-            listaTutoriasIndividuales = em.createQuery("SELECT ti FROM TutoriasIndividuales ti WHERE ti.sesionGrupal.sesionGrupal = :sesionGrupal AND ti.eventoRegistro = :eventoRegistro ORDER BY ti.tutoriaIndividual DESC", TutoriasIndividuales.class)
-                    .setParameter("sesionGrupal", sesionGrupal.getSesionGrupal())
+            listaTutoriasIndividuales = em.createQuery("SELECT ti FROM TutoriasIndividuales ti WHERE ti.estudiante.grupo.idGrupo = :grupo AND ti.eventoRegistro = :eventoRegistro ORDER BY ti.tutoriaIndividual DESC", TutoriasIndividuales.class)
+                    .setParameter("grupo", grupo.getIdGrupo())
                     .setParameter("eventoRegistro", eventoRegistro.getEventoRegistro())
                     .getResultList();
             if (listaTutoriasIndividuales.isEmpty()) {
@@ -1186,10 +1184,10 @@ public class EjbRegistroAsesoriaTutoria {
                        listaDto.add(dto);
                    }
                 });
-                return ResultadoEJB.crearCorrecto(listaDto, "Lista de tutorias individuales de la sesión y evento seleccionado");
+                return ResultadoEJB.crearCorrecto(listaDto, "Lista de tutorias individuales del grupo y evento seleccionado");
             }
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de tutorias individuales por sesión y evento de registro (EjbRegistroAsesoriaTutoria.buscaTutoriasIndividuales)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de tutorias individuales por grupo y evento de registro (EjbRegistroAsesoriaTutoria.buscaTutoriasIndividuales)", e, null);
         }
     }
     

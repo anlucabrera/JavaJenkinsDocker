@@ -16,8 +16,6 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.SesionesGrupalesTutorias;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutoriasIndividuales;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 
@@ -34,9 +32,6 @@ public class RegistroTutoriaIndividualRolTutor extends AbstractRol{
     
     @Getter     private     DtoListadoTutores                       grupoTutorSeleccionado;
     @Getter     private     List<DtoListadoTutores>                 listadoGruposTutor;
-    
-    @Getter     private     SesionesGrupalesTutorias                sesionGrupalSeleccionada;
-    @Getter     private     List<SesionesGrupalesTutorias>          listaSesionesGrupalesTutorias;
     
     @Getter     private     DtoTutoriaIndividualCE                  dtoTutoriaIndividualCE;
     @Getter     @Setter     private                                 DtoTutoriaIndividualCE                        tutoriaIndividualSeleccionada;
@@ -101,7 +96,6 @@ public class RegistroTutoriaIndividualRolTutor extends AbstractRol{
 
     public void setGrupoTutorSeleccionado(DtoListadoTutores grupoTutorSeleccionado) {
         this.grupoTutorSeleccionado = grupoTutorSeleccionado;
-        this.setListaSesionesGrupalesTutorias(Collections.EMPTY_LIST);
     }
 
     public void setListadoGruposTutor(List<DtoListadoTutores> listadoGruposTutor) {
@@ -110,19 +104,6 @@ public class RegistroTutoriaIndividualRolTutor extends AbstractRol{
             grupoTutorSeleccionado = listadoGruposTutor.get(0);
         } else {
             grupoTutorSeleccionado = null;
-        }
-    }
-
-    public void setSesionGrupalSeleccionada(SesionesGrupalesTutorias sesionGrupalSeleccionada) {
-        this.sesionGrupalSeleccionada = sesionGrupalSeleccionada;
-    }
-
-    public void setListaSesionesGrupalesTutorias(List<SesionesGrupalesTutorias> listaSesionesGrupalesTutorias) {
-        this.listaSesionesGrupalesTutorias = listaSesionesGrupalesTutorias;
-        if(!listaSesionesGrupalesTutorias.isEmpty()){
-            sesionGrupalSeleccionada = listaSesionesGrupalesTutorias.get(0);
-        }else{
-            sesionGrupalSeleccionada = null;
         }
     }
     
