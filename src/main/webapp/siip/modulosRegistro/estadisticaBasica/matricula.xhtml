@@ -30,756 +30,758 @@
     </ui:define>
 
     <ui:define name="body">
-        <adm:breadcrumb title="Estadística Básica - Matricula"/>
-        <adm:sidebar collapsed="true"/>
-        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
-        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
-            <h1>
-                Esta página está disponible solo para pantallas superiores a 1024px.
-            </h1>
-        </p:panel>
-        <div class="box box-primary">
-            <div class="box-header with-border">
-                <div id="main-buttons" class="hidden-sm hidden-xs" >
-                    <p:outputPanel >
-                        <p:autoUpdate/>
-                        <p:toolbar id="tb">
-                            <f:facet name="left">
-                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
-                                    <p:spacer width="10" />
-                                    <c:if test="#{controladorArchivoMatriculaPerEsc.etapa eq etapa.MOSTRAR}">
-                                        <p:outputLabel value="Periodo: " for="periodo" />
-                                        <p:spacer width="3" />
-                                        <p:selectOneMenu id="periodo" converter="entityConverter"
-                                                         value="#{controladorMatriculaPeriodosEscolares.dto.periodo}" valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarMeses}"
-                                                         class="form-control" style="padding-top: 0px;">
-                                            <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
-                                            <p:ajax process="@this" update="@(form)" />
-                                        </p:selectOneMenu>
+        <c:if test="#{controladorEmpleado.empleadoLogeado eq 287}">
+            <adm:breadcrumb title="Estadística Básica - Matricula"/>
+            <adm:sidebar collapsed="true"/>
+            <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
+            <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+                <h1>
+                    Esta página está disponible solo para pantallas superiores a 1024px.
+                </h1>
+            </p:panel>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb">
+                                <f:facet name="left">
+                                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                                        <p:spacer width="10" />
+                                        <c:if test="#{controladorArchivoMatriculaPerEsc.etapa eq etapa.MOSTRAR}">
+                                            <p:outputLabel value="Periodo: " for="periodo" />
+                                            <p:spacer width="3" />
+                                            <p:selectOneMenu id="periodo" converter="entityConverter"
+                                                             value="#{controladorMatriculaPeriodosEscolares.dto.periodo}" valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarMeses}"
+                                                             class="form-control" style="padding-top: 0px;">
+                                                <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
+                                                <p:ajax process="@this" update="@(form)" />
+                                            </p:selectOneMenu>
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Mes: " for="mes" />
+                                            <p:spacer width="3" />
+                                            <p:selectOneMenu id="mes" value="#{controladorMatriculaPeriodosEscolares.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
+                                                <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
+                                                <p:ajax process="@this" listener="#{controladorMatriculaPeriodosEscolares.cargarListaPorEvento()}" update="@(form)" />
+                                            </p:selectOneMenu>
+                                        </c:if>
+                                    </h:form>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <h:form id="frmReporte">
+                                        <div class="btn-group">
+                                            <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
+                                        </div>
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:outputLabel value="Mes: " for="mes" />
-                                        <p:spacer width="3" />
-                                        <p:selectOneMenu id="mes" value="#{controladorMatriculaPeriodosEscolares.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
-                                            <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
-                                            <p:ajax process="@this" listener="#{controladorMatriculaPeriodosEscolares.cargarListaPorEvento()}" update="@(form)" />
-                                        </p:selectOneMenu>
-                                    </c:if>
-                                </h:form>
-                            </f:facet>
-                            <f:facet name="right">
-                                <h:form id="frmReporte">
-                                    <div class="btn-group">
-                                        <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
-                                    </div>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <c:if test="#{controladorArchivoMatriculaPerEsc.etapa eq etapa.CARGAR}">
-                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="matricula?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
-                                    </c:if>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasEB.descargarReporteEjercicioMatriculaPeriodoEscolar()}" target="_blank" title="Descargar Reporte de Matricula"><i class="fa fa-file-excel-o" /></p:commandLink>
-                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasEB.descargarPlantillaMatriculaPeriodoEscolar()}" target="_blank" title="Descargar Plantilla Matricula"><i class="fa fa-download" /></p:commandLink>
-                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                </h:form>
-                            </f:facet>
-                        </p:toolbar>
-                        <p:sticky target="tb" />
-                    </p:outputPanel>
+                                        <c:if test="#{controladorArchivoMatriculaPerEsc.etapa eq etapa.CARGAR}">
+                                            <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="matricula?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
+                                        </c:if>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasEB.descargarReporteEjercicioMatriculaPeriodoEscolar()}" target="_blank" title="Descargar Reporte de Matricula"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasEB.descargarPlantillaMatriculaPeriodoEscolar()}" target="_blank" title="Descargar Plantilla Matricula"><i class="fa fa-download" /></p:commandLink>
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                    </h:form>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
 
-                </div>
-                <p:separator/>
-
-                <div class="box-body">
-                    <!-- Sección de visualización y eliminación -->
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                            <h:form id="formMuestraDatosActivos">
-                                <c:if test="#{controladorArchivoMatriculaPerEsc.etapa eq etapa.MOSTRAR}">
-                                    <center>
-                                        <p:remoteCommand name="actualizar" update="@form:dtbMatriculaInicialConsultaEliminacion"/>
-                                        <p:dataTable id="dtbMatriculaInicialConsultaEliminacion" 
-                                                     emptyMessage="Sin datos en el periodo seleccionado." 
-                                                     value="#{controladorMatriculaPeriodosEscolares.dto.lista}"
-                                                     var="matricula"
-                                                     paginator="true" 
-                                                     rows="10" 
-                                                     rowsPerPageTemplate="10,20,30,40,50,100,200" 
-                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                     resizeMode="expand"
-                                                     tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
-                                                     lazy="true">
-                                            <p:columnGroup type="header">
-                                                <p:row>
-                                                    <p:column headerText="Acciones"             width="150"/>
-                                                    <p:column headerText="Periodo Escolar"      width="200" rendered="false"/>
-                                                    <p:column headerText="Programa Educativo"   width="600"/>
-                                                    <p:column headerText="Matricula"            width="100"/>
-                                                    <p:column headerText="Cuatrimestre"         width="100"/>
-                                                    <p:column headerText="Grupo"                width="100"/>
-                                                    <p:column headerText="CURP"                 width="400"/>
-                                                    <p:column headerText="Lengua Indígena"      width="300"/>
-                                                    <p:column headerText="Discapacidad"         width="300"/>
-                                                    <p:column headerText="Comunidad Indígena"   width="300"/>
-                                                </p:row>
-                                            </p:columnGroup>
-                                            <p:column style="text-align: center">
-                                                <div class="btn-group"> 
-                                                    <p:commandButton class="btn btn-info btn-sm"
-                                                                     icon="fa fa-trash"
-                                                                     actionListener="#{controladorMatriculaPeriodosEscolares.eliminarRegistro(matricula)}"
-                                                                     title="Eliminar matricula" 
-                                                                     rendered="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarActivo.periodo eq matricula.matricula.periodo}">
-                                                        <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro #{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula} ?" icon="ui-icon-alert" />
-                                                    </p:commandButton>
-                                                    <c:set var="evidencias" value="#{controladorMatriculaPeriodosEscolares.consultarEvidencias(matricula)}" />
-                                                    <p:commandButton actionListener="#{controladorMatriculaPeriodosEscolares.seleccionarRegistro(matricula)}"
-                                                                     class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
-                                                                     title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                    <p:commandButton actionListener="#{controladorMatriculaPeriodosEscolares.abrirAlineacionPOA(matricula)}"
-                                                                     class="btn btn-sm #{!empty matricula.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
-                                                                     title="Alineación a POA." />
-                                                    <p:commandButton actionListener="#{controladorMatriculaPeriodosEscolares.abrirEdicionMatriculaPeriodoEscolar(matricula.matricula)}"
-                                                                     class="btn btn-sm btn-info"
-                                                                     icon="fa fa-pencil-square-o"
-                                                                     title="Editar Matricula"/>
-                                                </div>
-                                            </p:column>  
-
-                                            <p:column rendered="false">
-                                                <h:outputText value="#{matricula.periodo}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.programaEducativo.nombre}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.matricula}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.cuatrimestre}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.grupo}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.curp}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.lenguaIndigena}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.discapacidad}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.comunidadIndigena}"/>
-                                            </p:column>
-
-                                            <f:facet name="footer">
-                                                En el mes de: #{controladorMatriculaPeriodosEscolares.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorMatriculaPeriodosEscolares.dto.lista)} registros de Matricula Inicial.
-                                            </f:facet>
-                                        </p:dataTable>
-                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
-                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
-                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
-                                        </p:confirmDialog>                                 
-                                    </center>
-                                </c:if>
-                            </h:form>
-                        </div>
                     </div>
+                    <p:separator/>
 
-                    <!--                    Evidencias-->
-                    <p:dialog id="modalCargaEvidencia" 
-                              widgetVar="modalCargaEvidencia" 
-                              width="700" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{controladorMatriculaPeriodosEscolares.dto.forzarAperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Carga de evidencias" 
-                              onHide="actualizar();"
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">
+                    <div class="box-body">
+                        <!-- Sección de visualización y eliminación -->
                         <div class="row">
-                            <div class="col-md-12">
-                                <p:toolbar>
-                                    <f:facet name="left">
-                                        <p:spacer width="10" />
-                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
-                                        <p:spacer width="10" />
-                                    </f:facet>
-                                    <f:facet name="right">
-                                        <o:form id="formularioEvidencia" 
-                                                enctype="multipart/form-data" class="form-inline"  >
-                                            <o:inputFile id="files" 
-                                                         value="#{controladorMatriculaPeriodosEscolares.dto.archivos}" 
-                                                         multiple="true" 
-                                                         class="form-control"
-                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" 
-                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
-                                                         maxsize="#{caster.evidenciasTamanioLimite}"
-                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
-                                                         required="true" 
-                                                         requiredMessage="Debe elegir al menos un archivo." >
-                                            </o:inputFile>
-                                            <h:commandButton id="btnuploadFiles" 
-                                                             value="Subir archivos" 
-                                                             class="btn btn-primary" 
-                                                             actionListener="#{controladorMatriculaPeriodosEscolares.subirEvidencias()}" />
-                                        </o:form>
-                                    </f:facet>
-                                </p:toolbar>
+                            <div class="col-lg-12 col-md-12">
+                                <h:form id="formMuestraDatosActivos">
+                                    <c:if test="#{controladorArchivoMatriculaPerEsc.etapa eq etapa.MOSTRAR}">
+                                        <center>
+                                            <p:remoteCommand name="actualizar" update="@form:dtbMatriculaInicialConsultaEliminacion"/>
+                                            <p:dataTable id="dtbMatriculaInicialConsultaEliminacion" 
+                                                         emptyMessage="Sin datos en el periodo seleccionado." 
+                                                         value="#{controladorMatriculaPeriodosEscolares.dto.lista}"
+                                                         var="matricula"
+                                                         paginator="true" 
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="10,20,30,40,50,100,200" 
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         resizeMode="expand"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                         lazy="true">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Acciones"             width="150"/>
+                                                        <p:column headerText="Periodo Escolar"      width="200" rendered="false"/>
+                                                        <p:column headerText="Programa Educativo"   width="600"/>
+                                                        <p:column headerText="Matricula"            width="100"/>
+                                                        <p:column headerText="Cuatrimestre"         width="100"/>
+                                                        <p:column headerText="Grupo"                width="100"/>
+                                                        <p:column headerText="CURP"                 width="400"/>
+                                                        <p:column headerText="Lengua Indígena"      width="300"/>
+                                                        <p:column headerText="Discapacidad"         width="300"/>
+                                                        <p:column headerText="Comunidad Indígena"   width="300"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column style="text-align: center">
+                                                    <div class="btn-group"> 
+                                                        <p:commandButton class="btn btn-info btn-sm"
+                                                                         icon="fa fa-trash"
+                                                                         actionListener="#{controladorMatriculaPeriodosEscolares.eliminarRegistro(matricula)}"
+                                                                         title="Eliminar matricula" 
+                                                                         rendered="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarActivo.periodo eq matricula.matricula.periodo}">
+                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro #{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula} ?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <c:set var="evidencias" value="#{controladorMatriculaPeriodosEscolares.consultarEvidencias(matricula)}" />
+                                                        <p:commandButton actionListener="#{controladorMatriculaPeriodosEscolares.seleccionarRegistro(matricula)}"
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:commandButton actionListener="#{controladorMatriculaPeriodosEscolares.abrirAlineacionPOA(matricula)}"
+                                                                         class="btn btn-sm #{!empty matricula.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
+                                                                         title="Alineación a POA." />
+                                                        <p:commandButton actionListener="#{controladorMatriculaPeriodosEscolares.abrirEdicionMatriculaPeriodoEscolar(matricula.matricula)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar Matricula"/>
+                                                    </div>
+                                                </p:column>  
+
+                                                <p:column rendered="false">
+                                                    <h:outputText value="#{matricula.periodo}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.programaEducativo.nombre}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.matricula}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.cuatrimestre}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.grupo}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.curp}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.lenguaIndigena}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.discapacidad}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.comunidadIndigena}"/>
+                                                </p:column>
+
+                                                <f:facet name="footer">
+                                                    En el mes de: #{controladorMatriculaPeriodosEscolares.dto.eventoSeleccionado.mes} hay un total de: #{fn:length(controladorMatriculaPeriodosEscolares.dto.lista)} registros de Matricula Inicial.
+                                                </f:facet>
+                                            </p:dataTable>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                            </p:confirmDialog>                                 
+                                        </center>
+                                    </c:if>
+                                </h:form>
                             </div>
                         </div>
-                        <h:form id="frmEvidencias" >
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-4"><p:outputLabel value="Programa Educativo " /></div>
-                                <div class="col-md-6"><p:outputLabel value="#{controladorMatriculaPeriodosEscolares.dto.registro.programaEducativo.nombre}" /></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4"><p:outputLabel value="Matricula " /></div>
-                                <div class="col-md-6"><p:outputLabel value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula}" /></div>
-                            </div>
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
-                                    <p:dataTable id="tblEvidencias" 
-                                                 value="#{controladorMatriculaPeriodosEscolares.dto.listaEvidencias}" 
-                                                 var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de este registro." 
-                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
-                                                 paginator="true" 
-                                                 rows="10" 
-                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
-                                                 paginatorAlwaysVisible="false" 
-                                                 paginatorPosition="bottom"
-                                                 >
-                                        <p:columnGroup type="header">
-                                            <p:row>
-                                                <p:column headerText="Opciones" width="80"/>
-                                                <p:column headerText="Archivo" />
-                                                <p:column headerText="Tipo"     width="80" />
-                                                <p:column headerText="Tamanio"  width="80" />
-                                            </p:row>
-                                        </p:columnGroup>
-                                        <p:column style="text-align: center;">
-                                            <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" 
-                                                                 icon="fa fa-trash" 
-                                                                 actionListener="#{controladorMatriculaPeriodosEscolares.eliminarEvidencia(evidencia)}" 
-                                                                 onsuccess="actualizar2();" 
-                                                                 title="Eliminar evidencia."
-                                                                 rendered="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarActivo.periodo eq controladorMatriculaPeriodosEscolares.dto.registro.matricula.periodo}">
-                                                    <p:confirm header="Eliminar evidencia" 
-                                                               message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
-                                                               icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                                <p:commandLink class="btn btn-info btn-sm" 
-                                                               ajax="false" 
-                                                               action="#{controladorMatriculaPeriodosEscolares.descargarEvidencia(evidencia)}" 
-                                                               target="_blank" 
-                                                               title="Descargar evidencia.">
-                                                    <i class="fa fa-download" />
-                                                </p:commandLink>
-                                            </div>
-                                        </p:column>
-                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
-                                        <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{controladorMatriculaPeriodosEscolares.dto.listaEvidencias.size()}.</span>
-                                        </f:facet>
-                                    </p:dataTable>
-                                </div>
-                            </div>
-                        </h:form>
-                    </p:dialog>
-                    <p:dialog id="modalAlineacion" 
-                              widgetVar="modalAlineacion" 
-                              width="900" 
-                              height="auto"  
-                              closeOnEscape="true"
-                              showEffect="fade" 
-                              hideEffect="fade"
-                              modal="true" 
-                              draggable="true" 
-                              header="Alineación a POA." 
-                              onHide="actualizar();"
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">                        
-                        <h:form id="frmAlineacion" >
+
+                        <!--                    Evidencias-->
+                        <p:dialog id="modalCargaEvidencia" 
+                                  widgetVar="modalCargaEvidencia" 
+                                  width="700" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{controladorMatriculaPeriodosEscolares.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Carga de evidencias" 
+                                  onHide="actualizar();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:toolbar>
                                         <f:facet name="left">
-
+                                            <p:spacer width="10" />
+                                            <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                            <p:spacer width="10" />
                                         </f:facet>
                                         <f:facet name="right">
-                                            <p:commandButton class="btn btn-primary" 
-                                                             value="Eliminar alineación" 
-                                                             icon="fa fa-trash" 
-                                                             actionListener="#{controladorMatriculaPeriodosEscolares.eliminarAlineacion()}" 
-                                                             rendered="#{!empty controladorMatriculaPeriodosEscolares.dto.registro.actividadAlineada}" >
-                                                <p:confirm header="Eliminar alineación" 
-                                                           message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." 
-                                                           icon="ui-icon-alert" />
-                                            </p:commandButton>
-                                            <p:commandButton class="btn btn-primary" 
-                                                             value="Guardar alineación" 
-                                                             icon="fa fa-save" 
-                                                             actionListener="#{controladorMatriculaPeriodosEscolares.alinearRegistro()}" 
-                                                             oncomplete="PF('modalAlineacion').hide();" />
+                                            <o:form id="formularioEvidencia" 
+                                                    enctype="multipart/form-data" class="form-inline"  >
+                                                <o:inputFile id="files" 
+                                                             value="#{controladorMatriculaPeriodosEscolares.dto.archivos}" 
+                                                             multiple="true" 
+                                                             class="form-control"
+                                                             accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                             acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                             maxsize="#{caster.evidenciasTamanioLimite}"
+                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                             required="true" 
+                                                             requiredMessage="Debe elegir al menos un archivo." >
+                                                </o:inputFile>
+                                                <h:commandButton id="btnuploadFiles" 
+                                                                 value="Subir archivos" 
+                                                                 class="btn btn-primary" 
+                                                                 actionListener="#{controladorMatriculaPeriodosEscolares.subirEvidencias()}" />
+                                            </o:form>
                                         </f:facet>
                                     </p:toolbar>
                                 </div>
                             </div>
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-4"><p:outputLabel value="Programa Educativo " /></div>
-                                <div class="col-md-6"><p:outputLabel value="#{controladorMatriculaPeriodosEscolares.dto.registro.programaEducativo.nombre}" /></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4"><p:outputLabel value="Matricula " /></div>
-                                <div class="col-md-6"><p:outputLabel value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula}" /></div>
-                            </div>
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
-                            <c:set var="col1" value="#{'col-md-2'}" />
-                            <c:set var="col2" value="#{'col-md-10'}" />
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="eje" value="#{controladorMatriculaPeriodosEscolares.dto.alineacionEje}" valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarEstrategias}" required="true"  converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
-                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                            <h:form id="frmEvidencias" >
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-4"><p:outputLabel value="Programa Educativo " /></div>
+                                    <div class="col-md-6"><p:outputLabel value="#{controladorMatriculaPeriodosEscolares.dto.registro.programaEducativo.nombre}" /></div>
                                 </div>
-                            </div>
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategia" value="#{controladorMatriculaPeriodosEscolares.dto.alineacionEstrategia}" valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
-                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                <div class="row">
+                                    <div class="col-md-4"><p:outputLabel value="Matricula " /></div>
+                                    <div class="col-md-6"><p:outputLabel value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula}" /></div>
                                 </div>
-                            </div>
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccion" value="#{controladorMatriculaPeriodosEscolares.dto.alineacionLinea}" valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarActividades}" required="true"  converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
-                                        <p:ajax process="lineaAccion" update="actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
-                                </div>
-                            </div>
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="actividad" value="#{controladorMatriculaPeriodosEscolares.dto.alineacionActividad}" required="true" converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
-                                        <p:ajax process="actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="actividad"><p:autoUpdate /></p:message>
-                                </div>
-                            </div>
-                        </h:form>
-                    </p:dialog>
-                    <!-- Sección de subida -->
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                            <h:form id="formPrevisualizacionDatos" prependId="false">
-                                <c:if test="#{controladorArchivoMatriculaPerEsc.etapa eq etapa.CARGAR}">
-                                    <center>
-                                        <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
-                                                     paginator="true"
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
+                                        <p:dataTable id="tblEvidencias" 
+                                                     value="#{controladorMatriculaPeriodosEscolares.dto.listaEvidencias}" 
+                                                     var="evidencia"
+                                                     emptyMessage="No se han registrado evidencias de este registro." 
+                                                     tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                     paginator="true" 
                                                      rows="10" 
-                                                     rowsPerPageTemplate="5,10,20,30,40,50"
-                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                     id="dtbMatriculaInicial"
-                                                     var="matricula" value="#{controladorMatriculaPeriodosEscolares.dto.lista}"
-                                                     resizeMode="expand"
-                                                     tableStyleClass="table-bordered table-hover table-condensed table-responsive">
-                                            <f:facet name="header">
-                                                Previsualización de datos
-                                            </f:facet>
-
+                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                     paginatorAlwaysVisible="false" 
+                                                     paginatorPosition="bottom"
+                                                     >
                                             <p:columnGroup type="header">
                                                 <p:row>
-                                                    <p:column headerText="Periodo Escolar"      width="200"/>
-                                                    <p:column headerText="Programa Educativo"   width="600"/>
-                                                    <p:column headerText="Matricula"            width="100"/>
-                                                    <p:column headerText="Cuatrimestre"         width="100"/>
-                                                    <p:column headerText="Grupo"                width="100"/>
-                                                    <p:column headerText="CURP"                 width="400"/>
-                                                    <p:column headerText="Lengua Indígena"      width="300"/>
-                                                    <p:column headerText="Discapacidad"         width="300"/>
-                                                    <p:column headerText="Comunidad Indígena"   width="300"/>
+                                                    <p:column headerText="Opciones" width="80"/>
+                                                    <p:column headerText="Archivo" />
+                                                    <p:column headerText="Tipo"     width="80" />
+                                                    <p:column headerText="Tamanio"  width="80" />
                                                 </p:row>
                                             </p:columnGroup>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.periodo}"/>
+                                            <p:column style="text-align: center;">
+                                                <div class="btn-group">
+                                                    <p:commandButton class="btn btn-info btn-sm" 
+                                                                     icon="fa fa-trash" 
+                                                                     actionListener="#{controladorMatriculaPeriodosEscolares.eliminarEvidencia(evidencia)}" 
+                                                                     onsuccess="actualizar2();" 
+                                                                     title="Eliminar evidencia."
+                                                                     rendered="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarActivo.periodo eq controladorMatriculaPeriodosEscolares.dto.registro.matricula.periodo}">
+                                                        <p:confirm header="Eliminar evidencia" 
+                                                                   message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" 
+                                                                   icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:commandLink class="btn btn-info btn-sm" 
+                                                                   ajax="false" 
+                                                                   action="#{controladorMatriculaPeriodosEscolares.descargarEvidencia(evidencia)}" 
+                                                                   target="_blank" 
+                                                                   title="Descargar evidencia.">
+                                                        <i class="fa fa-download" />
+                                                    </p:commandLink>
+                                                </div>
                                             </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.programaEducativo.nombre}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.matricula}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.cuatrimestre}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.grupo}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.curp}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.lenguaIndigena}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.discapacidad}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{matricula.matricula.comunidadIndigena}"/>
-                                            </p:column>
-
+                                            <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                             <f:facet name="footer">
-                                                Su archivo de excel contiene un total de: #{fn:length(controladorMatriculaPeriodosEscolares.dto.lista)} registros de Matricula Inicial.
+                                                <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{controladorMatriculaPeriodosEscolares.dto.listaEvidencias.size()}.</span>
                                             </f:facet>
                                         </p:dataTable>
-                                        <p></p>
-                                        <p:commandButton id="btnGuardarMatriculaInicial" 
-                                                         value="Guardar Datos" 
-                                                         actionListener="#{controladorMatriculaPeriodosEscolares.guardarMatriculaPeriodosEscolares()}" 
-                                                         icon="fa fa-pencil-square-o" 
-                                                         class="btn-primary" 
-                                                         update="formPrevisualizacionDatos"/>
-                                        <p:spacer width="5" />
-                                        <p:commandButton id="btnCancelar" 
-                                                         value="Cancelar" 
-                                                         actionListener="#{controladorMatriculaPeriodosEscolares.cancelarArchivo()}" 
-                                                         icon="fa fa-times-circle" 
-                                                         class="btn-danger" 
-                                                         update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
-                                    </center>
-                                </c:if>
+                                    </div>
+                                </div>
                             </h:form>
+                        </p:dialog>
+                        <p:dialog id="modalAlineacion" 
+                                  widgetVar="modalAlineacion" 
+                                  width="900" 
+                                  height="auto"  
+                                  closeOnEscape="true"
+                                  showEffect="fade" 
+                                  hideEffect="fade"
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Alineación a POA." 
+                                  onHide="actualizar();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">                        
+                            <h:form id="frmAlineacion" >
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:toolbar>
+                                            <f:facet name="left">
+
+                                            </f:facet>
+                                            <f:facet name="right">
+                                                <p:commandButton class="btn btn-primary" 
+                                                                 value="Eliminar alineación" 
+                                                                 icon="fa fa-trash" 
+                                                                 actionListener="#{controladorMatriculaPeriodosEscolares.eliminarAlineacion()}" 
+                                                                 rendered="#{!empty controladorMatriculaPeriodosEscolares.dto.registro.actividadAlineada}" >
+                                                    <p:confirm header="Eliminar alineación" 
+                                                               message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." 
+                                                               icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandButton class="btn btn-primary" 
+                                                                 value="Guardar alineación" 
+                                                                 icon="fa fa-save" 
+                                                                 actionListener="#{controladorMatriculaPeriodosEscolares.alinearRegistro()}" 
+                                                                 oncomplete="PF('modalAlineacion').hide();" />
+                                            </f:facet>
+                                        </p:toolbar>
+                                    </div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-4"><p:outputLabel value="Programa Educativo " /></div>
+                                    <div class="col-md-6"><p:outputLabel value="#{controladorMatriculaPeriodosEscolares.dto.registro.programaEducativo.nombre}" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4"><p:outputLabel value="Matricula " /></div>
+                                    <div class="col-md-6"><p:outputLabel value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula}" /></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                                <c:set var="col1" value="#{'col-md-2'}" />
+                                <c:set var="col2" value="#{'col-md-10'}" />
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="eje" value="#{controladorMatriculaPeriodosEscolares.dto.alineacionEje}" valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                            <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="eje"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="estrategia" value="#{controladorMatriculaPeriodosEscolares.dto.alineacionEstrategia}" valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                            <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="lineaAccion" value="#{controladorMatriculaPeriodosEscolares.dto.alineacionLinea}" valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                            <p:ajax process="lineaAccion" update="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="actividad" value="#{controladorMatriculaPeriodosEscolares.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                            <p:ajax process="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="actividad"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                        <!-- Sección de subida -->
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <h:form id="formPrevisualizacionDatos" prependId="false">
+                                    <c:if test="#{controladorArchivoMatriculaPerEsc.etapa eq etapa.CARGAR}">
+                                        <center>
+                                            <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                         paginator="true"
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         id="dtbMatriculaInicial"
+                                                         var="matricula" value="#{controladorMatriculaPeriodosEscolares.dto.lista}"
+                                                         resizeMode="expand"
+                                                         tableStyleClass="table-bordered table-hover table-condensed table-responsive">
+                                                <f:facet name="header">
+                                                    Previsualización de datos
+                                                </f:facet>
+
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Periodo Escolar"      width="200"/>
+                                                        <p:column headerText="Programa Educativo"   width="600"/>
+                                                        <p:column headerText="Matricula"            width="100"/>
+                                                        <p:column headerText="Cuatrimestre"         width="100"/>
+                                                        <p:column headerText="Grupo"                width="100"/>
+                                                        <p:column headerText="CURP"                 width="400"/>
+                                                        <p:column headerText="Lengua Indígena"      width="300"/>
+                                                        <p:column headerText="Discapacidad"         width="300"/>
+                                                        <p:column headerText="Comunidad Indígena"   width="300"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.periodo}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.programaEducativo.nombre}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.matricula}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.cuatrimestre}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.grupo}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.curp}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.lenguaIndigena}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.discapacidad}"/>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <h:outputText value="#{matricula.matricula.comunidadIndigena}"/>
+                                                </p:column>
+
+                                                <f:facet name="footer">
+                                                    Su archivo de excel contiene un total de: #{fn:length(controladorMatriculaPeriodosEscolares.dto.lista)} registros de Matricula Inicial.
+                                                </f:facet>
+                                            </p:dataTable>
+                                            <p></p>
+                                            <p:commandButton id="btnGuardarMatriculaInicial" 
+                                                             value="Guardar Datos" 
+                                                             actionListener="#{controladorMatriculaPeriodosEscolares.guardarMatriculaPeriodosEscolares()}" 
+                                                             icon="fa fa-pencil-square-o" 
+                                                             class="btn-primary" 
+                                                             update="formPrevisualizacionDatos"/>
+                                            <p:spacer width="5" />
+                                            <p:commandButton id="btnCancelar" 
+                                                             value="Cancelar" 
+                                                             actionListener="#{controladorMatriculaPeriodosEscolares.cancelarArchivo()}" 
+                                                             icon="fa fa-times-circle" 
+                                                             class="btn-danger" 
+                                                             update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
+                                        </center>
+                                    </c:if>
+                                </h:form>
+                            </div>
                         </div>
+
+                        <p:dialog id="modalEdicionMatriculaPeriodoEscolar" 
+                                  widgetVar="modalEdicionMatriculaPeriodoEscolar" 
+                                  width="700" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{controladorMatriculaPeriodosEscolares.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Edición de Matricula" 
+                                  onHide="actualizar();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
+                            <h:form id="frmEdicionMatriculaPeriodoEscolar">
+                                <div class="row">
+
+                                    <div class="col-sm-12 col-md-12">
+                                        <p:outputLabel value="Actualización de datos de la matricula: #{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula}"/>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12"><p:separator/></div>
+
+                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
+                                        <p:outputLabel id="mensaje" value="#{controladorMatriculaPeriodosEscolares.dto.mensaje}"/>
+                                        <br></br>
+                                    </div>
+
+                                    <!--Periodo Escolar-->
+                                    <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                        <p:outputLabel for="somPeriodoEscolar" value="Periodo Escolar: "/>
+                                        <p:spacer width="5" />
+                                        <br></br>
+                                        <p:selectOneMenu id="somPeriodoEscolar"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el Periodo Escolar"
+                                                         value="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.periodo}"
+                                                         filter="true" 
+                                                         filterPlaceholder="Buscar" 
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         style="padding-top: 0px;"
+                                                         disabled="true"
+                                                         >
+                                            <f:selectItem itemValue="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.periodo}" 
+                                                          itemLabel="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesInicio.mes}-#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesFin.mes}"
+                                                          itemDescription="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesInicio.mes}-#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesFin.mes}" />
+                                            <p:ajax process="somPeriodoEscolar" update="somCuatrimestre" />
+                                        </p:selectOneMenu>
+                                        <p:message for="somPeriodoEscolar" />
+                                    </div>
+
+                                    <!--Programa Educativo-->
+                                    <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                        <p:outputLabel for="somProgramasEducativos" value="Programa Educativo: "/>
+                                        <p:spacer width="5" />
+                                        <br></br>
+                                        <p:selectOneMenu id="somProgramasEducativos"
+                                                         required="true"
+                                                         requiredMessage="Seleccione el Programa Educativo"
+                                                         value="#{controladorMatriculaPeriodosEscolares.dto.programaEducativoMatriculaPeriodoEscolar}"
+                                                         valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarProgramaEducativo}"
+                                                         filter="true" 
+                                                         filterPlaceholder="Buscar" 
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         style="padding-top: 0px; width: 30em;"
+                                                         converter="entidadConverter2"
+
+                                                         >
+                                            <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.programasEducativos}" 
+                                                           var="proEdu"
+                                                           itemValue="#{proEdu}" 
+                                                           itemLabel="#{proEdu.nombre}"
+                                                           itemDescription="#{proEdu.nivelEducativo.nivel}" />
+                                            <p:ajax event="change" process="somProgramasEducativos" update="somCuatrimestre" />
+                                        </p:selectOneMenu>
+                                        <p:message for="somProgramasEducativos" />
+                                    </div>
+
+                                    <!--Matricula-->
+                                    <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                        <p:outputLabel value="Matricula: " for="spnMatricula" />
+                                        <p:spacer width="5" />
+                                        <br></br>
+                                        <p:spinner id="spnMatricula"
+                                                   label="spnMatricula"
+                                                   required="true"
+                                                   maxlength="6"
+                                                   requiredMessage="Favor de ingresar la matricula del estudiante"
+                                                   value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula}"
+                                                   styleClass="campo3Partes"
+                                                   disabled="true"
+                                                   />
+                                        <p:watermark for="spnMatricula" value="161210 *" />
+                                        <p:message for="spnMatricula" />
+                                    </div>
+
+                                    <!--Curp-->
+                                    <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                        <p:outputLabel value="CURP: " for="iptCURP"/>
+                                        <p:inputText id="iptCURP"
+                                                     label="iptCURP"
+                                                     maxlength="18"
+                                                     required="true"
+                                                     class="form-control"
+                                                     requiredMessage="Ingrese el CURP del estudiante"
+                                                     value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.curp}"
+                                                     onkeyup="this.value = this.value.toUpperCase()"
+                                                     >
+                                            <f:validateRegex pattern="[A-Z]{1}[AEIOU]{1}[A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HM]{1}(AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}[0-9]{1}$" />
+                                        </p:inputText>
+                                        <p:watermark for="iptCURP" value="AAGL980223MPLMTZ08 *" />
+                                        <p:message for="iptCURP" />
+                                    </div>
+
+                                    <!--Cuatrimestres-->
+                                    <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                        <p:outputLabel value="Cuatrimestres: " for="somCuatrimestre"/>
+                                        <p:spacer width="5" />
+                                        <br></br>
+                                        <p:selectOneMenu id="somCuatrimestre"
+                                                         required="true"
+                                                         requiredMessage="Seleccione cuatrimestre"
+                                                         value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.cuatrimestre}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         style="padding-top: 0px; width: 22.5em;"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - " 
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.programaEducativoMatriculaPeriodoEscolar.nivelEducativo.nivel eq 'TSU'? controladorMatriculaPeriodosEscolares.dto.cuatrimestresTSU : controladorMatriculaPeriodosEscolares.dto.cuatrimestresING}" 
+                                                           var="cuat"
+                                                           itemValue="#{cuat}" 
+                                                           itemLabel="#{cuat}"
+                                                           itemDescription="#{cuat}"/>
+                                            <p:ajax process="somCuatrimestre" />
+                                            <p:message for="somCuatrimestre" />
+                                        </p:selectOneMenu>
+                                    </div>
+
+                                    <!--Grupo-->
+                                    <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                        <p:outputLabel value="Grupos: " for="somGrupos"/>
+                                        <p:spacer width="5" />
+                                        <br></br>
+                                        <p:selectOneMenu id="somGrupos"
+                                                         required="true"
+                                                         requiredMessage="Seleccione grupo"
+                                                         value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.grupo}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         class="form-control"
+                                                         style="padding-top: 0px; width: 22.5em;"
+                                                         >
+                                            <f:selectItem itemLabel=" - Seleccione - " 
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.grupos}" 
+                                                           var="grupo"
+                                                           itemValue="#{grupo}" 
+                                                           itemLabel="#{grupo}"
+                                                           itemDescription="#{grupo}"/>
+                                            <p:ajax process="somGrupos" />
+                                            <p:message for="somGrupos" />
+                                        </p:selectOneMenu>
+                                    </div>
+
+                                    <!--Lengua Indigena-->
+                                    <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                        <p:outputLabel value="Lengua Indígena: " for="iptLenguaIndigena"/>
+                                        <p:inputText id="iptLenguaIndigena"
+                                                     label="iptLenguaIndigena"
+                                                     maxlength="255"
+                                                     required="true"
+                                                     class="form-control"
+                                                     requiredMessage="Ingrese la lengua indígena del estudiante, en caso de que no aplique, favor de ingresar N/A"
+                                                     value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.lenguaIndigena}"/>
+                                        <p:watermark for="iptLenguaIndigena" value="Totonaca *" />
+                                        <p:message for="iptLenguaIndigena" />
+                                    </div>
+
+                                    <!--Discapacidad-->
+                                    <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                        <p:outputLabel value="Discapacidad: " for="iptDiscapacidad"/>
+                                        <p:inputText id="iptDiscapacidad"
+                                                     label="iptDiscapacidad"
+                                                     maxlength="255"
+                                                     required="true"
+                                                     class="form-control"
+                                                     requiredMessage="Ingrese la discapacidad del estudiante, en caso de que no aplique, favor de ingresar N/A"
+                                                     value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.discapacidad}"/>
+                                        <p:watermark for="iptDiscapacidad" value="Hipoacusia *" />
+                                        <p:message for="iptDiscapacidad" />
+                                    </div>
+
+                                    <!--Comunidad Indigena-->
+                                    <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                        <p:outputLabel value="Comunidad Indígena: " for="iptComunidadIndigena"/>
+                                        <p:inputText id="iptComunidadIndigena"
+                                                     label="iptComunidadIndigena"
+                                                     maxlength="255"
+                                                     required="true"
+                                                     class="form-control"
+                                                     requiredMessage="Ingrese la comunidad indígena del estudiante, en caso de que no aplique, favor de ingresar N/A"
+                                                     value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.comunidadIndigena}"/>
+                                        <p:watermark for="iptComunidadIndigena" value="Aucatlan *" />
+                                        <p:message for="iptComunidadIndigena" />
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                    <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                        <center>
+                                            <p:commandButton id="btnEditaMatriculaPeriodoEscolar"
+                                                             value="Actualizar Cambios"
+                                                             icon="fa fa-save"
+                                                             class="btn-primary"
+                                                             actionListener="#{controladorMatriculaPeriodosEscolares.editaMatriculaPeriodoEscolar}"
+                                                             update="@form:frmEdicionMatriculaPeriodoEscolar" 
+                                                             process="@form:frmEdicionMatriculaPeriodoEscolar"
+                                                             />
+                                        </center>
+                                    </div>
+
+                                </div>
+                            </h:form>
+                        </p:dialog>
+
                     </div>
 
-                    <p:dialog id="modalEdicionMatriculaPeriodoEscolar" 
-                              widgetVar="modalEdicionMatriculaPeriodoEscolar" 
-                              width="700" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{controladorMatriculaPeriodosEscolares.dto.forzarAperturaDialogo}"
+                    <p:dialog widgetVar="modalCargaArchivo" 
+                              width="400" 
+                              height="auto" 
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
-                              draggable="true" 
-                              header="Edición de Matricula" 
-                              onHide="actualizar();"
+                              header="Carga de Archivo" 
                               styleClass="panel panel-primary" 
                               responsive="true" 
                               resizable="false" 
                               maximizable="false">
-                        <h:form id="frmEdicionMatriculaPeriodoEscolar">
-                            <div class="row">
-
-                                <div class="col-sm-12 col-md-12">
-                                    <p:outputLabel value="Actualización de datos de la matricula: #{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula}"/>
+                        <center>
+                            <h:form id="formularioContenedor" enctype="multipart/form-data" >
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <o:inputFile id="file" 
+                                                     value="#{controladorArchivoMatriculaPerEsc.file}"
+                                                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+                                                     acceptMessage="Solo se permiten archivos XLSX."
+                                                     maxsize="#{100*1024*1024}"
+                                                     maxsizeMessage="El tamaño máximo permitido son 100MB."
+                                                     required="true" 
+                                                     requiredMessage="Debe elegir un archivo." >
+                                        </o:inputFile>
+                                        <h:message id="messageForFile" for="file" />
+                                    </div>
+                                    <p:separator />
+                                    <div class="col-md-12">
+                                        <h:commandButton id="btnuploadFile" 
+                                                         value="Subir archivo" 
+                                                         class="btn-primary btn-info" 
+                                                         action="#{controladorArchivoMatriculaPerEsc.subirExcelMatriculaPeriodoEscolar()}"/>
+                                    </div>
                                 </div>
-                                <div class="col-sm-12 col-md-12"><p:separator/></div>
-
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
-                                    <p:outputLabel id="mensaje" value="#{controladorMatriculaPeriodosEscolares.dto.mensaje}"/>
-                                    <br></br>
-                                </div>
-
-                                <!--Periodo Escolar-->
-                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
-                                    <p:outputLabel for="somPeriodoEscolar" value="Periodo Escolar: "/>
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somPeriodoEscolar"
-                                                     required="true"
-                                                     requiredMessage="Seleccione el Periodo Escolar"
-                                                     value="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.periodo}"
-                                                     filter="true" 
-                                                     filterPlaceholder="Buscar" 
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     style="padding-top: 0px;"
-                                                     disabled="true"
-                                                     >
-                                        <f:selectItem itemValue="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.periodo}" 
-                                                      itemLabel="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesInicio.mes}-#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesFin.mes}"
-                                                      itemDescription="#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesInicio.mes}-#{controladorMatriculaPeriodosEscolares.dto.periodoEscolarMatriculaPeriodoEscolar.mesFin.mes}" />
-                                        <p:ajax process="somPeriodoEscolar" update="somCuatrimestre" />
-                                    </p:selectOneMenu>
-                                    <p:message for="somPeriodoEscolar" />
-                                </div>
-
-                                <!--Programa Educativo-->
-                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
-                                    <p:outputLabel for="somProgramasEducativos" value="Programa Educativo: "/>
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somProgramasEducativos"
-                                                     required="true"
-                                                     requiredMessage="Seleccione el Programa Educativo"
-                                                     value="#{controladorMatriculaPeriodosEscolares.dto.programaEducativoMatriculaPeriodoEscolar}"
-                                                     valueChangeListener="#{controladorMatriculaPeriodosEscolares.actualizarProgramaEducativo}"
-                                                     filter="true" 
-                                                     filterPlaceholder="Buscar" 
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     style="padding-top: 0px; width: 30em;"
-                                                     converter="entidadConverter2"
-
-                                                     >
-                                        <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.programasEducativos}" 
-                                                       var="proEdu"
-                                                       itemValue="#{proEdu}" 
-                                                       itemLabel="#{proEdu.nombre}"
-                                                       itemDescription="#{proEdu.nivelEducativo.nivel}" />
-                                        <p:ajax event="change" process="somProgramasEducativos" update="somCuatrimestre" />
-                                    </p:selectOneMenu>
-                                    <p:message for="somProgramasEducativos" />
-                                </div>
-
-                                <!--Matricula-->
-                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Matricula: " for="spnMatricula" />
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:spinner id="spnMatricula"
-                                               label="spnMatricula"
-                                               required="true"
-                                               maxlength="6"
-                                               requiredMessage="Favor de ingresar la matricula del estudiante"
-                                               value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.matricula}"
-                                               styleClass="campo3Partes"
-                                               disabled="true"
-                                               />
-                                    <p:watermark for="spnMatricula" value="161210 *" />
-                                    <p:message for="spnMatricula" />
-                                </div>
-
-                                <!--Curp-->
-                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="CURP: " for="iptCURP"/>
-                                    <p:inputText id="iptCURP"
-                                                 label="iptCURP"
-                                                 maxlength="18"
-                                                 required="true"
-                                                 class="form-control"
-                                                 requiredMessage="Ingrese el CURP del estudiante"
-                                                 value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.curp}"
-                                                 onkeyup="this.value = this.value.toUpperCase()"
-                                                 >
-                                        <f:validateRegex pattern="[A-Z]{1}[AEIOU]{1}[A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HM]{1}(AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}[0-9]{1}$" />
-                                    </p:inputText>
-                                    <p:watermark for="iptCURP" value="AAGL980223MPLMTZ08 *" />
-                                    <p:message for="iptCURP" />
-                                </div>
-
-                                <!--Cuatrimestres-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Cuatrimestres: " for="somCuatrimestre"/>
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somCuatrimestre"
-                                                     required="true"
-                                                     requiredMessage="Seleccione cuatrimestre"
-                                                     value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.cuatrimestre}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     style="padding-top: 0px; width: 22.5em;"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - " 
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.programaEducativoMatriculaPeriodoEscolar.nivelEducativo.nivel eq 'TSU'? controladorMatriculaPeriodosEscolares.dto.cuatrimestresTSU : controladorMatriculaPeriodosEscolares.dto.cuatrimestresING}" 
-                                                       var="cuat"
-                                                       itemValue="#{cuat}" 
-                                                       itemLabel="#{cuat}"
-                                                       itemDescription="#{cuat}"/>
-                                        <p:ajax process="somCuatrimestre" />
-                                        <p:message for="somCuatrimestre" />
-                                    </p:selectOneMenu>
-                                </div>
-
-                                <!--Grupo-->
-                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Grupos: " for="somGrupos"/>
-                                    <p:spacer width="5" />
-                                    <br></br>
-                                    <p:selectOneMenu id="somGrupos"
-                                                     required="true"
-                                                     requiredMessage="Seleccione grupo"
-                                                     value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.grupo}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     class="form-control"
-                                                     style="padding-top: 0px; width: 22.5em;"
-                                                     >
-                                        <f:selectItem itemLabel=" - Seleccione - " 
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{controladorMatriculaPeriodosEscolares.dto.grupos}" 
-                                                       var="grupo"
-                                                       itemValue="#{grupo}" 
-                                                       itemLabel="#{grupo}"
-                                                       itemDescription="#{grupo}"/>
-                                        <p:ajax process="somGrupos" />
-                                        <p:message for="somGrupos" />
-                                    </p:selectOneMenu>
-                                </div>
-
-                                <!--Lengua Indigena-->
-                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Lengua Indígena: " for="iptLenguaIndigena"/>
-                                    <p:inputText id="iptLenguaIndigena"
-                                                 label="iptLenguaIndigena"
-                                                 maxlength="255"
-                                                 required="true"
-                                                 class="form-control"
-                                                 requiredMessage="Ingrese la lengua indígena del estudiante, en caso de que no aplique, favor de ingresar N/A"
-                                                 value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.lenguaIndigena}"/>
-                                    <p:watermark for="iptLenguaIndigena" value="Totonaca *" />
-                                    <p:message for="iptLenguaIndigena" />
-                                </div>
-
-                                <!--Discapacidad-->
-                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Discapacidad: " for="iptDiscapacidad"/>
-                                    <p:inputText id="iptDiscapacidad"
-                                                 label="iptDiscapacidad"
-                                                 maxlength="255"
-                                                 required="true"
-                                                 class="form-control"
-                                                 requiredMessage="Ingrese la discapacidad del estudiante, en caso de que no aplique, favor de ingresar N/A"
-                                                 value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.discapacidad}"/>
-                                    <p:watermark for="iptDiscapacidad" value="Hipoacusia *" />
-                                    <p:message for="iptDiscapacidad" />
-                                </div>
-
-                                <!--Comunidad Indigena-->
-                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
-                                    <p:outputLabel value="Comunidad Indígena: " for="iptComunidadIndigena"/>
-                                    <p:inputText id="iptComunidadIndigena"
-                                                 label="iptComunidadIndigena"
-                                                 maxlength="255"
-                                                 required="true"
-                                                 class="form-control"
-                                                 requiredMessage="Ingrese la comunidad indígena del estudiante, en caso de que no aplique, favor de ingresar N/A"
-                                                 value="#{controladorMatriculaPeriodosEscolares.dto.registro.matricula.comunidadIndigena}"/>
-                                    <p:watermark for="iptComunidadIndigena" value="Aucatlan *" />
-                                    <p:message for="iptComunidadIndigena" />
-                                </div>
-
-                                <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
-                                    <center>
-                                        <p:commandButton id="btnEditaMatriculaPeriodoEscolar"
-                                                         value="Actualizar Cambios"
-                                                         icon="fa fa-save"
-                                                         class="btn-primary"
-                                                         actionListener="#{controladorMatriculaPeriodosEscolares.editaMatriculaPeriodoEscolar}"
-                                                         update="@form:frmEdicionMatriculaPeriodoEscolar" 
-                                                         process="@form:frmEdicionMatriculaPeriodoEscolar"
-                                                         />
-                                    </center>
-                                </div>
-
-                            </div>
-                        </h:form>
+                                <p:blockUI block="@form:formularioContenedor" 
+                                           widgetVar="bloqueoCargaFile"
+                                           trigger="formularioContenedor:btnuploadFile">
+                                    Cargando archivo espere por favor.<br />
+                                </p:blockUI>
+                            </h:form>
+                        </center>
                     </p:dialog>
-
                 </div>
-
-                <p:dialog widgetVar="modalCargaArchivo" 
-                          width="400" 
-                          height="auto" 
-                          showEffect="fade" 
-                          hideEffect="fade" 
-                          modal="true" 
-                          header="Carga de Archivo" 
-                          styleClass="panel panel-primary" 
-                          responsive="true" 
-                          resizable="false" 
-                          maximizable="false">
-                    <center>
-                        <h:form id="formularioContenedor" enctype="multipart/form-data" >
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <o:inputFile id="file" 
-                                                 value="#{controladorArchivoMatriculaPerEsc.file}"
-                                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
-                                                 acceptMessage="Solo se permiten archivos XLSX."
-                                                 maxsize="#{100*1024*1024}"
-                                                 maxsizeMessage="El tamaño máximo permitido son 100MB."
-                                                 required="true" 
-                                                 requiredMessage="Debe elegir un archivo." >
-                                    </o:inputFile>
-                                    <h:message id="messageForFile" for="file" />
-                                </div>
-                                <p:separator />
-                                <div class="col-md-12">
-                                    <h:commandButton id="btnuploadFile" 
-                                                     value="Subir archivo" 
-                                                     class="btn-primary btn-info" 
-                                                     action="#{controladorArchivoMatriculaPerEsc.subirExcelMatriculaPeriodoEscolar()}"/>
-                                </div>
-                            </div>
-                            <p:blockUI block="@form:formularioContenedor" 
-                                       widgetVar="bloqueoCargaFile"
-                                       trigger="formularioContenedor:btnuploadFile">
-                                Cargando archivo espere por favor.<br />
-                            </p:blockUI>
-                        </h:form>
-                    </center>
-                </p:dialog>
             </div>
-        </div>
+        </c:if>
     </ui:define>
 </ui:composition>
