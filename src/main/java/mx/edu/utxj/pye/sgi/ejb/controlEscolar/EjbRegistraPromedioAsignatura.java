@@ -61,7 +61,7 @@ public class EjbRegistraPromedioAsignatura {
         try{
             System.out.println("EjbRegistraPromedioAsignatura.registrarMasivamentePromedios");
             ResultadoEJB<Integer> verificarRegistro = verificarRegistro();
-            System.out.println("verificarRegistro = " + verificarRegistro);
+//            System.out.println("verificarRegistro = " + verificarRegistro);
             if(!verificarRegistro.getCorrecto()) return ResultadoEJB.crearErroneo(3, verificarRegistro.getMensaje(), Point.class);
             final List<ResultadoEJB<BigDecimal>> resultadoEJBS = new Vector<>();
 
@@ -74,10 +74,11 @@ public class EjbRegistraPromedioAsignatura {
             }
 
             List<DtoCargaAcademica> cargasCalculadas = new ArrayList<>();
-            @NonNull List<DtoCargaAcademica> dtoCargaAcademicas = obtenerCargasAcademasPorPeriodo.getValor().stream().filter(dtoCargaAcademica -> dtoCargaAcademica.getCargaAcademica().getCarga() >= verificarRegistro.getValor()).limit(100).collect(Collectors.toList());
-            dtoCargaAcademicas.forEach(dtoCargaAcademica -> {
+            int generarPromediosRango = ep.leerPropiedadEntera("generarPromediosRango").orElse(1);
+            @NonNull List<DtoCargaAcademica> dtoCargaAcademicas = obtenerCargasAcademasPorPeriodo.getValor().stream().filter(dtoCargaAcademica -> dtoCargaAcademica.getCargaAcademica().getCarga() >= verificarRegistro.getValor()).limit(generarPromediosRango).collect(Collectors.toList());
+            dtoCargaAcademicas.parallelStream().forEach(dtoCargaAcademica -> {
                 System.out.println("dtoCargaAcademica " + cargasCalculadas.size() + " = " + dtoCargaAcademica);
-                ResultadoEJB<List<DtoEstudiante>> packDtoEstudiantesGrupo = ejbPacker.packDtoEstudiantesGrupo(dtoCargaAcademica);
+                ResultadoEJB<List<DtoEstudiante>> packDtoEstudiantesGrupo = ejbPacker.packDtoEstudiantesHistoricoGrupo(dtoCargaAcademica);
                 if(packDtoEstudiantesGrupo.getCorrecto()){
                     @NonNull List<DtoEstudiante> dtoEstudiantes = packDtoEstudiantesGrupo.getValor();
                     dtoEstudiantes.parallelStream().forEach(dtoEstudiante -> {
@@ -101,6 +102,7 @@ public class EjbRegistraPromedioAsignatura {
             reportarRegistro();
             return ResultadoEJB.crearCorrecto(resultado, "Conteo de resultados");
         }catch (Exception e){
+            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar ejecutar de forma masiva el registro de promedios por asignatura (EjbRegistraPromedioAsignatura.registrarMasivamentePromedios).", e, Point.class);
         }
     }

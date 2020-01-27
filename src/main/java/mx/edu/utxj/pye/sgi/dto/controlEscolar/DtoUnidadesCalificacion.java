@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import lombok.*;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
 
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @ToString @EqualsAndHashCode
 public class DtoUnidadesCalificacion implements Serializable {
@@ -53,6 +55,9 @@ public class DtoUnidadesCalificacion implements Serializable {
         if(!Objects.equals(dtoEstudiante.getPersona(), dtoCapturaCalificacion.getDtoEstudiante().getPersona())) throw  new Exception("Los datos del estudiante no coinciden con la línea de captura de calificación.");
 
         DtoUnidadesCalificacionPK pk = new DtoUnidadesCalificacionPK(dtoCargaAcademica, dtoEstudiante, dtoUnidadConfiguracion);
+//        System.out.println("dtoCapturaCalificacion = " + dtoEstudiante.getInscripciones().stream().map(DtoInscripcion::getInscripcion).map(Estudiante::getMatricula).collect(Collectors.toList()));
+//        if(dtoEstudiante.getAspirante().getIdAspirante() == 917)
+//            System.out.println("dtoCapturaCalificacion.getPromedio() = " + dtoCapturaCalificacion.getPromedio());
         calificacionMap.put(pk, dtoCapturaCalificacion);
     }
 
@@ -66,6 +71,7 @@ public class DtoUnidadesCalificacion implements Serializable {
             }
             else return BigDecimal.ZERO;
         }catch (NullPointerException e){
+            e.printStackTrace();
             return BigDecimal.ZERO;
         }
     }
