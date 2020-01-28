@@ -134,7 +134,7 @@ public class ControladorEstudianteRegistro implements Serializable{
 //            }
             
             
-            if (estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11 || estudiante.getGradoActual() == 10) {
+            if (estudiante.getGradoActual() == 5 || estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11 || estudiante.getGradoActual() == 10) {
                 procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
 
                 if (procesosIntexp == null) {
