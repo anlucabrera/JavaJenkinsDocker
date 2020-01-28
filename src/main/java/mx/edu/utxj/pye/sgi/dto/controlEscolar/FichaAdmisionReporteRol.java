@@ -25,7 +25,8 @@ public class FichaAdmisionReporteRol {
     @Getter @NonNull private List<AreasUniversidad> peActivas;
     // Concentrado
     @Getter @NonNull List<DtoReporteFichaAdmision> concentradoFichas;
-
+    //Reporte
+    @Getter @NonNull List<DtoReporteProyeccionFichas> reporte;
     public Boolean tieneAcceso(PersonalActivo personalActivo, UsuarioTipo usuarioTipo){
         if(personalActivo == null) return false;
         if(!usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) return false;
@@ -52,5 +53,8 @@ public class FichaAdmisionReporteRol {
 
     public void setConcentradoFichas(List<DtoReporteFichaAdmision> concentradoFichas) {
         this.concentradoFichas = concentradoFichas;
+    }
+    public void setReporte(List<DtoReporteProyeccionFichas> reporte) {
+        this.reporte = reporte;
     }
 }

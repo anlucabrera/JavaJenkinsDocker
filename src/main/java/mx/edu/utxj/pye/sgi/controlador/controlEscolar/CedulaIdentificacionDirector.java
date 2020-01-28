@@ -129,7 +129,11 @@ public class CedulaIdentificacionDirector extends ViewScopedRol implements Desar
         ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPlanEstudio(rol.getPlanEstudio(), rol.getPeriodo());
         if (!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
         rol.setGrupos(resgrupos.getValor());
-//        rol.setGrupoSelec(rol.getGrupos().get(0));
+        rol.setGrupoSelec(rol.getGrupos().get(0));
+        rol.setListaEstudiantes(new ArrayList<>());
+        ResultadoEJB<List<Listaalumnosca>> res=  ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
+        if(!res.getCorrecto()) mostrarMensajeResultadoEJB(res);
+        rol.setListaEstudiantes(res.getValor());
 //
     }
     /**

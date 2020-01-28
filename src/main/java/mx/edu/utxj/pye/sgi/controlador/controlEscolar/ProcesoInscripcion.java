@@ -96,10 +96,6 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
             documentosentregadosestudiante = new Documentosentregadosestudiante();
             procesosInscripcion = ejbFichaAdmision.getProcesoIncripcionTSU();
             listaAspirantesTSU = ejbProcesoInscripcion.listaAspirantesTSU(procesosInscripcion.getIdProcesosInscripcion());
-            listaPe = ejbSelectItemCE.itemPEAll();
-            listaAreasUniversidad = ejbAreasLogeo.listaProgramasEducativos();
-            listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
-
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
@@ -111,19 +107,25 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
             rol = new ProcesoInscripcionRolServiciosEscolares(filtro, serviciosEscolares, serviciosEscolares.getAreaOperativa());
             tieneAcceso = rol.tieneAcceso(serviciosEscolares);
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-
             rol.setServiciosEscolares(serviciosEscolares);
-            ResultadoEJB<EventoEscolar> resEvento = ejbProcesoInscripcion.verificarEvento();
-            if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
+            ResultadoEJB<EventoEscolar> resEvRegFichas = ejbProcesoInscripcion.verificarEventoRegistroFichas(); //Evento para registro de fichas
+            if(resEvRegFichas.getCorrecto()==true){rol.setEventoRegistroFichas(resEvRegFichas.getValor());}
+            //else {mostrarMensajeResultadoEJB(resEvRegFichas);}
+            //System.out.println("Registro de fichas "+ rol.getEventoRegistroFichas());
+            ResultadoEJB<EventoEscolar> resEvento = ejbProcesoInscripcion.verificarEventoIncipcion();  //Verifica evento de ProcesoInscripcion
+            if(resEvento.getCorrecto()==true){rol.setEventoIncripcion(resEvento.getValor());}
+            //else {mostrarMensajeResultadoEJB(resEvento);}
+            // System.out.println("Inscripcion"+ rol.getEventoRegistroFichas());
+            if(comprabarEventos()==false){tieneAcceso=false;}//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
             rol.setNivelRol(NivelRol.OPERATIVO);
-
             rol.setPeriodoActivo(resEvento.getValor().getPeriodo());
-
-            rol.setEventoActivo(resEvento.getValor());
-
+            ////////////
+            listaPe = ejbSelectItemCE.itemPEAll();
+            listaAreasUniversidad = ejbAreasLogeo.listaProgramasEducativos();
+            if(rol.getEventoIncripcion()!=null){ listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(rol.getEventoIncripcion().getPeriodo());}
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -134,6 +136,18 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
 //        map.entrySet().forEach(System.out::println);
         return mostrar(request, map.containsValue(valor));
+    }
+    public Boolean comprabarEventos(){
+         try{
+             Boolean acceso =false;
+             if(rol.getEventoIncripcion()!=null){acceso =true; }
+             else if(rol.getEventoRegistroFichas()!=null){acceso=true;}
+             else {acceso =false;}
+             return acceso;
+            }catch (Exception e){
+             mostrarExcepcion(e);
+             return false;
+         }
     }
     
     public void buscarFichaAdmision(){

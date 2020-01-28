@@ -32,5 +32,6 @@ public interface EjbProcesoInscripcion {
     public List<Estudiante> listaEstudiantesXPeriodo(Integer perido);
     public void actualizaEstudiante(Estudiante estudiante);
     public Iems buscaIemsByClave(Integer id);
-    public ResultadoEJB<EventoEscolar> verificarEvento();
+    public ResultadoEJB<EventoEscolar> verificarEventoIncipcion();
+    public ResultadoEJB<EventoEscolar> verificarEventoRegistroFichas();
 }
