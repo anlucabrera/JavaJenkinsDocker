@@ -381,6 +381,7 @@ public class EjbPacker {
 
             return ResultadoEJB.crearCorrecto(dtoCapturaCalificacion, "Captura de calificación empaquetada");
         }catch (Exception e){
+            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la captura de calificaciones a partir del empaquetado de estudiante y carga academica(EjbPacker.packCapturaCalificacion).", e, DtoCapturaCalificacion.class);
         }
     }
@@ -504,7 +505,7 @@ public class EjbPacker {
      */
     public ResultadoEJB<DtoUnidadesCalificacion> packDtoUnidadesCalificacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones, EventoEscolar eventoEscolar){
         try{
-            ResultadoEJB<List<DtoEstudiante>> res = packDtoEstudiantesGrupo(dtoCargaAcademica);
+            ResultadoEJB<List<DtoEstudiante>> res = packDtoEstudiantesHistoricoGrupo(dtoCargaAcademica);
             if(res.getCorrecto()) {
                 List<DtoEstudiante> dtoEstudiantes = res.getValor();
 
@@ -520,23 +521,26 @@ public class EjbPacker {
 
                 DtoUnidadesCalificacion dtoUnidadesCalificacion = new DtoUnidadesCalificacion(dtoCargaAcademica, dtoEstudiantes, dtoUnidadConfiguraciones, activaPorFecha, activaPorPermiso);
                 dtoEstudiantes.forEach(dtoEstudiante -> {
+//                    if(dtoEstudiante.getAspirante().getIdAspirante() == 917)
+//                        System.out.println("dtoEstudiante.getPersona() = " + dtoEstudiante.getPersona());
                     dtoUnidadConfiguraciones.forEach(dtoUnidadConfiguracion -> {
                         ResultadoEJB<DtoCapturaCalificacion> dtoCapturaCalificacionResultadoEJB = packCapturaCalificacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion);
                         if(dtoCapturaCalificacionResultadoEJB.getCorrecto()){
                             try {
-                                /*if(dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula() == 190575){
-                                    System.out.println("dtoCapturaCalificacionResultadoEJB.getValor() = " + dtoCapturaCalificacionResultadoEJB.getValor().getPromedio());
-                                }*/
+//                                if(dtoEstudiante.getAspirante().getIdAspirante() == 917)
+//                                    System.out.println("dtoCapturaCalificacionResultadoEJB.getValor() = " + dtoCapturaCalificacionResultadoEJB.getValor().getDtoCargaAcademica().getMateria());
                                 dtoUnidadesCalificacion.agregarCapturaCalificacion(dtoEstudiante, dtoUnidadConfiguracion, dtoCapturaCalificacionResultadoEJB.getValor());
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        }
+                        }else
+                            System.out.println("dtoCapturaCalificacionResultadoEJB = " + dtoCapturaCalificacionResultadoEJB);
                     });
                 });
                 return ResultadoEJB.crearCorrecto(dtoUnidadesCalificacion, "Empaqueta de calificaciones por unidad de un grupo.");
             }else return ResultadoEJB.crearErroneo(2, res.getMensaje(), DtoUnidadesCalificacion.class);
         }catch (Exception e){
+            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetas las calificaciones de todas la unidades de una materia(EjbPacker.packCapturaCalificacion).", e, DtoUnidadesCalificacion.class);
         }
     }
@@ -550,6 +554,39 @@ public class EjbPacker {
         try{
             Grupo grupo = em.find(Grupo.class, dtoCargaAcademica.getGrupo().getIdGrupo());
             List<DtoEstudiante> dtoEstudiantes = em.createQuery("select e from Estudiante e where e.grupo=:grupo and e.tipoEstudiante.idTipoEstudiante=1 order by e.aspirante.idPersona.apellidoPaterno, e.aspirante.idPersona.apellidoMaterno, e.aspirante.idPersona.nombre", Estudiante.class)
+                    .setParameter("grupo", grupo)
+                    .getResultStream()
+                    .distinct()
+                    .map(estudiante -> packEstudiante(estudiante))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .distinct()
+                    .sorted(Comparator.comparing(dtoEstudiante -> {
+                        String res = "";
+                        String paterno = dtoEstudiante.getAspirante().getIdPersona().getApellidoPaterno();
+                        String materno = dtoEstudiante.getAspirante().getIdPersona().getApellidoMaterno();
+                        String nombre = dtoEstudiante.getAspirante().getIdPersona().getNombre();
+                        if (paterno != null) res = res.concat(paterno);
+                        if (materno != null) res = res.concat(materno);
+                        if (nombre != null) res = res.concat(nombre);
+                        return res;
+                    }))
+                    .collect(Collectors.toList());
+            return ResultadoEJB.crearCorrecto(dtoEstudiantes, "Lista de estudiantes de un grupo ordenados por apellido y nombre");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar las lista de estudiantes de un grupo ordenados por apellido y nombre(EjbPacker.packCapturaCalificacion).", e, null);
+        }
+    }
+
+    /**
+     * Permite empaquetar la lista de estudiantes de un grupo, segun su carga académica
+     * @param dtoCargaAcademica Carga académica que determina grupo, docente y materia que se imparte
+     * @return Lista de empaquetados de estudiantes pertenecientes al grupo de la carga académica o código de error de lo contrario
+     */
+    public ResultadoEJB<List<DtoEstudiante>> packDtoEstudiantesHistoricoGrupo(DtoCargaAcademica dtoCargaAcademica){
+        try{
+            Grupo grupo = em.find(Grupo.class, dtoCargaAcademica.getGrupo().getIdGrupo());
+            List<DtoEstudiante> dtoEstudiantes = em.createQuery("select e from Estudiante e where e.grupo=:grupo order by e.aspirante.idPersona.apellidoPaterno, e.aspirante.idPersona.apellidoMaterno, e.aspirante.idPersona.nombre", Estudiante.class)
                     .setParameter("grupo", grupo)
                     .getResultStream()
                     .distinct()

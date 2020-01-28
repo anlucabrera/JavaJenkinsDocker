@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Representa a un Estudiante activo
  */
-@RequiredArgsConstructor @ToString @EqualsAndHashCode
+@RequiredArgsConstructor @ToString @EqualsAndHashCode(of = "persona")
 public class DtoEstudiante implements Serializable {
     @Getter @Setter @NonNull private Persona persona;
     @Getter @Setter @NonNull private Aspirante aspirante;
