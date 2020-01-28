@@ -96,7 +96,63 @@
                                 </h:form>
                                 <hr/>
                             </section>
-                        </p:panel>
+                    <section class="content">
+                        <h:form id="frmComparativo">
+                            <p:dataTable var="reporte" id="comparativo" value="#{fichaAdmisionReporte.rol.reporte}" styleClass="box-primary 'no-border':''" reflow="true"
+                                         paginator="false" rows="15" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                            >
+                                <f:facet name="header">
+                                    Reporte General
+                                    <br></br>
+
+                                    <p:commandLink  ajax="false">
+                                        <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                        <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="comparativo"
+                                                        fileName="reporte_fichas"/>
+                                    </p:commandLink>
+                                </f:facet>
+
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column rowspan="2" headerText="" />
+                                        <p:column style="width: 300px;" colspan="3" headerText="Registradas" />
+                                        <p:column style="width: 300px;" colspan="3" headerText="Proyectadas" />
+                                    </p:row>
+                                    <p:row>
+                                        <p:column headerText="Semanal"/>
+                                        <p:column headerText="Sabatino"/>
+                                        <p:column headerText="Total"/>
+                                        <p:column headerText="Semanal"/>
+                                        <p:column headerText="Sabatino"/>
+                                        <p:column headerText="Total"/>
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:column>
+                                    <h:outputText value="#{reporte.nombre}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{reporte.registradas.totalSemanal}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{reporte.registradas.totalSabatino}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{reporte.registradas.total}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{reporte.proyectadas.totalSemanal}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{reporte.proyectadas.totalSabatino}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{reporte.proyectadas.total}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                        <hr/>
+                    </section>
+                </p:panel>
             </c:if>
             <c:if test="#{!fichaAdmisionReporte.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">

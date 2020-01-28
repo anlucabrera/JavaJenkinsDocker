@@ -8,6 +8,7 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteFichaAdmision;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteProyeccionFichas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.FichaAdmisionReporteRol;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ProcesoInscripcionRolServiciosEscolares;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmisionReporte;
@@ -82,7 +83,7 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             //Obtiene PE activos
             getPE();
             getConcentrado();
-
+            getReporte();
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -119,6 +120,16 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             rol.setConcentradoFichas(concentrado);
             //System.out.println("Total " + rol.getConcentradoFichas().size());
 
+        }catch (Exception e){
+            mostrarExcepcion(e);
+        }
+    }
+    public void getReporte(){
+        try{
+            ResultadoEJB<List<DtoReporteProyeccionFichas>> resReporte = ejb.getReporte();
+            if(resReporte.getCorrecto()==true){
+                rol.setReporte(resReporte.getValor());
+            }else {mostrarMensajeResultadoEJB(resReporte);}
         }catch (Exception e){
             mostrarExcepcion(e);
         }

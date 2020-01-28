@@ -131,7 +131,7 @@ public class EjbCedulaIdentificacion {
         try{
             //TODO: Obtiene la lista de estudiantes general
             List<Estudiante> estudiantes = new ArrayList<>();
-            estudiantes =em.createQuery("select e from Estudiante e",Estudiante.class)
+            estudiantes =em.createQuery("select e from Estudiante e group by e.matricula",Estudiante.class)
             .getResultList()
             ;
             if(estudiantes ==null ){return  ResultadoEJB.crearErroneo(2,estudiantes,"No existen estudiantes");}
@@ -327,7 +327,7 @@ public class EjbCedulaIdentificacion {
             Estudiante estudiante = new Estudiante();
             if(matricula==null){return ResultadoEJB.crearErroneo(2,estudiante, "La matricula no debe ser nula");}
             else {
-                estudiante = em.createQuery("select e from Estudiante e where  e.matricula=:matricula", Estudiante.class)
+                estudiante = em.createQuery("select e from Estudiante e where  e.matricula=:matricula order by e.periodo desc", Estudiante.class)
                 .setParameter("matricula", matricula)
                 .getResultStream()
                 .findFirst()
