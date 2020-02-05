@@ -162,7 +162,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
     public BigDecimal getPromedioAsignaturaEstudiante(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull Estudiante estudiante){
         ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica, estudiante), dtoCargaAcademica, estudiante);
         if(res.getCorrecto()){
-            return res.getValor();
+            return res.getValor().setScale(2, RoundingMode.HALF_UP);
         }else{
             mostrarMensaje(
                     String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno(),
@@ -173,7 +173,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
     }
 
     public BigDecimal getPromedioFinal(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull Estudiante estudiante){
-        BigDecimal promedioOrdinario = getPromedioAsignaturaEstudiante(dtoCargaAcademica, estudiante);
+        BigDecimal promedioOrdinario = getPromedioAsignaturaEstudiante(dtoCargaAcademica, estudiante).setScale(2, RoundingMode.HALF_UP);
         BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal promedioFinal = BigDecimal.ZERO;
         if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -196,7 +196,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         BigDecimal totalMaterias = new BigDecimal(rol.getCargasEstudiante().size());
         BigDecimal suma = lista.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         promedioCuatrimestral = suma.divide(totalMaterias, RoundingMode.HALF_UP);
-        return promedioCuatrimestral.setScale(1, RoundingMode.HALF_UP);
+        return promedioCuatrimestral.setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal obtenerPromedioAcumulado(){
@@ -208,7 +208,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
             promedios.add(getPromedioCuatrimestral(estudiante));
         });
         suma = promedios.stream().map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add);
-        promedio = suma.divide(totalRegistro).setScale(1, RoundingMode.HALF_UP);
+        promedio = suma.divide(totalRegistro).setScale(2, RoundingMode.HALF_UP);
         return promedio;
     }
 

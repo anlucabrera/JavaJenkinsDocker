@@ -1,17 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.faces.model.SelectItem;
-import javax.persistence.TypedQuery;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
@@ -28,23 +17,34 @@ import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.faces.model.SelectItem;
+import javax.persistence.TypedQuery;
+import java.io.Serializable;
+import java.util.*;
+
 @Stateless
 public class EjbEncuestaServicios implements Serializable {
     private static final long serialVersionUID = 8258275727749911168L;
-    @EJB Facade f;
-    @EJB Facade2 f2;
-    @Getter @Setter private Integer periodo;
+    @EJB
+    Facade f;
+    @EJB
+    Facade2 f2;
+    @Getter
+    @Setter
+    private Integer periodo;
 
     /**
      * Metodo que ayuda a encontrar la evaluacion activa, detro de la tabla Evaluaciones
      * donde especifica el tipo de encuesta a aplicar y la fecha, comparando la fecha actual
-     * con la fecha de apertura y la fecha de cierre, para así encontrar la encuesta. 
+     * con la fecha de apertura y la fecha de cierre, para así encontrar la encuesta.
      */
     public Evaluaciones getEvaluacionActiva() {
         TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
         q.setParameter("tipo", "Servicios");
         q.setParameter("fecha", new Date());
-        
+
         List<Evaluaciones> l = q.getResultList();
         if(l.isEmpty()){
             return new Evaluaciones();
@@ -52,7 +52,7 @@ public class EjbEncuestaServicios implements Serializable {
             return l.get(0);
         }
     }
-    
+
     /**
      * Metodo que ayuda a obtener un resultado a partir del evaluador, aplicando una condicion para verificar si este
      * ya se encuentra definido dentro de la tabla EncuestasServiciosResultados.
@@ -308,9 +308,9 @@ public class EjbEncuestaServicios implements Serializable {
         }
     }
 
-    
+
     /**
-     * Metodo con dos posibles opciones (falso ó verdadero) que ayuda a realizar la actualizacion 
+     * Metodo con dos posibles opciones (falso ó verdadero) que ayuda a realizar la actualizacion
      * del objeto EncuestaServiciosResultados de acuerdo al estudiante.
      */
     public boolean actualizarResultado(EncuestaServiciosResultados resultado) {
@@ -318,17 +318,17 @@ public class EjbEncuestaServicios implements Serializable {
             f.setEntityClass(EncuestaServiciosResultados.class);
             f.edit(resultado);
         }
-        
-        Comparador<EncuestaServiciosResultados> comparador = new ComparadorEncuestaServicios();        
+
+        Comparador<EncuestaServiciosResultados> comparador = new ComparadorEncuestaServicios();
         return comparador.isCompleto(resultado);
     }
 
     /**
-     * 
+     *
      * @param resultado
      * @param pregunta
      * @param respuesta
-     * @param respuestas 
+     * @param respuestas
      */
     public void actualizarRespuestaPorPregunta(EncuestaServiciosResultados resultado, String pregunta, String respuesta, Map<String,String> respuestas) {
         switch (pregunta.trim()) {
@@ -409,7 +409,7 @@ public class EjbEncuestaServicios implements Serializable {
             case "p75": resultado.setR75(Short.parseShort(respuesta)); break;
             case "p76": resultado.setR76(respuesta); break;
         }
-        
+
         respuestas.put(pregunta, respuesta);
     }
 
@@ -419,7 +419,7 @@ public class EjbEncuestaServicios implements Serializable {
      */
     public List<Apartado> getApartados() {
         List<Apartado> l = new ArrayList<>();
-        
+
         Apartado a1 = new Apartado(1f);
         a1.setContenido("Orientación a los estudiantes en su desarrollo personal y pedagógico.");
         a1.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 1f, 1f, "Al solicitar el servicio de psicopedagogía el tiempo de respuesta fue:", ""));
@@ -427,7 +427,7 @@ public class EjbEncuestaServicios implements Serializable {
         a1.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 1f, 3f, "El nivel en que se cumplieron mis expectativas y necesidades, es:", ""));
         a1.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 1f, 4f, "Considero que el servicio de apoyo psicopedagógico es:", ""));
         l.add(a1);
-        
+
         Apartado a2 = new Apartado(2f);
         a2.setContenido("Actividades que promueven y facilitan el conocimiento de las artes, tales como danza, música, teatro.");
         a2.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 2f, 5f, "Las opciones que me ofrece la Universidad en cuanto a talleres artísticos son:", ""));
@@ -435,7 +435,7 @@ public class EjbEncuestaServicios implements Serializable {
         a2.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 2f, 7f, "La infraestructura física del taller artístico y el equipamiento de éste me parece que es:", ""));
         a2.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 2f, 8f, "El horario asignado a la actividad artística que practico me parece:", ""));
         l.add(a2);
-        
+
         Apartado a3 = new Apartado(3f);
         a3.setContenido("Atención y preservación de la salud (Interna).");
         a3.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 3f, 9f, "La atención que recibo en el servicio médico la califico como:", ""));
@@ -444,13 +444,13 @@ public class EjbEncuestaServicios implements Serializable {
         a3.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 3f, 12f, "Cuando voy a consulta médica el material de curación o medicamentos que se me proporciona son:", ""));
         a3.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 3f, 13f, "El tiempo que espero para recibir atención médica es:", ""));
         l.add(a3);
-        
+
         Apartado a4 = new Apartado(4f);
         a4.setContenido("Atención y preservación de la salud (Externa).");
         a4.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 4f, 14f, "La oportunidad con que recibo la información sobre el trámite de inscripción al IMSS:", ""));
         a4.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 4f, 15f, "La atención que me brindó el personal de la UT, que realiza el trámite del IMSS fue:", ""));
         l.add(a4);
-        
+
         Apartado a5 = new Apartado(5f);
         a5.setContenido("Fomento de la salud por medio de actividades deportivas.");
         a5.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 5f, 16f, "En general, el desempeño de los entrenadores deportivos  me parece:", ""));
@@ -458,7 +458,7 @@ public class EjbEncuestaServicios implements Serializable {
         a5.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 5f, 18f, "El material deportivo con que cuenta el departamento de deportes lo califico como:", ""));
         a5.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 5f, 19f, "El grado en que satisfacen mis intereses los deportes que ofrece la universidad es:", ""));
         l.add(a5);
-        
+
         Apartado a6 = new Apartado(6f);
         a6.setContenido("Actividades sistemáticas de orientación y apoyo en el desempeño personal y académico de alumno (Tutoría).");
         a6.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 6f, 20f, "¿Cómo considera la cordialidad y capacidad del tutor para lograr crear un clima de confianza para que usted pueda exponer su problemática?", ""));
@@ -469,7 +469,7 @@ public class EjbEncuestaServicios implements Serializable {
         a6.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 6f, 25f, "¿Como ha mejorado la participación en el programa de tutoría en su desempeño académico?", ""));
         a6.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 6f, 26f, "¿El programa de tutoría, lo considera que está?", ""));
         l.add(a6);
-        
+
         Apartado a7 = new Apartado(7f);
         a7.setContenido("Actividades sistemáticas de orientación y apoyo en el desempeño personal y académico de alumno (Asesoría Académica).");
         a7.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 7f, 27f, "¿La capacidad que tiene el asesor para resolver dudas académicas, la considera?", ""));
@@ -477,7 +477,7 @@ public class EjbEncuestaServicios implements Serializable {
         a7.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 7f, 29f, "El tiempo que me asignan para la asesoría académica es:", ""));
         a7.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 7f, 30f, "La asesoría académica aclara mis dudas:", ""));
         l.add(a7);
-        
+
         Apartado a8 =  new Apartado(8f);
         a8.setContenido("Servicio de alimentos");
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 8f, 31f, "La atención que recibo en la cafetería, es:", ""));
@@ -486,7 +486,7 @@ public class EjbEncuestaServicios implements Serializable {
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 8f, 34f, "La cantidad de comida que recibo por lo que pago es:", ""));
         a8.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 8f, 35f, "Los precios que se manejan en la cafetería son accesibles para mí:", ""));
         l.add(a8);
-        
+
         Apartado a9 =  new Apartado(9f);
         a9.setContenido("Actividades que favorecen el crecimiento personal, a través de pláticas, talleres, conferencias, etc.");
         a9.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 9f, 36f, "Participar en las actividades de desarrollo humano, me ayuda a ser una persona más responsable y consciente de mis decisiones, de manera:", ""));
@@ -495,7 +495,7 @@ public class EjbEncuestaServicios implements Serializable {
         a9.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 9f, 39f, "Las experiencias obtenidas en estas actividades las he aplicado en mi vida cotidiana:", ""));
         a9.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 9f, 40f, "El desempeño de los conductores de las actividades de desarrollo humano lo califico como:", ""));
         l.add(a9);
-        
+
         Apartado a10 =  new Apartado(10f);
         a10.setContenido("Apoyo bibliográfico para complemento o refuerzo del aprendizaje");
         a10.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 10f, 41f, "El servicio y la actitud del personal que me atiende es:", ""));
@@ -507,7 +507,7 @@ public class EjbEncuestaServicios implements Serializable {
         a10.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 10f, 47f, "Los servicios tales como: préstamos de libros, fotocopiado y otros que ofrece la biblioteca satisfacen mis necesidades:", ""));
         a10.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 10f, 48f, "El número de computadoras conectadas a Internet, disponibles en la biblioteca,  es suficiente para satisfacer mis necesidades:", ""));
         l.add(a10);
-        
+
         Apartado a11 =  new Apartado(11f);
         a11.setContenido("Instalaciones adecuadas para las diferentes actividades curriculares");
         a11.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 11f, 49f, "El número de computadoras disponibles en la UT satisface la demanda de los estudiantes:", ""));
@@ -519,7 +519,7 @@ public class EjbEncuestaServicios implements Serializable {
         a11.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 11f, 55f, "Considero el equipo y mobiliario de las aulas y laboratorios como:", ""));
         a11.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 11f, 56f, "Los cubículos destinados a los profesores, para recibir la tutoría o la asesoría académica los considero:", ""));
         l.add(a11);
-        
+
         Apartado a12 =  new Apartado(12f);
         a12.setContenido("Traslado de los estudiantes a la universidad");
         a12.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 12f, 57f, "Las rutas actuales son suficientes para trasladarme a la institución:", ""));
@@ -527,7 +527,7 @@ public class EjbEncuestaServicios implements Serializable {
         a12.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 12f, 59f, "Los conductores de transporte público respetan las tarifas de descuento para estudiantes:", ""));
         a12.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 12f, 60f, "El desempeño en general de los conductores es:", ""));
         l.add(a12);
-        
+
         Apartado a13 =  new Apartado(13f);
         a13.setContenido("Espacios de expresión con los estudiantes, tales como: radio, revista, etc.");
         a13.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 13f, 61f, "Los medios de expresión de la universidad son adecuados para mí:", ""));
@@ -535,7 +535,7 @@ public class EjbEncuestaServicios implements Serializable {
         a13.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 13f, 63f, "A través de estos medios realmente puedo expresar lo que deseo:", ""));
         a13.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 13f, 64f, "Los medios de expresión de los estudiantes contribuyen a mi propia identificación:", ""));
         l.add(a13);
-        
+
         Apartado a14 =  new Apartado(14f);
         a14.setContenido("Estímulos al desempeño académico de los estudiantes");
         a14.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 14f, 65f, "Las convocatorias para becas se publican en tiempo y forma:", ""));
@@ -545,14 +545,14 @@ public class EjbEncuestaServicios implements Serializable {
         a14.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 14f, 69f, "El horario de atención es:", ""));
         a14.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 14f, 70f, "El trato que he recibido en los trámites de beca es :", ""));
         l.add(a14);
-        
+
         Apartado a15 =  new Apartado(15f);
         a15.setContenido("Bolsa de trabajo");
         a15.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 15f, 71f, "Los puestos que se ofrecen en la bolsa de trabajo son acordes a la formación académica:", ""));
         a15.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 15f, 72f, "El desempeño del personal de la bolsa de trabajo lo considera:", ""));
         a15.getPreguntas().add(new Opciones(EvaluacionesTipo.SERVICIOS.getNumero() , 15f, 73f, "El servicio de la bolsa de trabajo de la universidad es:", ""));
         l.add(a15);
-        
+
         return l;
     }
 
@@ -594,34 +594,43 @@ public class EjbEncuestaServicios implements Serializable {
      * @return Devuelve un objeto de Alumnos que se encuetra en la tabla misma.
      */
     public Alumnos obtenerAlumnos(String matricula) {
-         f.getEntityManager().createQuery("select v from VariablesProntuario as v", VariablesProntuario.class).getResultStream()
-                 .collect(Collectors.toList()).stream().filter(a -> a.getNombre().equals("periodoEncuestaServicios"))
-                 .forEach(x -> {periodo = Integer.parseInt(x.getValor());});
-        TypedQuery<Alumnos> q = f2.getEntityManager()
-                .createQuery("SELECT a from Alumnos a " 
+        String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaServicios")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        String grado1 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado1")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        String grado2 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado2")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        String grado3 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado3")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        String grado4 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado4")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        return f2.getEntityManager()
+                .createQuery("SELECT a from Alumnos a "
                         + "WHERE a.matricula=:matricula AND "
-                        + "(a.cveStatus = :estatus or a.cveStatus =:estatus2) AND "
-                        + "(a.grupos.gruposPK.cvePeriodo = :periodo or a.grupos.gruposPK.cvePeriodo =:periodo1)", Alumnos.class);
-        q.setParameter("estatus", 1);
-        q.setParameter("estatus2", 6);
-        q.setParameter("periodo", periodo);
-        q.setParameter("periodo1", periodo - 1);
-        q.setParameter("matricula", matricula);
-        List<Alumnos> l = q.getResultList();
-        if(!l.isEmpty()){
-            return l.get(0);
-        }else{
-            return null;
-        }
+                        + "a.cveStatus = :estatus AND "
+                        + "(a.gradoActual = :grado1 or a.gradoActual = :grado2 or a.gradoActual = :grado3 or a.gradoActual = :grado4) AND "
+                        + "a.grupos.gruposPK.cvePeriodo = :periodo", Alumnos.class)
+                .setParameter("estatus", 1)
+                .setParameter("grado1", Short.parseShort(grado1))
+                .setParameter("grado2", Short.parseShort(grado2))
+                .setParameter("grado3", Short.parseShort(grado3))
+                .setParameter("grado4", Short.parseShort(grado4))
+                .setParameter("periodo", Integer.parseInt(periodoEscolar))
+                .setParameter("matricula", matricula).getResultStream().findFirst().orElse(null);
     }
-    
+
     public PeriodosEscolares getPeriodo(Evaluaciones evaluacion) {
         f.setEntityClass(PeriodosEscolares.class);
         return (PeriodosEscolares)f.find(evaluacion.getPeriodo());
     }
-    
+
     public List<ListaEncuestaServicios> obtenerEncuestasRealizadas(){
-        TypedQuery<ListaEncuestaServicios> q=f.getEntityManager().createQuery("SELECT l FROM ListaEncuestaServicios l",ListaEncuestaServicios.class);
+        TypedQuery<ListaEncuestaServicios> q=f.getEntityManager().createQuery("SELECT l FROM ListaEncuestaServicios l", ListaEncuestaServicios.class);
         List<ListaEncuestaServicios> pr=q.getResultList();
         return pr;
     }

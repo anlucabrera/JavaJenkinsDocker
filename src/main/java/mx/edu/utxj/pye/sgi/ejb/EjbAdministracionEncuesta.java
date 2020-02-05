@@ -5,25 +5,28 @@
  */
 package mx.edu.utxj.pye.sgi.ejb;
 
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.ejb.EJB;
-import javax.ejb.Stateful;
-import javax.ejb.Stateless;
-import javax.persistence.TypedQuery;
-
 import lombok.Getter;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
+import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Grupos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Stateful;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -32,9 +35,19 @@ import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 @Stateful
 public class EjbAdministracionEncuesta {
 
-    @EJB Facade f;
-    @EJB Facade2 f2;
-    @Getter private Integer periodo;
+    @EJB
+    Facade f;
+    @EJB
+    Facade2 f2;
+    @Getter
+    private Integer periodo;
+    private EntityManager em;
+    private EntityManager em2;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager(); em2 = f2.getEntityManager();
+    }
 
     public List<Personal> esDirectorDeCarrera(Integer areaSup, Integer actividad, Integer catOp, Integer catOp1, Integer clave){
         TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and " +
@@ -65,6 +78,7 @@ public class EjbAdministracionEncuesta {
         q.setParameter("clave", clave);
         return q.getResultList();
     }
+
     public List<Personal> esPsicopedagogia(Short areaOp, Integer clave){
         TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaOperativa= :areaOp AND p.clave = :clave", Personal.class);
         q.setParameter("areaOp", areaOp);
@@ -73,24 +87,16 @@ public class EjbAdministracionEncuesta {
     }
 
     public List<Grupos> estTutordeGrupo(Integer cvePersona){
-        List<Periodos> periodos = f2.getEntityManager().createQuery("select p from Periodos as p", Periodos.class).getResultStream().collect(Collectors.toList());
-        periodos.forEach(x -> {
-            Boolean activo = true;
-            Boolean acv = x.getActivo().equals(true);
-            if (activo.equals(acv)) {
-                periodo = x.getPeriodosPK().getCvePeriodo();
-            }
-        });
-        //.setParameter("grado", grado) AND g.grado = :grado
-        List<Grupos> tutor = f2.getEntityManager().createQuery("SELECT g FROM Grupos as g WHERE (g.gruposPK.cvePeriodo = :periodo or g.gruposPK.cvePeriodo = :periodo2) "
-                + "AND g.cveMaestro = :cvePersona",Grupos.class)
-                .setParameter("periodo",periodo)
-                .setParameter("periodo2", periodo - 1)
+        String periodoEncuesta = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaServicios")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        return f2.getEntityManager().createQuery("SELECT g FROM Grupos as g WHERE (g.gruposPK.cvePeriodo = :periodo) "
+                + "AND g.cveMaestro = :cvePersona", Grupos.class)
+                .setParameter("periodo",Integer.parseInt(periodoEncuesta))
                 .setParameter("cvePersona", cvePersona)
-
                 .getResultStream().collect(Collectors.toList());
-        return tutor;
     }
+
     public Grupo esTutorCE (Integer clave){
         List<Periodos> periodos = f2.getEntityManager().createQuery("select p from Periodos as p", Periodos.class).getResultStream().collect(Collectors.toList());
         periodos.forEach(x -> {
@@ -100,7 +106,7 @@ public class EjbAdministracionEncuesta {
                 periodo = x.getPeriodosPK().getCvePeriodo();
             }
         });
-        Grupo tutorCE = f.getEntityManager().createQuery("select g from Grupo g where g.periodo=:periodo and g.tutor=:tutor",Grupo.class)
+        Grupo tutorCE = f.getEntityManager().createQuery("select g from Grupo g where g.periodo=:periodo and g.tutor=:tutor", Grupo.class)
                 .setParameter("periodo",periodo)
                 .setParameter("tutor",clave)
                 .getResultStream()
@@ -112,7 +118,7 @@ public class EjbAdministracionEncuesta {
 
     public boolean aperturaVisualizacionEncuesta(String tipo){
         List<AperturaVisualizacionEncuestas> ave = f.getEntityManager()
-                .createQuery("select a from AperturaVisualizacionEncuestas as a where a.encuesta = :tipo and :fecha BETWEEN a.fechaInicial AND a.fechaFinal",AperturaVisualizacionEncuestas.class)
+                .createQuery("select a from AperturaVisualizacionEncuestas as a where a.encuesta = :tipo and :fecha BETWEEN a.fechaInicial AND a.fechaFinal", AperturaVisualizacionEncuestas.class)
                 .setParameter("tipo", tipo)
                 .setParameter("fecha", new Date())
                 .getResultStream().collect(Collectors.toList());
@@ -124,7 +130,7 @@ public class EjbAdministracionEncuesta {
     }
 
     public List<AlumnosEncuestas> obtenerListaAlumnosNoAccedieron(){
-        TypedQuery<AlumnosEncuestas> q=f2.getEntityManager().createQuery("SELECT a FROM AlumnosEncuestas a",AlumnosEncuestas.class);
+        TypedQuery<AlumnosEncuestas> q=f2.getEntityManager().createQuery("SELECT a FROM AlumnosEncuestas a", AlumnosEncuestas.class);
         List<AlumnosEncuestas> pr=q.getResultList();
         if(!pr.isEmpty()){
             return pr;
@@ -134,7 +140,7 @@ public class EjbAdministracionEncuesta {
     }
 
     public Grupos obtenerCuatriPorTutor(Integer cveMaestro){
-        TypedQuery<Grupos> q=f2.getEntityManager().createQuery("SELECT g FROM Grupos g where g.gruposPK.cvePeriodo=47 AND g.cveMaestro=:cveMaestro",Grupos.class);
+        TypedQuery<Grupos> q=f2.getEntityManager().createQuery("SELECT g FROM Grupos g where g.gruposPK.cvePeriodo=47 AND g.cveMaestro=:cveMaestro", Grupos.class);
         q.setParameter("cveMaestro", cveMaestro);
         List<Grupos> l=q.getResultList();
         if(l.isEmpty()){
@@ -167,7 +173,16 @@ public class EjbAdministracionEncuesta {
         }
     }
 
-
+    public Boolean activarOrDesactivarVisualizacion(String nombre){
+        VariablesProntuario apertura = em.createQuery("select v from VariablesProntuario v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", nombre).getResultStream().findFirst().orElse(null);
+        assert apertura != null;
+        if(apertura.getValor().equals("1")){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
 
 
 }

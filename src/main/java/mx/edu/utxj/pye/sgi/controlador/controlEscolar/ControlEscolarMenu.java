@@ -71,7 +71,7 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{registroTutoriaIndividual.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{seguimientoCasoCriticoEspecialista.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{validacionPlanAccionTutorialDirector.tieneAcceso}"); if(get) return true;
-        get = Faces.evaluateExpressionGet("#{consultaCalificacionesCoordinadorAD.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{consultaCalificaciones.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{validacionTutoriaGrupalEstudiante.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{prestamoDocumentoServiciosEscolares.tieneAcceso}"); if(get) return true;  
         get = Faces.evaluateExpressionGet("#{reinscripcionAutonomaEstudiante.tieneAcceso}"); if(get) return true;
@@ -79,6 +79,8 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{validacionPlanAccionTutorialPsicopedagogia.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{fichaAdmisionReporte.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{casosCriticosEstudiante.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{evaluacionDesempenioAmbiental.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{administracionEvaluacionAmbiental.tieneAcceso}"); if(get) return true;
         return false;
     }
 }

@@ -5,22 +5,21 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
-import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
+import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
-
-import javax.inject.Inject;
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -33,58 +32,60 @@ public class AdministracionEncuesta implements Serializable{
     
     private static final long serialVersionUID = 9051830636523223017L;
 
-    @Getter @Setter private DtoEvaluaciones dto = new DtoEvaluaciones();
+    @Getter
+    @Setter
+    private DtoEvaluaciones dto = new DtoEvaluaciones();
     @Inject private LogonMB logonMB;
     @EJB private EjbAdministracionEncuesta ejbAdmEncuesta;
     
     
 
-@Getter private Boolean cargado = false;
+@Getter
+private Boolean cargado = false;
 
 
 
     @PostConstruct
     public void init() {
         try {
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
+            if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+            cargado = true;
             if(logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)){
                 dto.usuarioNomina=Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
+                dto.cveDirector = String.valueOf(logonMB.getListaUsuarioClaveNomina().getCvePersona());
                 dto.cveTrabajador= logonMB.getListaUsuarioClaveNomina().getCvePersona();
-                dto.cveDirector = dto.cveTrabajador.toString();
-                    if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18,48, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
-                        dto.director = true;
-                        aperturarEncuestas();
-                    }
-                    if (logonMB.getPersonal().getAreaOperativa() == 9 || dto.usuarioNomina.equals(579)) {
-                        dto.esDeIyE = true;
-                        aperturarEncuestas();
-                    }
-                    if(logonMB.getPersonal().getAreaOperativa() == 11 && logonMB.getPersonal().getAreaSuperior() == 2){
-                        dto.esServEst = true;
-                        aperturarEncuestas();
-                    }
-                    if(logonMB.getPersonal().getAreaOperativa() == 11 && dto.usuarioNomina.equals(111)){
-                        dto.esServEst2 = true;
-                    }
-                    if(!ejbAdmEncuesta.estTutordeGrupo(dto.cveTrabajador).isEmpty()){
-                        dto.tutor = true;
-                        aperturarEncuestas();
-                    }
-                    if(ejbAdmEncuesta.esTutorCE(dto.usuarioNomina)!=null){
-                        dto.tutorCe = true;
-                        aperturarEncuestas();
-                    }
-
-                    if (!ejbAdmEncuesta.esSecretarioAcademico(1, Short.parseShort("2"), Short.parseShort("38"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
-                        dto.esSecretario = true;
-                        aperturarEncuestas();
-                    }
-                    if(logonMB.getPersonal().getAreaOperativa() == 6){
-                        dto.planeacion = true;
-                        aperturarEncuestas();
-                    }
-                    if(!ejbAdmEncuesta.esPsicopedagogia( Short.parseShort("18"),  Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
+                if (!ejbAdmEncuesta.esDirectorDeCarrera(2, 2, 18,48, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+                    dto.director = ejbAdmEncuesta.activarOrDesactivarVisualizacion("director");
+                    aperturarEncuestas();
+                }
+                if (logonMB.getPersonal().getAreaOperativa() == 9 || dto.usuarioNomina.equals(579)) {
+                    dto.esDeIyE = ejbAdmEncuesta.activarOrDesactivarVisualizacion("iye");
+                    aperturarEncuestas();
+                }
+                if(logonMB.getPersonal().getAreaOperativa() == 11 && logonMB.getPersonal().getAreaSuperior() == 2){
+                    dto.esServEst = true;
+                    aperturarEncuestas();
+                }
+                if(logonMB.getPersonal().getAreaOperativa() == 11 && dto.usuarioNomina.equals(111)){
+                    dto.esServEst2 = true;
+                }
+                if(!ejbAdmEncuesta.estTutordeGrupo(dto.cveTrabajador).isEmpty()){
+                    dto.tutor = ejbAdmEncuesta.activarOrDesactivarVisualizacion("tutor");
+                    aperturarEncuestas();
+                }
+                if(ejbAdmEncuesta.esTutorCE(dto.usuarioNomina)!=null){
+                    dto.tutorCe = true;
+                    aperturarEncuestas();
+                }
+                if (!ejbAdmEncuesta.esSecretarioAcademico(1, Short.parseShort("2"), Short.parseShort("38"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
+                    dto.esSecretario = ejbAdmEncuesta.activarOrDesactivarVisualizacion("secretario");
+                    aperturarEncuestas();
+                }
+                if(logonMB.getPersonal().getAreaOperativa() == 6){
+                    dto.planeacion = ejbAdmEncuesta.activarOrDesactivarVisualizacion("planeacion");
+                    aperturarEncuestas();
+                }
+                if(!ejbAdmEncuesta.esPsicopedagogia( Short.parseShort("18"),  Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
                     dto.esPsicopedagogia = true;
                     aperturarEncuestas();
                 }

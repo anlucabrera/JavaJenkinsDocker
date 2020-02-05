@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import mx.edu.utxj.pye.sgi.controlador.*;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConsultaCalificacionesRolCoordinadorAD;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.ValidacionTutoriaGrupalEstudiante;
 
 @RequiredArgsConstructor
@@ -81,11 +80,15 @@ public enum ControlEscolarVistaControlador {
 
     SEGUIMIENTO_CASO_CRITICO_ESPECIALISTA("/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml", SeguimientoCasoCriticoEspecialista.class),
 
-    CONSULTA_CALIFICACION_COORDINADOR("/controlEscolar/coordinador/consultarCalificacionesCoordinador.xhtml", ConsultaCalificacionesCoordinadorAD.class),
+    CONSULTA_CALIFICACION("/controlEscolar/consultarCalificaciones.xhtml", ConsultaCalificaciones.class),
 
     FICHA_ADMISION_REPORTE("/controlEscolar/reporteFichaAdmision.xhtml",FichaAdmisionReporte.class),
 
-    EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class);
+    EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class),
+
+    EVALUACION_DESEMPENIO_AMBIENTAL("/encuestas/evaluacionDesempenioAmbiental.xhtml", EvaluacionDesempenioAmbiental.class),
+
+    ADMINISTRACION_DESEMPENIO_AMBIENTAL("/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml", AdministracionEvaluacionAmbiental.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;
 }

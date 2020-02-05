@@ -8,6 +8,7 @@ import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -15,34 +16,46 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ConsultaCalificacionesRolCoordinadorAD extends AbstractRol{
+public class ConsultaCalificacionesRolMultiple extends AbstractRol{
 
     @Getter @NonNull private PersonalActivo coordinador;
     @Getter @NonNull private AreasUniversidad programa;
     @Getter @NonNull private PeriodosEscolares periodosEscolar;
     @Getter @NonNull private List<PeriodosEscolares> periodosEscolares;
-    @Getter @NonNull private List<Estudiante> estudiantes;
+    @Getter @NonNull private List<Estudiante> estudiantes, estudianteRegistro = new ArrayList<>();
     @Getter @NonNull private Estudiante estudiante;
     @Getter @NonNull private Integer periodoSelect;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante, promedioMateria;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.UnidadesPorMateria> unidadesPorMateria;
     @Getter @NonNull private List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionePorMateria, calificacionesFinalesPorMateria;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion;
-    @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria;
-    @Getter @NonNull private List<Calificacion> calificacion;
     @Getter @NonNull private List<BigDecimal> promediosAcumulados;
     @Getter @NonNull private Integer periodo, idMateria, matricula;
     @Getter @NonNull private BigDecimal promedio = BigDecimal.ZERO;
     @Getter @NonNull private BigDecimal promedioAcumluado = BigDecimal.ZERO;
 
-    public ConsultaCalificacionesRolCoordinadorAD(Filter<PersonalActivo> filtro, PersonalActivo coordinador, AreasUniversidad programa) {
+    @Getter @NonNull private List<DtoCargaAcademica> cargasEstudiante = new ArrayList<>();
+    @Getter private Map<DtoCargaAcademica, List<DtoUnidadConfiguracion>> dtoUnidadConfiguracionesMap = new HashMap<>();
+    @Getter @NonNull private DtoUnidadesCalificacionEstudiante dtoUnidadesCalificacionEstudiante;
+    @Getter private Map<DtoCargaAcademica, DtoUnidadesCalificacionEstudiante> dtoUnidadesCalificacionMap = new HashMap<>();
+    @Getter @NonNull private List<DtoCalificacionEstudiante.UnidadesPorMateria> unidadesPorMateria;
+    @Getter @Setter private Boolean tieneIntegradora = false;
+    @Getter @Setter private Map<DtoCargaAcademica, Boolean> tieneIntegradoraMap = new HashMap<>();
+    @Getter @Setter private Map<DtoCargaAcademica, TareaIntegradora> tareaIntegradoraMap = new HashMap<>();
+
+    public ConsultaCalificacionesRolMultiple(Filter<PersonalActivo> filtro, PersonalActivo coordinador, AreasUniversidad programa) {
         super(filtro);
         this.coordinador = coordinador;
         this.programa = programa;
+    }
+
+    public void setCargasEstudiante(List<DtoCargaAcademica> cargasEstudiante) {
+        this.cargasEstudiante = cargasEstudiante;
+    }
+
+    public void setDtoUnidadesCalificacionEstudiante(DtoUnidadesCalificacionEstudiante dtoUnidadesCalificacionEstudiante) {
+        this.dtoUnidadesCalificacionEstudiante = dtoUnidadesCalificacionEstudiante;
     }
 
     public void setCoordinador(PersonalActivo coordinador) {
@@ -73,44 +86,12 @@ public class ConsultaCalificacionesRolCoordinadorAD extends AbstractRol{
         this.periodoSelect = periodoSelect;
     }
 
-    public void setMateriasPorEstudiante(List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante) {
-        this.materiasPorEstudiante = materiasPorEstudiante;
-    }
-
-    public void setPromedioMateria(List<DtoCalificacionEstudiante.MateriasPorEstudiante> promedioMateria) {
-        this.promedioMateria = promedioMateria;
-    }
-
     public void setUnidadesPorMateria(List<DtoCalificacionEstudiante.UnidadesPorMateria> unidadesPorMateria) {
         this.unidadesPorMateria = unidadesPorMateria;
     }
 
     public void setMapUnidadesTematicas(List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas) {
         this.mapUnidadesTematicas = mapUnidadesTematicas;
-    }
-
-    public void setCalificacionePorUnidad(List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad) {
-        this.calificacionePorUnidad = calificacionePorUnidad;
-    }
-
-    public void setCalificacionePorMateria(List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionePorMateria) {
-        this.calificacionePorMateria = calificacionePorMateria;
-    }
-
-    public void setCalificacionesFinalesPorMateria(List<DtoCalificacionEstudiante.CalificacionePorMateria> calificacionesFinalesPorMateria) {
-        this.calificacionesFinalesPorMateria = calificacionesFinalesPorMateria;
-    }
-
-    public void setTareaIntegradoraPresentacion(List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tareaIntegradoraPresentacion) {
-        this.tareaIntegradoraPresentacion = tareaIntegradoraPresentacion;
-    }
-
-    public void setCalificacionesNivelacionPorMateria(List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria) {
-        this.calificacionesNivelacionPorMateria = calificacionesNivelacionPorMateria;
-    }
-
-    public void setCalificacion(List<Calificacion> calificacion) {
-        this.calificacion = calificacion;
     }
 
     public void setPromediosAcumulados(List<BigDecimal> promediosAcumulados) {
@@ -135,5 +116,9 @@ public class ConsultaCalificacionesRolCoordinadorAD extends AbstractRol{
 
     public void setMatricula(Integer matricula) {
         this.matricula = matricula;
+    }
+
+    public void setEstudianteRegistro(List<Estudiante> estudianteRegistro) {
+        this.estudianteRegistro = estudianteRegistro;
     }
 }
