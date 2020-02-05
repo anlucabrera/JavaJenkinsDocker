@@ -5,25 +5,24 @@
  */
 package mx.edu.utxj.pye.sgi.controlador;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import lombok.Getter;
+import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
+import mx.edu.utxj.pye.sgi.ejb.*;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Messages;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
-import lombok.Getter;
-import lombok.Setter;
-import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
-import mx.edu.utxj.pye.sgi.ejb.*;
-import org.omnifaces.util.Messages;
-
-
-import javax.inject.Inject;
-import com.github.adminfaces.starter.infra.security.LogonMB;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
 /**
@@ -35,7 +34,9 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 public class AdministracionAvanceEncuestas implements Serializable{
     
     private static final long serialVersionUID = -7745875703360648941L;
-    @Getter @Setter private DtoEvaluaciones dto = new DtoEvaluaciones();
+    @Getter
+    @Setter
+    private DtoEvaluaciones dto = new DtoEvaluaciones();
     @EJB private EjbAdministracionEncuestaServicios ejbAES;
     @EJB private EjbAdministracionEncuestaTsu ejbET;
     @EJB private EjbAdministracionEvaluacionEstadia ejbEE;
@@ -44,8 +45,10 @@ public class AdministracionAvanceEncuestas implements Serializable{
 
 
 
-@Inject LogonMB logonMB;
-@Getter private Boolean cargado = false;
+@Inject
+LogonMB logonMB;
+@Getter
+private Boolean cargado = false;
 
 
 
@@ -87,8 +90,7 @@ public class AdministracionAvanceEncuestas implements Serializable{
 
     public void mostrarAvanceEncSatIng() {
         try {
-
-
+            dto.dtoLDAES3 = ejbAEI.obtenerListaDatosAvanceEncuestaSatIng();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(AdministracionAvanceEncuestas.class.getName()).log(Level.SEVERE, null, ex);
@@ -112,6 +114,11 @@ public class AdministracionAvanceEncuestas implements Serializable{
     public void mostrarAvanceEncuestaSatEgresadosPorGrupoTutor(){
         dto.dtoAESPG1 = new ArrayList<>();
         dto.dtoAESPG1 = ejbET.avanceEncuestaServiciosPorGrupoTutor();
+    }
+
+    public void mostrarAvanceEncuestaSatEgresadosIngPorGrupoTutor(){
+        dto.dtoAESPG2 = new ArrayList<>();
+        dto.dtoAESPG2 = ejbAEI.avanceEncuestaSatIngPorGrupo();
     }
 
 }

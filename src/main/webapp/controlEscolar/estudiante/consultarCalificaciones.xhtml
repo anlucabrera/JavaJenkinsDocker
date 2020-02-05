@@ -5,12 +5,8 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:adm="http://github.com/adminfaces"
-                xmlns:jsf="http://xmlns.jcp.org/jsf"
                 template="#{layoutMB.template}"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-                xmlns:pe="http://primefaces.org/ui/extensions"
-                xmlns:o="http://omnifaces.org/ui">
-
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
         <!-- Inicio estilos par proceso electoral -->
@@ -175,10 +171,10 @@
                                                                                                         <c:set var="promedio" value="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante).getPromedioUnidad(unidad, carga1)}"/>
                                                                                                         <c:set var="escala" value="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante).getEscala(unidad, carga1)}"/>
                                                                                                         <p:panelGrid columns="2" style="height: 20px; align-content: center">
-                                                                                                            <h:outputText style="font-weight: bold; font-size: x-small; #{promedio >= 8 ? 'color: #000000':'color: #E53935' or promedio > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                                            <h:outputText style="font-weight: bold; font-size: x-small; #{promedio > 7.9 ? 'color: #000000':'color: #E53935'}"
                                                                                                                           value="#{escala}"/>
                                                                                                             <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                                                                            <h:outputText style="font-weight: bold; font-size: small; #{promedio >= 8 ? 'color: #000000':'color: #E53935' or promedio > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                                            <h:outputText style="font-weight: bold; font-size: small; #{promedio > 7.9 ? 'color: #000000':'color: #E53935'}"
                                                                                                                           value="#{promedio}">
                                                                                                                 <f:convertNumber pattern="#.##"/>
                                                                                                             </h:outputText>
@@ -223,7 +219,7 @@
                                                                                         <td role="gridcell" class="promedio" style="text-align: center">
                                                                                             <h:outputLabel value="#{valor}" styleClass="promedio"
                                                                                                            style="font-weight: bold; font-size: small; #{valor >= 8 ? 'color: #000000':'color: #E53935' or valor > 0 ? 'color: #E53935':'color: #000000'}">
-                                                                                                <f:convertNumber pattern="#.###" />
+                                                                                                <f:convertNumber pattern="#.##" />
                                                                                             </h:outputLabel>
                                                                                         </td>
                                                                                         <c:set var="nivelacion" value="#{consultaCalificacionesEstudiante.getNivelacion(carga1, estudiante).calificacionNivelacion.valor}"/>
@@ -235,14 +231,14 @@
                                                                                         <c:if test="#{nivelacion ne 0}">
                                                                                             <td role="gridcell" class="promedio" style="text-align: center">
                                                                                                 <h:outputLabel value="#{nivelacion}" styleClass="promedio" style="font-weight: bold; font-size: small; #{nivelacion >= 8 ? 'color: #000000':'color: #E53935' or nivelacion > 0 ? 'color: #E53935':'color: #000000'}">
-                                                                                                    <f:convertNumber pattern="#.###" />
+                                                                                                    <f:convertNumber pattern="#.##" />
                                                                                                 </h:outputLabel>
                                                                                             </td>
                                                                                         </c:if>
                                                                                         <c:set value="#{consultaCalificacionesEstudiante.getPromedioFinal(carga1, estudiante)}" var="promedioFinal"/>
                                                                                         <td role="gridcell" class="promedio" style="text-align: center">
                                                                                             <h:outputLabel value="#{promedioFinal}" styleClass="promedio" style="font-weight: bold; font-size: small; #{promedioFinal >= 8 ? 'color: #000000':'color: #E53935' or promedioFinal > 0 ? 'color: #E53935':'color: #000000'}">
-                                                                                                <f:convertNumber pattern="#.###" />
+                                                                                                <f:convertNumber pattern="#.##" />
                                                                                             </h:outputLabel>
                                                                                         </td>
 
@@ -261,7 +257,7 @@
                                                                             <th colspan="1" style="text-align: center">
                                                                                 <c:set var="promedioCuat" value="#{consultaCalificacionesEstudiante.getPromedioCuatrimestral(estudiante)}"/>
                                                                                 <h:outputLabel value="#{promedioCuat}" styleClass="promedio" style="font-weight: bold; font-size: small; #{promedioCuat >= 8 ? 'color: #000000':'color: #E53935' or promedioCuat > 0 ? 'color: #E53935':'color: #000000'}">
-                                                                                    <f:convertNumber pattern="#.###" />
+                                                                                    <f:convertNumber pattern="#.##" />
                                                                                 </h:outputLabel>
                                                                             </th>
                                                                         </tr>
@@ -317,7 +313,6 @@
                     <h:panelGrid columns="2" cellpadding="10">
                         <h:outputText value="El acceso solo está autorizado para estudiantes."/>
                     </h:panelGrid>
-                    <f:facet name="footer"></f:facet>
                 </p:panel>
             </c:if>
         </div>

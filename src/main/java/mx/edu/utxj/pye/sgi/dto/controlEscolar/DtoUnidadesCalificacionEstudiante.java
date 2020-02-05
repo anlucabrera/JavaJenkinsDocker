@@ -1,25 +1,23 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import lombok.*;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @ToString
 @EqualsAndHashCode
 public class DtoUnidadesCalificacionEstudiante implements Serializable {
     @Getter @Setter @NonNull private Estudiante estudiante;
-    @Getter @Setter @NonNull private List<DtoCargaAcademica> dtoCargaAcademicas;
-    @Getter @Setter @NonNull private List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones;
-    @Getter @Setter @NonNull private Map<DtoUnidadesCalificacionEstudiante.DtoUnidadesCalificacionPK, DtoCapturaCalificacionEstudiante> calificacionMap;
-    @Getter @Setter @NonNull private Map<DtoCargaAcademica, TareaIntegradoraPromedio> tareaIntegradoraPromedioMap;
-    @Getter @Setter @NonNull private Map<DtoUnidadesCalificacionEstudiante.DtoNivelacionPK, DtoCalificacionNivelacion> nivelacionMap;
+    @Getter @Setter @NonNull private List<DtoCargaAcademica> dtoCargaAcademicas = new ArrayList<>();
+    @Getter @Setter @NonNull private List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones = new ArrayList<>();
+    @Getter @Setter @NonNull private Map<DtoUnidadesCalificacionEstudiante.DtoUnidadesCalificacionPK, DtoCapturaCalificacionEstudiante> calificacionMap = new HashMap<>();
+    @Getter @Setter @NonNull private Map<DtoCargaAcademica, TareaIntegradoraPromedio> tareaIntegradoraPromedioMap = new HashMap<>();
+    @Getter @Setter @NonNull private Map<DtoUnidadesCalificacionEstudiante.DtoNivelacionPK, DtoCalificacionNivelacion> nivelacionMap = new HashMap<>();
 
     public DtoUnidadesCalificacionEstudiante(@NonNull Estudiante estudiante, @NonNull List<DtoCargaAcademica> dtoCargaAcademicas, @NonNull List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones) {
         this.estudiante = estudiante;
@@ -54,6 +52,8 @@ public class DtoUnidadesCalificacionEstudiante implements Serializable {
     }
 
     public BigDecimal getPromedioUnidad(@NonNull DtoUnidadConfiguracion dtoUnidadConfiguracion, @NonNull DtoCargaAcademica dtoCargaAcademica){
+        if (dtoUnidadConfiguracion == null)return BigDecimal.ZERO;
+        if (dtoCargaAcademica == null)return BigDecimal.ZERO;
         DtoUnidadesCalificacionEstudiante.DtoUnidadesCalificacionPK pk = new DtoUnidadesCalificacionEstudiante.DtoUnidadesCalificacionPK(dtoCargaAcademica, estudiante, dtoUnidadConfiguracion);
         if(calificacionMap.containsKey(pk)) {
             return calificacionMap.get(pk).getPromedio();
@@ -62,6 +62,8 @@ public class DtoUnidadesCalificacionEstudiante implements Serializable {
     }
 
     public String getEscala(@NonNull DtoUnidadConfiguracion dtoUnidadConfiguracion, @NonNull DtoCargaAcademica dtoCargaAcademica){
+        if(dtoUnidadConfiguracion == null)return "";
+        if(dtoCargaAcademica == null)return "";
         BigDecimal promedioUnidad = getPromedioUnidad(dtoUnidadConfiguracion, dtoCargaAcademica);
         String escala = "";
         if(promedioUnidad.compareTo(BigDecimal.valueOf(0)) == 0 || promedioUnidad.compareTo(BigDecimal.valueOf(8)) < 0){

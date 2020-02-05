@@ -41,6 +41,9 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Evaluaciones implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionDesempenioAmbientalUtxj> evaluacionDesempenioAmbientalUtxjList;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionConocimientoCodigoEticaResultados> evaluacionConocimientoCodigoEticaResultadosList;
 
     private static final long serialVersionUID = 1L;
@@ -250,6 +253,15 @@ public class Evaluaciones implements Serializable {
 
     public void setEvaluacionConocimientoCodigoEticaResultadosList(List<EvaluacionConocimientoCodigoEticaResultados> evaluacionConocimientoCodigoEticaResultadosList) {
         this.evaluacionConocimientoCodigoEticaResultadosList = evaluacionConocimientoCodigoEticaResultadosList;
+    }
+
+    @XmlTransient
+    public List<EvaluacionDesempenioAmbientalUtxj> getEvaluacionDesempenioAmbientalUtxjList() {
+        return evaluacionDesempenioAmbientalUtxjList;
+    }
+
+    public void setEvaluacionDesempenioAmbientalUtxjList(List<EvaluacionDesempenioAmbientalUtxj> evaluacionDesempenioAmbientalUtxjList) {
+        this.evaluacionDesempenioAmbientalUtxjList = evaluacionDesempenioAmbientalUtxjList;
     }
     
 }

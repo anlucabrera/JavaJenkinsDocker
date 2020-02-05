@@ -1,15 +1,5 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.faces.model.SelectItem;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-
 import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import lombok.Getter;
@@ -19,13 +9,24 @@ import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaSatisfaccionEgresadosIngPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaSatisfaccionEgresadosIng;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.faces.model.SelectItem;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  *
@@ -36,7 +37,9 @@ public class EjbSatisfaccionEgresadosIng {
 
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
-    @Getter @Setter Integer periodo;
+    @Getter
+    @Setter
+    Integer periodo;
     @EJB
     Facade f;
     @EJB
@@ -169,31 +172,22 @@ public class EjbSatisfaccionEgresadosIng {
     }
 
     public Alumnos obtenerAlumnos(String matricula) {
-        TypedQuery<Periodos> periodoAct = f2.getEntityManager().createQuery("SELECT p FROM Periodos AS p",Periodos.class);
-        List<Periodos> periodos = periodoAct.getResultList();
-        periodos.stream().forEach(x -> {
-            Boolean activo = true;
-            Boolean acv = x.getActivo().equals(true);
-            if (activo.equals(acv)) {
-                periodo = x.getPeriodosPK().getCvePeriodo();
-                //System.out.println("Periodo:"+ periodo);
-            }
-        });
+        Integer periodoEscolar =  Integer.parseInt(Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaSatisfaccionING").getResultStream().findFirst().orElse(null)).getValor());
+        PeriodosEscolares periodo = em.find(PeriodosEscolares.class, periodoEscolar);
 
-        TypedQuery<Alumnos> q = f2.getEntityManager()
-                .createQuery("SELECT a from Alumnos a WHERE a.matricula=:matricula AND (a.cveStatus = :estatus or a.cveStatus = :estatus2) AND a.grupos.gruposPK.cvePeriodo = :periodo AND a.gradoActual =:grado", Alumnos.class);
-        q.setParameter("estatus", 1);
-        q.setParameter("estatus2", 6);
-        q.setParameter("periodo", 50);
-        q.setParameter("matricula", matricula);
-        q.setParameter("grado", 11);
+        Alumnos alumno = f2.getEntityManager()
+                .createQuery("SELECT a from Alumnos a WHERE a.matricula=:matricula AND (a.cveStatus = :estatus or a.cveStatus = :estatus2) " +
+                        "AND a.grupos.gruposPK.cvePeriodo = :periodo AND a.gradoActual =:grado", Alumnos.class)
+                .setParameter("estatus", 1)
+                .setParameter("estatus2", 6)
+                .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("matricula", matricula)
+                .setParameter("grado", 11)
+                .getResultStream().findFirst()
+                .orElse(new Alumnos());
 
-        List<Alumnos> l = q.getResultList();
-        if(!l.isEmpty()){
-            return l.get(0);
-        }else{
-            return null;
-        }
+    return alumno;
     }
 
     public PeriodosEscolares getPeriodo(Evaluaciones evaluacion){

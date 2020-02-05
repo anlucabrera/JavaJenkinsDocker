@@ -158,7 +158,8 @@ public class GeneracionKardex implements Serializable{
                     table.addCell(cuatrimestre);
                     List<BigDecimal> listaPromedios1 = new ArrayList<>();
                     ejb.obtenerCargasAcademicas(estudiante1).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 1).forEach(dtoCargaAcademica -> {
-                        BigDecimal promedio = controlador.getPromedioFinal(dtoCargaAcademica, estudiante1).setScale(1, RoundingMode.HALF_UP);
+                        BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1).getValor().getValor())
+                                .setScale(2, RoundingMode.HALF_UP);
                         listaPromedios1.add(promedio);
                         PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                         materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -166,34 +167,15 @@ public class GeneracionKardex implements Serializable{
                         table.addCell(materias);
                         table.addCell(promedios);
                     });
-                    Integer materiastotal = (int)ejb.obtenerCargasAcademicas(estudiante1).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 1).count();
+                    Integer materiastotal = (int) ejb.obtenerCargasAcademicas(estudiante1).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 1).count();
                     BigDecimal promedioCuatrimestral = listaPromedios1.stream().reduce(BigDecimal.ZERO, BigDecimal::add).plus()
-                            .divide(new BigDecimal(materiastotal), RoundingMode.HALF_UP);
+                            .divide(new BigDecimal(materiastotal), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
                     PdfPCell texto = new PdfPCell(new Paragraph("Promedio", fontBold));
                     PdfPCell avg = new PdfPCell(new Paragraph(promedioCuatrimestral.toString(), fontBold));
                     tablaPromedio.addCell(texto);
                     tablaPromedio.addCell(avg);
                     celda.addElement(table);
                     celda2.addElement(tablaPromedio);
-                    break;
-                case 2:
-                    PdfPCell grado2 = new PdfPCell(new Paragraph("SEGUNDO", fontBold));
-                    grado2.setColspan(3);
-                    grado2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    table2.addCell(grado2);
-                    List<BigDecimal> average = new ArrayList<>();
-                    ejb.obtenerCargasAcademicas(estudiante1).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 2).forEach(dtoCargaAcademica -> {
-                        BigDecimal promedio = controlador.getPromedioFinal(dtoCargaAcademica, estudiante1).setScale(1, RoundingMode.HALF_UP);
-                        average.add(promedio);
-                        PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
-                        materias.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        PdfPCell promedios = new PdfPCell(new Paragraph(promedio.toString(), fontMateria2));
-                        table2.addCell(materias);
-                        table2.addCell(promedios);
-                    });
-                    if(!average.contains(BigDecimal.ZERO.setScale(1, RoundingMode.HALF_UP))){
-                        celda.addElement(table2);
-                    }
                     break;
             }
             tablaPrincipal.addCell(celda);

@@ -5,28 +5,25 @@
  */
 package mx.edu.utxj.pye.sgi.ejb;
 
+import mx.edu.utxj.pye.sgi.dto.DtoAlumnosEncuesta;
+import mx.edu.utxj.pye.sgi.dto.ListaDatosAvanceEncuestaServicio;
+import mx.edu.utxj.pye.sgi.dto.ListadoGraficaEncuestaServicios;
+import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
+import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
+import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.funcional.Comparador;
+import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaSatisfaccionEgresadosTsu;
+import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.persistence.TypedQuery;
-
-import mx.edu.utxj.pye.sgi.dto.DtoAlumnosEncuesta;
-import mx.edu.utxj.pye.sgi.dto.ListaDatosAvanceEncuestaServicio;
-import mx.edu.utxj.pye.sgi.dto.ListadoGraficaEncuestaServicios;
-import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
-import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.sgi.funcional.Comparador;
-import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaSatisfaccionEgresadosTsu;
-import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
-import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
-import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
 /**
  *
@@ -59,7 +56,7 @@ public class EjbAdministracionEncuestaTsu {
         TypedQuery<ResultadosEncuestaSatisfaccionTsu> q = f.getEntityManager()
                 .createQuery("SELECT r FROM ResultadosEncuestaSatisfaccionTsu r " +
                         "WHERE r.resultadosEncuestaSatisfaccionTsuPK.evaluador= :matricula and " +
-                        "r.resultadosEncuestaSatisfaccionTsuPK.evaluacion = :evaluacion",ResultadosEncuestaSatisfaccionTsu.class);
+                        "r.resultadosEncuestaSatisfaccionTsuPK.evaluacion = :evaluacion", ResultadosEncuestaSatisfaccionTsu.class);
         q.setParameter("evaluacion", evaluacionActiva);
         q.setParameter("matricula", matricula);
         List<ResultadosEncuestaSatisfaccionTsu> pr=q.getResultList();
@@ -74,15 +71,16 @@ public class EjbAdministracionEncuestaTsu {
         List<ListaDatosAvanceEncuestaServicio.AvanceEncuestaServiciosPorGrupo> aespg = new ArrayList<>();
         List<DtoAlumnosEncuesta> dtoAE = new ArrayList<>();
         Comparador<ResultadosEncuestaSatisfaccionTsu> comparador = new ComparadorEncuestaSatisfaccionEgresadosTsu();
-        List<AlumnosEncuestas> ae1 = ejbAES.obtenerAlumnosNoAccedieron();
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> ae1 = ejbAES.obtenerAlumnosNoAccedieron().getValor();
         ae1.forEach(x -> {
-            ResultadosEncuestaSatisfaccionTsu est = getResultadoEncPorEvaluador(Integer.parseInt(x.getMatricula()));
+            ResultadosEncuestaSatisfaccionTsu est = getResultadoEncPorEvaluador(Integer.parseInt(x.getAlumnos().getMatricula()));
             if(est != null){
                 if(comparador.isCompleto(est)){
-                    String matricula = x.getMatricula();
+                    String matricula = x.getAlumnos().getMatricula();
                     dtoAE.add(new DtoAlumnosEncuesta(
-                            matricula, x.getCvePeriodo(), x.getNombre(), x.getApellidoPat(), x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), x.getCveStatus(), x.getCveMaestro(),
-                            x.getNombreTutor(), x.getApPatTutor(), x.getApMatTutor(), x.getCveDirector()
+                            matricula, x.getGrupos().getGruposPK().getCvePeriodo(), x.getPersonas().getNombre(), x.getPersonas().getApellidoPat(), x.getPersonas().getApellidoMat(),
+                            x.getCarrerasCgut().getAbreviatura(), x.getAlumnos().getGradoActual(), x.getGrupos().getIdGrupo(), x.getAlumnos().getCveStatus(), x.getTutor().getPersonasPK().getCvePersona(),
+                            x.getTutor().getNombre(), x.getTutor().getApellidoPat(), x.getTutor().getApellidoMat(), String.valueOf(x.getDtoDirector().getCvePersona())
                     ));
                 }
             }
@@ -95,9 +93,9 @@ public class EjbAdministracionEncuestaTsu {
             v.forEach((k1, v1) -> {
                 v1.forEach((k2, v2) -> {
                     Map<String, Map<String, Map<Short, Long>>> groupingByCareerByGroupAndQuarterStudents = ae1
-                            .stream().collect(Collectors.groupingBy(AlumnosEncuestas::getAbreviatura,
-                                    Collectors.groupingBy(AlumnosEncuestas::getIdGrupo,
-                                            Collectors.groupingBy(AlumnosEncuestas::getGrado, Collectors.counting()))));
+                            .stream().collect(Collectors.groupingBy(DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral::getSiglas,
+                                    Collectors.groupingBy(DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral::getGrupo,
+                                            Collectors.groupingBy(DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral::getGrado, Collectors.counting()))));
                     groupingByCareerByGroupAndQuarterStudents.forEach((k3, v3) -> {
                         v3.forEach((k4, v4) -> {
                             v4.forEach((k5, v5) -> {
@@ -122,14 +120,14 @@ public class EjbAdministracionEncuestaTsu {
     public List<ListaDatosAvanceEncuestaServicio> obtenerListaDatosAvanceEncuestaSatisfaccion(){
         List<ListaDatosAvanceEncuestaServicio> ldaes = new ArrayList<>();
         List<ListadoGraficaEncuestaServicios> lges = new ArrayList<>();
-        List<AlumnosEncuestas> ae = ejbAES.obtenerAlumnosNoAccedieron();
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> ae = ejbAES.obtenerAlumnosNoAccedieron().getValor();
         ae.stream().filter(a -> a.getGrado().equals(Short.parseShort("6"))).forEach(x -> {
             try {
-                ResultadosEncuestaSatisfaccionTsu listaCompleta = getResultadoEncPorEvaluador(Integer.parseInt(x.getMatricula()));
+                ResultadosEncuestaSatisfaccionTsu listaCompleta = getResultadoEncPorEvaluador(Integer.parseInt(x.getAlumnos().getMatricula()));
                 Comparador<ResultadosEncuestaSatisfaccionTsu> comparador = new ComparadorEncuestaSatisfaccionEgresadosTsu();
                 if (listaCompleta != null) {
                     if(comparador.isCompleto(listaCompleta)){
-                        lges.add(new ListadoGraficaEncuestaServicios(x.getAbreviatura(), Long.parseLong(x.getMatricula())));
+                        lges.add(new ListadoGraficaEncuestaServicios(x.getCarrerasCgut().getAbreviatura(), Long.parseLong(x.getAlumnos().getMatricula())));
                     }
                 }
             } catch (Throwable ex) {
@@ -138,7 +136,8 @@ public class EjbAdministracionEncuestaTsu {
         });
         Map<String, Long> gropingByCareer = lges.stream().collect(Collectors.groupingBy(ListadoGraficaEncuestaServicios::getSiglas, Collectors.counting()));
         gropingByCareer.forEach((k, v) -> {
-            Map<String, Long> groupingByCareer = ae.stream().filter(a -> a.getGrado().equals(Short.parseShort("6"))).collect(Collectors.groupingBy(AlumnosEncuestas::getAbreviatura, Collectors.counting()));
+            Map<String, Long> groupingByCareer = ae.stream().filter(a -> a.getGrado().equals(Short.parseShort("6")))
+                    .collect(Collectors.groupingBy(DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral::getSiglas, Collectors.counting()));
             groupingByCareer.forEach((k1, v1) -> {
                 if(k.equals(k1)){
                     ldaes.add(new ListaDatosAvanceEncuestaServicio(k, Math.toIntExact(v1), Math.toIntExact(v), Math.toIntExact(v1 - v), (v.doubleValue() * 100) / v1.doubleValue()));

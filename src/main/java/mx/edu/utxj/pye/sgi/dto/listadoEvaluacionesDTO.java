@@ -24,5 +24,5 @@ public class listadoEvaluacionesDTO {
     @Getter @Setter private String periodo;
     @Getter @Setter private Date fechaI;
     @Getter @Setter private Date fechaF;
-    @Getter @Setter private String status;  
+    @Getter @Setter private String status;
 }

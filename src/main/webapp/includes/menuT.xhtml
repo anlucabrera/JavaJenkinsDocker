@@ -126,6 +126,9 @@
 
                     <!-- Especialista -->
                     <c:if test="#{seguimientoCasoCriticoEspecialista.mostrarEnDesarrollo(request) and seguimientoCasoCriticoEspecialista.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Caso Crítico Especialista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+
+                    <!-- Consulta multiples -->
+                    <c:if test="#{consultaCalificaciones.mostrarEnDesarrollo(request) and consultaCalificaciones.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/consultarCalificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Consultar calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 </c:if>
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
                 <c:if test="#{controlEscolarMenu.tieneElementos()}">
@@ -138,6 +141,7 @@
                         </a>
                         <ul class="treeview-menu" style="display: none;">
                             <c:if test="#{evaluacionConocimientoCodigoEtica.mostrarEnDesarrollo(request) and evaluacionConocimientoCodigoEtica.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Ética</span></p:link></li></c:if>
+                            <c:if test="#{evaluacionDesempenioAmbiental.mostrarEnDesarrollo(request) and evaluacionDesempenioAmbiental.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/evaluacionDesempenioAmbiental.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Desempeño Ambiental</span></p:link></li></c:if>
                         </ul>
                     </li>
                 </c:if>
@@ -185,6 +189,26 @@
                                 </ul>
                             </li>
                         </c:if>
+
+                        <!--c:if test=" #{controlEscolarMenu.tieneElementos()}">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-check-square-o"></i> <span>Seguimiento Evaluaciones</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                    <c:if test=" #{administracionEvaluacionAmbiental.mostrarEnDesarrollo(request) and administracionEvaluacionAmbiental.tieneAcceso}">
+                                        <li>
+                                            <p:link href=" #{request.contextPath}/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml">
+                                            <i class="fa fa-list-ol"></i><span>Seguimiento Evaluación Ambiental</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span>
+                                            </p:link>
+                                        </li>
+                                    </c:if>
+                                </ul>
+                            </li>
+                        </c:if-->
                         <!-- Segumiento de Evaluciones  a Tutor y Evaluacion a Docente-->
                         <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.tutorCe or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
                             <li class="treeview">

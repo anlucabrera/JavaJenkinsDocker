@@ -29,6 +29,9 @@
                 <c:if test="#{encuestaServicios.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
                 <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
                 <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
+                <c:if test="#{evaluacionDesempenioAmbientalEstudiante.mostrarEnDesarrollo(request) and evaluacionDesempenioAmbientalEstudiante.tieneAcceso}">
+                    <li><p:link href="#{request.contextPath}/encuestas/evaluacionDesempenioAmbiental.xhtml">
+                        <i class="fa fa-check-square"></i><span>Evaluación de Desempeño Ambiental</span></p:link></li></c:if>
             </li>
             <c:if test="#{controladorEstReg.cargada}">
                 <li class="header" style="color: #040404;background: #ffffff">Expediente Titulación</li>

@@ -5,30 +5,32 @@
  */
 package mx.edu.utxj.pye.sgi.ejb;
 
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javax.ejb.EJB;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-
-import com.google.zxing.common.detector.MathUtils;
 import mx.edu.utxj.pye.sgi.dto.DtoAlumnosEncuesta;
 import mx.edu.utxj.pye.sgi.dto.ListaDatosAvanceEncuestaServicio;
 import mx.edu.utxj.pye.sgi.dto.ListadoGraficaEncuestaServicios;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
-import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
+import mx.edu.utxj.pye.sgi.saiiut.entity.*;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -38,13 +40,22 @@ import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 public class EjbAdministracionEncuestaServicios {
 
 
-    @EJB
-    private Facade f;
+    @EJB private Facade f;
     @EJB private Facade2 f2;
+    private EntityManager em;
+    private EntityManager em2;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager(); em2 = f2.getEntityManager();
+    }
 
     public Evaluaciones evaluacionEstadiaPeridoActual() {
+        String periodoEncuesta = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaServicios")
+                .getResultStream().findFirst().orElse(null)).getValor();
         List<Evaluaciones> e = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones as e where e.periodo = :periodo and e.tipo = :tipo", Evaluaciones.class)
-                .setParameter("periodo", 51)
+                .setParameter("periodo", Integer.parseInt(periodoEncuesta))
                 .setParameter("tipo", "Servicios")
                 .getResultStream().collect(Collectors.toList());
         if (e.isEmpty()) {
@@ -58,10 +69,114 @@ public class EjbAdministracionEncuestaServicios {
      * Metodo que ayuda a la busqueda de todos los estudiantes activos en el periodo actual
      * @return Devuelve la lista completa de los estudiantes activos
      */
-    public List<AlumnosEncuestas> obtenerAlumnosNoAccedieron() {
-        Short grado = 11;
-        List<AlumnosEncuestas> ae = f2.getEntityManager().createQuery("select a from AlumnosEncuestas as a",AlumnosEncuestas.class).getResultStream().collect(Collectors.toList());
-        return ae;
+    public ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral>> obtenerAlumnosNoAccedieron() {
+        String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaServicios")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        String grado1 = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado1")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        String grado2 = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado2")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        String grado3 = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado3")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        String grado4 = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado4")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> dtoAlumnosEncuesta = new ArrayList<>();
+        dtoAlumnosEncuesta = em2.createQuery("select a from Alumnos as a " +
+                "where (a.cveStatus = :estatus or a.cveStatus = :estatus2) " +
+                "and a.grupos.gruposPK.cvePeriodo = :periodo " +
+                "and (a.gradoActual = :grado1 or a.gradoActual = :grado2 or a.gradoActual = :grado3 or a.gradoActual = :grado4)", Alumnos.class)
+                .setParameter("estatus", 1)
+                .setParameter("estatus2", 6)
+                .setParameter("periodo", Integer.parseInt(periodoEscolar))
+                .setParameter("grado1", Short.parseShort(grado1))
+                .setParameter("grado2", Short.parseShort(grado2))
+                .setParameter("grado3", Short.parseShort(grado3))
+                .setParameter("grado4", Short.parseShort(grado4))
+                .getResultStream().map(alumnos -> packEstudiantesEncuesta(alumnos)).filter(ResultadoEJB::getCorrecto).map(ResultadoEJB::getValor).collect(Collectors.toList());
+        return ResultadoEJB.crearCorrecto(dtoAlumnosEncuesta, "Se empaqueto con éxito.");
+    }
+
+    public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> packEstudiantesEncuesta(Alumnos alumnos){
+        try{
+            Personas alumno = em2.createQuery("select p from Personas as p where p.personasPK.cvePersona = :cveAlumno", Personas.class)
+                    .setParameter("cveAlumno", alumnos.getAlumnosPK().getCveAlumno()).getResultStream().findFirst().orElse(null);
+            assert alumno != null;
+            //System.out.println("Datos personales:"+alumno.getNombre()+" "+alumno.getApellidoPat()+" "+alumno.getApellidoMat());
+            Grupos grupos = alumnos.getGrupos();
+            //System.out.println("Grupo:"+ grupos.getGrado()+" "+grupos.getIdGrupo());
+            CarrerasCgut carrerasCgut = em2.createQuery("select c from CarrerasCgut as c where c.cveCarrera = :cveCarrera", CarrerasCgut.class)
+                    .setParameter("cveCarrera", grupos.getGruposPK().getCveCarrera()).getResultStream().findFirst().orElse(null);
+            DtoAlumnosEncuesta.DtoCarrera dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera();
+            assert carrerasCgut != null;
+            if(carrerasCgut.getAbreviatura().equals("AARH")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "AARH");}
+            if(carrerasCgut.getAbreviatura().equals("ADMON")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "AD");}
+            if(carrerasCgut.getAbreviatura().equals("ASP")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "ASP");}
+            if(carrerasCgut.getAbreviatura().equals("BIO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "BIO");}
+            if(carrerasCgut.getAbreviatura().equals("EA")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "EA");}
+            if(carrerasCgut.getAbreviatura().equals("FAT")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "FOT");}
+            if(carrerasCgut.getAbreviatura().equals("GASTRO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "GAS");}
+            if(carrerasCgut.getAbreviatura().equals("IBIO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IBIO");}
+            if(carrerasCgut.getAbreviatura().equals("IDIE")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IDIE");}
+            if(carrerasCgut.getAbreviatura().equals("IMECA")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IMECA");}
+            if(carrerasCgut.getAbreviatura().equals("IMI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IMI");}
+            if(carrerasCgut.getAbreviatura().equals("INF")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IN");}
+            if(carrerasCgut.getAbreviatura().equals("IPA")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IPA");}
+            if(carrerasCgut.getAbreviatura().equals("IPRI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IPRI");}
+            if(carrerasCgut.getAbreviatura().equals("ITIC")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "ITIC");}
+            if(carrerasCgut.getAbreviatura().equals("LTF")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "LTEFI");}
+            if(carrerasCgut.getAbreviatura().equals("MAI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "MAI");}
+            if(carrerasCgut.getAbreviatura().equals("MAA")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "MECAA");}
+            if(carrerasCgut.getAbreviatura().equals("MAP")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "MIAP");}
+            if(carrerasCgut.getAbreviatura().equals("PAL")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "PA");}
+            if(carrerasCgut.getAbreviatura().equals("PAI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "PAI");}
+            if(carrerasCgut.getAbreviatura().equals("QAB")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "QAB");}
+            if(carrerasCgut.getAbreviatura().equals("TFAR")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "TFAR");}
+            if(carrerasCgut.getAbreviatura().equals("TICAMC")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "TICAMC");}
+            if(carrerasCgut.getAbreviatura().equals("TICASI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "TICASI");}
+            if(carrerasCgut.getAbreviatura().equals("LGASTRO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "LGASTRO");}
+            if(carrerasCgut.getAbreviatura().equals("AACH")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "AACH");}
+            if(carrerasCgut.getAbreviatura().equals("TIEVND")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "TIEVND");}
+            //System.out.println("Transformación de la carrera:"+ dtoCarrera.getNombre()+"-"+dtoCarrera.getAbreviatura());
+            Personas docente = em2.createQuery("select p from Personas as p where p.personasPK.cvePersona = :cvePersona", Personas.class)
+                    .setParameter("cvePersona", grupos.getCveMaestro()).getResultStream().findFirst().orElse(null);
+            assert docente != null;
+            //System.out.println("Información del tutor:"+docente.getNombre()+" "+docente.getApellidoPat()+" "+docente.getApellidoMat());
+            DtoAlumnosEncuesta.DtoCarrera finalDtoCarrera = dtoCarrera;
+            DtoAlumnosEncuesta.DtoDirectores dtoDirector = listaDirectores().getValor().stream()
+                    .filter(siglas -> siglas.getSiglas().equals(finalDtoCarrera.getAbreviatura())).findFirst().orElse(null);
+            assert dtoDirector != null;
+            ListaUsuarioClaveNomina listaUsuarioClaveNomina = em2.createQuery("select l from ListaUsuarioClaveNomina as l where l.numeroNomina = :noNomima", ListaUsuarioClaveNomina.class)
+                    .setParameter("noNomima", dtoDirector.getClaveDirector().toString()).getResultStream().findFirst().orElse(null);
+            DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral dto = new DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral(
+                    alumnos, alumno, grupos, dtoCarrera, docente, listaUsuarioClaveNomina, dtoCarrera.getAbreviatura(), grupos.getIdGrupo(), alumnos.getGradoActual()
+            );
+            //System.out.println("DTO Alumno:"+dto);
+            return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1,"No se pudo empaquetar la carga académica (EjbAsignacionAcademica. pack).", e, DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral.class);
+        }
+    }
+
+    public ResultadoEJB<List<DtoAlumnosEncuesta.DtoDirectores>> listaDirectores(){
+        List<DtoAlumnosEncuesta.DtoDirectores> dtoDirectores = new ArrayList<>();
+        List<AreasUniversidad> au = em.createQuery("select a from AreasUniversidad  as a where a.categoria.categoria = :categoria", AreasUniversidad.class)
+                .setParameter("categoria", Short.parseShort("8")).getResultStream().collect(Collectors.toList());
+        au.forEach(area -> {
+            em.createQuery("select a from AreasUniversidad as a where a.areaSuperior = :area and a.vigente = :vigente", AreasUniversidad.class)
+                    .setParameter("vigente", "1")
+                    .setParameter("area", area.getArea()).getResultStream().forEach(programa -> {
+                        Personal personal = em.find(Personal.class, area.getResponsable());
+                        dtoDirectores.add(new DtoAlumnosEncuesta.DtoDirectores(
+                                programa.getNombre(), programa.getSiglas(), personal.getClave(), personal.getNombre()
+                        ));
+                    });
+        });
+        return ResultadoEJB.crearCorrecto(dtoDirectores, "Cargas académicas por docente y periodo");
     }
 
     /**
@@ -73,7 +188,7 @@ public class EjbAdministracionEncuestaServicios {
         Integer evaluacionActiva = evaluacionEstadiaPeridoActual().getEvaluacion();
         List<EncuestaServiciosResultados> esr = f.getEntityManager()
                 .createQuery("SELECT e FROM EncuestaServiciosResultados as e where e.encuestaServiciosResultadosPK.evaluador = :matricula AND " +
-                        "e.encuestaServiciosResultadosPK.evaluacion =:evaluacion",EncuestaServiciosResultados.class)
+                        "e.encuestaServiciosResultadosPK.evaluacion =:evaluacion", EncuestaServiciosResultados.class)
                 .setParameter("evaluacion", evaluacionActiva)
                 .setParameter("matricula", matricula).getResultStream().collect(Collectors.toList());
         if(esr.isEmpty()){
@@ -88,39 +203,42 @@ public class EjbAdministracionEncuestaServicios {
      * @param cveDirector cadena que se envia para realizar la busqueda
      * @return devuelve la informacion de todos los estudiantes que se encuentran a su cargo
      */
-    public List<AlumnosEncuestas> obtenerResultadosXDirector(String cveDirector) {
-        List<AlumnosEncuestas> ae = f2.getEntityManager().createQuery("select a from AlumnosEncuestas as a where a.cveDirector = :cveDirector",AlumnosEncuestas.class)
-                .setParameter("cveDirector", cveDirector).getResultStream().collect(Collectors.toList());
-        if(ae.isEmpty()){
+    public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> obtenerResultadosXDirector(String cveDirector) {
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> dtoAlumnosEncuestaDirector = obtenerAlumnosNoAccedieron().getValor()
+                .stream()
+                .filter(alumno -> alumno.getDtoDirector().getCvePersona() == Integer.parseInt(cveDirector)).collect(Collectors.toList());
+        if(dtoAlumnosEncuestaDirector.isEmpty()){
             return new ArrayList<>();
         }else{
-            return ae;
+            return dtoAlumnosEncuestaDirector;
         }
     }
 
-    public List<AlumnosEncuestas> obtenerResultadosXTutor(Integer cveMaestro) {
-        //Short grado = 11;
-        List<AlumnosEncuestas> ae = f2.getEntityManager().createQuery("SELECT a FROM AlumnosEncuestas a WHERE a.cveMaestro = :cveMaestro",AlumnosEncuestas.class)
-                .setParameter("cveMaestro", cveMaestro).getResultStream().collect(Collectors.toList());
-        if(ae.isEmpty()){
+    public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> obtenerResultadosXTutor(Integer cveMaestro) {
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> dtoAlumnosEncuestaTutor = obtenerAlumnosNoAccedieron().getValor()
+                .stream()
+                .filter(alumno -> alumno.getTutor().getPersonasPK().getCvePersona() == cveMaestro).collect(Collectors.toList());
+        if(dtoAlumnosEncuestaTutor.isEmpty()){
             return new ArrayList<>();
         }else{
-            return ae;
+            return dtoAlumnosEncuestaTutor;
         }
     }
+
 
     public List<ListaDatosAvanceEncuestaServicio.AvanceEncuestaServiciosPorGrupo> avanceEncuestaServiciosPorGrupo(){
         List<ListaDatosAvanceEncuestaServicio.AvanceEncuestaServiciosPorGrupo> aespg = new ArrayList<>();
         List<DtoAlumnosEncuesta> dtoAE = new ArrayList<>();
         Comparador<EncuestaServiciosResultados> comparador = new ComparadorEncuestaServicios();
-        List<AlumnosEncuestas> ae1 = obtenerAlumnosNoAccedieron();
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> ae1 = obtenerAlumnosNoAccedieron().getValor();
         ae1.forEach(x -> {
-            EncuestaServiciosResultados esr = obtenerResultadosEncServXMatricula(Integer.parseInt(x.getMatricula()));
+            EncuestaServiciosResultados esr = obtenerResultadosEncServXMatricula(Integer.parseInt(x.getAlumnos().getMatricula()));
             if(esr != null){
                 if(comparador.isCompleto(esr)){
                     dtoAE.add(new DtoAlumnosEncuesta(
-                            x.getMatricula(), x.getCvePeriodo(), x.getNombre(), x.getApellidoPat(), x.getApellidoMat(), x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), x.getCveStatus(),
-                            x.getCveMaestro(), x.getNombreTutor(), x.getApPatTutor(), x.getApMatTutor(), x.getCveDirector()
+                            x.getAlumnos().getMatricula(), x.getGrupos().getGruposPK().getCvePeriodo(), x.getPersonas().getNombre(), x.getPersonas().getApellidoPat(), x.getPersonas().getApellidoMat(),
+                            x.getCarrerasCgut().getAbreviatura(), x.getAlumnos().getGradoActual(), x.getGrupos().getIdGrupo(), x.getAlumnos().getCveStatus(), x.getTutor().getPersonasPK().getCvePersona(),
+                            x.getTutor().getNombre(), x.getTutor().getApellidoPat(), x.getTutor().getApellidoMat(), String.valueOf(x.getDtoDirector().getCvePersona())
                     ));
                 }
             }
@@ -133,9 +251,9 @@ public class EjbAdministracionEncuestaServicios {
             v.forEach((k1, v1) -> {
                 v1.forEach((k2, v2) -> {
                     Map<String, Map<String, Map<Short, Long>>> groupingByCareerByGroupAndQuarterStudents = ae1
-                            .stream().collect(Collectors.groupingBy(AlumnosEncuestas::getAbreviatura,
-                                    Collectors.groupingBy(AlumnosEncuestas::getIdGrupo,
-                                            Collectors.groupingBy(AlumnosEncuestas::getGrado, Collectors.counting()))));
+                            .stream().collect(Collectors.groupingBy(DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral::getSiglas,
+                                    Collectors.groupingBy(DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral::getGrupo,
+                                            Collectors.groupingBy(DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral::getGrado, Collectors.counting()))));
                     groupingByCareerByGroupAndQuarterStudents.forEach((k3, v3) -> {
                         v3.forEach((k4, v4) -> {
                             v4.forEach((k5, v5) -> {
@@ -160,14 +278,14 @@ public class EjbAdministracionEncuestaServicios {
     public List<ListaDatosAvanceEncuestaServicio> obtenerListaDatosAvanceEncuestaServicio(){
         List<ListaDatosAvanceEncuestaServicio> ldaes = new ArrayList<>();
         List<ListadoGraficaEncuestaServicios> lges = new ArrayList<>();
-        List<AlumnosEncuestas> ae = obtenerAlumnosNoAccedieron();
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> ae = obtenerAlumnosNoAccedieron().getValor();
         ae.forEach(x -> {
             try {
-                EncuestaServiciosResultados listaCompleta = obtenerResultadosEncServXMatricula(Integer.parseInt(x.getMatricula()));
+                EncuestaServiciosResultados listaCompleta = obtenerResultadosEncServXMatricula(Integer.parseInt(x.getAlumnos().getMatricula()));
                 Comparador<EncuestaServiciosResultados> comparador = new ComparadorEncuestaServicios();
                 if (listaCompleta != null) {
                     if(comparador.isCompleto(listaCompleta)){
-                        lges.add(new ListadoGraficaEncuestaServicios(x.getAbreviatura(), Long.parseLong(x.getMatricula())));
+                        lges.add(new ListadoGraficaEncuestaServicios(x.getSiglas(), Long.parseLong(x.getAlumnos().getMatricula())));
                     }
                 }
             } catch (Throwable ex) {
@@ -176,7 +294,7 @@ public class EjbAdministracionEncuestaServicios {
         });
         Map<String, Long> gropingByCareer = lges.stream().collect(Collectors.groupingBy(ListadoGraficaEncuestaServicios::getSiglas, Collectors.counting()));
         gropingByCareer.forEach((k, v) -> {
-            Map<String, Long> groupingByCareer = ae.stream().collect(Collectors.groupingBy(AlumnosEncuestas::getAbreviatura, Collectors.counting()));
+            Map<String, Long> groupingByCareer = ae.stream().collect(Collectors.groupingBy(DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral::getSiglas, Collectors.counting()));
             groupingByCareer.forEach((k1, v1) -> {
                 if(k.equals(k1)){
                     ldaes.add(new ListaDatosAvanceEncuestaServicio(k, Math.toIntExact(v1), Math.toIntExact(v), Math.toIntExact(v1 - v), (v.doubleValue() * 100) / v1.doubleValue()));

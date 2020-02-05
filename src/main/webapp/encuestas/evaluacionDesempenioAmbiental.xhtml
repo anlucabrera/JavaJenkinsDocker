@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="#{layoutMB.template}">
+
+    <ui:define name="head-end">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <style type="text/css">
+            .dtHorizontalVerticalExampleWrapper {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            #dtHorizontalVerticalExample th, td {
+                white-space: nowrap;
+            }
+            table.dataTable thead .sorting:after,
+            table.dataTable thead .sorting:before,
+            table.dataTable thead .sorting_asc:after,
+            table.dataTable thead .sorting_asc:before,
+            table.dataTable thead .sorting_asc_disabled:after,
+            table.dataTable thead .sorting_asc_disabled:before,
+            table.dataTable thead .sorting_desc:after,
+            table.dataTable thead .sorting_desc:before,
+            table.dataTable thead .sorting_desc_disabled:after,
+            table.dataTable thead .sorting_desc_disabled:before {
+                bottom: .5em;
+            }
+            .ui-inputtextarea{
+                width: 350px !important;
+                height: 50px !important;
+            }
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectOneButton-panel .ui-selectOneButton-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a65a  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #c43c35 !important;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="title">
+        4.2 Identificación de Grupos de Interés Ambientales
+    </ui:define>
+
+    <ui:define name="description">
+        Con la intención de mejorar continuamente nuestro sistema de gestión ambiental, le pedimos atentamente nos permita conocer su percepción
+        sobre el desempeño ambiental de la Universidad Tecnológica de Xicotepec de Juárez.
+    </ui:define>
+
+    <ui:define name="body">
+        <section class="content">
+            <c:if test="#{evaluacionDesempenioAmbiental.cargado}">
+                <div class="row">
+                    <c:if test="#{evaluacionDesempenioAmbiental.tieneAcceso}">
+                        <h:form id="form">
+                            <div class="col-md-12">
+                                <div class="box box-primary">
+                                    <div class="box-header with-border">
+                                        <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                            <p:focus for="ayuda"/>
+                                            <p:outputPanel id="ayuda">
+                                                <p:autoUpdate/>
+                                                <p:toolbar id="tb">
+                                                    <f:facet name="left">
+                                                        <h:outputText value="Nombre de la parte interesada: #{evaluacionDesempenioAmbiental.rol.personal.personal.nombre}"/>
+                                                        <p:spacer width="30"/>
+                                                        <h:outputText value="Fecha de elaboración: #{evaluacionDesempenioAmbiental.rol.fechaElaboracion}"/>
+                                                    </f:facet>
+                                                    <f:facet name="right">
+                                                        <c:if test="#{evaluacionDesempenioAmbiental.finalizado}">
+                                                            <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado la evaluación.</span></h4>
+                                                        </c:if>
+                                                        <c:if test="#{!evaluacionDesempenioAmbiental.finalizado}">
+                                                            <h4><span class="label denegado"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
+                                                        </c:if>
+                                                    </f:facet>
+                                                </p:toolbar>
+                                                <p:sticky target="tb" />
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="col-sm-1"/>
+                                        <div class="col-sm-10" style="align-content: center">
+                                            <c:set var="index" value="#{1}"/>
+                                            <c:set var="index2" value="#{11}"/>
+                                            <c:forEach var="apartado" items="#{evaluacionDesempenioAmbiental.rol.apartados}">
+                                                <div class="box box-success">
+                                                    <div class="box-header with-border">
+                                                        <div class="row">
+                                                            <div class="col hidden-xs col-md-4">
+                                                                <h1 class="panel-title">Grupo de interés al que pertenece:*</h1>
+                                                            </div>
+                                                            <div class="col col-xs-5">
+                                                                <f:ajax execute="p#{111}">
+                                                                    <c:set var="pos" value="#{'p'.concat(111)}"/>
+                                                                    <p:selectOneRadio id="p#{111}" value="#{evaluacionDesempenioAmbiental.rol.respuestas[pos]}"
+                                                                                      valueChangeListener="#{evaluacionDesempenioAmbiental.guardarRespuesta}">
+                                                                        <f:selectItem itemValue="Docente" itemDescription="Docente" itemLabel="Docente"/>
+                                                                        <f:selectItem itemValue="Administrativo" itemDescription="Administrativo" itemLabel="Administrativo"/>
+                                                                    </p:selectOneRadio>
+                                                                </f:ajax>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <div class="table-responsive">
+                                                            <table class="table no-margin">
+                                                                <thead>
+                                                                    <tr style="font-weight: bold">
+                                                                        <td>#</td>
+                                                                        <td>Pregunta</td>
+                                                                        <td>Opción</td>
+                                                                        <td>Lugar donde lo percibió</td>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                <c:forEach var="pregunta" items="#{apartado.preguntas}">
+                                                                    <tr>
+                                                                        <td><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                                                        <td><h:outputText value="#{pregunta.titulo}"/><label style="color: #E53935" >*</label></td>
+                                                                        <td>
+                                                                            <f:ajax execute="p#{index}">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <c:if test="#{pregunta.numero eq 1.0 or pregunta.numero eq 2.0 or pregunta.numero eq 3.0
+                                                                                or pregunta.numero eq 4.0 or pregunta.numero eq 5.0 or pregunta.numero eq 6.0 or
+                                                                                pregunta.numero eq 7.0 or pregunta.numero eq 8.0 or pregunta.numero eq 9.0}">
+                                                                                    <p:selectOneButton id="p#{index}" value="#{evaluacionDesempenioAmbiental.rol.respuestas[pos]}"
+                                                                                                       valueChangeListener="#{evaluacionDesempenioAmbiental.guardarRespuesta}">
+                                                                                        <f:selectItem itemValue="Cuida" itemDescription="Cuida" itemLabel="Cuida"/>
+                                                                                        <f:selectItem itemValue="Hace mal uso" itemDescription="Hace mal uso" itemLabel="Hace mal uso"/>
+                                                                                    </p:selectOneButton>
+                                                                                </c:if>
+                                                                                <c:if test="#{pregunta.numero eq 10.0}">
+                                                                                    <p:inputTextarea id="p#{index}" style="width: 200px; height: 50px;" cols="20" rows="3"
+                                                                                                     value="#{evaluacionDesempenioAmbiental.rol.respuestas[pos]}"
+                                                                                                     valueChangeListener="#{evaluacionDesempenioAmbiental.guardarRespuesta}">
+                                                                                    </p:inputTextarea>
+                                                                                </c:if>
+                                                                            </f:ajax>
+                                                                            <c:set var="index" value="#{index+1}" />
+                                                                        </td>
+                                                                        <td>
+                                                                            <f:ajax execute="p#{index2}">
+                                                                                <c:set var="pos2" value="#{'p'.concat(index2)}"/>
+                                                                                <c:if test="#{pregunta.numero eq 1.0 or pregunta.numero eq 2.0 or pregunta.numero eq 3.0
+                                                                                or pregunta.numero eq 4.0 or pregunta.numero eq 5.0 or pregunta.numero eq 6.0 or
+                                                                                pregunta.numero eq 7.0 or pregunta.numero eq 8.0 or pregunta.numero eq 9.0}">
+                                                                                    <p:inputTextarea id="p#{index2}" style="width: 200px; height: 50px;" cols="20" rows="3"
+                                                                                                     value="#{evaluacionDesempenioAmbiental.rol.respuestas[pos2]}"
+                                                                                                     valueChangeListener="#{evaluacionDesempenioAmbiental.guardarRespuesta}">
+                                                                                    </p:inputTextarea>
+                                                                                </c:if>
+                                                                            </f:ajax>
+                                                                            <c:set var="index2" value="#{index2+10}" />
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:forEach>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                        <div class="col-sm-1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+
+                    </c:if>
+                </div>
+            </c:if>
+            <c:if test="#{evaluacionDesempenioAmbientalEstudiante19.cargado}">
+                <div class="row">
+                    <c:if test="#{evaluacionDesempenioAmbientalEstudiante19.tieneAcceso}">
+                        <h:form id="formEst">
+                            <div class="col-md-12">
+                                <div class="box box-primary">
+                                    <div class="box-header with-border">
+                                        <div id="main-buttons1" class="hidden-sm hidden-xs" >
+                                            <p:focus for="ayuda1"/>
+                                            <p:outputPanel id="ayuda1">
+                                                <p:autoUpdate/>
+                                                <p:toolbar id="tb1">
+                                                    <f:facet name="left">
+                                                        <h:outputText value="Nombre de la parte interesada:
+                                                        #{evaluacionDesempenioAmbientalEstudiante19.rol.estudiante.aspirante.idPersona.nombre}
+                                                        #{evaluacionDesempenioAmbientalEstudiante19.rol.estudiante.aspirante.idPersona.apellidoPaterno}
+                                                        #{evaluacionDesempenioAmbientalEstudiante19.rol.estudiante.aspirante.idPersona.apellidoMaterno}"/>
+                                                        <p:spacer width="30"/>
+                                                        <h:outputText value="Fecha de elaboración: #{evaluacionDesempenioAmbientalEstudiante19.rol.fechaElaboracion}"/>
+                                                    </f:facet>
+                                                    <f:facet name="right">
+                                                        <c:if test="#{evaluacionDesempenioAmbientalEstudiante19.finalizado}">
+                                                            <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado la evaluación.</span></h4>
+                                                        </c:if>
+                                                        <c:if test="#{!evaluacionDesempenioAmbientalEstudiante19.finalizado}">
+                                                            <h4><span class="label denegado"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
+                                                        </c:if>
+                                                    </f:facet>
+                                                </p:toolbar>
+                                                <p:sticky target="tb1" />
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="col-sm-1"/>
+                                        <div class="col-sm-10" style="align-content: center">
+                                            <c:set var="index" value="#{1}"/>
+                                            <c:set var="index2" value="#{11}"/>
+                                            <c:forEach var="apartado" items="#{evaluacionDesempenioAmbientalEstudiante19.rol.apartados}">
+                                                <div class="box box-success">
+                                                    <div class="box-header with-border">
+                                                        <div class="row">
+                                                            <div class="col hidden-xs col-md-4">
+                                                                <h1 class="panel-title">Grupo de interés al que pertenece:*</h1>
+                                                            </div>
+                                                            <div class="col col-xs-5">
+                                                                <f:ajax execute="p#{111}">
+                                                                    <c:set var="pos" value="#{'p'.concat(111)}"/>
+                                                                    <p:selectOneRadio id="p#{111}" value="#{evaluacionDesempenioAmbientalEstudiante19.rol.respuestas[pos]}"
+                                                                                      valueChangeListener="#{evaluacionDesempenioAmbientalEstudiante19.guardarRespuesta}">
+                                                                        <f:selectItem itemValue="Estudiante" itemDescription="Estudiante" itemLabel="Estudiante"/>
+                                                                    </p:selectOneRadio>
+                                                                </f:ajax>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <div class="table-responsive">
+                                                            <table class="table no-margin">
+                                                                <thead>
+                                                                <tr style="font-weight: bold">
+                                                                    <td>#</td>
+                                                                    <td>Pregunta</td>
+                                                                    <td>Opción</td>
+                                                                    <td>Lugar donde lo percibió</td>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                <c:forEach var="pregunta" items="#{apartado.preguntas}">
+                                                                    <tr>
+                                                                        <td><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                                                        <td><h:outputText value="#{pregunta.titulo}"/><label style="color: #E53935" >*</label></td>
+                                                                        <td>
+                                                                            <f:ajax execute="p#{index}">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <c:if test="#{pregunta.numero eq 1.0 or pregunta.numero eq 2.0 or pregunta.numero eq 3.0
+                                                                                or pregunta.numero eq 4.0 or pregunta.numero eq 5.0 or pregunta.numero eq 6.0 or
+                                                                                pregunta.numero eq 7.0 or pregunta.numero eq 8.0 or pregunta.numero eq 9.0}">
+                                                                                    <p:selectOneButton id="p#{index}" value="#{evaluacionDesempenioAmbientalEstudiante19.rol.respuestas[pos]}"
+                                                                                                       valueChangeListener="#{evaluacionDesempenioAmbientalEstudiante19.guardarRespuesta}">
+                                                                                        <f:selectItem itemValue="Cuida" itemDescription="Cuida" itemLabel="Cuida"/>
+                                                                                        <f:selectItem itemValue="Hace mal uso" itemDescription="Hace mal uso" itemLabel="Hace mal uso"/>
+                                                                                    </p:selectOneButton>
+                                                                                </c:if>
+                                                                                <c:if test="#{pregunta.numero eq 10.0}">
+                                                                                    <p:inputTextarea id="p#{index}" style="width: 200px; height: 50px;" cols="20" rows="3"
+                                                                                                     value="#{evaluacionDesempenioAmbientalEstudiante19.rol.respuestas[pos]}"
+                                                                                                     valueChangeListener="#{evaluacionDesempenioAmbientalEstudiante19.guardarRespuesta}">
+                                                                                    </p:inputTextarea>
+                                                                                </c:if>
+                                                                            </f:ajax>
+                                                                            <c:set var="index" value="#{index+1}" />
+                                                                        </td>
+                                                                        <td>
+                                                                            <f:ajax execute="p#{index2}">
+                                                                                <c:set var="pos2" value="#{'p'.concat(index2)}"/>
+                                                                                <c:if test="#{pregunta.numero eq 1.0 or pregunta.numero eq 2.0 or pregunta.numero eq 3.0
+                                                                                or pregunta.numero eq 4.0 or pregunta.numero eq 5.0 or pregunta.numero eq 6.0 or
+                                                                                pregunta.numero eq 7.0 or pregunta.numero eq 8.0 or pregunta.numero eq 9.0}">
+                                                                                    <p:inputTextarea id="p#{index2}" style="width: 200px; height: 50px;" cols="20" rows="3"
+                                                                                                     value="#{evaluacionDesempenioAmbientalEstudiante19.rol.respuestas[pos2]}"
+                                                                                                     valueChangeListener="#{evaluacionDesempenioAmbientalEstudiante19.guardarRespuesta}">
+                                                                                    </p:inputTextarea>
+                                                                                </c:if>
+                                                                            </f:ajax>
+                                                                            <c:set var="index2" value="#{index2+10}" />
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:forEach>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                        <div class="col-sm-1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+
+                    </c:if>
+                </div>
+            </c:if>
+            <c:if test="#{evaluacionDesempenioAmbientalEstudiante.cargado}">
+                <div class="row">
+                    <c:if test="#{evaluacionDesempenioAmbientalEstudiante.tieneAcceso}">
+                        <h:form id="formEstudiante">
+                            <div class="col-md-12">
+                                <div class="box box-primary">
+                                    <div class="box-header with-border">
+                                        <div id="main-buttons2" class="hidden-sm hidden-xs" >
+                                            <p:focus for="ayuda2"/>
+                                            <p:outputPanel id="ayuda2">
+                                                <p:autoUpdate/>
+                                                <p:toolbar id="tb2">
+                                                    <f:facet name="left">
+                                                        <h:outputText value="Nombre de la parte interesada:
+                                                        #{evaluacionDesempenioAmbientalEstudiante.rol.personas.nombre}
+                                                        #{evaluacionDesempenioAmbientalEstudiante.rol.personas.apellidoPat}
+                                                        #{evaluacionDesempenioAmbientalEstudiante.rol.personas.apellidoMat}"/>
+                                                        <p:spacer width="30"/>
+                                                        <h:outputText value="Fecha de elaboración: #{evaluacionDesempenioAmbientalEstudiante.rol.fechaElaboracion}"/>
+                                                    </f:facet>
+                                                    <f:facet name="right">
+                                                        <c:if test="#{evaluacionDesempenioAmbientalEstudiante.finalizado}">
+                                                            <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado la evaluación.</span></h4>
+                                                        </c:if>
+                                                        <c:if test="#{!evaluacionDesempenioAmbientalEstudiante.finalizado}">
+                                                            <h4><span class="label denegado"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
+                                                        </c:if>
+                                                    </f:facet>
+                                                </p:toolbar>
+                                                <p:sticky target="tb2" />
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="col-sm-1"/>
+                                        <div class="col-sm-10" style="align-content: center">
+                                            <c:set var="index" value="#{1}"/>
+                                            <c:set var="index2" value="#{11}"/>
+                                            <c:forEach var="apartado" items="#{evaluacionDesempenioAmbientalEstudiante.rol.apartados}">
+                                                <div class="box box-success">
+                                                    <div class="box-header with-border">
+                                                        <div class="row">
+                                                            <div class="col hidden-xs col-md-4">
+                                                                <h1 class="panel-title">Grupo de interés al que pertenece:*</h1>
+                                                            </div>
+                                                            <div class="col col-xs-5">
+                                                                <f:ajax execute="p#{111}">
+                                                                    <c:set var="pos" value="#{'p'.concat(111)}"/>
+                                                                    <p:selectOneRadio id="p#{111}" value="#{evaluacionDesempenioAmbientalEstudiante.rol.respuestas[pos]}"
+                                                                                      valueChangeListener="#{evaluacionDesempenioAmbientalEstudiante.guardarRespuesta}">
+                                                                        <f:selectItem itemValue="Estudiante" itemDescription="Estudiante" itemLabel="Estudiante"/>
+                                                                    </p:selectOneRadio>
+                                                                </f:ajax>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <div class="table-responsive">
+                                                            <table class="table no-margin">
+                                                                <thead>
+                                                                <tr style="font-weight: bold">
+                                                                    <td>#</td>
+                                                                    <td>Pregunta</td>
+                                                                    <td>Opción</td>
+                                                                    <td>Lugar donde lo percibió</td>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                <c:forEach var="pregunta" items="#{apartado.preguntas}">
+                                                                    <tr>
+                                                                        <td><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.##"/></h:outputText></td>
+                                                                        <td><h:outputText value="#{pregunta.titulo}"/><label style="color: #E53935" >*</label></td>
+                                                                        <td>
+                                                                            <f:ajax execute="p#{index}">
+                                                                                <c:set var="pos" value="#{'p'.concat(index)}" />
+                                                                                <c:if test="#{pregunta.numero eq 1.0 or pregunta.numero eq 2.0 or pregunta.numero eq 3.0
+                                                                                or pregunta.numero eq 4.0 or pregunta.numero eq 5.0 or pregunta.numero eq 6.0 or
+                                                                                pregunta.numero eq 7.0 or pregunta.numero eq 8.0 or pregunta.numero eq 9.0}">
+                                                                                    <p:selectOneButton id="p#{index}" value="#{evaluacionDesempenioAmbientalEstudiante.rol.respuestas[pos]}"
+                                                                                                       valueChangeListener="#{evaluacionDesempenioAmbientalEstudiante.guardarRespuesta}">
+                                                                                        <f:selectItem itemValue="Cuida" itemDescription="Cuida" itemLabel="Cuida"/>
+                                                                                        <f:selectItem itemValue="Hace mal uso" itemDescription="Hace mal uso" itemLabel="Hace mal uso"/>
+                                                                                    </p:selectOneButton>
+                                                                                </c:if>
+                                                                                <c:if test="#{pregunta.numero eq 10.0}">
+                                                                                    <p:inputTextarea id="p#{index}" style="width: 200px; height: 50px;" cols="20" rows="3"
+                                                                                                     value="#{evaluacionDesempenioAmbientalEstudiante.rol.respuestas[pos]}"
+                                                                                                     valueChangeListener="#{evaluacionDesempenioAmbientalEstudiante.guardarRespuesta}">
+                                                                                    </p:inputTextarea>
+                                                                                </c:if>
+                                                                            </f:ajax>
+                                                                            <c:set var="index" value="#{index+1}" />
+                                                                        </td>
+                                                                        <td>
+                                                                            <f:ajax execute="p#{index2}">
+                                                                                <c:set var="pos2" value="#{'p'.concat(index2)}"/>
+                                                                                <c:if test="#{pregunta.numero eq 1.0 or pregunta.numero eq 2.0 or pregunta.numero eq 3.0
+                                                                                or pregunta.numero eq 4.0 or pregunta.numero eq 5.0 or pregunta.numero eq 6.0 or
+                                                                                pregunta.numero eq 7.0 or pregunta.numero eq 8.0 or pregunta.numero eq 9.0}">
+                                                                                    <p:inputTextarea id="p#{index2}" style="width: 200px; height: 50px;" cols="20" rows="3"
+                                                                                                     value="#{evaluacionDesempenioAmbientalEstudiante.rol.respuestas[pos2]}"
+                                                                                                     valueChangeListener="#{evaluacionDesempenioAmbientalEstudiante.guardarRespuesta}">
+                                                                                    </p:inputTextarea>
+                                                                                </c:if>
+                                                                            </f:ajax>
+                                                                            <c:set var="index2" value="#{index2+10}" />
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:forEach>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                        <div class="col-sm-1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+
+                    </c:if>
+                </div>
+            </c:if>
+        </section>
+    </ui:define>
+</ui:composition>
