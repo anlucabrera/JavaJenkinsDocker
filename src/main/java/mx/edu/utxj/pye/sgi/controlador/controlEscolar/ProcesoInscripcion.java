@@ -170,13 +170,13 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         String claveCorreo = "DServiciosEscolares19";
         String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Se le informa que su ficha de admisión ha sido validada correctamente, para continuar con el tu proceso de inscripción se le pide de favor que continúes con tu exámen institucional y ceneval.\n\n" +
                         "Datos de acceso a exámen Institucional: \n\n"
-                        + "Activo a partir del 20 de mayo de 2019\n"
+                        + "Activo a partir del 20 de mayo de 2020\n"
                         + "Url: http://escolar.utxj.edu.mx/utxj \n"
                         + "Usuario: "+aspirante.getFolioAspirante()+" \n" +
                           "Password: "+persona.getCurp()+"\n\n "+
                         "ATENTAMENTE \n" +
                         "Departamento de Servicios Escolares";
-        String identificador = "Registro de Ficha de Admisión 2019 UTXJ";
+        String identificador = "Registro de Ficha de Admisión 2020 UTXJ";
         String asunto = "Validación Ficha de Admisión";
         if(aspirante.getIdPersona().getMedioComunicacion().getEmail() != null){
            EnvioCorreos.EnviarCorreoTxt(correoEnvia, claveCorreo, identificador,asunto,aspirante.getIdPersona().getMedioComunicacion().getEmail(),mensaje); 

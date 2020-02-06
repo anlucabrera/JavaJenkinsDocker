@@ -46,7 +46,7 @@
                                         <p:commandButton id="dynaButton" value="Utilerias" type="button" icon="fa fa-cogs" class="btn btn-primary"/>
                                         <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom" >
                                                 <p:menuitem value="Resetear contraseña"
-                                                            update=":frm1,:tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6,:frmPwd"
+                                                            update=":frm1,:tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6,:frmPwd,:frmConfirm"
                                                             icon="fa fa-key"
                                                             oncomplete="PF('modalConfirm').show();"
 
@@ -644,7 +644,13 @@
                           style="scroll-: 300px"
                           modal="true" draggable="true" header="Reseteo de contraseña" styleClass="panel panel-primary" responsive="true" resizable="true" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <h:form>
+                        <h:form id="frmConfirm">
+                            <c:if test="#{cedulaIdentificacionSE.rol.estudiante.aspirante.idPersona.login.modificado==true}">
+                                <span class="label label-success" style="text-align: justify;"><i class="fa fa-exclamation-triangle"></i> El estudiante ha relizado el cambio de contraseña.</span>
+                            </c:if>
+                            <c:if test="#{cedulaIdentificacionSE.rol.estudiante.aspirante.idPersona.login.modificado==false}">
+                                <span class="label label-warning" style="text-align: justify;"><i class="fa fa-exclamation-triangle"></i> El estudiante no ha relizado el cambio de contraseña.</span>
+                            </c:if>
                             <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">¿Esta seguro de que desea resetear la contraseña del estudiante?</h3></div>
                             <div class="box-body">
                                 <p:spacer width="50px"/>

@@ -273,7 +273,6 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
                 getNuevasMaterias();
                 //System.out.println("Lista de materias" + rol.getNuevoGrupo());
                 activaTab();
-
             }else {
                 mostrarMensajeResultadoEJB(resActualiza);
             }
