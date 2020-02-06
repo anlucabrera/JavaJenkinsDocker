@@ -193,4 +193,15 @@ public class SeguimientoCasoCriticoEspecialista extends ViewScopedRol implements
         }
     }
     
+    public void abrirCasoCritico(DtoCasoCritico dto) {
+        ResultadoEJB<Boolean> res = ejb.quitarValidacionEspecialista(dto);
+        if (res.getCorrecto()) {
+            mostrarMensajeResultadoEJB(res);
+            actualizarListaCasosCriticos();
+        }else{
+            mostrarMensajeResultadoEJB(res);
+            actualizarListaCasosCriticos();
+        }
+    }
+
 }

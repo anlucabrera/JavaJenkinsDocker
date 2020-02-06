@@ -69,7 +69,7 @@ public class CasosCriticosEstudiante extends ViewScopedRol implements Desarrolla
         try {
             if(logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)){
                 setVistaControlador(ControlEscolarVistaControlador.CONSULTA_CASOS_CRITICOS);
-                ResultadoEJB<Estudiante> resAcceso = ejbValidacionRol.validarEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
+                ResultadoEJB<Estudiante> resAcceso = ejbValidacionRol.validarEstudiante(logonMB.getCurrentUser());
                 if(!resAcceso.getCorrecto()){mostrarMensajeResultadoEJB(resAcceso);return;}
                 rol = new CasosCriticosRolEstudiante(ejbPacker.packEstudiante(resAcceso.getValor()).getValor());
                 tieneAcceso = rol.tieneAcceso(rol.getDtoEstudiante(), UsuarioTipo.ESTUDIANTE19);

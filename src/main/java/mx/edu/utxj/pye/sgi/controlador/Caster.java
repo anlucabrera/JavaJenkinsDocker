@@ -357,6 +357,14 @@ public class Caster {
         }
     }
     
+    public Integer obtenerAreaOperativa(Integer clave){
+        try {
+            return (ejbTutor.obtenerAreaOperativa(clave)).getValor();
+        }catch (Exception e){
+            return 0;
+        }
+    }
+    
     public String parseHoraMinutos(Date hora){
         DateFormat formatoHora = new SimpleDateFormat("HH:mm a");    
         return formatoHora.format(hora);

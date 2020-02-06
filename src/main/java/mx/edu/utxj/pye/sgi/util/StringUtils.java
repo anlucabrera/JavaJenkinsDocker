@@ -19,6 +19,11 @@ public class StringUtils {
         if(cadena == null) return "";
         return cadena.replace(' ', '_').trim();
     }
+    
+    public static String quitarEspaciosVacios(String cadena){
+        if(cadena == null) return "";
+        return cadena.replaceAll("\\s", "").trim();
+    }
 
     public static String prettyURL(String string) {
         if (string == null) {

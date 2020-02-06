@@ -105,8 +105,10 @@ public class ServicioArchivos implements Serializable{
     
     public static void eliminarArchivo(String ruta){
         try {
-            Path path = Paths.get(ruta);
-            Files.deleteIfExists(path);
+            if (!ruta.equals("") || ruta != null) {
+                Path path = Paths.get(ruta);
+                Files.deleteIfExists(path);
+            }
         } catch (IOException ex) {
             Logger.getLogger(ServicioArchivos.class.getName()).log(Level.SEVERE, null, ex);
         }

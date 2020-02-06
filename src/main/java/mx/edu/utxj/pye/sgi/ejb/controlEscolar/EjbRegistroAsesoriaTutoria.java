@@ -48,11 +48,14 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.CasoCritico;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CordinadoresTutores;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.FuncionesTutor;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.FuncionesTutorPlantilla;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ParticipantesTutoriaGrupal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ParticipantesTutoriaGrupalPK;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanAccionTutorial;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanAccionTutorialPlantilla;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SesionesGrupalesTutorias;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.SesionesGrupalesTutoriasPlantilla;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutoriasGrupales;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutoriasIndividuales;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -78,6 +81,7 @@ public class EjbRegistroAsesoriaTutoria {
     @EJB        EjbValidadorDocente         ejbValidadorDocente;
     @EJB        EjbPeriodoEventoRegistro    ejbPeriodoEventoRegistro;
     @EJB        EjbAsignacionAcademica      ejbAsignacionAcademica;
+    @EJB        EjbRegistroPlanAccionTutorial   ejbPlanAccionTutorial;
     @EJB        Facade                      f;
     @EJB        EjbPacker                   pack;
     @EJB        EjbCasoCritico              cc;
@@ -261,7 +265,7 @@ public class EjbRegistroAsesoriaTutoria {
     
     public ResultadoEJB<List<Asesoria>> buscaAsesoriasPorUnidadEventoRegistro(Integer configuracion, Integer eventoRegistro){
         try {
-            List<Asesoria> asesorias = em.createQuery("SELECT a FROM Asesoria a WHERE a.configuracion.configuracion = :configuracion AND a.eventoRegistro = :eventoRegistro", Asesoria.class)
+            List<Asesoria> asesorias = em.createQuery("SELECT a FROM Asesoria a WHERE a.configuracion.configuracion = :configuracion AND a.eventoRegistro = :eventoRegistro ORDER BY a.idAsesoria DESC", Asesoria.class)
                     .setParameter("configuracion", configuracion)
                     .setParameter("eventoRegistro", eventoRegistro)
                     .getResultList();
@@ -421,6 +425,67 @@ public class EjbRegistroAsesoriaTutoria {
         }
     }
     
+    public ResultadoEJB<List<PlanAccionTutorial>> aplicarPlantillaPlanAccionTutorial(Grupo grupo){
+        try {
+            if (!buscaPlanAccionTutorialExistente(grupo).getCorrecto()) {
+                ResultadoEJB<List<PlanAccionTutorialPlantilla>> resPlantillaPAT = ejbPlanAccionTutorial.buscaPlantillaPlanAccionTutorialGradoAcademico(String.valueOf(grupo.getGrado()));
+                if (resPlantillaPAT.getCorrecto()) {
+//                Asignación de plan de acción tutorial con base a la plantilla registrada por el area de psicopedagogia
+                    PlanAccionTutorialPlantilla patPlantilla = resPlantillaPAT.getValor().get(0);
+                    PlanAccionTutorial pat = new PlanAccionTutorial();
+                    pat.setGrupo(grupo);
+                    pat.setPlanAccionTutoria(grupo.getIdGrupo());
+                    pat.setObjetivo(patPlantilla.getObjetivo());
+                    pat.setComentarios(patPlantilla.getComentarios());
+                    pat.setSugerencias(patPlantilla.getSugerencias());
+                    pat.setEstatus(PlanAccionTutorialEstado.REGISTRADO.getLabel());
+                    pat.setComentariosDirector(null);
+
+                    em.persist(pat);
+
+//                Asignación de las funcioens como metas del tutor con base a la plantilla registrada por el area de psicopedagogia
+                    List<FuncionesTutor> listaFt = new ArrayList<>();
+                    List<FuncionesTutorPlantilla> ftp = patPlantilla.getFuncionesTutorPlantillaList();
+                    ftp.stream().forEach((ftplantilla) -> {
+                        FuncionesTutor ftNuevo = new FuncionesTutor();
+                        ftNuevo.setPlanAccionTutoria(pat);
+                        ftNuevo.setNoSesion(ftplantilla.getNoSesion());
+                        ftNuevo.setMetaFuncionTutor(ftplantilla.getMetaFuncionTutor());
+                        listaFt.add(ftNuevo);
+                    });
+                    pat.setFuncionesTutorList(listaFt);
+
+//                Asignacion de las sesiones grupales de tutorias con base a la plantulla registrada por el area de psicopedagogia
+                    List<SesionesGrupalesTutorias> listaSg = new ArrayList<>();
+                    List<SesionesGrupalesTutoriasPlantilla> sgtp = patPlantilla.getSesionesGrupalesTutoriasPlantillaList();
+                    sgtp.stream().forEach((sgtplantilla) -> {
+                        SesionesGrupalesTutorias sgtNuevo = new SesionesGrupalesTutorias();
+                        sgtNuevo.setPlanAccionTutoria(pat);
+                        sgtNuevo.setNoSesion(sgtplantilla.getNoSesion());
+                        sgtNuevo.setActividadProgramada(sgtplantilla.getActividadProgramada());
+                        sgtNuevo.setObjetivos(sgtplantilla.getObjetivos());
+                        sgtNuevo.setCumplimiento(Boolean.FALSE);
+                        sgtNuevo.setJustificacion("En espera de registro de tutorías grupales");
+                        listaSg.add(sgtNuevo);
+                    });
+                    pat.setSesionesGrupalesTutoriasList(listaSg);
+
+                    em.merge(pat);
+
+                    List<PlanAccionTutorial> lpat = new ArrayList();
+                    lpat.add(pat);
+                    return ResultadoEJB.crearCorrecto(lpat, "Plan de acción tutorial generado automaticamente, favor de revisar y hacer las modificaciones correspondientes");
+                } else {
+                    return buscaPlanAccionTutorialExistente(grupo);
+                }
+            } else {
+                return buscaPlanAccionTutorialExistente(grupo);
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido aplicar la plantilla, favor de ponerse en contactor con el adminsitrador del sistema", e, null);
+        }
+    }
+    
     /**
      * Método que permite la búsqueda del plan de acción tutorial registrado en el grupo que el tutor haya seleccionado, para que automáticamente se vea reflejado en la interfaz de usuario
      * @param grupo
@@ -483,7 +548,7 @@ public class EjbRegistroAsesoriaTutoria {
     public ResultadoEJB<List<SesionesGrupalesTutorias>> buscaSesionesGrupalesXPlanAT(Grupo grupo) {
         try {
             List<SesionesGrupalesTutorias> sesiones = new ArrayList<>();
-            sesiones = em.createQuery("SELECT sgt FROM SesionesGrupalesTutorias sgt WHERE sgt.planAccionTutoria.planAccionTutoria = :planAccionTutoria", SesionesGrupalesTutorias.class)
+            sesiones = em.createQuery("SELECT sgt FROM SesionesGrupalesTutorias sgt WHERE sgt.planAccionTutoria.planAccionTutoria = :planAccionTutoria ORDER BY sgt.noSesion ASC", SesionesGrupalesTutorias.class)
                     .setParameter("planAccionTutoria", grupo.getIdGrupo())
                     .getResultList();
             if (sesiones.isEmpty()) {
@@ -547,10 +612,11 @@ public class EjbRegistroAsesoriaTutoria {
      * @param planAccionTutorial
      * @return 
      */
+//    TODO: Verificar si realmente es necesario llevar a cabo esta consulta.
     public ResultadoEJB<List<FuncionesTutor>> buscaFuncionesTutor(PlanAccionTutorial planAccionTutorial){
         try {
             List<FuncionesTutor> listarFunciones = new ArrayList<>();
-            listarFunciones = em.createQuery("SELECT ft FROM FuncionesTutor ft WHERE ft.planAccionTutoria.planAccionTutoria = :planAccionTutoria", FuncionesTutor.class)
+            listarFunciones = em.createQuery("SELECT ft FROM FuncionesTutor ft WHERE ft.planAccionTutoria.planAccionTutoria = :planAccionTutoria ORDER BY ft.noSesion ASC", FuncionesTutor.class)
                     .setParameter("planAccionTutoria", planAccionTutorial.getPlanAccionTutoria())
                     .getResultList();
             if(listarFunciones.isEmpty()){
@@ -912,6 +978,21 @@ public class EjbRegistroAsesoriaTutoria {
                  .concat(docentes.get(0).getPersonal().getNombre()).concat(" - ")
                  .concat(docentes.get(0).getAreaOperativa().getNombre());
     }
+
+    public ResultadoEJB<Integer> obtenerAreaOperativa(Integer clave){
+        try {
+            List<Short> areaOperativa = em.createQuery("SELECT p.areaOperativa FROM Personal p WHERE p.clave = :clave", Short.class)
+                    .setParameter("clave", clave)
+                    .getResultList();
+            if(areaOperativa.isEmpty()){
+                return ResultadoEJB.crearErroneo(2,"No se ha encontrado al personal seleccionado", Integer.class);
+            }else{
+                return ResultadoEJB.crearCorrecto(areaOperativa.get(0).intValue(),"Área operativa encontrada del personal seleccionado.");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1,"No se ha podido consultar el área operativa del personal seleccionado", e, Integer.class);
+        }
+    }
     
     public ResultadoEJB<List<TutoriasGrupales>> buscaTutoriasGrupalesPorSesionEventoRegistro(SesionesGrupalesTutorias sesionGrupal, EventosRegistros eventoRegistro){
         try {
@@ -1123,9 +1204,12 @@ public class EjbRegistroAsesoriaTutoria {
                 em.remove(ti);
                 return ResultadoEJB.crearCorrecto(Boolean.TRUE, "La tutoría individual se ha eliminado del sistema");
             }else{
-                if(dtoCC.getEstado().getNivel() < CasoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.getNivel() && dtoCC.getEstado().getNivel() < CasoCriticoEstado.EN_SEGUMIENTO_TUTOR.getNivel()){
+                if(dtoCC.getEstado().getNivel() < CasoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.getNivel()){
                     TutoriasIndividuales ti = em.find(TutoriasIndividuales.class, tutoriaIndividual.getTutoriaIndividual());
-                    eliminarEvidenciaCasoCritico(dtoCC);
+                    if (dtoCC.getCasoCritico().getEvidenciaTutor() != null) {
+                        eliminarEvidenciaCasoCritico(dtoCC);
+                    }
+                    dtoCC.getCasoCritico().setEstado(CasoCriticoEstado.REGISTRADO.getLabel());
                     dtoCC.getCasoCritico().setComentariosTutor(null);
                     cc.actualizarCasoCritico(dtoCC);
                     em.remove(ti);
@@ -1139,21 +1223,61 @@ public class EjbRegistroAsesoriaTutoria {
         }
     }
     
-    public ResultadoEJB<Boolean> liberarCasoCritico(TutoriasIndividuales tutoriaIndividual, DtoCasoCritico dtoCC) {
+//    public ResultadoEJB<Boolean> liberarCasoCritico(TutoriasIndividuales tutoriaIndividual, DtoCasoCritico dtoCC) {
+//        try {
+//            if(dtoCC.getCasoCritico().getEstado().equals(CasoCriticoEstado.REGISTRADO.getLabel())){    
+//                return ResultadoEJB.crearErroneo(3, "No se ha podido liberar el caso critico debido a que aún no se le ha dado seguimiento", Boolean.TYPE);
+//            }   
+//            dtoCC.getCasoCritico().setEstado(CasoCriticoEstado.CERRADO_TUTOR.getLabel());
+//            dtoCC.getCasoCritico().setFechaCierre(new Date());
+//            ResultadoEJB<DtoCasoCritico> res = cc.actualizarCasoCritico(dtoCC);
+//            if(res.getCorrecto()){
+//                em.merge(tutoriaIndividual);
+//                return ResultadoEJB.crearCorrecto(Boolean.TRUE, "El caso crítico del estudiante se ha liberado correctamente");
+//            }
+//            else return ResultadoEJB.crearErroneo(2, "No se pudo cerrar el caso crítico del estudiante, debido a una validacion del caso crítico", Boolean.TYPE);
+//        } catch (Exception e) {
+//            return ResultadoEJB.crearErroneo(1, "No se pudo liberar el caso crítico (EjbRegistroAsesoriaTutoria.liberarCasoCritico).", e, Boolean.TYPE);
+//        }
+//    }
+    
+    public ResultadoEJB<Boolean> quitarValidacionTutor(DtoCasoCritico dtoCC){
         try {
-            if(dtoCC.getCasoCritico().getEstado().equals(CasoCriticoEstado.REGISTRADO.getLabel())){    
-                return ResultadoEJB.crearErroneo(3, "No se ha podido liberar el caso critico debido a que aún no se le ha dado seguimiento", Boolean.TYPE);
-            }   
-            dtoCC.getCasoCritico().setEstado(CasoCriticoEstado.CERRADO_TUTOR.getLabel());
-            dtoCC.getCasoCritico().setFechaCierre(new Date());
-            ResultadoEJB<DtoCasoCritico> res = cc.actualizarCasoCritico(dtoCC);
-            if(res.getCorrecto()){
-                em.merge(tutoriaIndividual);
-                return ResultadoEJB.crearCorrecto(Boolean.TRUE, "El caso crítico del estudiante se ha liberado correctamente");
+            if (dtoCC.getCasoCritico().getEstado().equals(CasoCriticoEstado.REGISTRADO.getLabel())) {
+                return ResultadoEJB.crearErroneo(3, "No se ha podido quitar la validación del caso crítico debido a que aún no se le ha dado seguimiento", Boolean.TYPE);
             }
-            else return ResultadoEJB.crearErroneo(2, "No se pudo cerrar el caso crítico del estudiante, debido a una validacion del caso crítico", Boolean.TYPE);
+            if (dtoCC.getCasoCritico().getEstado().equals(CasoCriticoEstado.CERRADO_TUTOR.getLabel())) {
+                dtoCC.getCasoCritico().setEstado(CasoCriticoEstado.EN_SEGUMIENTO_TUTOR.getLabel());
+                dtoCC.getCasoCritico().setFechaCierre(null);
+                ResultadoEJB<DtoCasoCritico> res = cc.abrirCasoCritico(dtoCC);
+            } else if (dtoCC.getCasoCritico().getEstado().equals(CasoCriticoEstado.EN_SEGUMIENTO_TUTOR.getLabel())) {
+                dtoCC.getCasoCritico().setEstado(CasoCriticoEstado.CERRADO_TUTOR.getLabel());
+                dtoCC.getCasoCritico().setFechaCierre(new Date());
+                ResultadoEJB<DtoCasoCritico> res = cc.abrirCasoCritico(dtoCC);
+            }
+            return ResultadoEJB.crearCorrecto(Boolean.TRUE, "El caso crítico ha sido actualizado");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo liberar el caso crítico (EjbRegistroAsesoriaTutoria.liberarCasoCritico).", e, Boolean.TYPE);
+            return ResultadoEJB.crearErroneo(1, "No se ha podido quitar la validación del caso crítico (EjbRegistroAsesoriaTutoria.quitarValidacionEspecialista).", e, Boolean.TYPE);
+        }
+    }
+    
+    public ResultadoEJB<Boolean> quitarValidacionEspecialista(DtoCasoCritico dtoCC){
+        try {
+            if (dtoCC.getCasoCritico().getEstado().equals(CasoCriticoEstado.REGISTRADO.getLabel())) {
+                return ResultadoEJB.crearErroneo(3, "No se ha podido quitar la validación del caso crítico debido a que aún no se le ha dado seguimiento", Boolean.TYPE);
+            }
+            if (dtoCC.getCasoCritico().getEstado().equals(CasoCriticoEstado.CERRADO_ESPECIALISTA.getLabel())) {
+                dtoCC.getCasoCritico().setEstado(CasoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.getLabel());
+                dtoCC.getCasoCritico().setFechaCierre(null);
+                ResultadoEJB<DtoCasoCritico> res = cc.abrirCasoCritico(dtoCC);
+            } else if (dtoCC.getCasoCritico().getEstado().equals(CasoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.getLabel())) {
+                dtoCC.getCasoCritico().setEstado(CasoCriticoEstado.CERRADO_ESPECIALISTA.getLabel());
+                dtoCC.getCasoCritico().setFechaCierre(new Date());
+                ResultadoEJB<DtoCasoCritico> res = cc.abrirCasoCritico(dtoCC);
+            }
+            return ResultadoEJB.crearCorrecto(Boolean.TRUE, "El caso crítico ha sido actualizado");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido quitar la validación del caso crítico (EjbRegistroAsesoriaTutoria.quitarValidacionEspecialista).", e, Boolean.TYPE);
         }
     }
     
@@ -1274,7 +1398,9 @@ public class EjbRegistroAsesoriaTutoria {
         }
         if (casoCritico.getEstado().getNivel() > CasoCriticoEstado.CERRADO_ESPECIALISTA.getNivel() && casoCritico.getEstado().getNivel() > CasoCriticoEstado.CERRADO_TUTOR.getNivel()) {
             try {
-                ServicioArchivos.eliminarArchivo(casoCritico.getCasoCritico().getEvidenciaTutor());
+                if (!casoCritico.getCasoCritico().getEvidenciaTutor().equals("") || casoCritico.getCasoCritico().getEvidenciaTutor() != null) {
+                    ServicioArchivos.eliminarArchivo(casoCritico.getCasoCritico().getEvidenciaTutor());
+                }
                 casoCritico.getCasoCritico().setEvidenciaTutor(null);
                 em.merge(casoCritico.getCasoCritico());
             } catch (Exception e) {
@@ -1351,7 +1477,7 @@ public class EjbRegistroAsesoriaTutoria {
     
     public ResultadoEJB<List<DtoCasoCritico>> getCasosCriticosParaEspecialista(PeriodosEscolares periodoSeleccionado, AreasUniversidad programaEducativo, PersonalActivo especialista){
         try {
-            List<DtoCasoCritico> casosCriticos = em.createQuery("SELECT cc FROM CasoCritico cc INNER JOIN cc.idEstudiante e WHERE e.grupo.periodo = :periodo AND e.grupo.idPe = :idPE AND cc.especialista = :especialista", CasoCritico.class)
+            List<DtoCasoCritico> casosCriticos = em.createQuery("SELECT cc FROM CasoCritico cc INNER JOIN cc.idEstudiante e WHERE e.grupo.periodo = :periodo AND e.grupo.idPe = :idPE AND cc.especialista = :especialista ORDER BY cc.fechaRegistro DESC", CasoCritico.class)
                     .setParameter("periodo", periodoSeleccionado.getPeriodo())
                     .setParameter("idPE", programaEducativo.getArea())
                     .setParameter("especialista", especialista.getPersonal().getClave())
@@ -1515,7 +1641,7 @@ public class EjbRegistroAsesoriaTutoria {
     public ResultadoEJB<List<DtoPlanAccionTutorial>> getPlanesAccionTutorialPeriodoArea(PeriodosEscolares periodo, AreasUniversidad area){
         try {
             List<DtoPlanAccionTutorial> listaDto = new ArrayList<>();
-            List<PlanAccionTutorial> planesAccionTutorial = em.createQuery("SELECT p FROM PlanAccionTutorial p INNER JOIN p.grupo g WHERE g.periodo = :periodo AND g.idPe = :idPe", PlanAccionTutorial.class)
+            List<PlanAccionTutorial> planesAccionTutorial = em.createQuery("SELECT p FROM PlanAccionTutorial p INNER JOIN p.grupo g WHERE g.periodo = :periodo AND g.idPe = :idPe ORDER BY g.idPe,p.planAccionTutoria", PlanAccionTutorial.class)
                     .setParameter("periodo", periodo.getPeriodo())
                     .setParameter("idPe", area.getArea())
                     .getResultList();

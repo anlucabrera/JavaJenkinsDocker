@@ -38,7 +38,7 @@
     <ui:define name="body">
         <c:if test="#{registroAsesoriaDocente.cargado}">
         <adm:breadcrumb title="Registro de Asesorías"/>
-
+        <adm:sidebar collapsed="true"/>
         <div class="contenedor">
             <c:if test="#{registroAsesoriaDocente.tieneAcceso}">
                 <!-- zona de importación de enums -->
@@ -274,8 +274,7 @@
                                                     <center>
                                                         <p:dataTable id="dtAsesorias" 
                                                                      var="asesoria" 
-                                                                     value="#{registroAsesoriaDocente.rol.listaAsesorias}" 
-                                                                     sortBy="#{asesoria.idAsesoria}"
+                                                                     value="#{registroAsesoriaDocente.rol.listaAsesorias}"
                                                                      tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                      resizeMode="expand"
                                                                      emptyMessage="Aún no se han registrado asesorías en la unidad y evento de registro seleccionado"
@@ -514,7 +513,6 @@
                                                                      var="est" 
                                                                      value="#{registroAsesoriaDocente.rol.listaEstudiantes}" 
                                                                      filteredValue="#{registroAsesoriaDocente.rol.listaFiltroEstudiantes}"
-                                                                     sortBy="#{est.estudiante.estudiante.idEstudiante}"
                                                                      tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                      resizeMode="expand"
                                                                      emptyMessage="No se encontrarón estudiantes en el grupo seleccionado"
