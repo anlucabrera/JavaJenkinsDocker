@@ -5,29 +5,18 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.*;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacionDesempenioAmbiental;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDesempenioAmbientalUtxj;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
-import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -169,14 +158,14 @@ public class AdministracionEvaluacionAmbiental extends ViewScopedRol implements 
                         ejb.obtenerListaPersonalActivo().getValor().stream())
                 .collect(Collectors.toList());
         BigDecimal totalRegistrosEnBD = new BigDecimal(dtoEvaluaciones1.size());
-        System.out.println("Registros en DB:"+ totalRegistrosEnBD);
+        //System.out.println("Registros en DB:"+ totalRegistrosEnBD);
         BigDecimal totalEvaluaciones = new BigDecimal(ejb.obtenerTotalResultadosCompletos().getValor());
-        System.out.println("Registros de evaluaciones:"+ totalEvaluaciones);
+        //System.out.println("Registros de evaluaciones:"+ totalEvaluaciones);
         porcentaje = totalEvaluaciones
                 .multiply(new BigDecimal(100))
                 .divide(totalRegistrosEnBD, RoundingMode.HALF_UP)
                 .setScale(2, RoundingMode.HALF_UP);
-        System.out.println("Porcentaje:"+porcentaje);
+        //System.out.println("Porcentaje:"+porcentaje);
         return porcentaje;
     }
 

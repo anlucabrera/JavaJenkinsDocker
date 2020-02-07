@@ -2,7 +2,6 @@ package mx.edu.utxj.pye.sgi.ejb;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
-import edu.mx.utxj.pye.seut.util.preguntas.Pregunta;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.DtoAlumnosEncuesta;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
@@ -17,14 +16,12 @@ import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionAmbiental;
-import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionCodigoEtica;
 import mx.edu.utxj.pye.sgi.saiiut.entity.*;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
