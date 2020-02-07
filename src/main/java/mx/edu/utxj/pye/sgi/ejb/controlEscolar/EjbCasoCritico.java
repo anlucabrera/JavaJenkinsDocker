@@ -393,7 +393,7 @@ public class EjbCasoCritico implements Serializable {
         try {
             Boolean existe = (dtoCasoCritico.getCasoCritico().getCaso() != null && dtoCasoCritico.getCasoCritico().getCaso() > 0);
             if(!existe){
-                return ResultadoEJB.crearErroneo(2, "No se pudo actualizar el caso crítico debido a que no este registrado en la base de datos", DtoCasoCritico.class);
+                return ResultadoEJB.crearErroneo(2, "No se pudo actualizar el caso crítico debido a que no esta registrado en la base de datos", DtoCasoCritico.class);
             }else{
                 if (dtoCasoCritico.getEstado().getNivel() > CasoCriticoEstado.CERRADO_ESPECIALISTA.getNivel() && dtoCasoCritico.getEstado().getNivel() > CasoCriticoEstado.CERRADO_TUTOR.getNivel()) {
                     em.merge(dtoCasoCritico.getCasoCritico());
@@ -403,6 +403,32 @@ public class EjbCasoCritico implements Serializable {
                 }
             } 
         }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el caso crítico (EjbCasoCritico.actualizarCasoCritico).", e, DtoCasoCritico.class);
+        }
+    }
+    
+//    public ResultadoEJB<DtoCasoCritico> abrirCasoCriticoEspecialista(DtoCasoCritico dtoCasoCritico){
+//        dtoCasoCritico.getCasoCritico().setEstado(CasoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.getLabel());
+//        dtoCasoCritico.getCasoCritico().setFechaCierre(null);
+//        return abrirCasoCritico(dtoCasoCritico);
+//    }
+//    
+//    public ResultadoEJB<DtoCasoCritico> abrirCasoCriticoTutor(DtoCasoCritico dtoCasoCritico){
+//        dtoCasoCritico.getCasoCritico().setEstado(CasoCriticoEstado.EN_SEGUMIENTO_TUTOR.getLabel());
+//        dtoCasoCritico.getCasoCritico().setFechaCierre(null);
+//        return abrirCasoCritico(dtoCasoCritico);
+//    }
+    
+    public ResultadoEJB<DtoCasoCritico> abrirCasoCritico(DtoCasoCritico dtoCasoCritico){
+        try {
+            Boolean existe = (dtoCasoCritico.getCasoCritico().getCaso() != null && dtoCasoCritico.getCasoCritico().getCaso() > 0);
+            if(!existe){
+                return ResultadoEJB.crearErroneo(2, "No se pudo actualizar el caso crítico debido a que no esta registrado en la base de datos", DtoCasoCritico.class);
+            }else{
+                em.merge(dtoCasoCritico.getCasoCritico());    
+                return  ResultadoEJB.crearCorrecto(dtoCasoCritico, "Caso crítico actualizado correctamente");
+            }
+        } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el caso crítico (EjbCasoCritico.actualizarCasoCritico).", e, DtoCasoCritico.class);
         }
     }

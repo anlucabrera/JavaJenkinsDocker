@@ -27,7 +27,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Registro de Plan de Acción Tutorial
+        Registro de Plantillas de Plan de Acción Tutoríal
     </ui:define>
 
     <ui:define name="description">
@@ -35,12 +35,11 @@
     </ui:define>
 
     <ui:define name="body">
-        <c:if test="#{registroPlanTutoriaTutor.cargado}">
-            <adm:breadcrumb title="Registro de Plan de Acción Tutorial"/>
+        <c:if test="#{plantillaPlanAccionTutorialPsicopedagogia.cargado}">
+            <adm:breadcrumb title="Registro de Plantillas del Plan de Acción Tutorial"/>
             <adm:sidebar collapsed="true"/>
-            <p:importEnum type="mx.edu.utxj.pye.sgi.enums.PlanAccionTutorialEstado" var="patEstado" allSuffix="ESTADOS" />
             <div class="contenedor">
-                <c:if test="#{registroPlanTutoriaTutor.tieneAcceso}">
+                <c:if test="#{plantillaPlanAccionTutorialPsicopedagogia.tieneAcceso}">
                     <!-- zona de importación de enums -->
 
                     <div class="box box-primary">
@@ -49,8 +48,6 @@
                                 <div id="main-buttons" class="hidden-sm hidden-xs">
                                     <p:toolbar id="tb">
                                         <f:facet name="left">
-                                            <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registroPlanTutoriaTutor.rol.periodoActivo)}" />
-                                            <p:spacer width="5" />
 
                                         </f:facet>
                                         <f:facet name="right">
@@ -74,34 +71,24 @@
                                         <div class="row margin-bottom" style="margin-top: 20px;">
                                             <div class="#{casilla}">
                                                 <div class="ui-material">
-                                                    <p:selectOneMenu id="periodo" value="#{registroPlanTutoriaTutor.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
-                                                        <f:selectItems value="#{registroPlanTutoriaTutor.rol.periodosConCargaGrupo}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                        <p:ajax process="@this" update="@this grupo contenedor" listener="#{registroPlanTutoriaTutor.cambiarPeriodo}" />
+                                                    <p:selectOneMenu id="grado" value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.gradoCuatrimestre}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItems value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.gradosCuatrimestres}" var="grado" itemValue="#{grado}" itemLabel="#{grado}° Cuatrimestre" />
+                                                        <p:ajax process="@this" update="@this contenedor" listener="#{plantillaPlanAccionTutorialPsicopedagogia.cargarPlanAccionTutorial()}" />
                                                     </p:selectOneMenu>
-                                                    <p:outputLabel value="Periodo" for="periodo"/>
-                                                    <p:message for="periodo" />
-                                                </div>
-                                            </div>
-                                            <div class="#{casilla4}">
-                                                <div class="ui-material">
-                                                    <p:selectOneMenu id="grupo" value="#{registroPlanTutoriaTutor.rol.grupoTutorSeleccionado}" converter="entityConverter" styleClass="form-control" >
-                                                        <f:selectItems value="#{registroPlanTutoriaTutor.rol.listadoGruposTutor}" var="grupo" itemValue="#{grupo}" itemLabel="#{grupo.grupo.grado}° #{grupo.grupo.literal} #{grupo.grupo.idSistema.nombre} de #{grupo.programaEducativo.nombre}" />
-                                                        <p:ajax process="@this" update="@this contenedor" listener="#{registroPlanTutoriaTutor.cambiarGrupo}" />
-                                                    </p:selectOneMenu>
-                                                    <p:outputLabel value="Grupo Tutorado" for="grupo"/>
-                                                    <p:message for="grupo" ><p:autoUpdate/></p:message>
+                                                    <p:outputLabel value="Grado" for="grado"/>
+                                                    <p:message for="grado" />
                                                 </div>
                                             </div>
                                         </div>
                                     </h:form>
                                     <h:form id="frmPlanAccionTutorial" prependId="false" class="form-inline">
-                                        <p:remoteCommand id="actualizar" name="actualizar" process="@this" update="contenedor" actionListener="#{registroPlanTutoriaTutor.actualizar()}" />
+                                        <p:remoteCommand id="actualizar" name="actualizar" process="@this" update="contenedor" actionListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizar()}" />
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 text-info">
                                                 <p:outputPanel id="contenedor">
                                                     <p:accordionPanel style="text-align:left">
-                                                        <p:ajax event="tabChange" listener="#{registroPlanTutoriaTutor.onTabChange}" update="frmPlanAccionTutorial" />
-                                                        <p:ajax event="tabClose" listener="#{registroPlanTutoriaTutor.onTabClose}" update="frmPlanAccionTutorial" />
+                                                        <p:ajax event="tabChange" listener="#{plantillaPlanAccionTutorialPsicopedagogia.onTabChange}" update="frmPlanAccionTutorial" />
+                                                        <p:ajax event="tabClose" listener="#{plantillaPlanAccionTutorialPsicopedagogia.onTabClose}" update="frmPlanAccionTutorial" />
 
                                                         <p:tab title="1.- Registro de plan de acción tutorial" titleStyle="box-solid" id="tabRPAT">
 
@@ -121,8 +108,7 @@
                                                                                          class="form-control"
                                                                                          required="true"
                                                                                          requiredMessage="Es requerido el campo de Observaciones y Compromisos"
-                                                                                         value="#{registroPlanTutoriaTutor.rol.planAccionTutorial.objetivo}"
-                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planAccionTutorialPlantilla.objetivo}"
                                                                                          />
                                                                         <h:outputText id="displayObs" />
                                                                         <p:watermark for="patObjetivo" value="Ejemplo de objetivo en el plan de acción de tutorial *" />
@@ -143,8 +129,7 @@
                                                                                          class="form-control"
                                                                                          required="true"
                                                                                          requiredMessage="Es requerido el campo de Comentarios"
-                                                                                         value="#{registroPlanTutoriaTutor.rol.planAccionTutorial.comentarios}"
-                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planAccionTutorialPlantilla.comentarios}"
                                                                                          />
                                                                         <h:outputText id="displayCom" />
                                                                         <p:watermark for="patComentarios" value="Ejemplo de comentarios en el plan de acción de tutorial *" />
@@ -165,8 +150,7 @@
                                                                                          class="form-control"
                                                                                          required="true"
                                                                                          requiredMessage="Es requerido el campo de sugerencias"
-                                                                                         value="#{registroPlanTutoriaTutor.rol.planAccionTutorial.sugerencias}"
-                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planAccionTutorialPlantilla.sugerencias}"
                                                                                          />
                                                                         <h:outputText id="displaySug" />
                                                                         <p:watermark for="patSugerencias" value="Ejemplo de sugerencias en el plan de acción de tutorial *" />
@@ -175,49 +159,20 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-sm-12 col-md-6 col-lg-6">
-                                                                    <c:if test="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus ne patEstado.VALIDADO.label}">
-                                                                        <div class="callout callout-warning">
-                                                                            <p><code style="color:#4185A0;">#{caster.leyendaValidacion(registroPlanTutoriaTutor.rol.planAccionTutorial.estatus)}</code></p>
-                                                                            <c:if test="#{registroPlanTutoriaTutor.rol.planAccionTutorial.comentariosDirector ne '' and registroPlanTutoriaTutor.rol.planAccionTutorial.comentariosDirector ne null}">
-                                                                                <p><code style="color:#4185A0;">#{registroPlanTutoriaTutor.rol.planAccionTutorial.comentariosDirector}</code></p>
-                                                                            </c:if>
-                                                                        </div>
-                                                                    </c:if>
-
-                                                                    <c:if test="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}">
-                                                                        <div class="callout callout-success">
-                                                                            <p><code style="color:#4185A0;">#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus}</code></p>
-                                                                        </div>
-                                                                    </c:if>
-                                                                </div>
+                                                                <div class="col-sm-12 col-md-6 col-lg-6"></div>
 
                                                                 <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px"></div>
                                                                 <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px;">
                                                                     <p:commandButton id="btnGuardarPlanAccionTutorial" 
-                                                                                     value="#{registroPlanTutoriaTutor.rol.planRegistrado?'Guardar Plan de Acción Tutorial':'Actualizar información y enviar a revisión'}" 
-                                                                                     action="#{registroPlanTutoriaTutor.guardarNuevoPlanAccionTutorial()}" 
+                                                                                     value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado?'Guardar Plan de Acción Tutorial':'Actualizar Plantilla'}" 
+                                                                                     action="#{plantillaPlanAccionTutorialPsicopedagogia.guardaNuevaPlantillaPlanAccionTutorial}" 
                                                                                      oncomplete="actualizar();" 
                                                                                      icon="fa fa-pencil-square-o" 
                                                                                      class="btn-primary" 
                                                                                      style="width:22em;"
-                                                                                     title="#{registroPlanTutoriaTutor.rol.planRegistrado?'Guardar Plan de Acción Tutorial':'Actualizar información y enviar a revisión'}"
-                                                                                     disabled="#{(registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label)}"
+                                                                                     title="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado?'Guardar Plan de Acción Tutorial':'Actualizar Plantilla'}"
                                                                                      />
                                                                     <p:spacer width="10" />
-                                                                    <p:commandButton id="btnEliminarPlanAccionTutorial"
-                                                                                     value="Eliminar Plan de Acción Tutorial" 
-                                                                                     actionListener="#{registroPlanTutoriaTutor.eliminarPlanAccionTutorial(registroPlanTutoriaTutor.rol.planAccionTutorial)}" 
-                                                                                     oncomplete="actualizar();" 
-                                                                                     icon="fa fa-trash" 
-                                                                                     class="btn-danger" 
-                                                                                     style="width:20em;" 
-                                                                                     disabled="#{(registroPlanTutoriaTutor.rol.planRegistrado eq true) or (caster.permiteEliminarPAT(registroPlanTutoriaTutor.rol.planAccionTutorial.estatus) eq false) or (registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label)}"
-                                                                                     title="#{caster.permiteEliminarPAT(registroPlanTutoriaTutor.rol.planAccionTutorial.estatus)?'Eliminar plan de acción tutorial':'El Plan de Acción Tutorial ya se encuentra validado por el director ó en observaciones'}"
-                                                                                     rendered="#{registroPlanTutoriaTutor.rol.planRegistrado eq false}"
-                                                                                     >
-                                                                        <p:confirm header="Eliminar Plan de Acción Tutorial" message="¿Está seguro que deseá eliminar el Plan de Acción Tutorial? Se eliminarán todas las metas de su función como tutor asignadas a este Plan de Acción Tutorial" icon="ui-icon-alert" />
-                                                                    </p:commandButton>
                                                                 </div>
                                                             </div>
                                                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -227,7 +182,7 @@
                                                         </p:tab>
 
 
-                                                        <p:tab title="2.- Registro de plan de metas de su función como tutor" titleStyle="box-solid" disabled="#{registroPlanTutoriaTutor.rol.planRegistrado}" id="tabRMFT">
+                                                        <p:tab title="2.- Registro de plan de metas de la función como tutor" titleStyle="box-solid" disabled="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}" id="tabRMFT">
                                                             <div class="row margin-bottom">
                                                                 <p></p>
                                                                 <p></p>
@@ -237,10 +192,10 @@
                                                                         <p:inputText id="ftMetaFuncion"
                                                                                      label="ftMetaFuncion"
                                                                                      maxlength="2000"
-                                                                                     value="#{registroPlanTutoriaTutor.rol.funcionesTutor.metaFuncionTutor}"
+                                                                                     value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.funcionTutorPlantilla.metaFuncionTutor}"
                                                                                      style="width: 45em"
-                                                                                     readonly="#{registroPlanTutoriaTutor.rol.planRegistrado or registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
-                                                                                     rendered="#{registroPlanTutoriaTutor.rol.tab2}"
+                                                                                     readonly="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}"
+                                                                                     rendered="#{plantillaPlanAccionTutorialPsicopedagogia.rol.tab2}"
                                                                                      class="form-control"
                                                                                      required="true"
                                                                                      requiredMessage="Por favor ingrese meta de su función como tutor"
@@ -253,12 +208,12 @@
                                                                 <div class="col-sm-12 col-md-6 col-lg-6">
                                                                     <p:commandButton id="btnGuardarFuncionTutor" 
                                                                                      value="Guardar" 
-                                                                                     action="#{registroPlanTutoriaTutor.guardarFuncionTutor()}" 
+                                                                                     action="#{plantillaPlanAccionTutorialPsicopedagogia.guardarFuncionTutor()}" 
                                                                                      oncomplete="actualizar();" 
                                                                                      icon="fa fa-pencil-square-o" 
                                                                                      class="btn-primary" 
                                                                                      style="width:15em;"
-                                                                                     disabled="#{registroPlanTutoriaTutor.rol.planRegistrado or registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                     disabled="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}"
                                                                                      />
                                                                 </div>
                                                             </div>
@@ -273,10 +228,10 @@
                                                                 </f:facet>
                                                             </p:toolbar>
                                                             <center>
-                                                                <p:remoteCommand id="actualizarFunciones" name="actualizarFunciones" actionListener="#{registroPlanTutoriaTutor.actualizarListaFuncionesTutor}" update="dtFuncionesTutor" global="false" />
+                                                                <p:remoteCommand id="actualizarFunciones" name="actualizarFunciones" actionListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizarListaFuncionesTutor}" update="dtFuncionesTutor" global="false" />
                                                                 <p:dataTable id="dtFuncionesTutor" 
                                                                              var="funcionTutor" 
-                                                                             value="#{registroPlanTutoriaTutor.rol.listaFuncionesTutor}" 
+                                                                             value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.listaFuncionesTutorPlantilla}"
                                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                              resizeMode="expand"
                                                                              emptyMessage="Aún no se han registrado funciones como tutor"
@@ -288,18 +243,17 @@
                                                                             <p:column headerText="Meta de su función como tutor" />
                                                                         </p:row>
                                                                     </p:columnGroup>
-                                                                    <c:set var="ft" value="#{funcionTutor.funcionTutor}"/>
+                                                                    <c:set var="ft" value="#{funcionTutor.funcionTutorPlantilla}"/>
                                                                     <p:column>
                                                                         <center>
                                                                             <div class="btn-group">
                                                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                                                  icon="fa fa-trash" 
-                                                                                                 actionListener="#{registroPlanTutoriaTutor.eliminarFuncionTutor(ft)}" 
+                                                                                                 actionListener="#{plantillaPlanAccionTutorialPsicopedagogia.eliminarFuncionTutor(ft)}" 
                                                                                                  title="Eliminar registro."
                                                                                                  process="@this" 
                                                                                                  oncomplete="actualizar();" 
                                                                                                  global="false"
-                                                                                                 disabled="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
                                                                                                  >
                                                                                     <p:confirm header="Eliminar" message="¿Está seguro de eliminar el registro seleccionado?" icon="ui-icon-alert" />
                                                                                 </p:commandButton>
@@ -314,28 +268,29 @@
                                                                             <p:inputText maxlength="2000"
                                                                                          value="#{funcionTutor.metaFuncionTutor}"
                                                                                          style="width: 45em"
-                                                                                         valueChangeListener="#{registroPlanTutoriaTutor.actualizarFuncionTutor}"
+                                                                                         valueChangeListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizarFuncionTutor}"
                                                                                          title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB ó ENTER, ó bien colocar el cursor en el siguiente campo"
                                                                                          placeholder="Ejemplo de meta de mi función como tutor *"
                                                                                          class="form-control"
                                                                                          required="true"
                                                                                          requiredMessage="Este campo es requerido"
-                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
-                                                                                         onkeydown="if (event.keyCode === 13) {editarFuncionTutor();return false;}"
+                                                                                         onkeydown="if (event.keyCode === 13) {
+                                                                                                     editarFuncionTutor();
+                                                                                                     return false;
+                                                                                                 }"
                                                                                          >
-                                                                                
                                                                                 <p:remoteCommand name="editarFuncionTutor"
                                                                                                  process="dtFuncionesTutor"
                                                                                                  oncomplete="actualizarFunciones();"
                                                                                                  global="false"
                                                                                                  />
-                                                                                <p:ajax process="@this" oncomplete="actualizarFunciones();" global="false" /> 
+                                                                                <p:ajax process="@this" oncomplete="actualizarFunciones();" global="false"/> 
                                                                                 <f:attribute name="funcionTutor" value="#{funcionTutor}" />
                                                                             </p:inputText>
                                                                         </div>
                                                                     </p:column>
                                                                     <f:facet name="footer">
-                                                                        Usted ha registrado un total de: #{fn:length(registroPlanTutoriaTutor.rol.listaFuncionesTutor)} metas de su función como tutor.
+                                                                        Usted ha registrado un total de: #{fn:length(plantillaPlanAccionTutorialPsicopedagogia.rol.listaFuncionesTutorPlantilla)} metas de la función como tutor.
                                                                     </f:facet>
                                                                 </p:dataTable>
                                                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -346,7 +301,7 @@
 
                                                         </p:tab>
 
-                                                        <p:tab title="3.- Registro de Organización de las sesiones grupales de tutoría" titleStyle="box-solid" disabled="#{registroPlanTutoriaTutor.rol.planRegistrado}" id="tabRSGT">
+                                                        <p:tab title="3.- Registro de Organización de las sesiones grupales de tutoría" titleStyle="box-solid" disabled="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}" id="tabRSGT">
                                                             <div class="row margin-bottom">
                                                                 <p></p>
                                                                 <p></p>
@@ -363,10 +318,9 @@
                                                                                          required="true"
                                                                                          class="form-control"
                                                                                          requiredMessage="Es requerido el campo de actividad programada"
-                                                                                         value="#{registroPlanTutoriaTutor.rol.sesionesGrupalesTutorias.actividadProgramada}"
-                                                                                         rendered="#{registroPlanTutoriaTutor.rol.tab3}"
-                                                                                         disabled="#{registroPlanTutoriaTutor.rol.planRegistrado}"
-                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.sesionGrupalTutoriaPlantilla.actividadProgramada}"
+                                                                                         rendered="#{plantillaPlanAccionTutorialPsicopedagogia.rol.tab3}"
+                                                                                         disabled="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}"
                                                                                          />
                                                                         <h:outputText id="displaySgtActividadProgramada" />
                                                                         <p:watermark for="sgtActividadProgramada" value="Ejemplo de actividad programada en el registro de la sesión grupal de la tutoria *" />
@@ -374,28 +328,7 @@
                                                                         <p:outputLabel for="sgtObjetivos" value="Actividad Programada de la sesión grupal de la tutoría" />
                                                                     </div>
                                                                 </div>
-
-                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
-                                                                    <p:outputLabel value="Cumplimiento" for="sgtCumplimiento" />
-                                                                    <p:selectBooleanButton id="sgtCumplimiento"
-                                                                                           required="true"
-                                                                                           requiredMessage="Seleccione si hay cumplimiento con esta sesión"
-                                                                                           value="#{registroPlanTutoriaTutor.rol.sesionesGrupalesTutorias.cumplimiento}"
-                                                                                           onLabel="Si"
-                                                                                           offLabel="No"
-                                                                                           onIcon="ui-icon-check"
-                                                                                           offIcon="ui-icon-close"
-                                                                                           class="btn-sm"
-                                                                                           style="text-align: left"
-                                                                                           disabled="true"
-                                                                                           >
-                                                                        <p:ajax process="sgtCumplimiento"/>
-                                                                        <p:message for="sgtCumplimiento" />
-                                                                    </p:selectBooleanButton>
-                                                                </div>
-
-                                                                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;"></div>
-
+                                                                
                                                                 <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
                                                                     <div class="ui-material">
                                                                         <p:inputTextarea id="sgtObjetivos"
@@ -408,10 +341,9 @@
                                                                                          required="true"
                                                                                          class="form-control"
                                                                                          requiredMessage="Es requerido el campo de objetivos"
-                                                                                         value="#{registroPlanTutoriaTutor.rol.sesionesGrupalesTutorias.objetivos}"
-                                                                                         rendered="#{registroPlanTutoriaTutor.rol.tab3}"
-                                                                                         disabled="#{registroPlanTutoriaTutor.rol.planRegistrado}"
-                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.sesionGrupalTutoriaPlantilla.objetivos}"
+                                                                                         rendered="#{plantillaPlanAccionTutorialPsicopedagogia.rol.tab3}"
+                                                                                         disabled="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}"
                                                                                          />
                                                                         <h:outputText id="displaySgtObjetivos" />
                                                                         <p:watermark for="sgtObjetivos" value="Ejemplo de objetivos en el regsistro de la sesión grupal de la tutoria *" />
@@ -421,36 +353,14 @@
                                                                 </div>
 
                                                                 <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
-                                                                    <div class="ui-material">
-                                                                        <p:inputTextarea id="sgtJustificacion"
-                                                                                         rows="2" 
-                                                                                         cols="100"
-                                                                                         counter="displaySgtJustificacion" 
-                                                                                         maxlength="3000" 
-                                                                                         counterTemplate="{0} caracteres en total." 
-                                                                                         autoResize="true"
-                                                                                         required="true"
-                                                                                         class="form-control"
-                                                                                         requiredMessage="Es requerido el campo de justificación"
-                                                                                         value="#{registroPlanTutoriaTutor.rol.sesionesGrupalesTutorias.justificacion}"
-                                                                                         disabled="true"
-                                                                                         />
-                                                                        <h:outputText id="displaySgtJustificacion" />
-                                                                        <p:watermark for="sgtJustificacion" value="Ejemplo de justificación en el regsistro de la sesión grupal de la tutoria *" />
-                                                                        <p:message for="sgtJustificacion" />
-                                                                        <p:outputLabel for="sgtJustificacion" value="Justificación del por que no se llevó a cabo esta sesióm grupal de tutoría" />
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
                                                                     <p:commandButton id="btnGuardarSesionGrupalTutoria" 
                                                                                      value="Guardar" 
-                                                                                     action="#{registroPlanTutoriaTutor.guardarSesionGrupalTutoria()}" 
+                                                                                     action="#{plantillaPlanAccionTutorialPsicopedagogia.guardarSesionGrupalTutoria()}" 
                                                                                      oncomplete="actualizar();" 
                                                                                      icon="fa fa-pencil-square-o" 
                                                                                      class="btn-primary" 
                                                                                      style="width:15em;"
-                                                                                     disabled="#{registroPlanTutoriaTutor.rol.planRegistrado or registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                     disabled="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}"
                                                                                      />
                                                                 </div>
                                                             </div>
@@ -465,10 +375,10 @@
                                                                 </f:facet>
                                                             </p:toolbar>
                                                             <center>
-                                                                <p:remoteCommand id="actualizarSesionesGrupales" name="actualizarSesionesGrupales" actionListener="#{registroPlanTutoriaTutor.actualizarListaSesionesGrupalesTutorias()}" update="dtSesionesGrupales" global="false"/>
+                                                                <p:remoteCommand id="actualizarSesionesGrupales" name="actualizarSesionesGrupales" actionListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizarListaSesionesGrupalesTutorias()}" update="dtSesionesGrupales" global="false"/>
                                                                 <p:dataTable id="dtSesionesGrupales" 
                                                                              var="sesionGrupal" 
-                                                                             value="#{registroPlanTutoriaTutor.rol.listaSesionesGrupalesTutorias}"
+                                                                             value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.listaSesionesGrupalesTutoriaPlantilla}"
                                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                              resizeMode="expand"
                                                                              emptyMessage="Aún no se han registrado sesiones grupales de tutoría"
@@ -479,22 +389,19 @@
                                                                             <p:column headerText="No. de Sesión" width="50"/>
                                                                             <p:column headerText="Actividad Programada"/>
                                                                             <p:column headerText="Objetivos" />
-                                                                            <p:column headerText="Cumplimiento" width="90"/>
-                                                                            <p:column headerText="Justificación" />
                                                                         </p:row>
                                                                     </p:columnGroup>
-                                                                    <c:set var="sg" value="#{sesionGrupal.sesionGrupal}"/>
+                                                                    <c:set var="sg" value="#{sesionGrupal.sesionGrupalPlantilla}"/>
                                                                     <p:column>
                                                                         <center>
                                                                             <div class="btn-group"> 
                                                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                                                  icon="fa fa-trash" 
-                                                                                                 actionListener="#{registroPlanTutoriaTutor.eliminarSesionGrupalTutor(sg)}" 
+                                                                                                 actionListener="#{plantillaPlanAccionTutorialPsicopedagogia.eliminarSesionGrupalTutor(sg)}" 
                                                                                                  title="Eliminar registro." 
                                                                                                  process="@this" 
                                                                                                  oncomplete="actualizar();" 
                                                                                                  global="false"
-                                                                                                 disabled="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
                                                                                                  >
                                                                                     <p:confirm header="Eliminar" message="¿Está seguro de eliminar el registro seleccionado?" icon="ui-icon-alert" />
                                                                                 </p:commandButton>
@@ -508,7 +415,7 @@
                                                                     <p:column>
                                                                         <div class="ui-material">
                                                                             <p:inputTextarea rows="1" 
-                                                                                             cols="62"
+                                                                                             cols="100"
                                                                                              maxlength="3000" 
                                                                                              autoResize="true"
                                                                                              required="true"
@@ -516,11 +423,9 @@
                                                                                              class="form-control"
                                                                                              title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
                                                                                              value="#{sesionGrupal.actividadProgramada}"
-                                                                                             valueChangeListener="#{registroPlanTutoriaTutor.actulizaActividadProgramada}"
-                                                                                             readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                             valueChangeListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizaActividadProgramada}"
                                                                                              >
-                                                                                
-                                                                                <p:ajax process="@this" oncomplete="actualizarSesionesGrupales();" global="false" /> 
+                                                                                <p:ajax process="@this" oncomplete="actualizarSesionesGrupales();" global="false"/> 
                                                                                 <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
                                                                             </p:inputTextarea>
                                                                         </div>
@@ -529,7 +434,7 @@
                                                                     <p:column>
                                                                         <div class="ui-material">
                                                                             <p:inputTextarea rows="1" 
-                                                                                             cols="62"
+                                                                                             cols="100"
                                                                                              maxlength="3000" 
                                                                                              autoResize="true"
                                                                                              required="true"
@@ -537,43 +442,16 @@
                                                                                              class="form-control"
                                                                                              title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
                                                                                              value="#{sesionGrupal.objetivos}"
-                                                                                             valueChangeListener="#{registroPlanTutoriaTutor.actulizaObjetivos}"
-                                                                                             readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                             valueChangeListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizaObjetivos}"
                                                                                              >
-                                                                                
                                                                                 <p:ajax process="@this" oncomplete="actualizarSesionesGrupales();" global="false"/> 
                                                                                 <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
                                                                             </p:inputTextarea>
                                                                         </div>
                                                                     </p:column>
-
-                                                                    <p:column style="text-align: center">
-                                                                        <h:outputText value="#{sesionGrupal.cumplimiento?'Si':'No'}"/>
-                                                                    </p:column>
-
-                                                                    <p:column>
-                                                                        <div class="ui-material">
-                                                                            <p:inputTextarea rows="1"
-                                                                                             cols="62"
-                                                                                             maxlength="3000" 
-                                                                                             autoResize="true"
-                                                                                             required="true"
-                                                                                             requiredMessage="Es requerido el campo de justificaciónes"
-                                                                                             class="form-control"
-                                                                                             title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                             value="#{sesionGrupal.justificacion}"
-                                                                                             disabled="#{sesionGrupal.cumplimiento}"
-                                                                                             valueChangeListener="#{registroPlanTutoriaTutor.actulizaJustificacion}"
-                                                                                             >
-                                                                                
-                                                                                <p:ajax process="@this" oncomplete="actualizarSesionesGrupales();" global="false"/> 
-                                                                                <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
-                                                                            </p:inputTextarea>
-                                                                        </div>
-                                                                    </p:column>
-
+                                                                    
                                                                     <f:facet name="footer">
-                                                                        Usted ha registrado un total de: #{fn:length(registroPlanTutoriaTutor.rol.listaSesionesGrupalesTutorias)} sesiones grupales de tutoría.
+                                                                        Usted ha registrado un total de: #{fn:length(plantillaPlanAccionTutorialPsicopedagogia.rol.listaSesionesGrupalesTutoriaPlantilla)} sesiones grupales de tutoría.
                                                                     </f:facet>
                                                                 </p:dataTable>
                                                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -592,11 +470,11 @@
                             </div>
                         </div>
                     </div>
-                    <c:if test="#{!empty registroPlanTutoriaTutor.alertas || true}">
+                    <c:if test="#{!empty plantillaPlanAccionTutorialPsicopedagogia.alertas || true}">
                         <div class="box box-info">
                             <div class="box-header">
                                 <ui:include src="/includes/alertas.xhtml">
-                                    <ui:param name="alertas" value="#{registroPlanTutoriaTutor.alertas}"></ui:param>
+                                    <ui:param name="alertas" value="#{plantillaPlanAccionTutorialPsicopedagogia.alertas}"></ui:param>
                                 </ui:include>
                             </div>
                         </div>
@@ -609,7 +487,7 @@
                             <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registro de Plan de Acción Tutorial</h3></div>
                             <div class="box-body">
                                 <ul class="todo-list">
-                                    <c:forEach items="#{registroPlanTutoriaTutor.rol.instrucciones}" var="instruccion">
+                                    <c:forEach items="#{plantillaPlanAccionTutorialPsicopedagogia.rol.instrucciones}" var="instruccion">
                                         <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
                                     </c:forEach>
                                 </ul>
@@ -618,7 +496,7 @@
                         </div>
                     </p:dialog>
                 </c:if>
-                <c:if test="#{!registroPlanTutoriaTutor.tieneAcceso}">
+                <c:if test="#{!plantillaPlanAccionTutorialPsicopedagogia.tieneAcceso}">
                     <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                         <h:panelGrid columns="2" cellpadding="10">
                             <h:outputText value="El acceso solo está autorizado a docentes con grupos tutorados."/>

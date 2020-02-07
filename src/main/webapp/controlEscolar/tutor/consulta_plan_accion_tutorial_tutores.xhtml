@@ -112,7 +112,6 @@
                                                             <p:dataTable id="dtPlanesAccionTutorial" 
                                                                          var="dtoPlanAccionTutorial" 
                                                                          value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.listaDtoPlanAccionTutorial}" 
-                                                                         sortBy="#{dtoPlanAccionTutorial.planAccionTutorial.planAccionTutoria}"
                                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                          resizeMode="expand"
                                                                          emptyMessage="Aún no se han registrado planes de acción tutorial en el periodo y programa educativo seleccionado"
@@ -244,8 +243,7 @@
                                                     <center>
                                                         <p:dataTable id="dtFuncionesTutor" 
                                                                      var="funcionTutor" 
-                                                                     value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.listaFuncionesTutor}" 
-                                                                     sortBy="#{funcionTutor.noSesion}"
+                                                                     value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.listaFuncionesTutor}"
                                                                      tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                      resizeMode="expand"
                                                                      emptyMessage="Aún no se han registrado funciones como tutor"
@@ -307,8 +305,7 @@
                                                     <center>
                                                         <p:dataTable id="dtSesionesGrupales" 
                                                                      var="sesionGrupal" 
-                                                                     value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.listaSesionesGrupalesTutorias}" 
-                                                                     sortBy="#{sesionGrupal.noSesion}"
+                                                                     value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.listaSesionesGrupalesTutorias}"
                                                                      tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                      resizeMode="expand"
                                                                      emptyMessage="Aún no se han registrado sesiones grupales de tutoría"

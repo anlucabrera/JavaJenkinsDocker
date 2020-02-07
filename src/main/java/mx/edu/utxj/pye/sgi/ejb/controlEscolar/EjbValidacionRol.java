@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CordinadoresTutores;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.util.StringUtils;
 
 @Stateless
 public class EjbValidacionRol {
@@ -143,10 +144,12 @@ public class EjbValidacionRol {
         }
     }
     
-    public ResultadoEJB<Estudiante> validarEstudiante(Integer matricula){        
+    public ResultadoEJB<Estudiante> validarEstudiante(String matricula){        
         try {
+            matricula = StringUtils.quitarEspacios(matricula);
+            Integer matriculaConvertida = Integer.parseInt(matricula);
             List<Estudiante> e = em.createQuery("SELECT e FROM Estudiante AS e WHERE e.matricula = :matricula ORDER BY e.periodo DESC", Estudiante.class)
-                    .setParameter("matricula", matricula)
+                    .setParameter("matricula", matriculaConvertida)
                     .getResultList();
             if (!e.isEmpty()) {
                 return ResultadoEJB.crearCorrecto(e.get(0), "El usuario ha sido comprobado como estudiante.");

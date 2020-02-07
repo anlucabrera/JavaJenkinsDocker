@@ -339,31 +339,33 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
             mostrarMensajeResultadoEJB(res);
         }
     }
-    
+
     public void seleccionarTutoriaIndividual() {
+        if (rol.getTutoriaIndividualSeleccionada() != null) {
 //        Valor seleccionado
-        rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual();
+            rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual();
 //        Valores anidados
-        rol.setEstudianteSeguimientoSeleccionado(caster.dtoEstudianteAutocomplete(rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual().getEstudiante().getIdEstudiante()));
-        rol.setDtoTutoriaIndividualCE(rol.getTutoriaIndividualSeleccionada());
-        rol.setFecha(rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual().getFecha());
-        rol.setHoraInicio(rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual().getHoraInicio());
+            rol.setEstudianteSeguimientoSeleccionado(caster.dtoEstudianteAutocomplete(rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual().getEstudiante().getIdEstudiante()));
+            rol.setDtoTutoriaIndividualCE(rol.getTutoriaIndividualSeleccionada());
+            rol.setFecha(rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual().getFecha());
+            rol.setHoraInicio(rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual().getHoraInicio());
 //        Actualizar lista de casos criticos el estudiante seleccionado
-        ResultadoEJB<Estudiante> estudianteEncontrado = ejb.buscaEstudiante(rol.getEstudianteSeguimientoSeleccionado().getEstudiantes().getIdEstudiante());
-        rol.setEstudianteSeleccionado(estudianteEncontrado.getValor());
+            ResultadoEJB<Estudiante> estudianteEncontrado = ejb.buscaEstudiante(rol.getEstudianteSeguimientoSeleccionado().getEstudiantes().getIdEstudiante());
+            rol.setEstudianteSeleccionado(estudianteEncontrado.getValor());
 
 //        Validar que el caso critico sea o no nulo
-        if (rol.getTutoriaIndividualSeleccionada().getCasoCritico() != null) {
-            ResultadoEJB<List<DtoCasoCritico>> casosCriticosEstudiane = ejbCritico.identificarPorEsdudiante(rol.getEstudianteSeleccionado());
-            if (casosCriticosEstudiane.getCorrecto()) {
-                rol.setListaCasosCriticos(casosCriticosEstudiane.getValor());
+            if (rol.getTutoriaIndividualSeleccionada().getCasoCritico() != null) {
+                ResultadoEJB<List<DtoCasoCritico>> casosCriticosEstudiane = ejbCritico.identificarPorEsdudiante(rol.getEstudianteSeleccionado());
+                if (casosCriticosEstudiane.getCorrecto()) {
+                    rol.setListaCasosCriticos(casosCriticosEstudiane.getValor());
 
 //            Actualizar caso critico de la tutoria individual consultada
-                rol.setDtoCasoCritico(rol.getTutoriaIndividualSeleccionada().getCasoCritico());
-                actualizarCasoCriticoSeleccionado();
+                    rol.setDtoCasoCritico(rol.getTutoriaIndividualSeleccionada().getCasoCritico());
+                    actualizarCasoCriticoSeleccionado();
+                }
+            } else {
+                rol.setListaCasosCriticos(Collections.EMPTY_LIST);
             }
-        }else{
-            rol.setListaCasosCriticos(Collections.EMPTY_LIST);
         }
     }
     
@@ -392,9 +394,24 @@ public class RegistroTutoriaIndividual extends ViewScopedRol implements Desarrol
         }else Messages.addGlobalError("El archivo no pudo eliminarse.");
     }
     
-    public void liberarCasoCritico(){
-        ResultadoEJB<Boolean> res = ejb.liberarCasoCritico(rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual(), rol.getDtoCasoCritico());
-        if(res.getCorrecto()){
+//    public void liberarCasoCritico(){
+//        ResultadoEJB<Boolean> res = ejb.liberarCasoCritico(rol.getTutoriaIndividualSeleccionada().getTutoriaIndividual(), rol.getDtoCasoCritico());
+//        if(res.getCorrecto()){
+//            mostrarMensajeResultadoEJB(res);
+//            inicializarTutoriaIndividual();
+//            inicializarListaCasosCriticos();
+//            actualizarListaTutoriasIndividuales();
+//        }else{
+//            mostrarMensajeResultadoEJB(res);
+//            inicializarTutoriaIndividual();
+//            inicializarListaCasosCriticos();
+//            actualizarListaTutoriasIndividuales();
+//        }
+//    }
+    
+    public void abrirCasoCritico(DtoCasoCritico dto) {
+        ResultadoEJB<Boolean> res = ejb.quitarValidacionTutor(dto);
+        if (res.getCorrecto()) {
             mostrarMensajeResultadoEJB(res);
             inicializarTutoriaIndividual();
             inicializarListaCasosCriticos();
