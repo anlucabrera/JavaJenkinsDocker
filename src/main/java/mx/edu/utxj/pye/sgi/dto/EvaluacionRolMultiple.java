@@ -4,17 +4,20 @@ import com.github.adminfaces.starter.infra.model.Filter;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.controlador.EvaluacionDesempenioAmbiental;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionConocimientoCodigoEticaResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDesempenioAmbientalUtxj;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
+import mx.edu.utxj.pye.sgi.funcional.Comparador;
+import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
+import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionAmbiental;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
 
 import javax.faces.model.SelectItem;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,8 +49,12 @@ public class EvaluacionRolMultiple{
         @Getter @NonNull private Map<String, String> respuestas = new HashMap<>();
         @Getter @NonNull private  String valor;
         @Getter @NonNull private EvaluacionDesempenioAmbientalUtxj resultados;
-
-        @Getter @Setter private List<listadoEvaluacionesDTO> listaEvaluaciones = new ArrayList<>();
+        @Getter @Setter private Comparador<EvaluacionDesempenioAmbientalUtxj> comparador = new ComparadorEvaluacionAmbiental();
+        @Getter @Setter private List<DtoAlumnosEncuesta.DtoEvaluaciones> evaluacionesCompletas = new ArrayList<>();
+        @Getter @Setter private List<DtoAlumnosEncuesta.DtoEvaluaciones> evaluacionesInCompletas = new ArrayList<>();
+        @Getter @Setter private List<DtoAlumnosEncuesta.DtoEvaluaciones> evaluacionesCompletasPersonal = new ArrayList<>();
+        @Getter @Setter private List<DtoAlumnosEncuesta.DtoEvaluaciones> evaluacionesCompletasEyP = new ArrayList<>();
+        @Getter @Setter private List<DtoAlumnosEncuesta.DtoEvaluaciones> evaluacionesInCompletasPersonal = new ArrayList<>();
 
         public void setPersonal(PersonalActivo personal) {
             this.personal = personal;

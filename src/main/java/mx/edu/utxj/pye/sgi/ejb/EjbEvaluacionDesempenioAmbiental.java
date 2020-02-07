@@ -4,10 +4,13 @@ import com.github.adminfaces.starter.infra.model.Filter;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import edu.mx.utxj.pye.seut.util.preguntas.Pregunta;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.dto.DtoAlumnosEncuesta;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
@@ -15,8 +18,7 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionAmbiental;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionCodigoEtica;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
+import mx.edu.utxj.pye.sgi.saiiut.entity.*;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +27,7 @@ import javax.ejb.Stateless;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Stateless
 public class EjbEvaluacionDesempenioAmbiental {
@@ -32,12 +35,14 @@ public class EjbEvaluacionDesempenioAmbiental {
     @EJB Facade f;
     @EJB Facade2 f2;
     @EJB EjbPersonalBean ejbPersonalBean;
+    @EJB EjbAdministracionEncuestaServicios ejb;
     @EJB EjbPropiedades ep;
     private EntityManager em;
+    private EntityManager em2;
 
     @PostConstruct
     public  void init(){
-        em = f.getEntityManager();
+        em = f.getEntityManager();em2 = f2.getEntityManager();
     }
 
 
@@ -58,7 +63,7 @@ public class EjbEvaluacionDesempenioAmbiental {
             //verificar apertura del evento
             Integer periodo = Integer.parseInt(Objects.requireNonNull(em.createQuery("select v from VariablesProntuario v where v.nombre = :nombre", VariablesProntuario.class)
                     .setParameter("nombre", "periodoEncuestaSatisfaccionING").getResultStream().findFirst().orElse(null)).getValor());
-            Alumnos alumnos = f2.getEntityManager().createQuery("select a from Alumnos as a where a.matricula = :matricula and a.cveStatus = :estatus " +
+            Alumnos alumnos = em2.createQuery("select a from Alumnos as a where a.matricula = :matricula and a.cveStatus = :estatus " +
                     "and a.grupos.gruposPK.cvePeriodo = :periodo", Alumnos.class)
                     .setParameter("estatus", 1)
                     .setParameter("matricula", matricula)
@@ -242,5 +247,150 @@ public class EjbEvaluacionDesempenioAmbiental {
         }
 
         respuestas.put(pregunta, respuesta);
+    }
+
+    public ResultadoEJB<List<DtoAlumnosEncuesta.DtoEvaluaciones>> obtenerListaAlumnosSaiiut(){
+        List<DtoAlumnosEncuesta.DtoEvaluaciones> dtoSaiiut = em2
+                .createQuery("select a from Alumnos a where a.cveStatus = :estatus and a.grupos.gruposPK.cvePeriodo = :periodo", Alumnos.class)
+                .setParameter("estatus", 1)
+                .setParameter("periodo", 53)
+                .getResultStream()
+                .map(alumnos -> packEstudiantesEncuesta(alumnos))
+                .filter(ResultadoEJB::getCorrecto)
+                .map(ResultadoEJB::getValor)
+                .map(dtoAlumnosEncuestaGeneral -> packResultadoEvaluacion(dtoAlumnosEncuestaGeneral))
+                .filter(ResultadoEJB::getCorrecto)
+                .map(ResultadoEJB::getValor)
+                .collect(Collectors.toList());
+        return ResultadoEJB.crearCorrecto(dtoSaiiut, "Lista completa");
+    }
+
+    public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnos>  packEstudiantesEncuesta(Alumnos alumnos){
+        try{
+            Personas alumno = em2.createQuery("select p from Personas as p where p.personasPK.cvePersona = :cveAlumno", Personas.class)
+                    .setParameter("cveAlumno", alumnos.getAlumnosPK().getCveAlumno()).getResultStream().findFirst().orElse(null);
+            assert alumno != null;
+            //System.out.println("Datos personales:"+alumno.getNombre()+" "+alumno.getApellidoPat()+" "+alumno.getApellidoMat());
+            Grupos grupos = alumnos.getGrupos();
+            //System.out.println("Grupo:"+ grupos.getGrado()+" "+grupos.getIdGrupo());
+            CarrerasCgut carrerasCgut = em2.createQuery("select c from CarrerasCgut as c where c.cveCarrera = :cveCarrera", CarrerasCgut.class)
+                    .setParameter("cveCarrera", grupos.getGruposPK().getCveCarrera()).getResultStream().findFirst().orElse(null);
+            DtoAlumnosEncuesta.DtoCarrera dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera();
+            assert carrerasCgut != null;
+            if(carrerasCgut.getAbreviatura().equals("AARH")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "AARH");}
+            if(carrerasCgut.getAbreviatura().equals("ADMON")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "AD");}
+            if(carrerasCgut.getAbreviatura().equals("ASP")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "ASP");}
+            if(carrerasCgut.getAbreviatura().equals("BIO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "BIO");}
+            if(carrerasCgut.getAbreviatura().equals("EA")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "EA");}
+            if(carrerasCgut.getAbreviatura().equals("FAT")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "FOT");}
+            if(carrerasCgut.getAbreviatura().equals("GASTRO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "GAS");}
+            if(carrerasCgut.getAbreviatura().equals("IBIO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IBIO");}
+            if(carrerasCgut.getAbreviatura().equals("IDIE")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IDIE");}
+            if(carrerasCgut.getAbreviatura().equals("IMECA")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IMECA");}
+            if(carrerasCgut.getAbreviatura().equals("IMI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IMI");}
+            if(carrerasCgut.getAbreviatura().equals("INF")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IN");}
+            if(carrerasCgut.getAbreviatura().equals("IPA")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IPA");}
+            if(carrerasCgut.getAbreviatura().equals("IPRI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IPRI");}
+            if(carrerasCgut.getAbreviatura().equals("ITIC")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "ITIC");}
+            if(carrerasCgut.getAbreviatura().equals("LTF")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "LTEFI");}
+            if(carrerasCgut.getAbreviatura().equals("MAI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "MAI");}
+            if(carrerasCgut.getAbreviatura().equals("MAA")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "MECAA");}
+            if(carrerasCgut.getAbreviatura().equals("MAP")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "MIAP");}
+            if(carrerasCgut.getAbreviatura().equals("PAL")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "PA");}
+            if(carrerasCgut.getAbreviatura().equals("PAI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "PAI");}
+            if(carrerasCgut.getAbreviatura().equals("QAB")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "QAB");}
+            if(carrerasCgut.getAbreviatura().equals("TFAR")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "TFAR");}
+            if(carrerasCgut.getAbreviatura().equals("TICAMC")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "TICAMC");}
+            if(carrerasCgut.getAbreviatura().equals("TICASI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "TICASI");}
+            if(carrerasCgut.getAbreviatura().equals("LGASTRO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "LGASTRO");}
+            if(carrerasCgut.getAbreviatura().equals("AACH")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "AACH");}
+            if(carrerasCgut.getAbreviatura().equals("TIEVND")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "TIEVND");}
+            DtoAlumnosEncuesta.DtoAlumnos dto = new DtoAlumnosEncuesta.DtoAlumnos(
+                    alumnos, alumno, dtoCarrera
+            );
+            //System.out.println("DTO Alumno:"+dto);
+            return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1,"No se pudo empaquetar la carga académica (EjbAsignacionAcademica. pack).", e, DtoAlumnosEncuesta.DtoAlumnos.class);
+        }
+    }
+
+    public ResultadoEJB<List<DtoAlumnosEncuesta.DtoEvaluaciones>> obtenerListaAlumnosControlEscolar(){
+        List<DtoAlumnosEncuesta.DtoEvaluaciones> dtoEvaluaciones = em
+                .createQuery("select e from Estudiante e where e.periodo = :periodo and e.tipoEstudiante.idTipoEstudiante = :tipo", Estudiante.class)
+                .setParameter("periodo", 53)
+                .setParameter("tipo", Short.parseShort("1"))
+                .getResultStream()
+                .map(estudiante -> packResultadoEvaluacion(estudiante))
+                .filter(ResultadoEJB::getCorrecto)
+                .map(ResultadoEJB::getValor)
+                .collect(Collectors.toList());
+        return ResultadoEJB.crearCorrecto(dtoEvaluaciones, "Lista obtenida con exito");
+    }
+
+    public ResultadoEJB<List<DtoAlumnosEncuesta.DtoEvaluaciones>> obtenerListaPersonalActivo(){
+        List<DtoAlumnosEncuesta.DtoEvaluaciones> listaPersonal = em.createQuery("select p from Personal p where p.status = :estatus", Personal.class)
+                .setParameter("estatus", 'A')
+                .getResultStream()
+                .map(personal -> packPersonalActivo(personal))
+                .filter(ResultadoEJB::getCorrecto)
+                .map(ResultadoEJB::getValor)
+                .collect(Collectors.toList());
+        return ResultadoEJB.crearCorrecto(listaPersonal, "Lista del personal activo");
+    }
+
+    public ResultadoEJB<DtoAlumnosEncuesta.DtoEvaluaciones> packPersonalActivo(Personal personal){
+        Personal personalBD = em.find(Personal.class, personal.getClave());
+        AreasUniversidad areasUniversidad = em.find(AreasUniversidad.class, personalBD.getAreaOperativa());
+        DtoAlumnosEncuesta.DtoEvaluaciones dtoEvaluaciones = new DtoAlumnosEncuesta.DtoEvaluaciones(
+                personalBD.getClave(), personalBD.getNombre(), areasUniversidad.getNombre()
+        );
+        return ResultadoEJB.crearCorrecto(dtoEvaluaciones, "Personal empaquetado.");
+    }
+
+    public ResultadoEJB<DtoAlumnosEncuesta.DtoEvaluaciones> packResultadoEvaluacion(DtoAlumnosEncuesta.DtoAlumnos dtoAlumnosEncuestaGeneral){
+        DtoAlumnosEncuesta.DtoEvaluaciones dto;
+        dto = new DtoAlumnosEncuesta.DtoEvaluaciones(
+                Integer.parseInt(dtoAlumnosEncuestaGeneral.getAlumnos().getMatricula()),
+                dtoAlumnosEncuestaGeneral.getPersonas().getNombre()+" "+dtoAlumnosEncuestaGeneral.getPersonas().getApellidoPat()+" "+dtoAlumnosEncuestaGeneral.getPersonas().getApellidoMat(),
+                dtoAlumnosEncuestaGeneral.getProgramaEdcuativo().getNombre()
+        );
+        return ResultadoEJB.crearCorrecto(dto, "Empaquetado con éxito");
+    }
+
+    public ResultadoEJB<DtoAlumnosEncuesta.DtoEvaluaciones> packResultadoEvaluacion(Estudiante estudiante){
+        Estudiante estudianteBD = em.find(Estudiante.class, estudiante.getIdEstudiante());
+        AreasUniversidad areasUniversidad = em.find(AreasUniversidad.class, estudianteBD.getCarrera());
+        DtoAlumnosEncuesta.DtoEvaluaciones dto;
+        dto = new DtoAlumnosEncuesta.DtoEvaluaciones(
+                estudianteBD.getMatricula(),
+                estudianteBD.getAspirante().getIdPersona().getNombre()+" "+estudianteBD.getAspirante().getIdPersona().getApellidoPaterno()+" "+estudianteBD.getAspirante().getIdPersona().getApellidoMaterno(),
+                areasUniversidad.getNombre()
+        );
+        return ResultadoEJB.crearCorrecto(dto, "Empaquetado con éxito");
+    }
+
+    public ResultadoEJB<EvaluacionDesempenioAmbientalUtxj> obtenerResultadoEvaluacion(Integer evaluador){
+        EvaluacionDesempenioAmbientalUtxj edau = em
+                .createQuery("select e from EvaluacionDesempenioAmbientalUtxj e where e.evaluacionDesempenioAmbientalUtxjPK.evaluador = :evaluador", EvaluacionDesempenioAmbientalUtxj.class)
+                .setParameter("evaluador", evaluador)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        return ResultadoEJB.crearCorrecto(edau, "El resultado por evaluador se encontró con éxito");
+    }
+
+    public ResultadoEJB<List<EvaluacionDesempenioAmbientalUtxj>> obtenerResultados(){
+        List<EvaluacionDesempenioAmbientalUtxj> edau = em.createQuery("select e from EvaluacionDesempenioAmbientalUtxj e", EvaluacionDesempenioAmbientalUtxj.class)
+                .getResultStream().collect(Collectors.toList());
+        return ResultadoEJB.crearCorrecto(edau, "Lista completa");
+    }
+
+    public ResultadoEJB<Integer> obtenerTotalResultadosCompletos(){
+        Comparador<EvaluacionDesempenioAmbientalUtxj> comparador = new ComparadorEvaluacionAmbiental();
+        Integer total = em.createQuery("select e from EvaluacionDesempenioAmbientalUtxj e", EvaluacionDesempenioAmbientalUtxj.class)
+                .getResultStream().map(evaluacion -> comparador.isCompleto(evaluacion))
+                .collect(Collectors.toList()).size();
+        return ResultadoEJB.crearCorrecto(total, "Total de resultados completos");
     }
 }

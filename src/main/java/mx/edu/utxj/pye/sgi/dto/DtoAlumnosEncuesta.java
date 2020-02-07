@@ -68,42 +68,9 @@ public class DtoAlumnosEncuesta {
     @AllArgsConstructor
     @ToString
     public static class DtoAlumnos{
-        @Getter
-        @Setter
-        private String matricula;
-        @Getter
-        @Setter
-        private Integer periodo;
-        @Getter
-        @Setter
-        private String nombre;
-        @Getter
-        @Setter
-        private String primerAp;
-        @Getter
-        @Setter
-        private String segundoAp;
-        @Getter
-        @Setter
-        private String siglas;
-        @Getter
-        @Setter
-        private Short grado;
-        @Getter
-        @Setter
-        private Integer idgrupo;
-        @Getter
-        @Setter
-        private String grupo;
-        @Getter
-        @Setter
-        private Integer cveStatus;
-        @Getter
-        @Setter
-        private Integer cveDirector;
-        @Getter
-        @Setter
-        private Integer cveTutor;
+        @Getter @Setter private Alumnos alumnos;
+        @Getter @Setter private Personas personas;
+        @Getter @Setter private DtoAlumnosEncuesta.DtoCarrera programaEdcuativo;
     }
     
     @RequiredArgsConstructor
@@ -191,6 +158,13 @@ public class DtoAlumnosEncuesta {
         private String nombreDirector;
     }
 
-
+    @RequiredArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    public static class DtoEvaluaciones{
+        @Getter @Setter private Integer clave;
+        @Getter @Setter private String nombreCompleto;
+        @Getter @Setter private String areaOprogramaEducativo;
+    }
     
 }
