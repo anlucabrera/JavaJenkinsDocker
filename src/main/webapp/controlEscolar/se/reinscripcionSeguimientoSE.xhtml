@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+       Reinscripción
+    </ui:define>
+
+    <ui:define name="description">
+        Modulo de seguimiento de reinscripción de estudiantes
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{reinscripcionExtemporaneaSE.cargado}">
+        <adm:breadcrumb title="Reinscripción"/>
+
+        <div class="contenedor">
+            <c:if test="#{reinscripcionExtemporaneaSE.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Último periodo programado para reinscripción: #{caster.clavePeriodoToString(reinscripcionExtemporaneaSE.rol.eventoEscolar.periodo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-sm btn-info"
+                                                actionListener="#{reinscripcionExtemporaneaSE.actualizarInfo()}"
+                                                update=":frm,:frmModalProm"
+                                                title="Actualizar información"><i
+                                                class="fa fa-undo"/>
+                                        </p:commandLink>
+                                        <p:spacer width="10px"/>
+                                        <p:commandLink id="xls" ajax="false"
+                                                       class="btn btn-primary"
+                                                       title="Exportar información"
+                                        >
+                                            <pe:exporter target=":tab:tbl,:tab:tbl2" type="xlsx" fileName="seguimientoReinscritos" datasetPadding="5"/>
+                                            <i class="fa fa-file-excel-o"/>
+                                        </p:commandLink>
+                                        <p:spacer width="10px"/>
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12">
+                                            <p:outputLabel style="" value="Total de estudiantes reinscritos en el periodo programado: #{reinscripcionExtemporaneaSE.rol.listEstudiantesReinscritos.size().toString()}" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12">
+                                            <p:outputLabel value="Total de estudiantes regulares en el periodo anterior: #{reinscripcionExtemporaneaSE.rol.listEstudiantesPeriodoAnterior.size().toString()}" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12">
+                                            <p:outputLabel value="Total de estudiantes faltantes: #{reinscripcionExtemporaneaSE.rol.listEstudiantesNoReinscritos.size().toString()}" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info text-center">
+                                            <p:tabView id="tab">
+                                                <p:tab title="Reinscritos">
+                                                    <p:dataTable var="reinscritos"
+                                                                 emptyMessage="Sin registros."
+                                                                 value="#{reinscripcionExtemporaneaSE.rol.listEstudiantesReinscritos}"
+                                                                 id="tbl" rowIndexVar="rowIndex"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                 tableStyle="vertical-align: middle;">
+                                                        <p:column headerText="Matricula" style="width: 70px;" filterBy="#{reinscritos.estudiante.matricula}"><h:outputText value="#{reinscritos.estudiante.matricula}"/></p:column>
+                                                        <p:column headerText="Nombre" style="width: 300px;"><h:outputText value="#{reinscritos.estudiante.aspirante.idPersona.nombre.concat(reinscritos.estudiante.aspirante.idPersona.apellidoPaterno).concat(' ').concat(reinscritos.estudiante.aspirante.idPersona.apellidoMaterno)}"/></p:column>
+                                                        <p:column headerText="Carrera" style="width: 70px;" filterBy="#{reinscritos.carrera.siglas}"><h:outputText value="#{reinscritos.carrera.siglas}"/></p:column>
+                                                        <p:column headerText="Grupo actual" style="width: 70px;"><h:outputText value="#{reinscritos.grupoActual.grado} - #{reinscritos.grupoActual.literal}" /></p:column>
+                                                        <p:column headerText="Tutor"  style="width: 300px;"><h:outputText value="#{reinscritos.nombreTutor}" /></p:column>
+                                                        <p:column headerText="Tipo reinscripción"  style="width: 200px;"><h:outputText value="#{reinscritos.estudiante.tipoRegistro}" /></p:column>
+                                                        <p:column headerText="Trabajador que inscribe"  style="width: 300px;"><h:outputText value="#{reinscritos.trabajadorIncribe.nombre}" /></p:column>
+                                                        <p:column headerText="Fecha de registro"><h:outputText  converter="javax.faces.DateTime" value="#{reinscritos.estudiante.fechaAlta}" /></p:column>
+                                                    </p:dataTable>
+                                                </p:tab>
+                                                <p:tab title="Faltantes" >
+                                                    <p:dataTable var="faltantes" rendered="true"
+                                                                 emptyMessage="Sin registros."
+                                                                 value="#{reinscripcionExtemporaneaSE.rol.listEstudiantesNoReinscritos}"
+                                                                 id="tbl2" rowIndexVar="rowIndex"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                 tableStyle="vertical-align: middle;">
+                                                        <p:column headerText="Matricula" style="width: 70px;"><h:outputText value="#{faltantes.estudiante.matricula}"/></p:column>
+                                                        <p:column headerText="Nombre" style="width: 300px;"><h:outputText value="#{faltantes.estudiante.aspirante.idPersona.nombre.concat(faltantes.estudiante.aspirante.idPersona.apellidoPaterno).concat(' ').concat(faltantes.estudiante.aspirante.idPersona.apellidoMaterno)}"/></p:column>
+                                                        <p:column headerText="Grupo actual"><h:outputText value="#{faltantes.grupoActual.grado}- #{faltantes.grupoActual.literal}"/></p:column>
+                                                        <p:column headerText="Tutor" style="width: 300px;" ><h:outputText value="#{faltantes.nombreTutor}"/></p:column>
+                                                        <p:column headerText="Nuevo grupo"><h:outputText value="#{faltantes.nuevoGrupo.grado}-#{faltantes.nuevoGrupo.literal}"/></p:column>
+                                                        <p:column headerText="Carrera"><h:outputText value="#{faltantes.carrera.siglas}"/></p:column>
+                                                        <p:column headerText="Acreditado"><p:selectBooleanButton disabled="true" id="statusF" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{faltantes.aprobo}"/></p:column>
+                                                        <p:column headerText="Materias reprobadas"><h:outputText value="#{faltantes.materiasReprobadas}"/></p:column>
+                                                        <p:column headerText="Opciones">
+                                                            <div class="btn-group">
+                                                                <p:commandButton
+                                                                    styleClass="btn btn-sm btn-success"
+                                                                    icon="fa fa-check"
+                                                                    actionListener="#{reinscripcionExtemporaneaSE.reinscribirEstudiante(faltantes)}"
+                                                                    oncomplete="#{reinscripcionExtemporaneaSE.actualizarInfo()}"
+                                                                    update=":frm,:frmModalProm "
+                                                                />
+                                                                <p:spacer width="10px"/>
+                                                                <p:commandLink
+                                                                        class="btn btn-sm btn-warning"
+                                                                        actionListener="#{reinscripcionExtemporaneaSE.getPromediosMat(faltantes.promedioMateria)}"
+                                                                        oncomplete="PF('modalPromedioMaterias').show();"
+                                                                        update=":frmModalProm"
+                                                                        title="Visualizar calificaciones."><i
+                                                                        class="fa fa-search"/>
+                                                                </p:commandLink>
+                                                            </div>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                </p:tab>
+                                            </p:tabView>
+
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                             styleClass="panel panel-primary" width="500"
+                                                             closable="false" closeOnEscape="true">
+                                                <p:commandButton value="Si" type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                                 icon="ui-icon-check"/>
+                                                <p:commandButton value="No" type="button"
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary"
+                                                                 icon="ui-icon-close"/>
+                                            </p:confirmDialog>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el seguimiento de reinscripción</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{reinscripcionExtemporaneaSE.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                <!-- Modal Promedios de materias -->
+                <p:dialog id="modalPromedioMaterias"
+                          widgetVar="modalPromedioMaterias"
+                          width="850"
+                          height="auto"
+                          closeOnEscape="true"
+                          showEffect="fade"
+                          hideEffect="fade"
+                          modal="true"
+                          draggable="true"
+                          header="Promedio materias"
+                          styleClass="panel panel-primary"
+                          responsive="true"
+                          resizable="false"
+                          maximizable="false">
+
+                    <h:form id="frmModalProm" >
+                        <p:dataTable id="tblModalProm" value="#{reinscripcionExtemporaneaSE.rol.promediosMateriasSelec}" var="materia"
+                                     emptyMessage="No hay registro de promedios" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                     paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                        >
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column headerText="Clave Materia"  width="150" />
+                                    <p:column headerText="Materia"  width="200" />
+                                    <p:column headerText="Docente"  width="200" />
+                                    <p:column headerText="Promedio ordinario"  width="70" />
+                                    <p:column headerText="Nivelación"  width="70" />
+                                    <p:column headerText="Promedio Final"  width="70" />
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column style="text-align: center;"><h:outputText value="#{materia.cargaAcademica.cargaAcademica.idPlanMateria.claveMateria}" /></p:column>
+                            <p:column style="text-align: center;"><h:outputText value="#{materia.cargaAcademica.materia.nombre}" /></p:column>
+                            <p:column style="text-align: justify;"><h:outputText value="#{materia.cargaAcademica.docente.personal.nombre}" /></p:column>
+                            <p:column style="text-align: justify;">
+                                <h:outputText style="font-weight: bold; font-size: small; #{materia.promedioOrdinario >= 8 ? 'color: #000000':'color: #E53935' or materia.promedioOrdinario > 0 ? 'color: #E53935':'color: #000000'}"
+                                              value="#{materia.promedioOrdinario}">
+                                    <f:convertNumber pattern="#.##"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="text-align: justify;">
+                                <h:outputText style="font-weight: bold; font-size: small; #{materia.nivelacion >= 8 ? 'color: #000000':'color: #E53935' or materia.nivelacion > 0 ? 'color: #E53935':'color: #000000'}"
+                                              value="#{materia.nivelacion}">
+                                    <f:convertNumber pattern="#.##"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="text-align: justify;">
+                                <h:outputText style="font-weight: bold; font-size: small; #{materia.promedio >= 8 ? 'color: #000000':'color: #E53935' or materia.promedio > 0 ? 'color: #E53935':'color: #000000'}"
+                                              value="#{materia.promedio}">
+                                    <f:convertNumber pattern="#.##"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!reinscripcionExtemporaneaSE.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal de Servicios Escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
