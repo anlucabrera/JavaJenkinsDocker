@@ -160,10 +160,20 @@ public class GeneracionKardex implements Serializable{
                     ejb.obtenerCargasAcademicas(estudiante1).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 1).forEach(dtoCargaAcademica -> {
                         BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1).getValor().getValor())
                                 .setScale(2, RoundingMode.HALF_UP);
-                        listaPromedios1.add(promedio);
+                        BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                        BigDecimal promedioFinal = BigDecimal.ZERO;
                         PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                         materias.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        PdfPCell promedios = new PdfPCell(new Paragraph(promedio.toString(), fontMateria2));
+                        PdfPCell promedios;
+                        if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
+                            promedioFinal = promedioFinal.add(promedio);
+                            promedios = new PdfPCell(new Paragraph(promedio.toString(), fontMateria2));
+                        }else{
+                            promedioFinal = promedioFinal.add(nivelacion);
+                            promedios = new PdfPCell(new Paragraph(nivelacion.toString(), fontMateria2));
+                        }
+                        listaPromedios1.add(promedioFinal);
+
                         table.addCell(materias);
                         table.addCell(promedios);
                     });
