@@ -49,7 +49,10 @@
                                 <div id="main-buttons" class="hidden-sm hidden-xs">
                                     <p:toolbar id="tb">
                                         <f:facet name="left">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                             <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(validacionPlanAccionTutorialDirector.rol.periodoActivo)} " />
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Antes de iniciar con la validación favor de verificar que los filtros seleccionados seán los correctos" />
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
@@ -105,7 +108,7 @@
                                                             <p:toolbar>
                                                                 <f:facet name="left">
                                                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                                    <p:outputLabel value="Listado de planes de acción tutorial registrados" style="padding-top: 5px;" />
+                                                                    <p:outputLabel value="Listado de planes de acción tutorial registrados por los tutores." style="padding-top: 5px;" />
                                                                     <p></p>
                                                                 </f:facet>
                                                             </p:toolbar>
@@ -136,8 +139,8 @@
                                                                     <div class="ui-material" style="margin-bottom: 5px; text-align: center">
                                                                         <p:commandButton id="btnValidarPlanAccionTutorial"
                                                                                          actionListener="#{validacionPlanAccionTutorialPsicopedagogia.validarPlanAccionTutorial(dtoPlanAccionTutorial)}"
-                                                                                         class="btn btn-sm #{dtoPlanAccionTutorial.planAccionTutorial.estatus ne patEstado.VALIDADO.label?'btn-info':'btn-danger'}" 
-                                                                                         icon="#{dtoPlanAccionTutorial.planAccionTutorial.estatus ne patEstado.VALIDADO.label?'fa fa-check':'fa fa-close'}"
+                                                                                         class="btn btn-sm #{dtoPlanAccionTutorial.planAccionTutorial.estatus ne patEstado.VALIDADO.label?'btn-danger':'btn-info'}" 
+                                                                                         icon="#{dtoPlanAccionTutorial.planAccionTutorial.estatus ne patEstado.VALIDADO.label?'fa fa-close':'fa fa-check'}"
                                                                                          title="#{dtoPlanAccionTutorial.planAccionTutorial.estatus ne patEstado.VALIDADO.label?'Validar plan de acción tutorial':'Quitar validación'}"
                                                                                          disabled="#{caster.validarDirector(dtoPlanAccionTutorial.planAccionTutorial.estatus) eq true?'false':'true'}"
                                                                                          process="@this"
@@ -267,6 +270,7 @@
                                                     <center>
                                                         <p:dataTable id="dtFuncionesTutor" 
                                                                      var="funcionTutor"
+                                                                     value="#{validacionPlanAccionTutorialDirector.rol.listaFuncionesTutor}"
                                                                      tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                      resizeMode="expand"
                                                                      emptyMessage="Aún no se han registrado funciones como tutor"

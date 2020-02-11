@@ -246,6 +246,7 @@ public class RegistroPlanTutoriaTutor extends ViewScopedRol implements Desarroll
             mostrarMensajeResultadoEJB(resFuncionTutor);
             inicializarFuncionTutor();
             inicializarFuncionesTutor();
+            actualizarListaFuncionesTutor();
         }else{
             mostrarMensajeResultadoEJB(resFuncionTutor);
             inicializarFuncionTutor();

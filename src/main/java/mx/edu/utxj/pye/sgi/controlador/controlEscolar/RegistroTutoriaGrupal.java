@@ -55,6 +55,7 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.ParticipanteTutoriaGrupalAcuerdos;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -377,6 +378,30 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
             }else{
                 rol.setListaEstudiantes(Collections.EMPTY_LIST);
             }
+        }
+    }
+    
+    public Double comprobarPorcentaje(SesionesGrupalesTutorias sesionGrupal) {
+        if (!sesionGrupal.getTutoriasGrupalesList().isEmpty()) {
+            TutoriasGrupales tutoriaGrupal = sesionGrupal.getTutoriasGrupalesList().get(0);
+            if (!tutoriaGrupal.getParticipantesTutoriaGrupalList().isEmpty()) {
+                List<ParticipantesTutoriaGrupal> part = tutoriaGrupal.getParticipantesTutoriaGrupalList();
+                List<ParticipantesTutoriaGrupal> partFaltantes = new ArrayList<>();
+                part.stream().forEach((t) -> {
+                    if (!t.getAceptacionAcuerdos().equals(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel())) {
+                        partFaltantes.add(t);
+                    }
+                });
+                double participantesDouble = part.size();
+                double partFDouble = partFaltantes.size();
+                Double suma = partFDouble / participantesDouble;
+                Double porcentaje = suma * 100D;
+                return (double)Math.round(porcentaje * 100d) / 100d;
+            }else{
+                return 0.0D;
+            }
+        } else {
+            return 0.0D;
         }
     }
     

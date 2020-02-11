@@ -49,9 +49,11 @@
                                 <div id="main-buttons" class="hidden-sm hidden-xs">
                                     <p:toolbar id="tb">
                                         <f:facet name="left">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                             <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registroPlanTutoriaTutor.rol.periodoActivo)}" />
                                             <p:spacer width="5" />
-
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Antes de iniciar su registro favor de verificar que los filtros seleccionados seán los correctos" />
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
@@ -269,11 +271,12 @@
                                                                 <f:facet name="left">
                                                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                                     <p:outputLabel value="Listado de metas de su función como tutor" style="padding-top: 5px;" />
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Para modificar metas de su función como tutor solo modifique directamente los campos y se guardarán de manera automática." style="padding-top: 5px;" />
                                                                     <p></p>
                                                                 </f:facet>
                                                             </p:toolbar>
                                                             <center>
-                                                                <p:remoteCommand id="actualizarFunciones" name="actualizarFunciones" actionListener="#{registroPlanTutoriaTutor.actualizarListaFuncionesTutor}" update="dtFuncionesTutor" global="false" />
                                                                 <p:dataTable id="dtFuncionesTutor" 
                                                                              var="funcionTutor" 
                                                                              value="#{registroPlanTutoriaTutor.rol.listaFuncionesTutor}" 
@@ -321,15 +324,18 @@
                                                                                          required="true"
                                                                                          requiredMessage="Este campo es requerido"
                                                                                          readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
-                                                                                         onkeydown="if (event.keyCode === 13) {editarFuncionTutor();return false;}"
+                                                                                         onkeydown="if (event.keyCode === 13) {
+                                                                                                     editarFuncionTutor();
+                                                                                                     return false;
+                                                                                                 }"
                                                                                          >
-                                                                                
+
                                                                                 <p:remoteCommand name="editarFuncionTutor"
-                                                                                                 process="dtFuncionesTutor"
-                                                                                                 oncomplete="actualizarFunciones();"
+                                                                                                 process="@this"
                                                                                                  global="false"
+                                                                                                 oncomplete="actualizar();"
                                                                                                  />
-                                                                                <p:ajax process="@this" oncomplete="actualizarFunciones();" global="false" /> 
+                                                                                <p:ajax process="@this" global="false" oncomplete="actualizar();" /> 
                                                                                 <f:attribute name="funcionTutor" value="#{funcionTutor}" />
                                                                             </p:inputText>
                                                                         </div>
@@ -461,11 +467,12 @@
                                                                 <f:facet name="left">
                                                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                                     <p:outputLabel value="Listado de sesiones grupales de tutoría" style="padding-top: 5px;" />
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Para modificar sesiones grupales solo modifique directamente los campos y se guardarán de manera automática." style="padding-top: 5px;" />
                                                                     <p></p>
                                                                 </f:facet>
                                                             </p:toolbar>
                                                             <center>
-                                                                <p:remoteCommand id="actualizarSesionesGrupales" name="actualizarSesionesGrupales" actionListener="#{registroPlanTutoriaTutor.actualizarListaSesionesGrupalesTutorias()}" update="dtSesionesGrupales" global="false"/>
                                                                 <p:dataTable id="dtSesionesGrupales" 
                                                                              var="sesionGrupal" 
                                                                              value="#{registroPlanTutoriaTutor.rol.listaSesionesGrupalesTutorias}"
@@ -519,8 +526,8 @@
                                                                                              valueChangeListener="#{registroPlanTutoriaTutor.actulizaActividadProgramada}"
                                                                                              readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
                                                                                              >
-                                                                                
-                                                                                <p:ajax process="@this" oncomplete="actualizarSesionesGrupales();" global="false" /> 
+
+                                                                                <p:ajax process="@this" global="false" oncomplete="actualizar();" /> 
                                                                                 <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
                                                                             </p:inputTextarea>
                                                                         </div>
@@ -540,8 +547,8 @@
                                                                                              valueChangeListener="#{registroPlanTutoriaTutor.actulizaObjetivos}"
                                                                                              readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
                                                                                              >
-                                                                                
-                                                                                <p:ajax process="@this" oncomplete="actualizarSesionesGrupales();" global="false"/> 
+
+                                                                                <p:ajax process="@this" global="false" oncomplete="actualizar();"/> 
                                                                                 <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
                                                                             </p:inputTextarea>
                                                                         </div>
@@ -565,8 +572,8 @@
                                                                                              disabled="#{sesionGrupal.cumplimiento}"
                                                                                              valueChangeListener="#{registroPlanTutoriaTutor.actulizaJustificacion}"
                                                                                              >
-                                                                                
-                                                                                <p:ajax process="@this" oncomplete="actualizarSesionesGrupales();" global="false"/> 
+
+                                                                                <p:ajax process="@this" global="false" oncomplete="actualizar();"/> 
                                                                                 <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
                                                                             </p:inputTextarea>
                                                                         </div>

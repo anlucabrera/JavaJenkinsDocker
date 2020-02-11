@@ -157,6 +157,20 @@ public class ValidacionTutoriaGrupalEstudiante extends ViewScopedRol implements 
         }else mostrarMensaje("El valor seleccionado no es valido");
     }
     
+    public void verificarComentariosDesacuerdo() {
+        if (!rol.getListaParticipantesTutoriaGrupal().isEmpty()) {
+            rol.getListaParticipantesTutoriaGrupal().stream().forEach((t) -> {
+                if (t.getAceptacionAcuerdos().equals("Asistí - No estoy de acuerdo") || t.getAceptacionAcuerdos().equals("No asistí - No estoy de acuerdo")) {
+                    if (t.getComentarios().equals("Pendiente de registro") || t.getComentarios().equals("") || t.getComentarios() == null) {
+                        rol.setComentarioPendiente(Boolean.TRUE);
+                    } else {
+                        rol.setComentarioPendiente(Boolean.FALSE);
+                    }
+                }
+            });
+        }
+    } 
+    
     public void actualizarComentarios(ValueChangeEvent event){
         if(event.getNewValue() instanceof String){
         ParticipantesTutoriaGrupal ptga = (ParticipantesTutoriaGrupal) event.getComponent().getAttributes().get("participanteTutoriaGrupal");
@@ -184,6 +198,7 @@ public class ValidacionTutoriaGrupalEstudiante extends ViewScopedRol implements 
         ResultadoEJB<List<ParticipantesTutoriaGrupal>> res = ejb.getListaParticipantesTutoriaGrupalPorEventoRegistro(rol.getEventoSeleccionado(),rol.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
         if (res.getCorrecto()) {
             rol.setListaParticipantesTutoriaGrupal(res.getValor());
+            verificarComentariosDesacuerdo();
         } else {
             rol.setListaParticipantesTutoriaGrupal(Collections.EMPTY_LIST);
         }

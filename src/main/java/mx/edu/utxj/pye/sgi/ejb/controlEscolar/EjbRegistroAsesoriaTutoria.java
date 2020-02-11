@@ -866,7 +866,7 @@ public class EjbRegistroAsesoriaTutoria {
                 em.persist(tg);
                 actualizaValorSesionGrupalCumplimiento(tg.getSesionGrupal());
                 empaquetarDTOParticipanteGuardar(tg);
-                return ResultadoEJB.crearCorrecto(tg, "El registro de la tutoria grupal ha sido guardado correctamente en el sistema");
+                return ResultadoEJB.crearCorrecto(tg, "El registro de la tutoria grupal ha sido guardado correctamente en el sistema, el pase de lista se ha realizado de manera automática a todos los estudiantes del grupo seleccionado.");
             }else{
                 return ResultadoEJB.crearErroneo(2, "El registro de esta tutoria grupal ya se encuentra en sistema, favor de verificar la información", TutoriasGrupales.class);
             }
@@ -1047,15 +1047,20 @@ public class EjbRegistroAsesoriaTutoria {
     }
     
     
-    public ResultadoEJB<ParticipantesTutoriaGrupal> editaParticipanteTutoriaGrupal(ParticipantesTutoriaGrupal participante){
+    public ResultadoEJB<ParticipantesTutoriaGrupal> editaParticipanteTutoriaGrupal(ParticipantesTutoriaGrupal participante) {
         try {
             ParticipantesTutoriaGrupal ptg = new ParticipantesTutoriaGrupal();
             ptg = participante;
-            if(!(buscaParticipanteTutoriaGrupal(ptg.getParticipantesTutoriaGrupalPK().getTutoriaGrupal(),ptg.getParticipantesTutoriaGrupalPK().getEstudiante()).getCorrecto())){
+            if (!(buscaParticipanteTutoriaGrupal(ptg.getParticipantesTutoriaGrupalPK().getTutoriaGrupal(), ptg.getParticipantesTutoriaGrupalPK().getEstudiante()).getCorrecto())) {
                 return ResultadoEJB.crearErroneo(2, "El participante necesita ser guardado previamente", ParticipantesTutoriaGrupal.class);
-            }else{
-                if(ptg.getAsistencia()) ptg.setAsistencia(Boolean.FALSE);
-                else ptg.setAsistencia(Boolean.TRUE);
+            } else {
+                if (ptg.getAsistencia()) {
+                    ptg.setAsistencia(Boolean.FALSE);
+                    ptg.setAceptacionAcuerdos(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel());
+                } else {
+                    ptg.setAsistencia(Boolean.TRUE);
+                    ptg.setAceptacionAcuerdos(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel());
+                }
                 em.merge(ptg);
                 return ResultadoEJB.crearCorrecto(ptg, "El participante ha sido actualizado correctamente");
             }
@@ -1254,10 +1259,14 @@ public class EjbRegistroAsesoriaTutoria {
                 dtoCC.getCasoCritico().setEstado(CasoCriticoEstado.CERRADO_TUTOR.getLabel());
                 dtoCC.getCasoCritico().setFechaCierre(new Date());
                 ResultadoEJB<DtoCasoCritico> res = cc.abrirCasoCritico(dtoCC);
+            } else if (dtoCC.getCasoCritico().getEstado().equals(CasoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.getLabel())){
+                dtoCC.getCasoCritico().setEstado(CasoCriticoEstado.CERRADO_TUTOR.getLabel());
+                dtoCC.getCasoCritico().setFechaCierre(new Date());
+                ResultadoEJB<DtoCasoCritico> res = cc.abrirCasoCritico(dtoCC);
             }
             return ResultadoEJB.crearCorrecto(Boolean.TRUE, "El caso crítico ha sido actualizado");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se ha podido quitar la validación del caso crítico (EjbRegistroAsesoriaTutoria.quitarValidacionEspecialista).", e, Boolean.TYPE);
+            return ResultadoEJB.crearErroneo(1, "No se ha podido quitar la validación del caso crítico (EjbRegistroAsesoriaTutoria.quitarValidacionTutor).", e, Boolean.TYPE);
         }
     }
     

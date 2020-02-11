@@ -53,6 +53,8 @@
                                             <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registroTutoriaIndividual.rol.periodoActivo)} " />
                                             <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                             <p:outputLabel value="Evento de registro activo: #{registroTutoriaIndividual.rol.eventoRegistroActivo.mes}" />
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Antes de iniciar su registro favor de verificar que los filtros seleccionados seán los correctos" />
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
@@ -126,7 +128,7 @@
 
                                                 <p:outputPanel id="contenedor">
                                                     <div style="margin-bottom: 10px;">
-                                                        <p:outputLabel value="1.- Ingrese la matricula ó nombre del estudiante "></p:outputLabel>
+                                                        <p:outputLabel value="1.- Ingrese la matricula ó nombre del estudiante y seleccione el resultado."></p:outputLabel>
                                                     </div>
                                                     <div class="row margin-bottom" style="margin-bottom: 10px;">
 
@@ -263,7 +265,7 @@
                                                                         <h:outputText id="displayTICCComentariosTutor" />
                                                                         <p:watermark for="ticcComentariosTutor" value="Ejemplo de comentarios del tutor *" />
                                                                         <p:message for="ticcComentariosTutor" />
-                                                                        <p:outputLabel for="ticcComentariosTutor" value="Comentarios del tutor (caso crítico)" />
+                                                                        <p:outputLabel for="ticcComentariosTutor" value="Comentarios del tutor (recuerde que estos comentarios serán asignados al caso crítico y serán visualizados por el especialista)" />
                                                                     </div>
                                                                     <p:message for="ticcComentariosTutor" />
                                                                 </div>
@@ -275,7 +277,7 @@
 
                                                         <div class="col-sm-12 col-md-12 col-lg-12">
                                                             <p:separator/>
-                                                            <p:outputLabel value="4.- Ingrese la información de la tutoría individual "></p:outputLabel>
+                                                            <p:outputLabel value="4.- Ingrese la información de la tutoría individual (asegúrese de llenar todos los campos)."></p:outputLabel>
                                                         </div>
                                                         <div class="col-sm-12 col-md-6 col-lg-3">
                                                             <div class="ui-material">
@@ -428,14 +430,14 @@
                                                                                  />
                                                             </c:if>
                                                             <c:if test="#{registroTutoriaIndividual.rol.dtoCasoCritico ne null}">
-                                                                <c:if test="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado eq casoCriticoEstado.EN_SEGUMIENTO_TUTOR.label or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado eq casoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.label}">
+                                                                <c:if test="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado eq casoCriticoEstado.EN_SEGUMIENTO_TUTOR.label or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado eq casoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.label or registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado eq casoCriticoEstado.CERRADO_TUTOR.label}">
                                                                     <c:if test="#{caster.obtenerAreaOperativa(registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.especialista) ne 18}">
                                                                         <p:commandButton id="btnLiberarCasoCritico"
-                                                                                         actionListener="#{registroTutoriaIndividual.abrirCasoCritico(dto)}"
-                                                                                         class="btn #{dto.casoCritico.estado ne casoCriticoEstado.CERRADO_TUTOR.label?'btn-success':'btn-danger'}" 
-                                                                                         icon="#{dto.casoCritico.estado ne casoCriticoEstado.CERRADO_TUTOR.label?'fa fa-check':'fa fa-close'}"
-                                                                                         title="#{dto.casoCritico.estado ne casoCriticoEstado.CERRADO_TUTOR.label?'Liberar Caso Crítico':'Quitar validación'}"
-                                                                                         value="#{dto.casoCritico.estado ne casoCriticoEstado.CERRADO_TUTOR.label?'Liberar Caso Crítico':'Quitar validación'}"
+                                                                                         actionListener="#{registroTutoriaIndividual.abrirCasoCritico(registroTutoriaIndividual.rol.dtoCasoCritico)}"
+                                                                                         class="btn #{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado ne casoCriticoEstado.CERRADO_TUTOR.label?'btn-success':'btn-danger'}" 
+                                                                                         icon="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado ne casoCriticoEstado.CERRADO_TUTOR.label?'fa fa-check':'fa fa-close'}"
+                                                                                         title="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado ne casoCriticoEstado.CERRADO_TUTOR.label?'Liberar Caso Crítico':'Quitar validación'}"
+                                                                                         value="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.estado ne casoCriticoEstado.CERRADO_TUTOR.label?'Liberar Caso Crítico':'Quitar validación'}"
                                                                                          process="@this"
                                                                                          update="@this"
                                                                                          oncomplete="actualizarRegistroTutoria();"
@@ -460,7 +462,10 @@
                                                         <p:toolbar>
                                                             <f:facet name="left">
                                                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                                <p:outputLabel value="Listado de tutorías individuales registrados en la sesión y mes de registro seleccionados" style="padding-top: 5px;" />
+                                                                <p:outputLabel value="Listado de tutorías individuales registrados en la sesión y mes de registro seleccionados." style="padding-top: 5px;" />
+                                                                <p></p>
+                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                <p:outputLabel value="Para modificar la información de una tutoría individual o dar seguimiento al caso crítico asignado, favor de seleccionar desde el campo selección y dar clic en Seguimiento Tutoria Individual." style="padding-top: 5px;" />
                                                                 <p></p>
                                                             </f:facet>
                                                         </p:toolbar>
@@ -469,7 +474,6 @@
                                                             <p:dataTable id="dtTutoriasIndividuales" 
                                                                          var="ti" 
                                                                          value="#{registroTutoriaIndividual.rol.listaDtoTutoriasIndividuales}" 
-
                                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                          resizeMode="expand"
                                                                          emptyMessage="Aún no se han registrado tutorías individuales en la sesión y evento de registro seleccionado"
@@ -478,9 +482,9 @@
                                                                          >
                                                                 <p:columnGroup type="header">
                                                                     <p:row class="sucess">
-                                                                        <p:column headerText=""  width="30"/>
-                                                                        <p:column headerText="Opciones"  width="60"/>
-                                                                        <p:column headerText="Matricula" width="60"/>
+                                                                        <p:column headerText="Seleccione y de clic en Seguimiento Tutoría Individual"  width="210"/>
+                                                                        <p:column headerText="Opciones"  width="70"/>
+                                                                        <p:column headerText="Matricula" width="70"/>
                                                                         <p:column headerText="Estudiante" width="300"/>
                                                                         <p:column headerText="Fecha" width="100"/>
                                                                         <p:column headerText="Hora Inicio" width="100"/>
@@ -720,6 +724,7 @@
                                                                                     styleClass="campoAutocompleteDocente"
                                                                                     scrollHeight="300"
                                                                                     disabled="#{registroTutoriaIndividual.rol.dtoCasoCritico.casoCritico.comentariosEspecialista ne null}"
+                                                                                    title="Ingrese clave, nombre ó área del especialista"
                                                                                     >
                                                                         <p:column>#{docente.personal.clave}</p:column>
                                                                         <p:column>#{docente.personal.nombre}</p:column>
