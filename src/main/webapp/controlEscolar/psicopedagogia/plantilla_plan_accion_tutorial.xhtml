@@ -48,7 +48,8 @@
                                 <div id="main-buttons" class="hidden-sm hidden-xs">
                                     <p:toolbar id="tb">
                                         <f:facet name="left">
-
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Antes de iniciar su registro favor de verificar que los filtros seleccionados seán los correctos" />
                                         </f:facet>
                                         <f:facet name="right">
                                             <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
@@ -224,11 +225,12 @@
                                                                 <f:facet name="left">
                                                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                                     <p:outputLabel value="Listado de metas de su función como tutor" style="padding-top: 5px;" />
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Para modificar metas de su función como tutor solo modifique directamente los campos y se guardarán de manera automática." style="padding-top: 5px;" />
                                                                     <p></p>
                                                                 </f:facet>
                                                             </p:toolbar>
                                                             <center>
-                                                                <p:remoteCommand id="actualizarFunciones" name="actualizarFunciones" actionListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizarListaFuncionesTutor}" update="dtFuncionesTutor" global="false" />
                                                                 <p:dataTable id="dtFuncionesTutor" 
                                                                              var="funcionTutor" 
                                                                              value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.listaFuncionesTutorPlantilla}"
@@ -281,10 +283,10 @@
                                                                                          >
                                                                                 <p:remoteCommand name="editarFuncionTutor"
                                                                                                  process="dtFuncionesTutor"
-                                                                                                 oncomplete="actualizarFunciones();"
+                                                                                                 oncomplete="actualizar();"
                                                                                                  global="false"
                                                                                                  />
-                                                                                <p:ajax process="@this" oncomplete="actualizarFunciones();" global="false"/> 
+                                                                                <p:ajax process="@this" oncomplete="actualizar();" global="false"/> 
                                                                                 <f:attribute name="funcionTutor" value="#{funcionTutor}" />
                                                                             </p:inputText>
                                                                         </div>
@@ -328,7 +330,7 @@
                                                                         <p:outputLabel for="sgtObjetivos" value="Actividad Programada de la sesión grupal de la tutoría" />
                                                                     </div>
                                                                 </div>
-                                                                
+
                                                                 <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
                                                                     <div class="ui-material">
                                                                         <p:inputTextarea id="sgtObjetivos"
@@ -371,11 +373,12 @@
                                                                 <f:facet name="left">
                                                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                                     <p:outputLabel value="Listado de sesiones grupales de tutoría" style="padding-top: 5px;" />
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Para modificar sesiones grupales solo modifique directamente los campos y se guardarán de manera automática." style="padding-top: 5px;" />
                                                                     <p></p>
                                                                 </f:facet>
                                                             </p:toolbar>
                                                             <center>
-                                                                <p:remoteCommand id="actualizarSesionesGrupales" name="actualizarSesionesGrupales" actionListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizarListaSesionesGrupalesTutorias()}" update="dtSesionesGrupales" global="false"/>
                                                                 <p:dataTable id="dtSesionesGrupales" 
                                                                              var="sesionGrupal" 
                                                                              value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.listaSesionesGrupalesTutoriaPlantilla}"
@@ -425,7 +428,7 @@
                                                                                              value="#{sesionGrupal.actividadProgramada}"
                                                                                              valueChangeListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizaActividadProgramada}"
                                                                                              >
-                                                                                <p:ajax process="@this" oncomplete="actualizarSesionesGrupales();" global="false"/> 
+                                                                                <p:ajax process="@this" oncomplete="actualizar();" global="false"/> 
                                                                                 <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
                                                                             </p:inputTextarea>
                                                                         </div>
@@ -444,12 +447,12 @@
                                                                                              value="#{sesionGrupal.objetivos}"
                                                                                              valueChangeListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizaObjetivos}"
                                                                                              >
-                                                                                <p:ajax process="@this" oncomplete="actualizarSesionesGrupales();" global="false"/> 
+                                                                                <p:ajax process="@this" oncomplete="actualizar();" global="false"/> 
                                                                                 <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
                                                                             </p:inputTextarea>
                                                                         </div>
                                                                     </p:column>
-                                                                    
+
                                                                     <f:facet name="footer">
                                                                         Usted ha registrado un total de: #{fn:length(plantillaPlanAccionTutorialPsicopedagogia.rol.listaSesionesGrupalesTutoriaPlantilla)} sesiones grupales de tutoría.
                                                                     </f:facet>

@@ -60,7 +60,10 @@
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(casosCriticosEstudiante.rol.periodoActivo.periodo)} " />
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Antes de realizar una consulta favor de verificar que los filtros seleccionados seán los correctos" />
                                     </f:facet>
                                     <f:facet name="right">
                                         <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
@@ -146,7 +149,7 @@
 
                                 <p:dialog id="modalDetalleCasosCriticos" 
                                           widgetVar="modalDetalleCasosCriticos" 
-                                          width="500" 
+                                          width="700" 
                                           height="500"  
                                           closeOnEscape="true" 
                                           visible="#{false}"
@@ -198,43 +201,11 @@
                                                             <p></p>
                                                         </f:facet>
                                                     </p:toolbar>
-                                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> Comentarios del tutor: #{casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.comentariosTutor eq null ? 'No se han registrado comentarios':casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.comentariosTutor}</span></li>
+                                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> Comentarios del tutor: #{casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.comentariosTutor eq null ? 'No se han registrado comentarios':'El estudiante fué o está siendo atendido por el tutor'}</span></li>
 
-                                                    <c:if test="#{casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.evidenciaTutor ne null}">
-                                                        <li>
-                                                            <div style="text-align: right">
-                                                                <p:commandLink class="btn btn-info btn-sm"
-                                                                               ajax="false"
-                                                                               action="#{casosCriticosEstudiante.descargarEvidenciaTutor}" 
-                                                                               target="_blank" 
-                                                                               title="Descargar evidencia por parte del tutor"
-                                                                               value="Descargar evidencia por parte del tutor"
-                                                                               >
-                                                                    <i class="fa fa-download" />
-                                                                </p:commandLink>
-                                                            </div>
-                                                        </li>
-                                                    </c:if>
-
-                                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> Especialista: #{casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.especialista eq null ? 'Aún no ha sido canalizado con ningun especialista':caster.personalActivoLabel(casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.especialista)}</span></li>
-                                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> Comentarios del especialista: #{casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.comentariosEspecialista eq null ? 'No se han registrado comentarios':casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.comentariosEspecialista}</span></li>
-
-                                                    <c:if test="#{casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.evidenciaEspecialista ne null}">
-                                                        <li>
-                                                            <div style="text-align: right">
-                                                                <p:commandLink class="btn btn-info btn-sm"
-                                                                               ajax="false"
-                                                                               action="#{casosCriticosEstudiante.descargarEvidenciaEspecialista}" 
-                                                                               target="_blank" 
-                                                                               title="Descargar evidencia por parte del tutor"
-                                                                               value="Descargar evidencia por parte del tutor"
-                                                                               >
-                                                                    <i class="fa fa-download" />
-                                                                </p:commandLink>
-                                                            </div>
-                                                        </li>
-                                                    </c:if>
-
+                                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> Especialista: #{casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.especialista eq null ? 'Aún no ha sido canalizado con ningun especialista':'El estudiante ha sido canalizado con un especialista'}</span></li>
+                                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> Comentarios del especialista: #{casosCriticosEstudiante.rol.dtoCasoCriticoSeleccionado.casoCritico.comentariosEspecialista eq null ? 'No se han registrado comentarios':'El estudiante fué o está siendo atendido por el especialista'}</span></li>
+                                                    
                                                     <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> Fecha de cierre del caso crítico: #{casosCriticosEstudiante.rol.fechaCierreCasoCritico}</span></li>
                                                 </ul>
                                             </div>
