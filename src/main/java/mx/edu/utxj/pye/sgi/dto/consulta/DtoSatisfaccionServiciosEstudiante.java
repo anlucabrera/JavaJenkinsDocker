@@ -13,7 +13,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor @EqualsAndHashCode(of = "dtoEstudiantePeriodo")
-public class DtoSatisfaccionServiciosEstudiante implements Serializable {
+public class
+DtoSatisfaccionServiciosEstudiante implements Serializable {
     @Getter @Setter @NonNull private DtoEstudiantePeriodo dtoEstudiantePeriodo;
     @Getter @Setter @NonNull private EncuestaServiciosResultados encuestaServiciosResultado;
     @Getter @Setter private Map<Pregunta, BigDecimal> preguntaValorMap = new HashMap<>();

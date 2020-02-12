@@ -17,5 +17,5 @@ public class DtoEstudiantePeriodo implements Serializable {
     @Getter @Setter @NonNull private PeriodosEscolares periodo;
     @Getter @Setter @NonNull private CiclosEscolares ciclo;
     @Getter @Setter @NonNull private UsuarioTipo usuarioTipo;
-    @Getter @Setter private DtoEstudiante dtoEstudiante;
+//    @Getter @Setter private DtoEstudiante dtoEstudiante;
 }

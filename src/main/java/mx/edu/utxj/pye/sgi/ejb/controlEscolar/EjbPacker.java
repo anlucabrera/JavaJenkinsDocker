@@ -661,11 +661,48 @@ public class EjbPacker {
             AreasUniversidad programa = em.find(AreasUniversidad.class, matriculaPeriodosEscolares.getProgramaEducativo());
 
             DtoEstudiantePeriodo dtoEstudiantePeriodo = new DtoEstudiantePeriodo(matriculaPeriodosEscolares, programa, periodosEscolares, ciclosEscolares, UsuarioTipo.ESTUDIANTE);
-            ResultadoEJB<DtoEstudiante> packEstudiante = packEstudiante(NumberUtils.stringToInt(matricula));
+            /*ResultadoEJB<DtoEstudiante> packEstudiante = packEstudiante(NumberUtils.stringToInt(matricula));
             if(packEstudiante.getCorrecto()) {
                 dtoEstudiantePeriodo.setDtoEstudiante(packEstudiante.getValor());
                 dtoEstudiantePeriodo.setUsuarioTipo(UsuarioTipo.ESTUDIANTE19);
-            }
+            }*/
+
+            return ResultadoEJB.crearCorrecto(dtoEstudiantePeriodo, "Asociación de estudiante con periodo empaquetada");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el estudiante con su periodo (EjbPacker.packDtoAreaUniversidadCategoria)", e, DtoEstudiantePeriodo.class);
+        }
+    }
+
+    /**
+     * Empaqueta una asociación del estudiante con sus periodo escolar, en caso de ser un estudinate del nuevo sistema se inlcuye un empaquetado del estudiante
+     * @param matricula Valor de la matrícula
+     * @param periodo Valor del periodo a asociar
+     * @return Regresa el empaquetado, código 1 para error desconocido, código 2 para indicar que la matricula no está registrada en el epriodo, código 3 para indicar que el periodo no es válido
+     */
+    public ResultadoEJB<DtoEstudiantePeriodo> packDtoEstudiantePeriodoEnDemanda(String matricula, Integer periodo, List<MatriculaPeriodosEscolares> matriculasPeriodosEscolares, List<AreasUniversidad> programas){
+        try{
+            PeriodosEscolares periodosEscolares = em.find(PeriodosEscolares.class, periodo);
+            if(periodosEscolares == null) return ResultadoEJB.crearErroneo(3, "El periodo no es válido", DtoEstudiantePeriodo.class);
+            CiclosEscolares ciclosEscolares = periodosEscolares.getCiclo();
+
+            MatriculaPeriodosEscolares matriculaPeriodosEscolares = matriculasPeriodosEscolares.stream().filter(m -> Objects.equals(m.getMatricula(), matricula)).filter(m -> Objects.equals(m.getPeriodo(), periodo)).findFirst().orElse(null);
+
+            /*MatriculaPeriodosEscolares matriculaPeriodosEscolares = em.createQuery("select m from MatriculaPeriodosEscolares m where m.periodo=:periodo and m.matricula=:matricula", MatriculaPeriodosEscolares.class)
+                    .setParameter("matricula", StringUtils.trim(matricula))
+                    .setParameter("periodo", periodo)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);*/
+            if(matriculaPeriodosEscolares == null) return ResultadoEJB.crearErroneo(2, "La matrícula no está asociada al period en la BD", DtoEstudiantePeriodo.class);
+
+            AreasUniversidad programa = programas.stream().filter(p -> Objects.equals(p.getArea(), matriculaPeriodosEscolares.getProgramaEducativo())).findFirst().orElse(null); //em.find(AreasUniversidad.class, matriculaPeriodosEscolares.getProgramaEducativo());
+
+            DtoEstudiantePeriodo dtoEstudiantePeriodo = new DtoEstudiantePeriodo(matriculaPeriodosEscolares, programa, periodosEscolares, ciclosEscolares, UsuarioTipo.ESTUDIANTE);
+            /*ResultadoEJB<DtoEstudiante> packEstudiante = packEstudiante(NumberUtils.stringToInt(matricula));
+            if(packEstudiante.getCorrecto()) {
+                dtoEstudiantePeriodo.setDtoEstudiante(packEstudiante.getValor());
+                dtoEstudiantePeriodo.setUsuarioTipo(UsuarioTipo.ESTUDIANTE19);
+            }*/
 
             return ResultadoEJB.crearCorrecto(dtoEstudiantePeriodo, "Asociación de estudiante con periodo empaquetada");
         }catch (Exception e){
@@ -681,11 +718,11 @@ public class EjbPacker {
      * @param cuestionario
      * @return
      */
-    public ResultadoEJB<DtoSatisfaccionServiciosEstudiante> packDtoSatisfaccionServiciosEstudiante(EncuestaServiciosResultados encuestaServiciosResultados, Evaluaciones evaluacion, DtoSatisfaccionServiciosCuestionario cuestionario){
+    public ResultadoEJB<DtoSatisfaccionServiciosEstudiante> packDtoSatisfaccionServiciosEstudiante(EncuestaServiciosResultados encuestaServiciosResultados, Evaluaciones evaluacion, DtoSatisfaccionServiciosCuestionario cuestionario, List<MatriculaPeriodosEscolares> matriculaPeriodosEscolaresList, List<AreasUniversidad> programas){
         try{
 //            System.out.println("EjbPacker.packDtoSatisfaccionServiciosEstudiante");
 //            System.out.println("evaluacion.getPeriodo() = " + evaluacion.getPeriodo());
-            ResultadoEJB<DtoEstudiantePeriodo> packDtoEstudiantePeriodo = packDtoEstudiantePeriodo(String.valueOf(encuestaServiciosResultados.getEncuestaServiciosResultadosPK().getEvaluador()), evaluacion.getPeriodo());
+            ResultadoEJB<DtoEstudiantePeriodo> packDtoEstudiantePeriodo = packDtoEstudiantePeriodoEnDemanda(String.valueOf(encuestaServiciosResultados.getEncuestaServiciosResultadosPK().getEvaluador()), evaluacion.getPeriodo(), matriculaPeriodosEscolaresList, programas);
             if(!packDtoEstudiantePeriodo.getCorrecto()) {
 //                System.out.println("EjbPacker.packDtoSatisfaccionServiciosEstudiante");
 //                System.out.println("encuestaServiciosResultados = " + encuestaServiciosResultados + ", evaluacion = " + evaluacion);

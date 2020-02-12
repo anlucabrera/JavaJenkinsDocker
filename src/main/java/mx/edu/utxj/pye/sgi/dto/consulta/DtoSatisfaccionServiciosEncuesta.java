@@ -26,29 +26,29 @@ public class DtoSatisfaccionServiciosEncuesta implements Serializable {
 
     public void setSatisfaccionServiciosEstudiantes(List<DtoSatisfaccionServiciosEstudiante> satisfaccionServiciosEstudiantes) {
         this.satisfaccionServiciosEstudiantes = satisfaccionServiciosEstudiantes;
-        if(satisfaccionServiciosEstudiantes == null) return;
+        /*if(satisfaccionServiciosEstudiantes == null) return;
 
-        cuestionario.preguntas.forEach(pregunta -> {
-            /*Map<BigDecimal, Long> conteo = satisfaccionServiciosEstudiantes
+        cuestionario.preguntas.stream().forEach(pregunta -> {
+            *//*Map<BigDecimal, Long> conteo = satisfaccionServiciosEstudiantes
                     .stream()
                     .map(dtoSatisfaccionServiciosEstudiante -> dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap())
                     .filter(map -> map.containsKey(pregunta))
                     .map(map -> map.values())
                     .flatMap(bigDecimals -> bigDecimals.stream())
                     .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-            preguntaConteoValoresMap.put(pregunta, conteo);*/
+            preguntaConteoValoresMap.put(pregunta, conteo);*//*
 
             List<Dato> datos = satisfaccionServiciosEstudiantes
-                    .stream()
+                    .parallelStream()
                     .map(dtoSatisfaccionServiciosEstudiante -> dtoSatisfaccionServiciosEstudiante.generarDatos())
                     .flatMap(datoes -> datoes.stream())
                     .collect(Collectors.toList());
 
-            Map<Dato, Long> conteoMap = datos.stream()
+            Map<Dato, Long> conteoMap = datos.parallelStream()
                     .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
             List<Conteo> conteos = conteoMap.entrySet()
-                    .stream()
+                    .parallelStream()
                     .map(datoLongEntry -> new Conteo(new Dato(datoLongEntry.getKey().programa, datoLongEntry.getKey().pregunta, datoLongEntry.getKey().respuesta), datoLongEntry.getValue()))
                     .collect(Collectors.toList());
             conteos.forEach(conteo -> {
@@ -73,7 +73,7 @@ public class DtoSatisfaccionServiciosEncuesta implements Serializable {
 //                    System.out.println("conteoInstitucional 2= " + this.conteosInstitucional.get(index));
                 }else this.conteosInstitucional.add(conteo);
             });
-        });
+        });*/
     }
 
     public Long getFrecuencia(AreasUniversidad programa, Pregunta pregunta, BigDecimal respuesta){

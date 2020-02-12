@@ -152,6 +152,10 @@ public class ServicioArchivos implements Serializable{
     public static String genRutaRelativa(String categoria){
         return categoria.concat(File.separator).concat(Year.now().toString()).concat(File.separator);
     }
+
+    public static String genRutaRelativa(String categoria, Integer periodo){
+        return categoria.concat(File.separator).concat(periodo.toString()).concat(File.separator);
+    }
     
     /**
      * Genera una ruta relativa por area, mes y nombre de registro,

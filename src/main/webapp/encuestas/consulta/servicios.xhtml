@@ -78,7 +78,101 @@
                                             <p:outputPanel id="contenedor">
                                                 <c:forEach items="#{serviciosConsulta.dto.evaluaciones}" var="evaluacion2">
                                                     <p:outputPanel rendered="#{evaluacion2 eq serviciosConsulta.dto.evaluacionSeleccionada}">
-                                                        -#{serviciosConsulta.getContenedor(evaluacion2).conteosInstitucional}-<br/>
+                                                        <p:autoUpdate />
+                                                        <table class="table table-condensed table-bordered table-hover table-responsive tabla ui-datatable">
+                                                            <thead>
+                                                                <tr role="row">
+                                                                    <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">No.</span></th>
+                                                                    <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">Descripción de la pregunta</span></th>
+                                                                    <th role="columnheader" class="ui-state-default" colspan="6"><span class="ui-column-title">Frecuencias</span></th>
+                                                                    <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">Total G</span></th>
+                                                                    <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">Total H</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Total J</span></th>
+                                                                    <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">Total K</span></th>
+                                                                    <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">Total base 10</span></th>
+                                                                    <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">% de satisfechos</span></th>
+                                                                    <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">% de no satisfechos</span></th>
+                                                                </tr>
+                                                                <tr role="row">
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Muy bien</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Bien</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Regular</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Mal</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Pésimo</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">No aplica</span></th>
+                                                                    <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">A*5 + B*4 + C*3 + D*2 + E*1</span></th>
+                                                                </tr>
+                                                                <tr role="row">
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">A</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">B</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">C</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">D</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">E</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">F</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">∑ A a F</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">∑ A a E</span></th>
+                                                                    <th role="columnheader" class="ui-state-default"><span class="ui-column-title">J/H</span></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
+                                                                    <tr role="row">
+                                                                        <th role="columnheader" class="ui-state-default" colspan="15" style="text-align: center; text-transform: uppercase;"><span class="ui-column-title">#{apartado.contenido}</span></th>
+                                                                    </tr>
+                                                                    <c:forEach items="#{apartado.preguntas}" var="pregunta" varStatus="status">
+                                                                        <tr data-ri="#{status.index}" class="ui-widget-content #{status.index%2 eq 1?'ui-datatable-odd':'ui-datatable-even'}">
+                                                                            <td role="gridcell"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                            <td role="gridcell">#{pregunta.titulo}</td>
+                                                                            <c:forEach items="#{serviciosConsulta.respuestas}" var="respuesta">
+                                                                                <td role="gridcell"><h:outputText value="#{serviciosConsulta.calcularFrecuencia(evaluacion2, pregunta, respuesta)}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                            </c:forEach>
+                                                                            <td role="gridcell"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                            <td role="gridcell"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                            <td role="gridcell"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                            <td role="gridcell"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                            <td role="gridcell"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                            <td role="gridcell"><h:outputText value="#{pregunta.numero}"><f:convertNumber type="percent"/> </h:outputText></td>
+                                                                            <td role="gridcell"><h:outputText value="#{pregunta.numero}"><f:convertNumber type="percent"/> </h:outputText></td>
+                                                                        </tr>
+                                                                    </c:forEach>
+                                                                    <th role="columnheader" class="ui-state-default" colspan="2" style="text-align: right;">Total</th>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber type="percent"/> </h:outputText></td>
+                                                                    <td role="gridcell" style="font-weight: bolder;"><h:outputText value="#{apartado.id}"><f:convertNumber type="percent"/> </h:outputText></td>
+                                                                </c:forEach>
+                                                            </tbody>
+                                                            <tfoot>
+                                                                <tr role="row">
+                                                                    <th role="columnheader" class="ui-state-default" colspan="2" style="text-align: right;">Total general</th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber pattern="#.#"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber type="percent"/> </h:outputText></th>
+                                                                    <th role="columnheader" class="ui-state-default"><h:outputText value="#{1}"><f:convertNumber type="percent"/> </h:outputText></th>
+                                                                </tr>
+                                                            </tfoot>
+                                                        </table>
+                                                        <c:forEach items="#{serviciosConsulta.getContenedor(evaluacion2).satisfaccionServiciosEstudiantes}" var="estudiante">
+                                                            #{estudiante.preguntaValorMap}<br/>
+                                                        </c:forEach>
                                                     </p:outputPanel>
                                                 </c:forEach>
                                             </p:outputPanel>

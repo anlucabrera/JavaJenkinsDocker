@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.dto.consulta;
 import com.github.adminfaces.starter.infra.model.Filter;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
@@ -16,15 +17,20 @@ import java.util.Map;
 public class ServiciosConsultaDto extends AbstractRol {
     @Getter @Setter private Evaluaciones evaluacionSeleccionada;
     @Getter private List<Evaluaciones> evaluaciones;
+    @Getter @Setter @NonNull private DtoSatisfaccionServiciosCuestionario cuestionario;
 
     @Getter @Setter private Map<Evaluaciones, DtoSatisfaccionServiciosEncuesta> contenedores = new HashMap<>();
+    @Getter @Setter private DtoSatisfaccionServiciosEncuesta contenedor;
 
     public ServiciosConsultaDto(@NonNull Filter<PersonalActivo> filtro) {
         super(filtro);
+
     }
 
     public boolean hayContenedor(Evaluaciones evaluacion){
-        return contenedores.containsKey(evaluacion);
+        boolean b = contenedores.containsKey(evaluacion);
+        if(b) setContenedor(contenedores.get(evaluacion));
+        return b;
     }
 
     public boolean hayEvaluacion(){
