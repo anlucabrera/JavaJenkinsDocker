@@ -290,6 +290,8 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
             q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionReprobacionMaterias.class)
             .setParameter("mes", mes)
             .setParameter("ejercicio", ejercicio)
+                    .setFirstResult(0)
+                    .setMaxResults(100)
             .getResultList();
             
         } else {
@@ -297,6 +299,8 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
            .setParameter("mes", mes)
            .setParameter("ejercicio", ejercicio)
            .setParameter("area", area)
+                   .setFirstResult(0)
+                    .setMaxResults(100)
            .getResultList();
         }
         if (q.isEmpty() || q == null) {

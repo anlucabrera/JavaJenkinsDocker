@@ -24,6 +24,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -75,6 +76,11 @@ public class ControladorServiciosEnfermeriaCicloPeriodos implements Serializable
         try {
             dto = new DtoServicioEnfermeria();
             consultaAreaRegistro();
+            
+            if (dto.getArea() == null) {
+                return;
+            }
+            
             dto.setListaServiciosEnfermeriaTipos(ejbServiciosEnfermeriaCicloPeriodos.getServiciosEnfermeriaTipos());
             Faces.setSessionAttribute("serviciosEnfermeriaTipos", dto.getListaServiciosEnfermeriaTipos());
             filtros();
@@ -89,12 +95,17 @@ public class ControladorServiciosEnfermeriaCicloPeriodos implements Serializable
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 22);
             if (areaRegistro == null) {
-                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dto.setArea(area.getValor());
+                }else{
+                    dto.setArea(null);
+                }
             } else {
                 dto.setArea(areaRegistro);
             }
         } catch (Exception ex) {
-            System.out.println("ControladorServiciosEnfermeriaCicloPeriodos.consultaAreaRegistro: " + ex.getMessage());
+            dto.setArea(null);
         }
     }
     

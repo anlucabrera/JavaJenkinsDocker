@@ -95,6 +95,16 @@
                             <div class="col-lg-12 col-md-12">
                                 <h:form id="formMuestraDatosActivos">
                                     <c:if test="#{controladorArchivoMatriculaPerEsc.etapa eq etapa.MOSTRAR}">
+                                        <p:toolbar>
+                                            <f:facet name="left">
+                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                <p:outputLabel value="Este es un reporte parcial de su información mostrando únicamente 100 registros, si desea descargar el reporte completo favor de dirigirse a la parte superior derecha y dar clic en descargar reporte." style="padding-top: 5px;" />
+                                                <p></p>
+                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                <p:outputLabel value="Si presenta algún incoveniente en el sistema favor de dirigirse con el administrador del sistema." style="padding-top: 5px;" />
+                                                <p></p>
+                                            </f:facet>
+                                        </p:toolbar>
                                         <center>
                                             <p:remoteCommand name="actualizar" update="@form:dtbMatriculaInicialConsultaEliminacion"/>
                                             <p:dataTable id="dtbMatriculaInicialConsultaEliminacion" 

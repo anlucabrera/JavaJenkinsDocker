@@ -237,6 +237,20 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
             return Collections.EMPTY_LIST;
         }
     }
+    
+    @Override
+    public List<Integer> getConteoParticipantes(String actividad) {
+        if (actividad == null || actividad.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+        try {
+            return f.getEntityManager().createQuery("SELECT COUNT(p) FROM ParticipantesActividadesFormacionIntegral p JOIN p.actividadFormacionIntegral a WHERE a.actividadFormacionIntegral = :actividadFormacionIntegral", Integer.class)
+                    .setParameter("actividadFormacionIntegral", actividad)
+                    .getResultList();
+        } catch (Exception e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
 
     @Override
     public List<participantesAFIporNivel> totalParticipantesAFIporNivel(String actividadFormacionIntegral) {

@@ -20,6 +20,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -86,21 +87,27 @@ public class ControladorActFormacionIntegralPYE implements Serializable{
         }
         cargado = true;
         try {
-        dto = new DtoActividadesFormInt();  
-        dtopart = new DtoParticipantesFormInt();
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setListaAFIAreasConRegistroMensualGeneral(ejb.getAFIAreasConRegistroMensualGeneral(ejbModulos.getEventoRegistro().getMes()));
+            dto = new DtoActividadesFormInt();
+            dtopart = new DtoParticipantesFormInt();
 
-        try {
-            dto.setEventoActual(ejbModulos.getEventoRegistro());
-        } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorActFormacionIntegralPYE.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        initFiltros();
-        
-        clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
-        claveRegistro = 62;
-        consultarPermiso();
+            ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if (!resArea.getCorrecto()) {
+                return;
+            }
+            dto.setArea(resArea.getValor());
+
+            dto.setListaAFIAreasConRegistroMensualGeneral(ejb.getAFIAreasConRegistroMensualGeneral(ejbModulos.getEventoRegistro().getMes()));
+
+            try {
+                dto.setEventoActual(ejbModulos.getEventoRegistro());
+            } catch (EventoRegistroNoExistenteException ex) {
+                Logger.getLogger(ControladorActFormacionIntegralPYE.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            initFiltros();
+
+            clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
+            claveRegistro = 62;
+            consultarPermiso();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorActFormacionIntegralPYE.class.getName()).log(Level.SEVERE, null, ex);
@@ -271,7 +278,7 @@ public class ControladorActFormacionIntegralPYE implements Serializable{
     
     
       public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro).getValor();
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }

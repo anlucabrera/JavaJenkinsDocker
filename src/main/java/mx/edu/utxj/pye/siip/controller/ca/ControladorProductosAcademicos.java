@@ -25,6 +25,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
@@ -87,6 +88,11 @@ public class ControladorProductosAcademicos implements Serializable{
         try {
         dtoProductoAcademico = new DtoProductoAcademico();
         consultaAreaRegistro(); 
+        
+        if(dtoProductoAcademico.getArea() == null){
+            return;
+        }
+        
         dtoProductoAcademico.setEventoRegistro(ejbModulos.getEventoRegistro());
         dtoProductoAcademico.setListaAreasAcademicas(ejbCatalogos.getAreasAcademicas());
         Faces.setSessionAttribute("programasEducativos", dtoProductoAcademico.getListaAreasAcademicas());
@@ -104,12 +110,17 @@ public class ControladorProductosAcademicos implements Serializable{
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 19);
             if (areaRegistro == null) {
-                dtoProductoAcademico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dtoProductoAcademico.setArea(area.getValor());
+                }else{
+                    dtoProductoAcademico.setArea(null);
+                }
             } else {
                 dtoProductoAcademico.setArea(areaRegistro);
             }
-        } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.siip.controller.ca.ControladorProductosAcademicos.consultaAreaRegistro(): " + e.getMessage());
+        } catch (Exception ex) {
+            dtoProductoAcademico.setArea(null);
         }
     }
     

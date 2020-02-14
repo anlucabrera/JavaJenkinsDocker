@@ -23,6 +23,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ContactosEmpresa;
@@ -95,6 +96,10 @@ public class ControladorOrganismosVinculados implements Serializable {
         
         consultaAreaRegistro(); 
         
+        if(dtoOrganismosVinculado.getArea() == null){
+            return;
+        }
+        
         inicializarUbicacion();
         filtros();
         try {
@@ -113,12 +118,17 @@ public class ControladorOrganismosVinculados implements Serializable {
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 29);
             if (areaRegistro == null) {
-                dtoOrganismosVinculado.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dtoOrganismosVinculado.setArea(area.getValor());
+                }else{
+                    dtoOrganismosVinculado.setArea(null);
+                }
             } else {
                 dtoOrganismosVinculado.setArea(areaRegistro);
             }
-        } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorOrganismosVinculados.consultaAreaRegistro(): " + e.getMessage());
+        } catch (Exception ex) {
+            dtoOrganismosVinculado.setArea(null);
         }
     }
     

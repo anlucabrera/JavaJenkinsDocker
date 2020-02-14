@@ -21,6 +21,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistrosUsuarios;
@@ -109,14 +110,22 @@ public class ControladorModulosRegistro implements Serializable {
    
     public AreasUniversidad consultaAreaRegistro(Short claveModuloRegistroEspecifico) {
         try {
-            List<ModulosRegistrosUsuarios> mr = ejbModulos.getListaPermisoPorRegistro(personal, claveModuloRegistroEspecifico);
-            if (mr != null || !mr.isEmpty()) {
-                if (mr.get(0).getAreaRegistro() != null) {
-                    return (ejbModulos.getAreaUniversidadPrincipalRegistro((short) mr.get(0).getAreaRegistro()));
-                } else {
+            ResultadoEJB<List<ModulosRegistrosUsuarios>> mr = ejbModulos.getListaPermisoPorRegistro(personal, claveModuloRegistroEspecifico);
+            if(mr.getCorrecto()){
+                if(mr.getValor().get(0).getAreaRegistro()!= null){
+                    ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) mr.getValor().get(0).getAreaRegistro());
+                    if(resArea.getCorrecto()){
+                        return resArea.getValor();
+                    }else{
+//                        Messages.addGlobalFatal(resArea.getMensaje());
+                        return null;
+                    }
+                }else{
+//                    Messages.addGlobalFatal(mr.getMensaje());
                     return null;
                 }
-            } else {
+            }else{
+//                Messages.addGlobalFatal(mr.getMensaje());
                 return null;
             }
         } catch (Throwable ex) {

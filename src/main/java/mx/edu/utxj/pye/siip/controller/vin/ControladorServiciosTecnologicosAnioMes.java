@@ -25,6 +25,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -85,6 +86,9 @@ public class ControladorServiciosTecnologicosAnioMes implements Serializable{
         try {
         dtoServicioTecnologico = new DtoServiciosTecnologicos();
         consultaAreaRegistro();
+        if(dtoServicioTecnologico.getArea() == null){
+            return;
+        }
         filtros();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
@@ -97,12 +101,17 @@ public class ControladorServiciosTecnologicosAnioMes implements Serializable{
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 30);
             if (areaRegistro == null) {
-                dtoServicioTecnologico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dtoServicioTecnologico.setArea(area.getValor());
+                }else{
+                    dtoServicioTecnologico.setArea(null);
+                }
             } else {
                 dtoServicioTecnologico.setArea(areaRegistro);
             }
-        } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorServiciosTecnologicosAnioMes.consultaAreaRegistro(): " + e.getMessage());
+        } catch (Exception ex) {
+            dtoServicioTecnologico.setArea(null);
         }
     }
     

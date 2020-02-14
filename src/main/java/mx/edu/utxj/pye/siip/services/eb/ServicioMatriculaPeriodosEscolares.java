@@ -413,19 +413,19 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
     
     @Override
     public List<PeriodosEscolares> getPeriodosConregistro(RegistrosTipo registroTipo, EventosRegistros eventoRegistro) {
-        List<Integer> claves = f.getEntityManager().createQuery("SELECT mpe.periodo FROM MatriculaPeriodosEscolares mpe INNER JOIN mpe.registros r WHERE r.tipo.registroTipo=:tipo", Integer.class)
+        List<Integer> claves = f.getEntityManager().createQuery("SELECT mpe.periodo FROM MatriculaPeriodosEscolares mpe INNER JOIN mpe.registros r WHERE r.tipo.registroTipo=:tipo GROUP BY mpe.periodo", Integer.class)
                 .setParameter("tipo", registroTipo.getRegistroTipo())
                 .getResultList();
 
         List<PeriodosEscolares> l = new ArrayList<>();
         if (claves.isEmpty()) {
             
-            l = f.getEntityManager().createQuery("SELECT p FROM PeriodosEscolares p WHERE (:mes BETWEEN p.mesInicio.numero AND p.mesFin.numero) AND (p.anio = :anio)",PeriodosEscolares.class)
+            l = f.getEntityManager().createQuery("SELECT p FROM PeriodosEscolares p WHERE (:mes BETWEEN p.mesInicio.numero AND p.mesFin.numero) AND (p.anio = :anio) GROUP BY p.periodo",PeriodosEscolares.class)
                     .setParameter("mes", ejbModulos.getNumeroMes(eventoRegistro.getMes()))
                     .setParameter("anio", eventoRegistro.getEjercicioFiscal().getAnio())
                     .getResultList();
         } else {
-            l = f.getEntityManager().createQuery("SELECT periodo FROM PeriodosEscolares periodo WHERE periodo.periodo IN :claves ORDER BY periodo.periodo desc", PeriodosEscolares.class)
+            l = f.getEntityManager().createQuery("SELECT periodo FROM PeriodosEscolares periodo WHERE periodo.periodo IN :claves GROUP BY periodo.periodo ORDER BY periodo.periodo DESC", PeriodosEscolares.class)
                     .setParameter("claves", claves)
                     .getResultList();
         }
@@ -472,7 +472,8 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("tipo", registrosTipo.getRegistroTipo())
                 .setParameter("area", area.getArea())
-                .setMaxResults(500)
+                .setFirstResult(0)
+                .setMaxResults(100)
                 .getResultList();
 
         //construir la lista de dto's para mostrar en tabla

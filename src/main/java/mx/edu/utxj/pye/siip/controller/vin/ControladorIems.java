@@ -155,7 +155,7 @@ public class ControladorIems implements Serializable{
     }
     
      public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro).getValor();
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }

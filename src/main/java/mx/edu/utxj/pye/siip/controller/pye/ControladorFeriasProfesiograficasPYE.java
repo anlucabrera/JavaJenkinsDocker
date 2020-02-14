@@ -20,8 +20,10 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
@@ -78,13 +80,23 @@ public class ControladorFeriasProfesiograficasPYE implements Serializable{
         }
         cargado = true;
         try {
-        dto = new DtoFeriasProfesiograficas();
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)16));
-       
-        clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
-        claveRegistro = 64;
-        consultarPermiso();
+            dto = new DtoFeriasProfesiograficas();
+
+            ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if (!resArea.getCorrecto()) {
+                return;
+            }
+            dto.setArea(resArea.getValor());
+
+            ResultadoEJB<AreasUniversidad> resAreaPOA = ejbModulos.getAreaUniversidadPrincipalRegistro((short) 16);
+            if (!resAreaPOA.getCorrecto()) {
+                return;
+            }
+            dto.setAreaPOA(resAreaPOA.getValor());
+
+            clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
+            claveRegistro = 64;
+            consultarPermiso();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorFeriasProfesiograficasPYE.class.getName()).log(Level.SEVERE, null, ex);
@@ -92,7 +104,7 @@ public class ControladorFeriasProfesiograficasPYE implements Serializable{
     }
     
      public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro).getValor();
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }

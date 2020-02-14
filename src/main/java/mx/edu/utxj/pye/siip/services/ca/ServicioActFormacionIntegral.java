@@ -415,7 +415,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
 
     @Override
     public List<PeriodosEscolares> getPeriodosConregistro() {
-        List<Integer> claves = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a", ActividadesFormacionIntegral.class)
+        List<Integer> claves = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a GROUP BY a.periodo", ActividadesFormacionIntegral.class)
                 .getResultStream()
                 .map(a -> a.getPeriodo())
                 .collect(Collectors.toList());
@@ -503,6 +503,8 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("areas", areas)
+                .setFirstResult(0)
+                .setMaxResults(100)
                 .getResultList();
      
 

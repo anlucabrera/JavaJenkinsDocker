@@ -20,6 +20,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -90,7 +91,13 @@ public class ControladorRegistrosMovilidadPYE implements Serializable{
         dto = new DtoRegistrosMovilidad();  
         dtodoc = new DtoMovilidadDocente();
         dtoest = new DtoMovilidadEstudiantil();
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if(!resArea.getCorrecto()){
+                return;
+            }
+        dto.setArea(resArea.getValor());
+        
         dto.setListaMovAreasConRegistroMensualGeneral(ejb.getMovAreasConRegistroMensualGeneral(ejbModulos.getEventoRegistro().getMes()));
         
         try {
@@ -183,7 +190,7 @@ public class ControladorRegistrosMovilidadPYE implements Serializable{
     }
     
     public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro).getValor();
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }

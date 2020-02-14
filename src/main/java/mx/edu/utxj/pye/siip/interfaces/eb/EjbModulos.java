@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.Local;
 import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -127,7 +128,7 @@ public interface EjbModulos {
      * para: Guardar Registro, Filtrar Ejercicio, Filtrar Meses, Filtrar
      * Registros.
      */
-    public AreasUniversidad getAreaUniversidadPrincipalRegistro(Short areaUsuario);
+    public ResultadoEJB<AreasUniversidad> getAreaUniversidadPrincipalRegistro(Short areaUsuario);
 
     /**
      * Método que elimina en masivo los participantes de un registro principal.
@@ -236,7 +237,7 @@ public interface EjbModulos {
      * @param claveRegistro Clave del Registro de la Vista Modulos Registros Usuarios
      * @return Permiso
     */
-    public List<ModulosRegistrosUsuarios> getListaPermisoPorRegistro(Integer clavePersonal, Short claveRegistro);
+    public ResultadoEJB<List<ModulosRegistrosUsuarios>> getListaPermisoPorRegistro(Integer clavePersonal, Short claveRegistro);
     
      /**
      * Verificar que el usuario tenga permiso para visualizar el registro seleccionado (sólo para registro que se encuentran en dos ejes distintos)

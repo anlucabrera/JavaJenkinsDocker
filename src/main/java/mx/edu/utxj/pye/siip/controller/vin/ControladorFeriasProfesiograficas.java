@@ -25,6 +25,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -93,6 +94,9 @@ public class ControladorFeriasProfesiograficas implements Serializable{
         dto.getEjesRegistro().setEje(4);
         
         consultaAreaRegistro(); 
+        if(dto.getArea() == null){
+            return;
+        }
         
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 34));
         
@@ -128,17 +132,17 @@ public class ControladorFeriasProfesiograficas implements Serializable{
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 27);
             if (areaRegistro == null) {
-                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 64);
-                if (areaRegistro == null) {
-                    dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-                } else {
-                    dto.setArea(areaRegistro);
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dto.setArea(area.getValor());
+                }else{
+                    dto.setArea(null);
                 }
             } else {
                 dto.setArea(areaRegistro);
             }
-        } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorFeriasProfesiograficas.consultaAreaRegistro(): " + e.getMessage());
+        } catch (Exception ex) {
+            dto.setArea(null);
         }
     }
     

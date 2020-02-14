@@ -119,6 +119,9 @@
                                                 <p:column rowspan="2" headerText="Descripción del Proyecto" style="width: 300px;"/>
                                                 <p:column colspan="5" headerText="Inversión" style="width: 600px;"/>
                                                 <p:column rowspan="2" headerText="Descripción de Ingresos Extraordinarios" style="width: 300px;"/>
+                                                
+                                                <p:column rowspan="2" headerText="Participantes Estudiantes" style="width: 100px;"/>
+                                                <p:column rowspan="2" headerText="Participantes Docentes" style="width: 100px;"/>
                                             </p:row>
                                             <p:row>
                                                 <p:column headerText="Presupuesto Estatal" style="width: 12px;"/>
@@ -171,6 +174,9 @@
                                         <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.ingPropios}"/></p:column>
                                         <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.ingExtra}"/></p:column>
                                         <p:column style="width: 300px;"><h:outputText value="#{regMov.registrosMovilidad.descripcionIngExt}"/></p:column>
+                                        
+                                        <p:column style="width: 100px;"><h:outputText value="#{fn:length(regMov.registrosMovilidad.registroMovilidadEstudianteList)}"/></p:column>
+                                        <p:column style="width: 100px;"><h:outputText value="#{fn:length(regMov.registrosMovilidad.registroMovilidadDocenteList)}"/></p:column>
                                     </p:dataTable>
                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
                                         <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />

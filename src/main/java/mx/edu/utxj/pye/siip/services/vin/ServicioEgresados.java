@@ -988,6 +988,8 @@ public class ServicioEgresados implements EjbEgresados {
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
+                    .setFirstResult(0)
+                    .setMaxResults(100)
                     .getResultList();
             
             actividaEgresados.forEach((aeg) -> {
@@ -1014,6 +1016,8 @@ public class ServicioEgresados implements EjbEgresados {
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
+                    .setFirstResult(0)
+                    .setMaxResults(100)
                     .getResultList();
             
             actividaEconomicaEgresadoGeneracion.forEach((aeeg) -> {
@@ -1039,6 +1043,8 @@ public class ServicioEgresados implements EjbEgresados {
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
+                    .setFirstResult(0)
+                    .setMaxResults(100)
                     .getResultList();
             
             nivelOcupacionEgresados.forEach((noeg) -> {
@@ -1065,6 +1071,8 @@ public class ServicioEgresados implements EjbEgresados {
                     .setParameter("anio", ejercicio)
                     .setParameter("mes", mes)
                     .setParameter("area", area)
+                    .setFirstResult(0)
+                    .setMaxResults(100)
                     .getResultList();
             
             nivelIngresos.forEach((nieg) -> {

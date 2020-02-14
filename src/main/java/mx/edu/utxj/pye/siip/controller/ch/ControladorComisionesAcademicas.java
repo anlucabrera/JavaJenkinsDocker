@@ -25,6 +25,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -102,6 +103,10 @@ public class ControladorComisionesAcademicas implements Serializable{
         
         consultaAreaRegistro();
         
+        if(dto.getArea() == null){
+            return;
+        }
+        
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 48));   
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
@@ -111,6 +116,10 @@ public class ControladorComisionesAcademicas implements Serializable{
         dtopart.getEje().setEje(2);
         
         consultaAreaRegistroParticipantes();
+        
+        if(dtopart.getArea() == null){
+            return;
+        }
         
         dtopart.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
         dtopart.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
@@ -139,12 +148,17 @@ public class ControladorComisionesAcademicas implements Serializable{
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 1);
             if (areaRegistro == null) {
-                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dto.setArea(area.getValor().getArea());
+                }else{
+                    dto.setArea(null);
+                }
             } else {
                 dto.setArea(areaRegistro.getArea());
             }
         } catch (Exception ex) {
-            System.out.println("ControladorComisionesAcademicas.consultaAreaRegistro: " + ex.getMessage());
+            dto.setArea(null);
         }
     }
 
@@ -153,12 +167,17 @@ public class ControladorComisionesAcademicas implements Serializable{
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 1);
             if (areaRegistro == null) {
-                dtopart.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()).getArea());
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dtopart.setArea(area.getValor().getArea());
+                }else{
+                    dtopart.setArea(null);
+                }
             } else {
                 dtopart.setArea(areaRegistro.getArea());
             }
         } catch (Exception ex) {
-            System.out.println("ControladorComisionesAcademicas.consultaAreaRegistroParticipantes: " + ex.getMessage());
+            dtopart.setArea(null);
         }
     }
     
@@ -244,7 +263,7 @@ public class ControladorComisionesAcademicas implements Serializable{
     }
     
     public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro).getValor();
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }

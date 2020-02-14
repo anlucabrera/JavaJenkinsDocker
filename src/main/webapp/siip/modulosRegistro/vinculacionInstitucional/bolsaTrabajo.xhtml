@@ -138,7 +138,7 @@
                                        <p:column style="width: 80px; text-align: center;"><h:outputText value="#{BolTrab.bolsaTrabajo.plazas}"/></p:column>
                                        <p:column style="width: 400px;">
                                            <c:set var="entrevistas" value="#{entBolTrab.consultarEntrevistas(bolTrabClave)}" />
-                                           <center>Consultar <p:commandButton actionListener="#{entBolTrab.seleccionarEntrevistas(bolTrabClave)}"
+                                           <center>#{fn:length(BolTrab.bolsaTrabajo.bolsaTrabajoEntrevistasList)} Consultar <p:commandButton actionListener="#{entBolTrab.seleccionarEntrevistas(bolTrabClave)}"
                                                             class="btn btn-sm #{!empty entrevistas?'btn-info':'btn-danger'}" 
                                                             icon="fa fa-search"
                                                             title="#{!empty entrevistas?'Consultar entrevistas registrados':'No se han registrado wntrevistas'}" />

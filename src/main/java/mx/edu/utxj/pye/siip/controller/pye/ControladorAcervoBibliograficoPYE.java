@@ -24,7 +24,9 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
@@ -79,25 +81,35 @@ public class ControladorAcervoBibliograficoPYE implements Serializable{
         }
         cargado = true;
         try {
-        dto = new DtoAcervoBibliografico();  
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-    
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)11));
-        dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
-        
-        
-        clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
-        claveRegistro = 84;
-        consultarPermiso();
+            dto = new DtoAcervoBibliografico();
+
+            ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if(!resArea.getCorrecto()){
+                return;
+            }
+            dto.setArea(resArea.getValor());
+
+            ResultadoEJB<AreasUniversidad> resAreaPOA = ejbModulos.getAreaUniversidadPrincipalRegistro((short) 11);
+            if(!resAreaPOA.getCorrecto()){
+                return;
+            }
+            dto.setAreaPOA(resAreaPOA.getValor());
+            
+            
+            dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
+
+            clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
+            claveRegistro = 84;
+            consultarPermiso();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorAcervoBibliograficoPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
-   
+
     public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro).getValor();
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }

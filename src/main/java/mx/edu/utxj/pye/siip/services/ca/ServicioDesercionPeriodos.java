@@ -348,12 +348,16 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
             entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes", DesercionPeriodosEscolares.class)
                     .setParameter("mes", mes)
                     .setParameter("ejercicio", ejercicio)
+                    .setFirstResult(0)
+                    .setMaxResults(100)
                     .getResultList();
         } else {
             entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v WHERE v.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND v.registros.eventoRegistro.mes = :mes AND v.registros.area = :area", DesercionPeriodosEscolares.class)
                     .setParameter("mes", mes)
                     .setParameter("ejercicio", ejercicio)
                     .setParameter("area", area)
+                    .setFirstResult(0)
+                    .setMaxResults(100)
                     .getResultList();
 
         }
