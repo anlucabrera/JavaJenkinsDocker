@@ -15,6 +15,7 @@ import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
@@ -66,6 +67,9 @@ public class ControladorArchivoDesercion implements Serializable{
         eje = ejes[1];
         ejercicio = ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio();
         consultaAreaRegistro();
+        if(area == null){
+            return;
+        }
         setEtapa(RegistroSiipEtapa.MOSTRAR);
     }
 
@@ -74,9 +78,14 @@ public class ControladorArchivoDesercion implements Serializable{
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 13);
             if (areaRegistro == null) {
-                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 41);
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 32);
                 if (areaRegistro == null) {
-                    area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                    ResultadoEJB<AreasUniversidad> resultadoEJB = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                    if(resultadoEJB.getCorrecto()){
+                        area = resultadoEJB.getValor();
+                    }else{
+                        area = null;
+                    }
                 } else {
                     area = areaRegistro;
                 }
@@ -84,7 +93,7 @@ public class ControladorArchivoDesercion implements Serializable{
                 area = areaRegistro;
             }
         } catch (Exception ex) {
-            System.out.println("ControladorArchivoDesercion.consultaAreaRegistro " + ex.getMessage());
+            area = null;
         }
     }
     

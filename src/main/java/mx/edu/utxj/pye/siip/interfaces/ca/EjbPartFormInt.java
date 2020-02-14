@@ -53,6 +53,8 @@ public interface EjbPartFormInt {
      * @return Lista de participantes.
      */
    public List<DTODatosEstudiante> getListaParticipantesPorActividad(String actividad);
+   
+   public List<Integer> getConteoParticipantes(String actividad);
 //   
 //   public List<NumeroParticipantesAFI> totalParticipantesAFIporProgEduCuatrimestreInfEst (String actividadFormacionIntegral);
 //

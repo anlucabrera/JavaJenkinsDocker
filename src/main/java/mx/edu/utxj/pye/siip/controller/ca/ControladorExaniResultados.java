@@ -26,6 +26,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -99,6 +100,10 @@ public class ControladorExaniResultados implements Serializable{
         
         dto = new DtoExani();  
         consultaAreaRegistro();
+        
+        if(dto.getArea() == null){
+            return;
+        }
     
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
@@ -125,17 +130,17 @@ public class ControladorExaniResultados implements Serializable{
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 16);
             if (areaRegistro == null) {
-                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 48);
-                if (areaRegistro == null) {
-                    dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-                } else {
-                    dto.setArea(areaRegistro);
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dto.setArea(area.getValor());
+                }else{
+                    dto.setArea(null);
                 }
             } else {
                 dto.setArea(areaRegistro);
             }
         } catch (Exception ex) {
-            System.out.println("ControladorExaniResultados.consultaAreaRegistro: " + ex.getMessage());
+            dto.setArea(null);
         }
     }
     

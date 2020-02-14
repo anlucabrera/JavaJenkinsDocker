@@ -24,6 +24,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -76,10 +77,16 @@ public class ControladorActividadesVariasPYE implements Serializable {
         }
         cargado = true;
         try {
-        dto = new DtoActividadesVarias();
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setListaAreasConRegistroMensualGeneral(ejbActividadesVarias.getAreasConRegistroMensualGeneral(Boolean.FALSE, ejbModulos.getEventoRegistro().getMes()));
-        filtros();
+            dto = new DtoActividadesVarias();
+
+            ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if (!resArea.getCorrecto()) {
+                return;
+            }
+            dto.setArea(resArea.getValor());
+
+            dto.setListaAreasConRegistroMensualGeneral(ejbActividadesVarias.getAreasConRegistroMensualGeneral(Boolean.FALSE, ejbModulos.getEventoRegistro().getMes()));
+            filtros();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorActividadesVariasPYE.class.getName()).log(Level.SEVERE, null, ex);

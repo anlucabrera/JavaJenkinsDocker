@@ -236,6 +236,8 @@ public class ServicioBecasPeriodo implements EjbBecasPeriodo{
              q = f.getEntityManager().createQuery("SELECT a from BecasPeriodosEscolares a WHERE a.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND a.registros.eventoRegistro.mes = :mes", BecasPeriodosEscolares.class)
                     .setParameter("mes", mes)
                     .setParameter("ejercicio", ejercicio)
+                    .setFirstResult(0)
+                    .setMaxResults(100)
                     .getResultList();
 
         } else {
@@ -245,6 +247,8 @@ public class ServicioBecasPeriodo implements EjbBecasPeriodo{
                     .setParameter("mes", mes)
                     .setParameter("ejercicio", ejercicio)
                     .setParameter("areas", areas)
+                    .setFirstResult(0)
+                    .setMaxResults(100)
                     .getResultList();
         }
         

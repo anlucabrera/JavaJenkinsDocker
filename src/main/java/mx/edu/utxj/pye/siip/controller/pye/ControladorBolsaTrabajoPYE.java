@@ -24,7 +24,9 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
@@ -92,9 +94,19 @@ public class ControladorBolsaTrabajoPYE implements Serializable{
         try {
         dto = new  DtoBolsaTrabajo();  
         dtopart = new  DtoBolsaEntrevistas();
-        dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if(!resArea.getCorrecto()){
+                return;
+            }
+        dto.setArea(resArea.getValor());
       
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short)5));
+        ResultadoEJB<AreasUniversidad> resAreaPOA = ejbModulos.getAreaUniversidadPrincipalRegistro((short)5);
+            if(!resAreaPOA.getCorrecto()){
+                return;
+            }
+        dto.setAreaPOA(resAreaPOA.getValor());
+        
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
@@ -114,7 +126,7 @@ public class ControladorBolsaTrabajoPYE implements Serializable{
     }
     
     public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro).getValor();
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }

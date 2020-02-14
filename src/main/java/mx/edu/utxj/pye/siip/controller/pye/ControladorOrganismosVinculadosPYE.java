@@ -25,6 +25,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -95,15 +96,21 @@ public class ControladorOrganismosVinculadosPYE implements Serializable {
         }
         cargado = true;
         try {
-        dtoOrganismosVinculado = new DtoOrganismosVinculados();
-        dtoOrganismosVinculado.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        inicializarUbicacion();
-        filtros();
-        try {
-            dtoOrganismosVinculado.setListaProgramasEducativosBeneficiadosV(ejbOrganismosVinculados.getProgramasBeneficiadosVinculacion());
-        } catch (Throwable ex) {
-            Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            dtoOrganismosVinculado = new DtoOrganismosVinculados();
+
+            ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if (!resArea.getCorrecto()) {
+                return;
+            }
+            dtoOrganismosVinculado.setArea(resArea.getValor());
+
+            inicializarUbicacion();
+            filtros();
+            try {
+                dtoOrganismosVinculado.setListaProgramasEducativosBeneficiadosV(ejbOrganismosVinculados.getProgramasBeneficiadosVinculacion());
+            } catch (Throwable ex) {
+                Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorOrganismosVinculadosPYE.class.getName()).log(Level.SEVERE, null, ex);

@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -76,15 +77,21 @@ public class ControladorAsesoriasTutoriasCicloEscolarPYE implements Serializable
         }
         cargado = true;
         try {
-        dto = new DtoAsesoriasTutorias();
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
-        try {
-            dto.setEventoActual(ejbModulos.getEventoRegistro());
-        } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorAsesoriasTutoriasCicloEscolarPYE.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        initFiltros();
+            dto = new DtoAsesoriasTutorias();
+
+            ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if (!resArea.getCorrecto()) {
+                return;
+            }
+            dto.setAreaPOA(resArea.getValor());
+
+            dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
+            try {
+                dto.setEventoActual(ejbModulos.getEventoRegistro());
+            } catch (EventoRegistroNoExistenteException ex) {
+                Logger.getLogger(ControladorAsesoriasTutoriasCicloEscolarPYE.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            initFiltros();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorAsesoriasTutoriasCicloEscolarPYE.class.getName()).log(Level.SEVERE, null, ex);

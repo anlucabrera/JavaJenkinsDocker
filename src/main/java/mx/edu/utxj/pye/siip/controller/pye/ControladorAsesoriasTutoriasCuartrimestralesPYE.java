@@ -22,6 +22,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -75,23 +76,29 @@ public class ControladorAsesoriasTutoriasCuartrimestralesPYE implements Serializ
         }
         cargado = true;
         try {
-        dto = new DtoAsesoriaTutoriaCuatrimestral();
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
-        try {
-            dto.setEventoActual(ejbModulos.getEventoRegistro());
-            dto.setListaDatosAsesoriasTutorias(ejb.getDatosAsesoriasTutorias());
-            Faces.setSessionAttribute("datosAsesoriasTutorias", dto.getListaDatosAsesoriasTutorias());
-        } catch (EventoRegistroNoExistenteException ex) {
-            Logger.getLogger(ControladorAsesoriasTutoriasCuartrimestralesPYE.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        initFiltros();
+            dto = new DtoAsesoriaTutoriaCuatrimestral();
+
+            ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if (!resArea.getCorrecto()) {
+                return;
+            }
+            dto.setAreaPOA(resArea.getValor());
+
+            dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
+            try {
+                dto.setEventoActual(ejbModulos.getEventoRegistro());
+                dto.setListaDatosAsesoriasTutorias(ejb.getDatosAsesoriasTutorias());
+                Faces.setSessionAttribute("datosAsesoriasTutorias", dto.getListaDatosAsesoriasTutorias());
+            } catch (EventoRegistroNoExistenteException ex) {
+                Logger.getLogger(ControladorAsesoriasTutoriasCuartrimestralesPYE.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            initFiltros();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorAsesoriasTutoriasCuartrimestralesPYE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void actualizaPeriodosEscolares(ValueChangeEvent e){
         dto.setAreaUniversidadPOAAdministrador((AreasUniversidad)e.getNewValue());
         dto.setPeriodos(ejb.getPeriodosConregistro(dto.getRegistroTipo(),dto.getEventoActual(),dto.getAreaUniversidadPOAAdministrador()));

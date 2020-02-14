@@ -25,6 +25,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -95,6 +96,9 @@ public class ControladorVisitasIndustriales implements Serializable {
         dto.getEjesRegistro().setEje(4);
         
         consultaAreaRegistro();
+        if(dto.getArea() == null){
+            return;
+        }
 
         /*INIT FILTRADO*/
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 30));
@@ -131,12 +135,17 @@ public class ControladorVisitasIndustriales implements Serializable {
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 31);
             if (areaRegistro == null) {
-                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dto.setArea(area.getValor());
+                }else{
+                    dto.setArea(null);
+                }
             } else {
                 dto.setArea(areaRegistro);
             }
-        } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorVisitasIndustriales.consultaAreaRegistro(): " + e.getMessage());
+        } catch (Exception ex) {
+            dto.setArea(null);
         }
     }
     
@@ -343,7 +352,7 @@ public class ControladorVisitasIndustriales implements Serializable {
     }
 
     public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro).getValor();
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }

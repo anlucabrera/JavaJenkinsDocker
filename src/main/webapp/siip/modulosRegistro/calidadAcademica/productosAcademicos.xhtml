@@ -143,6 +143,7 @@
                                                             <p:column rowspan="2" headerText="Descripción" width="300" />
                                                             <p:column rowspan="2" headerText="ISSN ó ISBN" width="300" />
                                                             <p:column rowspan="2" headerText="Arbitrado / Indexado" width="300" />
+                                                            <p:column rowspan="2" headerText="Participantes" width="100" />
                                                         </p:row>
                                                         <p:row>
                                                             <p:column headerText="Fecha Inicio" />
@@ -226,6 +227,11 @@
                                                     <p:column>
                                                         <h:outputText value="#{prodAcad.productosAcademicos.arbitradoIndexado}"/>
                                                     </p:column>
+                                                    
+                                                    <p:column>
+                                                        <h:outputText value="#{fn:length(prodAcad.productosAcademicos.productosAcademicosPersonalList)}"/>
+                                                    </p:column>
+                                                    
                                                     <f:facet name="footer">
                                                         En el mes de: #{controladorProductosAcademicos.dtoProductoAcademico.mesConsulta} hay un total de: #{fn:length(controladorProductosAcademicos.dtoProductoAcademico.lstDtoProductosAcademicos)} registros de Productos Académicos.
                                                     </f:facet>

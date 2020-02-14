@@ -18,6 +18,8 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.siip.dto.eb.DTORepositorio;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbRepositorio;
@@ -46,7 +48,11 @@ public class ControladorRepositorio implements Serializable{
     @PostConstruct
     public void init(){
         dto = new DTORepositorio();
-        dto.setAreaUniversidad(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        ResultadoEJB<AreasUniversidad> areasUniversidad = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        if(!areasUniversidad.getCorrecto()){
+            return;
+        }
+        dto.setAreaUniversidad(areasUniversidad.getValor());
         filtros();
     }
     

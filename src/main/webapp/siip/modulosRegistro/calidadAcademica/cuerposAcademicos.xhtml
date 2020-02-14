@@ -147,6 +147,8 @@
                                                             <p:column rowspan="2" headerText="Nivel de Reconocimiento por PRODEP"   width="200"/>
                                                             <p:column rowspan="2" headerText="Área de Estudio"                      width="400"/>
                                                             <p:column rowspan="2" headerText="Disciplina"                           width="400"/>
+                                                            <p:column rowspan="2" headerText="Integrantes"                           width="100"/>
+                                                            <p:column rowspan="2" headerText="Líneas de investigación"               width="100"/>
                                                         </p:row>
                                                         <p:row>
                                                             <p:column headerText="Fecha de Inicio" />
@@ -211,6 +213,18 @@
                                                     <p:column>
                                                         <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.disciplina.nombre}"/>
                                                     </p:column>
+                                                    
+                                                    <p:column>
+                                                        <center>
+                                                        <h:outputText value="#{fn:length(cuerpoAcademico.cuerposAcademicosRegistro.cuerpacadIntegrantesList)}"/>
+                                                        </center>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <center>
+                                                        <h:outputText value="#{fn:length(cuerpoAcademico.cuerposAcademicosRegistro.cuerpacadLineasList)}"/>
+                                                        </center>
+                                                    </p:column>
+                                                    
                                                     <f:facet name="footer">
                                                         En el mes de: #{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta} hay un total de: #{fn:length(controladorCuerposAcademicos.dtoCuerposAcademicos.lstDtoCuerposAcademicosR)} registros de Cuerpos Académicos.
                                                     </f:facet>

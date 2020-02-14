@@ -102,23 +102,24 @@
                                                  rendered="true">
                                         <p:columnGroup type="header">
                                             <p:row>
-                                                <p:column headerText="Opciones" style="width:120px; text-align: center;"/>
-                                                <p:column headerText="Clave" style="width: 80px; text-align: center;"/>
-                                                <p:column headerText="Nombre del Curso" style="width: 150px; text-align: center;"/>
+                                                <p:column headerText="Opciones" style="width:150px; text-align: center;"/>
+                                                <p:column headerText="Clave" style="width: 100px; text-align: center;"/>
+                                                <p:column headerText="Nombre del Curso" style="width: 500px; text-align: center;"/>
                                                 <p:column headerText="Fecha Inicio" style="width: 80px; text-align: center;"/>
                                                 <p:column headerText="Fecha Fin" style="width: 80px; text-align: center;"/>
                                                 <p:column headerText="Duración (hh:mm)" style="width: 80px; text-align: center;"/>
                                                 <p:column headerText="Tipo" style="width: 80px; text-align: center;"/>
-                                                <p:column headerText="Modalidad" style="width: 80px; text-align: center;"/>
+                                                <p:column headerText="Modalidad" style="width: 120px; text-align: center;"/>
                                                 <p:column headerText="Monto Invertido" style="width: 100px; text-align: center;"/>
-                                                <p:column headerText="Empresa impartidora del Curso" style="width: 180px; text-align: center;"/>
-                                                <p:column headerText="Lugar de realización" style="width: 300px; text-align: center;"/>
-                                                <p:column headerText="Objetivo" style="width: 300px; text-align: center;"/>
+                                                <p:column headerText="Empresa impartidora del Curso" style="width: 500px; text-align: center;"/>
+                                                <p:column headerText="Lugar de realización" style="width: 500px; text-align: center;"/>
+                                                <p:column headerText="Objetivo" style="width: 500px; text-align: center;"/>
+                                                <p:column headerText="Participantes" style="width: 100px; text-align: center;"/>
                                             </p:row>
                                         </p:columnGroup>
                                         <c:set var="perCapReg" value="#{perCap.personalCapacitado.registro}"/>
                                         <c:set var="perCapClave" value="#{perCap.personalCapacitado.curso}"/>
-                                        <p:column style="width: 120px; text-align: center;">
+                                        <p:column style="width:150px; text-align: center;">
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{personalCap.eliminarRegistro(perCapReg, perCapClave)}" onsuccess="actualizar(); actualizar1();" title="Eliminar registro." disabled="#{personalCap.dto.eventoActual ne personalCap.dto.eventoSeleccionado}">
                                                     <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del curso #{perCap.personalCapacitado.nombre}?" icon="ui-icon-alert" />
@@ -137,17 +138,18 @@
                                                             title="Editar registro" disabled="#{personalCap.dto.eventoActual ne personalCap.dto.eventoSeleccionado}"/>
                                             </div>
                                         </p:column>
-                                        <p:column style="width: 80px; text-align: center;"><h:outputText value="#{perCap.personalCapacitado.curso}"/></p:column> 
-                                        <p:column style="width: 150px; text-align: justify;"><h:outputText value="#{perCap.personalCapacitado.nombre}"/></p:column>
+                                        <p:column style="width: 100px; text-align: center;"><h:outputText value="#{perCap.personalCapacitado.curso}"/></p:column> 
+                                        <p:column style="width: 500px; text-align: justify;"><h:outputText value="#{perCap.personalCapacitado.nombre}"/></p:column>
                                         <p:column style="width: 80px; text-align: center;"><h:outputText value="#{perCap.personalCapacitado.fechaInicial}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                         <p:column style="width: 80px; text-align: center;"><h:outputText value="#{perCap.personalCapacitado.fechaFinal}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                         <p:column style="width: 80px; text-align: center;"><h:outputText value="#{perCap.personalCapacitado.duracion}"/></p:column>
                                         <p:column style="width: 80px; text-align: center;"><h:outputText value="#{perCap.personalCapacitado.tipo.tipo}"/></p:column>
-                                        <p:column style="width: 80px; text-align: center;"><h:outputText value="#{perCap.personalCapacitado.modalidad.modalidad}"/></p:column>
+                                        <p:column style="width: 120px; text-align: center;"><h:outputText value="#{perCap.personalCapacitado.modalidad.modalidad}"/></p:column>
                                         <p:column style="width: 100px; text-align: center;"><h:outputText value="#{perCap.personalCapacitado.montoInvertido}"><f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></h:outputText></p:column>
-                                        <p:column style="width: 180px; text-align: justify;"><h:outputText value="#{perCap.personalCapacitado.empresaImpartidora}"/></p:column>
-                                        <p:column style="width: 300px; text-align: justify;"><h:outputText value="#{perCap.personalCapacitado.lugarImparticion}"/></p:column>
-                                        <p:column style="width: 300px; text-align: justify;"><h:outputText value="#{perCap.personalCapacitado.objetivo}"/></p:column>
+                                        <p:column style="width: 500px; text-align: justify;"><h:outputText value="#{perCap.personalCapacitado.empresaImpartidora}"/></p:column>
+                                        <p:column style="width: 500px; text-align: justify;"><h:outputText value="#{perCap.personalCapacitado.lugarImparticion}"/></p:column>
+                                        <p:column style="width: 500px; text-align: justify;"><h:outputText value="#{perCap.personalCapacitado.objetivo}"/></p:column>
+                                        <p:column style="width: 100px; text-align: center;"><h:outputText value="#{fn:length(perCap.personalCapacitado.participantesPersonalCapacitadoList)}"/></p:column>
                                     </p:dataTable>
                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
                                         <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />

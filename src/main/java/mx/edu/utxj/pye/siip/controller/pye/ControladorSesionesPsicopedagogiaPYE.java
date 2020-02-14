@@ -25,6 +25,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
@@ -80,16 +81,22 @@ public class ControladorSesionesPsicopedagogiaPYE implements Serializable{
         }
         cargado = true;
         try {
-        dto = new DtoSesionPsicopedagogia();
-        dto.setAreaUniversidadAdministrador(ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
-        dto.setLstAreasConflicto(ejbSesionesPsicopedagogia.getListaAreasDeConflicto());
-        dto.setLstOtrosTiposSesionesPsicopedagogia(ejbSesionesPsicopedagogia.getListaOtrosTiposSesionesPsicopedagogia());
-        dto.setLstProgramasEducativos(ejbCatalogos.getProgramasEducativos());
-        
-        Faces.setSessionAttribute("areasConflicto", dto.getLstAreasConflicto());
-        Faces.setSessionAttribute("otroTipoSesion", dto.getLstOtrosTiposSesionesPsicopedagogia());
-        Faces.setSessionAttribute("programasEducativos", dto.getLstProgramasEducativos());
-        filtros();
+            dto = new DtoSesionPsicopedagogia();
+
+            ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if (!resArea.getCorrecto()) {
+                return;
+            }
+            dto.setAreaUniversidadAdministrador(resArea.getValor());
+
+            dto.setLstAreasConflicto(ejbSesionesPsicopedagogia.getListaAreasDeConflicto());
+            dto.setLstOtrosTiposSesionesPsicopedagogia(ejbSesionesPsicopedagogia.getListaOtrosTiposSesionesPsicopedagogia());
+            dto.setLstProgramasEducativos(ejbCatalogos.getProgramasEducativos());
+
+            Faces.setSessionAttribute("areasConflicto", dto.getLstAreasConflicto());
+            Faces.setSessionAttribute("otroTipoSesion", dto.getLstOtrosTiposSesionesPsicopedagogia());
+            Faces.setSessionAttribute("programasEducativos", dto.getLstProgramasEducativos());
+            filtros();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorSesionesPsicopedagogiaPYE.class.getName()).log(Level.SEVERE, null, ex);

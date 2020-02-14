@@ -24,6 +24,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -86,6 +87,10 @@ public class ControladorDesercionReprobacion implements Serializable {
         
         consultaAreaRegistro(); 
         
+        if(dto.getArea() == null){
+            return;
+        }
+        
         /*INIT FILTRADO*/
         dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 26));
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
@@ -118,17 +123,17 @@ public class ControladorDesercionReprobacion implements Serializable {
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 13);
             if (areaRegistro == null) {
-                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 41);
-                if (areaRegistro == null) {
-                    dto.setArea((ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa())).getArea());
-                } else {
-                    dto.setArea(areaRegistro.getArea());
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dto.setArea(area.getValor().getArea());
+                }else{
+                    dto.setArea(null);
                 }
             } else {
                 dto.setArea(areaRegistro.getArea());
             }
         } catch (Exception ex) {
-            System.out.println("ControladorDesercionReprobacion.consultaAreaRegistro: " + ex.getMessage());
+            dto.setArea(null);
         }
     }
     

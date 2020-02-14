@@ -26,6 +26,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -83,7 +84,13 @@ public class ControladorDistribucionEquipamientoPYE implements Serializable{
         cargado = true;
         try {
         dto = new DtoDistribucionEquipamiento();
-        dto.setAreaPOA(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if(!resArea.getCorrecto()){
+                return;
+            }
+        dto.setAreaPOA(resArea.getValor());
+        
         dto.setPeriodoEscolarActivo(ejbModulos.getPeriodoEscolarActivo());
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());

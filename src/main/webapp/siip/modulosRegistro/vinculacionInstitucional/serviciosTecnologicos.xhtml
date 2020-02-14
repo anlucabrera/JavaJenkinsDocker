@@ -138,6 +138,7 @@
                                                             <p:column rowspan="2" headerText="Monto Ingresado" width="200" />
                                                             <p:column rowspan="2" headerText="Facilitador" width="300" />
                                                             <p:column rowspan="2" headerText="Servicio Demandado" width="200" />
+                                                            <p:column rowspan="2" headerText="Participantes" width="100" />
                                                         </p:row>
                                                         <p:row>
                                                             <p:column headerText="Fecha Inicio" />
@@ -205,6 +206,11 @@
                                                     </p:column>
                                                     <p:column>
                                                         <h:outputText value="#{servicioTecnologico.servicioDemandado}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <center>
+                                                            <h:outputText value="#{fn:length(servicioTecnologico.serviciosTecnologicosParticipantesList)}"/>
+                                                        </center>
                                                     </p:column>
                                                     <f:facet name="footer">
                                                         En el mes de: #{controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.mesConsulta} hay un total de: #{fn:length(controladorServiciosTecnologicosAnioMes.dtoServicioTecnologico.lstServiciosTecnologicosAnioMes)} registros de Servicios Tecnológicos.

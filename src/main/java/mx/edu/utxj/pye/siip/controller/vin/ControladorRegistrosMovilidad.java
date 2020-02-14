@@ -25,6 +25,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -101,6 +102,9 @@ public class ControladorRegistrosMovilidad implements Serializable{
         dtoest = new DtoMovilidadEstudiantil();
         
         consultaAreaRegistro(); 
+        if(dto.getArea() == null){
+            return;
+        }
         
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea().getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
@@ -125,12 +129,17 @@ public class ControladorRegistrosMovilidad implements Serializable{
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 18);
             if (areaRegistro == null) {
-                dto.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dto.setArea(area.getValor());
+                }else{
+                    dto.setArea(null);
+                }
             } else {
                 dto.setArea(areaRegistro);
             }
-        } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorRegistrosMovilidad.consultaAreaRegistro(): " + e.getMessage());
+        } catch (Exception ex) {
+            dto.setArea(null);
         }
     }
     
@@ -441,7 +450,7 @@ public class ControladorRegistrosMovilidad implements Serializable{
      }
     
     public void consultarPermiso(){
-        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro);
+        listaReg = ejbModulos.getListaPermisoPorRegistro(clavePersonal, claveRegistro).getValor();
         if(listaReg == null || listaReg.isEmpty()){
             Messages.addGlobalWarn("Usted no cuenta con permiso para visualizar este apartado");
         }
