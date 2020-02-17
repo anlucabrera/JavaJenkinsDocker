@@ -20,7 +20,7 @@ public class CedulaIdentificacionRolSE  extends AbstractRol {
     @Getter @NonNull private PersonalActivo serviciosEscolares;
 
     @Getter @NonNull private AreasUniversidad programa;
-
+    @Getter @NonNull private Boolean avisoPrivacidad=false;
     // Apartados de la cedula de identificación(Informacion completa del estudiante)
     @Getter @Setter private List<Apartado> apartados;
     //Lista general de Estudiantes
@@ -28,6 +28,8 @@ public class CedulaIdentificacionRolSE  extends AbstractRol {
     @Getter @Setter String matricula;
     //TODO: Representa al estudiante que esta buscando
     @Getter @Setter Estudiante estudiante;
+    @Getter @NonNull private  Estudiante estudiantePeriodo;
+    @Getter @NonNull private  List<PeriodosEscolares> periodosEstudiante;
     //TODO: Cedula de identificacion del estudiante
     @Getter @Setter DtoCedulaIdentificacion cedulaIdentificacion;
     @Getter @Setter String pwdNueva;
@@ -95,5 +97,17 @@ public class CedulaIdentificacionRolSE  extends AbstractRol {
     }
     public void setCalificacionesNivelacionPorMateria(List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> calificacionesNivelacionPorMateria) {
         this.calificacionesNivelacionPorMateria = calificacionesNivelacionPorMateria;
+    }
+
+    public void setPeriodosEstudiante(List<PeriodosEscolares> periodosEstudiante) {
+        this.periodosEstudiante = periodosEstudiante;
+    }
+
+    public void setEstudiantePeriodo(Estudiante estudiantePeriodo) {
+        this.estudiantePeriodo = estudiantePeriodo;
+    }
+
+    public void setAvisoPrivacidad(Boolean avisoPrivacidad) {
+        this.avisoPrivacidad = avisoPrivacidad;
     }
 }

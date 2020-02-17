@@ -31,7 +31,9 @@ public class CedulaIdetificacionRolTutor extends AbstractRol {
     //TODO: Estudiante seleccionado
     @Getter @Setter Estudiante estudiante;
     @Getter @Setter String matricula;
-    //Calificaciones del estudiante
+    @Getter @NonNull private  Estudiante estudiantePeriodo;
+    @Getter @NonNull private  List<PeriodosEscolares> periodosEstudiante;
+    //Calificaciones del estudiante seleccionado
     @Getter @NonNull private List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante;
     @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad;
     @Getter @NonNull private List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas;
@@ -44,6 +46,7 @@ public class CedulaIdetificacionRolTutor extends AbstractRol {
     @Getter @NonNull PeriodosEscolares periodoEstudiante;
     @Getter @NonNull Integer periodoE;
     @Getter @NonNull Integer periodoX;
+
 
     public CedulaIdetificacionRolTutor(@NonNull Filter<PersonalActivo> filtro) {
         super(filtro);
@@ -76,6 +79,14 @@ public class CedulaIdetificacionRolTutor extends AbstractRol {
 
     public void setGrupoSelec(Grupo grupoSelec) {
         this.grupoSelec = grupoSelec;
+    }
+
+    public void setEstudiantePeriodo(Estudiante estudiantePeriodo) {
+        this.estudiantePeriodo = estudiantePeriodo;
+    }
+
+    public void setPeriodosEstudiante(List<PeriodosEscolares> periodosEstudiante) {
+        this.periodosEstudiante = periodosEstudiante;
     }
 
     public void setMateriasPorEstudiante(List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante) {

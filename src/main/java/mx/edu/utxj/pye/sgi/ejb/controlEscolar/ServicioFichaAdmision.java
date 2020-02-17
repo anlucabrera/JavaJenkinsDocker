@@ -493,7 +493,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         fields.setField("folioC", String.valueOf(aspirante.getFolioAspirante()));
         fields.setField("usuarioC", String.valueOf(aspirante.getFolioAspirante()));
         fields.setField("passC", persona.getCurp());
-        fields.setField("turnoC", academicos.getSistemaSegundaOpcion().getNombre());
+        fields.setField("turnoC", academicos.getSistemaPrimeraOpcion().getNombre());
         
         pdfStamper.close();
         pdfStamper.close();
