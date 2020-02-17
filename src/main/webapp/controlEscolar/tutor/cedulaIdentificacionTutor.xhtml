@@ -384,7 +384,20 @@
                                                         <div class="#{panel}">
                                                             <p:separator styleClass="ui-noborder"/>
                                                             <p:outputPanel id="contenedor">
-                                                                <p:dataTable var="calificaciones"
+                                                                <div class="row">
+                                                                    <div class="#{casilla}">
+                                                                        <div class="ui-material">
+                                                                            <p:selectOneMenu id="periodoE" value="#{cedulaIdentificacionTutor.rol.periodoEstudiante}" converter="entityConverter" styleClass="form-control" >
+                                                                                <f:selectItems value="#{cedulaIdentificacionTutor.rol.periodosEstudiante}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                                                <p:ajax update=":tabw2:tabw3:frmCalificaciones:calificaciones" process="@this" listener="#{cedulaIdentificacionTutor.changePeriodo()}"/>
+                                                                                <p:autoUpdate />
+                                                                            </p:selectOneMenu>
+                                                                            <p:outputLabel value="Periodo" for="periodoE"/>
+                                                                            <p:message for="periodoE" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <p:dataTable var="calificaciones" id="calificaciones"
                                                                              value="#{cedulaIdentificacionTutor.rol.materiasPorEstudiante}"
                                                                              rendered="#{cedulaIdentificacionTutor.rol.periodoE eq cedulaIdentificacionTutor.rol.periodoX}"
                                                                              emptyMessage="Sin registros."
@@ -392,9 +405,9 @@
                                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
                                                                              tableStyle="vertical-align: middle;" >
                                                                     <f:facet name="header">
-                                                                        <h:outputText value="Cuatrimestre: #{cedulaIdentificacionTutor.rol.estudiante.grupo.grado}  '#{cedulaIdentificacionTutor.rol.estudiante.grupo.literal}'"/>
+                                                                        <h:outputText value="Cuatrimestre: #{cedulaIdentificacionTutor.rol.estudiantePeriodo.grupo.grado}  '#{cedulaIdentificacionTutor.rol.estudiantePeriodo.grupo.literal}'"/>
                                                                         <p:spacer width="10"/>
-                                                                        <h:outputText value="(#{caster.clavePeriodoToString(cedulaIdentificacionTutor.rol.estudiante.grupo.periodo)})"/>
+                                                                        <h:outputText value="(#{caster.clavePeriodoToString(cedulaIdentificacionTutor.rol.estudiantePeriodo.grupo.periodo)})"/>
                                                                     </f:facet>
 
                                                                     <p:columnGroup type="header">
@@ -617,7 +630,6 @@
 
             </c:if>
             <c:if test="#{cedulaIdentificacionTutor.tieneAcceso}">
-
                 <!-- Zona de cuadros de diálogo -->
                 <p:dialog id="modalAyuda"
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
@@ -632,6 +644,35 @@
                             </ul>
                         </div>
                         <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                <p:dialog id="modalAviso"
+                          widgetVar="modalAviso" width="300" max-height="200" closeOnEscape="false" visible="#{true}" showEffect="fade" hideEffect="fade"
+                          style="scroll-: 300px"
+                          modal="true" draggable="true" header="Aviso de privacidad" position="center" styleClass="panel panel-primary" responsive="true" resizable="true" closable="false" maximizable="false">
+                    <div class="box box-primary">
+                        <h:form id="frmAviso">
+                            <div class="box-body">
+                                <p:panelGrid columns="1" style="align-items: center">
+                                    <p:outputLabel value="El siguiente modulo contiene información personal de las y los estudiantes adcritos a esta casa de estudios. Por lo cual es importante que conozca y acepte nuestro aviso de privacidad de datos personales." />
+                                </p:panelGrid>
+                                <br/>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/plantillas/avisoPrivacidad.pdf" target="_blank">
+                                    <span><strong>Consultar aviso de privacidad</strong></span>
+                                </p:link>
+
+                            </div>
+                            <div class="box-footer clearfix no-border">
+                                <p:commandButton
+                                        class="btn btn-primary"
+                                        value="Aceptar aviso de privacidad"
+                                        onclick="PF('modalAviso').hide();"
+                                        update="@this ,:frm1,:tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6">
+
+                                </p:commandButton>
+                            </div>
+                        </h:form>
+
                     </div>
                 </p:dialog>
             </c:if>

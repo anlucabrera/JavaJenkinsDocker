@@ -1297,6 +1297,36 @@
                     <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
                 </div>
             </p:dialog>
+                <p:dialog id="modalAviso"
+                          widgetVar="modalAviso" width="300" max-height="200" closeOnEscape="false" visible="#{true}" showEffect="fade" hideEffect="fade"
+                          style="scroll-: 300px"
+                          modal="true" draggable="true" header="Aviso de privacidad" position="center" styleClass="panel panel-primary" responsive="true" resizable="true" closable="false" maximizable="false">
+                    <div class="box box-primary">
+                        <h:form id="frmAviso">
+                            <div class="box-body">
+                                <p:panelGrid columns="1" style="align-items: center">
+                                    <p:outputLabel value="El siguiente modulo contiene información personal de las y los estudiantes adcritos a esta casa de estudios. Por lo cual es importante que conozca y acepte nuestro aviso de privacidad de datos personales." />
+                                </p:panelGrid>
+                                <br/>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/plantillas/avisoPrivacidad.pdf" target="_blank">
+                                    <span><strong>Consultar aviso de privacidad</strong></span>
+                                </p:link>
+
+                            </div>
+                            <div class="box-footer clearfix no-border">
+                                <p:commandButton
+                                        class="btn btn-primary"
+                                        value="Aceptar aviso de privacidad"
+                                        onclick="PF('modalAviso').hide();"
+                                        update="@this ,:frm1,:tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6">
+
+                                </p:commandButton>
+                            </div>
+                        </h:form>
+
+                    </div>
+                </p:dialog>
+
         </c:if>
             <c:if test="#{!cedulaIdentificacionPsicopedagogia.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
