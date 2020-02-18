@@ -55,13 +55,13 @@ public class DtoParticipantesFormInt {
     @Getter private List<Short> clavesAreasSubordinadas;//claves de areas subordinas que no tienes poa
     
     @Getter private List<DTODatosEstudiante> listaParticipantesAFI;
-    @Getter private List<ParticipantesAFIporNivel> listaParticipantes;
-    @Getter private List<ParticipantesAFIporPECuat> listaParticipantesAEA;
-    @Getter private List<ParticipantesAFIporPECuat> listaParticipantesAAA;
-    @Getter private List<ParticipantesAFIporPECuat> listaParticipantesAMI;
-    @Getter private List<ParticipantesAFIporPECuat> listaParticipantesAMA;
-    @Getter private List<ParticipantesAFIporPECuat> listaParticipantesATIC;
-    @Getter private List<ParticipantesAFIporPECuat> listaParticipantesAS;
+    @Getter private List<ParticipantesAFIporNivel1> listaParticipantes;
+    @Getter private List<ParticipantesAFIporPECuat1> listaParticipantesAEA;
+    @Getter private List<ParticipantesAFIporPECuat1> listaParticipantesAAA;
+    @Getter private List<ParticipantesAFIporPECuat1> listaParticipantesAMI;
+    @Getter private List<ParticipantesAFIporPECuat1> listaParticipantesAMA;
+    @Getter private List<ParticipantesAFIporPECuat1> listaParticipantesATIC;
+    @Getter private List<ParticipantesAFIporPECuat1> listaParticipantesAS;
 
     public DtoParticipantesFormInt() {
         setRegistroTipo(new RegistrosTipo((short)17));
@@ -225,32 +225,32 @@ public class DtoParticipantesFormInt {
         setTieneParticipante(!listaParticipantesAFI.isEmpty());
     }
     
-    public void setListaParticipantes(List<ParticipantesAFIporNivel> listaParticipantes) {
+    public void setListaParticipantes(List<ParticipantesAFIporNivel1> listaParticipantes) {
         this.listaParticipantes = listaParticipantes;
         setTieneParticipante(!listaParticipantes.isEmpty());
     }
 
-    public void setListaParticipantesAEA(List<ParticipantesAFIporPECuat> listaParticipantesAEA) {
+    public void setListaParticipantesAEA(List<ParticipantesAFIporPECuat1> listaParticipantesAEA) {
         this.listaParticipantesAEA = listaParticipantesAEA;
     }
 
-    public void setListaParticipantesAAA(List<ParticipantesAFIporPECuat> listaParticipantesAAA) {
+    public void setListaParticipantesAAA(List<ParticipantesAFIporPECuat1> listaParticipantesAAA) {
         this.listaParticipantesAAA = listaParticipantesAAA;
     }
 
-    public void setListaParticipantesAMI(List<ParticipantesAFIporPECuat> listaParticipantesAMI) {
+    public void setListaParticipantesAMI(List<ParticipantesAFIporPECuat1> listaParticipantesAMI) {
         this.listaParticipantesAMI = listaParticipantesAMI;
     }
 
-    public void setListaParticipantesAMA(List<ParticipantesAFIporPECuat> listaParticipantesAMA) {
+    public void setListaParticipantesAMA(List<ParticipantesAFIporPECuat1> listaParticipantesAMA) {
         this.listaParticipantesAMA = listaParticipantesAMA;
     }
 
-    public void setListaParticipantesATIC(List<ParticipantesAFIporPECuat> listaParticipantesATIC) {
+    public void setListaParticipantesATIC(List<ParticipantesAFIporPECuat1> listaParticipantesATIC) {
         this.listaParticipantesATIC = listaParticipantesATIC;
     }
 
-    public void setListaParticipantesAS(List<ParticipantesAFIporPECuat> listaParticipantesAS) {
+    public void setListaParticipantesAS(List<ParticipantesAFIporPECuat1> listaParticipantesAS) {
         this.listaParticipantesAS = listaParticipantesAS;
     }
     
