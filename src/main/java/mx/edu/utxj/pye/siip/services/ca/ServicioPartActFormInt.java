@@ -33,8 +33,8 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.ViewMatriculaF911;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.eb.DTODatosEstudiante;
 import mx.edu.utxj.pye.siip.dto.pye.DTOParticipantesActFormInt;
-import mx.edu.utxj.pye.siip.dto.pye.ParticipantesAFIporNivel1;
-import mx.edu.utxj.pye.siip.dto.pye.ParticipantesAFIporPECuat1;
+import mx.edu.utxj.pye.siip.dto.pye.ParticipantesAFIporNivel;
+import mx.edu.utxj.pye.siip.dto.pye.ParticipantesAFIporPECuat;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbActFormacionIntegral;
 import mx.edu.utxj.pye.siip.interfaces.ca.EjbPartFormInt;
@@ -253,12 +253,12 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
     }
 
     @Override
-    public List<ParticipantesAFIporNivel1> totalParticipantesAFIporNivel(String actividadFormacionIntegral) {
+    public List<ParticipantesAFIporNivel> totalParticipantesAFIporNivel(String actividadFormacionIntegral) {
         if(actividadFormacionIntegral == null){
             return Collections.EMPTY_LIST;
         }
         
-        List<ParticipantesAFIporNivel1> lista = new ArrayList<>();
+        List<ParticipantesAFIporNivel> lista = new ArrayList<>();
         List<String> listaNivel = new ArrayList<>();
        
         listaNivel= f.getEntityManager().createQuery("SELECT p.nivel FROM Viewparticipantesactformintegral p WHERE p.actividadFormacionIntegral =:actividadFormacionIntegral GROUP BY p.actividadFormacionIntegral, p.nivel ORDER BY p.nivel DESC")
@@ -277,7 +277,7 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
                 partMuj.setParameter("nivel", e);
               Long partM = partMuj.getSingleResult();
               
-            lista.add(new ParticipantesAFIporNivel1(
+            lista.add(new ParticipantesAFIporNivel(
                    e,
                    partH,
                    partM));
@@ -288,12 +288,12 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
     }
 
     @Override
-    public List<ParticipantesAFIporPECuat1> totalParticipantesAFIporPECuat(Short area, String actividadFormacionIntegral) {
+    public List<ParticipantesAFIporPECuat> totalParticipantesAFIporPECuat(Short area, String actividadFormacionIntegral) {
         if(actividadFormacionIntegral == null){
             return Collections.EMPTY_LIST;
         }
         
-        List<ParticipantesAFIporPECuat1> lista = new ArrayList<>();
+        List<ParticipantesAFIporPECuat> lista = new ArrayList<>();
 
             AreasUniversidad areaUni = f.getEntityManager().find(AreasUniversidad.class, area);
             
@@ -350,7 +350,7 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
                     partMujD.setParameter("cuatrimestre", c);
                     Long partMD = partMujD.getSingleResult();
                     
-                lista.add(new ParticipantesAFIporPECuat1(
+                lista.add(new ParticipantesAFIporPECuat(
                         areaUni,
                         p,
                         c,

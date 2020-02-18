@@ -10,9 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
  *
@@ -20,22 +20,13 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = "ParticipantesAFIporPECuat")
+@ToString(of = "ParticipantesAFIporNivel")
 @EqualsAndHashCode
-public class ParticipantesAFIporPECuat1 implements Serializable{
+public class ParticipantesAFIporNivel implements Serializable{
 
-    private static final long serialVersionUID = 3012974059656544216L;
-    @Getter @Setter private AreasUniversidad area;
-    @Getter @Setter private String progEdu;
-    @Getter @Setter private String cuat;
+    private static final long serialVersionUID = 8569654802003406126L;
+    @Getter @Setter @NonNull private String nivel;
     @Getter @Setter private Long partH;
     @Getter @Setter private Long partM;
-    @Getter @Setter private Long partHLI;
-    @Getter @Setter private Long partMLI;
-    @Getter @Setter private Long partHD;
-    @Getter @Setter private Long partMD;
-    
-    
-    
     
 }
