@@ -20,7 +20,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString(of = "dtoNivelyPE")
 @EqualsAndHashCode
-public class DtoNivelyPE1 implements Serializable{
+public class DtoNivelyPE implements Serializable{
 
     private static final long serialVersionUID = 2372040210974878217L;
     @Getter @Setter private Integer nivel;

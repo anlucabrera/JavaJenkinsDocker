@@ -12,24 +12,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 /**
  *
  * @author UTXJ
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = "dtoEstudianteParaReporte")
+@ToString(of = "dtoExpedientesActuales")
 @EqualsAndHashCode
-public class DtoEstudianteParaReporte1 implements Serializable{
-    
-    private static final long serialVersionUID = -2350761936753405071L;
-    @Getter @Setter private String generacion;
-    @Getter @Setter private String progEducativo;
+public class DtoExpedientesActuales implements Serializable{
+
+    private static final long serialVersionUID = 1904185014812357415L;
     @Getter @Setter private String matricula;
     @Getter @Setter private String nombre;
-    @Getter @Setter private String genero;
-    @Getter @Setter private String status;
-    @Getter @Setter private String expValidado;
-    
+    @Getter @Setter private String programa;
+    @Getter @Setter private Integer expediente;
 }

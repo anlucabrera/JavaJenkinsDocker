@@ -23,7 +23,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString(of = "dtoPagosFinanzas")
 @EqualsAndHashCode
-public class DtoPagosFinanzas1 implements Serializable{
+public class DtoPagosFinanzas implements Serializable{
 
     private static final long serialVersionUID = 5748066900424598601L;
     @Getter @Setter private Integer concepto;

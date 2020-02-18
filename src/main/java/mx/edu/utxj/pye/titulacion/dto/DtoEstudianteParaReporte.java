@@ -12,9 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
-import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
-import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 
 /**
  *
@@ -22,12 +19,17 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = "dtoDomicilio")
+@ToString(of = "dtoEstudianteParaReporte")
 @EqualsAndHashCode
-public class DtoDomicilio1 implements Serializable{
-
-    private static final long serialVersionUID = -1078583630293095495L;
-    @Getter @Setter private DomiciliosExpediente domiciliosExpediente;
-    @Getter @Setter private Municipio municipio;
-    @Getter @Setter private Estado estado;
+public class DtoEstudianteParaReporte implements Serializable{
+    
+    private static final long serialVersionUID = -2350761936753405071L;
+    @Getter @Setter private String generacion;
+    @Getter @Setter private String progEducativo;
+    @Getter @Setter private String matricula;
+    @Getter @Setter private String nombre;
+    @Getter @Setter private String genero;
+    @Getter @Setter private String status;
+    @Getter @Setter private String expValidado;
+    
 }

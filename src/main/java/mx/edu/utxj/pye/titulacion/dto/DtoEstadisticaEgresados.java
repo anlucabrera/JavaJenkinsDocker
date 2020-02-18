@@ -22,7 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 @AllArgsConstructor
 @ToString(of = "dtoEstadisticaEgresados")
 @EqualsAndHashCode
-public class DtoEstadisticaEgresados1 implements Serializable{
+public class DtoEstadisticaEgresados implements Serializable{
 
     private static final long serialVersionUID = 3068807273104161311L;
     @Getter @Setter private String generacion;

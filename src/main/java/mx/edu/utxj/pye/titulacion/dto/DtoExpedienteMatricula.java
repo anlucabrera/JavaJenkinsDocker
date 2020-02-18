@@ -31,7 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
 @AllArgsConstructor
 @ToString(of = "dtoExpedienteMatricula")
 @EqualsAndHashCode
-public class DtoExpedienteMatricula1 implements Serializable{
+public class DtoExpedienteMatricula implements Serializable{
     
     private static final long serialVersionUID = 2850497036094890250L;
     @Getter @Setter private Egresados egresados;
@@ -51,6 +51,6 @@ public class DtoExpedienteMatricula1 implements Serializable{
     @Getter @Setter private FechasDocumentos fechasDocumentos;
     @Getter @Setter private String generacion;
     @Getter @Setter private String personalValido;
-    @Getter @Setter private dtoPagosFinanzas pagosFinanzas;
+    @Getter @Setter private DtoPagosFinanzas pagosFinanzas;
     @Getter @Setter private String situacionAcademica;
 }

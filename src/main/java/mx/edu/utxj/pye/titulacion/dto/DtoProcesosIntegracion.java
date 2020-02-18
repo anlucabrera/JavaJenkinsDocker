@@ -24,7 +24,7 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
 @AllArgsConstructor
 @ToString(of = "dtoProcesosIntegracion")
 @EqualsAndHashCode
-public class DtoProcesosIntegracion1 implements Serializable{
+public class DtoProcesosIntegracion implements Serializable{
     private static final long serialVersionUID = 1304458214610294698L;
     @Getter @Setter private ProcesosGeneraciones procesosGeneraciones;
     @Getter @Setter private Generaciones generacion;

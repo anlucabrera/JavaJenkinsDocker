@@ -25,7 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 @AllArgsConstructor
 @ToString(of = "dtoFechasDocumentos")
 @EqualsAndHashCode
-public class DtoFechasDocumentos1 implements Serializable{
+public class DtoFechasDocumentos implements Serializable{
 
     private static final long serialVersionUID = 2721760825600654002L;
     @Getter @Setter @NonNull private FechasDocumentos fechasDocumentos;
