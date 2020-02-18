@@ -20,9 +20,9 @@ import lombok.ToString;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = "participantesAFIporNivel")
+@ToString(of = "ParticipantesAFIporNivel")
 @EqualsAndHashCode
-public class participantesAFIporNivel implements Serializable{
+public class ParticipantesAFIporNivel implements Serializable{
 
     private static final long serialVersionUID = 8569654802003406126L;
     @Getter @Setter @NonNull private String nivel;

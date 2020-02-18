@@ -20,9 +20,9 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = "participantesAFIporPECuat")
+@ToString(of = "ParticipantesAFIporPECuat")
 @EqualsAndHashCode
-public class participantesAFIporPECuat implements Serializable{
+public class ParticipantesAFIporPECuat implements Serializable{
 
     private static final long serialVersionUID = 3012974059656544216L;
     @Getter @Setter private AreasUniversidad area;
