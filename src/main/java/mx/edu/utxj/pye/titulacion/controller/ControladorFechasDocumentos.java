@@ -20,7 +20,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
-import mx.edu.utxj.pye.titulacion.dto.dtoFechasDocumentos;
+import mx.edu.utxj.pye.titulacion.dto.DtoFechasDocumentos;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbFechasDocumentos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
@@ -38,8 +38,8 @@ public class ControladorFechasDocumentos implements Serializable{
 
    private static final long serialVersionUID = 6878126949579656934L;
    
-   @Getter @Setter private List<dtoFechasDocumentos> listaFecDocs;
-   @Getter @Setter private dtoFechasDocumentos dtoFecDocs;
+   @Getter @Setter private List<DtoFechasDocumentos> listaFecDocs;
+   @Getter @Setter private DtoFechasDocumentos dtoFecDocs;
    @Getter @Setter private FechasDocumentos fechasDocumentos;
       
    @Getter @Setter private Boolean aperturaDialogoEdicion;
@@ -86,7 +86,7 @@ public class ControladorFechasDocumentos implements Serializable{
       
     }
     
-    public void eliminarFecDoc(dtoFechasDocumentos fecDocs){
+    public void eliminarFecDoc(DtoFechasDocumentos fecDocs){
         Boolean eliminado = ejbFechasDocumentos.eliminarFecDocsGeneracion(fecDocs);
         if(eliminado){ 
             Messages.addGlobalInfo("El documento se eliminó correctamente.");
@@ -94,7 +94,7 @@ public class ControladorFechasDocumentos implements Serializable{
         }else Messages.addGlobalError("El documento no ha podido eliminarse.");
     }
     
-    public void editarRegistro(dtoFechasDocumentos fecDocs){
+    public void editarRegistro(DtoFechasDocumentos fecDocs){
         dtoFecDocs = fecDocs;
         Ajax.update("frmModalEdicion");
         Ajax.oncomplete("skin();");

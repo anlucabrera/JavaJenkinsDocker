@@ -40,7 +40,7 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.Domicilios;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbEstudianteRegistro;
-import mx.edu.utxj.pye.titulacion.dto.dtoDatosTitulacion;
+import mx.edu.utxj.pye.titulacion.dto.DtoDatosTitulacion;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
@@ -70,7 +70,7 @@ public class ControladorEstudianteRegistro implements Serializable{
     @Getter @Setter private Personas nuevoOBJpersona;
     @Getter @Setter private Egresados nuevoOBJegresado;
     @Getter @Setter private ExpedientesTitulacion nuevoOBJexpediente;
-    @Getter @Setter private dtoDatosTitulacion nuevoDTOdatTit;
+    @Getter @Setter private DtoDatosTitulacion nuevoDTOdatTit;
     @Getter @Setter private List<String> listaGeneros;
     
     /* Objetos para Datos de Contacto y Domicilio */

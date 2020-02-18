@@ -72,15 +72,20 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaFin;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "personal_graba_permiso")
-    private int personalGrabaPermiso;
-    @Basic(optional = false)
-    @NotNull
+    private Integer personalGrabaPermiso;
     @Column(name = "fecha_graba_permiso")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaGrabaPermiso;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 10)
+    @Column(name = "tipo_apertura")
+    private String tipoApertura;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "validada")
+    private int validada;
     @JoinColumn(name = "id_grupo", referencedColumnName = "id_grupo")
     @ManyToOne(optional = false)
     private Grupo idGrupo;
@@ -101,7 +106,7 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
         this.permisoGrupal = permisoGrupal;
     }
 
-    public PermisosCapturaExtemporaneaGrupal(Integer permisoGrupal, int periodo, int docente, String tipoEvaluacion, Date fechaInicio, Date fechaFin, int personalGrabaPermiso, Date fechaGrabaPermiso) {
+    public PermisosCapturaExtemporaneaGrupal(Integer permisoGrupal, int periodo, int docente, String tipoEvaluacion, Date fechaInicio, Date fechaFin, int personalGrabaPermiso, Date fechaGrabaPermiso, String tipoApertura, int validada) {
         this.permisoGrupal = permisoGrupal;
         this.periodo = periodo;
         this.docente = docente;
@@ -110,6 +115,8 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
         this.fechaFin = fechaFin;
         this.personalGrabaPermiso = personalGrabaPermiso;
         this.fechaGrabaPermiso = fechaGrabaPermiso;
+        this.tipoApertura = tipoApertura;
+        this.validada = validada;
     }
 
     public Integer getPermisoGrupal() {
@@ -174,6 +181,22 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
 
     public void setFechaGrabaPermiso(Date fechaGrabaPermiso) {
         this.fechaGrabaPermiso = fechaGrabaPermiso;
+    }
+    
+    public String getTipoApertura() {
+        return tipoApertura;
+    }
+
+    public void setTipoApertura(String tipoApertura) {
+        this.tipoApertura = tipoApertura;
+    }
+
+    public int getValidada() {
+        return validada;
+    }
+
+    public void setValidada(int validada) {
+        this.validada = validada;
     }
 
     public Grupo getIdGrupo() {

@@ -17,8 +17,9 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosIntexp;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
-import mx.edu.utxj.pye.titulacion.dto.dtoDatosTitulacion;
-import mx.edu.utxj.pye.titulacion.dto.dtoNivelyPE;
+import mx.edu.utxj.pye.sgi.entity.titulacion.TituloExpediente;
+import mx.edu.utxj.pye.titulacion.dto.DtoDatosTitulacion;
+import mx.edu.utxj.pye.titulacion.dto.DtoNivelyPE;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Comunicaciones;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Domicilios;
@@ -56,10 +57,10 @@ public interface EjbEstudianteRegistro {
     /**
      * Obtiene datos académicos del estudiante de SAIIUT
      * @param estudiante
-     * @return dtoDatosTitulacion
+     * @return DtoDatosTitulacion
      * @throws java.lang.Throwable
      */
-    public dtoDatosTitulacion obtenerDatosAcadSAIIUT(Alumnos estudiante) throws Throwable;
+    public DtoDatosTitulacion obtenerDatosAcadSAIIUT(Alumnos estudiante) throws Throwable;
     
     /**
      * Muestra datos personales del estudiante guardados en la base de Titulación
@@ -101,9 +102,9 @@ public interface EjbEstudianteRegistro {
     /**
      * Obtiene nivel y programa educativo del estudiante de SAIIUT
      * @param estudiante
-     * @return dtoNivelyPE
+     * @return DtoNivelyPE
      */
-    public dtoNivelyPE obtenerNivelyProgEgresado (Alumnos estudiante);
+    public DtoNivelyPE obtenerNivelyProgEgresado (Alumnos estudiante);
     
      /**
      * Obtiene clave del Expediente de titulación del estudiante
@@ -292,4 +293,34 @@ public interface EjbEstudianteRegistro {
      * @return entity Alumnos
      */
     public Alumnos obtenerInformacionTSUAlumno(String matricula);
+    
+     /**
+     * Guarda titulo en el expediente del estudiante
+     * @param nuevoOBJtitExp
+     * @return entity DocumentosExpediente
+     * @throws java.lang.Throwable
+     */
+    public TituloExpediente guardarTituloExpediente(TituloExpediente nuevoOBJtitExp) throws Throwable;
+    
+     /**
+     * Eliminar titulo del expediente del estudiante
+     * @param titExp
+     * @return boolean
+     */
+    public Boolean eliminarTituloExpediente(TituloExpediente titExp);
+    
+     /**
+     * Busca si el egresado tiene titulo cargado
+     * @param expedienteTitulacion
+     * @return entity TituloExpediente
+     */
+    public TituloExpediente buscarTituloRegistrado(ExpedientesTitulacion expedienteTitulacion);
+    
+     /**
+     * Actualiza fecha de emisión de título desde la interfaz de descarga de título
+     * @param tituloExpediente
+     * @return entity TituloExpediente
+     * @throws java.lang.Throwable
+     */
+    public TituloExpediente actualizarFechaEmision(TituloExpediente tituloExpediente) throws Throwable;
 }

@@ -34,13 +34,14 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.entity.titulacion.Documentos;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosNivel;
-import mx.edu.utxj.pye.titulacion.dto.dtoNivelyPE;
+import mx.edu.utxj.pye.titulacion.dto.DtoNivelyPE;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosIntexp;
+import mx.edu.utxj.pye.sgi.entity.titulacion.TituloExpediente;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import mx.edu.utxj.pye.titulacion.dto.dtoDatosTitulacion;
+import mx.edu.utxj.pye.titulacion.dto.DtoDatosTitulacion;
 import org.omnifaces.util.Messages;
 
 /**
@@ -85,10 +86,10 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
     }
     
     @Override
-    public dtoDatosTitulacion obtenerDatosAcadSAIIUT(Alumnos estudiante) throws Throwable {
+    public DtoDatosTitulacion obtenerDatosAcadSAIIUT(Alumnos estudiante) throws Throwable {
         facadeSAIIUT.setEntityClass(CarrerasCgut.class);
         CarrerasCgut c = facadeSAIIUT.getEntityManager().find(CarrerasCgut.class, estudiante.getGrupos().getGruposPK().getCveCarrera());
-        dtoDatosTitulacion dto = new dtoDatosTitulacion();
+        DtoDatosTitulacion dto = new DtoDatosTitulacion();
        
         if(c == null){
             return null;
@@ -183,13 +184,13 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
 
     
     @Override
-    public dtoNivelyPE obtenerNivelyProgEgresado(Alumnos estudiante) {
+    public DtoNivelyPE obtenerNivelyProgEgresado(Alumnos estudiante) {
         //verificar que el parametro no sea nulo
         if (estudiante == null) {
             return null;
         }
         
-        dtoNivelyPE dto = new dtoNivelyPE();
+        DtoNivelyPE dto = new DtoNivelyPE();
         
         String siglas ="";
 
@@ -232,7 +233,7 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
             return null;
         }
         ExpedientesTitulacion exp = new  ExpedientesTitulacion();
-        dtoNivelyPE nivel = obtenerNivelyProgEgresado(estudiante);
+        DtoNivelyPE nivel = obtenerNivelyProgEgresado(estudiante);
         
         TypedQuery<ExpedientesTitulacion> expTit = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.matricula.matricula =:matricula AND e.nivel =:nivel", ExpedientesTitulacion.class);
         expTit.setParameter("matricula", estudiante.getMatricula());
@@ -667,5 +668,57 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         }else{
             return null;
         }
+    }
+    
+    @Override
+    public TituloExpediente guardarTituloExpediente(TituloExpediente nuevoOBJtitExp) throws Throwable {
+        facade.setEntityClass(TituloExpediente.class);
+        facade.create(nuevoOBJtitExp);
+        facade.flush();
+        Messages.addGlobalInfo("<b>Se registró el titulo en el expediente correctamente </b>");
+            
+        return nuevoOBJtitExp;
+    }
+
+    @Override
+    public Boolean eliminarTituloExpediente(TituloExpediente titExp) {
+         if (titExp == null) {
+            return false;
+        }
+
+        Integer id = titExp.getTitExpediente();
+        try {
+            ServicioArchivos.eliminarArchivo(titExp.getRuta());
+            facade.remove(titExp);
+            facade.flush();
+
+        } catch (Exception e) {
+            return false;
+        }
+
+        return facade.getEntityManager().find(TituloExpediente.class, id) == null;
+    }
+
+    @Override
+    public TituloExpediente buscarTituloRegistrado(ExpedientesTitulacion expedienteTitulacion) {
+        //verificar que el parametro no sea nulo
+        if(expedienteTitulacion == null){
+            return null;
+        }
+        
+        TituloExpediente titExp = facade.getEntityManager().createQuery("SELECT t FROM TituloExpediente t WHERE t.expediente.expediente =:expediente", TituloExpediente.class)
+                .setParameter("expediente", expedienteTitulacion.getExpediente())
+                .getResultStream().findFirst().orElse(null);
+        
+        return titExp;
+    }
+
+    @Override
+    public TituloExpediente actualizarFechaEmision(TituloExpediente tituloExpediente) throws Throwable {
+        facade.setEntityClass(TituloExpediente.class);
+        facade.edit(tituloExpediente);
+        Messages.addGlobalInfo("<b>Se actualizó fecha de emisión del título correctamente.</b>");
+        
+        return tituloExpediente;
     }
 }

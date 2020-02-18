@@ -5,15 +5,14 @@
  */
 package mx.edu.utxj.pye.titulacion.interfaces;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Local;
-import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 //import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
-import mx.edu.utxj.pye.titulacion.dto.dtoExpedientesActuales;
-import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
+import mx.edu.utxj.pye.titulacion.dto.DtoExpedientesActuales;
+import mx.edu.utxj.pye.titulacion.dto.DtoExpedienteMatricula;
 import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DatosContacto;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
@@ -22,8 +21,10 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.Egresados;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
 import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
-import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
-import mx.edu.utxj.pye.titulacion.dto.dtoProcesosIntegracion;
+import mx.edu.utxj.pye.sgi.entity.titulacion.TituloExpediente;
+import mx.edu.utxj.pye.titulacion.dto.DtoPagosFinanzas;
+import mx.edu.utxj.pye.titulacion.dto.DtoProcesosIntegracion;
+import mx.edu.utxj.pye.titulacion.dto.DtoTitulosRegistrados;
 
 /**
  *
@@ -42,15 +43,15 @@ public interface EjbTitulacionSeguimiento {
      * Consulta expedientes registrados actualmente
      * @return Lista de una vista llamada ListaExpedientes
      */
-    public List<dtoExpedientesActuales> consultaListaExpedientes();  
+    public List<DtoExpedientesActuales> consultaListaExpedientes();  
     
      /**
      * Muestra expediente completo de titulación del estudiante
      * @param expediente
-     * @return dtoExpedienteMatricula
+     * @return DtoExpedienteMatricula
      * @throws java.lang.Throwable
      */
-    public dtoExpedienteMatricula mostrarExpediente(Integer expediente) throws Throwable;
+    public DtoExpedienteMatricula mostrarExpediente(Integer expediente) throws Throwable;
 
     /**
      * Actualiza la información del documento del expediente
@@ -113,9 +114,9 @@ public interface EjbTitulacionSeguimiento {
      * Obtiene la lista de expedientes correspondiente a la generación y programa educativo seleccionado.
      * @param programaSeleccionado
      * @param generacion
-     * @return Lista de dtoExpedienteMatricula
+     * @return Lista de DtoExpedienteMatricula
      */
-    public List<dtoExpedienteMatricula> getListaExpedientesPorProgramaGeneracion(AreasUniversidad programaSeleccionado, Generaciones generacion);
+    public List<DtoExpedienteMatricula> getListaExpedientesPorProgramaGeneracion(AreasUniversidad programaSeleccionado, Generaciones generacion);
     
      /**
      * Busca datos de titulación registrados del estudiante
@@ -129,19 +130,19 @@ public interface EjbTitulacionSeguimiento {
      * Guarda datos de titulación del estudiante de la vista "seguimientoExpMatricula"
      * @param datosTitulacion
      * @param expediente
-     * @return dtoExpedienteMatricula
+     * @return DtoExpedienteMatricula
      * @throws java.lang.Throwable
      */
-    public dtoExpedienteMatricula guardarDatosTitulacion(DatosTitulacion datosTitulacion, Integer expediente) throws Throwable;
+    public DtoExpedienteMatricula guardarDatosTitulacion(DatosTitulacion datosTitulacion, Integer expediente) throws Throwable;
     
      /**
      * Guarda antecedentes académicos del estudiante de la vista "seguimientoExpMatricula"
      * @param antecedentesAcademicos
      * @param expediente
-     * @return dtoExpedienteMatricula
+     * @return DtoExpedienteMatricula
      * @throws java.lang.Throwable
      */
-    public dtoExpedienteMatricula guardarAntecedentesAcad(AntecedentesAcademicos antecedentesAcademicos, Integer expediente) throws Throwable;
+    public DtoExpedienteMatricula guardarAntecedentesAcad(AntecedentesAcademicos antecedentesAcademicos, Integer expediente) throws Throwable;
     
      /**
      * Busca información del expediente de titulación
@@ -196,30 +197,30 @@ public interface EjbTitulacionSeguimiento {
      * Obtiene la lista de expedientes correspondiente a la generación y programa educativo seleccionado.
      * @param generacion
      * @param nivel
-     * @return Lista de dtoExpedienteMatricula
+     * @return Lista de DtoExpedienteMatricula
      */
-    public List<dtoExpedienteMatricula> getListaExpedientesPorGeneracion(Generaciones generacion, Integer nivel);
+    public List<DtoExpedienteMatricula> getListaExpedientesPorGeneracion(Generaciones generacion, Integer nivel);
     
      /**
      * Obtiene la lista de pagos de finanzas del egresado seleccionado
      * @param matricula
-     * @return Lista de dtoPagosFinanzas
+     * @return Lista de DtoPagosFinanzas
      */
-    public List<dtoPagosFinanzas> getListaDtoPagosFinanzas(String matricula);
+    public List<DtoPagosFinanzas> getListaDtoPagosFinanzas(String matricula);
     
      /**
-     * Obtiene dtoPagosFinanzas nivel T.S.U.
+     * Obtiene DtoPagosFinanzas nivel T.S.U.
      * @param listaDtoPagosFinanzas
-     * @return dtoPagosFinanzas
+     * @return DtoPagosFinanzas
      */
-    public dtoPagosFinanzas getDtoPagosFinanzasTSU(List<dtoPagosFinanzas> listaDtoPagosFinanzas);
+    public DtoPagosFinanzas getDtoPagosFinanzasTSU(List<DtoPagosFinanzas> listaDtoPagosFinanzas);
     
     /**
-     * Obtiene dtoPagosFinanzas nivel Ing. y Lic.
+     * Obtiene DtoPagosFinanzas nivel Ing. y Lic.
      * @param listaDtoPagosFinanzas
-     * @return dtoPagosFinanzas
+     * @return DtoPagosFinanzas
      */
-    public dtoPagosFinanzas getDtoPagosFinanzasING(List<dtoPagosFinanzas> listaDtoPagosFinanzas);
+    public DtoPagosFinanzas getDtoPagosFinanzasING(List<DtoPagosFinanzas> listaDtoPagosFinanzas);
     
     /**
      * Obtiene status del egresado en SAIIUT
@@ -296,7 +297,7 @@ public interface EjbTitulacionSeguimiento {
      * @return 
      * @throws java.lang.Throwable
      */
-    public ExpedientesTitulacion guardarExpedienteTitulacion(ExpedientesTitulacion expedienteTitulacion, dtoProcesosIntegracion procesoIntegracion, Egresados egresado, AreasUniversidad progEdu, Generaciones generacion) throws Throwable;
+    public ExpedientesTitulacion guardarExpedienteTitulacion(ExpedientesTitulacion expedienteTitulacion, DtoProcesosIntegracion procesoIntegracion, Egresados egresado, AreasUniversidad progEdu, Generaciones generacion) throws Throwable;
     
      /**
      * Guarda datos de contacto (datosContacto)
@@ -334,10 +335,10 @@ public interface EjbTitulacionSeguimiento {
     
      /**
      * Obtiene lista de procesos de integración de expedientes de titulación
-     * @return lista de dtoProcesosIntegracion
+     * @return lista de DtoProcesosIntegracion
      * @throws java.lang.Throwable
      */
-    public List<dtoProcesosIntegracion> obtenerListaProcesos() throws Throwable;
+    public List<DtoProcesosIntegracion> obtenerListaProcesos() throws Throwable;
     
      /**
      * Obtiene lista de programas educativos
@@ -362,4 +363,62 @@ public interface EjbTitulacionSeguimiento {
      * @throws java.lang.Throwable
      */
     public Integer obtenerNivelEducativo(AreasUniversidad progEdu) throws Throwable;
+    
+      /**
+     * Consulta expedientes validados actualmente
+     * @return Lista de una vista llamada ListaExpedientes
+     */
+    public List<DtoExpedientesActuales> consultaListaExpedientesValidados();  
+    
+     /**
+     * Obtiene generacion del egresado
+     * @param expediente
+     * @return generación
+     * @throws java.lang.Throwable
+     */
+    public Generaciones obtenerGeneracionEgresado(Integer expediente) throws Throwable;
+    
+      /**
+     * Consulta titulo registrado del expediente
+     * @param expedienteTitulacion
+     * @return Lista
+     */
+    public List<TituloExpediente> getListaTituloExpediente(ExpedientesTitulacion expedienteTitulacion); 
+    
+     /**
+     * Actualiza fecha de emisión del titulo
+     * @param tituloExpediente
+     */
+    
+    public void actualizarFechaEmision(TituloExpediente tituloExpediente); 
+    
+     /**
+     * Obtiene la lista de generaciones con titulos registrados
+     * @return Lista de entity Generaciones
+     */
+    public List<Generaciones> getGeneracionesExpValidados();
+
+    /**
+     * Obtiene la lista de niveles educativos por generación con titulos registrados
+     * @param generacion
+     * @return Lista de entity ProgramasEducativosNiveles
+     */
+    public List<String> getNivelesPorGeneracionesExpValidados(Generaciones generacion);
+    
+    /**
+     * Obtiene la lista de niveles educativos por generación con titulos registrados
+     * @param generacion
+     * @param nivel
+     * @return Lista de entity AreasUniversidad
+     */
+    public List<AreasUniversidad> getProgramasPorNivGenExpValidados(Generaciones generacion, String nivel);
+    
+     /**
+     * Obtiene la lista de expedientes correspondiente a la generación y programa educativo seleccionado.
+     * @param programa
+     * @param generacion
+     * @return Lista de DtoTitulosRegistrados
+     */
+    public List<DtoTitulosRegistrados> getListaExpedientesValidados (Generaciones generacion, AreasUniversidad programa);
+    
 }

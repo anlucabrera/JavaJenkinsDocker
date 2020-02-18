@@ -72,15 +72,20 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaFin;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "personal_graba_permiso")
-    private int personalGrabaPermiso;
-    @Basic(optional = false)
-    @NotNull
+    private Integer personalGrabaPermiso;
     @Column(name = "fecha_graba_permiso")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaGrabaPermiso;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 10)
+    @Column(name = "tipo_apertura")
+    private String tipoApertura;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "validada")
+    private int validada;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false)
     private Estudiante estudiante;
@@ -113,6 +118,8 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
         this.fechaFin = fechaFin;
         this.personalGrabaPermiso = personalGrabaPermiso;
         this.fechaGrabaPermiso = fechaGrabaPermiso;
+        this.tipoApertura = tipoApertura;
+        this.validada = validada;
     }
 
     public Integer getPermisoEstudiante() {
@@ -178,7 +185,23 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
     public void setFechaGrabaPermiso(Date fechaGrabaPermiso) {
         this.fechaGrabaPermiso = fechaGrabaPermiso;
     }
+         
+    public String getTipoApertura() {
+        return tipoApertura;
+    }
 
+    public void setTipoApertura(String tipoApertura) {
+        this.tipoApertura = tipoApertura;
+    }
+
+    public int getValidada() {
+        return validada;
+    }
+
+    public void setValidada(int validada) {
+        this.validada = validada;
+    }
+    
     public Estudiante getEstudiante() {
         return estudiante;
     }
@@ -243,5 +266,5 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PermisosCapturaExtemporaneaEstudiante[ permisoEstudiante=" + permisoEstudiante + " ]";
     }
-    
+   
 }

@@ -61,6 +61,8 @@
                             </ul>
                         </li>
                     </c:if>
+                    
+<!--                    <c:if test="# {validacionAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and validacionAperturaExtemporaneaAdministrador.tieneAcceso}"> <li><p:link href="# {request.contextPath}/controlEscolar/pye/validacionAperturaExtemporanea.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Aperturas</span></p:link></li></c:if>-->
 
                     <!-- Secretaría Académica -->
                     <c:if test="#{concentradoCalificacionesSecAca.mostrarEnDesarrollo(request) and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span></p:link></li></c:if>
@@ -112,7 +114,21 @@
                     <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de <br/>Lista Docente</span></p:link></li></c:if>
                     <c:if test="#{avanceProgramaticoDocente.mostrarEnDesarrollo(request) and avanceProgramaticoDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
                     <c:if test="#{registroAsesoriaDocente.mostrarEnDesarrollo(request) and registroAsesoriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/registro_asesorias.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Asesorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-
+<!--                    <c:if test="# {permisoAperturaExtemporaneaDocente.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaDocente.tieneAcceso}">
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-calendar"></i> <span>Solicitar Apertura</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <li><p:link href="# {request.contextPath}/controlEscolar/docente/solicitarAperExtGrupal.xhtml"><i class="fa fa-users"></i><span>Grupal</span></p:link></li>
+                            <li><p:link href="# {request.contextPath}/controlEscolar/docente/solicitarAperExtPorEstudiante.xhtml"><i class="fa fa-user-plus"></i><span>Estudiante</span></p:link></li>
+                        </ul>
+                    </li>
+                    </c:if>-->
+                    
                     <!-- Tutor -->
                     <c:if test="#{reporteAsistenciasTutor.mostrarEnDesarrollo(request) and reporteAsistenciasTutor.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Tutor</li>
@@ -436,6 +452,26 @@
                             </li>
                         </ul>
                     </li>
+<!--                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-id-badge"></i><span>Títulos</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <li>
+                                <p:link href="# {request.contextPath}/expedienteTitulacion/titulacion/cargarTituloExpediente.xhtml" target="_blank"><i class="fa fa-upload"></i>
+                                    <span>Cargar Título Electrónico</span>
+                                </p:link>
+                            </li>
+                            <li>
+                                <p:link href="# {request.contextPath}/expedienteTitulacion/titulacion/listadoTitulados.xhtml" target="_blank"><i class="fa fa-list-ul"></i>
+                                    <span>Listado de Titulados</span>
+                                </p:link>
+                            </li>
+                        </ul>
+                    </li>-->
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-folder"></i><span>Catálogos - Reportes</span>

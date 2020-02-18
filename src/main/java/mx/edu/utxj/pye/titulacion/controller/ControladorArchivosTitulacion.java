@@ -70,7 +70,6 @@ public class ControladorArchivosTitulacion implements Serializable{
         matricula = controladorTitSegGeneracion.getNuevoDtoExpMat().getExpedientesTitulacion().getMatricula().getMatricula();
         expediente = controladorTitSegGeneracion.getNuevoDtoExpMat().getExpedientesTitulacion();
         controladorTitSegGeneracion.consultarExpediente(expediente.getExpediente());
-        
     }
    
     public void eliminarDocumento(DocumentosExpediente docsExp){
@@ -711,5 +710,5 @@ public class ControladorArchivosTitulacion implements Serializable{
         }
                  
     }
- 
+   
 }

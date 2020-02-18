@@ -16,6 +16,11 @@
         </f:metadata>
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="calendario.js" />
+         <style type="text/css">
+            .ui-progressbar .ui-progressbar-label {
+                color: #ffffff;
+            }
+        </style>
     </ui:define>
 
     <ui:define name="title"/>
@@ -59,7 +64,7 @@
                                 <br/>
                                 <h4 style="text-align: center;">
                                             La información ya no se puede modificar debido a que el expediente ya ha sido validado por el Área de Titulación. Acude al departamento para continuar con el proceso. <br />
-                                            Si tienes alguna duda puedes comunicarte al teléfono <strong>764-764-5240 ext. 3215</strong>o enviar un correo electrónico a la dirección: <strong>coordinacion.titulacion@utxicotepec.edu.mx</strong>
+                                            Si tienes alguna duda puedes comunicarte al teléfono <strong>764-764-5240 ext. 3215</strong> o enviar un correo electrónico a la dirección: <strong>coordinacion.titulacion@utxicotepec.edu.mx</strong>
                                 </h4>
                                 </c:if>
                                 <c:if test="#{!controladorEstReg.expValidado}">

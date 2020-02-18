@@ -12,8 +12,8 @@ import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
-import mx.edu.utxj.pye.titulacion.dto.dtoEstudianteParaReporte;
-import mx.edu.utxj.pye.titulacion.dto.dtoEstadisticaEgresados;
+import mx.edu.utxj.pye.titulacion.dto.DtoEstudianteParaReporte;
+import mx.edu.utxj.pye.titulacion.dto.DtoEstadisticaEgresados;
 
 /**
  *
@@ -39,9 +39,9 @@ public interface EjbEstadisticaEgresados {
      * Obtiene reporte de integración de expedientes de titulación
      * @param generacion
      * @param nivel
-     * @return Lista de dtoEstadisticaEgresados por programa educativo
+     * @return Lista de DtoEstadisticaEgresados por programa educativo
      */
-    public List<dtoEstadisticaEgresados> obtenerReporteIntegracionExp(Generaciones generacion, String nivel);
+    public List<DtoEstadisticaEgresados> obtenerReporteIntegracionExp(Generaciones generacion, String nivel);
     
      /**
      * Obtiene número de estudiantes inscritos (reportado en registro de SII de matricula periodos escolares)
@@ -89,9 +89,9 @@ public interface EjbEstadisticaEgresados {
      /**
      * Obtiene listado de alumnos por generación y nivel seleccionado con situación: académica, integración de expediente y validación de expediente.
      * @param generacion
-     * @return Lista de dtoEstadisticaEgresados
+     * @return Lista de DtoEstadisticaEgresados
      */
-    public List<dtoEstudianteParaReporte> obtenerListadoGeneral(Generaciones generacion);
+    public List<DtoEstudianteParaReporte> obtenerListadoGeneral(Generaciones generacion);
    
      /**
      * Convertir clave de status del estudiante en SAIIUT a descripcion

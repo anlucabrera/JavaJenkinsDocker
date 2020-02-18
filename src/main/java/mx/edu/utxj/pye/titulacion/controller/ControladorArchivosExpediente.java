@@ -590,7 +590,7 @@ public class ControladorArchivosExpediente implements Serializable{
         }
                  
     }
-    
+ 
     public void cargarDocumentosPorExpediente(){
         listaDocsExp = ejbEstudianteRegistro.getListaDocumentosPorRegistro(ejbEstudianteRegistro.obtenerClaveExpediente(estudiante));
         expediente = ejbEstudianteRegistro.obtenerClaveExpediente(estudiante);

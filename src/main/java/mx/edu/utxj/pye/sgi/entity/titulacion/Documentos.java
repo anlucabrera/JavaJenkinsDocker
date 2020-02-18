@@ -39,12 +39,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Documentos.findByActivo", query = "SELECT d FROM Documentos d WHERE d.activo = :activo")})
 public class Documentos implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "documento")
-    private Integer documento;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
@@ -64,6 +58,15 @@ public class Documentos implements Serializable {
     @NotNull
     @Column(name = "activo")
     private boolean activo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento")
+    private List<TituloExpediente> tituloExpedienteList;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "documento")
+    private Integer documento;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento")
     private List<DocumentosExpediente> documentosExpedienteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "documentos")
@@ -92,37 +95,6 @@ public class Documentos implements Serializable {
         this.documento = documento;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getEspecificaciones() {
-        return especificaciones;
-    }
-
-    public void setEspecificaciones(String especificaciones) {
-        this.especificaciones = especificaciones;
-    }
-
-    public String getNomenclatura() {
-        return nomenclatura;
-    }
-
-    public void setNomenclatura(String nomenclatura) {
-        this.nomenclatura = nomenclatura;
-    }
-
-    public boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(boolean activo) {
-        this.activo = activo;
-    }
 
     @XmlTransient
     public List<DocumentosExpediente> getDocumentosExpedienteList() {
@@ -165,6 +137,47 @@ public class Documentos implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.titulacion.Documentos[ documento=" + documento + " ]";
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getEspecificaciones() {
+        return especificaciones;
+    }
+
+    public void setEspecificaciones(String especificaciones) {
+        this.especificaciones = especificaciones;
+    }
+
+    public String getNomenclatura() {
+        return nomenclatura;
+    }
+
+    public void setNomenclatura(String nomenclatura) {
+        this.nomenclatura = nomenclatura;
+    }
+
+    public boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    @XmlTransient
+    public List<TituloExpediente> getTituloExpedienteList() {
+        return tituloExpedienteList;
+    }
+
+    public void setTituloExpedienteList(List<TituloExpediente> tituloExpedienteList) {
+        this.tituloExpedienteList = tituloExpedienteList;
     }
     
 }

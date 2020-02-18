@@ -14,8 +14,8 @@ import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.siip.dto.pye.DTOParticipantesActFormInt;
 import mx.edu.utxj.pye.siip.dto.eb.DTODatosEstudiante;
-import mx.edu.utxj.pye.siip.dto.pye.participantesAFIporNivel;
-import mx.edu.utxj.pye.siip.dto.pye.participantesAFIporPECuat;
+import mx.edu.utxj.pye.siip.dto.pye.ParticipantesAFIporNivel;
+import mx.edu.utxj.pye.siip.dto.pye.ParticipantesAFIporPECuat;
 /**
  *
  * @author UTXJ
@@ -59,7 +59,7 @@ public interface EjbPartFormInt {
 //   public List<NumeroParticipantesAFI> totalParticipantesAFIporProgEduCuatrimestreInfEst (String actividadFormacionIntegral);
 //
 
-   public List<participantesAFIporNivel> totalParticipantesAFIporNivel(String actividadFormacionIntegral);
+   public List<ParticipantesAFIporNivel> totalParticipantesAFIporNivel(String actividadFormacionIntegral);
 
-   public List<participantesAFIporPECuat> totalParticipantesAFIporPECuat(Short area, String actividadFormacionIntegral);
+   public List<ParticipantesAFIporPECuat> totalParticipantesAFIporPECuat(Short area, String actividadFormacionIntegral);
 }
