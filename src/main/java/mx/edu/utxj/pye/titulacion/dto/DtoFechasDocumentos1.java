@@ -10,11 +10,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
  *
@@ -22,13 +23,12 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = "dtoProcesosIntegracion")
+@ToString(of = "dtoFechasDocumentos")
 @EqualsAndHashCode
-public class dtoProcesosIntegracion implements Serializable{
-    private static final long serialVersionUID = 1304458214610294698L;
-    @Getter @Setter private ProcesosGeneraciones procesosGeneraciones;
-    @Getter @Setter private Generaciones generacion;
-    @Getter @Setter private PeriodosEscolares periodoIntegracion;
-    @Getter @Setter private String nivel;
-    
+public class DtoFechasDocumentos1 implements Serializable{
+
+    private static final long serialVersionUID = 2721760825600654002L;
+    @Getter @Setter @NonNull private FechasDocumentos fechasDocumentos;
+    @Getter @Setter private Generaciones generaciones;
+    @Getter @Setter private AreasUniversidad areasUniversidad;
 }
