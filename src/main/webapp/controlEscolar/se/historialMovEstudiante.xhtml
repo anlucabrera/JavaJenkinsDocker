@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+<!--         Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+<!--         Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Historial Movimientos Estudiante
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Historial Movimientos Estudiante"/>
+
+        <div class="contenedor">
+            <c:if test="#{historialMovEstServiciosEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(historialMovEstServiciosEscolares.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                            <div class="ui-material">
+                                                <p:autoComplete id="persona" value="#{historialMovEstServiciosEscolares.rol.persona}" completeMethod="#{historialMovEstServiciosEscolares.completePersonas}" queryDelay="800"
+                                                                valueChangeListener="#{historialMovEstServiciosEscolares.cambiarPersona}"
+                                                                var="persona" itemValue="#{persona}" itemLabel="#{persona.apellidoPaterno} #{persona.apellidoMaterno} #{persona.nombre} #{persona.curp}" converter="entityConverter" forceSelection="true" size="70">
+                                                    <p:column>#{persona.apellidoPaterno} #{persona.apellidoMaterno} #{persona.nombre}</p:column>
+                                                    <p:column>#{persona.curp}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Nombre de la Persona - CURP" for="persona" style="font-weight: bold; font-size: 14px;"/>
+                                                <p:message for="persona" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                     <hr/>
+                                     <c:if test="#{historialMovEstServiciosEscolares.rol.persona ne null}">
+                                         <div class="row">
+                                             <div class="col-sm-12 border-right">
+                                                 <div class="description-block" style="text-align: center">
+                                                     <h3><strong>Datos personales</strong></h3>
+                                                 </div>
+                                                 </div>
+                                             </div>
+                                         <div class="row">
+                                                     <div class="box box-primary">                                                                   
+                                                             <div class="col-sm-12">
+                                                                 <div class="row">
+                                                                     <center>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                         <strong>Nombre</strong>
+                                                                         <p class="text-muted">
+                                                                         #{historialMovEstServiciosEscolares.rol.persona.nombre}
+                                                                         </p>
+                                                                         <hr/>
+                                                                     </div>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                         <strong>Apellido Paterno</strong>
+                                                                         <p class="text-muted">
+                                                                         #{historialMovEstServiciosEscolares.rol.persona.apellidoPaterno}
+                                                                         </p>
+                                                                         <hr/>
+                                                                     </div>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                         <strong>Apellido Materno</strong>
+                                                                         <p class="text-muted">
+                                                                         #{historialMovEstServiciosEscolares.rol.persona.apellidoMaterno}
+                                                                         </p>
+                                                                         <hr/>
+                                                                     </div>
+
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                         <strong>CURP</strong>
+                                                                         <p class="text-muted">
+                                                                         #{historialMovEstServiciosEscolares.rol.persona.curp}
+                                                                         </p>
+                                                                         <hr/>
+                                                                     </div>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                         <strong>Fecha de Nacimiento</strong>
+                                                                         <p class="text-muted">
+                                                                             <h:outputText value="#{historialMovEstServiciosEscolares.rol.persona.fechaNacimiento}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                         </p>
+                                                                         <hr/>
+                                                                     </div>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                         <strong>Género</strong>
+                                                                         <c:if test="#{historialMovEstServiciosEscolares.rol.persona.genero eq 2}">
+                                                                         <p class="text-muted">
+                                                                         Masculino
+                                                                         </p>
+                                                                         </c:if>
+                                                                         <c:if test="#{historialMovEstServiciosEscolares.rol.persona.genero eq 1}">
+                                                                         <p class="text-muted">
+                                                                         Femenino
+                                                                         </p>
+                                                                         </c:if>
+                                                                         <hr/>
+                                                                     </div>
+                                                                     </center>
+                                                                 </div>
+                                                             </div>
+                                                     </div>
+                                         </div>
+                                         <div class="row">
+                                             <div class="col-sm-12 border-right">
+                                                 <div class="description-block" style="text-align: center">
+                                                     <h3><strong>Historial de Movimientos</strong></h3>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                         <div class="row">
+                                             <ui:repeat var="table" value="#{historialMovEstServiciosEscolares.rol.listaHistorialMovEst}" varStatus="status">
+                                                 <div class="row">
+                                                     <div class="col-sm-12 border-right">
+                                                         <div class="description-block">
+                                                             <div class="box box-primary">
+                                                                 <div class="box-header with-border">                                                                    
+                                                                     <div class="col-sm-12">
+                                                                         <div class="row">
+                                                                             <div class="col-sm-12 col-md-12 col-lg-1">
+                                                                                 <strong>No:</strong>
+                                                                                 <p class="text-muted" style="color:red; font-weight: bold;">
+                                                                                        #{status.index + 1}
+                                                                                 </p>
+                                                                                 <hr/>
+                                                                             </div>
+                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                 <strong>Periodo Proceso:</strong>
+                                                                                 <p class="text-muted">
+                                                                                         #{caster.clavePeriodoToString(table.aspirante.idProcesoInscripcion.idPeriodo)}
+                                                                                 </p>
+                                                                                 <hr/>
+                                                                             </div>
+                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                 <strong>Periodo Actual:</strong>
+                                                                                 <p class="text-muted">
+                                                                                         #{table.periodoActual.mesInicio.mes} - #{table.periodoActual.mesFin.mes} #{table.periodoActual.anio}
+                                                                                 </p>
+                                                                                 <hr/>
+                                                                             </div>
+                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                 <strong>Situación Actual:</strong>
+                                                                                 <p class="text-muted">
+                                                                                         #{table.situacionActual}
+                                                                                 </p>
+                                                                                 <hr/>
+                                                                             </div>
+                                                                             <div class="col-sm-12 col-md-12 col-lg-1">
+                                                                                 <strong>Matricula:</strong>
+                                                                                 <p class="text-muted">
+                                                                                         #{table.estudiante.matricula}
+                                                                                 </p>
+                                                                                 <hr/>
+                                                                             </div>
+                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                 <strong>Programa Educativo:</strong>
+                                                                                 <p class="text-muted">
+                                                                                         #{table.programaEducativoActual}
+                                                                                 </p>
+                                                                                 <hr/>
+                                                                             </div>
+                                                                         </div>
+                                                                     </div>
+                                                                 </div>
+                                                                 <p:dataTable id="tbHistorial" var="historialMov" value="#{table.listaDatosMovimiento}" 
+                                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" style="width: auto;">
+                                                                     <p:columnGroup type="header">
+                                                                         <p:row class="success">
+                                                                             <p:column headerText="Fecha" style="width: 80px;"/>
+                                                                             <p:column headerText="Periodo Escolar" style="width: 100px;"/> 
+                                                                             <p:column headerText="Tipo de Movimiento" style="width: 100px;"/>
+                                                                             <p:column headerText="Información del Movimiento" style="width: 200px;"/>
+                                                                             <p:column headerText="Realizó" style="width: 150px;"/>
+                                                                         </p:row>
+                                                                     </p:columnGroup>
+                                                                     <p:column style="text-align: center;">
+                                                                         <h:outputText value="#{historialMov.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                     </p:column>
+                                                                     <p:column style="text-align: center;">
+                                                                         <h:outputText value="#{historialMov.periodoEscolar}" style="text-align: center;" />
+                                                                     </p:column>
+                                                                     <p:column style="text-align: center;">
+                                                                         <h:outputText value="#{historialMov.tipoMovimiento}"/>
+                                                                     </p:column>
+                                                                     <p:column style="text-align: justify;">
+                                                                         <h:outputText value="#{historialMov.informacionMovimiento}"/>
+                                                                     </p:column>
+                                                                     <p:column style="text-align: justify;">
+                                                                         <h:outputText value="#{historialMov.personaRealizo}"/>
+                                                                     </p:column>
+                                                                 </p:dataTable>
+
+                                                             </div>
+                                                         </div>
+                                                     </div>     
+                                                 </div>
+                                             </ui:repeat>
+                                         </div>
+                                     </c:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty historialMovEstServiciosEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{historialMovEstServiciosEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para Consultar Historial de Movimientos</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{historialMovEstServiciosEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!historialMovEstServiciosEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal de servicios escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>

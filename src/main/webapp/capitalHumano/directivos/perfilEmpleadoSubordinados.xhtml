@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{controladorSubordinados.cargado}">
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador'}">
+                <div class="row">
+                    <h:form id="frmFunciones">
+                        <p:outputLabel value="Subordinados(as)" for="clave" class="col-sm-2 control-label"/>
+                        <div class="col-sm-3">
+                            <p:selectOneMenu id="clave" value="#{controladorSubordinados.contactoDestino}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
+                                <f:selectItem itemValue="0" itemLabel=" Regresar " itemDescription="Descripción del valor." />
+                                <f:selectItems value="#{controladorSubordinados.nuevaListaListaPersonalJefes}" var="subordinado" itemValue="#{subordinado.clave}" itemLabel="#{subordinado.clave} - #{subordinado.nombre} - #{subordinado.categoriaOperativaNombre}" />
+                            </p:selectOneMenu>  
+                            <p:message for="clave"/>
+                        </div>
+                        <div class="col-sm-3">
+                            <p:commandButton id="btnBuscarActiuvidades" value="Visualizar perfil" actionListener="#{controladorSubordinados.mostrarPerfilSubordinado()}" icon="fa fa-paper-plane" class="btn-primary btn-block col-md-3" update="@form :frmFunciones :informacion panelDatos" process="@form :frmFunciones" /> 
+                        </div>
+                    </h:form>
+                </div> 
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilSubordinado.xhtml"/>
+                        <div class="col-md-9">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>
+                                    <p:tab title="Currículum vitae">
+                                        <h:form>
+                                            <p:commandButton value="Imprimir currículum vitae" icon="fa fa-print" class="btn-success">                                        
+                                                <p:printer target="CV" />
+                                            </p:commandButton>
+                                            <p:panel id="CV" >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h1><strong>Currículum vitae</strong></h1>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div id="tituloCV" class="col-sm-12">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                        <h3>Contenido de currículum para expedientes</h3>
+                                                                        <h4>Departamento de personal</h4>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos personales</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div  id="fotoPersonal" class="col-sm-2 pull-left">
+                                                                                            <div class="description-block" style="text-align: center" >
+                                                                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{controladorSubordinados.nuevoOBJListaPersonal.clave}.jpg" alt="#{controladorSubordinados.nuevoOBJListaPersonal.clave}" title="Personal #{controladorSubordinados.nuevoOBJListaPersonal.clave}" style="width: 140px; height: 140px; align-content: center;"/>
+                                                                                            </div>  
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Nombre completo</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorSubordinados.nuevoOBJListaPersonal.nombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                                <strong>Lugar y fecha de nacimiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorSubordinados.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}
+                                                                                                </p> 
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>CURP</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorSubordinados.nuevoOBJInformacionAdicionalPersonal.curp}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                                <strong>RFC</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorSubordinados.nuevoOBJInformacionAdicionalPersonal.rfc}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal2" class="col-sm-2 pull-left" style="width: 180px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Fecha de nacimiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <h:outputLabel value="#{controladorSubordinados.nuevoOBJListaPersonal.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                                </p>                                                                
+                                                                                                <hr/>                                                                                                
+                                                                                                <strong>Estado civil</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorSubordinados.nuevoOBJInformacionAdicionalPersonal.estadoCivil}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal2" class="col-sm-2 pull-left" style="width: 150px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Edad</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorSubordinados.nuevoOBJInformacionAdicionalPersonal.edad} años
+                                                                                                </p>                                                             
+                                                                                                <hr/>  
+                                                                                                <strong>Sexo</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorSubordinados.nuevoOBJListaPersonal.generoNombre}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <hr/>   
+                                                                                    <div class="row">
+                                                                                        <div  id="dstoasPerosonalesPersonal1" class="col-sm-4 pull-left" style="width: 340px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Dirección</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorSubordinados.nuevoOBJInformacionAdicionalPersonal.direccion}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal1" class="col-sm-4 pull-left" style="width: 340px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Correo electrónico</strong>
+                                                                                                <ul style="list-style-type: square">
+                                                                                                    <li>
+                                                                                                        #{controladorSubordinados.nuevoOBJListaPersonal.correoElectronico}
+                                                                                                        <br/>
+                                                                                                        #{controladorSubordinados.nuevoOBJListaPersonal.correoElectronico2}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal1" class="col-sm-4 pull-left" style="width: 340px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Número de teléfono</strong>
+                                                                                                <ul style="list-style-type: square">
+                                                                                                    <li>
+                                                                                                        Casa: #{controladorSubordinados.nuevoOBJInformacionAdicionalPersonal.numTelFijo}
+                                                                                                    </li>
+                                                                                                    <li>
+                                                                                                        Cel.: #{controladorSubordinados.nuevoOBJInformacionAdicionalPersonal.numTelMovil}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="text-align: center" >
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block" style="text-align: center">
+                                                                            <h3><strong>Formación académica</strong></h3>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaFormacionAcademica.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblFormaciónAcadémica" value="#{controladorSubordinados.listaFormacionAcademica}" var="formaAL"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaFormacionAcademica.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Formación académica</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Estudio realizado" >
+                                                                                    <h:outputText value="#{formaAL.nivelEscolaridad.nombre}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Fecha" >
+                                                                                    <h:outputLabel value="#{formaAL.fechaObtencion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Institución" >
+                                                                                    <h:outputText value="#{formaAL.institucion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Modo titulación" >
+                                                                                    <h:outputText value="#{formaAL.modoTitulacion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="No. cédula profesional" >
+                                                                                    <h:outputText value="#{formaAL.cedulaProfesional}" />
+                                                                                </p:column>
+
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+
+                                                                <div class="row" style="display: #{controladorSubordinados.listaExperienciasLaborales.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblExperienciaLaboral" value="#{controladorSubordinados.listaExperienciasLaborales}" var="experiencL"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaExperienciasLaborales.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Experiencia laboral</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Empresa o institución" >
+                                                                                    <h:outputText value="#{experiencL.institucionEmpresa}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                    <h:outputLabel value="del"/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{experiencL.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>                                                                                
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="al"/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{experiencL.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Puesto" >
+                                                                                    <h:outputText value="#{experiencL.puestoDesepenado}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 40%" headerText="Funciones realizadas" >
+                                                                                    <h:outputText value="#{experiencL.funcionesDesempenio}" />
+                                                                                </p:column>
+
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaCapacitacionespersonal.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblCapacitación" value="#{controladorSubordinados.listaCapacitacionespersonal}" var="capaci"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaCapacitacionespersonal.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Actualización profesional</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 50%" headerText="Nombre de la capacitación" >
+                                                                                    <h:outputText value="#{capaci.nombre}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 30%" headerText="Lugar" >
+                                                                                    <h:outputText value="#{capaci.lugar}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                    <h:outputLabel value="del "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{capaci.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="al "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{capaci.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaIdiomas.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblIdiomas" value="#{controladorSubordinados.listaIdiomas}" var="idiomasD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaIdiomas.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Idiomas</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 25%" headerText="Idioma">
+                                                                                    <h:outputText value="#{idiomasD.idiomaHablado}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de conversación">
+                                                                                    <h:outputText value="#{idiomasD.nivelConversacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de escritura">
+                                                                                    <h:outputText value="#{idiomasD.nivelEscritura}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de lectura">
+                                                                                    <h:outputText value="#{idiomasD.nivelLectura}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaHabilidadesInformaticas.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblInformática" value="#{controladorSubordinados.listaHabilidadesInformaticas}" var="informaticD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaHabilidadesInformaticas.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Habilidades informáticas </h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 30%" headerText="Conocimiento informático" >
+                                                                                    <h:outputText value="#{informaticD.tipoConocimiento}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Programa dominado">
+                                                                                    <h:outputText value="#{informaticD.programaDominante}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nivel de dominio">
+                                                                                    <h:outputText value="#{informaticD.nivelConocimiento}" />
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaLenguas.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblLenguas" value="#{controladorSubordinados.listaLenguas}" var="lenguasD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaLenguas.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Lenguas indígenas</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 25%" headerText="Lengua">
+                                                                                    <h:outputText value="#{lenguasD.tipoLengua}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de conversación">
+                                                                                    <h:outputText value="#{lenguasD.nivelConversacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de escritura">
+                                                                                    <h:outputText value="#{lenguasD.nivelEscritura}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de lectura">
+                                                                                    <h:outputText value="#{lenguasD.nivelLectura}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaDesarrollosTecnologicos.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblTrabajosdeInvestigación" value="#{controladorSubordinados.listaDesarrollosTecnologicos}" var="des"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaDesarrollosTecnologicos.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Desarrollos tecnológicos</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 30%" headerText="Tipo de desarrollo">
+                                                                                    <h:outputText value="#{des.tipoDesarrollo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Objetivo" >
+                                                                                    <h:outputText value="#{des.objetivoDesarrollo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Resumen">
+                                                                                    <h:outputLabel value="#{des.resumenDesarrollo}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaInnovaciones.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblinnnovacion" value="#{controladorSubordinados.listaInnovaciones}" var="ino"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaInnovaciones.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Innovaciones</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column headerText="Tipo de innovación">
+                                                                                    <h:outputText value="#{ino.tipoInnovacion}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Cobertura">
+                                                                                    <h:outputText value="#{ino.potencialCobertura}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Aplicación">
+                                                                                    <h:outputText value="#{ino.aplicacionInnovacion}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaDesarrolloSoftwar.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tbldesSof" value="#{controladorSubordinados.listaDesarrolloSoftwar}" var="dess"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaDesarrolloSoftwar.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Desarrollo de Software</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Tipo">
+                                                                                    <h:outputText value="#{dess.tipoDesarrollo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Lugar">
+                                                                                    <h:outputText value="#{dess.lugar}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Horas invertidas">
+                                                                                    <h:outputText value="#{dess.horasHombre}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 45%" headerText="Logros">
+                                                                                    <h:outputText value="#{dess.logros}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaDistinciones.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tbldistin" value="#{controladorSubordinados.listaDistinciones}" var="dist"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaDistinciones.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Premios y Distinciones</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 30%" headerText="Instituto">
+                                                                                    <h:outputText value="#{dist.institucion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nombre">
+                                                                                    <h:outputText value="#{dist.nombreDistincion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Motivo">
+                                                                                    <h:outputText value="#{dist.motivoDescripcion}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaLibrosPubs.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tbllibros" value="#{controladorSubordinados.listaLibrosPubs}" var="libro"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaLibrosPubs.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Libros Publicados</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 15%" headerText="ISBN">
+                                                                                    <h:outputText value="#{libro.isbn}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 55%" headerText="Título">
+                                                                                    <h:outputText value="#{libro.titulo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Idioma">
+                                                                                    <h:outputText value="#{libro.idioma}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="País">
+                                                                                    <h:outputText value="#{libro.pasi}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaArticulosp.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblarticulos" value="#{controladorSubordinados.listaArticulosp}" var="articulo"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaArticulosp.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold"> Artículos Publicados</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 15%" headerText="ISBN electrónico">
+                                                                                    <h:outputText value="#{articulo.issnElectronico}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nombre">
+                                                                                    <h:outputText value="#{articulo.nombre}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Título">
+                                                                                    <h:outputText value="#{articulo.tituloArticulo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="País">
+                                                                                    <h:outputText value="#{articulo.pais}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaMemoriaspub.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblmemorias" value="#{controladorSubordinados.listaMemoriaspub}" var="memoria"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaMemoriaspub.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Memorias Publicadas</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 29%" headerText="Título de memoria">
+                                                                                    <h:outputText value="#{memoria.tituloDeMemoria}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 29%" headerText="Título de publicación">
+                                                                                    <h:outputText value="#{memoria.tituloDePublicacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 29%" headerText="Título de obra">
+                                                                                    <h:outputText value="#{memoria.tituloDeObra}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 13%" headerText="País">
+                                                                                    <h:outputText value="#{memoria.pais}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorSubordinados.listaCongresos.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblcongreso" value="#{controladorSubordinados.listaCongresos}" var="idiomasD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaCongresos.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Congresos</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Tipo de participación">
+                                                                                    <h:outputText value="#{idiomasD.participacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nombre de congreso">
+                                                                                    <h:outputText value="#{idiomasD.nombreCongreso}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 30%" headerText="Título de trabajo">
+                                                                                    <h:outputText value="#{idiomasD.tituloTrabajo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="País">
+                                                                                    <h:outputText value="#{idiomasD.lugarPais}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div> 
+                                                                <div class="row" style="display: #{controladorSubordinados.listaInvestigacion.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblInvestigaciones" value="#{controladorSubordinados.listaInvestigacion}" var="invest"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorSubordinados.listaInvestigacion.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Investigación</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 10%" headerText="Tipo de Investigación">
+                                                                                    <h:outputText value="#{invest.tipo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Nombre de la Investigación" >
+                                                                                    <h:outputText value="#{invest.nombreInvestigacion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 30%" headerText="Descripción" >
+                                                                                    <h:outputText value="#{invest.decripcion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                    <h:outputLabel value="del "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{invest.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="al "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{invest.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>  
+                                                                                <p:column style="width: 15%" headerText="Institución">
+                                                                                    <h:outputText value="#{invest.institucion}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:panel>
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Funciones">
+                                        <p:outputPanel>
+                                            <p:autoUpdate/>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">Función genérica</h5>
+                                                                    <c:forEach var="i" begin="0" end="#{controladorSubordinados.listaFuncioneSubordinado.size()-1}">
+                                                                        <c:set var="eje" value="#{controladorSubordinados.listaFuncioneSubordinado.get(i)}"/>
+                                                                        <c:if test="#{eje.tipo eq 'GENERAL'}">
+                                                                            <br/>
+                                                                            <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                            <br/>
+                                                                        </c:if>                                                                    
+                                                                    </c:forEach>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">Funciones específicas </h5>
+                                                                    <c:forEach var="f" begin="0" end="#{controladorSubordinados.listaFuncioneSubordinado.size()-1}">
+                                                                        <c:set var="eje" value="#{controladorSubordinados.listaFuncioneSubordinado.get(f)}"/>
+                                                                        <c:if test="#{eje.tipo ne 'GENERAL'}">
+                                                                            <br/>
+                                                                            <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                            <br/>
+                                                                        </c:if>                                                                    
+                                                                    </c:forEach>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </p:tab>
+                                    <p:tab title="Docencias" rendered="#{controladorSubordinados.listaDocencias.size() eq 0? false:true}">
+                                        <h:form id="frmExLab">                                               
+                                            <p:outputPanel>
+                                                <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaDocencias}"  var="docencia"
+                                                             paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30"
+                                                             emptyMessage="No se encontraron registros." rendered="true">
+                                                    <p:column headerText="Programa" 
+                                                              sortBy="#{docencia.programa}" 
+                                                              filterBy="#{docencia.programa}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputText value="#{docencia.programa}" />
+                                                    </p:column>
+                                                    <p:column headerText="Asignatura" 
+                                                              sortBy="#{docencia.materia}" 
+                                                              filterBy="#{docencia.materia}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputText value="#{docencia.materia}" />
+                                                    </p:column>                                                
+                                                    <p:column headerText="Periodo escolar" 
+                                                              sortBy="#{docencia.anio}" 
+                                                              filterBy="#{docencia.anio}" 
+                                                              filterMatchMode="contains"
+                                                              width="200">
+                                                        <h:outputText value="#{docencia.anio}, #{docencia.mesInicio} -#{docencia.msFin}" />
+                                                    </p:column>  
+                                                </p:dataTable>  
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Incidencias" titletip="#{controladorSubordinados.listaIncidenciasIndividuales.size()} incidencias pendientes" titleStyle="#{controladorSubordinados.listaIncidenciasIndividuales.size() eq 0 ?'':'background: #00a7d0 !important;' }">
+                                        <h:form id="frminci">                                               
+                                            <p:outputPanel >
+                                                <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaIncidenciasIndividuales}"  var="incidencias"
+                                                             paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" style="margin-bottom:20px"
+                                                             emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                    <p:column headerText="Tipo de incidencia" 
+                                                              sortBy="#{incidencias.tipo}" 
+                                                              filterBy="#{incidencias.tipo}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputText value="#{incidencias.tipo}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Fecha de aplicación" 
+                                                              sortBy="#{incidencias.fecha}" 
+                                                              filterBy="#{incidencias.fecha}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputLabel value="#{incidencias.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                    </p:column>    
+
+                                                    <p:column headerText="Justificacion" 
+                                                              sortBy="#{incidencias.justificacion}" 
+                                                              filterBy="#{incidencias.justificacion}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputText value="#{incidencias.justificacion}" />
+                                                    </p:column>  
+                                                    <p:column headerText="Estatus" 
+                                                              sortBy="#{incidencias.estatus}" 
+                                                              filterBy="#{incidencias.estatus}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputText value="#{incidencias.estatus}" />
+                                                    </p:column>     
+
+                                                    <p:column headerText="Tiempo" 
+                                                              sortBy="#{incidencias.tiempo}" 
+                                                              filterBy="#{incidencias.tiempo}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputText value="#{incidencias.tiempo}" />
+                                                    </p:column> 
+                                                </p:dataTable>  
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>
+                                    <!--p:tab title="Tarjeta de asistencia">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <h5 class="description-header">Tarjeta de asistencia</h5>
+                                                                <hr/>
+                                                                <object width="100%" height="850" data="resources/documentos/registro_de_funciones.pdf"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr/>                                               
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </p:tab-->
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+                <h1>
+                    Esta página está disponible solo para directivos.
+                </h1>
+            </c:if>            
+        </p:panel>
+            </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

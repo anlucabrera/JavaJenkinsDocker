@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <script type="text/javascript">
+            function myconfig() {
+                console.log("ejemplo");
+            }
+            ;
+
+        </script>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
+        </c:if>      
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="title">
+        Reporte avance programático
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{avanceProgramaticoDirector.cargado}">
+        <adm:breadcrumb title="Pase de lista"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{avanceProgramaticoDirector.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <!--p:link outcome="seguimientoPaseListaTutor">
+                                            <i class="fa fa-search"></i>
+                                            <span>Ver Reporte por materia</span>
+                                        </p:link-->
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {avanceProgramaticoDirector.actualizarCargaAcademica}" update="@form" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{avanceProgramaticoDirector.rol.periodo}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{avanceProgramaticoDirector.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this, planEstudio"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+
+
+                                                <p:selectOneMenu id="planEstudio" value="#{avanceProgramaticoDirector.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{avanceProgramaticoDirector.cambiarPlanestudio}">
+                                                    <f:selectItem itemValue="#{null}"/>
+                                                    <f:selectItems value="#{avanceProgramaticoDirector.rol.planesEstudios}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                    <p:ajax update="@this,:unidad, :CV" process="@this"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa Educativo" for="planEstudio"/>
+                                                <p:message for="planEstudio" />
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        <br/>
+                                        <div class="row">
+                                            <center>
+
+                                                <p:outputLabel value="Seleccione un Grupo para visualizar las Calificaciones" />
+                                                <p></p>
+                                                <p:selectOneRadio id="unidad" value="#{avanceProgramaticoDirector.rol.grupoSelec}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{avanceProgramaticoDirector.consultarAlumnos}" >
+                                                    <f:selectItems value="#{avanceProgramaticoDirector.rol.grupos}" var="g" itemLabel="#{g.grado}°#{g.literal} -- #{g.idSistema.nombre}" itemValue="#{g}"/>
+                                                    <p:ajax update="@this,:CV" process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneRadio>
+                                                <p></p>
+                                                <p></p>
+                                            </center>      
+                                            <p></p>
+                                            <p></p>
+                                            <p></p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <center>
+                                            <!--h:commandLink>
+                                                <i class="fa fa-file-excel-o"></i>
+                                                <p:dataExporter type="xls" target="tbAsigInd1" fileName="# {concentradoCalificaciones.rol.grupoSelec.grado}-# {concentradoCalificaciones.rol.grupoSelec.literal}-# {concentradoCalificaciones.rol.grupoSelec.plan.idPe}" />
+                                            </h:commandLink-->
+                                            <p:panel id="CV" >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row hidden-sm hidden-xs" style="align-content:  center">
+                                                                <div class="col-sm-3 pull-left">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <img src="../../resources/img/logoSep.jpg" alt="" height="80px"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6 pull-left" >
+                                                                    <div class="row">
+                                                                        <div class="row">
+                                                                            <div id="tituloCV" class="col-sm-12">
+                                                                                <div class="description-block" style="text-align: center">
+                                                                                    <h3><strong>Universidad Tecnológica De</strong></h3>
+                                                                                    <h3><strong>Xicotepec de Juárez</strong></h3>
+                                                                                    <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>       
+                                                                                    <h4><strong>Avance programático</strong></h4>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <img src="../../resources/img/utxj.png" alt="" height="100px"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row hidden-sm hidden-xs">
+                                                                <div class="col-sm-12">
+                                                                    <div class="description-block" style="text-align: right">
+                                                                        <h:outputLabel value="Fecha de Reporte" style="font-weight: bold;"/> <p:spacer width="10px"/> <h:outputLabel value="#{avanceProgramaticoDirector.rol.fechaInpresion}"><f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/></h:outputLabel><p:spacer width="10px"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <div class="description-block" style="text-align: left">
+                                                                        <h:outputLabel value="ÁREA ACADEMICA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{avanceProgramaticoDirector.rol.programa.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                        <h:outputLabel value="CARRERA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{avanceProgramaticoDirector.rol.planEstudio.descripcion}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                        <h:outputLabel value="PERIODO:"/> <p:spacer width="10px"/> <h:outputLabel value="#{avanceProgramaticoDirector.rol.periodo.mesInicio.mes} - #{avanceProgramaticoDirector.rol.periodo.mesFin.mes} #{avanceProgramaticoDirector.rol.periodo.anio}" style="font-weight: bold;"/><p:spacer width="10px"/> <h:outputLabel value="GRUPO:"/> <p:spacer width="10px"/> 
+                                                                        <h:outputLabel value="#{avanceProgramaticoDirector.rol.grupoSelec.grado}° #{avanceProgramaticoDirector.rol.grupoSelec.literal}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                        <h:outputLabel value="NOMBRE DEL TUTOR"/> <p:spacer width="10px"/> <h:outputLabel value="#{avanceProgramaticoDirector.buscarPersonal(avanceProgramaticoDirector.rol.grupoSelec.tutor)}" style="font-weight: bold;"/><p:spacer width="10px"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="col-sm-12">
+                                                    <div class="description-block">
+                                                        <p:outputPanel>            
+                                                            <p:autoUpdate/>
+
+
+                                                            <div class="col-md-12">
+                                                                <div class="box box-default collapsed-box">
+                                                                    <div class="box-header with-border">
+                                                                        <h3 class="box-title">Simbología</h3>
+
+                                                                        <div class="box-tools pull-right">
+                                                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- /.box-header -->
+                                                                    <div class="box-body" style="display: none;">
+                                                                        <div class="col-lg-3 col-md-6 col-xs-12">
+                                                                            <div class="info-box bg-blue">
+                                                                                <span class="info-box-icon">
+                                                                                    <i class="fa fa-calendar"/>
+                                                                                </span>
+                                                                                <div class="info-box-content">
+                                                                                    <span class="info-box-number">Aun no hay periodo activo </span>
+                                                                                    <span class="info-box-number">para captura de calificaciones</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-3 col-md-6 col-xs-12">
+                                                                            <div class="info-box bg-green">
+                                                                                <span class="info-box-icon">
+                                                                                    <i class="fa fa-calendar-check-o"/>
+                                                                                </span>
+                                                                                <div class="info-box-content">
+                                                                                    <span class="info-box-number">Captura de calificaciones  </span>
+                                                                                    <span class="info-box-number">finalizada</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-3 col-md-6 col-xs-12">
+                                                                            <div class="info-box bg-yellow">
+                                                                                <span class="info-box-icon">
+                                                                                    <i class="fa fa-clock-o"/>
+                                                                                </span>
+                                                                                <div class="info-box-content">
+                                                                                    <span class="info-box-number">En proceso de evaluación </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-3 col-md-6 col-xs-12">
+                                                                            <div class="info-box bg-red">
+                                                                                <span class="info-box-icon">
+                                                                                    <i class="fa fa-calendar-times-o"/>
+                                                                                </span>
+                                                                                <div class="info-box-content">
+                                                                                    <span class="info-box-number">El periodo de captura finalizo, </span>
+                                                                                    <span class="info-box-number">y no se registraron calificaciones </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <c:forEach var="a" begin="0" end="#{avanceProgramaticoDirector.rol.dvcs.size()-1}">
+                                                                <c:set var="b" value="#{avanceProgramaticoDirector.rol.dvcs.get(a)}"/>
+                                                                <div class="row">
+
+                                                                    <h3 style="text-align: justify">#{b.docente} -- #{b.materia}</h3>
+                                                                    <c:forEach var="c" begin="0" end="#{b.unidadd.size()-1}">
+                                                                        <c:set var="e" value="#{b.unidadd.get(c)}"/>
+                                                                        <c:set var="f" value="#{b.avanceU.get(c)}"/>
+                                                                        <c:set var="g" value="#{b.comentario.get(c)}"/>
+                                                                        <c:set var="h" value="#{b.clase.get(c)}"/>
+                                                                        <c:set var="i" value="#{b.notas.get(c)}"/>
+                                                                        <div class="col-lg-3 col-md-6 col-xs-12">
+                                                                            <div class="info-box #{h}">
+                                                                                <span class="info-box-icon">
+                                                                                    <c:if test="#{h eq 'bg-blue'}"><i class="fa fa-calendar"/></c:if>
+                                                                                    <c:if test="#{h eq 'bg-yellow'}"><i class="fa fa-clock-o"/></c:if>
+                                                                                    <c:if test="#{h eq 'bg-green'}"><i class="fa fa-calendar-check-o"/></c:if>
+                                                                                    <c:if test="#{h eq 'bg-red'}"><i class="fa fa-calendar-times-o"/></c:if>
+                                                                                </span>
+
+                                                                                <div class="info-box-content">
+                                                                                    <span class="info-box-text">#{e}</span>
+                                                                                    <span class="info-box-number">#{avanceProgramaticoDirector.rol.df.format(f)}</span>
+
+                                                                                    <div class="progress">
+                                                                                        <div class="progress-bar" style="width: #{f}%"></div>
+                                                                                    </div>
+                                                                                    <span class="progress-description">
+                                                                                        #{i}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </c:forEach>
+                                                                </div>
+                                                            </c:forEach> 
+                                                        </p:outputPanel>     
+                                                    </div>
+                                                </div>    
+                                            </p:panel>
+                                        </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <p:blockUI block="frm" widgetVar="bloqueoCargaFile">
+                    Cargando espere por favor.<br />
+                </p:blockUI>
+            </c:if>
+            <c:if test="#{!avanceProgramaticoDirector.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a Directores."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

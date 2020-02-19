@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Envie notificaciones via E-Mail a los trabajadores/as de la iunstitucion.
+    </ui:define>
+    <ui:define name="description">
+
+    </ui:define>
+    <ui:define name="body">
+        
+        <adm:breadcrumb title="Envio de notificaciones"/>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:toolbar id="tb">
+                            <f:facet name="right">
+
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </p:outputPanel>
+                </div>
+                <div class="box box-solid">
+                    <center>
+                        <h:form class="form-inline">
+                            <p:panel style="height: 70%; width: 70%;" class="bg-primary">
+                                <p:panel header="Seleccion de destinatario para el envio del mensaje">
+                                    <!--<p:outputLabel value="Seleccione el tipo de filtro que desea para enviar su notificacion"/>-->
+                                    <!--<br/>-->
+                                    <p:selectOneButton value="#{notificacionesEmail.nivelFriltro}" class="form-control">
+                                        <f:selectItem itemValue="1" itemLabel="Todo el personal" itemDescription=""/>
+                                        <f:selectItem itemValue="2" itemLabel="Personal por area" itemDescription=""/>
+                                        <f:selectItem itemValue="3" itemLabel="Directivos" itemDescription=""/>
+                                        <f:selectItem itemValue="4" itemLabel="Personalizado" itemDescription=""/>
+                                    </p:selectOneButton>
+                                    <br/>
+                                    <p:outputLabel value="Seleccione un area para el envio del mensaje"/>
+                                    <br/>
+                                    <p:selectOneButton value="#{notificacionesEmail.area}" class="form-control">
+                                        <f:selectItems value="#{utilidadesAdministracionEvaluaciones.selectItemEvaluacionesDirectivo}"/>
+                                    </p:selectOneButton>
+                                </p:panel>
+                                <p:panel header="Seleccione un encabezado para su mensaje">
+                                    <p:inputText value="#{notificacionesEmail.encabezado}" style="width: 75%;" placeholder="Encabezado del mensaje." class="form-control"/>
+                                </p:panel>
+                                <p:inputTextarea value="#{notificacionesEmail.mensaje}" rows="8" cols="110"  queryDelay="750" minQueryLength="4" class="form-control" autoResize="false"/>
+                                <br/>
+                                <p:commandButton value="Enviar mensaje" icon="fa fa-send" class="btn btn-primary"/> 
+                            </p:panel>
+                        </h:form>
+                    </center>
+                </div>
+            </div>
+        </div>
+        <!--Dialogo de confirmacion-->
+        <p:dialog widgetVar="modalConfirmacion" modal="true" showEffect="fade" hideEffect="fade" resizable="false" >
+
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

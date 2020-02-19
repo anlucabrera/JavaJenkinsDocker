@@ -1,0 +1,989 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>     
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>    
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{controladorEmpleadoLogeado.cargado}">
+        <p:panel id="errort" header="Error de tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <c:if test="#{controladorEmpleado.mandos eq 'Otro'}">
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Fecha límite</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">  
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                    <div class="info-box-content">
+                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                        <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                
+                    </div>
+                </div>
+            </div>
+        </c:if>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-10">
+                        <div class="nav-tabs-custom">
+                            <p:tabView>
+                                <p:tab title="Opciones ">
+
+                                    <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                        <div class="box box-primary">
+                                            <div class="box box-solid">
+                                                <div class="box-header with-border">
+                                                    <div class="box-tools pull-right">
+                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                <span class="info-box-number">Se recomienda que los archivos a subir sean escaneados de 400 o 400*400 DPI o PPP (según sea la configuración del escáner) en formato PDF, 
+                                                                    el nombre del archivo no deberá contener acentos ni caracteres especiales
+                                                                </span> 
+                                                                <hr/>
+                                                                <span class="info-box-number">Solo se permite anexar un archivo por registro, en caso de que su evidencia este en dos archivos distintos, en la siguiente página se le permite unirlos a fin de que queden en un solo archivo.</span>
+                                                                <p:link href="https://www.ilovepdf.com/es/unir_pdf" target="_blanck" style="color: #3a3030">
+                                                                    <i class="fa fa-file-pdf"></i>
+                                                                    <span>Unir archivos PDF</span>
+                                                                </p:link>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
+
+                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                        <div class="col-md-12">
+                                            <div class="box box-widget widget-user-2">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                    <div class="small-box bg-aqua-active">
+                                                                        <div class="inner">
+                                                                            <h3>Incidencias</h3>
+                                                                            <p>Registro</p>
+                                                                        </div>
+                                                                        <div class="icon">
+                                                                            <i class="fa fa-clock-o"/>
+                                                                        </div>
+                                                                        <a href="../capitalHumano/incidencias.xhtml" class="small-box-footer">Registrar</a>
+                                                                    </div>
+                                                                </div>
+                                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                                    <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                        <div class="small-box bg-aqua-active">
+                                                                            <div class="inner">
+                                                                                <h3>Datos personales</h3>
+                                                                                <p>Registro</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="fa fa-address-card-o"/>
+                                                                            </div>
+                                                                            <a href="../capitalHumano/perfilEmpleadoDatosPer.xhtml" class="small-box-footer">Datos personales</a>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                        <div class="small-box bg-aqua-active">
+                                                                            <div class="inner">
+                                                                                <h3>Premios</h3>
+                                                                                <p>Registro</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="fa fa-trophy"/>
+                                                                            </div>
+                                                                            <a href="../capitalHumano/perfilEmpleadoPremios.xhtml" class="small-box-footer">Premios y distinciones</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </c:if>
+                                                                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2 || controladorEmpleado.nuevoOBJListaPersonal.actividad eq 4}"> 
+                                                                    <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                        <div class="small-box bg-aqua-active">
+                                                                            <div class="inner">
+                                                                                <h3>Funciones</h3>
+                                                                                <p>Registro</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="fa fa-sitemap"/>
+                                                                            </div>
+                                                                            <a href="../capitalHumano/directivos/perfilEmpleadoFun.xhtml" class="small-box-footer">Organigrama y funciones</a>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                        <div class="small-box bg-green">
+                                                                            <div class="inner">
+                                                                                <h3>Incidencias</h3>
+                                                                                <p>Validacion</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="fa fa-check-square-o"/>
+                                                                            </div>
+                                                                            <a href="../capitalHumano/directivos/perfilSubordinadosIn.xhtml" class="small-box-footer">Validar</a>
+                                                                        </div>
+                                                                    </div>     
+                                                                    <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                        <div class="small-box bg-blue">
+                                                                            <div class="inner">
+                                                                                <h3>Subordinados</h3>
+                                                                                <p>Consulta</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="fa fa-users"/>
+                                                                            </div>
+                                                                            <a href="../capitalHumano/directivos/perfilEmpleadoSubordinados.xhtml" class="small-box-footer">Perfil de subordinados</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </c:if>                                                                
+                                                                <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                    <div class="small-box bg-blue">
+                                                                        <div class="inner">
+                                                                            <h3>Evaluaciones</h3>
+                                                                            <p>Consulta</p>
+                                                                        </div>
+                                                                        <div class="icon">
+                                                                            <i class="fa fa-list-alt"/>
+                                                                        </div>
+                                                                        <a href="../capitalHumano/perfilEmpleadoEvaluaciones.xhtml" class="small-box-footer">Resultados de evaluaciones</a>
+                                                                    </div>
+                                                                </div>
+                                                                <c:if test="#{controladorEmpleado.listaDocencias.size() != 0}">
+                                                                    <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                        <div class="small-box bg-blue">
+                                                                            <div class="inner">
+                                                                                <h3>Docencias</h3>
+                                                                                <p>Consulta</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="fa fa-book"/>
+                                                                            </div>
+                                                                            <a href="../capitalHumano/perfilEmpleadoExDoc.xhtml" class="small-box-footer">Experiencia docente UTXJ</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </c:if>   
+                                                                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 530}">
+                                                                    <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                        <div class="small-box bg-blue">
+                                                                            <div class="inner">
+                                                                                <h3>Incidencias</h3>
+                                                                                <p>Consulta</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="fa fa-file-text-o"/>
+                                                                            </div>
+                                                                            <a href="../capitalHumano/personal/perfilPersonalIn.xhtml" class="small-box-footer">Generar Reporte</a>
+                                                                        </div>
+                                                                    </div> 
+                                                                </c:if>      
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr/>
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                    <div class="small-box bg-aqua-active">
+                                                                        <div class="inner">
+                                                                            <h3>Educación</h3>
+                                                                            <p>Registro</p>
+                                                                        </div>
+                                                                        <div class="icon">
+                                                                            <i class="fa fa-graduation-cap"></i>
+                                                                        </div>
+                                                                        <h:link value="Formación académica" outcome="perfilEmpleadoEdu" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="0"/> </h:link>
+                                                                        <h:link value="Experiencia laboral" outcome="perfilEmpleadoEdu" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="1"/> </h:link>
+                                                                        <h:link value="Actualización profesional" outcome="perfilEmpleadoEdu" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="2"/> </h:link>
+                                                                    </div>
+                                                                </div>   
+
+                                                                <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                    <div class="small-box bg-aqua-active">
+                                                                        <div class="inner">
+                                                                            <h3>Habilidades</h3>
+                                                                            <p>Registro</p>
+                                                                        </div>
+                                                                        <div class="icon">
+                                                                            <i class="fa fa-handshake-o"></i>
+                                                                        </div>
+                                                                        <h:link value="Informáticas" outcome="perfilEmpleadoHab" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="1"/> </h:link>
+                                                                        <h:link value="Idiomas" outcome="perfilEmpleadoHab" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="0"/> </h:link>
+                                                                        <h:link value="Lenguas indígenas" outcome="perfilEmpleadoHab" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="2"/> </h:link>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                    <div class="small-box bg-aqua-active">
+                                                                        <div class="inner">
+                                                                            <h3>Tecnología</h3>
+                                                                            <p>Registro</p>
+                                                                        </div>
+                                                                        <div class="icon">
+                                                                            <i class="fa fa-desktop"/>
+                                                                        </div>
+                                                                        <h:link value="Desarrollos tecnológicos" outcome="perfilEmpleadoTecno" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="0"/> </h:link>
+                                                                        <h:link value="Desarrollo de software" outcome="perfilEmpleadoTecno" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="2"/> </h:link>
+                                                                        <h:link value="Innovaciones" outcome="perfilEmpleadoTecno" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="1"/> </h:link>
+                                                                    </div>
+                                                                </div>    
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr/>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <div class="row">
+                                                                    <div class="col-lg-4 col-md-12 col-xs-12">
+                                                                        <div class="small-box bg-aqua-active">
+                                                                            <div class="inner">
+                                                                                <h3>Producción</h3>
+                                                                                <p>Registro</p>
+                                                                            </div>
+                                                                            <div class="icon">
+                                                                                <i class="fa fa-wrench"/>
+                                                                            </div>
+                                                                            <h:link value="Libros" outcome="perfilEmpleadoProduccion" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="0"/> </h:link>
+                                                                            <h:link value="Artículos" outcome="perfilEmpleadoProduccion" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="1"/> </h:link>
+                                                                            <h:link value="Memorias" outcome="perfilEmpleadoProduccion" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="2"/> </h:link>
+                                                                            <h:link value="Congresos" outcome="perfilEmpleadoProduccion" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="4"/> </h:link>
+                                                                            <h:link value="Investigaciones" outcome="perfilEmpleadoProduccion" includeViewParams="true" class="small-box-footer"> <f:param name="activa" value="3"/> </h:link>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                                                <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="box box-primary">
+                                                        <div class="box box-solid">
+                                                            <div class="box-header with-border">
+                                                                <h3 class="box-title">Fecha límite</h3>
+                                                                <div class="box-tools pull-right">
+                                                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="box-body">  
+                                                                <div class="row">
+                                                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="info-box">
+                                                                            <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                            <div class="info-box-content">
+                                                                                <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                                <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:tab>
+                                <p:tab title="Currículum vitae">
+                                    <h:form>
+                                        <p:commandButton value="Imprimir currículum vitae" icon="fa fa-print" class="btn-success">                                        
+                                            <p:printer target="CV" />
+                                        </p:commandButton>
+                                        <p:panel id="CV" >
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h1><strong>Currículum vitae</strong></h1>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div id="tituloCV" class="col-sm-12">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                    <h3>Contenido de currículum para expedientes</h3>
+                                                                    <h4>Departamento de personal</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Datos personales</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="box box-primary">
+                                                                        <div class="box-header with-border">                                                                    
+                                                                            <div class="col-sm-12">
+                                                                                <div class="row">
+                                                                                    <div  id="fotoPersonal" class="col-sm-2 pull-left">
+                                                                                        <div class="description-block" style="text-align: center" >
+                                                                                            <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.clave}.jpg" alt="#{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.clave}" title="Personal #{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.clave}" style="width: 140px; height: 140px; align-content: center;"/>
+                                                                                        </div>  
+                                                                                    </div>
+                                                                                    <div class="col-sm-6">
+                                                                                        <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Nombre completo</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.nombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>CURP</strong>
+                                                                                                <p class="text-muted" style="text-transform: uppercase">
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.curp}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Lugar de nacimiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}
+                                                                                                </p> 
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>RFC</strong>
+                                                                                                <p class="text-muted" style="text-transform: uppercase">
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.rfc}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal3" class="col-sm-2 pull-left" style="width: 150px;"> 
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Edad</strong>
+                                                                                            <p class="text-muted">
+                                                                                                #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.edad} años
+                                                                                            </p>                                                             
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal4" class="col-sm-2 pull-left" style="width: 180px;"> 
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Estado civil</strong>
+                                                                                            <p class="text-muted">
+                                                                                                #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.estadoCivil}
+                                                                                            </p>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                    </div>
+
+
+                                                                                    <div  id="dstoasPerosonalesPersonal3" class="col-sm-2 pull-left" style="width: 150px;"> 
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Sexo</strong>
+                                                                                            <p class="text-muted">
+                                                                                                #{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.generoNombre}
+                                                                                            </p>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal4" class="col-sm-2 pull-left" style="width: 180px;"> 
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Fecha de nacimiento</strong>
+                                                                                            <p class="text-muted">
+                                                                                                <h:outputLabel value="#{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                            </p>                                                                
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div> 
+                                                                                <div class="row">
+                                                                                    <div  id="dstoasPerosonalesPersonal5" class="col-sm-4 pull-left" style="width: 250px;">        
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Dirección</strong>
+                                                                                            <p class="text-muted">
+                                                                                                #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.direccion}
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal6" class="col-sm-4 pull-left" style="width: 200px;">        
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Correo electrónico</strong>
+                                                                                            <ul style="list-style-type: square">
+                                                                                                <li>
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.correoElectronico}
+                                                                                                    <br/>
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.correoElectronico2}
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div  id="dstoasPerosonalesPersonal7" class="col-sm-4 pull-left" style="width: 200px;">        
+                                                                                        <div class="description-block" style="text-align: justify">
+                                                                                            <strong>Número de teléfono</strong>
+                                                                                            <ul style="list-style-type: square">
+                                                                                                <li>
+                                                                                                    Casa: #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.numTelFijo}
+                                                                                                </li>
+                                                                                                <li>
+                                                                                                    Cel.: #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.numTelMovil}
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaFormacionAcademica.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblFormaciónAcadémica" value="#{controladorEmpleadoLogeado.listaFormacionAcademica}" var="formaAL"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaFormacionAcademica.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Formación académica</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 20%" headerText="Estudio realizado" >
+                                                                                <h:outputText value="#{formaAL.nivelEscolaridad.nombre}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 15%" headerText="Fecha" >
+                                                                                <h:outputLabel value="#{formaAL.fechaObtencion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                            </p:column>
+                                                                            <p:column style="width: 25%" headerText="Institución" >
+                                                                                <h:outputText value="#{formaAL.institucion}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 25%" headerText="Modo titulación" >
+                                                                                <h:outputText value="#{formaAL.modoTitulacion}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 15%" headerText="No. cédula profesional" >
+                                                                                <h:outputText value="#{formaAL.cedulaProfesional}" />
+                                                                            </p:column>
+
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaExperienciasLaborales.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblExperienciaLaboral" value="#{controladorEmpleadoLogeado.listaExperienciasLaborales}" var="experiencL"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaExperienciasLaborales.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Experiencia laboral</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 20%" headerText="Empresa o institución" >
+                                                                                <h:outputText value="#{experiencL.institucionEmpresa}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                <h:outputLabel value="del"/>
+                                                                                <p:spacer width="10px"/>
+                                                                                <h:outputLabel value="#{experiencL.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>                                                                                
+                                                                                <p:spacer width="10px"/>
+                                                                                <h:outputLabel value="al"/>
+                                                                                <p:spacer width="10px"/>
+                                                                                <h:outputLabel value="#{experiencL.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                            </p:column>
+                                                                            <p:column style="width: 20%" headerText="Puesto" >
+                                                                                <h:outputText value="#{experiencL.puestoDesepenado}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 40%" headerText="Funciones realizadas" >
+                                                                                <h:outputText value="#{experiencL.funcionesDesempenio}" />
+                                                                            </p:column>
+
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaCapacitacionespersonal.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblCapacitación" value="#{controladorEmpleadoLogeado.listaCapacitacionespersonal}" var="capaci"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaCapacitacionespersonal.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Actualización profesional</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 50%" headerText="Nombre de la capacitación" >
+                                                                                <h:outputText value="#{capaci.nombre}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 30%" headerText="Lugar" >
+                                                                                <h:outputText value="#{capaci.lugar}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                <h:outputLabel value="del "/>
+                                                                                <p:spacer width="10px"/>
+                                                                                <h:outputLabel value="#{capaci.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                <p:spacer width="10px"/>
+                                                                                <h:outputLabel value="al "/>
+                                                                                <p:spacer width="10px"/>
+                                                                                <h:outputLabel value="#{capaci.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaIdiomas.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblIdiomas" value="#{controladorEmpleadoLogeado.listaIdiomas}" var="idiomasD"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaIdiomas.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Idiomas</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 25%" headerText="Idioma">
+                                                                                <h:outputText value="#{idiomasD.idiomaHablado}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 25%" headerText="% de conversación">
+                                                                                <h:outputText value="#{idiomasD.nivelConversacion}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 25%" headerText="% de escritura">
+                                                                                <h:outputText value="#{idiomasD.nivelEscritura}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 25%" headerText="% de lectura">
+                                                                                <h:outputText value="#{idiomasD.nivelLectura}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaHabilidadesInformaticas.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblInformática" value="#{controladorEmpleadoLogeado.listaHabilidadesInformaticas}" var="informaticD"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaHabilidadesInformaticas.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Habilidades informáticas </h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 30%" headerText="Conocimiento informático" >
+                                                                                <h:outputText value="#{informaticD.tipoConocimiento}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 35%" headerText="Programa dominado">
+                                                                                <h:outputText value="#{informaticD.programaDominante}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 35%" headerText="Nivel de dominio">
+                                                                                <h:outputText value="#{informaticD.nivelConocimiento}" />
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaLenguas.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblLenguas" value="#{controladorEmpleadoLogeado.listaLenguas}" var="lenguasD"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaLenguas.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Lenguas indígenas</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 25%" headerText="Lengua">
+                                                                                <h:outputText value="#{lenguasD.tipoLengua}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 25%" headerText="% de conversación">
+                                                                                <h:outputText value="#{lenguasD.nivelConversacion}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 25%" headerText="% de escritura">
+                                                                                <h:outputText value="#{lenguasD.nivelEscritura}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 25%" headerText="% de lectura">
+                                                                                <h:outputText value="#{lenguasD.nivelLectura}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaDesarrollosTecnologicos.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblTrabajosdeInvestigación" value="#{controladorEmpleadoLogeado.listaDesarrollosTecnologicos}" var="des"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaDesarrollosTecnologicos.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Desarrollos tecnológicos</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 30%" headerText="Tipo de desarrollo">
+                                                                                <h:outputText value="#{des.tipoDesarrollo}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 35%" headerText="Objetivo" >
+                                                                                <h:outputText value="#{des.objetivoDesarrollo}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 35%" headerText="Resumen">
+                                                                                <h:outputLabel value="#{des.resumenDesarrollo}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaInnovaciones.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblinnnovacion" value="#{controladorEmpleadoLogeado.listaInnovaciones}" var="ino"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaInnovaciones.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Innovaciones</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column headerText="Tipo de innovación">
+                                                                                <h:outputText value="#{ino.tipoInnovacion}"/>
+                                                                            </p:column>
+                                                                            <p:column headerText="Cobertura">
+                                                                                <h:outputText value="#{ino.potencialCobertura}"/>
+                                                                            </p:column>
+                                                                            <p:column headerText="Aplicación">
+                                                                                <h:outputText value="#{ino.aplicacionInnovacion}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaDesarrolloSoftwar.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tbldesSof" value="#{controladorEmpleadoLogeado.listaDesarrolloSoftwar}" var="dess"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaDesarrolloSoftwar.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Desarrollo de Software</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 20%" headerText="Tipo">
+                                                                                <h:outputText value="#{dess.tipoDesarrollo}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 20%" headerText="Lugar">
+                                                                                <h:outputText value="#{dess.lugar}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 15%" headerText="Horas invertidas">
+                                                                                <h:outputText value="#{dess.horasHombre}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 45%" headerText="Logros">
+                                                                                <h:outputText value="#{dess.logros}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaDistinciones.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tbldistin" value="#{controladorEmpleadoLogeado.listaDistinciones}" var="dist"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaDistinciones.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Premios y Distinciones</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 30%" headerText="Instituto">
+                                                                                <h:outputText value="#{dist.institucion}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 35%" headerText="Nombre">
+                                                                                <h:outputText value="#{dist.nombreDistincion}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 35%" headerText="Motivo">
+                                                                                <h:outputText value="#{dist.motivoDescripcion}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaLibrosPubs.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tbllibros" value="#{controladorEmpleadoLogeado.listaLibrosPubs}" var="libro"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaLibrosPubs.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Libros Publicados</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 15%" headerText="ISBN">
+                                                                                <h:outputText value="#{libro.isbn}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 55%" headerText="Título">
+                                                                                <h:outputText value="#{libro.titulo}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 15%" headerText="Idioma">
+                                                                                <h:outputText value="#{libro.idioma}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 15%" headerText="País">
+                                                                                <h:outputText value="#{libro.pasi}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaArticulosp.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblarticulos" value="#{controladorEmpleadoLogeado.listaArticulosp}" var="articulo"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaArticulosp.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold"> Artículos Publicados</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 15%" headerText="ISBN electrónico">
+                                                                                <h:outputText value="#{articulo.issnElectronico}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 35%" headerText="Nombre">
+                                                                                <h:outputText value="#{articulo.nombre}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 35%" headerText="Título">
+                                                                                <h:outputText value="#{articulo.tituloArticulo}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 15%" headerText="País">
+                                                                                <h:outputText value="#{articulo.pais}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaMemoriaspub.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblmemorias" value="#{controladorEmpleadoLogeado.listaMemoriaspub}" var="memoria"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaMemoriaspub.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Memorias Publicadas</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 29%" headerText="Título de memoria">
+                                                                                <h:outputText value="#{memoria.tituloDeMemoria}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 29%" headerText="Título de publicación">
+                                                                                <h:outputText value="#{memoria.tituloDePublicacion}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 29%" headerText="Título de obra">
+                                                                                <h:outputText value="#{memoria.tituloDeObra}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 13%" headerText="País">
+                                                                                <h:outputText value="#{memoria.pais}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaCongresos.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblcongreso" value="#{controladorEmpleadoLogeado.listaCongresos}" var="idiomasD"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaCongresos.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Congresos</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 15%" headerText="Tipo de participación">
+                                                                                <h:outputText value="#{idiomasD.participacion}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 35%" headerText="Nombre de congreso">
+                                                                                <h:outputText value="#{idiomasD.nombreCongreso}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 35%" headerText="Título de trabajo">
+                                                                                <h:outputText value="#{idiomasD.tituloTrabajo}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 15%" headerText="País">
+                                                                                <h:outputText value="#{idiomasD.lugarPais}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                            <div class="row" style="display: #{controladorEmpleadoLogeado.listaInvestigacion.size() != 0?'inline':'none'} ">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <p:dataTable id="tblInvestigaciones" value="#{controladorEmpleadoLogeado.listaInvestigacion}" var="invest"
+                                                                                     emptyMessage="No se encontraron datos registrados." rendered="#{controladorEmpleadoLogeado.listaInvestigacion.size() != 0?true:false}">
+
+                                                                            <f:facet name="header">
+                                                                                <h4 style="font-weight: bold">Investigación</h4>
+                                                                            </f:facet>
+
+                                                                            <p:column style="width: 10%" headerText="Tipo de Investigación">
+                                                                                <h:outputText value="#{invest.tipo}"/>
+                                                                            </p:column>
+                                                                            <p:column style="width: 25%" headerText="Nombre de la Investigación" >
+                                                                                <h:outputText value="#{invest.nombreInvestigacion}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 30%" headerText="Descripción" >
+                                                                                <h:outputText value="#{invest.decripcion}" />
+                                                                            </p:column>
+                                                                            <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                <h:outputLabel value="del "/>
+                                                                                <p:spacer width="10px"/>
+                                                                                <h:outputLabel value="#{invest.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                <p:spacer width="10px"/>
+                                                                                <h:outputLabel value="al "/>
+                                                                                <p:spacer width="10px"/>
+                                                                                <h:outputLabel value="#{invest.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                            </p:column>  
+                                                                            <p:column style="width: 15%" headerText="Institución">
+                                                                                <h:outputText value="#{invest.institucion}"/>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:panel>
+                                    </h:form>
+                                </p:tab>
+                                <p:tab title="Funciones">
+                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                        <div class="col-md-12">
+                                            <div class="box box-widget widget-user-2">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Función genérica</h5>
+                                                            <c:forEach var="i" begin="0" end="#{controladorEmpleadoLogeado.listaFuncionesLogeado.size()-1}">
+                                                                <c:set var="eje" value="#{controladorEmpleadoLogeado.listaFuncionesLogeado.get(i)}"/>
+                                                                <c:if test="#{eje.tipo eq 'GENERAL'}">
+                                                                    <br/>
+                                                                    <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                    <br/>
+                                                                </c:if>                                                                    
+                                                            </c:forEach>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr/>
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <h5 class="description-header">Funciones específicas</h5>
+                                                            <c:forEach var="i" begin="0" end="#{controladorEmpleadoLogeado.listaFuncionesLogeado.size()-1}">
+                                                                <c:set var="eje" value="#{controladorEmpleadoLogeado.listaFuncionesLogeado.get(i)}"/>
+                                                                <c:if test="#{eje.tipo ne 'GENERAL'}">
+                                                                    <br/>
+                                                                    <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                    <br/>
+                                                                </c:if>                                                                    
+                                                            </c:forEach>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:tab>
+                                <c:if test="#{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.actividadNombre eq 'Directivo'}">
+                                    <p:tab title="#{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.actividadNombre eq 'Directivo'?'Nombramiento':'Contrato'}" >
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <object width="100%" height="850" data="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.creaRutaNombramiento(controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.clave)}" style="#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr/>                                               
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </p:tab>
+                                </c:if>
+                            </p:tabView>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+            </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

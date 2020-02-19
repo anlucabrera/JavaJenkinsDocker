@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{administracionControl.cargado}">
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="informacion">
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-10">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>
+                            <p:tabView>
+                                <p:tab title="Eventos Generales" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                                    <h:form id="frmEventos"> 
+                                        <p:outputPanel id="incidenciasReporte">
+                                            <p:dataTable id="tblActividades"  value="#{administracionControl.eventoses}"  var="eventosR"
+                                                         editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+                                                <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditEventos}" update="tblActividades" process="@this"/>
+                                                <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblActividades" />
+                                                <p:column headerText="Nombre" style="width: 200px;text-align: justify;"
+                                                          sortBy="#{eventosR.nombre}" 
+                                                          filterBy="#{eventosR.nombre}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{eventosR.nombre}" />
+                                                </p:column>    
+                                                <p:column headerText="Tipo" style="width: 200px;text-align: justify;"
+                                                          sortBy="#{eventosR.tipo}" 
+                                                          filterBy="#{eventosR.tipo}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{eventosR.tipo}" />
+                                                </p:column>                                                     
+                                                <p:column headerText="Fecha Inicio" style="width: 100px">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputLabel value="#{eventosR.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{eventosR.fechaInicio}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/> mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>      
+                                                <p:column headerText="Fecha Fin" style="width: 100px">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputLabel value="#{eventosR.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{eventosR.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/> mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>      
+                                                <p:column style="width:32px;" class="noprint">
+                                                    <p:rowEditor />
+                                                </p:column>
+                                            </p:dataTable>  
+                                        </p:outputPanel>    
+                                    </h:form>
+                                </p:tab>
+                                <p:tab title="Eventos Áreas"  rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                                    <h:form id="frmInci"> 
+                                        <p:outputPanel >            
+                                            <p:autoUpdate/>
+                                            <p:panel header="Registro de Eventos Áreas" class="box box-primary">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12 col-md-6 col-lg-12"> 
+                                                                                <p:outputLabel for="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evento" />
+                                                                                <p:selectOneMenu id="gradoD" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{administracionControl.eventoC}" filter="true" filterMatchMode="contains">
+                                                                                    <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                    <f:selectItems value="#{administracionControl.eventoses}" var="evento" itemLabel="#{evento.tipo}--#{evento.nombre}" itemValue="#{evento.evento}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="gradoD" display="tooltip" />
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-6 col-lg-9"> 
+                                                                                <p:outputLabel for="arC" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Áreas" />
+                                                                                <p:selectOneMenu id="arC" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{administracionControl.areaC}" filter="true" filterMatchMode="contains">
+                                                                                    <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                    <f:selectItems value="#{administracionControl.areasUniversidads}" var="area" itemLabel="#{area.nombre}" itemValue="#{area.area}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="arC" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-6 col-lg-3">                                                                              
+                                                                                <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha limite de proceso" />
+                                                                                <p:calendar locale="es" id="fechaIn" value="#{administracionControl.fehDate}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="La incidencia debe contar con una fecha"/>
+                                                                                <p:message for="fechaIn"><p:autoUpdate/></p:message>     
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                    <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{administracionControl.agreggarEventoArea()}" 
+                                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" oncomplete="PF('frmEventosAreas').update();"/> 
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>                                                    
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:panel>
+                                        </p:outputPanel>
+                                    </h:form>
+                                    <h:form id="frmEventosAreas"> 
+                                        <p:outputPanel id="incidenciasReporte">
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
+                                            <p:dataTable id="tblEvenAre"  value="#{administracionControl.areaPOAs}"  var="eventosAr" editable="true"
+                                                         sortBy="#{eventosAr.proceso}" expandableRowGroups="true"
+                                                         style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+                                                <p:columnGroup type="header" class="hederTablesTitle">
+                                                    <p:row class="success">
+                                                        <p:column rowspan="2" headerText="" style="width: 50px;" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Área" style="width: 300px;" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Responsable" style="width: 200px;" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="2" headerText="Fecha" style="width: 160px;" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Restan" style="width: 200px;" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="" style="width: 50px;" styleClass="hederTablesTitle"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Liberacion"  styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Limite Pro."  styleClass="hederTablesTitle"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditEventosAreas}" update="tblEvenAre" process="@this"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblEvenAre" />
+
+                                                <p:headerRow>
+                                                    <p:column colspan="7" style="background: #2796cb; color: #FFFFFF;">
+                                                        <h:outputText value="#{eventosAr.proceso}" />
+                                                    </p:column>
+                                                </p:headerRow>
+
+                                                <p:column>
+                                                    <p:commandButton actionListener="#{administracionControl.eliminarEventoArea(eventosAr)}" update="tblEvenAre" process="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
+                                                                     styleClass="btn-primary" title="Eliminar evento área">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del evento #{eventosAr.proceso} del área #{eventosAr.area}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+                                                <p:column >
+                                                    <h:outputText value="#{eventosAr.area}" />
+                                                </p:column>   
+                                                <p:column >
+                                                    <h:outputText value="#{eventosAr.responsable}" />
+                                                </p:column>  
+                                                <p:column >
+                                                    <h:outputLabel value="#{eventosAr.fecaValidacion}"><f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/></h:outputLabel>
+                                                </p:column>  
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputLabel value="#{eventosAr.fechaLimiteProceso}"><f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/></h:outputLabel></f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{eventosAr.fechaLimiteProceso}" disabledWeekends="true" pattern="dd-MM-yyyy" timeZone="America/Mexico_City" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>  
+                                                <p:column >
+                                                    <h:outputText value="#{eventosAr.diasrestantes}" />
+                                                </p:column>     
+                                                <p:column class="noprint">
+                                                    <p:rowEditor />
+                                                </p:column>
+                                            </p:dataTable>     
+                                        </p:outputPanel> 
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+                                    </h:form>
+                                </p:tab>
+                                <p:tab title="Proceso POA">
+                                    <h:form id="frmProcesoPoa"> 
+                                        <p:outputPanel id="procesoPoaReporte">
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
+                                            <p:dataTable id="tblEvenAre"  value="#{administracionControl.procesopoas}"  var="procesoPoa" 
+                                                         style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+                                                <p:columnGroup type="header" class="hederTablesTitle">
+                                                    <p:row class="success">
+                                                        <p:column rowspan="2" headerText="Área" style="width: 200px;" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Responsable" style="width: 200px;" styleClass="hederTablesTitle"/>
+                                                        <p:column rowspan="2" headerText="Correo" style="width: 200px;" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="3" headerText="Registros" style="width: 300px;" styleClass="hederTablesTitle"/>
+                                                        <p:column colspan="3" headerText="Validaciones" style="width: 300px;" styleClass="hederTablesTitle"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Actividades"  styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Recurso"  styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Justificaciones"   styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Programacion"  styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Presupuesto"  styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="Justificacion"   styleClass="hederTablesTitle"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column >
+                                                    <h:outputText value="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" />
+                                                </p:column>   
+                                                <p:column >
+                                                    <h:outputText value="#{administracionControl.buscarPersonal(procesoPoa.responsable)}" />
+                                                </p:column> 
+                                                <p:column>
+                                                    <h:outputText value="#{administracionControl.buscarCorreoArea(procesoPoa.area)}" style="word-wrap: break-word;" />
+                                                </p:column> 
+                                                <p:column rendered="#{procesoPoa.responsable eq null}" colspan="6" >
+                                                    <h:outputText value="Sin POA para el ejercicio Fiscal 20#{procesoPoa.ejercicioFiscalEtapa1+1}" />
+                                                </p:column> 
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
+                                                          class="#{procesoPoa.registroAFinalizado eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.registroAFinalizado eq true ?'Finalizado':'Pendiente'}" />
+                                                </p:column>   
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
+                                                          class="#{procesoPoa.asiganacionRFinalizado eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.asiganacionRFinalizado eq true ?'Finalizado':'Pendiente'}" />
+                                                </p:column>
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
+                                                          class="#{procesoPoa.registroJustificacionFinalizado eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.registroJustificacionFinalizado eq true ?'Finalizado':'Pendiente'}" />
+                                                </p:column>                                                                                                                                                                                                                                                  
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
+                                                          class="#{procesoPoa.validacionRegistroA eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.validacionRegistroA eq true ?'Aprobado':'Pendiente'}" />
+                                                </p:column>     
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
+                                                          class="#{procesoPoa.validacionRFFinalizado eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.validacionRFFinalizado eq true ?'Aprobado':'Pendiente'}" />
+                                                </p:column>    
+                                                <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
+                                                          class="#{procesoPoa.validacionJustificacion eq false ?'denegado':'aceptado'}">
+                                                    <h:outputText value="#{procesoPoa.validacionJustificacion eq true ?'Aprobado':'Pendiente'}" />
+                                                </p:column>   
+                                            </p:dataTable>  
+                                        </p:outputPanel> 
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+                                    </h:form>
+                                </p:tab>
+                            </p:tabView>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+            </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+</ui:composition>

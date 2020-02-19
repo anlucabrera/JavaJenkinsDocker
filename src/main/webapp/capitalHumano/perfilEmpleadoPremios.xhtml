@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{cvPremios.cargado}">
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'otro'}">
+                <div class="box box-primary">
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Fecha límite</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">  
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                            <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+        </c:if>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-10">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link outcome="perfilEmpleado">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>
+                            <p:tabView>
+                                <p:tab id="twbPyD" title="Premios y distinciones">
+                                    <o:form id="frmPremDis" enctype="multipart/form-data"> 
+                                        <script type="text/javascript">
+                                            function limpiarForm()
+                                            {
+                                                document.getElementById("frmPremDis").reset();
+                                            }
+                                        </script>
+                                        <p:outputPanel id="form1">
+                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                                                                    <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre del premio o distinción" />
+                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre del premio o distinción"
+                                                                                                 value="#{cvPremios.nuevoOBJDistinciones.nombreDistincion}"/>
+                                                                                    <p:message for="nombre" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+
+                                                                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                                                                    <p:outputLabel for="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Institución otorgante" />
+                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Institución otorgante"
+                                                                                                 value="#{cvPremios.nuevoOBJDistinciones.institucion}"/>
+                                                                                    <p:message for="lugar" display="tooltip"/>     
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                    <p:outputLabel for="fecha" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de entrega" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fecha" value="#{cvPremios.nuevoOBJDistinciones.fechaRealizacion}" pattern="dd-MM-yyyy" mask="true" required="true" />
+                                                                                    <p:message for="fecha" display="tooltip" />
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                    <p:outputLabel for="motivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Motivo" />
+                                                                                    <p:inputTextarea required="true" requiredMessage="No puede tener un campo vacío"  id="motivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Motivo" 
+                                                                                                     value="#{cvPremios.nuevoOBJDistinciones.motivoDescripcion}"/>
+                                                                                    <p:message for="motivo" display="tooltip"/> 
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                    <p:outputPanel>
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia del premio otorgado #{cvPremios.nuevoOBJDistinciones.evidenciaDistincion eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                    </p:outputPanel>
+                                                                                    <o:inputFile id="file" value="#{cvPremios.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFile" for="file" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{cvPremios.agregarEvidenciaDistincion}"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <p:outputPanel>
+                                                                                <p:autoUpdate/>
+                                                                                <div class="form-group"> 
+                                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{cvPremios.createDistincion()}" 
+                                                                                                         disabled="#{cvPremios.direccionInt.toString() eq '0' ?true:false}"
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmListaDistinciones')update();"
+                                                                                                         update="@form"  process="@form" />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>                                               
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                <div class="info-box-content">
+                                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel>
+                                    </o:form>
+                                    <h:form id="frmListaDistinciones">
+                                        <p:outputPanel >
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{cvPremios.metodoBase()}" update="tblDistinciones" />
+                                            <p:dataTable id="tblDistinciones" value="#{cvPremios.nuevaListaDistinciones}" var="premiosRegistro" 
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{premiosRegistro.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         editable="true" editMode="row">
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Nombre" style="width: 100px;" />
+                                                        <p:column rowspan="2" headerText="Fecha de obtención" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Motivo o descripción" style="width: 450px;"/>
+                                                        <p:column rowspan="2" headerText="Institución otorgante" style="width: 250px;"/> 
+                                                        <p:column rowspan="2" headerText="Evidencia" style="width:50px; "/>
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:ajax event="rowEdit" listener="#{cvPremios.updateDistinciones}" update="@this" oncomplete="actualizarTabla()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvPremios.delDistincion(premiosRegistro)}" update="tblDistinciones" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del Premio #{premiosRegistro.nombreDistincion}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
+                                                </p:column>
+
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{premiosRegistro.nombreDistincion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{premiosRegistro.nombreDistincion}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>                                        
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{premiosRegistro.fechaRealizacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{premiosRegistro.fechaRealizacion}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{premiosRegistro.motivoDescripcion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputTextarea value="#{premiosRegistro.motivoDescripcion}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{premiosRegistro.institucion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{premiosRegistro.institucion}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+
+                                                <p:column>
+                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(premiosRegistro.evidenciaDistincion)}" target="_blank" style="color: #000000">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>   
+                                            </p:dataTable>
+
+                                        </p:outputPanel>                                 
+
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+
+                                    </h:form>
+                                </p:tab>
+                                <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
+                                    Cargando archivo espere por favor.<br />
+                                </p:blockUI>
+                            </p:tabView>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+        </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

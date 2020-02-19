@@ -1,0 +1,1710 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <f:metadata>
+            <f:viewParam name="activa" value="#{cvProduccion.pestaniaActiva}"/>
+        </f:metadata>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{cvProduccion.cargado}">
+            <h:outputScript>
+                PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+                dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D','L','M','M','J','V','S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText : 'Todo el día'
+                };
+            </h:outputScript>
+            <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+                <h1>
+                    Esta página está disponible solo para pantallas superiores a 1024px.
+                </h1>
+            </p:panel>
+            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'otro'}">
+                    <div class="box box-primary">
+                        <div class="box box-solid">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Fecha límite</h3>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body">  
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="info-box">
+                                            <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                            <div class="info-box-content">
+                                                <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+            </c:if>
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link outcome="perfilEmpleado">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView activeIndex="#{cvProduccion.pestaniaActiva}">
+                                    <p:tab title="Libros">
+                                        <o:form id="frmHbInf" enctype="multipart/form-data">
+                                            <p:outputPanel id="registro1">
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                                        <p:outputLabel for="isbn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="ISBN:" />
+                                                                                        <p:inputText id="isbn" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="ISBN" value="#{cvProduccion.nuevOBJLibrosPub.isbn}"/>
+                                                                                        <p:message for="isbn" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                        <p:outputLabel for="titulo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título" />
+                                                                                        <p:inputText id="titulo" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título" value="#{cvProduccion.nuevOBJLibrosPub.titulo}"/>
+                                                                                        <p:message for="titulo" display="tooltip"/>                                                                         
+                                                                                        <hr/>
+                                                                                    </div>                                                                           
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-4">         
+                                                                                        <p:outputLabel for="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="País" />
+                                                                                        <p:selectOneMenu id="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{cvProduccion.nuevOBJLibrosPub.pasi}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItems value="#{utilidadesAcceso.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="pais" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-4">                                                                                
+                                                                                        <p:outputLabel for="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Idioma:" />
+                                                                                        <p:selectOneMenu id="idioma" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{cvProduccion.nuevOBJLibrosPub.idioma}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItems value="#{utilidadesAcceso.listaIdiomas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="idioma" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <div class="col-sm-12 col-md-6 col-lg-4">                                                                                
+                                                                                            <p:outputLabel for="traduccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Cuenta con traducción" />
+                                                                                            <p:selectOneMenu id="traduccion" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{cvProduccion.traduccion}" >
+                                                                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                                <f:selectItem itemValue="0" itemLabel="No"/>
+                                                                                                <f:selectItem itemValue="1" itemLabel="Si"/>
+                                                                                                <p:ajax process="traduccion" />
+                                                                                            </p:selectOneMenu> 
+                                                                                            <p:message for="traduccion" display="tooltip" />
+                                                                                            <hr/>
+                                                                                        </div>  
+                                                                                        <c:if test="#{cvProduccion.traduccion eq 1}">
+                                                                                            <div class="col-sm-4 col-md-4 col-lg-4">         
+                                                                                                <p:outputLabel for="idiomatraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Idioma traducido" />
+                                                                                                <p:selectOneMenu id="idiomatraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{cvProduccion.nuevOBJLibrosPub.idiomaTraducido}" >
+                                                                                                    <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                                    <f:selectItems value="#{controladorEmpleado.listaIdiomas}" var="idioma" itemValue="#{idioma}" itemLabel="#{idioma}" />
+                                                                                                </p:selectOneMenu> 
+                                                                                                <p:message for="idiomatraducido" display="tooltip" />
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                            <div class="col-sm-12 col-md-6 col-lg-4">                                                                               
+                                                                                                <p:outputLabel for="isbntraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="ISBN traducido" />
+                                                                                                <p:inputText id="isbntraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="ISBN traducido" value="#{cvProduccion.nuevOBJLibrosPub.isbnTraducido}"/>
+                                                                                                <p:message for="isbntraducido" display="tooltip" />
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                            <div class="col-sm-12 col-md-6 col-lg-4">                                                                              
+                                                                                                <p:outputLabel for="titulotraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título traducido" />
+                                                                                                <p:inputText id="titulotraducido" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título traducido" value="#{cvProduccion.nuevOBJLibrosPub.tituloTraducido}"/>
+                                                                                                <p:message for="titulotraducido" display="tooltip" />
+                                                                                                <hr/>  
+                                                                                            </div>
+                                                                                        </c:if>   
+                                                                                        <div class="#{cvProduccion.traduccion eq 1 ?'col-sm-4 col-md-4 col-lg-4':'col-sm-12 col-md-6 col-lg-4'}">       
+                                                                                            <p:outputLabel for="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="¿Recibió apoyo de la universidad?" />
+                                                                                            <p:selectOneMenu id="apoyo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvProduccion.nuevOBJLibrosPub.apoyoUni}" >
+                                                                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                                <f:selectItem itemValue="Si" itemLabel="Si"/>
+                                                                                                <f:selectItem itemValue="No" itemLabel="No"/>
+                                                                                            </p:selectOneMenu> 
+                                                                                            <p:message for="apoyo" display="tooltip" />
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                    </p:outputPanel>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-5"> 
+                                                                                        <p:outputLabel for="editorial" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Editorial" />
+                                                                                        <p:inputText id="editorial" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Editorial" value="#{cvProduccion.nuevOBJLibrosPub.editorial}"/>
+                                                                                        <p:message for="editorial" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-5">                                                                                
+                                                                                        <p:outputLabel for="lugarEdi" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lugar de edición" />
+                                                                                        <p:inputText id="lugarEdi" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Lugar de edición" value="#{cvProduccion.nuevOBJLibrosPub.lugarEdicion}"/>
+                                                                                        <p:message for="lugarEdi" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-2">         
+                                                                                        <p:outputLabel for="anio" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de publicación" />
+                                                                                        <p:calendar locale="es" id="anio" value="#{cvProduccion.nuevOBJLibrosPub.anioPub}" pattern="yyyy" placeholder="0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                                        <p:message for="anio" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-2">                                                                                    
+                                                                                        <p:outputLabel for="anioedi" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de edición" />
+                                                                                        <p:calendar locale="es" id="anioedi" value="#{cvProduccion.nuevOBJLibrosPub.anioEdicion}" pattern="yyyy" placeholder="0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                                        <p:message for="anioedi" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-2">         
+                                                                                        <p:outputLabel for="numedi" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Número de edición" />
+                                                                                        <p:inputText id="numedi" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Número de edición" value="#{cvProduccion.nuevOBJLibrosPub.numEdicion}"/>
+                                                                                        <p:message for="numedi" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-2">            
+                                                                                        <p:outputLabel for="tiraje" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tiraje" />
+                                                                                        <p:inputText id="tiraje" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Tiraje" value="#{cvProduccion.nuevOBJLibrosPub.tiraje}"/>
+                                                                                        <p:message for="tiraje" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-2">          
+                                                                                        <p:outputLabel for="volumen" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Volumen" />
+                                                                                        <p:inputText id="volumen" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Volumen" value="#{cvProduccion.nuevOBJLibrosPub.volumen}"/>
+                                                                                        <p:message for="volumen" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-2">           
+                                                                                        <p:outputLabel for="tomo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tomo" />
+                                                                                        <p:inputText id="tomo" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Tomo" value="#{cvProduccion.nuevOBJLibrosPub.tomo}"/>
+                                                                                        <p:message for="tomo" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-2">   
+                                                                                        <p:outputLabel for="nump" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Número de páginas" />
+                                                                                        <p:inputText id="nump" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Número de páginas" value="#{cvProduccion.nuevOBJLibrosPub.numPag}"/>
+                                                                                        <p:message for="nump" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia de libro #{cvProduccion.nuevOBJLibrosPub.evidencia eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                        </p:outputPanel>
+                                                                                        <o:inputFile id="file" value="#{cvProduccion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFile" for="file" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cvProduccion.agregarEvidenciaLibro}" />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr/>
+                                                                            <div class="row">
+                                                                                <p:outputPanel>            
+                                                                                    <p:autoUpdate/>
+                                                                                    <div class="form-group">
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                            <p:commandButton id="btnBuscarActiuvidades" disabled="#{cvProduccion.direccionInt1.toString() eq '0' ?true:false}"
+                                                                                                             value="Guardar información" actionListener="#{cvProduccion.createLibros()}"
+                                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro1')update();" onsuccess="PF('frmHbInf')update();"
+                                                                                                             update="@form" process="@form" /> 
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </p:outputPanel>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                               
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                                                <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="box-body">  
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="info-box">
+                                                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                    <div class="info-box-content">
+                                                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                        <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                
+                                                    </div>
+                                                </c:if>
+                                            </p:outputPanel>
+                                        </o:form>
+                                        <h:form id="frmLista1">
+                                            <p:outputPanel >
+                                                <p:remoteCommand name="actualizarTabla" actionListener="#{cvProduccion.metodoBase()}" update="tblLibros" />
+                                                <p:dataTable id="tblLibros" value="#{cvProduccion.nuevaListaLibrosPub}" var="libro" 
+                                                             emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{libro.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                             editable="true" editMode="row">
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                            <p:column rowspan="2" headerText="País" style="width: 100px;"/>
+                                                            <p:column colspan="2" headerText="Título" style="width: 400px;"/>
+                                                            <p:column colspan="2" headerText="ISBN" style="width: 400px;" />
+                                                            <p:column colspan="2" headerText="Idioma" style="width: 200px;"/> 
+                                                            <p:column rowspan="2" headerText="Apoyo por parte de la institución" style="width:100px; "/>
+                                                            <p:column rowspan="2" headerText="Editorial" style="width:200px; "/>
+                                                            <p:column rowspan="2" headerText="Lugar de edición" style="width:200px; "/>
+                                                            <p:column colspan="2" headerText="Año" style="width:150px; "/>
+                                                            <p:column rowspan="2" headerText="Número de edición" style="width:50px; "/>
+                                                            <p:column rowspan="2" headerText="Tiraje" style="width:50px; "/>
+                                                            <p:column rowspan="2" headerText="Valumen" style="width:50px; "/>
+                                                            <p:column rowspan="2" headerText="Tomo" style="width:50px; "/>
+                                                            <p:column rowspan="2" headerText="Número de páginas" style="width:50px; "/>
+                                                            <p:column rowspan="2" headerText="Evidencia" style="width:50px; "/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Original"/>
+                                                            <p:column headerText="Traducido"/>
+                                                            <p:column headerText="Original"/>
+                                                            <p:column headerText="Traducido"/>
+                                                            <p:column headerText="Original"/>
+                                                            <p:column headerText="Traducido"/>
+                                                            <p:column headerText="Edición"/>
+                                                            <p:column headerText="Publicación"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+                                                    <p:ajax event="rowEdit" listener="#{cvProduccion.actualizaLibros}" update="@this" oncomplete="actualizarTabla()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+
+                                                    <p:column >
+                                                        <p:commandButton actionListener="#{cvProduccion.eliminaLibros(libro)}" update="tblLibros" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación del libro #{libro.titulo}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                            <a href="#" class="ui-row-editor-pencil">
+                                                                <span class="ui-icon ui-icon-pencil"></span>
+                                                            </a>
+                                                            <a href="#" class="ui-row-editor-check">
+                                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                                            </a>
+                                                            <p:spacer width="20px"/>
+                                                            <a href="#" class="ui-row-editor-close">
+                                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                                            </a>
+                                                        </div>
+                                                    </p:column>
+
+
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.pasi}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{libro.pasi}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItems value="#{utilidadesAcceso.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>   
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.titulo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.titulo}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.tituloTraducido}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.tituloTraducido}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.isbn}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.isbn}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.isbnTraducido}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.isbnTraducido}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.idioma}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{libro.idioma}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItems value="#{utilidadesAcceso.listaIdiomas}" var="idiomas" itemValue="#{idiomas}" itemLabel="#{idiomas}" />
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.idiomaTraducido}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{libro.idiomaTraducido}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItems value="#{utilidadesAcceso.listaIdiomas}" var="idiomas" itemValue="#{idiomas}" itemLabel="#{idiomas}" />
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.apoyoUni}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{libro.apoyoUni}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Si'}" itemLabel="#{'Si'}"/>
+                                                                    <f:selectItem itemValue="#{'No'}" itemLabel="#{'No'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>   
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.editorial}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.editorial}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.lugarEdicion}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.lugarEdicion}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.anioEdicion}" ><f:convertDateTime type="date" pattern="yyyy"/></h:outputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{libro.anioEdicion}" pattern="yyyy" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.anioPub}" ><f:convertDateTime type="date" pattern="yyyy"/></h:outputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{libro.anioPub}" pattern="yyyy" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.numEdicion}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.numEdicion}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.tiraje}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.tiraje}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.volumen}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.volumen}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.tomo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.tomo}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{libro.numPag}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{libro.numPag}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(libro.evidencia)}" target="_blank" style="color: #000000">
+                                                            <i class="fa fa-search"></i>
+                                                            <span>Ver</span>
+                                                        </p:link>
+                                                    </p:column>   
+                                                </p:dataTable>    
+
+                                            </p:outputPanel>
+
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Artículos">
+                                        <o:form id="frmArticulos" enctype="multipart/form-data"> 
+                                            <p:outputPanel id="registro2">
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="issnbElec" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="ISSN electrónico" />
+                                                                                        <p:inputText id="issnbElec" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="ISSN electrónico" value="#{cvProduccion.nuevOBJArticulosp.issnElectronico}"/>
+                                                                                        <p:message for="issnbElec" display="tooltip"/>                                                                         
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                        <p:outputLabel for="issnbImpr" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="ISSN impreso" />
+                                                                                        <p:inputText id="issnbImpr" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="ISSN impreso" value="#{cvProduccion.nuevOBJArticulosp.issnNimpreso}"/>
+                                                                                        <p:message for="issnbImpr" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="tituloA" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título del artículo" />
+                                                                                        <p:inputText id="tituloA" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título del artículo" value="#{cvProduccion.nuevOBJArticulosp.tituloArticulo}"/>
+                                                                                        <p:message for="tituloA" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="pC1" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Palabra clave 1" />
+                                                                                        <p:inputText id="pC1" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Palabra clave 1" value="#{cvProduccion.nuevOBJArticulosp.palabraC1}"/>
+                                                                                        <p:message for="pC1" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="pC2" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Palabra clave 2" />
+                                                                                        <p:inputText id="pC2" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Palabra clave 2" value="#{cvProduccion.nuevOBJArticulosp.palabraC2}"/>
+                                                                                        <p:message for="pC2" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="pC3" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Palabra clave 3" />
+                                                                                        <p:inputText id="pC3" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Palabra clave 3" value="#{cvProduccion.nuevOBJArticulosp.palabraC3}"/>
+                                                                                        <p:message for="pC3" display="tooltip" />                                                                                
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="hojaIni" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Página de inicio" />
+                                                                                        <p:inputText id="hojaIni" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Página de inicio" value="#{cvProduccion.nuevOBJArticulosp.paginaInicio}"/>
+                                                                                        <p:message for="hojaIni" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="pagF" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Página de fin" />
+                                                                                        <p:inputText id="pagF" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Página de fin" value="#{cvProduccion.nuevOBJArticulosp.paginaFin}"/>
+                                                                                        <p:message for="pagF" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="País" />
+                                                                                        <p:selectOneMenu id="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{cvProduccion.nuevOBJArticulosp.pais}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItems value="#{utilidadesAcceso.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="pais" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="anioPub" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de publicación" />
+                                                                                        <p:calendar locale="es" id="anioPub" value="#{cvProduccion.nuevOBJArticulosp.anioPublicacion}" pattern="yyyy" placeholder="0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                                        <p:message for="anioPub" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="anioEdicion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de edición" />
+                                                                                        <p:calendar locale="es" id="anioEdicion" value="#{cvProduccion.nuevOBJArticulosp.enioEdicion}" pattern="yyyy" placeholder="0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                                        <p:message for="anioEdicion" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="numRev" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Número de revista, Solo si aplica" />
+                                                                                        <p:inputText id="numRev" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Número de revista" value="#{cvProduccion.nuevOBJArticulosp.numRevista}"/>
+                                                                                        <p:message for="numRev" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="volumnenR" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Volumen de revista, Solo si aplica" />
+                                                                                        <p:inputText id="volumnenR" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Volumen de revista" value="#{cvProduccion.nuevOBJArticulosp.volumenRevista}"/>
+                                                                                        <p:message for="volumnenR" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-6"> 
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia de artículo #{cvProduccion.nuevOBJArticulosp.evidencia eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                        </p:outputPanel>
+                                                                                        <o:inputFile id="file" value="#{cvProduccion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFile" for="file" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cvProduccion.agregarEvidenciaArticulo}" />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr/>
+                                                                            <div class="row">
+                                                                                <p:outputPanel>            
+                                                                                    <p:autoUpdate/>
+                                                                                    <div class="form-group">
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                            <p:commandButton id="btnBuscarActiuvidades" disabled="#{cvProduccion.direccionInt2.toString() eq '0' ?true:false}"
+                                                                                                             value="Actualizar información" actionListener="#{cvProduccion.createArticulos()}"
+                                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro2')update();" onsuccess="PF('frmArticulos')update();"
+                                                                                                             update="@form" process="@form" />   
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </p:outputPanel>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                              
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                                                <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="box-body">  
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="info-box">
+                                                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                    <div class="info-box-content">
+                                                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                        <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                
+                                                    </div>
+                                                </c:if>
+                                            </p:outputPanel>
+                                        </o:form>
+                                        <h:form id="frmLista2">
+                                            <p:outputPanel >
+                                                <p:remoteCommand name="actualizarTabla2" actionListener="#{cvProduccion.metodoBase()}" update="tblArticulos" />
+                                                <p:dataTable id="tblArticulos" value="#{cvProduccion.nuevaListaArticulosp}" var="articulos" 
+                                                             emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{articulos.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                             editable="true" editMode="row">
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                            <p:column colspan="2" headerText="ISSN" style="width: 400px;" />
+                                                            <p:column rowspan="2" headerText="Título del artículo" style="width: 200px;"/>
+                                                            <p:column colspan="3" headerText="Palabras clave" style="width: 450px;"/>
+                                                            <p:column colspan="2" headerText="Páginas" style="width: 100px;"/> 
+                                                            <p:column rowspan="2" headerText="País" style="width: 100px;"/> 
+                                                            <p:column colspan="2" headerText="Año" style="width: 200px;"/> 
+                                                            <p:column colspan="2" headerText="Revista" style="width:200px; "/>
+                                                            <p:column rowspan="2" headerText="Evidencia" style="width:50px; "/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Electrónico"/>
+                                                            <p:column headerText="Impreso"/>
+                                                            <p:column headerText="1"/>
+                                                            <p:column headerText="2"/>
+                                                            <p:column headerText="3"/>
+                                                            <p:column headerText="Inicio"/>
+                                                            <p:column headerText="Fin"/>
+                                                            <p:column headerText="Publicación"/>
+                                                            <p:column headerText="Edición"/>
+                                                            <p:column headerText="Número"/>
+                                                            <p:column headerText="Volumen"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+                                                    <p:ajax event="rowEdit" listener="#{cvProduccion.actualizaArticulos}" update="@this" oncomplete="actualizarTabla2()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
+
+                                                    <p:column >
+                                                        <p:commandButton actionListener="#{cvProduccion.eliminaArticulos(articulos)}" update="tblArticulos" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación del árticulo #{articulos.tituloArticulo}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                            <a href="#" class="ui-row-editor-pencil">
+                                                                <span class="ui-icon ui-icon-pencil"></span>
+                                                            </a>
+                                                            <a href="#" class="ui-row-editor-check">
+                                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                                            </a>
+                                                            <p:spacer width="20px"/>
+                                                            <a href="#" class="ui-row-editor-close">
+                                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                                            </a>
+                                                        </div>
+                                                    </p:column>
+
+
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.issnElectronico}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{articulos.issnElectronico}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.issnNimpreso}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{articulos.issnNimpreso}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.tituloArticulo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{articulos.tituloArticulo}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.palabraC1}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{articulos.palabraC1}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.palabraC2}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{articulos.palabraC2}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.palabraC3}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{articulos.palabraC3}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.paginaInicio}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{articulos.paginaInicio}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.paginaFin}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{articulos.paginaFin}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>                                                 
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.pais}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{articulos.pais}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItems value="#{utilidadesAcceso.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.anioPublicacion}" ><f:convertDateTime type="date" pattern="yyyy"/></h:outputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{articulos.anioPublicacion}" pattern="yyyy" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.enioEdicion}" ><f:convertDateTime type="date" pattern="yyyy"/></h:outputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{articulos.enioEdicion}" pattern="yyyy" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.numRevista}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{articulos.numRevista}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{articulos.volumenRevista}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{articulos.volumenRevista}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(articulos.evidencia)}" target="_blank" style="color: #000000">
+                                                            <i class="fa fa-search"></i>
+                                                            <span>Ver</span>
+                                                        </p:link>
+                                                    </p:column>   
+                                                </p:dataTable>    
+
+                                            </p:outputPanel>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Memorias">
+                                        <o:form id="frmLengIndi" enctype="multipart/form-data">
+                                            <p:outputPanel id="registro2">
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <p:outputLabel for="tituloO" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="ISSN electrónico" />
+                                                                                        <p:inputText id="tituloO" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="ISSN electrónico" value="#{cvProduccion.nuevOBJMemoriaspub.tituloDeObra}"/>
+                                                                                        <p:message for="tituloO" display="tooltip"/>                                                                         
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <p:outputLabel for="tituloM" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de la memoria" />
+                                                                                        <p:inputText id="tituloM" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título de la memoria" value="#{cvProduccion.nuevOBJMemoriaspub.tituloDeMemoria}"/>
+                                                                                        <p:message for="tituloM" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4"> 
+                                                                                        <p:outputLabel for="tituloP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de la publicación" />
+                                                                                        <p:inputText id="tituloP" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título de la publicación" value="#{cvProduccion.nuevOBJMemoriaspub.tituloDePublicacion}"/>
+                                                                                        <p:message for="tituloP" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                        <p:outputLabel for="pC1" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Palabra clave 1" />
+                                                                                        <p:inputText id="pC1" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Palabra clave 1" value="#{cvProduccion.nuevOBJMemoriaspub.palabraC1}"/>
+                                                                                        <p:message for="pC1" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                        <p:outputLabel for="pC2" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Palabra clave 2" />
+                                                                                        <p:inputText id="pC2" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Palabra clave 2" value="#{cvProduccion.nuevOBJMemoriaspub.palabraC2}"/>
+                                                                                        <p:message for="pC2" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                        <p:outputLabel for="pC3" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Palabra clave 3" />
+                                                                                        <p:inputText id="pC3" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Palabra clave 3" value="#{cvProduccion.nuevOBJMemoriaspub.palabraC3}"/>
+                                                                                        <p:message for="pC3" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3">  
+                                                                                        <p:outputLabel for="anioPub" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Año de publicación" />
+                                                                                        <p:calendar locale="es" id="anioPub" value="#{cvProduccion.nuevOBJMemoriaspub.anioDePublicacion}" pattern="yyyy" placeholder="0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                                        <p:message for="anioPub" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="hojaIni" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Página de inicio" />
+                                                                                        <p:inputText id="hojaIni" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Página de inicio" value="#{cvProduccion.nuevOBJMemoriaspub.paginaInicio}"/>
+                                                                                        <p:message for="hojaIni" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="pagF" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Página de fin" />
+                                                                                        <p:inputText id="pagF" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Página de fin" value="#{cvProduccion.nuevOBJMemoriaspub.paginaFin}"/>
+                                                                                        <p:message for="pagF" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="País" />
+                                                                                        <p:selectOneMenu id="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{cvProduccion.nuevOBJMemoriaspub.pais}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItems value="#{utilidadesAcceso.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="pais" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-4"> 
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia de memoria #{cvProduccion.nuevOBJMemoriaspub.evidencia eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                        </p:outputPanel>
+                                                                                        <o:inputFile id="file" value="#{cvProduccion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFile" for="file" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cvProduccion.agregarEvidenciaMemoria}" />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr/>
+                                                                            <div class="row">
+                                                                                <p:outputPanel>            
+                                                                                    <p:autoUpdate/>
+                                                                                    <div class="form-group">
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                            <p:commandButton id="btnBuscarActiuvidades" disabled="#{cvProduccion.direccionInt3.toString() eq '0' ?true:false}"
+                                                                                                             value="Guardar información" actionListener="#{cvProduccion.createrMemorias()}"
+                                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro3')update();" onsuccess="PF('frmLengIndi')update();"
+                                                                                                             update="@form" process="@form" />  
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </p:outputPanel>  
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                             
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                                                <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="box-body">  
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="info-box">
+                                                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                    <div class="info-box-content">
+                                                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                        <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                
+                                                    </div>
+                                                </c:if>
+                                            </p:outputPanel>
+                                        </o:form>
+                                        <h:form id="frmLista3">
+                                            <p:outputPanel >
+                                                <p:remoteCommand name="actualizarTabla3" actionListener="#{cvProduccion.metodoBase()}" update="tblMemorias" />
+                                                <p:dataTable id="tblMemorias" value="#{cvProduccion.nuevaListaMemoriaspub}" var="memorias" 
+                                                             emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{memorias.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                             editable="true" editMode="row">
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                            <p:column rowspan="2" headerText="ISBN" style="width: 200px;" />
+                                                            <p:column colspan="2" headerText="Título" style="width: 500px;"/>
+                                                            <p:column colspan="3" headerText="Palabras clave" style="width: 450px;"/>
+                                                            <p:column rowspan="2" headerText="Año de publicación" style="width: 100px;"/> 
+                                                            <p:column colspan="2" headerText="Página" style="width: 100px;"/> 
+                                                            <p:column rowspan="2" headerText="País" style="width: 100px;"/> 
+                                                            <p:column rowspan="2" headerText="Evidencia" style="width:50px; "/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Memoria"/>
+                                                            <p:column headerText="Publicación"/>
+                                                            <p:column headerText="1"/>
+                                                            <p:column headerText="2"/>
+                                                            <p:column headerText="3"/>
+                                                            <p:column headerText="Inicio"/>
+                                                            <p:column headerText="Fin"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+                                                    <p:ajax event="rowEdit" listener="#{cvProduccion.actualizaMemorias}" update="@this" oncomplete="actualizarTabla3()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla3()"/>
+
+                                                    <p:column >
+                                                        <p:commandButton actionListener="#{cvProduccion.eliminaMemorias(memorias)}" update="tblMemorias" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación de la memoria #{memorias.tituloDeMemoria}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                            <a href="#" class="ui-row-editor-pencil">
+                                                                <span class="ui-icon ui-icon-pencil"></span>
+                                                            </a>
+                                                            <a href="#" class="ui-row-editor-check">
+                                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                                            </a>
+                                                            <p:spacer width="20px"/>
+                                                            <a href="#" class="ui-row-editor-close">
+                                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                                            </a>
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{memorias.tituloDeObra}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{memorias.tituloDeObra}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{memorias.tituloDeMemoria}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{memorias.tituloDeMemoria}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{memorias.tituloDePublicacion}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{memorias.tituloDePublicacion}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{memorias.palabraC1}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{memorias.palabraC1}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{memorias.palabraC2}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{memorias.palabraC2}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{memorias.palabraC3}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{memorias.palabraC3}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{memorias.anioDePublicacion}" ><f:convertDateTime type="date" pattern="yyyy"/></h:outputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{memorias.anioDePublicacion}" pattern="yyyy" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{memorias.paginaInicio}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{memorias.paginaInicio}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{memorias.paginaFin}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{memorias.paginaFin}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>       
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{memorias.pais}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{memorias.pais}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItems value="#{utilidadesAcceso.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(memorias.evidencia)}" target="_blank" style="color: #000000">
+                                                            <i class="fa fa-search"></i>
+                                                            <span>Ver</span>
+                                                        </p:link>
+                                                    </p:column>   
+                                                </p:dataTable>    
+
+                                            </p:outputPanel>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Investigaciones">
+                                        <h:form id="frmProInv"> 
+                                            <p:outputPanel>
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <h4>*Incluye movilidad y estancia</h4>
+                                                                                <div class="form-group">                                                                                
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de la investigación" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Titulo de la investigacion" value="#{cvProduccion.nuevOBJInvestigaciones.nombreInvestigacion}"/>
+                                                                                        <p:message for="nombre" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Institución (donde fue realizada)" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Institución" value="#{cvProduccion.nuevOBJInvestigaciones.institucion}"/>
+                                                                                        <p:message for="lugar" display="tooltip"/>                                                                         
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6"> 
+                                                                                        <p:outputLabel for="desc" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Descripción" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="desc" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Descripción" value="#{cvProduccion.nuevOBJInvestigaciones.decripcion}"/>
+                                                                                        <p:message for="desc" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                        <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo" />
+                                                                                        <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvProduccion.nuevOBJInvestigaciones.tipo}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Proyecto" itemLabel=" Proyecto "/>
+                                                                                            <f:selectItem itemValue="Trabajo" itemLabel=" Trabajo "/>
+                                                                                        </p:selectOneMenu>
+                                                                                        <p:message for="tipo" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-6"> 
+                                                                                        <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
+                                                                                        <p:calendar navigator="true" locale="es" required="true" requiredMessage="No puede tener un campo vacío" id="fechaIn" value="#{cvProduccion.nuevOBJInvestigaciones.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                        <p:message for="fechaIn" display="tooltip" /> 
+                                                                                        <hr/>     
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-6"> 
+                                                                                        <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin, vació si esta en proceso" />
+                                                                                        <p:calendar navigator="true" title="En caso de estar en proceso dejar vacío el campo" locale="es" id="fechaFin" value="#{cvProduccion.nuevOBJInvestigaciones.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                        <p:message for="fechaFin" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                </div>                                                                 
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" oncomplete="PF('frmDatosInves')update();" value="Guardar información" 
+                                                                                                         actionListener="#{cvProduccion.createrProyecto()}" icon="fa fa-pencil-square-o" 
+                                                                                                         class="btn-primary btn-block col-md-3" update="@form" process="@form" /> 
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                           
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                                                <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="box-body">  
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="info-box">
+                                                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                    <div class="info-box-content">
+                                                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                        <span class="info-box-number">La fecha límite para la actualización de curriculum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                
+                                                    </div>
+                                                </c:if>
+                                            </p:outputPanel>
+                                        </h:form>
+                                        <h:form id="frmDatosInves"> 
+                                            <p:outputPanel >
+                                                <p:remoteCommand name="actualizarTabla4" actionListener="#{cvProduccion.metodoBase()}" update="tblProyecto" />
+                                                <p:dataTable id="tblProyecto" value="#{cvProduccion.nuevaListatInvestigaciones}" var="investigaciones" 
+                                                             emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                             sortBy="#{investigaciones.tipo}" expandableRowGroups="true"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="aceptado"
+                                                             editable="true" editMode="row">
+
+                                                    <p:headerRow>
+                                                        <p:column colspan="8">
+                                                            <h:outputText value="#{investigaciones.tipo}" />
+                                                        </p:column>
+                                                    </p:headerRow>
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                            <p:column rowspan="2" headerText="Título" style="width: 300px;" />
+                                                            <p:column rowspan="2" headerText="Institución" style="width: 300px;"/>
+                                                            <p:column rowspan="2" headerText="Descripción" style="width: 300px;"/>
+                                                            <p:column colspan="2" headerText="Fecha" style="width: 200px;"/> 
+                                                            <p:column rowspan="2" headerText="Tipo" style="width: 100px;"/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Inicio"/>
+                                                            <p:column headerText="Fin"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+                                                    <p:ajax event="rowEdit" listener="#{cvProduccion.actualizaInvestigacion}" update="@this" oncomplete="actualizarTabla4()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla4()"/>
+
+                                                    <p:column >
+                                                        <p:commandButton actionListener="#{cvProduccion.eliminaInvestigacion(investigaciones)}" update="tblProyecto" oncomplete="actualizarTabla4()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación de la investigacion #{investigaciones.nombreInvestigacion}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                            <a href="#" class="ui-row-editor-pencil">
+                                                                <span class="ui-icon ui-icon-pencil"></span>
+                                                            </a>
+                                                            <a href="#" class="ui-row-editor-check">
+                                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                                            </a>
+                                                            <p:spacer width="20px"/>
+                                                            <a href="#" class="ui-row-editor-close">
+                                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                                            </a>
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{investigaciones.nombreInvestigacion}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{investigaciones.nombreInvestigacion}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{investigaciones.institucion}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{investigaciones.institucion}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{investigaciones.decripcion}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputTextarea value="#{investigaciones.decripcion}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{investigaciones.fechaInicio}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{investigaciones.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{investigaciones.fechaFin}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{investigaciones.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{investigaciones.tipo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{investigaciones.tipo}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Proyecto'}" itemLabel="#{'Proyecto'}"/>
+                                                                    <f:selectItem itemValue="#{'Trabajo'}" itemLabel="#{'Trabajo'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                </p:dataTable>  
+                                            </p:outputPanel>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Congresos">
+                                        <h:form id="frmCongre"> 
+                                            <p:outputPanel>
+                                                <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                        <p:outputLabel for="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de participación" />
+                                                                                        <p:selectOneMenu id="tipo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvProduccion.nuevoOBJCongresos.participacion}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione Uno"/>
+                                                                                            <f:selectItem itemValue="Conferencia Magistral" itemLabel="Conferencia Magistral"/>
+                                                                                            <f:selectItem itemValue="Moderador" itemLabel="Moderador"/>
+                                                                                            <f:selectItem itemValue="Organizador del Evento" itemLabel="Organizador del Evento"/>
+                                                                                            <f:selectItem itemValue="Participante en Mesa Redonda" itemLabel="Participante en Mesa Redonda"/>
+                                                                                            <f:selectItem itemValue="Ponencia" itemLabel="Ponencia"/>
+                                                                                            <f:selectItem itemValue="Póster" itemLabel="Póster"/>
+                                                                                            <f:selectItem itemValue="Exposición de Artículo en Extenso" itemLabel="Exposición de Artículo en Extenso"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="tipo" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-6"> 
+                                                                                        <p:outputLabel for="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="País" />
+                                                                                        <p:selectOneMenu id="pais" style="height:100%; width: 100%; object-fit: contain; font-size: large" filter="true" filterMatchMode="contains" value="#{cvProduccion.nuevoOBJCongresos.lugarPais}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItems value="#{utilidadesAcceso.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="pais" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-6"> 
+                                                                                        <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre del congreso" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre del congreso" value="#{cvProduccion.nuevoOBJCongresos.nombreCongreso}"/>
+                                                                                        <p:message for="nombre" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-6">                                                                              
+                                                                                        <p:outputLabel for="titulo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Título del trabajo" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="titulo" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Título del trabajo" value="#{cvProduccion.nuevoOBJCongresos.tituloTrabajo}"/>
+                                                                                        <p:message for="titulo" display="tooltip"/>                                                                         
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="pal1" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Palabra clave 1" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="pal1" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Palabra clave 1" value="#{cvProduccion.nuevoOBJCongresos.palabraClave1}"/>
+                                                                                        <p:message for="pal1" display="tooltip"/>      
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="pal2" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Palabra clave 2" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="pal2" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Palabra clave 2" value="#{cvProduccion.nuevoOBJCongresos.palabraClave2}"/>
+                                                                                        <p:message for="pal2" display="tooltip"/>      
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3"> 
+                                                                                        <p:outputLabel for="pal3" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Palabra clave 3" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="pal3" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Palabra clave 3" value="#{cvProduccion.nuevoOBJCongresos.palabraClave3}"/>
+                                                                                        <p:message for="pal3" display="tooltip"/>      
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-6 col-lg-3">                                                           
+                                                                                        <p:outputLabel for="fecha" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha del congreso" />
+                                                                                        <p:calendar navigator="true" locale="es" required="true" requiredMessage="No puede tener un campo vacío" id="fecha" value="#{cvProduccion.fechaI}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                        <p:message for="fecha" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>    
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" oncomplete="PF('frmDatosCongre')update();" value="Guardar información" 
+                                                                                                         actionListener="#{cvProduccion.createrCongreso()}" icon="fa fa-pencil-square-o" 
+                                                                                                         class="btn-primary btn-block col-md-3" update="@form" process="@form" />                                            
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                                        
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                                                <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                    <div class="box-body">  
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="info-box">
+                                                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                    <div class="info-box-content">
+                                                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                        <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                
+                                                    </div>
+                                                </c:if>
+                                            </p:outputPanel>        
+                                        </h:form>
+                                        <h:form id="frmDatosCongre"> 
+                                            <p:outputPanel >
+                                                <p:remoteCommand name="actualizarTabla6" actionListener="#{cvProduccion.metodoBase()}" update="tblCongresos" />
+                                                <p:dataTable id="tblCongresos" value="#{cvProduccion.nuevaListaCongresos}" var="congreso" 
+                                                             emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{congreso.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                             editable="true" editMode="row">
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                            <p:column rowspan="2" headerText="Nombre" style="width: 300px;" />
+                                                            <p:column rowspan="2" headerText="Tipo de participación" style="width: 250px;"/>
+                                                            <p:column rowspan="2" headerText="Título del trabajo" style="width: 300px;"/>
+                                                            <p:column colspan="3" headerText="Palabras clave" style="width: 450px;"/> 
+                                                            <p:column rowspan="2" headerText="Fecha" style="width: 100px;"/> 
+                                                            <p:column rowspan="2" headerText="País" style="width:150px; "/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="1"/>
+                                                            <p:column headerText="2"/>
+                                                            <p:column headerText="3"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+                                                    <p:ajax event="rowEdit" listener="#{cvProduccion.actualizaCongreso}" update="@this" oncomplete="actualizarTabla6()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla6()"/>
+
+                                                    <p:column >
+                                                        <p:commandButton actionListener="#{cvProduccion.eliminaCongreso(congreso)}" update="tblCongresos" oncomplete="actualizarTabla6()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación del congreso #{congreso.nombreCongreso}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                            <a href="#" class="ui-row-editor-pencil">
+                                                                <span class="ui-icon ui-icon-pencil"></span>
+                                                            </a>
+                                                            <a href="#" class="ui-row-editor-check">
+                                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                                            </a>
+                                                            <p:spacer width="20px"/>
+                                                            <a href="#" class="ui-row-editor-close">
+                                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                                            </a>
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{congreso.nombreCongreso}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{congreso.nombreCongreso}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{congreso.participacion}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{congreso.participacion}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItem itemValue="#{'Conferencia Magistral'}" itemLabel="#{'Conferencia Magistral'}"/>
+                                                                    <f:selectItem itemValue="#{'Moderador'}" itemLabel="#{'Moderador'}"/>
+                                                                    <f:selectItem itemValue="#{'Organizador del Evento'}" itemLabel="#{'Organizador del Evento'}"/>
+                                                                    <f:selectItem itemValue="#{'Participante en Mesa Redonda'}" itemLabel="#{'Participante en Mesa Redonda'}"/>
+                                                                    <f:selectItem itemValue="#{'Ponencia'}" itemLabel="#{'Ponencia'}"/>
+                                                                    <f:selectItem itemValue="#{'Póster'}" itemLabel="#{'Póster'}"/>
+                                                                    <f:selectItem itemValue="#{'Exposición de Artículo en Extenso'}" itemLabel="#{'Exposición de Artículo en Extenso'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{congreso.tituloTrabajo}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{congreso.tituloTrabajo}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{congreso.palabraClave1}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{congreso.palabraClave1}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{congreso.palabraClave2}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{congreso.palabraClave2}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{congreso.palabraClave3}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{congreso.palabraClave3}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{congreso.fechaCongreso}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{congreso.fechaCongreso}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{congreso.lugarPais}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{congreso.lugarPais}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                    <f:selectItems value="#{utilidadesAcceso.listaPaises}" var="paises" itemValue="#{paises}" itemLabel="#{paises}" />
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                </p:dataTable>        
+
+                                            </p:outputPanel>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>
+                                    </p:tab>
+                                    <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
+                                        Cargando archivo espere por favor.<br />
+                                    </p:blockUI>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </p:panel>
+        </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

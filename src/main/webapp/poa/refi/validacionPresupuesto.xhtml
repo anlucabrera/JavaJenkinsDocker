@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>        
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Programa de Trabajo Anual
+    </ui:define>
+
+    <ui:define name="description">
+        Validación asignación de recurso
+    </ui:define>
+
+    <ui:define name="body">
+
+        <c:if test="#{concentradoCalificacionesSecAca.cargado}">
+        <adm:sidebar collapsed="true"/> 
+
+        <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:panel header="Alineación estratégica">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">            
+                                <p:autoUpdate/>
+                                <p:outputLabel value="Área:" />
+
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{adminPoaValidacionPresupuestacion.areaSeleccionada}">
+                                    <f:selectItems value="#{adminPoaValidacionPresupuestacion.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                    <p:ajax update=":frm :frm2" listener="#{adminPoaValidacionPresupuestacion.imprimirValores()}"/>
+                                </p:selectOneMenu> 
+                                <p:message for="eje" display="tooltip" />
+                            </div>
+                        </div>
+                    </p:panel>
+                </div>
+            </div>
+        </h:form>
+        <h:form id="frm2" prependId="false" class="form-inline" >
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:toolbar id="tb">
+                            <f:facet name="left">
+                                <p:outputPanel>     
+                                    <p:outputLabel value="Área: #{adminPoaValidacionPresupuestacion.areaPOASeleccionada.nombre}" />
+                                    <p:autoUpdate/>
+                                </p:outputPanel>
+                            </f:facet>
+                            <f:facet name="center">
+                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                                
+                            </f:facet>
+                            <f:facet name="right">
+
+                                <p:outputPanel>            
+                                    <p:autoUpdate/>
+                                    <p:commandButton value="Liberar Presupuestacion" id="btnEnviaCorreoConfirmacion" 
+                                                     actionListener="#{utilidadesPOA.enviarCorreo('R', 'Ad',true,'',adminPoaValidacionPresupuestacion.areaPOASeleccionada)}"
+                                                     process="@this" disabled="#{adminPoaValidacionPresupuestacion.procesopoa.validacionRFFinalizado || !adminPoaValidacionPresupuestacion.procesopoa.asiganacionRFinalizado}"
+                                                     icon="fa fa-info-circle" styleClass="btn-primary"/>
+                                    <p:commandButton value="Denegar Presupuestacion" id="btnEnviaCorreoNegacion" 
+                                                     actionListener="#{adminPoaValidacionPresupuestacion.imprimirValores()}"
+                                                     oncomplete="PF('dlgComentario').show()"
+                                                     process="@this" disabled="#{adminPoaValidacionPresupuestacion.procesopoa.validacionRFFinalizado || !adminPoaValidacionPresupuestacion.procesopoa.asiganacionRFinalizado}"
+                                                     icon="fa fa-info-circle" styleClass="btn-primary"/>
+                                </p:outputPanel>
+                            </f:facet>
+                        </p:toolbar>
+                    </div>
+                    <p:separator/>         
+                    <div class="row">         
+                        <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center;">
+                            <p:outputLabel value="Presupuesto general"/>
+                        </div>
+
+                        <p:outputPanel>
+                            <p:autoUpdate/>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value=""/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="Capítulo 2000"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="Capítulo 3000"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="Capítulo 4000"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="Capítulo 5000"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; ">
+                                    <p:outputLabel value="Captación de derechos"/>                            
+                                </div>
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center;">
+                                    <p:outputLabel value="Total"/>                            
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="Pretecho"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.pretecho2000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.pretecho3000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.pretecho4000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.pretecho5000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; ">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.pretechoCPDD}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.totalPretecho}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="Programado por partida"/>                            
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:dataTable var="capitulo2" value="#{adminPoaValidacionPresupuestacion.capitulo2000}" emptyMessage="Sin recurso asignado">
+                                        <p:column headerText="Partida"><h:outputText value="#{capitulo2.partidas1.partida}" /></p:column>   
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo2.total}" >
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column>                                         
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:dataTable var="capitulo3" value="#{adminPoaValidacionPresupuestacion.capitulo3000}" emptyMessage="Sin recurso asignado">
+                                        <p:column headerText="Partida"><h:outputText value="#{capitulo3.partidas1.partida}" /></p:column>   
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo3.total}" >
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column>                                                                     
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:dataTable var="capitulo4" value="#{adminPoaValidacionPresupuestacion.capitulo4000}" emptyMessage="Sin recurso asignado">
+                                        <p:column headerText="Partida"><h:outputText value="#{capitulo4.partidas1.partida}" /></p:column>   
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo4.total}" >
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column>                                                                            
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:dataTable var="capitulo5" value="#{adminPoaValidacionPresupuestacion.capitulo5000}" emptyMessage="Sin recurso asignado">
+                                        <p:column headerText="Partida"><h:outputText value="#{capitulo5.partidas1.partida}" /></p:column>   
+                                        <p:column headerText="Programado"><h:outputText value="#{capitulo5.total}">
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column>                                                                               
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center ">
+                                    <p:dataTable var="capituloCPDD" value="#{adminPoaValidacionPresupuestacion.capituloCPDD}" emptyMessage="Sin recurso asignado">
+                                        <p:column headerText="Partida"><h:outputText value="#{capituloCPDD.partidas1.partida}" /></p:column>   
+                                        <p:column headerText="Programado"><h:outputText value="#{capituloCPDD.total}">
+                                                <f:convertNumber pattern="$ ###,###,###.00"/>
+                                            </h:outputText>
+                                        </p:column>                                                                                
+                                    </p:dataTable>
+                                </div>
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value=""/>
+                                </div>         
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="Programado"/>                            
+                                </div>                                
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.totalCaptitulo2000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.totalCaptitulo3000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.totalCaptitulo4000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.totalCaptitulo5000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; ">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.totalCaptituloCPDD}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="#{adminPoaValidacionPresupuestacion.totalCaptitulos}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center">
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel value="Disponible"/>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel style="#{adminPoaValidacionPresupuestacion.claseP1 eq 'mayor'?'':'color: #ff0000'}" value="#{adminPoaValidacionPresupuestacion.pretecho2000-adminPoaValidacionPresupuestacion.totalCaptitulo2000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel style="#{adminPoaValidacionPresupuestacion.claseP2 eq 'mayor'?'':'color: #ff0000'}" value="#{adminPoaValidacionPresupuestacion.pretecho3000-adminPoaValidacionPresupuestacion.totalCaptitulo3000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel style="#{adminPoaValidacionPresupuestacion.claseP3 eq 'mayor'?'':'color: #ff0000'}" value="#{adminPoaValidacionPresupuestacion.pretecho4000-adminPoaValidacionPresupuestacion.totalCaptitulo4000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center">
+                                    <p:outputLabel style="#{adminPoaValidacionPresupuestacion.claseP4 eq 'mayor'?'':'color: #ff0000'}" value="#{adminPoaValidacionPresupuestacion.pretecho5000-adminPoaValidacionPresupuestacion.totalCaptitulo5000}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-2 col-md-2 col-lg-2" style="text-align: center; ">
+                                    <p:outputLabel style="#{adminPoaValidacionPresupuestacion.clasePC eq 'mayor'?'':'color: #ff0000'}" value="#{adminPoaValidacionPresupuestacion.pretechoCPDD-adminPoaValidacionPresupuestacion.totalCaptituloCPDD}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                                <div class="col-sm-1 col-md-1 col-lg-1" style="text-align: center">
+                                    <p:outputLabel style="#{adminPoaValidacionPresupuestacion.clasePT eq 'mayor'?'':'color: #ff0000'}" value="#{adminPoaValidacionPresupuestacion.totalPretecho-adminPoaValidacionPresupuestacion.totalCaptitulos}">
+                                        <f:convertNumber pattern="$ ###,###,###.00"/>
+                                    </p:outputLabel>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div class="box box-solid">
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 text-info text-center">
+                                    <p:remoteCommand name="actualizarTabla2" actionListener="#{adminPoaValidacionPresupuestacion.imprimirValores()}" update=":frm:dtbBajas" />
+                                    <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="ejesRegistro" 
+                                                 sortBy="#{ejesRegistro.ejeA.eje}" expandableRowGroups="true"
+                                                 value="#{adminPoaValidacionPresupuestacion.ejesEsLaAp}">
+
+                                        <f:facet name="header"></f:facet>
+
+                                        <p:headerRow>
+                                            <p:column colspan="1" styleClass="eje" style="text-align: left; color: #FFFFFF;">
+                                                <h:outputText value="#{ejesRegistro.ejeA.eje}.#{ejesRegistro.ejeA.nombre}" style="text-align: left"/>
+                                            </p:column>
+                                        </p:headerRow>
+                                        <p:column colspan="1" style="padding: 0px 0px">
+                                            <p:dataTable value="#{ejesRegistro.listalistaEstrategiaLaAp}" var="estrategiasRegistro" sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true">
+
+                                                <p:headerRow>
+                                                    <p:column colspan="1" styleClass="est" style="text-align: left; color: #FFFFFF;">
+                                                        <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="text-align: left"/>
+                                                    </p:column>
+                                                </p:headerRow>                            
+
+                                                <p:column  colspan="1" style="padding: 0px 0px">
+                                                    <p:dataTable value="#{estrategiasRegistro.actividadesPoas}" var="poa" sortBy="#{poa.cuadroMandoInt.lineaAccion.lineaAccion}"                                                                  expandedRow="true"
+                                                                 expandableRowGroups="true" rowStyleClass="#{poa.numeroS eq 0?'actividad':''}" emptyMessage="No hay actividades registradas">
+
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column rowspan="2" style="width:50px" styleClass="hederTablesTitle"/>
+                                                                <p:column rowspan="2" headerText="No." style="width: 50px;" styleClass="hederTablesTitle"/>
+                                                                <p:column rowspan="2" headerText="Actividad" styleClass="hederTablesTitle"/>
+                                                                <p:column rowspan="2" headerText="Unidad de medida" style="width:100px;" styleClass="hederTablesTitle"/>
+                                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;" styleClass="hederTablesTitle"/>  
+                                                                <p:column rowspan="2" headerText="Total" style="width: 50px;" styleClass="hederTablesTitle"/>
+                                                                <p:column rowspan="2" headerText="Justificacion" styleClass="hederTablesTitle"/>
+                                                                <p:column rowspan="2" headerText="Es" style="width: 50px;" styleClass="hederTablesTitle"/>
+                                                            </p:row>
+                                                            <p:row class="success">
+                                                                <p:column headerText="Ene" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Feb" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Mar" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Abr" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="May" styleClass="hederTablesTitle"/>                                                    
+                                                                <p:column headerText="Jun" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Jul" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Ago" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Sep" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Oct" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Nov" styleClass="hederTablesTitle"/>
+                                                                <p:column headerText="Dic" styleClass="hederTablesTitle"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+
+                                                        <p:headerRow>
+                                                            <p:column colspan="19" styleClass="lac" style="text-align: left; color: #000000;">
+                                                                <h:outputText value="#{poa.cuadroMandoInt.lineaAccion.nombre}"/>
+                                                            </p:column>
+                                                        </p:headerRow>  
+
+                                                        <p:column rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
+                                                            <p:rowToggler />
+                                                        </p:column>
+                                                        <p:column rendered="#{poa.recursosActividadList.size() eq 0?true:false}"/>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.numeroP}.#{poa.numeroS}" />
+                                                        </p:column>
+                                                        <p:column style="text-align: justify">
+                                                            <h:outputText value="#{poa.denominacion}"/>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.unidadMedida.nombre}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPEnero}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPFebrero}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPMarzo}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPAbril}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPMayo}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPJunio}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPJulio}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPAgosto}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPSeptiembre}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPOctubre}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPNoviembre}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.NPDiciembre}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{poa.total}" />
+                                                        </p:column>
+                                                        <p:column style="text-align: justify" >
+                                                            <h:outputText value="#{poa.descripcion}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <img src="../../resources/img/semaforoVerde.png" alt="Actividad Estratégica" style="visibility:#{poa.estratejica?'visible':'hidden'}"/>
+
+                                                        </p:column>
+
+                                                        <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
+                                                            <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
+                                                                <p:dataTable id="dtbBajas" var="recurso" 
+                                                                             style="background:  #cccccc"                                                                        
+                                                                             sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{poa.recursosActividadList}">
+
+                                                                    <f:facet name="header"></f:facet>
+
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="success">
+                                                                            <p:column rowspan="2" headerText="Producto" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column colspan="12" headerText="Calendarización de Metas" style="width: 1000px;" styleClass="hederSubTablesTitle"/>  
+                                                                            <p:column rowspan="2" headerText="Total" style="width: 80px;" styleClass="hederSubTablesTitle"/>
+                                                                        </p:row>
+                                                                        <p:row class="success">
+                                                                            <p:column headerText="Ene" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column headerText="Feb" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column headerText="Mar" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column headerText="Abr" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column headerText="May" styleClass="hederSubTablesTitle"/>                                                    
+                                                                            <p:column headerText="Jun" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column headerText="Jul" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column headerText="Ago" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column headerText="Sep" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column headerText="Oct" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column headerText="Nov" styleClass="hederSubTablesTitle"/>
+                                                                            <p:column headerText="Dic" styleClass="hederSubTablesTitle"/>
+                                                                        </p:row>
+                                                                    </p:columnGroup>
+
+                                                                    <p:headerRow>
+                                                                        <p:column colspan="1" style="background: #cccccc;">
+                                                                            <h:outputText value="Partida: #{recurso.productoArea.partida.partida}" />
+                                                                        </p:column>
+                                                                        <p:column colspan="13"  style="background: #cccccc;">
+                                                                            <h:outputText value="#{recurso.productoArea.partida.denominacion}" />
+                                                                        </p:column>
+                                                                    </p:headerRow>
+
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPEnero}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPFebero}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPMarzo}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPAbril}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPMayo}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPJunio}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPJulio}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPAgosto}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPSeptiembre}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPOctubre}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPNoviembre}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.RPDiciembre}" />
+                                                                    </p:column>
+                                                                    <p:column> 
+                                                                        <h:outputText value="#{recurso.total}" /> 
+                                                                    </p:column>
+                                                                </p:dataTable>
+                                                            </p:panelGrid>
+                                                        </p:rowExpansion>
+                                                    </p:dataTable>
+                                                </p:column> 
+                                            </p:dataTable>
+                                        </p:column>              
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+
+        <h:form id="frmComentario">
+            <p:dialog header="Agregar Observaciones" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
+                    <p:outputLabel value="Observaciones" />
+                    <p:inputTextarea id="txtComentario" value="#{adminPoaValidacionPresupuestacion.mss}" 
+                                     rows="5" cols="95" counter="display" maxlength="2000" counterTemplate="{0} caracteres restantes." 
+                                     styleClass="form-control" autoResize="true" />
+                    <p:message for="txtComentario" />
+                    <h:outputText id="display" />
+                    <p:commandButton id="btnAceptarComentario" value="Aceptar"
+                                     actionListener="#{adminPoaValidacionPresupuestacion.enviarmensajes('R')}"
+                                     icon="fa fa-chek" styleClass="btn-primary"  update=":frm:dtbBajas" onsuccess="actualizarTabla2()"
+                                     oncomplete="PF('dlgComentario').hide()" />
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+        </c:if>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <div id="main-buttons" class="hidden-sm hidden-xs" >
+                <p:toolbar id="tb3">
+                    <f:facet name="left">
+                        <h:form class="form-inline" enctype="multipart/form-data">
+                            <p:outputLabel value="Carga de facturas: " />
+                            <o:inputFile value="#{fiscalizacion.file}" class="form-control"
+                                         accept="application/xml" acceptMessage="Solo se aceptan archivos XML."
+                                         required="true" requiredMessage="Debe elegir un archivo XML."
+                                         title="Pulse para eligir el archivo XML a registrar." />
+                            <h:commandButton value="Subir" actionListener="#{fiscalizacion.subirFacturaXML()}" class="btn-primary form-control" />
+                        </h:form>
+                    </f:facet>
+                    <f:facet name="right">
+                        <h:form>
+                            <p:commandButton id="btnAgregar" actionListener="#{fiscalizacion.mostrarListaTramites()}" update="@(.contenedor)"
+                                             value="Trámites" process="@this" icon="fa fa-list" styleClass="btn-primary" title="Ver lista de trámites."
+                                             />
+                        </h:form>
+                    </f:facet>
+                </p:toolbar>
+            </div>
+            <p:separator/>
+            <h:form id="frmFacturas" prependId="false">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            Registro de facturas del trámite folio #{fiscalizacion.tramiteSeleccionado.folio}
+                        </h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 text-center">
+                                <p:remoteCommand id="rcFacturas" name="actualizarTabla"  />
+                                <p:dataTable id="tblFacturas" var="factura" sortBy="#{factura.fechaAplicacion}" value="#{fiscalizacion.facturas}"
+                                             editable="true" editMode="row" widgetVar="tblFacturas"
+                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive" tableStyle="vertical-align: middle;"
+                                             rowStyleClass="#{not(factura.fechaAplicacion eq factura.fechaExpedicion)?'warning':''}"
+                                             expandedRow="#{!empty factura.comentariosSistema or !empty factura.comentariosPdf}"
+                                             emptyMessage="Sin registros.">
+                                    <p:ajax event="rowEdit" listener="#{fiscalizacion.onRowEditFacturas}" oncomplete="actualizarTabla();"  />
+                                    <p:ajax event="rowEditCancel" oncomplete="actualizarTabla();"  />
+                                    <p:ajax event="cellEdit" listener="#{fiscalizacion.onCellEditFacturas}" oncomplete="actualizarTabla();" />
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column headerText="" rowspan="2" width="60" />
+                                            <p:column headerText="Contabilidad" colspan="4" />
+                                            <p:column headerText="Emisor" colspan="2" />
+                                            <p:column headerText="CFDI" width="170" />
+                                            <p:column headerText="Fechas" colspan="4" />
+                                            <p:column headerText="XML" rowspan="2" width="60" />
+                                            <p:column headerText="CFDI" rowspan="2" width="135" />
+                                            <p:column headerText="Ticket" rowspan="2" width="98" />
+                                            <p:column headerText="" rowspan="2" width="60" />
+                                            <p:column headerText="" rowspan="2" width="60" />
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="Partida" width="70" />
+                                            <p:column headerText="Total" width="100" />
+                                            <p:column headerText="Aceptado" width="100" />
+                                            <p:column headerText="Tarifa" width="50" />
+                                            <p:column headerText="RFC" />
+                                            <p:column headerText="Razón" />
+                                            <p:column headerText="No. certificado" />
+                                            <p:column headerText="Aplicación" />
+                                            <p:column headerText="Desde" />
+                                            <p:column headerText="Hasta" />
+                                            <p:column headerText="Expedición" />
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="vertical-align: middle;">
+                                        <p:commandButton actionListener="#{fiscalizacion.eliminarFactura(factura)}" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar factura">
+                                            <p:confirm header="Confirmación" message="¿Confirma eliminar la factura #{factura.timbreFiscalUUID} con monto de?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>
+                                    <p:column><h:outputText value="#{factura.partida}" /></p:column>
+                                    <p:column style="text-align:right"><h:outputText value="#{factura.montoTotal}" ><f:convertNumber currencySymbol="$" type="currency" /></h:outputText></p:column>
+                                    <p:column style="text-align:right">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{factura.montoAceptado}" title="#{factura.montoAceptado}" ><f:convertNumber currencySymbol="$" type="currency" /></h:outputText></f:facet>
+                                            <f:facet name="input"><p:inputNumber value="#{factura.montoAceptado}" emptyValue="zero" decimalPlaces="2" thousandSeparator=","></p:inputNumber></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column>
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{factura.viaticoDiario?'Si':'No'}" /></f:facet>
+                                            <f:facet name="input"><p:selectBooleanButton value="#{factura.viaticoDiario}" onLabel="Si" offLabel="No" /></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column><h:outputText value="#{factura.rfcEmisor}" /></p:column>
+                                    <p:column><h:outputText value="#{factura.razonEmisor}" /></p:column>
+                                    <p:column><h:outputText value="#{factura.timbreFiscalUUID}" /></p:column>
+                                    <p:column>
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{factura.fechaAplicacion}" ><f:convertDateTime pattern="yyyy-MM-dd" /></h:outputText></f:facet>
+                                            <f:facet name="input"><p:calendar value="#{factura.fechaAplicacion}" pattern="yyyy-MM-dd"></p:calendar></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column>
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{factura.fechaCoberturaInicio}" ><f:convertDateTime pattern="yyyy-MM-dd" /></h:outputText></f:facet>
+                                            <f:facet name="input"><p:calendar value="#{factura.fechaCoberturaInicio}" pattern="yyyy-MM-dd"></p:calendar></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column>
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{factura.fechaCoberturaFin}" ><f:convertDateTime pattern="yyyy-MM-dd" /></h:outputText></f:facet>
+                                            <f:facet name="input"><p:calendar value="#{factura.fechaCoberturaFin}" pattern="yyyy-MM-dd"></p:calendar></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column><h:outputText value="#{factura.fechaExpedicion}" ><f:convertDateTime pattern="yyyy-MM-dd" /></h:outputText></p:column>
+                                    <p:column style="vertical-align: middle;">
+                                        <div class="btn-group">
+                                            <p:commandLink class="btn btn-info" ajax="false" action="#{fiscalizacion.descargarXML(factura)}" target="_blank" title="Descargar archivo XML."><i class="fa fa-download" /></p:commandLink>
+                                        </div>
+                                    </p:column>
+                                    <p:column style="vertical-align: middle;">
+                                        <div class="btn-group">
+                                            <p:commandLink class="#{empty factura.pdf?'btn btn-warning':'btn btn-info'}" actionListener="#{fiscalizacion.seleccionarFactura(factura)}" oncomplete="PF('dlgSubirPDF').show();return false" title="Subir archivo PDF del CFDI."><i class="fa fa-upload" /></p:commandLink>
+                                            <p:commandLink disabled="#{empty factura.pdf}" class="#{empty factura.pdf?'btn btn-warning':'btn btn-info'}" ajax="false" action="#{fiscalizacion.descargarPDF(factura)}" target="_blank" title="Visualizar archivo PDF del CFDI."><i class="fa fa-external-link-square" /></p:commandLink>
+                                            <p:link disabled="#{empty factura.linkVerificacion}" class="#{empty factura.pdf?'btn btn-warning':'btn btn-info'}" href="#{factura.linkVerificacion}" target="_blank" title="Verificar el CFDI en plataforma del SAT."><i class="fa fa-check-square-o" /></p:link>
+                                        </div>
+                                    </p:column>
+                                    <p:column style="vertical-align: middle;">
+                                        <div class="btn-group">
+                                            <p:commandLink class="#{empty factura.ticket?'btn btn-warning':'btn btn-info'}" actionListener="#{fiscalizacion.seleccionarFactura(factura)}" oncomplete="PF('dlgSubirTicket').show();return false" title="Subir ticket para evidenciar fecha de apliación."><i class="fa fa-upload" /></p:commandLink>
+                                            <p:commandLink disabled="#{empty factura.ticket}" class="#{empty factura.ticket?'btn btn-warning':'btn btn-info'}" ajax="false" action="#{fiscalizacion.descargarTicket(factura)}" target="_blank" title="Visualizar ticket que evidencia la fecha de aplicación."><i class="fa fa-external-link-square" /></p:commandLink>
+                                        </div>
+                                    </p:column>
+                                    <p:column style="width:50px; vertical-align: middle;"><p:rowEditor /></p:column>
+                                    <p:column style="width:50px; vertical-align: middle;"><p:button class="#{factura.validacionSistema and factura.validacionPdf?'btn btn-success':'btn btn-warning'}" icon="#{factura.validacionSistema and factura.validacionPdf?'fa fa-check':'fa fa-times'}" title="#{factura.validacionSistema and factura.validacionPdf?'Factura correcta.':factura.comentariosSistema.concat(' ').concat(factura.comentariosPdf)}" onclick="return false;" /></p:column>
+                                    <p:summaryRow >
+                                        <p:column colspan="3" style="text-align:center;border: 1px solid #000000 !important;"><i class="fa fa-calendar-check-o" /><p:spacer width="2" />Fecha: <h:outputText value="#{factura.fechaExpedicion}" ><f:convertDateTime pattern="yyyy-MM-dd" /></h:outputText></p:column>
+                                        <p:column colspan="1" style="text-align:right;border: 1px solid #000000 !important;">Total: <h:outputText value="#{fiscalizacion.calcularSubtotalFacturas(factura)}"><f:convertNumber type="currency" currencySymbol="$" /></h:outputText></p:column>
+                                        <p:column colspan="2" style="text-align:right;border: 1px solid #000000 !important;">Acumulado: <h:outputText value="#{fiscalizacion.calcularSubtotalAcumulado(factura)}"><f:convertNumber type="currency" currencySymbol="$" /></h:outputText></p:column>
+                                    </p:summaryRow>
+                                    <p:rowExpansion styleClass="warning" >#{factura.comentariosSistema} #{factura.comentariosPdf}</p:rowExpansion>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+            <p:dialog id="dlgSubirPDF" header="CFDI para factura #{fiscalizacion.facturaSeleccionada.timbreFiscalUUID}" styleClass="box-primary" widgetVar="dlgSubirPDF" minHeight="100" modal="true" appendTo="@(body)" resizable="false">
+                <p:autoUpdate />
+                <div class="row">
+                    <div class="col-md-12" style="text-align: center;">
+                        <h:form id="frmSubirPDF" enctype="multipart/form-data" prependId="false" class="form-inline" >
+                            <o:inputFile id="ulfPDF" value="#{fiscalizacion.file}" class="form-control"
+                                         accept="application/pdf" acceptMessage="Solo se aceptan archivos PDF."
+                                         required="true" requiredMessage="Debe elegir un archivo PDF."
+                                         title="Pulse para eligir el archivo PDF a registrar." />
+                            <h:commandButton value="Subir" actionListener="#{fiscalizacion.subirFacturaPDF()}" class="btn-primary form-control" />
+                        </h:form>
+                    </div>
+                </div>
+                <c:if test="#{! empty fiscalizacion.facturaSeleccionada.pdf}">
+                    <div class="row">
+                        <div class="col-md-12" style="text-align: center;">
+                            <h:form id="frmDescargarPDF" prependId="false" class="form-inline" >
+                                Ya hay una factura asignada, para consultar presione el siguiente botón: 
+                                <p:commandLink class="btn btn-info" ajax="false" action="#{fiscalizacion.descargarPDF(fiscalizacion.facturaSeleccionada)}" target="_blank"><i class="fa fa-external-link-square" /></p:commandLink>
+                            </h:form>
+                        </div>
+                    </div>
+                </c:if>
+            </p:dialog>
+            <p:dialog id="dlgSubirTicket" header="Ticket para factura #{fiscalizacion.facturaSeleccionada.timbreFiscalUUID}" styleClass="box-primary" widgetVar="dlgSubirTicket" minHeight="100" modal="true" appendTo="@(body)" resizable="false">
+                <p:autoUpdate />
+                <div class="row">
+                    <div class="col-md-12" style="text-align: center;">
+                        <h:form id="frmSubirTicket" enctype="multipart/form-data" prependId="false" class="form-inline" >
+                            <o:inputFile id="ulfTicket" value="#{fiscalizacion.file}" class="form-control"
+                                         accept="application/pdf" acceptMessage="Solo se aceptan archivos PDF."
+                                         required="true" requiredMessage="Debe elegir un archivo PDF."
+                                         title="Pulse para eligir el archivo PDF a registrar." />
+                            <h:commandButton value="Subir" actionListener="#{fiscalizacion.subirFacturaTicket()}" class="btn-primary form-control" />
+                        </h:form>
+                    </div>
+                </div>
+                <c:if test="#{! empty fiscalizacion.facturaSeleccionada.ticket}">
+                    <div class="row">
+                        <div class="col-md-12" style="text-align: center;">
+                            <h:form id="frmDescargarTicket" prependId="false" class="form-inline" >
+                                Ya hay un ticket asignado, para consultar presione el siguiente botón: 
+                                <p:commandLink class="btn btn-info" ajax="false" action="#{fiscalizacion.descargarTicket(fiscalizacion.facturaSeleccionada)}" target="_blank"><i class="fa fa-external-link-square" /></p:commandLink>
+                            </h:form>
+                        </div>
+                    </div>
+                </c:if>
+            </p:dialog>
+        </div>
+    </div>
+</ui:composition>

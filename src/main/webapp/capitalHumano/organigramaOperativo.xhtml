@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+
+        <!--link rel="stylesheet" href="../resources/demo/js/jquery/ui-lightness/jquery-ui-1.10.2.custom.css" /-->
+        <script type="text/javascript" src="../resources/demo/js/jquery/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="../resources/demo/js/jquery/jquery-ui-1.10.2.custom.min.js"></script>
+
+        <script  type="text/javascript" src="../resources/demo/js/primitives.min.js?219"></script>
+        <link href="../resources/demo/css/primitives.latest.css?219" media="screen" rel="stylesheet" type="text/css" />
+
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+    </ui:define>
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{organigrama.cargado}">
+        <adm:sidebar collapsed="true"/>
+        <h:form id="frmParametros"> 
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row" >
+                        <!--ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/-->
+                        <div class="col-md-12">
+                            <p:outputLabel  value="Mando superior" class="msperior"/>
+                            <p:spacer width="15px"/>
+                            <p:outputLabel  value="Mandos medios superior" class="mmsperior"/>
+                            <p:spacer width="15px"/>
+                            <p:outputLabel  value="Áreas de apoyo" class="aapoyo"/>
+                            <p:spacer width="15px"/>
+                            <p:outputLabel  value="Subordinado" class="subordinado"/>
+                            <p:remoteCommand name="actualizarDatos" actionListener="#{organigrama.nodeSelectListener}" />
+                        </div>
+                    </div>
+                    <div class="row" >
+                        <div id="basicdiagram" class="col-md-12" style="height: 1000px; width: 100%"/>
+                    </div>
+                </section>
+            </p:panel>   
+        </h:form>
+        <h:form id="des">
+            <p:outputPanel style="max-width: 350px; max-height: 550px;">
+                <p:autoUpdate/>
+                <p:dialog id="datos" widgetVar="datos" position="center">
+                    <p:tabView style="max-width: 350px; max-height: 550px;">
+                        <p:tab title="Datos personales">
+                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                <div class="col-md-12">
+                                    <div class="box box-widget widget-user-2">
+                                        <div class="widget-user-header bg-aqua-active">
+                                            <div class="widget-user-image">
+                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{organigrama.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigrama.nuevoEmpleado.clave}" title="Personal #{organigrama.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
+                                            </div>
+                                            <h3 class="widget-user-username">#{organigrama.nuevoEmpleado.nombre}</h3>
+                                            <h5 class="widget-user-desc">#{organigrama.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                        </div>
+                                        <div class="box-footer">
+                                            <div class="row">
+                                                <div class="col-sm-12 border-right">
+                                                    <div class="description-block">
+                                                        <h5 class="description-header">Fecha de ingreso:</h5>
+                                                        <span class="description-text"><p style="text-align: center"><h:outputLabel value="#{organigrama.nuevoEmpleado.fechaIngreso}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 border-right">
+                                                    <div class="description-block">
+                                                        <h5 class="description-header">Grado de estudios:</h5>
+                                                        <span class="description-text"><p style="text-align: center">#{organigrama.nuevoEmpleado.perfilProfesional}</p></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="description-block">
+                                                        <h5 class="description-header">Área de adscripción:</h5>
+                                                        <span class="description-text"><p style="text-align: center">#{organigrama.nuevoEmpleado.areaOperativaNombre}</p></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:tab>
+                        <p:tab title="Subordinados" rendered="#{organigrama.sub eq 0? false:true}">
+                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                <div class="col-md-12">
+                                    <div class="box box-widget widget-user-2">
+                                        <div class="widget-user-header bg-aqua-active">
+                                            <div class="widget-user-image">
+                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{organigrama.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigrama.nuevoEmpleado.clave}" title="Personal #{organigrama.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
+                                            </div>
+                                            <h3 class="widget-user-username">#{organigrama.nuevoEmpleado.nombre}</h3>
+                                            <h5 class="widget-user-desc">#{organigrama.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                        </div>
+                                        <div class="box-footer">
+                                            <div class="row">
+                                                <c:choose>
+                                                    <c:when test="#{organigrama.sec != 0}">
+                                                        <div class="col-sm-6 border-right">
+                                                            <div class="description-block">
+                                                                <h5 class="description-header">Secretaria(s):</h5>
+                                                                <span class="description-text"><p style="text-align: center">#{organigrama.sec}</p></span>
+                                                            </div>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="#{organigrama.sec == 0}"/>
+                                                </c:choose>
+                                                <c:choose>
+                                                    <c:when test="#{organigrama.ptc!= 0}">
+                                                        <div class="col-sm-6 border-right">
+                                                            <div class="description-block">
+                                                                <h5 class="description-header">Profesor(es) de tiempo completo:</h5>
+                                                                <span class="description-text"><p style="text-align: center">#{organigrama.ptc}</p></span>
+                                                            </div>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="#{organigrama.ptc == 0}"/>
+                                                </c:choose>
+                                                <c:choose>
+                                                    <c:when test="#{organigrama.pda != 0}">
+                                                        <div class="col-sm-6">
+                                                            <div class="description-block">
+                                                                <h5 class="description-header">Profesor(es) de asignatura:</h5>
+                                                                <span class="description-text"><p style="text-align: center">#{organigrama.pda}</p></span>
+                                                            </div>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="#{organigrama.pda == 0}"/>
+                                                </c:choose>
+                                                <c:choose>
+                                                    <c:when test="#{organigrama.lab != 0}">
+                                                        <div class="col-sm-6">
+                                                            <div class="description-block">
+                                                                <h5 class="description-header">Laboratorista(s):</h5>
+                                                                <span class="description-text"><p style="text-align: center">#{organigrama.lab}</p></span>
+                                                            </div>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="#{organigrama.lab == 0}"/>
+                                                </c:choose>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:tab>
+                        <p:tab title="Funciones generales">
+                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                <div class="col-md-12">
+                                    <div class="box box-widget widget-user-2">
+                                        <div class="widget-user-header bg-aqua-active">
+                                            <div class="widget-user-image">
+                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{organigrama.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigrama.nuevoEmpleado.clave}" title="Personal #{organigrama.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/>
+                                            </div>
+                                            <h3 class="widget-user-username">#{organigrama.nuevoEmpleado.nombre}</h3>
+                                            <h5 class="widget-user-desc">#{organigrama.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                        </div>
+                                        <div class="box-footer">
+                                            <div class="row">
+                                                <div class="col-sm-12 border-right">
+                                                    <div class="description-block">
+                                                        <h5 class="description-header">Función genérica</h5>
+                                                        <c:forEach var="i" begin="0" end="#{organigrama.listaDFunciones.size()-1}">
+                                                            <c:set var="eje" value="#{organigrama.listaDFunciones.get(i)}"/>
+                                                            <c:if test="#{eje.tipo eq 'GENERAL'}">
+                                                                <br/>
+                                                                <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                <br/>
+                                                            </c:if>                                                                    
+                                                        </c:forEach>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:tab>
+                        <p:tab title="Funciones específicas">
+
+                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                <div class="col-md-12">
+                                    <div class="box box-widget widget-user-2">
+                                        <div class="widget-user-header bg-aqua-active">
+                                            <div class="widget-user-image">
+                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{organigrama.nuevoEmpleado.clave}.jpg" class="img-circle" alt="#{organigrama.nuevoEmpleado.clave}" title="Personal #{organigrama.nuevoEmpleado.clave}" style="width: 100px; height: 100px;"/> 
+                                            </div>
+                                            <h3 class="widget-user-username">#{organigrama.nuevoEmpleado.nombre}</h3>
+                                            <h5 class="widget-user-desc">#{organigrama.nuevoEmpleado.categoriaOperativaNombre}</h5>
+                                        </div>
+                                        <div class="box-footer">
+                                            <div class="row">
+                                                <div class="col-sm-12 border-right">
+                                                    <div class="description-block">
+                                                        <h5 class="description-header">Funciones específicas </h5>
+                                                        <c:forEach var="f" begin="0" end="#{organigrama.listaDFunciones.size()-1}">
+                                                            <c:set var="eje" value="#{organigrama.listaDFunciones.get(f)}"/>
+                                                            <c:if test="#{eje.tipo ne 'GENERAL'}">
+                                                                <br/>
+                                                                <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                <br/>
+                                                            </c:if>                                                                    
+                                                        </c:forEach>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:tab>
+                    </p:tabView>
+                </p:dialog>
+            </p:outputPanel>
+        </h:form>
+
+        <script type='text/javascript'>//<![CDATA[ 
+
+            jQuery(window).load(function () {
+                $.getJSON("/sii2/webresources/organigrama/json/personal", function (data) {
+                    var options = new primitives.orgdiagram.Config();
+                    var items = [];
+                    $.each(data, function (key, org) {
+                        if (org.tipo == 1) {
+                            if (org.id == 0) {
+                                items.push(new primitives.orgdiagram.ItemConfig({id: org.id, clave: org.clave, parent: org.padre, title: org.titulo, description: org.descripcion, image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/" + org.clave + ".jpg", templateName: "contactTemplate", itemTitleColor: org.color}))
+                            } else if (org.id == 3) {
+                                items.push(new primitives.orgdiagram.ItemConfig({id: org.id, clave: org.clave, parent: org.padre, title: org.titulo, description: org.descripcion, image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/" + org.clave + ".jpg", itemType: primitives.orgdiagram.ItemType.Assistant, childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: org.color}))
+                            } else {
+                                items.push(new primitives.orgdiagram.ItemConfig({id: org.id, clave: org.clave, parent: org.padre, title: org.titulo, description: org.descripcion, image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/" + org.clave + ".jpg", childrenPlacementType: primitives.common.ChildrenPlacementType.Matrix, templateName: "contactTemplate", itemTitleColor: org.color}))
+                            }
+                        } else if (org.tipo == 2) {
+                            items.push(new primitives.orgdiagram.ItemConfig({id: org.id, clave: org.clave, parent: org.padre, title: org.titulo, description: org.descripcion, image: "http://siip.utxj.edu.mx/sgot-images/evidencias/personal/" + org.clave + ".jpg", templateName: "contactTemplate", itemTitleColor: org.color}))
+                        }
+                    });
+                    var buttons = [];
+                    buttons.push(new primitives.orgdiagram.ButtonConfig("properties", "ui-icon-person", "Info"));
+                    options.buttons = buttons;
+                    options.hasButtons = primitives.common.Enabled.True;
+                    options.hasSelectorCheckbox = primitives.common.Enabled.False;
+                    options.items = items;
+                    options.cursorItem = 0;
+                    options.templates = [getContactTemplate()];
+                    options.onItemRender = onTemplateRender;
+                    options.hasButtons = primitives.common.Enabled.True;
+                    options.onButtonClick = function (e, data) {
+                        var clave;
+                        clave = data.context.clave;
+                        actualizarDatos([{name: 'clave', value: clave}]);
+                    };
+                    jQuery("#basicdiagram").orgDiagram(options);
+                    function onTemplateRender(event, data) {
+                        switch (data.renderingMode) {
+                            case primitives.common.RenderingMode.Create:                             /* Initialize widgets here */
+                                break;
+                            case primitives.common.RenderingMode.Update:
+                                /* Update widgets here */
+                                break;
+                        }
+
+                        var itemConfig = data.context;
+                        if (data.templateName == "contactTemplate") {
+                            data.element.find("[name=photo]").attr({"src": itemConfig.image, "alt": itemConfig.title});
+                            data.element.find("[name=titleBackground]").css({"background": itemConfig.itemTitleColor});
+                            var fields = ["title", "description", "phone", "email"];
+                            for (var index = 0; index < fields.length; index++) {
+                                var field = fields[index];
+                                var element = data.element.find("[name=" + field + "]");
+                                if (element.text() != itemConfig[field]) {
+                                    element.text(itemConfig[field]);
+                                }
+                            }
+                        }
+                    }
+
+                    function getContactTemplate() {
+                        var result = new primitives.orgdiagram.TemplateConfig();
+                        result.name = "contactTemplate";
+                        var buttons = [];
+                        buttons.push(new primitives.orgdiagram.ButtonConfig("notice", "ui-icon-notice", "Info"));
+                        result.buttons = buttons;
+                        result.itemSize = new primitives.common.Size(220, 120);
+                        result.minimizedItemSize = new primitives.common.Size(3, 3);
+                        result.highlightPadding = new primitives.common.Thickness(2, 2, 2, 2);
+                        var itemTemplate = jQuery(
+                                '<div class="bp-item bp-corner-all bt-item-frame">'
+                                + '<div name="titleBackground" class="bp-item bp-corner-all bp-title-frame" style="top: 2px; left: 2px; width: 216px; height: 42px;">'
+                                + '<div name="title" class="bp-item" style="top: 3px; left: 6px; width: 208px; height: 40px;text-align: center;">'
+                                + '</div>'
+                                + '</div>'
+                                + '<div class="bp-item bp-photo-frame" style="top: 46px; left: 2px; width: 50px; height: 60px;">'
+                                + '<img name="photo" style="height:60px; width:50px;" />'
+                                + '</div>'
+                                + '<div name="description" class="bp-item" style="top: 46px; left: 56px; width: 162px; height: 80px; font-size: 10px;"></div>'
+                                + '</div>'
+                                ).css({
+                            width: result.itemSize.width + "px", height: result.itemSize.height + "px"
+                        }).addClass("bp-item bp-corner-all bt-item-frame");
+                        result.itemTemplate = itemTemplate.wrap('<div>').parent().html();
+                        return result;
+                    }
+
+                });
+            }); //]]>  
+
+        </script>
+        </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

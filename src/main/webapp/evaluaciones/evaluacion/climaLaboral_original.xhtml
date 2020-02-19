@@ -1,0 +1,1472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Cuestionario de percepción de clima laboral y no discriminación
+    </ui:define>
+
+    <ui:define name="description">
+        Apéndice Normativo E
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{climaLaboral.cargado}">
+        <adm:breadcrumb title="Evaluación de control interno - Formulario"/>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb">
+                                <f:facet name="left">
+
+                                </f:facet>
+                                <f:facet name="right">
+                                    <c:if test="#{climaLaboral.finalizado}">
+                                        <h4><span class="label label-success"><i class="fa fa-check" />Ha finalizado el cuestionario.</span></h4>
+                                    </c:if>
+                                    <c:if test="#{!climaLaboral.finalizado}">
+                                        <h4><span class="label label-danger"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
+                                    </c:if>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
+                    </div>
+                    <div class="box box-solid">
+                        <div class="box-header">
+                            <p style="text-align: justify; font-size: larger;">
+                                El presente cuestionario, es una herramienta de medición de clima organizacional, cuyo objetivo es conocer la percepción que tienen las personas que laboran en los centros de trabajo, sobre aquellos aspectos sociales que conforman su entorno laboral y que facilitan o dificultan su desempeño.
+                            </p>
+                            <p style="text-align: justify; font-size: larger;">
+                                La información vertida en este cuestionario es estrictamente confidencial y no implica ninguna responsabilidad para los participantes.
+                            </p>
+                            <p style="text-align: justify; font-size: larger;">
+                                Indicaciones: Por favor seleccione la respuesta a cada reactivo de manera franca, con el objeto de que este ejercicio aporte lo necesario para su mejor aprovechamiento.
+
+                            </p>
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Datos generales
+                                        </h3>
+                                    </div>
+                                    <c:set var="index" value="#{1}" />
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 120px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Sexo</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Mujer" itemLabel="Mujer" itemDescription="Mujer" />
+                                                                <f:selectItem itemValue="Hombre" itemLabel="Hombre" itemDescription="Hombre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Edad</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="15 a 29" itemLabel="15 a 29" itemDescription="15 a 29" />
+                                                                <f:selectItem itemValue="30 a 39" itemLabel="30 a 39" itemDescription="30 a 39" />
+                                                                <f:selectItem itemValue="40 a 49" itemLabel="40 a 49" itemDescription="40 a 49" />
+                                                                <f:selectItem itemValue="50 a 59" itemLabel="50 a 59" itemDescription="50 a 59" />
+                                                                <f:selectItem itemValue="60 y más" itemLabel="60 y más" itemDescription="60 y mas" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Estado civil o conyugal</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Soltera/o" itemLabel="Soltera/o" itemDescription="Soltera/o" />
+                                                                <f:selectItem itemValue="Casada/o" itemLabel="Casada/o" itemDescription="Casada/o" />
+                                                                <f:selectItem itemValue="Unión libre" itemLabel="Unión libre" itemDescription="Unión libre" />
+                                                                <f:selectItem itemValue="Divorciada/o" itemLabel="Divorciada/o" itemDescription="Divorciada/o" />
+                                                                <f:selectItem itemValue="Viuda/o" itemLabel="Viuda/o" itemDescription="Viuda/o" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Años de antigüedad en el centro de trabajo</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Menos de un año" itemLabel="Menos de un año" itemDescription="Menos de un año " />
+                                                                <f:selectItem itemValue="De 1 a 3 años" itemLabel="De 1 a 3 años" itemDescription="De 1 a 3 años" />
+                                                                <f:selectItem itemValue="De 4 a 9 años" itemLabel="De 4 a 9 años" itemDescription="De 4 a 9 años" />
+                                                                <f:selectItem itemValue="Más de 10 años" itemLabel="Más de 10 años" itemDescription="Más de 10 años" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Escolaridad (Grado máximo de estudios)</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Sin escolaridad" itemLabel="Sin escolaridad" itemDescription="Sin escolaridad" />
+                                                                <f:selectItem itemValue="Primaria" itemLabel="Primaria" itemDescription="Primaria" />
+                                                                <f:selectItem itemValue="Secundaria" itemLabel="Secundaria" itemDescription="Secundaria" />
+                                                                <f:selectItem itemValue="Bachillerato o preparatoria" itemLabel="Bachillerato o preparatoria" itemDescription="Bachillerato o preparatoria" />
+                                                                <f:selectItem itemValue="Carrera técnica" itemLabel="Carrera técnica" itemDescription="Carrera técnica" />
+                                                                <f:selectItem itemValue="Licenciatura" itemLabel="Licenciatura" itemDescription="Licenciatura" />
+                                                                <f:selectItem itemValue="Maestría" itemLabel="Maestría" itemDescription="Maestría" />
+                                                                <f:selectItem itemValue="Doctorado" itemLabel="Doctorado" itemDescription="Doctorado" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Horario de trabajo</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <p:outputLabel for="p#{index}_1" value="De: " />
+                                                        <f:ajax execute="p#{index}_1">
+                                                            <p:selectOneMenu  id="p#{index}_1" value="#{climaLaboral.respuestas['p'.concat(index).concat('_1')]}" valueChangeListener="#{climaLaboral.guardarRespuesta}" style="width: 30px;">
+                                                                <c:if test="#{climaLaboral.respuestas['p'.concat(index).concat('_1')] == null}">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="--" />
+                                                                </c:if>
+                                                                <f:selectItem itemValue="1" itemLabel="07:00" />
+                                                                <f:selectItem itemValue="2" itemLabel="07:30" />
+                                                                <f:selectItem itemValue="3" itemLabel="08:00" />
+                                                                <f:selectItem itemValue="4" itemLabel="08:30" />
+                                                                <f:selectItem itemValue="5" itemLabel="09:00" />
+                                                                <f:selectItem itemValue="6" itemLabel="09:30" />
+                                                                <f:selectItem itemValue="7" itemLabel="10:00" />
+                                                                <f:selectItem itemValue="8" itemLabel="10:30" />
+                                                                <f:selectItem itemValue="9" itemLabel="11:00" />
+                                                                <f:selectItem itemValue="10" itemLabel="11:30" />
+                                                                <f:selectItem itemValue="11" itemLabel="12:00" />
+                                                                <f:selectItem itemValue="12" itemLabel="12:30" />
+                                                                <f:selectItem itemValue="13" itemLabel="13:00" />
+                                                                <f:selectItem itemValue="14" itemLabel="13:30" />
+                                                                <f:selectItem itemValue="15" itemLabel="14:00" />
+                                                                <f:selectItem itemValue="16" itemLabel="14:30" />
+                                                                <f:selectItem itemValue="17" itemLabel="15:00" />
+                                                                <f:selectItem itemValue="18" itemLabel="15:30" />
+                                                                <f:selectItem itemValue="19" itemLabel="16:00" />
+                                                                <f:selectItem itemValue="20" itemLabel="16:30" />
+                                                                <f:selectItem itemValue="21" itemLabel="17:00" />
+                                                                <f:selectItem itemValue="22" itemLabel="17:30" />
+                                                                <f:selectItem itemValue="23" itemLabel="18:00" />
+                                                                <f:selectItem itemValue="24" itemLabel="18:30" />
+                                                                <f:selectItem itemValue="25" itemLabel="19:00" />
+                                                                <f:selectItem itemValue="26" itemLabel="19:30" />
+                                                                <f:selectItem itemValue="27" itemLabel="20:00" />
+                                                                <f:selectItem itemValue="28" itemLabel="20:30" />
+                                                                <f:selectItem itemValue="29" itemLabel="21:00" />
+                                                                <f:selectItem itemValue="30" itemLabel="21:30" />
+                                                                <f:selectItem itemValue="31" itemLabel="22:00" />
+                                                                <f:selectItem itemValue="32" itemLabel="22:30" />
+                                                            </p:selectOneMenu>
+                                                        </f:ajax>
+                                                        <p:outputLabel for="p#{index}_2" value="a: " />
+                                                        <f:ajax execute="p#{index}_2">
+                                                            <p:selectOneMenu  id="p#{index}_2" value="#{climaLaboral.respuestas['p'.concat(index).concat('_2')]}" valueChangeListener="#{climaLaboral.guardarRespuesta}" style="width: 30px;">
+                                                                <c:if test="#{climaLaboral.respuestas['p'.concat(index).concat('_2')] == null}">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="--" />
+                                                                </c:if>
+                                                                <f:selectItem itemValue="1" itemLabel="07:00" />
+                                                                <f:selectItem itemValue="2" itemLabel="07:30" />
+                                                                <f:selectItem itemValue="3" itemLabel="08:00" />
+                                                                <f:selectItem itemValue="4" itemLabel="08:30" />
+                                                                <f:selectItem itemValue="5" itemLabel="09:00" />
+                                                                <f:selectItem itemValue="6" itemLabel="09:30" />
+                                                                <f:selectItem itemValue="7" itemLabel="10:00" />
+                                                                <f:selectItem itemValue="8" itemLabel="10:30" />
+                                                                <f:selectItem itemValue="9" itemLabel="11:00" />
+                                                                <f:selectItem itemValue="10" itemLabel="11:30" />
+                                                                <f:selectItem itemValue="11" itemLabel="12:00" />
+                                                                <f:selectItem itemValue="12" itemLabel="12:30" />
+                                                                <f:selectItem itemValue="13" itemLabel="13:00" />
+                                                                <f:selectItem itemValue="14" itemLabel="13:30" />
+                                                                <f:selectItem itemValue="15" itemLabel="14:00" />
+                                                                <f:selectItem itemValue="16" itemLabel="14:30" />
+                                                                <f:selectItem itemValue="17" itemLabel="15:00" />
+                                                                <f:selectItem itemValue="18" itemLabel="15:30" />
+                                                                <f:selectItem itemValue="19" itemLabel="16:00" />
+                                                                <f:selectItem itemValue="20" itemLabel="16:30" />
+                                                                <f:selectItem itemValue="21" itemLabel="17:00" />
+                                                                <f:selectItem itemValue="22" itemLabel="17:30" />
+                                                                <f:selectItem itemValue="23" itemLabel="18:00" />
+                                                                <f:selectItem itemValue="24" itemLabel="18:30" />
+                                                                <f:selectItem itemValue="25" itemLabel="19:00" />
+                                                                <f:selectItem itemValue="26" itemLabel="19:30" />
+                                                                <f:selectItem itemValue="27" itemLabel="20:00" />
+                                                                <f:selectItem itemValue="28" itemLabel="20:30" />
+                                                                <f:selectItem itemValue="29" itemLabel="21:00" />
+                                                                <f:selectItem itemValue="30" itemLabel="21:30" />
+                                                                <f:selectItem itemValue="31" itemLabel="22:00" />
+                                                                <f:selectItem itemValue="32" itemLabel="22:30" />
+                                                            </p:selectOneMenu>
+                                                        </f:ajax>
+                                                        <p:outputLabel value="horas" />
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Tipo de contratación</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Base" itemLabel="Base" itemDescription="Base" />
+                                                                <f:selectItem itemValue="Confianza" itemLabel="Confianza" itemDescription="Confianza" />
+                                                                <f:selectItem itemValue="Honorarios" itemLabel="Honorarios" itemDescription="Honorarios" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">¿Tienes alguna discapacidad?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Sí" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="No" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                    </td>
+                                                </tr>
+                                                <c:if test="#{climaLaboral.respuestas['p'.concat(index)] eq 'Sí'}">
+                                                    <tr>
+                                                        <td style="#{styleColPregunta}">¿Cuál?</td>
+                                                        <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                            <f:ajax execute="p#{index}_1">
+                                                                <p:selectOneButton id="p#{index}_1" value="#{climaLaboral.respuestas['p'.concat(index).concat('_1')]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                    <f:selectItem itemValue="Intelectual" itemLabel="Intelectual" itemDescription="Intelectual" />
+                                                                    <f:selectItem itemValue="Motriz" itemLabel="Motriz" itemDescription="Motriz" />
+                                                                    <f:selectItem itemValue="Auditiva" itemLabel="Auditiva" itemDescription="Auditiva" />
+                                                                    <f:selectItem itemValue="Visual" itemLabel="Visual" itemDescription="Visual" />
+                                                                </p:selectOneButton>
+                                                            </f:ajax>
+                                                        </td>
+                                                    </tr>
+                                                </c:if>
+                                                <c:set var="index" value="#{index+1}" />
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <p:separator />
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Solo para fines estadísticos de igualdad laboral y no discriminación, solicitamos conteste la siguiente pregunta de manera voluntaria.
+                                        </h3>
+                                    </div>
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 500px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th colspan="2">¿Formas parte de alguno de los siguientes sectores de la población?</th>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">De la diversidad sexual</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Sí" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="No" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Indígenas</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Sí" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="No" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Afrodescendientes</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Sí" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="No" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Adultos mayores</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Sí" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="No" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">Otros</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:inputText id="p#{index}" size="100" maxlength="150" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}" />
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">¿En su centro de trabajo existe una política de igualdad laboral y no discriminación?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Sí" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="No" itemLabel="No" itemDescription="No" />
+                                                                <f:selectItem itemValue="No sé" itemLabel="No sé" itemDescription="No sé" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">¿En su centro de trabajo existe un código de ética y/o conducta ?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Sí" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="No" itemLabel="No" itemDescription="No" />
+                                                                <f:selectItem itemValue="No sé" itemLabel="No sé" itemDescription="No sé" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">¿En su centro de trabajo existe un comité de igualdad y no discriminación?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Sí" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="No" itemLabel="No" itemDescription="No" />
+                                                                <f:selectItem itemValue="No sé" itemLabel="No sé" itemDescription="No sé" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">¿En su centro de trabajo existe un mecanismo para prevenir, atender y sancionar las prácticas de discriminación y violencia laboral?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="Sí" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="No" itemLabel="No" itemDescription="No" />
+                                                                <f:selectItem itemValue="No sé" itemLabel="No sé" itemDescription="No sé" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <p:separator />
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Reclutamiento y selección de personal
+                                        </h3>
+                                    </div>
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 500px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">1. ¿Para su contratación fue más importante ser mujer u hombre que sus habilidades profesionales?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="3" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">2. ¿En su centro de trabajo el proceso de contratación favorece más a personas jóvenes?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="3" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">3. ¿En el momento de su contratación, su edad fue determinante?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="3" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">4. ¿Para su contratación fue determinante su apariencia física?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="3" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>                            
+                            <p:separator />
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Formación y capacitación
+                                        </h3>
+                                    </div>
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 420px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">5. ¿En su centro de trabajo las oportunidades de desarrollo laboral solo las reciben unas cuantas personas privilegiadas?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">6. ¿En su centro de trabajo mujeres y hombres tienen por igual oportunidades de ascenso y capacitación?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">7. ¿En su centro de trabajo se cuenta con programas de capacitación en materia de igualdad laboral y no discriminación?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">8. ¿En los últimos 12 meses usted ha participado en programas de capacitación?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <p:separator />
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Permanencia y ascenso
+                                        </h3>
+                                    </div>
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 420px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">9. ¿En su centro de trabajo para lograr la contratación, una promoción o un ascenso cuentan más las recomendaciones que los conocimientos y capacidades de la persona?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">10. ¿En su centro de trabajo se ha despedido a alguna mujer por embarazo u orillado a renunciar al regresar de su licencia de maternidad?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">11. ¿En su centro de trabajo la competencia por mejores puestos, condiciones laborales o salariales es justa y equitativa?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">12. ¿En su centro de trabajo mujeres y hombres tienen las mismas oportunidades para ocupar puestos de decisión?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">13. ¿En su centro de trabajo se cuenta con un sistema de evaluación de desempeño del personal?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">14. ¿En los últimos 12 meses le han realizado una evaluación de desempeño?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <p:separator />
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Corresponsabilidad en la vida laboral, familiar y personal
+                                        </h3>
+                                    </div>
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 420px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">15. ¿En su centro de trabajo tanto mujeres como hombres tienen las mismas facilidades para atender problemas familiares no previstos?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">16. ¿En su centro de trabajo las mujeres embarazadas enfrentan un clima laboral hostil?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">17. ¿En su centro de trabajo las personas que se hacen cargo de personas o familiares que requieren cuidados enfrentan un clima laboral hostil?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">18. ¿En su centro de trabajo los hombres cuentan con licencia de paternidad por nacimiento o adopción de una hija/o?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">19. ¿En su centro de trabajo la licencia de paternidad se otorga por más de cinco días?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">20. ¿En su centro de trabajo se otorgan permisos para atender situaciones familiares como cuidado de hijas e hijos, personas enfermas o personas adultas mayores?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">21. ¿En su centro de trabajo existen convenios con prestadores de servicios que contemplen beneficios para el personal tales como: lavanderías, comedores, planchadurías, transporte, entre otros?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">22. ¿En su centro de trabajo, si usted decidiera usar las opciones de trabajo flexibles ¿se cuestionaría su compromiso ante su trabajo?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">23. ¿En su centro de trabajo usted puede acercarse a su jefa(e) inmediata(o) para hablar sobre cuestiones relacionadas con horarios que le estén afectando?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <p:separator />
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Clima laboral libre de violencia 
+                                        </h3>
+                                    </div>
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 420px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">24. ¿Usted siente que se le trata con respeto en su trabajo actual?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">25. ¿En su centro de trabajo quienes realizan tareas personales para las y los jefes logran privilegios?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">26. ¿En su centro de trabajo todas las personas que laboran obtienen un trato digno y decente?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">27. ¿En su centro de trabajo las valoraciones que se realizan a sus actividades dependen más de la calidad y responsabilidad que de cualquier otra cuestión personal?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">28. ¿En su centro de trabajo, en general hay personas que discriminan, tratan mal o les faltan el respeto a sus compañeras/os, colegas o subordinadas/os?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">29. ¿En su centro de trabajo debido a sus características personales hay personas que sufren un trato inferior o de burla?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">30. ¿En su centro de trabajo las y los superiores reciben un trato mucho más respetuoso que subordinados(as) y personal administrativo?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">31. ¿En su centro de trabajo las y los superiores están abiertos a la comunicación con el personal?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">32. ¿En su centro de trabajo se da un trato inferior o discriminatorio a las personas con los más bajos niveles de sueldo?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">33. ¿En su centro de trabajo existen campañas de difusión internas de promoción de la igualdad laboral y no discriminación?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">34. ¿En su centro de trabajo se toman acciones como: Aislamiento de sus compañeras/os, cambio de lugar repentinamente, falta de instrucciones, menosprecio del esfuerzo o propuestas, imposición de tareas sin los medios para realizarlas?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">35. ¿En su centro de trabajo las funciones y tareas se transmiten de manera clara y precisa?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">36. ¿En su centro de trabajo las cargas de trabajo se distribuyen de acuerdo a la responsabilidad del cargo?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">37. ¿Sí manifiesto mi preocupación sobre algún asunto relacionado con la igualdad de género o prácticas discriminatorias, se le da seguimiento?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <p:separator />
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Acoso y Hostigamiento
+                                        </h3>
+                                    </div>
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 200px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <td colspan="2">
+                                                        La información proporcionada, será enviada en un archivo comprimido que tendrá una contraseña que sólo es del conocimiento de la Ombudswoman.
+                                                    </td>
+                                                </tr>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">38. ¿En su centro de trabajo ha recibido, comentarios sugestivos o sexistas, bromas ofensivas, miradas obscenas, o petición de pláticas indeseables relacionadas con asuntos sexuales?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="3" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">39. ¿En su centro de trabajo ha recibido proposiciones o peticiones directas o indirectas para establecer una relación sexual?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="3" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">40. ¿En su centro de trabajo ha vivido contacto físico sexual no deseado?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="3" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">41. ¿En su centro de trabajo se logran recompensas o incentivos laborales a cambio de favores sexuales?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="3" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">42. ¿En su centro de trabajo se reciben amenazas con daños o castigos en caso de no acceder a proporcionar favores sexuales?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="3" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">43. ¿En su centro de trabajo ha recibido represalias sin razón o amenazas con relación a su permanencia en el trabajo?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="3" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">44. ¿En caso de que haya sido víctima de acoso u hostigamiento sexual, en su centro de trabajo resolvieron satisfactoriamente su caso al interior o le canalizaron con las autoridades competentes?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="0" itemLabel="No" itemDescription="No" />
+                                                                <f:selectItem itemValue="1" itemLabel="No aplica" itemDescription="No aplica" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">45. ¿En caso de ser acosada/o u hostigada/o sexual o laboralmente en su centro de trabajo sabe a qué autoridad puede dirigirse para denunciarlo?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Sí" itemDescription="Sí" />
+                                                                <f:selectItem itemValue="0" itemLabel="No" itemDescription="No" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <c:if test="#{climaLaboral.enviable}">
+                                                    <tr>
+                                                        <th style="#{styleColPregunta}background-color: #E53935; color:white;">
+                                                            ¿Autoriza usted el envío de sus datos y respuestas para que sea usted atendida o atendido por la Ombudswoman de la Universidad?<br/>
+                                                            Nota: La información proporcionada, será enviada en un archivo comprimido que tendrá una contraseña que sólo es del conocimiento de la Ombudswoman.
+                                                        </th>
+                                                        <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                            <f:ajax execute="p#{index}">
+                                                                <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                    <f:selectItem itemValue="1" itemLabel="Sí" itemDescription="Sí" />
+                                                                    <f:selectItem itemValue="0" itemLabel="No" itemDescription="No" />
+                                                                </p:selectOneButton>
+                                                            </f:ajax>
+                                                        </td>
+                                                    </tr>
+                                                    <c:if test="#{climaLaboral.respuestas['p'.concat(index)] eq '0'}">
+                                                        <tr class="info">
+                                                            <td colspan="2">
+                                                                <p>Su respuesta solo quedará como referencia, es importante se acerque a la Ombudswoman para poder dar atención a su situación y mejorar el Clima Laboral y evitar la discriminación en la Universidad. </p>
+                                                                <p>Lic. María del Carmen Vázquez Molina<br/>Telefono de Oficina: 764 764 3210<br/> marycarva@hotmail.com</p>
+                                                            </td>
+                                                        </tr>
+                                                    </c:if>
+                                                    <c:set var="index" value="#{index+1}" />
+                                                </c:if>
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <p:separator />
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Accesibilidad 
+                                        </h3>
+                                    </div>
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 420px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">46. ¿En su centro de trabajo se cuenta con el espacio, mobiliario y equipo adecuado para personas con discapacidad?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">47. ¿Considera que las instalaciones de su centro de trabajo son adecuadas y accesibles para personas con discapacidad (rampas, estacionamiento, sanitarios, oficinas, pasillos, escaleras, elevadores, entre otros)?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">48. ¿En su centro de trabajo se cuenta con los medios tecnológicos y de comunicación accesible para que cualquier persona con discapacidad desempeñe sus actividades de manera óptima?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">49. ¿En su centro de trabajo se contemplan mecanismos o políticas de inclusión laboral para personas con discapacidad, personas adultas mayores o con VIH, entre otras?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">50. ¿En su centro de trabajo se utiliza lenguaje incluyente y no sexista?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <p:separator />
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Respeto a la diversidad 
+                                        </h3>
+                                    </div>
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 420px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">51. ¿En su centro de trabajo hay un ambiente de respeto y no discriminación hacia las diferencias y preferencias sexuales?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">52. ¿En su centro de trabajo ha sido testigo de actos discriminatorios por ser mujer u hombre, por edad, apariencia, discapacidad, entre otros?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="3" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="2" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="1" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="0" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <p:separator />
+                            <div class="row">
+                                <div class="panel panel-primary" style="max-width: 1200px;margin: auto;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title" style="text-align: justify;">
+                                            Condiciones generales de trabajo
+                                        </h3>
+                                    </div>
+                                    <c:set var="styleColRespuesta" value="#{'min-width: 420px;'}" />
+                                    <c:set var="styleColPregunta" value="#{'vertical-align: middle;text-align: justify;'}" />
+                                    <c:set var="classColRespuesta" value="#{'danger text-left'}" />
+                                    <p:outputPanel >
+                                        <p:autoUpdate/>
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr class="info">
+                                                    <th>Pregunta</th>
+                                                    <th style="text-align: center;">Respuesta</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">53. ¿En su centro de trabajo se proporcionan las prestaciones de ley?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">54. ¿En su centro de trabajo las y los directivos apoyan la igualdad y no discriminación ?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">55. ¿En su centro de trabajo los mecanismos utilizados para asegurar la igualdad y no discriminación son eficaces?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="#{styleColPregunta}">56. ¿En su centro de trabajo se recibe un salario igual por igual trabajo, sin importar sexo, apariencia, edad u otras características personales?</td>
+                                                    <td class="#{classColRespuesta}" style="#{styleColRespuesta}">
+                                                        <f:ajax execute="p#{index}">
+                                                            <p:selectOneButton id="p#{index}" value="#{climaLaboral.respuestas['p'.concat(index)]}" valueChangeListener="#{climaLaboral.guardarRespuesta}">
+                                                                <f:selectItem itemValue="0" itemLabel="Nunca" itemDescription="Nunca" />
+                                                                <f:selectItem itemValue="1" itemLabel="Algunas veces" itemDescription="Algunas veces" />
+                                                                <f:selectItem itemValue="2" itemLabel="Con frecuencia" itemDescription="Con frecuencia" />
+                                                                <f:selectItem itemValue="3" itemLabel="Siempre" itemDescription="Siempre" />
+                                                            </p:selectOneButton>
+                                                        </f:ajax>
+                                                        <c:set var="index" value="#{index+1}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+                            <p:separator />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        </c:if>
+    </ui:define>
+</ui:composition>

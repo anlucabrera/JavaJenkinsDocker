@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <script type="text/javascript">
+            function myconfig() {
+                console.log("ejemplo");
+            }
+            ;
+
+        </script>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
+        </c:if>      
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="title">
+        Pase de lista
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{reporteAsistenciasDirector.cargado}">
+        <adm:breadcrumb title="Pase de lista"/>
+        <div class="contenedor">
+            <c:if test="#{reporteAsistenciasDirector.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                    </f:facet>
+                                    <f:facet name="right">
+
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {reporteAsistenciasDirector.actualizarCargaAcademica}" update="@form" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{reporteAsistenciasDirector.rol.periodo}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{reporteAsistenciasDirector.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this, planEstudio"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+
+
+                                                <p:selectOneMenu id="planEstudio" value="#{reporteAsistenciasDirector.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{reporteAsistenciasDirector.cambiarPlanestudio}">
+                                                    <f:selectItem itemValue="#{null}"/>
+                                                    <f:selectItems value="#{reporteAsistenciasDirector.rol.planesEstudios}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                    <p:ajax update="@this, :CV" process="@this"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa Educativo" for="planEstudio"/>
+                                                <p:message for="planEstudio" />
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        <br/>
+                                        <div class="row">
+                                            <center>
+
+                                                <p:outputLabel value="Seleccione Grupo para visualizar Asistencias" />
+                                                <p></p>
+                                                <p:selectOneRadio id="unidad" value="#{reporteAsistenciasDirector.rol.grupoSelec}" layout="responsive" columns="4" converter="entityConverter" valueChangeListener="#{reporteAsistenciasDirector.consultarAlumnos}" >
+                                                    <f:selectItems value="#{reporteAsistenciasDirector.rol.grupos}" var="g" itemLabel="#{g.grado}°#{g.literal} -- #{g.idSistema.nombre}" itemValue="#{g}"/>
+                                                    <p:ajax update="@this,:CV" process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneRadio>
+                                                <p></p>
+                                                <p></p>
+                                            </center>      
+                                            <p></p>
+                                            <p></p>
+                                            <p></p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <center>
+                                            <h:commandLink>
+                                                <i class="fa fa-file-excel-o"></i>
+                                                <p:dataExporter type="xls" target="tbAsigInd1" fileName="#{reporteAsistenciasDirector.rol.grupoSelec.grado}-#{reporteAsistenciasDirector.rol.grupoSelec.literal}-#{reporteAsistenciasDirector.rol.grupoSelec.plan.idPe}" />
+                                            </h:commandLink>
+                                            <p:panel id="CV" >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row hidden-sm hidden-xs" style="align-content:  center">
+                                                                <div class="col-sm-3 pull-left">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <img src="../../resources/img/logoSep.jpg" alt="" height="80px"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6 pull-left" >
+                                                                    <div class="row">
+                                                                        <div class="row">
+                                                                            <div id="tituloCV" class="col-sm-12">
+                                                                                <div class="description-block" style="text-align: center">
+                                                                                    <h3><strong>Universidad Tecnológica De</strong></h3>
+                                                                                    <h3><strong>Xicotepec de Juárez</strong></h3>
+                                                                                    <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>       
+                                                                                    <h4><strong>Pase de Lista</strong></h4>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <img src="../../resources/img/utxj.png" alt="" height="100px"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+
+                                                            <div class="row hidden-sm hidden-xs" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                                <div class="col-md-12">
+                                                                    <div class="box box-widget widget-user-2">
+                                                                        <div class="row" style="align-content:  center">
+                                                                            <div class="col-sm-12">
+                                                                                <div class="row">
+                                                                                    <div class="row">
+                                                                                        <div id="tituloCV" class="col-sm-12">
+                                                                                            <div class="description-block" style="text-align: center">
+                                                                                                <h4><strong>Lista de asistencia</strong></h4>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row hidden-sm hidden-xs">
+                                                                <div class="col-sm-12">
+                                                                    <div class="description-block" style="text-align: right">
+                                                                        <h:outputLabel value="Fecha de Impresión:" style="font-weight: bold;"/> <p:spacer width="10px"/> <h:outputLabel value="#{reporteAsistenciasDirector.rol.fechaInpresion}"><f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/></h:outputLabel><p:spacer width="10px"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <div class="description-block" style="text-align: left">
+                                                                        <h:outputLabel value="ÁREA ACADEMICA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{reporteAsistenciasDirector.rol.programa.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                        <h:outputLabel value="CARRERA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{reporteAsistenciasDirector.rol.planEstudio.descripcion}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                        <h:outputLabel value="PERIODO:"/> <p:spacer width="10px"/> <h:outputLabel value="#{reporteAsistenciasDirector.rol.periodo.mesInicio.mes} - #{reporteAsistenciasDirector.rol.periodo.mesFin.mes} #{reporteAsistenciasDirector.rol.periodo.anio}" style="font-weight: bold;"/><p:spacer width="10px"/> <h:outputLabel value="GRUPO:"/> <p:spacer width="10px"/> 
+                                                                        <h:outputLabel value="#{reporteAsistenciasDirector.rol.grupoSelec.grado}° #{reporteAsistenciasDirector.rol.grupoSelec.literal}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                        <h:outputLabel value="NOMBRE DEL TUTOR"/> <p:spacer width="10px"/> <h:outputLabel value="#{reporteAsistenciasDirector.buscarPersonal(reporteAsistenciasDirector.rol.grupoSelec.tutor)}" style="font-weight: bold;"/><p:spacer width="10px"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="description-block">
+                                                            <p:outputPanel>            
+                                                                <p:autoUpdate/>
+                                                                #{reporteAsistenciasDirector.rol.drpls.size()}
+                                                                <p:panelGrid style="width: 100%">
+                                                                    <f:facet name="header">
+                                                                        <p:row>
+                                                                            <p:column colspan="#{reporteAsistenciasDirector.rol.drpls.size()+reporteAsistenciasDirector.rol.dplrs.size()}" style="font-size: large">Reporte Asistencias</p:column>
+                                                                        </p:row>
+                                                                        <p:row>
+                                                                            <p:column rowspan="4" style="background: #00a7d0">Matricula</p:column>
+                                                                            <p:column rowspan="4" style="background: #00a7d0">Nombre</p:column>
+                                                                            <c:forEach var="i" begin="0" end="#{reporteAsistenciasDirector.rol.ums.size()-1}">
+                                                                                <c:set var="d" value="#{reporteAsistenciasDirector.rol.docentes.get(i)}"/>
+                                                                                <p:column colspan="2" style="background: #00a7d0">#{d.personal.nombre}</p:column>
+                                                                            </c:forEach>   
+                                                                        </p:row>
+                                                                        <p:row>
+                                                                            <c:forEach var="i" begin="0" end="#{reporteAsistenciasDirector.rol.ums.size()-1}">
+                                                                                <c:set var="t" value="#{reporteAsistenciasDirector.rol.ums.get(i)}"/>
+                                                                                <p:column colspan="2" style="font-size: smaller;background: #00D8D8 ">#{t.idMateria.nombre}<hr/>#{t.noUnidad}.-#{t.nombre}</p:column>
+                                                                            </c:forEach>   
+                                                                        </p:row>
+                                                                        <p:row>
+                                                                            <c:forEach var="i" begin="0" end="#{reporteAsistenciasDirector.rol.ums.size()-1}">
+                                                                                <p:column style="font-size: smaller;background: #00C853">Total Asistencias<hr/>Total Pases de Lista</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00C853">Porcentaje cumplido</p:column>
+                                                                            </c:forEach>
+                                                                        </p:row>
+                                                                    </f:facet>
+
+                                                                    <c:forEach var="k" begin="0" end="#{reporteAsistenciasDirector.rol.dplrs.size()-1}">
+                                                                        <c:set var="q" value="#{reporteAsistenciasDirector.rol.dplrs.get(k)}"/>
+                                                                        <p:row >
+                                                                            <p:column>#{q.listaalumnosca.matricula}</p:column>
+                                                                            <p:column style="text-align: justify">#{q.listaalumnosca.esApePat} #{q.listaalumnosca.esApeMat} #{q.listaalumnosca.esNombre}</p:column>
+                                                                            <c:forEach var="m" begin="0" end="#{q.drpls.size()-1}">
+                                                                                <c:set var="n" value="#{q.drpls.get(m)}"/>
+                                                                                <p:column style="#{n.casoC eq true?'background: #FF4848':''}">#{n.totalAsis}<hr/>#{n.totalPlista}</p:column>
+                                                                                <p:column style="#{n.casoC eq true?'background: #FF4848':''}">#{planeacionCuatrimestral.df.format(n.porAsis)}%</p:column>
+                                                                            </c:forEach>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </p:panelGrid>
+                                                            </p:outputPanel>          
+                                                        </div>
+                                                    </div>
+                                                </div>    
+                                            </p:panel>
+                                        </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <p:blockUI block="frm" widgetVar="bloqueoCargaFile">
+                    Cargando espere por favor.<br />
+                </p:blockUI>
+            </c:if>
+            <c:if test="#{!reporteAsistenciasDirector.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal directico."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

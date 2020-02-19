@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:ice="http://www.icefaces.org/icefaces/core"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+    <ui:define name="head-end">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a7d0  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+
+    </ui:define>
+
+    <ui:define name="title">
+        Administracion de evaluación:
+    </ui:define>
+
+    <ui:define name="description">
+        Desempeño Ambiental de la Universidad Tecnológica de Xicotepec de Juárez.
+    </ui:define>
+
+    <ui:define name="body">
+        <section>
+            <c:if test="#{administracionEvaluacionAmbiental.cargado}">
+                <div class="row">
+                    <c:if test="#{administracionEvaluacionAmbiental.tieneAcceso}">
+                        <h:form id="frm">
+                            <div class="col-md-12">
+                                <div class="box box-primary">
+                                    <div class="box-header with-border">
+                                        <div class="hidden-sm hidden-xs col-sm-6" >
+                                            <h:outputText value="Seguimiento de avance de evaluación" styleClass="box-title" style="font-weight: bold;"/>
+                                            <div class="progress">
+                                                <c:set value="#{administracionEvaluacionAmbiental.porcentajeAvance()}" var="porcentaje"/>
+                                                <div class="progress-bar bg-primary progress-bar-striped" role="progressbar" aria-valuenow="#{porcentaje}" aria-valuemin="0"
+                                                     aria-valuemax="100" style="width: #{porcentaje}%">
+                                                    <span>#{porcentaje}% Complete (success)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="hidden-sm hidden-xs col-sm-6" >
+                                            <p:commandButton value="Mostrar resultado personal" actionListener="#{administracionEvaluacionAmbiental.obtenerResultadosPersonal()}"
+                                                             process="@this" update="carTable, carTable1" styleClass="btn btn-primary"/>
+                                            <p:spacer width="10"/>
+                                            <p:commandButton value="Mostrar resultado estudiantes" actionListener="#{administracionEvaluacionAmbiental.obtenerResultadosEstudiantes()}"
+                                                             process="@this" update="carTable3, carTable4" styleClass="btn btn-primary"/>
+                                        </div>
+                                    </div>
+                                    <div class="box box-body">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="box box-success direct-chat direct-chat-warning">
+                                                    <div class="box-header with-border">
+                                                        <h3 class="box-title">Encuestas completas (Personal)</h3>
+
+                                                        <div class="box-tools pull-right">
+                                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <!-- /.box-header -->
+                                                    <div class="box-body">
+                                                        <p:dataTable var="evaluacion" value="#{administracionEvaluacionAmbiental.rol.evaluacionesCompletasPersonal}" paginator="true" rows="10"
+                                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                     rowsPerPageTemplate="5,10,15" id="carTable" lazy="true" paginatorPosition="top">
+                                                            <p:column headerText="Clave" width="20" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.clave}" />
+                                                            </p:column>
+                                                            <p:column headerText="Nombre completo" width="70" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.nombreCompleto}" />
+                                                            </p:column>
+                                                            <p:column headerText="Área" width="170" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.areaOprogramaEducativo}" />
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="box box-danger direct-chat direct-chat-warning">
+                                                    <div class="box-header with-border">
+                                                        <h3 class="box-title">Encuestas incompletas (Personal)</h3>
+
+                                                        <div class="box-tools pull-right">
+                                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <!-- /.box-header -->
+                                                    <div class="box-body">
+                                                        <p:dataTable var="evaluacion" value="#{administracionEvaluacionAmbiental.rol.evaluacionesInCompletasPersonal}" paginator="true" rows="10"
+                                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                     rowsPerPageTemplate="5,10,15" id="carTable1" lazy="true" paginatorPosition="top">
+                                                            <p:column headerText="Clave" width="20" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.clave}" />
+                                                            </p:column>
+                                                            <p:column headerText="Nombre completo" width="70" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.nombreCompleto}" />
+                                                            </p:column>
+                                                            <p:column headerText="Área" width="170" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.areaOprogramaEducativo}" />
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="box box-success direct-chat direct-chat-warning">
+                                                    <div class="box-header with-border">
+                                                        <h3 class="box-title">Encuestas completas (Estudiante)</h3>
+
+                                                        <div class="box-tools pull-right">
+                                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <!-- /.box-header -->
+                                                    <div class="box-body">
+                                                        <p:dataTable var="evaluacion" value="#{administracionEvaluacionAmbiental.rol.evaluacionesCompletas}" paginator="true" rows="10"
+                                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                     rowsPerPageTemplate="5,10,15" id="carTable3" lazy="true" paginatorPosition="top">
+                                                            <p:column headerText="Clave" width="20" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.clave}" />
+                                                            </p:column>
+                                                            <p:column headerText="Nombre completo" width="70" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.nombreCompleto}" />
+                                                            </p:column>
+                                                            <p:column headerText="Área" width="170" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.areaOprogramaEducativo}" />
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="box box-danger direct-chat direct-chat-warning">
+                                                    <div class="box-header with-border">
+                                                        <h3 class="box-title">Encuestas incompletas (Estudiante)</h3>
+
+                                                        <div class="box-tools pull-right">
+                                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <!-- /.box-header -->
+                                                    <div class="box-body">
+                                                        <p:dataTable var="evaluacion" value="#{administracionEvaluacionAmbiental.rol.evaluacionesInCompletas}" paginator="true" rows="10"
+                                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                     rowsPerPageTemplate="5,10,15" id="carTable4" lazy="true" paginatorPosition="top">
+                                                            <p:column headerText="Clave" width="20" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.clave}" />
+                                                            </p:column>
+                                                            <p:column headerText="Nombre completo" width="70" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.nombreCompleto}" />
+                                                            </p:column>
+                                                            <p:column headerText="Área" width="170" style="font-size: small">
+                                                                <h:outputText value="#{evaluacion.areaOprogramaEducativo}" />
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                    </c:if>
+                </div>
+            </c:if>
+        </section>
+    </ui:define>
+    
+</ui:composition>

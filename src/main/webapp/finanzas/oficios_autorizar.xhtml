@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="comisionMapa.css" />
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Comisionar personal
+    </ui:define>
+
+    <ui:define name="description">
+        Fiscalización
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Comisionar a personal"/>
+        <adm:sidebar collapsed="true"/>
+        <h:form id="frmAgregarTramite" class="form-horizontal" prependId="true">
+            <p:messages showSummary="true" showDetail="true" >
+                <p:autoUpdate />
+            </p:messages>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:toolbar id="tb2">
+                            <f:facet name="left">
+                            </f:facet>
+                            <f:facet name="right">
+                                <p:commandButton id="btnAgregar" actionListener="#{comisionar.guardarComisión()}"
+                                                 process="@form" update="@(.ui-message)" value="Guardar" icon="fa fa-save" styleClass="btn-primary"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb2" />
+                    </div>
+                    <p:separator/>
+                    <div class="box box-solid">                        
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12">
+                                    <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="../../index.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div> 
+                                    <br />
+                                    <br />
+                                </div>
+                                    <br />
+                                    <br />
+                                        <p:panel id="ET" >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <h:form id="frmTitExp">
+                                                                        <p:panelGrid style="width: 100%">
+                                                                        <f:facet name="header">
+                                                                            <p:row>
+                                                                                <p:column style="background: #3c8dbc; color: #ffffff;">Opciones</p:column>
+                                                                                <p:column style="background: #3c8dbc; color: #ffffff;">Archivo</p:column>
+                                                                                <p:column style="background: #3c8dbc; color: #ffffff;">Fecha de Carga</p:column>
+                                                                                <p:column style="background: #3c8dbc; color: #ffffff;">Fecha de Emisión</p:column>
+                                                                            </p:row>
+                                                                        </f:facet>
+                                                                        <p:row >
+                                                                            <c:set var="titExp" value="#{controladorTitEgresado.tituloExpediente}"/>
+                                                                            <p:column style="text-align: center;">
+                                                                                <div class="btn-group">
+                                                                                    <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{controladorTitEgresado.eliminarTitulo(titExp)}" title="Eliminar documento." >
+                                                                                        <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(titExp.ruta)}?" icon="ui-icon-alert" />
+                                                                                    </p:commandButton>
+                                                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                                                                                    </p:confirmDialog> 
+                                                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorTitEgresado.descargarTitulo(titExp)}" target="_blank" title="Descargar documento."><i class="fa fa-download" /></p:commandLink>
+                                                                                </div>
+                                                                            </p:column>
+                                                                            <p:column style="text-align: justify;">#{caster.rutaToArchivoNombre(titExp.ruta)}</p:column>
+                                                                            <p:column style="text-align: center;"><h:outputText value="#{controladorTitEgresado.tituloExpediente.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column> 
+                                                                            <p:column style="text-align: center;">
+                                                                                <p:calendar id="fechaEmision" locale="es" value="#{controladorTitEgresado.tituloExpediente.fechaEmision}" pattern="dd-MM-yyyy" mask="true">
+                                                                                    <p:ajax event="dateSelect" listener="#{controladorTitEgresado.cambiarFechaEmision2}"/>
+                                                                                </p:calendar>
+                                                                            </p:column> 
+                                                                        </p:row>
+                                                                        </p:panelGrid>
+                                                                    </h:form>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:panel>
+                                </div>
+                        </div>
+                    </div>
+                </section>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

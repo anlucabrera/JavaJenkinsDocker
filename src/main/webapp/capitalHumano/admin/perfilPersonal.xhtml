@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>        
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{personalAdmin.cargado}">
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            button, input, optgroup, select, textarea{
+                color: black;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-right{
+                right: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-left{
+                left: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .aceptado{
+                background-color: white;
+            }
+            .denegado{
+                background-color: #f39c12;
+            }
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 
+                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 579
+                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 511
+                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 349
+                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 617
+                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 203}">
+                <div class="row">
+                    <h:form id="frmFunciones">
+                        <p:outputLabel value="Subordinados(as)" for="clave" class="col-sm-2 control-label"/>
+                        <div class="col-sm-3">
+                            <p:selectOneMenu id="clave" value="#{personalAdmin.contactoDestino}" filter="true" 
+                                             filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label"
+                                             valueChangeListener="#{personalAdmin.asignarPersona}">
+                                <f:selectItem itemValue="0" itemLabel=" Regresar "/>
+                                <f:selectItems value="#{personalAdmin.listaPersonal}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.clave} - #{personal.nombre} - #{personal.categoriaOperativa.nombre}" />
+                                <p:ajax update="@form :frmFunciones :informacion panelDatos" listener="#{personalAdmin.imprimirValores()}"/>
+                            </p:selectOneMenu>  
+                            <p:message for="clave"/>
+                        </div>
+                        <div class="col-sm-2">
+                            <p:commandButton value="Datos acceso" id="btnBuscarActiuvidades" 
+                                             actionListener="#{personalAdmin.imprimirValores()}"  
+                                             oncomplete="PF('dlgRdVPC').show()" process="@this" 
+                                             class="btn-primary btn-block col-md-3" disabled="#{personalAdmin.contactoDestino eq 0}"
+                                             icon="fa fa-binoculars" styleClass="btn-primary"/>
+                        </div>
+                        <div class="col-sm-2">
+                            <p:commandButton value="Resetar contraseña" id="btnReset" 
+                                             actionListener="#{personalAdmin.imprimirValores()}"  
+                                             oncomplete="PF('dlgJusMes').show()" process="@this" 
+                                             class="btn-primary btn-block col-md-3" disabled="#{personalAdmin.contactoDestino eq 0}"
+                                             icon="fa fa-key" styleClass="btn-primary"/>
+                        </div>
+                    </h:form>
+                </div> 
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaAdminlPersonal.xhtml"/>
+                        <div class="col-md-9">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>
+                                    <p:tab title="Currículum vitae">
+                                        <h:form>
+                                            <p:panel id="CV" >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h1><strong>Currículum vitae</strong></h1>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div id="tituloCV" class="col-sm-12">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                        <h3>Contenido de currículum para expedientes</h3>
+                                                                        <h4>Departamento de personal</h4>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos personales</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div  id="dstoasPerosonalesPersonal1" class="col-sm-3">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Nombre completo</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{personalAdmin.nuevoOBJListaPersonal.nombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal2" class="col-sm-3"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>CURP</strong>
+                                                                                                <p class="text-muted" style="text-transform: uppercase">
+                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.curp}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div  id="dstoasPerosonalesPersonal1" class="col-sm-3">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Lugar de nacimiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}
+                                                                                                </p> 
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal2" class="col-sm-3"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>RFC</strong>
+                                                                                                <p class="text-muted" style="text-transform: uppercase">
+                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.rfc}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal3" class="col-sm-3" > 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Edad</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.edad} años
+                                                                                                </p>                                                             
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal4" class="col-sm-3" > 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Estado civil</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.estadoCivil}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+
+
+                                                                                        <div  id="dstoasPerosonalesPersonal3" class="col-sm-3" > 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Sexo</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{personalAdmin.nuevoOBJListaPersonal.generoNombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal4" class="col-sm-3" > 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Fecha de nacimiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <h:outputLabel value="#{personalAdmin.nuevoOBJListaPersonal.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                                </p>                                                                
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal5" class="col-sm-4">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Dirección</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.direccion}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal6" class="col-sm-4">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Correo electrónico</strong>
+                                                                                                <ul style="list-style-type: square">
+                                                                                                    <li>
+                                                                                                        #{personalAdmin.nuevoOBJListaPersonal.correoElectronico}
+                                                                                                        <br/>
+                                                                                                        #{personalAdmin.nuevoOBJListaPersonal.correoElectronico2}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal7" class="col-sm-4">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Número de teléfono</strong>
+                                                                                                <ul style="list-style-type: square">
+                                                                                                    <li>
+                                                                                                        Casa: #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.numTelFijo}
+                                                                                                    </li>
+                                                                                                    <li>
+                                                                                                        Cel.: #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.numTelMovil}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:panel>
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Funciones">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <h5 class="description-header">Función genérica</h5>
+                                                                <c:forEach var="i" begin="0" end="#{personalAdmin.listaFuncioneSubordinado.size()-1}">
+                                                                    <c:set var="eje" value="#{personalAdmin.listaFuncioneSubordinado.get(i)}"/>
+                                                                    <c:if test="#{eje.tipo eq 'GENERAL'}">
+                                                                        <br/>
+                                                                        <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                        <br/>
+                                                                    </c:if>                                                                    
+                                                                </c:forEach>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr/>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <h5 class="description-header">Funciones específicas </h5>
+                                                                <c:forEach var="f" begin="0" end="#{personalAdmin.listaFuncioneSubordinado.size()-1}">
+                                                                    <c:set var="eje" value="#{personalAdmin.listaFuncioneSubordinado.get(f)}"/>
+                                                                    <c:if test="#{eje.tipo ne 'GENERAL'}">
+                                                                        <br/>
+                                                                        <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                        <br/>
+                                                                    </c:if>                                                                    
+                                                                </c:forEach>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </p:tab>                                                                        
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>  
+                </section>
+
+                <p:dialog header="Datos de acceso al Sistema" widgetVar="dlgRdVPC" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+
+                    <h3>Usuario</h3> 
+
+                    <h5>#{personalAdmin.user.username}</h5> 
+
+                    <h3>Contraseña</h3> 
+
+                    <h5>#{personalAdmin.user.password}</h5> 
+                </p:dialog>
+
+                <h:form id="frmJuM">
+                    <p:dialog header="Resetear Contraseña" widgetVar="dlgJusMes" modal="true" showEffect="fade" hideEffect="fade" resizable="false" closeOnEscape="true">
+                        <p:panelGrid id="pnlAgregarJusMes" style="text-align:justify;" columns="1">
+                            <p:outputLabel value="Trabajador: #{personalAdmin.nuevoOBJListaPersonal.nombre}" />
+                            <p:inputText id="txtComentario" value="#{personalAdmin.newPwd}" />
+                            <p:message for="txtComentario" />
+                            <h:outputText id="display" />
+                            <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{personalAdmin.cambiarPwd()}"
+                                             icon="fa fa-chek" styleClass="btn-primary"  update="@form"
+                                             onsuccess="PF('dlgJusMes').hide()" />
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+
+            </c:if>
+            <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 
+                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 579
+                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 511
+                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 349
+                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 617
+                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 203)}">
+                <h1>
+                    Esta página está disponible solo para personal adscrito al área de personal
+                </h1>
+            </c:if>
+        </p:panel>
+            </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

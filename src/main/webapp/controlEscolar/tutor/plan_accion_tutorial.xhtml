@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                >
+    >
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="primefaces62" name="inputnumber.js"  />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Registro de Plan de Acción Tutorial
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{registroPlanTutoriaTutor.cargado}">
+            <adm:breadcrumb title="Registro de Plan de Acción Tutorial"/>
+            <adm:sidebar collapsed="true"/>
+            <p:importEnum type="mx.edu.utxj.pye.sgi.enums.PlanAccionTutorialEstado" var="patEstado" allSuffix="ESTADOS" />
+            <div class="contenedor">
+                <c:if test="#{registroPlanTutoriaTutor.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registroPlanTutoriaTutor.rol.periodoActivo)}" />
+                                            <p:spacer width="5" />
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Antes de iniciar su registro favor de verificar que los filtros seleccionados seán los correctos" />
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                           onclick="PF('modalAyuda').show();"
+                                                           process="@this"
+                                                           title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </h:form>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
+
+                                    <h:form id="frmFiltros" prependId="false" class="form-inline">
+                                        <div class="row margin-bottom" style="margin-top: 20px;">
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="periodo" value="#{registroPlanTutoriaTutor.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItems value="#{registroPlanTutoriaTutor.rol.periodosConCargaGrupo}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                        <p:ajax process="@this" update="@this grupo contenedor" listener="#{registroPlanTutoriaTutor.cambiarPeriodo}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Periodo" for="periodo"/>
+                                                    <p:message for="periodo" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla4}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="grupo" value="#{registroPlanTutoriaTutor.rol.grupoTutorSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItems value="#{registroPlanTutoriaTutor.rol.listadoGruposTutor}" var="grupo" itemValue="#{grupo}" itemLabel="#{grupo.grupo.grado}° #{grupo.grupo.literal} #{grupo.grupo.idSistema.nombre} de #{grupo.programaEducativo.nombre}" />
+                                                        <p:ajax process="@this" update="@this contenedor" listener="#{registroPlanTutoriaTutor.cambiarGrupo}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Grupo Tutorado" for="grupo"/>
+                                                    <p:message for="grupo" ><p:autoUpdate/></p:message>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                    <h:form id="frmPlanAccionTutorial" prependId="false" class="form-inline">
+                                        <p:remoteCommand id="actualizar" name="actualizar" process="@this" update="contenedor" actionListener="#{registroPlanTutoriaTutor.actualizar()}" />
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 text-info">
+                                                <p:outputPanel id="contenedor">
+                                                    <p:accordionPanel style="text-align:left">
+                                                        <p:ajax event="tabChange" listener="#{registroPlanTutoriaTutor.onTabChange}" update="frmPlanAccionTutorial" />
+                                                        <p:ajax event="tabClose" listener="#{registroPlanTutoriaTutor.onTabClose}" update="frmPlanAccionTutorial" />
+
+                                                        <p:tab title="1.- Registro de plan de acción tutorial" titleStyle="box-solid" id="tabRPAT">
+
+                                                            <div class="row margin-bottom">
+                                                                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px">
+                                                                    <p:outputLabel value="Ingrese los datos del Plan de Acción Tutorial:"/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
+                                                                    <div class="ui-material">
+                                                                        <p:inputTextarea id="patObjetivo"
+                                                                                         rows="2" 
+                                                                                         cols="100"
+                                                                                         counter="displayObs" 
+                                                                                         maxlength="3000" 
+                                                                                         counterTemplate="{0} caracteres en total." 
+                                                                                         autoResize="true"
+                                                                                         class="form-control"
+                                                                                         required="true"
+                                                                                         requiredMessage="Es requerido el campo de Observaciones y Compromisos"
+                                                                                         value="#{registroPlanTutoriaTutor.rol.planAccionTutorial.objetivo}"
+                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         />
+                                                                        <h:outputText id="displayObs" />
+                                                                        <p:watermark for="patObjetivo" value="Ejemplo de objetivo en el plan de acción de tutorial *" />
+                                                                        <p:message for="patObjetivo" />
+                                                                        <p:outputLabel for="patObjetivo" value="Objetivo del Plan de Acción Tutorial " />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
+                                                                    <div class="ui-material">
+                                                                        <p:inputTextarea id="patComentarios"
+                                                                                         rows="2" 
+                                                                                         cols="100"
+                                                                                         counter="displayCom" 
+                                                                                         maxlength="3000" 
+                                                                                         counterTemplate="{0} caracteres en total." 
+                                                                                         autoResize="true"
+                                                                                         class="form-control"
+                                                                                         required="true"
+                                                                                         requiredMessage="Es requerido el campo de Comentarios"
+                                                                                         value="#{registroPlanTutoriaTutor.rol.planAccionTutorial.comentarios}"
+                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         />
+                                                                        <h:outputText id="displayCom" />
+                                                                        <p:watermark for="patComentarios" value="Ejemplo de comentarios en el plan de acción de tutorial *" />
+                                                                        <p:message for="patComentarios" />
+                                                                        <p:outputLabel for="patComentarios" value="Comentarios del Plan de Acción Tutorial " />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
+                                                                    <div class="ui-material">
+                                                                        <p:inputTextarea id="patSugerencias"
+                                                                                         rows="2" 
+                                                                                         cols="100"
+                                                                                         counter="displaySug" 
+                                                                                         maxlength="3000" 
+                                                                                         counterTemplate="{0} caracteres en total." 
+                                                                                         autoResize="true"
+                                                                                         class="form-control"
+                                                                                         required="true"
+                                                                                         requiredMessage="Es requerido el campo de sugerencias"
+                                                                                         value="#{registroPlanTutoriaTutor.rol.planAccionTutorial.sugerencias}"
+                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         />
+                                                                        <h:outputText id="displaySug" />
+                                                                        <p:watermark for="patSugerencias" value="Ejemplo de sugerencias en el plan de acción de tutorial *" />
+                                                                        <p:message for="patSugerencias" />
+                                                                        <p:outputLabel for="patSugerencias" value="Sugerencias del Plan de Acción Tutorial " />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                    <c:if test="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus ne patEstado.VALIDADO.label}">
+                                                                        <div class="callout callout-warning">
+                                                                            <p><code style="color:#4185A0;">#{caster.leyendaValidacion(registroPlanTutoriaTutor.rol.planAccionTutorial.estatus)}</code></p>
+                                                                            <c:if test="#{registroPlanTutoriaTutor.rol.planAccionTutorial.comentariosDirector ne '' and registroPlanTutoriaTutor.rol.planAccionTutorial.comentariosDirector ne null}">
+                                                                                <p><code style="color:#4185A0;">#{registroPlanTutoriaTutor.rol.planAccionTutorial.comentariosDirector}</code></p>
+                                                                            </c:if>
+                                                                        </div>
+                                                                    </c:if>
+
+                                                                    <c:if test="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}">
+                                                                        <div class="callout callout-success">
+                                                                            <p><code style="color:#4185A0;">#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus}</code></p>
+                                                                        </div>
+                                                                    </c:if>
+                                                                </div>
+
+                                                                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px"></div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px;">
+                                                                    <p:commandButton id="btnGuardarPlanAccionTutorial" 
+                                                                                     value="#{registroPlanTutoriaTutor.rol.planRegistrado?'Guardar Plan de Acción Tutorial':'Actualizar información y enviar a revisión'}" 
+                                                                                     action="#{registroPlanTutoriaTutor.guardarNuevoPlanAccionTutorial()}" 
+                                                                                     oncomplete="actualizar();" 
+                                                                                     icon="fa fa-pencil-square-o" 
+                                                                                     class="btn-primary" 
+                                                                                     style="width:22em;"
+                                                                                     title="#{registroPlanTutoriaTutor.rol.planRegistrado?'Guardar Plan de Acción Tutorial':'Actualizar información y enviar a revisión'}"
+                                                                                     disabled="#{(registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label)}"
+                                                                                     />
+                                                                    <p:spacer width="10" />
+                                                                    <p:commandButton id="btnEliminarPlanAccionTutorial"
+                                                                                     value="Eliminar Plan de Acción Tutorial" 
+                                                                                     actionListener="#{registroPlanTutoriaTutor.eliminarPlanAccionTutorial(registroPlanTutoriaTutor.rol.planAccionTutorial)}" 
+                                                                                     oncomplete="actualizar();" 
+                                                                                     icon="fa fa-trash" 
+                                                                                     class="btn-danger" 
+                                                                                     style="width:20em;" 
+                                                                                     disabled="#{(registroPlanTutoriaTutor.rol.planRegistrado eq true) or (caster.permiteEliminarPAT(registroPlanTutoriaTutor.rol.planAccionTutorial.estatus) eq false) or (registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label)}"
+                                                                                     title="#{caster.permiteEliminarPAT(registroPlanTutoriaTutor.rol.planAccionTutorial.estatus)?'Eliminar plan de acción tutorial':'El Plan de Acción Tutorial ya se encuentra validado por el director ó en observaciones'}"
+                                                                                     rendered="#{registroPlanTutoriaTutor.rol.planRegistrado eq false}"
+                                                                                     >
+                                                                        <p:confirm header="Eliminar Plan de Acción Tutorial" message="¿Está seguro que deseá eliminar el Plan de Acción Tutorial? Se eliminarán todas las metas de su función como tutor asignadas a este Plan de Acción Tutorial" icon="ui-icon-alert" />
+                                                                    </p:commandButton>
+                                                                </div>
+                                                            </div>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog>
+                                                        </p:tab>
+
+
+                                                        <p:tab title="2.- Registro de plan de metas de su función como tutor" titleStyle="box-solid" disabled="#{registroPlanTutoriaTutor.rol.planRegistrado}" id="tabRMFT">
+                                                            <div class="row margin-bottom">
+                                                                <p></p>
+                                                                <p></p>
+                                                                <p></p>
+                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 20px;">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="ftMetaFuncion"
+                                                                                     label="ftMetaFuncion"
+                                                                                     maxlength="2000"
+                                                                                     value="#{registroPlanTutoriaTutor.rol.funcionesTutor.metaFuncionTutor}"
+                                                                                     style="width: 45em"
+                                                                                     readonly="#{registroPlanTutoriaTutor.rol.planRegistrado or registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                     rendered="#{registroPlanTutoriaTutor.rol.tab2}"
+                                                                                     class="form-control"
+                                                                                     required="true"
+                                                                                     requiredMessage="Por favor ingrese meta de su función como tutor"
+                                                                                     />
+                                                                        <p:watermark for="ftMetaFuncion" value="Ejemplo de meta de mi función como tutor *" />
+                                                                        <p:outputLabel for="ftMetaFuncion" value="Meta de su Función como Tutor: "/>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarFuncionTutor" 
+                                                                                     value="Guardar" 
+                                                                                     action="#{registroPlanTutoriaTutor.guardarFuncionTutor()}" 
+                                                                                     oncomplete="actualizar();" 
+                                                                                     icon="fa fa-pencil-square-o" 
+                                                                                     class="btn-primary" 
+                                                                                     style="width:15em;"
+                                                                                     disabled="#{registroPlanTutoriaTutor.rol.planRegistrado or registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                     />
+                                                                </div>
+                                                            </div>
+                                                            <p></p>
+                                                            <p></p>
+                                                            <p></p>
+                                                            <p:toolbar>
+                                                                <f:facet name="left">
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Listado de metas de su función como tutor" style="padding-top: 5px;" />
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Para modificar metas de su función como tutor solo modifique directamente los campos y se guardarán de manera automática." style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                            <center>
+                                                                <p:dataTable id="dtFuncionesTutor" 
+                                                                             var="funcionTutor" 
+                                                                             value="#{registroPlanTutoriaTutor.rol.listaFuncionesTutor}" 
+                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                             resizeMode="expand"
+                                                                             emptyMessage="Aún no se han registrado funciones como tutor"
+                                                                             >
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="sucess">
+                                                                            <p:column headerText="Opciones" width="80"/>
+                                                                            <p:column headerText="No. de Función" width="90"/>
+                                                                            <p:column headerText="Meta de su función como tutor" />
+                                                                        </p:row>
+                                                                    </p:columnGroup>
+                                                                    <c:set var="ft" value="#{funcionTutor.funcionTutor}"/>
+                                                                    <p:column>
+                                                                        <center>
+                                                                            <div class="btn-group">
+                                                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                                                 icon="fa fa-trash" 
+                                                                                                 actionListener="#{registroPlanTutoriaTutor.eliminarFuncionTutor(ft)}" 
+                                                                                                 title="Eliminar registro."
+                                                                                                 process="@this" 
+                                                                                                 oncomplete="actualizar();" 
+                                                                                                 global="false"
+                                                                                                 disabled="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                                 >
+                                                                                    <p:confirm header="Eliminar" message="¿Está seguro de eliminar el registro seleccionado?" icon="ui-icon-alert" />
+                                                                                </p:commandButton>
+                                                                            </div>
+                                                                        </center>
+                                                                    </p:column>
+                                                                    <p:column style="text-align: center;">
+                                                                        <h:outputText value="#{funcionTutor.noSesion}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <div class="ui-material">
+                                                                            <p:inputText maxlength="2000"
+                                                                                         value="#{funcionTutor.metaFuncionTutor}"
+                                                                                         style="width: 45em"
+                                                                                         valueChangeListener="#{registroPlanTutoriaTutor.actualizarFuncionTutor}"
+                                                                                         title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB ó ENTER, ó bien colocar el cursor en el siguiente campo"
+                                                                                         placeholder="Ejemplo de meta de mi función como tutor *"
+                                                                                         class="form-control"
+                                                                                         required="true"
+                                                                                         requiredMessage="Este campo es requerido"
+                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         onkeydown="if (event.keyCode === 13) {
+                                                                                                     editarFuncionTutor();
+                                                                                                     return false;
+                                                                                                 }"
+                                                                                         >
+
+                                                                                <p:remoteCommand name="editarFuncionTutor"
+                                                                                                 process="@this"
+                                                                                                 global="false"
+                                                                                                 oncomplete="actualizar();"
+                                                                                                 />
+                                                                                <p:ajax process="@this" global="false" oncomplete="actualizar();" /> 
+                                                                                <f:attribute name="funcionTutor" value="#{funcionTutor}" />
+                                                                            </p:inputText>
+                                                                        </div>
+                                                                    </p:column>
+                                                                    <f:facet name="footer">
+                                                                        Usted ha registrado un total de: #{fn:length(registroPlanTutoriaTutor.rol.listaFuncionesTutor)} metas de su función como tutor.
+                                                                    </f:facet>
+                                                                </p:dataTable>
+                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                                </p:confirmDialog> 
+                                                            </center>
+
+                                                        </p:tab>
+
+                                                        <p:tab title="3.- Registro de Organización de las sesiones grupales de tutoría" titleStyle="box-solid" disabled="#{registroPlanTutoriaTutor.rol.planRegistrado}" id="tabRSGT">
+                                                            <div class="row margin-bottom">
+                                                                <p></p>
+                                                                <p></p>
+                                                                <p></p>
+                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
+                                                                    <div class="ui-material">
+                                                                        <p:inputTextarea id="sgtActividadProgramada"
+                                                                                         rows="2" 
+                                                                                         cols="100" 
+                                                                                         counter="displaySgtActividadProgramada" 
+                                                                                         maxlength="3000" 
+                                                                                         counterTemplate="{0} caracteres en total." 
+                                                                                         autoResize="true"
+                                                                                         required="true"
+                                                                                         class="form-control"
+                                                                                         requiredMessage="Es requerido el campo de actividad programada"
+                                                                                         value="#{registroPlanTutoriaTutor.rol.sesionesGrupalesTutorias.actividadProgramada}"
+                                                                                         rendered="#{registroPlanTutoriaTutor.rol.tab3}"
+                                                                                         disabled="#{registroPlanTutoriaTutor.rol.planRegistrado}"
+                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         />
+                                                                        <h:outputText id="displaySgtActividadProgramada" />
+                                                                        <p:watermark for="sgtActividadProgramada" value="Ejemplo de actividad programada en el registro de la sesión grupal de la tutoria *" />
+                                                                        <p:message for="sgtActividadProgramada" />
+                                                                        <p:outputLabel for="sgtObjetivos" value="Actividad Programada de la sesión grupal de la tutoría" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
+                                                                    <p:outputLabel value="Cumplimiento" for="sgtCumplimiento" />
+                                                                    <p:selectBooleanButton id="sgtCumplimiento"
+                                                                                           required="true"
+                                                                                           requiredMessage="Seleccione si hay cumplimiento con esta sesión"
+                                                                                           value="#{registroPlanTutoriaTutor.rol.sesionesGrupalesTutorias.cumplimiento}"
+                                                                                           onLabel="Si"
+                                                                                           offLabel="No"
+                                                                                           onIcon="ui-icon-check"
+                                                                                           offIcon="ui-icon-close"
+                                                                                           class="btn-sm"
+                                                                                           style="text-align: left"
+                                                                                           disabled="true"
+                                                                                           >
+                                                                        <p:ajax process="sgtCumplimiento"/>
+                                                                        <p:message for="sgtCumplimiento" />
+                                                                    </p:selectBooleanButton>
+                                                                </div>
+
+                                                                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;"></div>
+
+                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
+                                                                    <div class="ui-material">
+                                                                        <p:inputTextarea id="sgtObjetivos"
+                                                                                         rows="2" 
+                                                                                         cols="100"
+                                                                                         counter="displaySgtObjetivos" 
+                                                                                         maxlength="3000" 
+                                                                                         counterTemplate="{0} caracteres en total." 
+                                                                                         autoResize="true"
+                                                                                         required="true"
+                                                                                         class="form-control"
+                                                                                         requiredMessage="Es requerido el campo de objetivos"
+                                                                                         value="#{registroPlanTutoriaTutor.rol.sesionesGrupalesTutorias.objetivos}"
+                                                                                         rendered="#{registroPlanTutoriaTutor.rol.tab3}"
+                                                                                         disabled="#{registroPlanTutoriaTutor.rol.planRegistrado}"
+                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                         />
+                                                                        <h:outputText id="displaySgtObjetivos" />
+                                                                        <p:watermark for="sgtObjetivos" value="Ejemplo de objetivos en el regsistro de la sesión grupal de la tutoria *" />
+                                                                        <p:message for="sgtObjetivos" />
+                                                                        <p:outputLabel for="sgtObjetivos" value="Objetivos de la sesión grupal de la tutoría" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
+                                                                    <div class="ui-material">
+                                                                        <p:inputTextarea id="sgtJustificacion"
+                                                                                         rows="2" 
+                                                                                         cols="100"
+                                                                                         counter="displaySgtJustificacion" 
+                                                                                         maxlength="3000" 
+                                                                                         counterTemplate="{0} caracteres en total." 
+                                                                                         autoResize="true"
+                                                                                         required="true"
+                                                                                         class="form-control"
+                                                                                         requiredMessage="Es requerido el campo de justificación"
+                                                                                         value="#{registroPlanTutoriaTutor.rol.sesionesGrupalesTutorias.justificacion}"
+                                                                                         disabled="true"
+                                                                                         />
+                                                                        <h:outputText id="displaySgtJustificacion" />
+                                                                        <p:watermark for="sgtJustificacion" value="Ejemplo de justificación en el regsistro de la sesión grupal de la tutoria *" />
+                                                                        <p:message for="sgtJustificacion" />
+                                                                        <p:outputLabel for="sgtJustificacion" value="Justificación del por que no se llevó a cabo esta sesióm grupal de tutoría" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
+                                                                    <p:commandButton id="btnGuardarSesionGrupalTutoria" 
+                                                                                     value="Guardar" 
+                                                                                     action="#{registroPlanTutoriaTutor.guardarSesionGrupalTutoria()}" 
+                                                                                     oncomplete="actualizar();" 
+                                                                                     icon="fa fa-pencil-square-o" 
+                                                                                     class="btn-primary" 
+                                                                                     style="width:15em;"
+                                                                                     disabled="#{registroPlanTutoriaTutor.rol.planRegistrado or registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                     />
+                                                                </div>
+                                                            </div>
+                                                            <p></p>
+                                                            <p></p>
+                                                            <p></p>
+                                                            <p:toolbar>
+                                                                <f:facet name="left">
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Listado de sesiones grupales de tutoría" style="padding-top: 5px;" />
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Para modificar sesiones grupales solo modifique directamente los campos y se guardarán de manera automática." style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                            <center>
+                                                                <p:dataTable id="dtSesionesGrupales" 
+                                                                             var="sesionGrupal" 
+                                                                             value="#{registroPlanTutoriaTutor.rol.listaSesionesGrupalesTutorias}"
+                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                             resizeMode="expand"
+                                                                             emptyMessage="Aún no se han registrado sesiones grupales de tutoría"
+                                                                             >
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="sucess">
+                                                                            <p:column headerText="Opciones" width="70"/>
+                                                                            <p:column headerText="No. de Sesión" width="50"/>
+                                                                            <p:column headerText="Actividad Programada"/>
+                                                                            <p:column headerText="Objetivos" />
+                                                                            <p:column headerText="Cumplimiento" width="90"/>
+                                                                            <p:column headerText="Justificación" />
+                                                                        </p:row>
+                                                                    </p:columnGroup>
+                                                                    <c:set var="sg" value="#{sesionGrupal.sesionGrupal}"/>
+                                                                    <p:column>
+                                                                        <center>
+                                                                            <div class="btn-group"> 
+                                                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                                                 icon="fa fa-trash" 
+                                                                                                 actionListener="#{registroPlanTutoriaTutor.eliminarSesionGrupalTutor(sg)}" 
+                                                                                                 title="Eliminar registro." 
+                                                                                                 process="@this" 
+                                                                                                 oncomplete="actualizar();" 
+                                                                                                 global="false"
+                                                                                                 disabled="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                                 >
+                                                                                    <p:confirm header="Eliminar" message="¿Está seguro de eliminar el registro seleccionado?" icon="ui-icon-alert" />
+                                                                                </p:commandButton>
+                                                                            </div>
+                                                                        </center>
+                                                                    </p:column>
+                                                                    <p:column style="text-align: center;">
+                                                                        <h:outputText value="#{sesionGrupal.noSesion}" />
+                                                                    </p:column>
+
+                                                                    <p:column>
+                                                                        <div class="ui-material">
+                                                                            <p:inputTextarea rows="1" 
+                                                                                             cols="62"
+                                                                                             maxlength="3000" 
+                                                                                             autoResize="true"
+                                                                                             required="true"
+                                                                                             requiredMessage="Es requerido el campo de actividad programada"
+                                                                                             class="form-control"
+                                                                                             title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+                                                                                             value="#{sesionGrupal.actividadProgramada}"
+                                                                                             valueChangeListener="#{registroPlanTutoriaTutor.actulizaActividadProgramada}"
+                                                                                             readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                             >
+
+                                                                                <p:ajax process="@this" global="false" oncomplete="actualizar();" /> 
+                                                                                <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
+                                                                            </p:inputTextarea>
+                                                                        </div>
+                                                                    </p:column>
+
+                                                                    <p:column>
+                                                                        <div class="ui-material">
+                                                                            <p:inputTextarea rows="1" 
+                                                                                             cols="62"
+                                                                                             maxlength="3000" 
+                                                                                             autoResize="true"
+                                                                                             required="true"
+                                                                                             requiredMessage="Es requerido el campo de objetivos"
+                                                                                             class="form-control"
+                                                                                             title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+                                                                                             value="#{sesionGrupal.objetivos}"
+                                                                                             valueChangeListener="#{registroPlanTutoriaTutor.actulizaObjetivos}"
+                                                                                             readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
+                                                                                             >
+
+                                                                                <p:ajax process="@this" global="false" oncomplete="actualizar();"/> 
+                                                                                <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
+                                                                            </p:inputTextarea>
+                                                                        </div>
+                                                                    </p:column>
+
+                                                                    <p:column style="text-align: center">
+                                                                        <h:outputText value="#{sesionGrupal.cumplimiento?'Si':'No'}"/>
+                                                                    </p:column>
+
+                                                                    <p:column>
+                                                                        <div class="ui-material">
+                                                                            <p:inputTextarea rows="1"
+                                                                                             cols="62"
+                                                                                             maxlength="3000" 
+                                                                                             autoResize="true"
+                                                                                             required="true"
+                                                                                             requiredMessage="Es requerido el campo de justificaciónes"
+                                                                                             class="form-control"
+                                                                                             title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+                                                                                             value="#{sesionGrupal.justificacion}"
+                                                                                             disabled="#{sesionGrupal.cumplimiento}"
+                                                                                             valueChangeListener="#{registroPlanTutoriaTutor.actulizaJustificacion}"
+                                                                                             >
+
+                                                                                <p:ajax process="@this" global="false" oncomplete="actualizar();"/> 
+                                                                                <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
+                                                                            </p:inputTextarea>
+                                                                        </div>
+                                                                    </p:column>
+
+                                                                    <f:facet name="footer">
+                                                                        Usted ha registrado un total de: #{fn:length(registroPlanTutoriaTutor.rol.listaSesionesGrupalesTutorias)} sesiones grupales de tutoría.
+                                                                    </f:facet>
+                                                                </p:dataTable>
+                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                                </p:confirmDialog> 
+                                                            </center>
+                                                        </p:tab>
+
+                                                    </p:accordionPanel>
+                                                </p:outputPanel>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <c:if test="#{!empty registroPlanTutoriaTutor.alertas || true}">
+                        <div class="box box-info">
+                            <div class="box-header">
+                                <ui:include src="/includes/alertas.xhtml">
+                                    <ui:param name="alertas" value="#{registroPlanTutoriaTutor.alertas}"></ui:param>
+                                </ui:include>
+                            </div>
+                        </div>
+                    </c:if>
+                    <!-- Zona de cuadros de diálogo -->
+                    <p:dialog id="modalAyuda"
+                              widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                              modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                        <div class="box box-primary">
+                            <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registro de Plan de Acción Tutorial</h3></div>
+                            <div class="box-body">
+                                <ul class="todo-list">
+                                    <c:forEach items="#{registroPlanTutoriaTutor.rol.instrucciones}" var="instruccion">
+                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                            <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                        </div>
+                    </p:dialog>
+                </c:if>
+                <c:if test="#{!registroPlanTutoriaTutor.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="El acceso solo está autorizado a docentes con grupos tutorados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+                <div style="display: none;">
+                    <!-- Es necesario este bloque para que se cargue en el navegador el soporte para el control inputnumber necesario para capturar el valor de las calificaciones -->
+                    <h:form>
+                        <p:inputNumber />
+                    </h:form>
+                </div>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

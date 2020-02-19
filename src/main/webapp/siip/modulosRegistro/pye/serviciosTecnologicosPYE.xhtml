@@ -1,0 +1,1207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="true"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="dialogs.js" />
+        <h:outputScript library="js" name="calendario.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+            <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+                <h:outputStylesheet library="css" name="procesoElectoral.css" />
+            </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+    <ui:define name="title">
+        Servicios Tecnológicos
+    </ui:define>
+
+    <ui:define name="description">
+        Vinculación Institucional
+    </ui:define>
+
+    <ui:define name="body"> 
+        <adm:breadcrumb title="Vinculación Institucional - Servicios Tecnológicos"/>
+        <adm:sidebar collapsed="true"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:toolbar id="tb"> 
+                            <f:facet name="left">
+                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                                    <p:spacer width="10" />
+                                    <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    <p:outputLabel value="Categoría " for="categoria"/>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="categoria"
+                                                     required="true"
+                                                     value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.categoria}"
+                                                     valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarAreas}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.listaCategoriasPOA}" 
+                                                       var="categoria" 
+                                                       itemValue="#{categoria}" 
+                                                       itemLabel="#{categoria.descripcion}"
+                                                       itemDescription="#{categoria.descripcion}"/>
+                                        <p:ajax process="@this" listener="#{controladorServiciosTecnologicosAnioMesPYE.buscaServiciosTecnologicos()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Área " for="area" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="area"
+                                                     required="true"
+                                                     value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.areaUniversidadPOA}"
+                                                     valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarAnios}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.listaAreasPOA}" 
+                                                       var="area" 
+                                                       itemValue="#{area}" 
+                                                       itemLabel="#{area.nombre}"
+                                                       itemDescription="#{area.nombre}" />
+                                        <p:ajax process="@this" listener="#{controladorServiciosTecnologicosAnioMesPYE.buscaServiciosTecnologicos()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Ejercicio: " for="anioConsulta"/>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="anioConsulta"
+                                                     required="true"
+                                                     value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta}"
+                                                     valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarMeses}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.aniosConsulta}"
+                                                       var="anio"
+                                                       itemValue="#{anio}"
+                                                       itemLabel="#{anio}" />
+                                        <p:ajax process="@this" listener="#{controladorServiciosTecnologicosAnioMesPYE.buscaServiciosTecnologicos()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                    <p:outputLabel value="Mes: " for="@form:mesConsulta" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="mesConsulta"
+                                                     required="true"
+                                                     value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top:  0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesesConsulta}"
+                                                       var="mes"
+                                                       itemValue="#{mes}"
+                                                       itemLabel="#{mes}" />
+                                        <p:ajax process="@this" listener="#{controladorServiciosTecnologicosAnioMesPYE.buscaServiciosTecnologicos()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                </h:form>
+                            </f:facet>
+                            <f:facet name="right">
+                                <h:form id="frmReporte">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarReporteServiciosTecnologicos()}" target="_blank" title="Descargar Servicios Tecnológicos"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                </h:form>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </p:outputPanel>
+                </div>
+                <p:separator/>
+
+                <div class="box-body">
+
+                    <!-- Sección de visualización y eliminación -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formMuestraDatosActivos">
+                                <center>
+                                    <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos" />
+                                    <p:tabView id="tabECServiciosTecnologicosAnioMes">
+                                        <p:tab id="tabECST" title="Servicios Tecnológicos Registrados">
+                                            <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta} y Mes: #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta}" 
+                                                         paginator="true"
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                         resizeMode="expand" 
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         id="dtbConsultaEliminacionServTec"
+                                                         var="servicioTecnologico" value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.lstServiciosTecnologicosAnioMes}"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column rowspan="2" headerText="Opciones" width="140" />
+                                                        <p:column rowspan="2" headerText="Servicio Tecnológico" width="300" />
+                                                        <p:column rowspan="2" headerText="Tipo de Servicio" width="200" />
+                                                        <p:column rowspan="2" headerText="Nombre del Servicio" width="400" />
+                                                        <p:column colspan="2" headerText="Duración" width="300" />
+                                                        <p:column rowspan="2" headerText="Duración(hrs)" width="100" />
+                                                        <p:column rowspan="2" headerText="Monto Ingresado" width="200" />
+                                                        <p:column rowspan="2" headerText="Facilitador" width="300" />
+                                                        <p:column rowspan="2" headerText="Servicio Demandado" width="200" />
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column headerText="Fecha Inicio" />
+                                                        <p:column headerText="Fecha Fin" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <c:set var="servTecEliminado" value="#{servicioTecnologico.registro}"/>
+                                                <p:column style="text-align: center;">
+                                                    <div class="btn-group">
+                                                        <p:commandButton class="btn btn-info btn-sm" 
+                                                                         icon="fa fa-trash"
+                                                                         actionListener="#{controladorServiciosTecnologicosAnioMesPYE.eliminarRegistro(servTecEliminado,servicioTecnologico)}"
+                                                                         onsuccess="actualizar();" 
+                                                                         title="Eliminar registro."
+                                                                         >
+                                                            <p:confirm header="Eliminar registro"
+                                                                       message="¿Está seguro de eliminar el registro de #{servicioTecnologico.servicio}?"
+                                                                       icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <p:spacer width="3" />
+                                                        <c:set var="evidencias" value="#{controladorServiciosTecnologicosAnioMesPYE.consultarEvidencias(servicioTecnologico.registro)}" />
+                                                        <p:commandButton actionListener="#{controladorServiciosTecnologicosAnioMesPYE.seleccionarRegistro(servicioTecnologico)}" 
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:spacer width="3" />
+                                                        <p:commandButton actionListener="#{controladorServiciosTecnologicosAnioMesPYE.abrirAlineacionPOA(servicioTecnologico)}"
+                                                                         class="btn btn-sm #{controladorServiciosTecnologicosAnioMesPYE.verificaAlineacion(servicioTecnologico.registro)?'btn-info':'btn-warning'}"
+                                                                         icon="fa fa-cog"
+                                                                         title="Alineación a POA."/>
+                                                        <p:commandButton actionListener="#{controladorServiciosTecnologicosAnioMesPYE.abrirEdicionServicioTecnologico(servicioTecnologico)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar Servicio Tecnológico"/>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologico.servicio}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologico.servicioTipo.descripcion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologico.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologico.fechaInicio}">
+                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologico.fechaTermino}">
+                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                    </h:outputText>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologico.duracion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="$ #{servicioTecnologico.montoIngresado}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologico.facilitador}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologico.servicioDemandado}"/>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                    En el mes de: #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta} hay un total de: #{fn:length(controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.lstServiciosTecnologicosAnioMes)} registros de Servicios Tecnológicos.
+                                                </f:facet>
+                                            </p:dataTable>
+                                            <p:confirmDialog global="true"
+                                                             showEffect="fade"
+                                                             hideEffect="fade"
+                                                             styleClass="panel panel-primary"
+                                                             width="500"
+                                                             closeOnEscape="true">
+                                                <p:commandButton value="Si"
+                                                                 type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary" 
+                                                                 icon="ui-icon-check" />
+                                                <p:commandButton value="No" 
+                                                                 type="button" 
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary" 
+                                                                 icon="ui-icon-close" />
+                                            </p:confirmDialog>
+                                        </p:tab>
+                                        <p:tab id="tabECSTP" title="Participantes en Servicios Tecnológicos Registrados">
+                                            <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta} y Mes: #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta}" 
+                                                         paginator="true"
+                                                         rows="10" 
+                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                         resizeMode="expand" 
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         id="dtbConsultaEliminacionServTecPart"
+                                                         var="servicioTecnologicoPart" value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.lstDtoServiciosTecnologicosParticipantes}"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Opciones" width="140" />
+                                                        <p:column headerText="Servicio Tecnólogico" width="300" />
+                                                        <p:column headerText="Sexo" width="100" />
+                                                        <p:column headerText="Edad" width="100" />
+                                                        <p:column headerText="Nombre del Participante" width="300" />
+                                                        <p:column headerText="Lengua Indígena" width="200" />
+                                                        <p:column headerText="Discapacidad" width="200" />
+                                                        <p:column headerText="Estado" width="300" />
+                                                        <p:column headerText="Municipio" width="300" />
+                                                        <p:column headerText="Nombre de la empresa" width="400" />
+                                                        <p:column headerText="Generacion" width="200" />
+                                                        <p:column headerText="Programa Educativo" width="600" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <c:set var="servTecEliminadoPart" value="#{servicioTecnologicoPart.serviciosTecnologicosParticipantes.registro}"/>
+                                                <p:column style="text-align: center;">
+                                                    <div class="btn-group">
+                                                        <p:commandButton class="btn btn-info btn-sm" 
+                                                                         icon="fa fa-trash"
+                                                                         actionListener="#{controladorServiciosTecnologicosAnioMesPYE.eliminarRegistroParticipante(servTecEliminadoPart)}"
+                                                                         onsuccess="actualizar();" 
+                                                                         title="Eliminar registro."
+                                                                         >
+                                                            <p:confirm header="Eliminar registro"
+                                                                       message="¿Está seguro de eliminar el registro de #{servicioTecnologicoPart.serviciosTecnologicosParticipantes.servicioTecnologico.servicio}?"
+                                                                       icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <p:spacer width="3" />
+                                                        <c:set var="evidencias" value="#{controladorServiciosTecnologicosAnioMesPYE.consultarEvidencias(servicioTecnologicoPart.serviciosTecnologicosParticipantes.registro)}" />
+                                                        <p:commandButton actionListener="#{controladorServiciosTecnologicosAnioMesPYE.seleccionarRegistroParticipantes(servicioTecnologicoPart)}" 
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:spacer width="3" />
+                                                        <p:commandButton actionListener="#{controladorServiciosTecnologicosAnioMesPYE.abrirAlineacionPOAParticipantes(servicioTecnologicoPart)}"
+                                                                         class="btn btn-sm #{controladorServiciosTecnologicosAnioMesPYE.verificaAlineacion(servicioTecnologicoPart.serviciosTecnologicosParticipantes.registro)?'btn-info':'btn-warning'}"
+                                                                         icon="fa fa-cog"
+                                                                         title="Alineación a POA."/>
+                                                        <p:commandButton actionListener="#{controladorServiciosTecnologicosAnioMesPYE.abrirEdicionServicioTecnologicoParticipante(servicioTecnologicoPart.serviciosTecnologicosParticipantes)}"
+                                                                         class="btn btn-sm btn-info"
+                                                                         icon="fa fa-pencil-square-o"
+                                                                         title="Editar Servicio Tecnológico Participante"/>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.serviciosTecnologicosParticipantes.servicioTecnologico.servicio}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.serviciosTecnologicosParticipantes.sexo}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.serviciosTecnologicosParticipantes.edad}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.serviciosTecnologicosParticipantes.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.serviciosTecnologicosParticipantes.lenguaIndigena}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.serviciosTecnologicosParticipantes.discapacidad}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.serviciosTecnologicosParticipantes.municipio.estado.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.serviciosTecnologicosParticipantes.municipio.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.serviciosTecnologicosParticipantes.empresa.nombre}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.generacion}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{servicioTecnologicoPart.programaEducativo.nombre}"/>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                    En el mes de: #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta} hay un total de: #{fn:length(controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.lstDtoServiciosTecnologicosParticipantes)} registros de Participantes en Servicios Tecnológicos.
+                                                </f:facet>
+                                            </p:dataTable>
+                                        </p:tab>
+                                    </p:tabView>
+                                </center>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <!-- Sección de evidencias -->
+                    <p:dialog id="modalCargaEvidencia" 
+                              widgetVar="modalCargaEvidencia" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px" />
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidencia" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="files"
+                                                         value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo" 
+                                                         >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFiles" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorServiciosTecnologicosAnioMesPYE.subirEvidencias()}"
+                                                             />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidencias">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Servicio Técnologico: #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.servicio}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
+                                    <p:dataTable id="tblEvidencias"
+                                                 value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{controladorServiciosTecnologicosAnioMesPYE.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia."
+                                                                 rendered="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorServiciosTecnologicosAnioMesPYE.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="modalCargaEvidenciaParticipantes" 
+                              widgetVar="modalCargaEvidenciaParticipantes" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar id="tbParticipantes">
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px" />
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaParticipante" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="filesParticipantes"
+                                                         value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo" 
+                                                         >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFilesParticipantes"
+                                                             value="Subir Archivos" 
+                                                             class="btn btn-primary" 
+                                                             actionListener="#{controladorServiciosTecnologicosAnioMesPYE.subirEvidenciasParticipantes()}"
+                                                             />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidenciasParticipantes">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Participante en Servicio Técnologico: #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.nombre}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar3" update="@form:tblEvidenciasParticipantes" />
+                                    <p:dataTable id="tblEvidenciasParticipantes"
+                                                 value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{controladorServiciosTecnologicosAnioMesPYE.eliminarEvidenciaParticipantes(evidencia)}" onsuccess="actualizar3();" title="Eliminar evidencia."
+                                                                 rendered="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorServiciosTecnologicosAnioMesPYE.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de alineación a POA -->
+                    <p:dialog id="modalAlineacion"
+                              widgetVar="modalAlineacion"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacion">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar>
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorServiciosTecnologicosAnioMesPYE.eliminarAlineacion()}" rendered="#{controladorServiciosTecnologicosAnioMesPYE.verificaAlineacion(controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorServiciosTecnologicosAnioMesPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Servicio Tecnológico: #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.servicio} " /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="eje" value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.alineacionEje}" valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.alineacionEstrategia}" valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.alineacionLinea}" valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccion" update="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividad" value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividad"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="modalAlineacionParticipantes"
+                              widgetVar="modalAlineacionParticipantes"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacionParticipantes">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar>
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorServiciosTecnologicosAnioMesPYE.eliminarAlineacionParticipante()}" rendered="#{controladorServiciosTecnologicosAnioMesPYE.verificaAlineacion(controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorServiciosTecnologicosAnioMesPYE.alinearRegistroParticipantes()}" oncomplete="PF('modalAlineacionParticipantes').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Servicio Tecnológico Participante: #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.nombre}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="ejeParticipante" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="ejeParticipante" value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.alineacionEje}" valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="ejeParticipante" update="@form:estrategiaParticipante,@form:lineaAccionParticipante,@form:actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="ejeParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategiaParticipante" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategiaParticipante" value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.alineacionEstrategia}" valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategiaParticipante" update="lineaAccionParticipante,actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategiaParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccionParticipante" value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.alineacionLinea}" valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccionParticipante" update="actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccionParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividadParticipante" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividadParticipante" value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividadParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="modalEdicionServicioTecnologico" 
+                              widgetVar="modalEdicionServicioTecnologico" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Servicios Tecnológicos" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmEdicionServicioTecnologico">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Edición del servicio tecnológico #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.servicio}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Servicio Tipo: " for="somServicioTipo"/>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="somServicioTipo"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el tipo de servicio"
+                                                     value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.servicioTipo}"
+                                                     valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarServicioTipo}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     converter="entidadConverter2"
+                                                     style="padding-top: 0px">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.servicioTipos}" 
+                                                       var="servt" 
+                                                       itemValue="#{servt}" 
+                                                       itemLabel="#{servt.descripcion}"
+                                                       itemDescription="#{servt.descripcion}"/>
+                                        <p:ajax process="somServicioTipo" />
+                                        <p:message for="somServicioTipo" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Nombre: " for="iptNombreServTec"/>
+                                    <p:inputText id="iptNombreServTec"
+                                                 label="iptNombreServTec"
+                                                 maxlength="250"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el nombre del servicio tecnológico"
+                                                 value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.nombre}"/>
+                                    <p:watermark for="iptNombreServTec" value="Curso Operación Autobús, Van y Taxi. *" />
+                                    <p:message for="iptNombreServTec" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Fecha de inicio: " for="iptFechaInicio" />
+                                    <br></br>
+                                    <p:spacer width="5" />
+                                    <p:calendar id="iptFechaInicio"
+                                                label="iptFechaInicio"
+                                                required="true"
+                                                requiredMessage="Ingrese Fecha de Inicio"
+                                                value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.fechaInicio}"
+                                                valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.validaFechaInicio}"
+                                                pattern="yyyy-MM-dd" 
+                                                mask="true"
+                                                locale="es"
+                                                styleClass="campo2Partes"
+                                                >
+                                        <p:ajax event="dateSelect" process="iptFechaInicio" update="iptFechaTermino"/>
+                                        <p:ajax event="change" process="iptFechaInicio" update="iptFechaTermino"/>
+                                    </p:calendar>
+                                    <p:watermark for="iptFechaInicio" value="2019-01-15 *" />
+                                    <p:message for="iptFechaInicio" />
+                                </div>
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Fecha de termino: " for="iptFechaTermino" />
+                                    <br></br>
+                                    <p:spacer width="5" />
+                                    <p:calendar id="iptFechaTermino"
+                                                label="iptFechaTermino"
+                                                required="true"
+                                                requiredMessage="Ingrese Fecha de Termino"
+                                                value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.fechaTermino}"
+                                                valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.validaFechaFin}"
+                                                pattern="yyyy-MM-dd" 
+                                                mask="true"
+                                                styleClass="campo2Partes"
+                                                locale="es"
+                                                >
+                                        <p:ajax event="dateSelect" process="iptFechaTermino" update="iptFechaInicio"/>
+                                        <p:ajax event="change" process="iptFechaTermino" update="iptFechaInicio"/>
+                                    </p:calendar>
+                                    <p:watermark for="iptFechaTermino" value="2019-01-26 *" />
+                                    <p:message for="iptFechaTermino" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Duración Horas: " for="spnDuracionHoras" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnDuracionHoras"
+                                               label="spnDuracionHoras"
+                                               required="true"
+                                               requiredMessage="Ingrese total en horas"
+                                               value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.duracion}" 
+                                               min="0" max="1000"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnDuracionHoras" value="8 *" />
+                                    <p:message for="spnDuracionHoras" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 10px;">
+                                    <p:outputLabel value="Monto ingresado: " for="spnMontoIngresado" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnMontoIngresado"
+                                               label="spnMontoIngresado"
+                                               required="true"
+                                               requiredMessage="Ingrese la cantidad del monto ingresado"
+                                               value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.montoIngresado}" 
+                                               min="0" max="500000"
+                                               styleClass="campo2Partes"
+                                               stepFactor="0.00"
+                                               prefix="$"
+                                               />
+                                    <p:watermark for="spnMontoIngresado" value="40550 *" />
+                                    <p:message for="spnMontoIngresado" />
+                                </div>
+
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Facilitador/a: " for="iptFacilitador"/>
+                                    <p:inputText id="iptFacilitador"
+                                                 label="iptFacilitador"
+                                                 maxlength="250"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el nombre de él o la facilitador/a"
+                                                 value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registro.serviciosTecnologicosAnioMes.facilitador}"/>
+                                    <p:watermark for="iptFacilitador" value="Antonio Sotomayor Lecona *" />
+                                    <p:message for="iptFacilitador" />
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px">
+                                    <p:outputLabel value="Servicio Demandado: " for="sbbServDemandado" />
+                                    <p:selectBooleanButton id="sbbServDemandado"
+                                                           required="true"
+                                                           requiredMessage="Seleccione si existe convenio"
+                                                           value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.servicioDemandado}"
+                                                           valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizaServicioDemandado}"
+                                                           onLabel="Por Oferta"
+                                                           offLabel="Por Demanda"
+                                                           onIcon="ui-icon-check"
+                                                           offIcon="ui-icon-check"
+                                                           class="btn-sm"
+                                                           style="text-align: left">
+                                        <p:ajax process="sbbServDemandado"/>
+                                        <p:message for="sbbServDemandado" />
+                                    </p:selectBooleanButton>
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaServicioTecnologico"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorServiciosTecnologicosAnioMesPYE.editaServicioTecnologico}"
+                                                         update="@form:frmEdicionServicioTecnologico" 
+                                                         process="@form:frmEdicionServicioTecnologico"
+                                                         />
+                                    </center>
+                                </div>
+
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="modalEdicionServicioTecnologicoParticipante" 
+                              widgetVar="modalEdicionServicioTecnologicoParticipante" 
+                              width="700" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Edición de Servicios Tecnológicos Participantes" 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+
+                        <h:form id="frmEdicionServicioTecnologicoParticipante">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <p:outputLabel value="Edición del participante #{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.nombre}"/>
+                                </div>
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Servicio Tecnológico: " for="somServicioTecnologico" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somServicioTecnologico"
+                                                     required="true"
+                                                     requiredMessage="Seleccione el servicio tecnológico"
+                                                     value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.servicioTecnologico}"
+                                                     valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarServicioTecnologicoAsignado}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     converter="entidadConverter2"
+                                                     style="padding-top: 0px">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.lstServiciosTecnologicosAnioMes}" 
+                                                       var="servtec" 
+                                                       itemValue="#{servtec}" 
+                                                       itemLabel="#{servtec.nombre}"
+                                                       itemDescription="#{servtec.servicio}"/>
+                                        <p:ajax process="somServicioTecnologico" />
+                                        <p:message for="somServicioTecnologico" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Nombre: " for="iptNombreParticipante"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:inputText id="iptNombreParticipante"
+                                                 label="iptNombreParticipante"
+                                                 maxlength="150"
+                                                 required="true"
+                                                 class="form-control"
+                                                 requiredMessage="Ingrese el nombre de él o la participante"
+                                                 value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.nombre}"/>
+                                    <p:watermark for="iptNombreParticipante" value="Adalberto Vázquez Sanchez *" />
+                                    <p:message for="iptNombreParticipante" />
+                                </div>
+
+                                <div class="col-sm-4 col-md-4" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Sexo: " for="sobSexo"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneButton id="sobSexo"
+                                                       label="sobSexo"
+                                                       value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.sexo}"
+                                                       required="true"
+                                                       requiredMessage="Seleccione el sexo del participante"
+                                                       >
+                                        <f:selectItem itemLabel="Hombre" itemValue="H" />
+                                        <f:selectItem itemLabel="Mujer" itemValue="M" />
+                                    </p:selectOneButton>
+                                    <p:message for="sobSexo" />
+                                </div>
+
+                                <div class="col-sm-8 col-md-8" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Edad: " for="spnEdad" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:spinner id="spnEdad"
+                                               label="spnEdad"
+                                               required="true"
+                                               requiredMessage="Ingrese la edad del participante"
+                                               value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.edad}" 
+                                               min="0" max="100"
+                                               styleClass="campo2Partes"/>
+                                    <p:watermark for="spnEdad" value="8 *" />
+                                    <p:message for="spnEdad" />
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="estado" value="Estado: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="estado" 
+                                                     required="true" 
+                                                     requiredMessage="Seleccione un estado"
+                                                     value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.municipio.estado}" 
+                                                     valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.actualizarMunicipiosSTP}" 
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains" 
+                                                     converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.estados}" 
+                                                       var="estado" 
+                                                       itemValue="#{estado}" 
+                                                       itemLabel="#{estado.nombre}" 
+                                                       itemDescription="#{estado.nombre}" />
+                                        <p:ajax process="estado" update="municipio" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estado" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="municipio" value="Municipio: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="municipio" 
+                                                     required="true"
+                                                     requiredMessage="Seleccione un municipio"
+                                                     value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.municipio}" 
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains" 
+                                                     converter="entidadConverter2">
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.municipios}" 
+                                                       var="municipio" 
+                                                       itemValue="#{municipio}" 
+                                                       itemLabel="#{municipio.nombre}" 
+                                                       itemDescription="#{municipio.nombre}" />
+                                        <p:ajax process="municipio" />
+                                    </p:selectOneMenu>
+                                    <p:message for="municipio" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Lengua Indígena: " for="iptLenguaIndigena"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:inputText id="iptLenguaIndigena"
+                                                 label="iptLenguaIndigena"
+                                                 maxlength="200"
+                                                 class="form-control"
+                                                 required="true"
+                                                 requiredMessage="En caso de que no aplique, ingresar N/A "
+                                                 value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.lenguaIndigena}"/>
+                                    <p:watermark for="iptLenguaIndigena" value="Náhuatl *" />
+                                    <p:message for="iptLenguaIndigena" />
+                                </div>
+
+                                <div class="col-sm-6 col-md-6" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Discapacidad: " for="iptDiscapacidad"/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:inputText id="iptDiscapacidad"
+                                                 label="iptDiscapacidad"
+                                                 maxlength="200"
+                                                 class="form-control"
+                                                 required="true"
+                                                 requiredMessage="En caso de que no aplique, ingresar N/A "
+                                                 value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.discapacidad}"/>
+                                    <p:watermark for="iptDiscapacidad" value="Visual *" />
+                                    <p:message for="iptDiscapacidad" />
+                                </div>
+
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <p:outputLabel value="Empresa: " for="acEmpresa" />
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:autoComplete id="acEmpresa"
+                                                    value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.empresa}"
+                                                    completeMethod="#{controladorServiciosTecnologicosAnioMesPYE.completeOrganismosVinculados}"
+                                                    inputStyle="width: 45.5em;"
+                                                    queryDelay="1000"
+                                                    var="empresa"
+                                                    itemLabel="#{empresa.nombre}"
+                                                    itemValue="#{empresa}"
+                                                    converter="organismoVinculadoConverter"
+                                                    forceSelection="true"
+                                                    placeholder="Escriba el nombre y seleccione."
+                                                    valueChangeListener="#{controladorServiciosTecnologicosAnioMesPYE.seleccionaOrganismoVinculado}"
+                                                    >
+                                        <p:column><h:outputText value="#{empresa.empresa}" /></p:column>
+                                        <p:column><h:outputText value="#{empresa.nombre}"/></p:column>
+                                        <p:ajax event="itemSelect" process="@this" update="@this"/>
+                                    </p:autoComplete>
+                                </div>
+
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somGeneraciones" value="Generaciones: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somGeneraciones"
+                                                     value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.generacion}" 
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     >
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.generaciones}" 
+                                                       var="generacion" 
+                                                       itemValue="#{generacion.generacion}" 
+                                                       itemLabel="#{generacion.inicio}-#{generacion.fin}" 
+                                                       itemDescription="#{generacion.inicio}-#{generacion.fin}" />
+                                        <p:ajax process="somGeneraciones" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somGeneraciones" />
+                                </div>
+
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <p:outputLabel for="somProgramasEducativos" value="Programas Educativos: "/>
+                                    <p:spacer width="5" />
+                                    <br></br>
+                                    <p:selectOneMenu id="somProgramasEducativos"
+                                                     value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.registroParticipantes.serviciosTecnologicosParticipantes.programaEducativo}" 
+                                                     filter="true" 
+                                                     filterPlaceholder="Buscar" 
+                                                     filterMatchMode="contains"
+                                                     >
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorServiciosTecnologicosAnioMesPYE.dtoServicioTecnologico.programasEducativos}" 
+                                                       var="programaEducativo" 
+                                                       itemValue="#{programaEducativo.area}" 
+                                                       itemLabel="#{programaEducativo.nombre}" 
+                                                       itemDescription="#{programaEducativo.siglas}"/>
+                                        <p:ajax process="somProgramasEducativos" />
+                                    </p:selectOneMenu>
+                                    <p:message for="somProgramasEducativos" />
+                                </div>
+
+                                <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
+                                    <center>
+                                        <p:commandButton id="btnEditaServicioTecnologicoParticipante"
+                                                         value="Actualizar Cambios"
+                                                         icon="fa fa-save"
+                                                         class="btn-primary"
+                                                         actionListener="#{controladorServiciosTecnologicosAnioMesPYE.editaServicioTecnologicoParticipante}"
+                                                         update="@form:frmEdicionServicioTecnologicoParticipante" 
+                                                         process="@form:frmEdicionServicioTecnologicoParticipante"
+                                                         />
+                                    </center>
+                                </div>
+                            </div>
+                        </h:form>
+
+                    </p:dialog>
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

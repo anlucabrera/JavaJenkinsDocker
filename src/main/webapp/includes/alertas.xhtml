@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:form id="frmAlertas">
+        <p:panel id="horizontal" header="Sistema" toggleable="true" toggleOrientation="horizontal" collapsed="#{empty alertas}">
+            <p:autoUpdate />
+            <c:forEach items="#{alertas}" var="alerta">
+                <div class="#{alerta.tipo.label}" role="alert">#{alerta.mensaje}</div>
+            </c:forEach>
+        </p:panel>
+    </h:form>
+</ui:composition>

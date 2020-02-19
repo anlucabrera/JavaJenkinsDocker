@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+    <h:form id="frmAgregarTramite" class="form-inline" prependId="true">
+        <p:remoteCommand name="rcActualizarDistancia" actionListener="#{fiscalizacion.actualizarDistancia()}" process="@this" update="distancia" />
+        <p:remoteCommand name="rcActualizarOrigen" actionListener="#{fiscalizacion.actualizarOrigen()}" process="@this" update="origen" />
+        <p:remoteCommand name="rcActualizarDestino" actionListener="#{fiscalizacion.actualizarDestino()}" process="@this" update="destino" />
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:toolbar id="tb2">
+                        <f:facet name="left">
+                        </f:facet>
+                        <f:facet name="right">
+                            
+                        </f:facet>
+                    </p:toolbar>
+                </div>
+                <p:separator/>
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            Nuevo trámite
+                        </h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                                <div class="row">
+                                    <div class="col-md-5 col-lg-4">
+                                        <div class="row" style="#{fila}">
+                                            <div class="col-md-4"><p:outputLabel for="tipoTramite" value="Tipo de trámite:" indicateRequired="true"/></div>
+                                            <div class="col-md-8">
+                                                <p:selectOneButton id="tipoTramite" required="true" value="#{fiscalizacion.tipo}" converter="tramiteTipoConverter" requiredMessage="Seleccione un tipo de trámite.">
+                                                    <f:selectItem itemLabel="Comisión" itemValue="#{fiscalizacion.tramiteTipoComision}"/>
+                                                    <f:selectItem itemLabel="Producto / Servicio" itemValue="#{fiscalizacion.tramiteTipoProductoServicio}"/>
+                                                    <p:ajax process="tipoTramite" update="@form" immediate="true" />
+                                                </p:selectOneButton>
+                                                <p:message for="tipoTramite"  />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-md-offset-1 col-lg-4">
+                                        <div class="row" style="#{fila}">
+                                            <div class="col-md-4"><p:outputLabel for="tipoPago" value="Tipo de pago:" indicateRequired="true"/></div>
+                                            <div class="col-md-8">
+                                                <p:selectOneButton id="tipoPago" required="true" value="#{fiscalizacion.gastoTipo}" converter="gastoTipoConverter" requiredMessage="Seleccione un tipo de gasto.">
+                                                    <f:selectItem itemLabel="Anticipado" itemValue="#{fiscalizacion.gastoTipoAnticipado}"/>
+                                                    <f:selectItem itemLabel="Devengado" itemValue="#{fiscalizacion.gastoTipoDevengado}"/>
+                                                    <p:ajax process="tipoPago" update="@form" immediate="true" />
+                                                </p:selectOneButton>
+                                                <p:message for="tipoPago" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <c:set var="col1" value="#{'col-md-1'}" />
+                                        <c:set var="col2" value="#{'col-md-11'}" />
+                                        <p:separator style="margin: 5px;"/>
+                                        <div class="row" style="#{fila}">
+                                            <div class="col-md-12 "><span style="float: left; font-size: 16px; font-weight: 600;" class="ui-dialog-title">Alineación</span></div>
+                                        </div>
+                                        <div class="row" style="#{fila}">
+                                            <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                            <div class="#{col2}">
+                                                <p:selectOneMenu id="eje" required="true" value="#{fiscalizacion.eje}" valueChangeListener="#{fiscalizacion.actualizarEstrategias}" converter="entidadConverter2">
+                                                    <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                    <f:selectItems value="#{fiscalizacion.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                                    <p:ajax process="eje" update="estrategia,lineaAccion,actividad" />
+                                                </p:selectOneMenu>
+                                                <p:message for="eje" />
+                                            </div>
+                                        </div>
+                                        <div class="row" style="#{fila}">
+                                            <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                            <div class="#{col2}">
+                                                <p:selectOneMenu id="estrategia" required="true" value="#{fiscalizacion.estrategia}" valueChangeListener="#{fiscalizacion.actualizarLineasAccion}" converter="entidadConverter2">
+                                                    <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                    <f:selectItems value="#{fiscalizacion.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                                    <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                                </p:selectOneMenu>
+                                                <p:message for="estrategia" />
+                                            </div>
+                                        </div>
+                                        <div class="row" style="#{fila}">
+                                            <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                            <div class="#{col2}">
+                                                <p:selectOneMenu id="lineaAccion" required="true" value="#{fiscalizacion.lineaAccion}" valueChangeListener="#{fiscalizacion.actualizarActividades}" converter="entidadConverter2">
+                                                    <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                    <f:selectItems value="#{fiscalizacion.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                                    <p:ajax process="lineaAccion" update="actividad" />
+                                                </p:selectOneMenu>
+                                                <p:message for="lineaAccion" />
+                                            </div>
+                                        </div>
+                                        <div class="row" style="#{fila}">
+                                            <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                            <div class="#{col2}">
+                                                <p:selectOneMenu id="actividad" required="true" value="#{fiscalizacion.actividad}" converter="entidadConverter2">
+                                                    <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                    <f:selectItems value="#{fiscalizacion.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                                    <p:ajax process="actividad" />
+                                                </p:selectOneMenu>
+                                                <p:message for="actividad" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <c:if test="#{fiscalizacion.tipo eq fiscalizacion.tramiteTipoComision}">
+                                    <p:separator style="margin: 5px;"/>
+                                    <div class="row" style="#{fila}">
+                                        <div class="col-md-12 "><span style="float: left; font-size: 16px; font-weight: 600;" class="ui-dialog-title">Comisión</span></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3 col-lg-2">
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-5"><p:outputLabel for="fechaInicio" value="Fecha inicio: " indicateRequired="true"/></div>
+                                                <div class="col-md-7">
+                                                    <p:calendar id="fechaInicio" showOn="button" required="true" requiredMessage="Seleccione una fecha." pattern="dd/MM/yyyy" inputStyle="width: 100px;"  />
+                                                    <p:message for="fechaInicio" />
+                                                </div>
+                                            </div>
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-5"><p:outputLabel for="fechaFin" value="Fecha fin: " indicateRequired="true"/></div>
+                                                <div class="col-md-7">
+                                                    <p:calendar id="fechaFin" showOn="button" required="true" requiredMessage="Seleccione una fecha." pattern="dd/MM/yyyy" inputStyle="width: 100px;" />
+                                                    <p:message for="fechaFin" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-lg-3">
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-8"><p:outputLabel for="viaticosSinPernoctar" value="Viáticos sin pernoctar (días): " indicateRequired="true"/></div>
+                                                <div class="col-md-4">
+                                                    <p:spinner id="viaticosSinPernoctar" required="true" maxlength="3" min="1" max="30" size="2" requiredMessage="Ingrese la cantidad de días." />
+                                                    <p:message for="viaticosSinPernoctar" />
+                                                </div>
+                                            </div>
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-8"><p:outputLabel for="viaticosPernoctando" value="Viáticos pernoctando (días): " indicateRequired="true"/></div>
+                                                <div class="col-md-4">
+                                                    <p:spinner id="viaticosPernoctando" required="true" maxlength="3" min="1" max="30" size="2" requiredMessage="Ingrese la cantidad de días." />
+                                                    <p:message for="viaticosPernoctando" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5 col-lg-4 col-md-offset-1">
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-4">
+                                                    <div class="row">
+                                                        <div class="col-md-6"><p:outputLabel for="pasajes" value="Pasajes: "/></div>
+                                                        <div class="col-md-6"><p:selectBooleanCheckbox id="pasajes" label="pasajes" /></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="row">
+                                                        <div class="col-md-6"><p:outputLabel for="gasolina" value="Gasolina: "/></div>
+                                                        <div class="col-md-6"><p:selectBooleanCheckbox id="gasolina" label="gasolina" /></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="row">
+                                                        <div class="col-md-6"><p:outputLabel for="casetas" value="Casetas: "/></div>
+                                                        <div class="col-md-6"><p:selectBooleanCheckbox id="casetas" label="casetas" /></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-5 col-lg-3"><p:outputLabel for="otros" value="Otros gastos ($): "/></div>
+                                                <div class="col-md-7 col-lg-4">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <div class="input-group-addon">$</div>
+                                                            <p:inputNumber id="otros" label="otros" decimalPlaces="2" inputStyle="width: 117px;" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-8">
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-1"><p:outputLabel for="comentarios" value="Comentarios: "/></div>
+                                                <div class="col-md-11">
+                                                    <p:inputTextarea id="comentarios" placeholder="Justificar otros gastos o ingresar comentarios hacia el área de Fiscalización."
+                                                                     label="comentarios" rows="2" cols="140" class="form-control" maxlength="500" autoResize="true" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-8">
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-1"><p:outputLabel value="Origen: " for="origen" /></div>
+                                                <div class="col-md-11">
+                                                    <p:inputText id="origen" value="#{fiscalizacion.origen}" class="form-control origen" required="true" style="width: 870px;"  />
+                                                    <p:message for="origen" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-8">
+                                            <div class="row" style="#{fila}">
+                                                <div class="col-md-1"><p:outputLabel value="Destino: " for="destino" /></div>
+                                                <div class="col-md-8">
+                                                    <p:inputText id="destino" value="#{fiscalizacion.destino}" class="form-control destino" required="true" style="width: 870px;" />
+                                                    <p:message for="destino" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-3">
+                                            <p:commandButton styleClass="btn-info pull-right" value="Consultar" process="origen, destino" update="@form"
+                                                             onsuccess="buscar();"/>
+                                        </div>
+                                    </div>
+                                </c:if>
+                                <c:if test="#{fiscalizacion.tipo eq fiscalizacion.tramiteTipoProductoServicio}">
+                                    <div class="row" style="#{fila}">
+                                        <div class="col-md-12 "><span style="float: left; font-size: 16px; font-weight: 600;" class="ui-dialog-title">Compra de producto o servicio</span></div>
+                                    </div>
+                                </c:if>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <p:outputLabel value="Distancia: " />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p:outputLabel id="distancia" value="#{fiscalizacion.distancia}" /> Km
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12" style="height: 500px;">
+                                        <iframe id="winMapa" name="winMapa"
+                                                src="#{request.contextPath}/servletMap/#{fiscalizacion.origen}/##{fiscalizacion.destino}" width="100%"
+                                                height="100%" frameborder="0" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </h:form>
+    <script>
+        function actualizarDistancia(distancia) {
+            console.log('Se recibió la orden de actualizar la distancia en el xhtml desde el jsp: ' + distancia);
+            rcActualizarDistancia([{name: 'distancia', value: distancia}]);
+        }
+
+        function actualizarOrigen(direccion) {
+            console.log('Se recibió la orden de actualizar el origen en el xhtml desde el jsp: ' + direccion);
+            rcActualizarOrigen([{name: 'origen', value: direccion}]);
+        }
+
+        function actualizarDestino(direccion) {
+            console.log('Se recibió la orden de actualizar el destino en el xhtml desde el jsp: ' + direccion);
+            rcActualizarDestino([{name: 'destino', value: direccion}]);
+        }
+
+        function mensajear(mensaje) {
+            console.log('Se recibió la orden de mostrar mensaje en el xhtml desde el jsp: ' + mensaje);
+        }
+
+        function getOrigen() {
+            var direccion = document.getElementsByClassName('origen')[0].value;
+            console.log('Se recibió la orden de enviar el origen desde el xhtml desde el jsp: ' + direccion);
+            return direccion;
+        }
+
+        function getDestino() {
+            var direccion = document.getElementsByClassName('destino')[0].value;
+            console.log('Se recibió la orden de enviar el destino desde el xhtml desde el jsp: ' + direccion);
+            return direccion;
+        }
+
+        function buscar() {
+            document.getElementById('winMapa').contentWindow.buscar();
+        }
+    </script>
+</ui:composition>

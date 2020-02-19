@@ -1,0 +1,788 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .anchoLista{
+                width: 50;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Resultados de Estudios de Egresados
+    </ui:define>
+    <ui:define name="description">
+
+    </ui:define>
+    <ui:define name="body">
+        <c:if test="#{estudioEgresados.cargada}">
+        <adm:breadcrumb title="Reporte egresados"/>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    
+                    <div class="box box-solid">
+                        <!--                        <div class="box-header">
+                                                    <div class="well well-md">
+                                                        <p style="text-align: justify; font-size: larger;">
+                                                            Reporte del estudio a egresados
+                                                        </p>
+                                                    </div>
+                                                </div>-->
+                        <div class="box-body">  
+                            <p:outputPanel id="pnlReporte" >
+                                <p:dataTable id="tblReporte" lazy="false" 
+                                             widgetVar="tblR"
+                                             value="#{estudioEgresados.listaResultadosReporte}"   
+                                             filteredValue="#{estudioEgresados.listaResultados}"
+                                             var="listaEgresados" filterDelay="700" 
+                                             paginator="true" rows="10"
+                                             rowsPerPageTemplate="10,20,30,40,50"
+                                             emptyMessage="No se encontrarono registros">
+                                    <f:facet name="footer">
+                                        Total de registros: #{estudioEgresados.listaResultadosReporte.size()}
+                                    </f:facet>
+                                    <f:facet name="header">
+                                            <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa fa-file-excel-o">
+                                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="csv" target="tblReporte" fileName="ReporteEgresados"/>
+                                            </p:commandButton>
+                                    </f:facet>
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column width="1500" colspan="6" headerText="Datos del egresado/a" />
+                                            <p:column width="1300" colspan="4" headerText="Datos generales" />
+                                            <p:column width="1300" colspan="5" headerText="4. Numeros telefónicos (con clave lada)" />
+                                            <p:column width="1500" colspan="6" headerText="5a. Domicilio particular"/>
+                                            <p:column width="1500" colspan="6" headerText="5b. Domicilio laboral"/>
+                                            <p:column width="1750" colspan="7" headerText="5c. Domicilio para recados"/>
+                                            <p:column width="2000" colspan="8" headerText="6. Medios electrónicos"/>
+                                            <p:column width="1000" colspan="3" headerText="7a. Referencia familiar 1"/>
+                                            <p:column width="1000" colspan="3" headerText="7b. Referencia familiar 2"/>
+                                            <p:column width="1000" colspan="3" headerText="7c. Referencia laboral 1"/>
+                                            <p:column width="1000" colspan="3" headerText="7d. Referencia laboral 2"/>
+                                            <p:column width="1000" colspan="3" headerText="7e. Referencia escolar 1"/>
+                                            <p:column width="1000" colspan="3" headerText="7f. Referencia escolar 2"/>
+                                            <p:column width="3500" colspan="8" headerText="Situación laboral"/>
+                                            <p:column width="2500" colspan="6" headerText="15. ¿En qué medida consideras que influyeron los siguientes factores en la obtención del empleo?"/>
+                                            <p:column width="1200" colspan="3" headerText="16. Datos de la empresa donde trabajas"/>
+                                            <p:column width="750" colspan="2" headerText="17. Localización de la empresa donde trabajas"/>
+                                            <p:column width="2000" colspan="5" headerText="18. Datos de jefe inmediato"/>
+                                            <p:column width="4000" colspan="8" headerText="Datos de la empresa."/>
+                                            <p:column width="8000" colspan="15" headerText="27. ¿Cuentas con las siguientes prestaciones?"/>
+                                            <p:column width="8000" colspan="22" headerText="31. De las siguientes habilidades, indica"/>
+                                            <p:column width="4000" colspan="10" headerText="32. ¿Qué tan satisfecho estás con los siguientes aspectos de tu empleo actual o del último que desempeñaste?"/>
+                                            <p:column width="8000" colspan="15" headerText="33. A partir de tu experiencia actual ¿Qué tan adecuados consideras los siguientes aspectos de tu formación profesional?"/>
+                                            <p:column width="2000" colspan="2" headerText="Cursos/comentarios"/>                                            
+                                        </p:row>
+                                        <p:row>
+                                            <p:column  headerText="Matricula" />
+                                            <p:column  headerText="Nombre" />
+                                            <p:column  headerText="Generación TSU" />
+                                            <p:column  headerText="Generación Ingeniería" />
+                                            <p:column  headerText="Programa educativo" />
+                                            <p:column  headerText="Actividad actual" />
+
+                                            <p:column  headerText="1. Estado civil" />
+                                            <p:column  headerText="2. Último nivel de escolaridad completo" />
+                                            <p:column  headerText="3. En qué tipo de institución estudias actualmente" />
+                                            <p:column  headerText="3a. ¿Cuál universidad en el extranjero?" />
+
+                                            <p:column  headerText="Teléfono fijo" />
+                                            <p:column  headerText="Teléfono móvil" />
+                                            <p:column  headerText="Radio" />   
+                                            <p:column  headerText="Teléfono para recados:"  />   
+                                            <p:column  headerText="¿De quién es el número para recados?" />  
+
+                                            <p:column  headerText="Calle, número y código postal" />
+                                            <p:column  headerText="Colonia"  />   
+                                            <p:column  headerText="Municipio"  />
+                                            <p:column  headerText="Estado" />   
+                                            <p:column  headerText="País" />    
+                                            <p:column  headerText="Apartado postal" /> 
+
+                                            <p:column  headerText="Calle, número y código postal" />
+                                            <p:column  headerText="Colonia"  />   
+                                            <p:column  headerText="Municipio"  />
+                                            <p:column  headerText="Estado" />   
+                                            <p:column  headerText="País" />    
+                                            <p:column  headerText="Apartado postal" /> 
+
+                                            <p:column  headerText="Calle, número y código postal" />
+                                            <p:column  headerText="Colonia"  />   
+                                            <p:column  headerText="Municipio"  />
+                                            <p:column  headerText="Estado" />   
+                                            <p:column  headerText="País" />    
+                                            <p:column  headerText="Apartado postal" /> 
+                                            <p:column  headerText="¿De quién es el domicilio para recados? " /> 
+
+                                            <p:column  headerText="Correo personal 1" />
+                                            <p:column  headerText="Correo personal 2"  />  
+                                            <p:column  headerText="Correo laboral/institucional" /> 
+                                            <p:column  headerText="Facebook"  />   
+                                            <p:column  headerText="Twitter"  />   
+                                            <p:column  headerText="Myspace"  />   
+                                            <p:column  headerText="Skype"  />   
+                                            <p:column  headerText="Otro"  />   
+
+
+                                            <p:column  headerText="Nombre" /> 
+                                            <p:column  headerText="Teléfono" />  
+                                            <p:column  headerText="Correo electrónico"/>
+
+                                            <p:column  headerText="Nombre" /> 
+                                            <p:column  headerText="Teléfono" />  
+                                            <p:column  headerText="Correo electrónico"/>
+
+                                            <p:column  headerText="Nombre" /> 
+                                            <p:column  headerText="Teléfono" />  
+                                            <p:column  headerText="Correo electrónico"/>
+
+                                            <p:column  headerText="Nombre" /> 
+                                            <p:column  headerText="Teléfono" />  
+                                            <p:column  headerText="Correo electrónico"/>
+
+                                            <p:column  headerText="Nombre" /> 
+                                            <p:column  headerText="Teléfono" />  
+                                            <p:column  headerText="Correo electrónico"/>
+
+                                            <p:column  headerText="Nombre" /> 
+                                            <p:column  headerText="Teléfono" />  
+                                            <p:column  headerText="Correo electrónico"/>
+
+                                            <p:column  headerText="8. Al concluir tus estudios en la UTXJ ¿cuánto tiempo tardaste en encontrar tu primer empleo, en empezar a trabajar por tu cuenta o en un negocio familiar o propio? "  />
+                                            <p:column  headerText="9. Indica la razón principal por la que no has empezado a trabajar."  />
+                                            <p:column  headerText="10. ¿Cuántos trabajos has tenido desde que egresaste de la UT?" />
+                                            <p:column  headerText="11. ¿Trabajas actualmente?"  />
+                                            <p:column  headerText="12. ¿Cuál fue el último mes laboraste?"  />
+                                            <p:column  headerText="12. ¿Cuál fue el último año que laboraste?"/>
+                                            <p:column  headerText="13. Marca de la siguiente lista, la razón principal por la que dejaste de trabajar."/>
+                                            <p:column  headerText="14. ¿Por qué medio obtuviste tu trabajo actual o el último que desempeñaste?"/>
+
+                                            <p:column  headerText="a) La buena imagen de la UT" />
+                                            <p:column  headerText="b) La formación recibida."  />
+                                            <p:column  headerText="c) Pertinencia de la carrera con las necesidades de la empresa."  />
+                                            <p:column  headerText="d) Recomendaciones o relaciones personales con la empresa." />
+                                            <p:column  headerText="e) Habilidades personales para obtener el empleo." />
+                                            <p:column  headerText="f) Experiencia laboral previa" />
+
+                                            <p:column  headerText="Nombre de la empresa" />
+                                            <p:column  headerText="Calle y número" />
+                                            <p:column  headerText="Colonia" />
+
+                                            <p:column  headerText="Municipio" />
+                                            <p:column  headerText="Estado" />
+
+                                            <p:column  headerText="Nombre" />
+                                            <p:column  headerText="Puesto" />
+                                            <p:column  headerText="Teléfono" />
+                                            <p:column  headerText="Extensión (0 en caso de no tener)"/>
+                                            <p:column  headerText="Correo electrónico" />
+
+                                            <p:column  headerText="19. ¿A qué régimen jurídico pertenece la empresa donde trabajas actualmente o donde trabajaste en tu último empleo? "  />
+                                            <p:column  headerText="20. Rama de actividad económica de la empresa en la que trabajas actualmente o tuviste tu último empleo."  />
+                                            <p:column  headerText="21. Tamaño de la empresa donde trabajas actualmente o donde trabajaste por última vez."  />
+                                            <p:column  headerText="22. Puesto actual o último que desempeñaste."/>
+                                            <p:column  headerText="23. ¿En qué medida coincide el  trabajo que tienes actualmente o el último que desempeñaste, con la formación que recibiste en la UT?"/>
+                                            <p:column  headerText="24. Tipo de contratación que tienes en tu trabajo actual o último que desempeñaste."  />
+                                            <p:column  headerText="25. ¿Por cuantas horas a la semana estás contratado o lo estabas en el último empleo que desempeñaste?" />
+                                            <p:column  headerText="26. Ingreso mensual aproximado en tu empleo o en el último que desempeñaste " />
+
+                                            <p:column  headerText="a) Seguridad social" />
+                                            <p:column  headerText="b) Goce de días de vacaciones" />
+                                            <p:column  headerText="c) Prima vacacional" />
+                                            <p:column  headerText="d) Aguinaldo"  />
+                                            <p:column  headerText="e) Reparto de utilidades" />
+                                            <p:column  headerText="f) Ropa y herramientas de trabajo" />
+                                            <p:column  headerText="g) Seguro privado de gastos médicos / vida" />
+                                            <p:column  headerText="h) Servicios de transporte" />
+                                            <p:column  headerText="i) Servicios de alimentación" />
+                                            <p:column  headerText="j) Capacitación" />
+                                            <p:column  headerText="k) Ingresos adicionales (bonos de productividad, vales de despensa, opción de horas extras)"/>
+                                            <p:column  headerText="l) Servicios deportivos y recreativos "/>
+                                            <p:column  headerText="28. ¿En el  trabajo que desempeñas actualmente o en el último que desempeñaste has tenido o tuviste ascensos?"/>
+                                            <p:column  headerText="29. ¿Cuánta gente tienes a tu cargo? " />
+                                            <p:column  headerText="30. Desde que egresaste a la fecha ¿Cómo consideras que ha cambiado tu situación económica?" />
+
+                                            <p:column  headerText="a-1) Aplicar conocimientos específicos de la carrera. " />
+                                            <p:column  headerText="a-2) Aplicar conocimientos específicos de la carrera. "  />
+                                            <p:column  headerText="b-1) Manejo de equipo y herramientas especializadas." />
+                                            <p:column  headerText="b-2) Manejo de equipo y herramientas especializadas." />
+                                            <p:column  headerText="c-1) Manejo de equipo de cómputo."/>
+                                            <p:column  headerText="c-2) Manejo de equipo de cómputo." />
+                                            <p:column  headerText="d-1) Dominio de idioma extranjero. " />
+                                            <p:column  headerText="d-2) Dominio de idioma extranjero. " />
+                                            <p:column  headerText="e-1) Destreza en la comunicación, ya sea oral, escrita o gráfica" />
+                                            <p:column  headerText="e-2) Destreza en la comunicación, ya sea oral, escrita o gráfica"/>
+                                            <p:column  headerText="f-1) Identificar, analizar y encontrar soluciones a problemas" />
+                                            <p:column  headerText="f-2) Identificar, analizar y encontrar soluciones a problemas" />
+                                            <p:column  headerText="g-1) Buscar, obtener, procesar y utilizar información" />
+                                            <p:column  headerText="g-2) Buscar, obtener, procesar y utilizar información" />
+                                            <p:column  headerText="h-1) Dirigir a tu grupo de trabajo para el logro de las metas laborales" />
+                                            <p:column  headerText="h-2) Dirigir a tu grupo de trabajo para el logro de las metas laborales"/>
+                                            <p:column  headerText="i-1) Colaborar con tus compañeros de trabajo para cumplir metas laborales." />
+                                            <p:column  headerText="i-2) Colaborar con tus compañeros de trabajo para cumplir metas laborales."/>
+                                            <p:column  headerText="j-1) Tomar decisiones en busca de mejores resultados en tus actividades laborales."/>
+                                            <p:column  headerText="j-2) Tomar decisiones en busca de mejores resultados en tus actividades laborales." />
+                                            <p:column  headerText="k-1) Negociar acuerdo con tus compañeros de trabajo." />
+                                            <p:column  headerText="k-2) Negociar acuerdo con tus compañeros de trabajo." />
+
+                                            <p:column  headerText="a) Las actividades o funciones asignadas."/>
+                                            <p:column  headerText="b) Oportunidad de aplicar los conocimientos adquiridos en la UT."/>
+                                            <p:column  headerText="c) El reconocimiento profesional." />
+                                            <p:column  headerText="d) Las oportunidades de desarrollo profesional."/>
+                                            <p:column  headerText="e) Oportunidades de toma de decisiones sobre los procesos."/>
+                                            <p:column  headerText="f) Oportunidad de usar mi creatividad."/>
+                                            <p:column  headerText="g) La Remuneración económica."/>
+                                            <p:column  headerText="h) La oportunidad de dirigir grupos de trabajo." />
+                                            <p:column  headerText="i) La oportunidad de trabajar en equipo con tus compañeros."/>
+                                            <p:column  headerText="j) La oportunidad de negociar acuerdos."/>
+
+                                            <p:column  headerText="a) Contenidos teóricos."/>
+                                            <p:column  headerText="b) Prácticas en talleres y laboratorios."/>
+                                            <p:column  headerText="c) Prácticas realizadas en las empresas previas a la estadía."/>
+                                            <p:column  headerText="d) Visitas guiadas."/>
+                                            <p:column  headerText="e) Estadía." />
+                                            <p:column  headerText="f) Equipo de talleres y laboratorios."/>
+                                            <p:column  headerText="g) Programa de tutorías."/>
+                                            <p:column  headerText="h) Asesorías de tus profesores." />
+                                            <p:column  headerText="i) Enseñanza de idioma extranjero."/>
+                                            <p:column  headerText="j) Uso de herramientas informáticas (paquetería básica, navegación en internet, correo electrónico)"/>
+                                            <p:column  headerText="k) Formación integral (actividades culturales y deportivas)."/>
+                                            <p:column  headerText="l) Proceso de enseñanza."/>
+                                            <p:column  headerText="m) Servicios de consulta en biblioteca."/>
+                                            <p:column  headerText="34. La formación que recibiste en la Universidad Tecnológica ¿Qué tanto, cubrió tus expectativas?"/>
+                                            <p:column  headerText="35. Aconsejarías a un familiar o amigo estudiar en la UT? "/>
+
+                                            <p:column headerText="Menciona un curso, capacitación o cualquier otro tipo de educación continua que desearías recibir para incrementar tus competencias profesionales:"/>
+                                            <p:column headerText="Comentarios"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column  headerText="Matricula"  >                           
+                                        <h:outputText value="#{listaEgresados.evaluacionEstudioEgresadosResultadosPK.evaluador}" />
+                                    </p:column>
+                                    <p:column  headerText="Nombre completo"   >   
+                                        <h:outputText value="#{listaEgresados.r1}"  />
+                                    </p:column>
+                                    <p:column  headerText="Generación TSU" >   
+                                        <h:outputText value="#{listaEgresados.r2}"/>
+                                    </p:column>
+                                    <p:column  headerText="Generación Ingeniería "   >   
+                                        <h:outputText value="#{listaEgresados.r3}"/>
+                                    </p:column>
+                                    <p:column  headerText="Programa educativo"  >   
+                                        <h:outputText value="#{listaEgresados.r4}"/>
+                                    </p:column>
+                                    <p:column  headerText="Actividad actual" >   
+                                        <h:outputText value="#{listaEgresados.r5}"/>
+                                    </p:column>
+                                    <p:column  headerText="1. Estado civil"  >   
+                                        <h:outputText value="#{listaEgresados.r6}"/>
+                                    </p:column>
+                                    <p:column  headerText="2. Último nivel de escolaridad completo"  >   
+                                        <h:outputText value="#{listaEgresados.r7}"/>
+                                    </p:column>
+                                    <p:column  headerText="3. En qué tipo de institución estudias actualmente"   >   
+                                        <h:outputText value="#{listaEgresados.r8}"/>
+                                    </p:column>
+                                    <p:column  headerText="3a. ¿Cuál universidad en el extranjero?"  >   
+                                        <h:outputText value="#{listaEgresados.r9}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Teléfono fijo" >   
+                                        <h:outputText value="#{listaEgresados.r10}"/>
+                                    </p:column>
+                                    <p:column  headerText="Teléfono móvil"  >   
+                                        <h:outputText value="#{listaEgresados.r11}"/>
+                                    </p:column>
+                                    <p:column  headerText="Radio" >   
+                                        <h:outputText value="#{listaEgresados.r12}"/>
+                                    </p:column>
+                                    <p:column  headerText="Teléfono para recados:"  >   
+                                        <h:outputText value="#{listaEgresados.r13}"/>
+                                    </p:column>
+                                    <p:column  headerText="¿De quién es el número para recados?" >   
+                                        <h:outputText value="#{listaEgresados.r14}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Calle, número y código postal" >   
+                                        <h:outputText value="#{listaEgresados.r15}"/>
+                                    </p:column>
+                                    <p:column  headerText="Colonia"  >   
+                                        <h:outputText value="#{listaEgresados.r16}"/>
+                                    </p:column>
+                                    <p:column  headerText="Municipio"  >   
+                                        <h:outputText value="#{listaEgresados.r17}"/>
+                                    </p:column>
+                                    <p:column  headerText="Estado" >   
+                                        <h:outputText value="#{listaEgresados.r18}"/>
+                                    </p:column>
+                                    <p:column  headerText="País"  >   
+                                        <h:outputText value="#{listaEgresados.r19}"/>
+                                    </p:column>
+                                    <p:column  headerText="Apartado postal" >   
+                                        <h:outputText value="#{listaEgresados.r20}"/>
+                                    </p:column>
+
+
+                                    <p:column  headerText="Calle, número y código postal" >   
+                                        <h:outputText value="#{listaEgresados.r21}"/>
+                                    </p:column>
+                                    <p:column  headerText="Colonia"  >   
+                                        <h:outputText value="#{listaEgresados.r22}"/>
+                                    </p:column>
+                                    <p:column  headerText="Municipio"  >   
+                                        <h:outputText value="#{listaEgresados.r23}"/>
+                                    </p:column>
+                                    <p:column  headerText="Estado" >   
+                                        <h:outputText value="#{listaEgresados.r24}"/>
+                                    </p:column>
+                                    <p:column  headerText="País"  >   
+                                        <h:outputText value="#{listaEgresados.r25}"/>
+                                    </p:column>
+                                    <p:column  headerText="Apartado postal" >   
+                                        <h:outputText value="#{listaEgresados.r26}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Calle, número y código postal" >   
+                                        <h:outputText value="#{listaEgresados.r27}"/>
+                                    </p:column>
+                                    <p:column  headerText="Colonia"  >   
+                                        <h:outputText value="#{listaEgresados.r28}"/>
+                                    </p:column>
+                                    <p:column  headerText="Municipio"  >   
+                                        <h:outputText value="#{listaEgresados.r29}"/>
+                                    </p:column>
+                                    <p:column  headerText="Estado" >   
+                                        <h:outputText value="#{listaEgresados.r30}"/>
+                                    </p:column>
+                                    <p:column  headerText="País"  >   
+                                        <h:outputText value="#{listaEgresados.r31}"/>
+                                    </p:column>
+                                    <p:column  headerText="Apartado postal" >   
+                                        <h:outputText value="#{listaEgresados.r32}"/>
+                                    </p:column>
+                                    <p:column  headerText="¿De quién es el domicilio para recados? " >   
+                                        <h:outputText value="#{listaEgresados.r33}"/>
+                                    </p:column>
+
+
+
+                                    <p:column  headerText="Correo personal 1"  >   
+                                        <h:outputText value="#{listaEgresados.r34}"/>
+                                    </p:column>
+                                    <p:column  headerText="Correo personal 2"  >   
+                                        <h:outputText value="#{listaEgresados.r35}"/>
+                                    </p:column>
+                                    <p:column  headerText="Correo laboral/institucional"  >   
+                                        <h:outputText value="#{listaEgresados.r36}"/>
+                                    </p:column>
+                                    <p:column  headerText="Facebook"  >   
+                                        <h:outputText value="#{listaEgresados.r37}"/>
+                                    </p:column>
+                                    <p:column  headerText="Twitter"  >   
+                                        <h:outputText value="#{listaEgresados.r38}"/>
+                                    </p:column>
+                                    <p:column  headerText="Myspace"  >   
+                                        <h:outputText value="#{listaEgresados.r39}"/>
+                                    </p:column>
+                                    <p:column  headerText="Skype"  >   
+                                        <h:outputText value="#{listaEgresados.r40}"/>
+                                    </p:column>
+                                    <p:column  headerText="Otro"  >   
+                                        <h:outputText value="#{listaEgresados.r41}"/>
+                                    </p:column>
+
+
+
+                                    <p:column  headerText="Nombre"  >   
+                                        <h:outputText value="#{listaEgresados.r42}"/>
+                                    </p:column>
+                                    <p:column  headerText="Teléfono"  >   
+                                        <h:outputText value="#{listaEgresados.r43}"/>
+                                    </p:column>
+                                    <p:column  headerText="Correo electrónico"  >   
+                                        <h:outputText value="#{listaEgresados.r44}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Nombre"  >   
+                                        <h:outputText value="#{listaEgresados.r45}"/>
+                                    </p:column>
+                                    <p:column  headerText="Teléfono"  >   
+                                        <h:outputText value="#{listaEgresados.r46}"/>
+                                    </p:column>
+                                    <p:column  headerText="Correo electrónico"  >   
+                                        <h:outputText value="#{listaEgresados.r47}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Nombre"  >   
+                                        <h:outputText value="#{listaEgresados.r48}"/>
+                                    </p:column>
+                                    <p:column  headerText="Teléfono"  >   
+                                        <h:outputText value="#{listaEgresados.r49}"/>
+                                    </p:column>
+                                    <p:column  headerText="Correo electrónico"  >   
+                                        <h:outputText value="#{listaEgresados.r50}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Nombre"  >   
+                                        <h:outputText value="#{listaEgresados.r51}"/>
+                                    </p:column>
+                                    <p:column  headerText="Teléfono"  >   
+                                        <h:outputText value="#{listaEgresados.r52}"/>
+                                    </p:column>
+                                    <p:column  headerText="Correo electrónico"  >   
+                                        <h:outputText value="#{listaEgresados.r53}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Nombre"  >   
+                                        <h:outputText value="#{listaEgresados.r54}"/>
+                                    </p:column>
+                                    <p:column  headerText="Teléfono"  >   
+                                        <h:outputText value="#{listaEgresados.r55}"/>
+                                    </p:column>
+                                    <p:column  headerText="Correo electrónico"  >   
+                                        <h:outputText value="#{listaEgresados.r56}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Nombre"  >   
+                                        <h:outputText value="#{listaEgresados.r57}"/>
+                                    </p:column>
+                                    <p:column  headerText="Teléfono"  >   
+                                        <h:outputText value="#{listaEgresados.r58}"/>
+                                    </p:column>
+                                    <p:column  headerText="Correo electrónico"  >   
+                                        <h:outputText value="#{listaEgresados.r59}"/>
+                                    </p:column>
+
+
+                                    <p:column  headerText="8. Al concluir tus estudios en la UTXJ ¿cuánto tiempo tardaste en encontrar tu primer empleo, en empezar a trabajar por tu cuenta o en un negocio familiar o propio? "  >   
+                                        <h:outputText value="#{listaEgresados.r60}"/>
+                                    </p:column>
+                                    <p:column  headerText="9. Indica la razón principal por la que no has empezado a trabajar."  >   
+                                        <h:outputText value="#{listaEgresados.r61}"/>
+                                    </p:column>
+                                    <p:column  headerText="10. ¿Cuántos trabajos has tenido desde que egresaste de la UT?"  >   
+                                        <h:outputText value="#{listaEgresados.r62}"/>
+                                    </p:column>
+                                    <p:column  headerText="11. ¿Trabajas actualmente?"  >   
+                                        <h:outputText value="#{listaEgresados.r63}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="12. ¿Cuál fue el último mes laboraste?"  >   
+                                        <h:outputText value="#{listaEgresados.r64a}"/>
+                                    </p:column>
+                                    <p:column  headerText="12. ¿Cuál fue el último año que laboraste?"  >   
+                                        <h:outputText value="#{listaEgresados.r64b}"/>
+                                    </p:column>
+                                    <p:column  headerText="13. Marca de la siguiente lista, la razón principal por la que dejaste de trabajar."  >   
+                                        <h:outputText value="#{listaEgresados.r65}"/>
+                                    </p:column>
+                                    <p:column  headerText="14. ¿Por qué medio obtuviste tu trabajo actual o el último que desempeñaste?"  >   
+                                        <h:outputText value="#{listaEgresados.r66}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="a) La buena imagen de la UT"  >   
+                                        <h:outputText value="#{listaEgresados.r67a}"/>
+                                    </p:column>
+                                    <p:column  headerText="b) La formación recibida."  >   
+                                        <h:outputText value="#{listaEgresados.r67b}"/>
+                                    </p:column>
+                                    <p:column  headerText="c) Pertinencia de la carrera con las necesidades de la empresa."  >   
+                                        <h:outputText value="#{listaEgresados.r67c}"/>
+                                    </p:column>
+                                    <p:column  headerText="d) Recomendaciones o relaciones personales con la empresa."  >   
+                                        <h:outputText value="#{listaEgresados.r67d}"/>
+                                    </p:column>
+                                    <p:column  headerText="e) Habilidades personales para obtener el empleo."  >   
+                                        <h:outputText value="#{listaEgresados.r67e}"/>
+                                    </p:column>
+                                    <p:column  headerText="f) Experiencia laboral previa"  >   
+                                        <h:outputText value="#{listaEgresados.r67f}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Nombre de la empresa"  >   
+                                        <h:outputText value="#{listaEgresados.r68}"/>
+                                    </p:column>
+                                    <p:column  headerText="Calle y número"  >   
+                                        <h:outputText value="#{listaEgresados.r69}"/>
+                                    </p:column>
+                                    <p:column  headerText="Colonia"  >   
+                                        <h:outputText value="#{listaEgresados.r70}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Municipio"  >   
+                                        <h:outputText value="#{listaEgresados.r71}"/>
+                                    </p:column>
+                                    <p:column  headerText="Estado"  >   
+                                        <h:outputText value="#{listaEgresados.r72}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Nombre"  >   
+                                        <h:outputText value="#{listaEgresados.r73}"/>
+                                    </p:column>
+                                    <p:column  headerText="Puesto"  >   
+                                        <h:outputText value="#{listaEgresados.r74}"/>
+                                    </p:column>
+                                    <p:column  headerText="Teléfono"  >   
+                                        <h:outputText value="#{listaEgresados.r75}"/>
+                                    </p:column>
+                                    <p:column  headerText="Extensión (0 en caso de no tener)"  >   
+                                        <h:outputText value="#{listaEgresados.r76}"/>
+                                    </p:column>
+                                    <p:column  headerText="Correo electrónico"  >   
+                                        <h:outputText value="#{listaEgresados.r77}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="19. ¿A qué régimen jurídico pertenece la empresa donde trabajas actualmente o donde trabajaste en tu último empleo? "  >   
+                                        <h:outputText value="#{listaEgresados.r78}"/>
+                                    </p:column>
+                                    <p:column  headerText="20. Rama de actividad económica de la empresa en la que trabajas actualmente o tuviste tu último empleo."  >   
+                                        <h:outputText value="#{listaEgresados.r79}"/>
+                                    </p:column>
+                                    <p:column  headerText="21. Tamaño de la empresa donde trabajas actualmente o donde trabajaste por última vez."  >   
+                                        <h:outputText value="#{listaEgresados.r80}"/>
+                                    </p:column>
+                                    <p:column  headerText="22. Puesto actual o último que desempeñaste."  >   
+                                        <h:outputText value="#{listaEgresados.r81}"/>
+                                    </p:column>
+                                    <p:column  headerText="23. ¿En qué medida coincide el  trabajo que tienes actualmente o el último que desempeñaste, con la formación que recibiste en la UT?"  >   
+                                        <h:outputText value="#{listaEgresados.r82}"/>
+                                    </p:column>
+                                    <p:column  headerText="24. Tipo de contratación que tienes en tu trabajo actual o último que desempeñaste."  >   
+                                        <h:outputText value="#{listaEgresados.r83}"/>
+                                    </p:column>
+                                    <p:column  headerText="25. ¿Por cuantas horas a la semana estás contratado o lo estabas en el último empleo que desempeñaste?"  >   
+                                        <h:outputText value="#{listaEgresados.r84}"/>
+                                    </p:column>
+                                    <p:column  headerText="26. Ingreso mensual aproximado en tu empleo o en el último que desempeñaste "  >   
+                                        <h:outputText value="#{listaEgresados.r85}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="a) Seguridad social"  >   
+                                        <h:outputText value="#{listaEgresados.r86a}"/>
+                                    </p:column>
+                                    <p:column  headerText="b) Goce de días de vacaciones"  >   
+                                        <h:outputText value="#{listaEgresados.r86b}"/>
+                                    </p:column>
+                                    <p:column  headerText="c) Prima vacacional"  >   
+                                        <h:outputText value="#{listaEgresados.r86c}"/>
+                                    </p:column>
+                                    <p:column  headerText="d) Aguinaldo"  >   
+                                        <h:outputText value="#{listaEgresados.r86d}"/>
+                                    </p:column>
+                                    <p:column  headerText="e) Reparto de utilidades"  >   
+                                        <h:outputText value="#{listaEgresados.r86e}"/>
+                                    </p:column>
+                                    <p:column  headerText="f) Ropa y herramientas de trabajo"  >   
+                                        <h:outputText value="#{listaEgresados.r86f}"/>
+                                    </p:column>
+                                    <p:column  headerText="g) Seguro privado de gastos médicos / vida"  >   
+                                        <h:outputText value="#{listaEgresados.r86g}"/>
+                                    </p:column>
+                                    <p:column  headerText="h) Servicios de transporte"  >   
+                                        <h:outputText value="#{listaEgresados.r86h}"/>
+                                    </p:column>
+                                    <p:column  headerText="i) Servicios de alimentación"  >   
+                                        <h:outputText value="#{listaEgresados.r86i}"/>
+                                    </p:column>
+                                    <p:column  headerText="j) Capacitación"  >   
+                                        <h:outputText value="#{listaEgresados.r86j}"/>
+                                    </p:column>
+                                    <p:column  headerText="k) Ingresos adicionales (bonos de productividad, vales de despensa, opción de horas extras)"  >   
+                                        <h:outputText value="#{listaEgresados.r86k}"/>
+                                    </p:column>
+                                    <p:column  headerText="l) Servicios deportivos y recreativos "  >   
+                                        <h:outputText value="#{listaEgresados.r86l}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="28. ¿En el  trabajo que desempeñas actualmente o en el último que desempeñaste has tenido o tuviste ascensos?"  >   
+                                        <h:outputText value="#{listaEgresados.r87}"/>
+                                    </p:column>
+                                    <p:column  headerText="29. ¿Cuánta gente tienes a tu cargo? "  >   
+                                        <h:outputText value="#{listaEgresados.r88}"/>
+                                    </p:column>
+                                    <p:column  headerText="30. Desde que egresaste a la fecha ¿Cómo consideras que ha cambiado tu situación económica?"  >   
+                                        <h:outputText value="#{listaEgresados.r89}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="a-1) Aplicar conocimientos específicos de la carrera. "  >   
+                                        <h:outputText value="#{listaEgresados.r90aa}"/>
+                                    </p:column>
+                                    <p:column  headerText="a-2) Aplicar conocimientos específicos de la carrera. "  >   
+                                        <h:outputText value="#{listaEgresados.r90ab}"/>
+                                    </p:column>
+                                    <p:column  headerText="b-1) Manejo de equipo y herramientas especializadas."  >   
+                                        <h:outputText value="#{listaEgresados.r90ba}"/>
+                                    </p:column>
+                                    <p:column  headerText="b-2) Manejo de equipo y herramientas especializadas."  >   
+                                        <h:outputText value="#{listaEgresados.r90bb}"/>
+                                    </p:column>
+                                    <p:column  headerText="c-1) Manejo de equipo de cómputo."  >   
+                                        <h:outputText value="#{listaEgresados.r90ca}"/>
+                                    </p:column>
+                                    <p:column  headerText="c-2) Manejo de equipo de cómputo."  >   
+                                        <h:outputText value="#{listaEgresados.r90cb}"/>
+                                    </p:column>
+                                    <p:column  headerText="d-1) Dominio de idioma extranjero. "  >   
+                                        <h:outputText value="#{listaEgresados.r90da}"/>
+                                    </p:column>
+                                    <p:column  headerText="d-2) Dominio de idioma extranjero. "  >   
+                                        <h:outputText value="#{listaEgresados.r90db}"/>
+                                    </p:column>
+                                    <p:column  headerText="e-1) Destreza en la comunicación, ya sea oral, escrita o gráfica"  >   
+                                        <h:outputText value="#{listaEgresados.r90ea}"/>
+                                    </p:column>
+                                    <p:column  headerText="e-2) Destreza en la comunicación, ya sea oral, escrita o gráfica"  >   
+                                        <h:outputText value="#{listaEgresados.r90eb}"/>
+                                    </p:column>
+                                    <p:column  headerText="f-1) Identificar, analizar y encontrar soluciones a problemas"  >   
+                                        <h:outputText value="#{listaEgresados.r90fa}"/>
+                                    </p:column>
+                                    <p:column  headerText="f-2) Identificar, analizar y encontrar soluciones a problemas"  >   
+                                        <h:outputText value="#{listaEgresados.r90fb}"/>
+                                    </p:column>
+                                    <p:column  headerText="g-1) Buscar, obtener, procesar y utilizar información"  >   
+                                        <h:outputText value="#{listaEgresados.r90ga}"/>
+                                    </p:column>
+                                    <p:column  headerText="g-2) Buscar, obtener, procesar y utilizar información"  >   
+                                        <h:outputText value="#{listaEgresados.r90gb}"/>
+                                    </p:column>
+                                    <p:column  headerText="h-1) Dirigir a tu grupo de trabajo para el logro de las metas laborales"  >   
+                                        <h:outputText value="#{listaEgresados.r90ha}"/>
+                                    </p:column>
+                                    <p:column  headerText="h-2) Dirigir a tu grupo de trabajo para el logro de las metas laborales"  >   
+                                        <h:outputText value="#{listaEgresados.r90hb}"/>
+                                    </p:column>
+                                    <p:column  headerText="i-1) Colaborar con tus compañeros de trabajo para cumplir metas laborales."  >   
+                                        <h:outputText value="#{listaEgresados.r90ia}"/>
+                                    </p:column>
+                                    <p:column  headerText="i-2) Colaborar con tus compañeros de trabajo para cumplir metas laborales."  >   
+                                        <h:outputText value="#{listaEgresados.r90ib}"/>
+                                    </p:column>
+                                    <p:column  headerText="j-1) Tomar decisiones en busca de mejores resultados en tus actividades laborales."  >   
+                                        <h:outputText value="#{listaEgresados.r90ja}"/>
+                                    </p:column>
+                                    <p:column  headerText="j-2) Tomar decisiones en busca de mejores resultados en tus actividades laborales."  >   
+                                        <h:outputText value="#{listaEgresados.r90jb}"/>
+                                    </p:column>
+                                    <p:column  headerText="k-1) Negociar acuerdo con tus compañeros de trabajo."  >   
+                                        <h:outputText value="#{listaEgresados.r90ka}"/>
+                                    </p:column>
+                                    <p:column  headerText="k-2) Negociar acuerdo con tus compañeros de trabajo."  >   
+                                        <h:outputText value="#{listaEgresados.r90kb}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="a) Las actividades o funciones asignadas."  >   
+                                        <h:outputText value="#{listaEgresados.r915a}"/>
+                                    </p:column>
+                                    <p:column  headerText="b) Oportunidad de aplicar los conocimientos adquiridos en la UT."  >   
+                                        <h:outputText value="#{listaEgresados.r915b}"/>
+                                    </p:column>
+                                    <p:column  headerText="c) El reconocimiento profesional."  >   
+                                        <h:outputText value="#{listaEgresados.r915c}"/>
+                                    </p:column>
+                                    <p:column  headerText="d) Las oportunidades de desarrollo profesional."  >   
+                                        <h:outputText value="#{listaEgresados.r915d}"/>
+                                    </p:column>
+                                    <p:column  headerText="e) Oportunidades de toma de decisiones sobre los procesos."  >   
+                                        <h:outputText value="#{listaEgresados.r915e}"/>
+                                    </p:column>
+                                    <p:column  headerText="f) Oportunidad de usar mi creatividad."  >   
+                                        <h:outputText value="#{listaEgresados.r915f}"/>
+                                    </p:column>
+                                    <p:column  headerText="g) La Remuneración económica."  >   
+                                        <h:outputText value="#{listaEgresados.r915g}"/>
+                                    </p:column>
+                                    <p:column  headerText="h) La oportunidad de dirigir grupos de trabajo."  >   
+                                        <h:outputText value="#{listaEgresados.r915h}"/>
+                                    </p:column>
+                                    <p:column  headerText="i) La oportunidad de trabajar en equipo con tus compañeros."  >   
+                                        <h:outputText value="#{listaEgresados.r915i}"/>
+                                    </p:column>
+                                    <p:column  headerText="j) La oportunidad de negociar acuerdos."  >   
+                                        <h:outputText value="#{listaEgresados.r915j}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="a) Contenidos teóricos."  >   
+                                        <h:outputText value="#{listaEgresados.r91a}"/>
+                                    </p:column>
+                                    <p:column  headerText="b) Prácticas en talleres y laboratorios."  >   
+                                        <h:outputText value="#{listaEgresados.r91b}"/>
+                                    </p:column>
+                                    <p:column  headerText="c) Prácticas realizadas en las empresas previas a la estadía."  >   
+                                        <h:outputText value="#{listaEgresados.r91c}"/>
+                                    </p:column>
+                                    <p:column  headerText="d) Visitas guiadas."  >   
+                                        <h:outputText value="#{listaEgresados.r91d}"/>
+                                    </p:column>
+                                    <p:column  headerText="e) Estadía."  >   
+                                        <h:outputText value="#{listaEgresados.r91e}"/>
+                                    </p:column>
+                                    <p:column  headerText="f) Equipo de talleres y laboratorios."  >   
+                                        <h:outputText value="#{listaEgresados.r91f}"/>
+                                    </p:column>
+                                    <p:column  headerText="g) Programa de tutorías."  >   
+                                        <h:outputText value="#{listaEgresados.r91g}"/>
+                                    </p:column>
+                                    <p:column  headerText="h) Asesorías de tus profesores."  >   
+                                        <h:outputText value="#{listaEgresados.r91h}"/>
+                                    </p:column>
+                                    <p:column  headerText="i) Enseñanza de idioma extranjero."  >   
+                                        <h:outputText value="#{listaEgresados.r91i}"/>
+                                    </p:column>
+                                    <p:column  headerText="j) Uso de herramientas informáticas (paquetería básica, navegación en internet, correo electrónico)"  >   
+                                        <h:outputText value="#{listaEgresados.r91j}"/>
+                                    </p:column>          
+                                    <p:column  headerText="k) Formación integral (actividades culturales y deportivas)."  >   
+                                        <h:outputText value="#{listaEgresados.r91k}"/>
+                                    </p:column>
+                                    <p:column  headerText="l) Proceso de enseñanza."  >   
+                                        <h:outputText value="#{listaEgresados.r91l}"/>
+                                    </p:column>
+                                    <p:column  headerText="m) Servicios de consulta en biblioteca."  >   
+                                        <h:outputText value="#{listaEgresados.r91m}"/>
+                                    </p:column>                   
+                                    <p:column  headerText="34. La formación que recibiste en la Universidad Tecnológica ¿Qué tanto, cubrió tus expectativas?"  >   
+                                        <h:outputText value="#{listaEgresados.r92}"/>
+                                    </p:column>
+                                    <p:column  headerText="35. Aconsejarías a un familiar o amigo estudiar en la UT? "  >   
+                                        <h:outputText value="#{listaEgresados.r93}"/>
+                                    </p:column>
+
+                                    <p:column  headerText="Menciona un curso, capacitación o cualquier otro tipo de educación continua que desearías recibir para incrementar tus competencias profesionales:"  >   
+                                        <h:outputText value="#{listaEgresados.r94}"/>
+                                    </p:column>
+                                    <p:column  headerText="Comentarios"  >   
+                                        <h:outputText value="#{listaEgresados.r95}"/>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        </c:if>
+ 
+    </ui:define>
+</ui:composition>

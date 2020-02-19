@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:ice="http://www.icefaces.org/icefaces/core"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+    <ui:define name="head-end">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a7d0  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+
+    </ui:define>
+
+    <ui:define name="title">
+        Reporte de becas
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionEncuesta.cargado}">
+        <h:form id="fr2">
+         <div id="main-buttons"  >
+            <p:toolbar id="tb">
+                <f:facet name="left">
+                     <p:outputLabel value="Periodo: " />
+                    <p:selectOneMenu id="periodo" value="#{reporteBecas.periodo}" converter="entityConverter" styleClass="form-control" >
+                        <f:selectItems value="#{reporteBecas.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this" update="@form" />
+                                                    <p:autoUpdate />
+                    </p:selectOneMenu>
+                    
+                </f:facet>
+                <f:facet name="right">
+                    <br/>
+                    <c:if test="#{administracionEncuesta.dto.esServEst2 or administracionEncuesta.dto.director or administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario}">
+                        <p:commandButton actionListener="#{reporteBecas.obReporteGeneralBecas()}" value="Obtener reporte" icon="fa fa-refresh"
+                                                         class="btn btn-primary" update="fr1:tblReporteBecas" process="@form"/>
+
+                    </c:if>
+                </f:facet>
+            </p:toolbar>
+            <p:sticky target="tb" />
+        </div>
+            
+        </h:form>
+        
+        <c:if test="#{administracionEncuesta.dto.esServEst2 or administracionEncuesta.dto.director or administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario}">
+             <h:form id="fr1">
+                        <p:outputPanel>
+                            <p:dataTable id="tblReporteBecas" value="#{reporteBecas.reporteBecas}"
+                                         paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         var="beca" filteredValue="#{reporteBecas.reporteBecasFilter}">
+
+                                <f:facet name="{Exporters}">
+                                    <p:commandLink  ajax="false">
+                                        <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                        <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblReporteBecas"
+                                                        fileName="Reporte_becas"/>
+                                    </p:commandLink>
+
+                                </f:facet>
+                                <p:column headerText="Nombre" filterBy="#{beca.nombreC}" sortBy="#{beca.nombreC}" filterMatchMode="contains">
+                                    <h:outputText value="#{beca.nombreC}" />
+                                </p:column>
+                                <p:column headerText="Matricula" filterBy="#{beca.matricula} " sortBy="#{beca.matricula} " filterMatchMode="contains">
+                                    <h:outputText value="#{beca.matricula}" />
+                                </p:column>
+                                <p:column headerText="Grado" filterBy="#{beca.grado}" sortBy="#{beca.grado}" filterMatchMode="contains">
+                                    <h:outputText value="#{beca.grado}" />
+                                </p:column>
+                                <p:column headerText="Carrera" filterBy="#{beca.carrera.siglas}" sortBy="#{beca.carrera.siglas}" filterMatchMode="contains">
+                                    <h:outputText value="#{beca.carrera.siglas}" />
+                                </p:column>
+                                <p:column headerText="Grupo" filterBy="#{beca.grupo}" sortBy="#{beca.grupo}" filterMatchMode="contains">
+                                    <h:outputText value="#{beca.grupo}" />
+                                </p:column>
+                                <p:column headerText="Tipo de beca" filterBy="#{beca.tipoBeca.nombre}" sortBy="#{beca.tipoBeca.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{beca.tipoBeca.nombre}" />
+                                </p:column>
+                                <p:column headerText="Estatus" filterBy="#{beca.status}" sortBy="#{beca.status}" filterMatchMode="contains">
+                                    <h:outputText value="#{beca.status}" />
+                                </p:column>
+                                <p:column headerText="Sexo" filterBy="#{beca.sexo}" sortBy="#{beca.sexo}" filterMatchMode="contains">
+                                    <h:outputText value="#{beca.sexo}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </h:form>
+
+            </c:if>
+            </c:if>
+            <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
+                <p:tab title="Información no disponible">
+                    <p:outputPanel>
+                        <div class="row">
+                            <center><span><i style="align-content: center" class="fa fa-exclamation-triangle fa-5x"></i></span></center>
+                        </div>
+                        <div class="row">
+                            <center><h2>Información no disponible</h2></center>
+                        </div>
+                    </p:outputPanel>
+                </p:tab>
+            </c:if>
+       
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{controladorPersonalReporteRegistros.cargado}">
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            button, input, optgroup, select, textarea{
+                color: black;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-right{
+                right: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-left{
+                left: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .aceptado{
+                background-color: #00a65a;
+            }
+            .pendiente{
+                background-color: #f39c12;
+            }
+            .denegado{
+                background-color: #FF4949;
+            }
+        </style>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>         
+                                    <p:tab title="Directivos y Coordinadores">
+                                        <p:outputPanel deferred="true">
+                                            <h:form id="frmDyC">
+                                                <p:dataTable id="dtbmandosMediosDyC" var="rdrDyC" paginator="true" rows="10" lazy="true"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" value="#{controladorPersonalReporteRegistros.listareporteRegistrosDyC}"
+                                                             rowStyleClass="#{rdrDyC.tipo eq 'C'?'aceptado':rdrDyC.tipo eq 'B'?'pendiente':'denegado'}">
+                                                    <f:facet name="header">
+                                                        FA=Formación Académica <p:spacer width="5px"/>
+                                                        EL=Experiencia Laboral<p:spacer width="5px"/>
+                                                        CA=Actualización Profesional<p:spacer width="5px"/>
+                                                        ID=Idiomas<p:spacer width="5px"/>
+                                                        DT=Desarrollo Tecnológico<p:spacer width="5px"/>
+                                                        PR=Premios<p:spacer width="5px"/>
+                                                        LP=Libros Publicados<p:spacer width="5px"/>
+                                                        AP=Artículos Publicados<p:spacer width="5px"/>
+                                                        MP=Memorias Publicadas<p:spacer width="5px"/>
+                                                        HI=Habilidades Informáticas<p:spacer width="5px"/>
+                                                        LI=Lenguas Indígenas<p:spacer width="5px"/>
+                                                        IN=Innovaciones<p:spacer width="5px"/>
+                                                        DS=Desarrollo de Software<p:spacer width="5px"/>
+                                                        IV=Investigaciones<p:spacer width="5px"/>
+                                                        CO=Congresos<p:spacer width="5px"/>
+                                                        TT=Total de registros
+                                                    </f:facet>
+                                                    
+                                                    <p:column headerText="Empleado" sortBy="#{rdrDyC.persona.nombre}" filterBy="#{rdrDyC.persona.nombre}" filterMatchMode="contains"> <h:outputText value="#{rdrDyC.persona.nombre}" /> </p:column>
+                                                    <p:column headerText="Área" sortBy="#{rdrDyC.persona.areaOperativaNombre}" filterBy="#{rdrDyC.persona.areaOperativaNombre}" filterMatchMode="contains"><h:outputText value="#{rdrDyC.persona.areaOperativaNombre}" />                                                    </p:column>
+                                                    <p:column headerText="FA" style="width: 4%"> <h:outputText value="#{rdrDyC.fa}" /> </p:column>
+                                                    <p:column headerText="EL" style="width: 4%"> <h:outputText value="#{rdrDyC.el}" /> </p:column> 
+                                                    <p:column headerText="CA" style="width: 4%"> <h:outputText value="#{rdrDyC.ca}" /> </p:column>
+                                                    <p:column headerText="ID" style="width: 4%"> <h:outputText value="#{rdrDyC.id}" /> </p:column> 
+                                                    <p:column headerText="DT" style="width: 4%"> <h:outputText value="#{rdrDyC.dt}" /> </p:column>
+                                                    <p:column headerText="PR" style="width: 4%"> <h:outputText value="#{rdrDyC.pr}" /> </p:column> 
+                                                    <p:column headerText="LP" style="width: 4%"> <h:outputText value="#{rdrDyC.lp}" /> </p:column>
+                                                    <p:column headerText="AP" style="width: 4%"> <h:outputText value="#{rdrDyC.ap}" /> </p:column> 
+                                                    <p:column headerText="MP" style="width: 4%"> <h:outputText value="#{rdrDyC.mp}" /> </p:column> 
+                                                    <p:column headerText="HI" style="width: 4%"> <h:outputText value="#{rdrDyC.hi}" /> </p:column>
+                                                    <p:column headerText="LI" style="width: 4%"> <h:outputText value="#{rdrDyC.li}" /> </p:column> 
+                                                    <p:column headerText="IN" style="width: 4%"> <h:outputText value="#{rdrDyC.in}" /> </p:column>
+                                                    <p:column headerText="DS" style="width: 4%"> <h:outputText value="#{rdrDyC.ds}" /> </p:column> 
+                                                    <p:column headerText="IV" style="width: 4%"> <h:outputText value="#{rdrDyC.iv}" /> </p:column>
+                                                    <p:column headerText="CO" style="width: 4%"> <h:outputText value="#{rdrDyC.co}" /> </p:column>
+                                                    <p:column headerText="TT" style="width: 4%"> <h:outputText value="#{rdrDyC.tt}" /> </p:column> 
+                                                </p:dataTable>
+                                            </h:form>
+                                        </p:outputPanel>
+                                    </p:tab>
+                                    <p:tab title="Docentes">
+                                        <p:outputPanel deferred="true">
+                                            <h:form id="frmD">
+                                                <p:dataTable id="dtbmandosMediosD" var="rdrD" paginator="true" rows="10" lazy="true"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" value="#{controladorPersonalReporteRegistros.listareporteRegistrosD}"
+                                                             rowStyleClass="#{rdrD.tipo eq 'C'?'aceptado':rdrD.tipo eq 'B'?'pendiente':'denegado'}"
+                                                             sortBy="#{rdrD.persona.areaSuperior}" expandableRowGroups="true">
+                                                    <f:facet name="header">
+                                                        FA=Formación Académica <p:spacer width="5px"/>
+                                                        EL=Experiencia Laboral<p:spacer width="5px"/>
+                                                        CA=Actualización Profesional<p:spacer width="5px"/>
+                                                        ID=Idiomas<p:spacer width="5px"/>
+                                                        DT=Desarrollo Tecnológico<p:spacer width="5px"/>
+                                                        PR=Premios<p:spacer width="5px"/>
+                                                        LP=Libros Publicados<p:spacer width="5px"/>
+                                                        AP=Artículos Publicados<p:spacer width="5px"/>
+                                                        MP=Memorias Publicadas<p:spacer width="5px"/>
+                                                        HI=Habilidades Informáticas<p:spacer width="5px"/>
+                                                        LI=Lenguas Indígenas<p:spacer width="5px"/>
+                                                        IN=Innovaciones<p:spacer width="5px"/>
+                                                        DS=Desarrollo de Software<p:spacer width="5px"/>
+                                                        IV=Investigaciones<p:spacer width="5px"/>
+                                                        CO=Congresos<p:spacer width="5px"/>
+                                                        TT=Total de registros
+                                                    </f:facet>
+                                                    <p:headerRow>
+                                                        <p:column colspan="17">
+                                                            <h:outputText value="#{rdrD.persona.areaSuperiorNombre}" />
+                                                        </p:column>
+                                                    </p:headerRow>
+                                                    <p:column headerText="Empleado" sortBy="#{rdrD.persona.nombre}" filterBy="#{rdrD.persona.nombre}" filterMatchMode="contains"> <h:outputText value="#{rdrD.persona.nombre}" /> </p:column>
+
+                                                    <p:column headerText="FA" style="width: 4%"> <h:outputText value="#{rdrD.fa}" /> </p:column>
+                                                    <p:column headerText="EL" style="width: 4%"> <h:outputText value="#{rdrD.el}" /> </p:column> 
+                                                    <p:column headerText="CA" style="width: 4%"> <h:outputText value="#{rdrD.ca}" /> </p:column>
+                                                    <p:column headerText="ID" style="width: 4%"> <h:outputText value="#{rdrD.id}" /> </p:column> 
+                                                    <p:column headerText="DT" style="width: 4%"> <h:outputText value="#{rdrD.dt}" /> </p:column>
+                                                    <p:column headerText="PR" style="width: 4%"> <h:outputText value="#{rdrD.pr}" /> </p:column> 
+                                                    <p:column headerText="LP" style="width: 4%"> <h:outputText value="#{rdrD.lp}" /> </p:column>
+                                                    <p:column headerText="AP" style="width: 4%"> <h:outputText value="#{rdrD.ap}" /> </p:column> 
+                                                    <p:column headerText="MP" style="width: 4%"> <h:outputText value="#{rdrD.mp}" /> </p:column> 
+                                                    <p:column headerText="HI" style="width: 4%"> <h:outputText value="#{rdrD.hi}" /> </p:column>
+                                                    <p:column headerText="LI" style="width: 4%"> <h:outputText value="#{rdrD.li}" /> </p:column> 
+                                                    <p:column headerText="IN" style="width: 4%"> <h:outputText value="#{rdrD.in}" /> </p:column>
+                                                    <p:column headerText="DS" style="width: 4%"> <h:outputText value="#{rdrD.ds}" /> </p:column> 
+                                                    <p:column headerText="IV" style="width: 4%"> <h:outputText value="#{rdrD.iv}" /> </p:column>
+                                                    <p:column headerText="CO" style="width: 4%"> <h:outputText value="#{rdrD.co}" /> </p:column>
+                                                    <p:column headerText="TT" style="width: 4%"> <h:outputText value="#{rdrD.tt}" /> </p:column> 
+                                                </p:dataTable>
+                                            </h:form>
+                                        </p:outputPanel>
+                                    </p:tab>
+                                    <p:tab title="Administrativos">
+                                        <p:outputPanel deferred="true">
+                                            <h:form id="frmA">
+                                                <p:dataTable id="dtbmandosMediosA" var="rdrA" paginator="true" rows="10" lazy="true"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" value="#{controladorPersonalReporteRegistros.listareporteRegistrosA}"
+                                                             rowStyleClass="#{rdrA.tipo eq 'C'?'aceptado':rdrA.tipo eq 'B'?'pendiente':'denegado'}"
+                                                             sortBy="#{rdrA.persona.areaOperativa}" expandableRowGroups="true">
+                                                    <f:facet name="header">
+                                                        FA=Formación Académica <p:spacer width="5px"/>
+                                                        EL=Experiencia Laboral<p:spacer width="5px"/>
+                                                        CA=Actualización Profesional<p:spacer width="5px"/>
+                                                        ID=Idiomas<p:spacer width="5px"/>
+                                                        DT=Desarrollo Tecnológico<p:spacer width="5px"/>
+                                                        PR=Premios<p:spacer width="5px"/>
+                                                        LP=Libros Publicados<p:spacer width="5px"/>
+                                                        AP=Artículos Publicados<p:spacer width="5px"/>
+                                                        MP=Memorias Publicadas<p:spacer width="5px"/>
+                                                        HI=Habilidades Informáticas<p:spacer width="5px"/>
+                                                        LI=Lenguas Indígenas<p:spacer width="5px"/>
+                                                        IN=Innovaciones<p:spacer width="5px"/>
+                                                        DS=Desarrollo de Software<p:spacer width="5px"/>
+                                                        IV=Investigaciones<p:spacer width="5px"/>
+                                                        CO=Congresos<p:spacer width="5px"/>
+                                                        TT=Total de registros
+                                                    </f:facet>
+                                                    <p:headerRow>
+                                                        <p:column colspan="17">
+                                                            <h:outputText value="#{rdrA.persona.areaOperativaNombre}" />
+                                                        </p:column>
+                                                    </p:headerRow>
+                                                    <p:column headerText="Empleado" sortBy="#{rdrA.persona.nombre}" filterBy="#{rdrA.persona.nombre}" filterMatchMode="contains"> <h:outputText value="#{rdrA.persona.nombre}" /> </p:column>
+
+                                                    <p:column headerText="FA" style="width: 4%"> <h:outputText value="#{rdrA.fa}" /> </p:column>
+                                                    <p:column headerText="EL" style="width: 4%"> <h:outputText value="#{rdrA.el}" /> </p:column> 
+                                                    <p:column headerText="CA" style="width: 4%"> <h:outputText value="#{rdrA.ca}" /> </p:column>
+                                                    <p:column headerText="ID" style="width: 4%"> <h:outputText value="#{rdrA.id}" /> </p:column> 
+                                                    <p:column headerText="DT" style="width: 4%"> <h:outputText value="#{rdrA.dt}" /> </p:column>
+                                                    <p:column headerText="PR" style="width: 4%"> <h:outputText value="#{rdrA.pr}" /> </p:column> 
+                                                    <p:column headerText="LP" style="width: 4%"> <h:outputText value="#{rdrA.lp}" /> </p:column>
+                                                    <p:column headerText="AP" style="width: 4%"> <h:outputText value="#{rdrA.ap}" /> </p:column> 
+                                                    <p:column headerText="MP" style="width: 4%"> <h:outputText value="#{rdrA.mp}" /> </p:column> 
+                                                    <p:column headerText="HI" style="width: 4%"> <h:outputText value="#{rdrA.hi}" /> </p:column>
+                                                    <p:column headerText="LI" style="width: 4%"> <h:outputText value="#{rdrA.li}" /> </p:column> 
+                                                    <p:column headerText="IN" style="width: 4%"> <h:outputText value="#{rdrA.in}" /> </p:column>
+                                                    <p:column headerText="DS" style="width: 4%"> <h:outputText value="#{rdrA.ds}" /> </p:column> 
+                                                    <p:column headerText="IV" style="width: 4%"> <h:outputText value="#{rdrA.iv}" /> </p:column>
+                                                    <p:column headerText="CO" style="width: 4%"> <h:outputText value="#{rdrA.co}" /> </p:column>
+                                                    <p:column headerText="TT" style="width: 4%"> <h:outputText value="#{rdrA.tt}" /> </p:column> 
+                                                </p:dataTable>
+                                            </h:form>
+                                        </p:outputPanel>
+                                    </p:tab>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+            <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564)}">
+                <h1>
+                    Esta página está disponible solo para personal adscrito al área de personal
+                </h1>
+            </c:if>
+        </p:panel>
+            </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>
