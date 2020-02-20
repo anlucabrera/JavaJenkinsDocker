@@ -160,23 +160,25 @@
                                                         <center>
                                                         <div class="btn-group">
                                                          <p:commandButton class="btn btn-sm #{aperturasExt.permisosCapturaExtemporaneaEstudiante ne null?'btn-info':'btn-danger'}" icon="#{aperturasExt.permisosCapturaExtemporaneaEstudiante ne null?'fa fa-close':'fa fa-check'}" 
-                                                                          title="#{aperturasExt.permisosCapturaExtemporaneaEstudiante ne null?'Permiso Activo.':'Activar Permiso.'}" disabled="#{aperturasExt.permisosCapturaExtemporaneaEstudiante ne null}"
+                                                                          title="#{aperturasExt.permisosCapturaExtemporaneaEstudiante ne null?'Permiso Activo.':'Activar Permiso.'}" disabled="#{aperturasExt.permisosCapturaExtemporaneaEstudiante.validada eq 1}"
                                                                           actionListener="#{permisoAperturaExtemporaneaDocente.aperturaExtEst(aperturasExt)}">
                                                          </p:commandButton>
                                                         </div>
                                                         </center>
                                                     </p:column>
-                                                    <p:column headerText="Matricula" style="width: 200px; text-align: center;">
+                                                    <p:column headerText="Matricula" style="width: 100px; text-align: center;">
                                                         <h:outputText value="#{aperturasExt.estudiante.matricula}"/>
                                                     </p:column>
-                                                    <p:column headerText="Nombre del Estudiante" style="width: 400px;">
+                                                    <p:column headerText="Nombre del Estudiante" style="width: 300px;">
                                                         <h:outputText value="#{aperturasExt.estudiante.aspirante.idPersona.apellidoPaterno} #{aperturasExt.estudiante.aspirante.idPersona.apellidoMaterno} #{aperturasExt.estudiante.aspirante.idPersona.nombre}" style="text-align: center;" />
                                                     </p:column>
-                                                    <p:column headerText="Apertura Solicitada" style="width: 200px; text-align: center;">
-                                                        <h:outputText value="#{aperturasExt.informacionApertura}" style="text-align: center;"/>
+                                                    <p:column headerText="Apertura Solicitada" style="width: 300px; text-align: center;">
+                                                        <h:outputText value="#{aperturasExt.informacionApertura}" style="text-align: justify;"/>
                                                     </p:column>
-                                                    <p:column headerText="Validada" style="width: 200px; text-align: center;">
-                                                        <h:outputText value="#{aperturasExt.validada}" style="text-align: center;"/>
+                                                    <p:column headerText="Validada" style="width: 100px; text-align: center;">
+                                                        <p:commandButton class="btn btn-sm #{aperturasExt.validada ne false?'btn-success':'btn-warning'}" icon="#{aperturasExt.validada ne false?'fa fa-thumbs-up':'fa fa-thumbs-down'}" 
+                                                                         title="#{aperturasExt.validada ne false?'Validado.':'Sin validar.'}" disabled="#{aperturasExt.permisosCapturaExtemporaneaEstudiante eq null}">
+                                                         </p:commandButton>
                                                     </p:column>
                                                 </p:dataTable>
                                             </center>
