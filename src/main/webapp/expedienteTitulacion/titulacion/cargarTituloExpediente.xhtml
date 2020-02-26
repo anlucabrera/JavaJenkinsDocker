@@ -52,7 +52,7 @@
                                           <h:form id="frmExpedientes">
                                                     <p:outputLabel value="Matricula del egresado" for="clave" class="col-sm-2 control-label"/>
                                                     <div class="col-sm-6">
-                                                        <p:selectOneMenu id="clave" value="#{controladorTitSegMat.expediente}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
+                                                        <p:selectOneMenu id="clave" value="#{controladorTitSegMat.expediente}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label" valueChangeListener="#{controladorTitSegMat.cambiarExpediente}">
                                                             <f:selectItem itemValue="0" itemLabel=" Regresar " itemDescription="Descripción del valor." />
                                                             <f:selectItems value="#{controladorTitSegMat.nuevaListaExpValidados}" var="expediente" itemValue="#{expediente.expediente}" itemLabel="#{expediente.matricula} - #{expediente.nombre} - #{expediente.programa}" />
                                                         </p:selectOneMenu>  

@@ -40,6 +40,7 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 import mx.edu.utxj.pye.sgi.util.XMLReader;
 import java.io.IOException;
+import javax.faces.event.ValueChangeEvent;
 import org.primefaces.component.datatable.DataTable;
 /**
  *
@@ -309,5 +310,11 @@ public class ControladorTitSegMatricula implements Serializable{
         DataTable dataTable = (DataTable) event.getSource();
         TituloExpediente actFechaEmision = (TituloExpediente) dataTable.getRowData();
         ejbTitulacionSeguimiento.actualizarFechaEmision(actFechaEmision);
+    }
+    
+     public void cambiarExpediente(ValueChangeEvent e){
+            Integer exp = (Integer)e.getNewValue();
+            setExpediente(exp);
+            System.err.println("cambiarExpediente - expediente " + expediente);
     }
 }

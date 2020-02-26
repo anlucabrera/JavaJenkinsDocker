@@ -147,7 +147,6 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
     }
 
     public void cambiarPeriodo() {
-//        System.out.println("rol.getPeriodoSeleccionado() = " + caster.periodoToString(rol.getPeriodoSeleccionado()));
         rol.setDrpls(new ArrayList<>());
         rol.setDplrs(new ArrayList<>());
         rol.setTitulos(new ArrayList<>());
@@ -234,51 +233,56 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
             dvcs = new ArrayList<>();
             dvcs.clear();
             Collections.sort(t.getCalificacionePorMateria(), (x, y) -> Integer.compare(x.getMateria().getIdMateria(), y.getMateria().getIdMateria()));
-            t.getCalificacionePorMateria().forEach((cm) -> {
-                proUni = new ArrayList<>();
-                proUni.clear();
-                List<DtoCalificacionEstudiante.CalificacionePorUnidad> cpus = t.getCalificacionePorUnidad().stream().filter(c -> Objects.equals(c.getMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
-                Collections.sort(cpus, (x, y) -> Integer.compare(x.getUnidadMateria().getNoUnidad(), y.getUnidadMateria().getNoUnidad()));
-
-                List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tips = t.getTareaIntegradoraPresentacion().stream().filter(c -> Objects.equals(c.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
-                List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> cnpms = t.getCalificacionesNivelacionPorMateria().stream().filter(c -> Objects.equals(c.getMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
-
-                DtoCalificacionEstudiante.TareaIntegradoraPresentacion tip = tips.get(0);
-                DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria cnpm = cnpms.get(0);
-
-                if (cnpms.isEmpty()) {
-                    niv = Boolean.FALSE;
-                } else {
-                    niv = Boolean.TRUE;
-                }
-
-                if (cpus.size() == cm.getMateria().getUnidadMateriaList().size()) {
-                    cpus.forEach((p) -> {
-                        proUni.add(p.getPromedioUnidad());
-                    });
-                } else {
-                    cm.getMateria().getUnidadMateriaList().forEach((p) -> {
-                        List<DtoCalificacionEstudiante.CalificacionePorUnidad> l = cpus.stream().filter(u -> Objects.equals(u.getUnidadMateria().getIdUnidadMateria(), p.getIdUnidadMateria())).collect(Collectors.toList());
-                        if (l.isEmpty()) {
-                            proUni.add(BigDecimal.ZERO);
+            if (!t.getCalificacionePorMateria().isEmpty()) {
+                t.getCalificacionePorMateria().forEach((cm) -> {
+                    proUni = new ArrayList<>();
+                    proUni.clear();
+                    List<DtoCalificacionEstudiante.CalificacionePorUnidad> cpus = t.getCalificacionePorUnidad().stream().filter(c -> Objects.equals(c.getMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
+                    Collections.sort(cpus, (x, y) -> Integer.compare(x.getUnidadMateria().getNoUnidad(), y.getUnidadMateria().getNoUnidad()));
+                    List<DtoCalificacionEstudiante.TareaIntegradoraPresentacion> tips = t.getTareaIntegradoraPresentacion().stream().filter(c -> Objects.equals(c.getCargaAcademica().getIdPlanMateria().getIdMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
+                    List<DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria> cnpms = t.getCalificacionesNivelacionPorMateria().stream().filter(c -> Objects.equals(c.getMateria().getIdMateria(), cm.getMateria().getIdMateria())).collect(Collectors.toList());
+                    DtoCalificacionEstudiante.TareaIntegradoraPresentacion tip;
+                    DtoCalificacionEstudiante.CalificacionesNivelacionPorMateria cnpm;
+                    if (cpus.size() == cm.getMateria().getUnidadMateriaList().size()) {
+                        cpus.forEach((p) -> {
+                            proUni.add(p.getPromedioUnidad());
+                        });
+                    } else {
+                        cm.getMateria().getUnidadMateriaList().forEach((p) -> {
+                            List<DtoCalificacionEstudiante.CalificacionePorUnidad> l = cpus.stream().filter(u -> Objects.equals(u.getUnidadMateria().getIdUnidadMateria(), p.getIdUnidadMateria())).collect(Collectors.toList());
+                            if (l.isEmpty()) {
+                                proUni.add(BigDecimal.ZERO);
+                            } else {
+                                DtoCalificacionEstudiante.CalificacionePorUnidad cpu = l.get(0);
+                                proUni.add(cpu.getPromedioUnidad());
+                            }
+                        });
+                    }                    
+                    if (!tips.isEmpty() && !cnpms.isEmpty()) {
+                        tip = tips.get(0);
+                        cnpm = cnpms.get(0);
+                        niv = Boolean.TRUE;
+                        if (cnpm.getPromedio() != BigDecimal.ZERO) {
+                            dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), cnpm.getPromedio(), cnpm.getPromedio()));
                         } else {
-                            DtoCalificacionEstudiante.CalificacionePorUnidad cpu = l.get(0);
-                            proUni.add(cpu.getPromedioUnidad());
+                            dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio()));
                         }
-                    });
-                }
-                if (cnpm.getPromedio()!=BigDecimal.ZERO) {
-                    dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), cnpm.getPromedio(), cnpm.getPromedio()));
-                } else {
-                    dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio()));
-                }
-                niv=Boolean.FALSE;
-            });
-            rol.getDvcs().add(new DtoPresentacionCalificacionesReporte(
+                    }else if(!tips.isEmpty() && cnpms.isEmpty()){   
+                        tip = tips.get(0);                     
+                        niv = Boolean.FALSE;
+                        dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio()));
+                    }else{
+                        niv = Boolean.FALSE;
+                        dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, "0", cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio()));
+                    }                                                                                                                        
+                    niv = Boolean.FALSE;
+                });
+                rol.getDvcs().add(new DtoPresentacionCalificacionesReporte(
                     t.getEstudiante().getMatricula(),
                     t.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getNombre(),
                     dvcs,
                     t.getPromedioF()));
+            }
         });
         rol.setTitulos(new ArrayList<>());
         rol.getTitulos().clear();
