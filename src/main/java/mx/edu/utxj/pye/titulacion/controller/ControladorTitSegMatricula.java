@@ -54,6 +54,7 @@ public class ControladorTitSegMatricula implements Serializable{
     private static final long serialVersionUID = -7349256943810409604L;
 
     @Getter @Setter private Integer expediente;
+    @Getter @Setter private ExpedientesTitulacion expedienteTit;
     @Getter @Setter private List<DtoExpedientesActuales> nuevaListaExpedientes = new ArrayList<>();
     @Getter @Setter private DtoExpedienteMatricula nuevoDtoExpMat;
     @Getter @Setter private List<DocumentosExpediente> listaDocsExp;
@@ -279,6 +280,7 @@ public class ControladorTitSegMatricula implements Serializable{
        try {
             nuevoDtoExpMat = new DtoExpedienteMatricula();
             nuevoDtoExpMat = ejbTitulacionSeguimiento.mostrarExpediente(expediente);
+            expedienteTit = ejbTitulacionSeguimiento.buscarExpedienteTitulacion(expediente);
             listaTitExp = ejbTitulacionSeguimiento.getListaTituloExpediente(nuevoDtoExpMat.getExpedientesTitulacion());
             Integer valor = nuevoDtoExpMat.getExpedientesTitulacion().getNivel();
             switch (valor) {
@@ -311,10 +313,10 @@ public class ControladorTitSegMatricula implements Serializable{
         TituloExpediente actFechaEmision = (TituloExpediente) dataTable.getRowData();
         ejbTitulacionSeguimiento.actualizarFechaEmision(actFechaEmision);
     }
-    
-     public void cambiarExpediente(ValueChangeEvent e){
+   
+    public void cambiarExpediente(ValueChangeEvent e) throws Throwable{
             Integer exp = (Integer)e.getNewValue();
             setExpediente(exp);
-            System.err.println("cambiarExpediente - expediente " + expediente);
+            expedienteTit = ejbTitulacionSeguimiento.buscarExpedienteTitulacion(expediente);
     }
 }

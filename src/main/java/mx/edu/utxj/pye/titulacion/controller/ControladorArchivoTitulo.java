@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.Part;
@@ -45,7 +46,7 @@ public class ControladorArchivoTitulo implements Serializable{
     private static final long serialVersionUID = 1L;
 
     // Variable para documentos  
-    @Getter private String matricula;
+//    @Getter private String matricula;
     
     @Getter @Setter private Integer claveDoc;
     @Getter @Setter private Part fileTitTSU, fileTitIL; 
@@ -66,18 +67,19 @@ public class ControladorArchivoTitulo implements Serializable{
     @Getter @Setter private ExpedientesTitulacion expediente;
     
     
-    @PostConstruct
-    public void init() {
-        matricula = controladorTitSegMatricula.getNuevoDtoExpMat().getExpedientesTitulacion().getMatricula().getMatricula();
-        expediente = controladorTitSegMatricula.getNuevoDtoExpMat().getExpedientesTitulacion();
-    }
+//    @PostConstruct
+//    public void init() {
+////        matricula = controladorTitSegMatricula.getNuevoDtoExpMat().getExpedientesTitulacion().getMatricula().getMatricula();
+//        expediente = controladorTitSegMatricula.getExpedienteTit();
+//    }
    
     public void subirDocumentoTitTSU(){
             try {
+            expediente = controladorTitSegMatricula.getExpedienteTit();
             claveDoc = 10;
             nuevoOBJtitExp = new TituloExpediente();
-            nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
-
+            nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(expediente.getMatricula().getMatricula());
+            
             Short gen = expediente.getGeneracion();
             String generacion = ejbEstudianteRegistro.obtenerGeneracionProntuario(gen);
             
@@ -105,7 +107,7 @@ public class ControladorArchivoTitulo implements Serializable{
             nuevoOBJtitExp = ejbEstudianteRegistro.guardarTituloExpediente(nuevoOBJtitExp);
             
             controladorTitSegMatricula.mostrarExpedienteValidado();
-            Ajax.update("frmTitExp");
+            Ajax.update("formMuestraExpediente");
             
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
@@ -116,10 +118,11 @@ public class ControladorArchivoTitulo implements Serializable{
    
     public void subirDocumentoTitIL(){
             try {
+            expediente = controladorTitSegMatricula.getExpedienteTit();
             claveDoc = 17;
             nuevoOBJtitExp = new TituloExpediente();
-            nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
-
+            nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(expediente.getMatricula().getMatricula());
+            
             Short gen = expediente.getGeneracion();
             String generacion = ejbEstudianteRegistro.obtenerGeneracionProntuario(gen);
             
@@ -147,7 +150,7 @@ public class ControladorArchivoTitulo implements Serializable{
             nuevoOBJtitExp = ejbEstudianteRegistro.guardarTituloExpediente(nuevoOBJtitExp);
             
             controladorTitSegMatricula.mostrarExpedienteValidado();
-            Ajax.update("frmTitExp");
+            Ajax.update("formMuestraExpediente");
             
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
@@ -164,9 +167,9 @@ public class ControladorArchivoTitulo implements Serializable{
     public void eliminarTitulo(TituloExpediente titExp){
         Boolean eliminado = ejbEstudianteRegistro.eliminarTituloExpediente(titExp);
         if (eliminado) {
-            controladorTitSegMatricula.mostrarExpedienteValidado();
-            Ajax.update("frmTitExp");
             Messages.addGlobalInfo("El documento se eliminó correctamente.");
+//            controladorTitSegMatricula.mostrarExpedienteValidado();
+            Faces.redirect("expedienteTitulacion/titulacion/cargarTituloExpediente.xhtml");
         } else {
             Messages.addGlobalError("El documento no ha podido eliminarse.");
         }

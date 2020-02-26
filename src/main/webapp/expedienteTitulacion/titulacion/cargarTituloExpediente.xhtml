@@ -55,6 +55,7 @@
                                                         <p:selectOneMenu id="clave" value="#{controladorTitSegMat.expediente}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label" valueChangeListener="#{controladorTitSegMat.cambiarExpediente}">
                                                             <f:selectItem itemValue="0" itemLabel=" Regresar " itemDescription="Descripción del valor." />
                                                             <f:selectItems value="#{controladorTitSegMat.nuevaListaExpValidados}" var="expediente" itemValue="#{expediente.expediente}" itemLabel="#{expediente.matricula} - #{expediente.nombre} - #{expediente.programa}" />
+                                                            <p:ajax process="@this" update="@this"/>
                                                         </p:selectOneMenu>  
                                                         <p:message for="clave"/>
                                                     </div>
@@ -205,13 +206,18 @@
                                                             </div>
                                                             </h:form>
                                                             <c:if test="#{controladorTitSegMat.listaTitExp.size() == 0}">
-                                                                <c:if test="#{controladorArchTitulo.expediente.nivel ne 1}">
+                                                                <c:if test="#{controladorTitSegMat.expedienteTit.nivel ne 1}">
                                                                     <div class="row">
                                                                         <o:form id="frmTitExpIL" enctype="multipart/form-data">
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
                                                                             </div>
                                                                             <center>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                     <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de Ing. o Lic." />
+                                                                                        <h5 style="text-align: justify;">Subir el documento .pdf que te enviaron a tu correo electrónico, en el siguiente campo ingresa la fecha de expedición del título que viene en el documento.</h5>
+                                                                                     </p:outputPanel>
                                                                                     <br/>
                                                                                     <center><o:inputFile id="fileTitIL" value="#{controladorArchTitulo.fileTitIL}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
                                                                                     <br/>
@@ -227,13 +233,18 @@
                                                                         </o:form>
                                                                     </div>
                                                             </c:if>
-                                                            <c:if test="#{controladorArchTitulo.expediente.nivel eq 1}">
+                                                            <c:if test="#{controladorTitSegMat.expedienteTit.nivel eq 1}">
                                                                 <div class="row">
                                                                     <o:form id="frmTitExpTSU" enctype="multipart/form-data">
                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                                                         </div>
                                                                         <center>
                                                                             <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                <p:outputPanel>            
+                                                                                    <p:autoUpdate/>
+                                                                                    <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de T.S.U." />
+                                                                                    <h5 style="text-align: justify;">Subir el documento .pdf que te enviaron a tu correo electrónico, en el siguiente campo ingresa la fecha de expedición del título que viene en el documento.</h5>
+                                                                                </p:outputPanel>
                                                                                 <br/>
                                                                                 <center><o:inputFile id="fileTitTSU" value="#{controladorArchTitulo.fileTitTSU}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
                                                                                 <br/>
@@ -277,7 +288,7 @@
                                                                                 <p:ajax event="cellEdit" listener="#{controladorTitSegMat.onCellEdit}"/>
                                                                                 <p:column style="text-align: center;">
                                                                                     <div class="btn-group">
-                                                                                        <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{controladorArchTitulo.eliminarTitulo(titExp)}" onsuccess="actualizarListaTit();" title="Eliminar documento." >
+                                                                                        <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{controladorArchTitulo.eliminarTitulo(titExp)}" onsuccess="actualizarListaTit();" title="Eliminar documento.">
                                                                                             <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(titExp.ruta)}?" icon="ui-icon-alert" />
                                                                                         </p:commandButton>
                                                                                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

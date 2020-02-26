@@ -150,7 +150,7 @@ public class PermisoAperturaExtemporaneaRolAdministrador extends AbstractRol{
      * PermisosCapturaExtemporaneaEstudiante activo
      */
     @Getter @NonNull private PermisosCapturaExtemporaneaEstudiante permisoActivo; 
-    
+   
     public PermisoAperturaExtemporaneaRolAdministrador(Filter<PersonalActivo> filtro, PersonalActivo administrador) {
         super(filtro);
         this.administrador = administrador;

@@ -103,17 +103,21 @@ public class PermisoAperturaExtemporaneaDocente extends ViewScopedRol implements
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
-          
-            rol.getInstrucciones().add("Ingrese nombre o clave del docente al que se le aperturará sistema.");
-            rol.getInstrucciones().add("Seleccionar Periodo Escolar.");
-            rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo.");
-            rol.getInstrucciones().add("Seleccionar Tipo de Evaluación: Ordinaria o Nivelación Final.");
-            rol.getInstrucciones().add("En caso de que haya seleccionado ORDINARIA en tipo de evaluación, DEBERÁ seleccionar la unidad correspondiente, en caso contrario NO es necesario seleccionar UNIDAD");
-            rol.getInstrucciones().add("Ingresar fecha de inicio y fin en la que estará habilitada la captura extemporanea.");
-            rol.getInstrucciones().add("Seleccionar la justificación por la cual el docente solicitó el permiso.");
-            rol.getInstrucciones().add("Una vez que haya ingresado la información, puede proceder a REGISTRAR el permiso.");
-            rol.getInstrucciones().add("En la tabla inferior podrá VISUALIZAR los permisos de captura extemporanea vigentes del docente seleccionado.");
-            rol.getInstrucciones().add("En caso de existir un error puede ELIMINAR el permiso de captura, al dar clic en el botón ubicado en la columna opciones de la tabla.");
+                   
+            rol.getInstrucciones().add("1. Seleccionar Periodo Escolar Activo, en caso de seleccionar un periodo anterior no podrá registrar la solicitud.");
+            rol.getInstrucciones().add("2. Seleccionar Materia - Grupo - Programa Educativo.");
+            rol.getInstrucciones().add("3. Seleccionar Tipo de Evaluación: Ordinaria o Nivelación Final.");
+            rol.getInstrucciones().add("4. En caso de que haya seleccionado ORDINARIA en tipo de evaluación, DEBERÁ seleccionar la unidad correspondiente, en caso contrario NO es necesario seleccionar UNIDAD");
+            rol.getInstrucciones().add("5. Ingresar fecha de inicio y fin en la que estará habilitada la captura extemporánea.");
+            rol.getInstrucciones().add("6. Seleccionar la justificación por la cual el docente solicitó el permiso.");
+            rol.getInstrucciones().add("7. SOLICITUD APERTURA EXTEMPORÁNEA GRUPAL:");
+            rol.getInstrucciones().add("7.1 Una vez que haya ingresado la información, puede proceder a GUARDAR la solicitud.");
+            rol.getInstrucciones().add("7.2 En la tabla inferior podrá VISUALIZAR los permisos de captura extemporánea vigentes y su situación actual (validado o sin validar).");
+            rol.getInstrucciones().add("7.3 En caso de existir un error puede ELIMINAR el permiso de captura, al dar clic en el botón ubicado en la columna opciones de la tabla.");
+            rol.getInstrucciones().add("8. SOLICITUD APERTURA EXTEMPORÁNEA POR ESTUDIANTE:");
+            rol.getInstrucciones().add("8.1 En la parte inferior podrá visualizar una tabla con el listado de estudiantes que integran el grupo seleccionado");
+            rol.getInstrucciones().add("8.2 Para solicitar apertura extemporánea deberá dar clic en el botón localizado en la columna SELECCIONAR que corresponda a la fila del estudiante correspondiente.");
+            rol.getInstrucciones().add("8.3 Una vez que se haya registrado correctamente, podrá visualizar en la columna 'Apertura Solicitada' la información del permiso solicitado y en la columna 'Validada' la situación actual del permiso (validado o sin validar).");
            
             buscarCargaAcademica();
         }catch (Exception e){mostrarExcepcion(e); }
@@ -362,13 +366,23 @@ public class PermisoAperturaExtemporaneaDocente extends ViewScopedRol implements
      public void aperturaExtEst(DtoAperturaExtPorEstudiante estudiante) {
          rol.setEstudiante(estudiante);
          if(rol.getCarga().getPeriodo().getPeriodo().equals(rol.getPeriodoActivo())){
-         ResultadoEJB<PermisosCapturaExtemporaneaEstudiante> resGuardar = ejb.guardarPermisoCapturaOrdinariaEstudianteDocente(rol.getCarga(), rol.getEstudiante().getEstudiante(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
-         if (resGuardar.getCorrecto()) {
-             actualizarListaEstudiantes();
-             rol.setFechaInicio(null);
-             rol.setFechaFin(null);
-             Ajax.update("frm");
-         } mostrarMensajeResultadoEJB(resGuardar);
+            if(rol.getEstudiante().getPermisosCapturaExtemporaneaEstudiante() == null){
+                ResultadoEJB<PermisosCapturaExtemporaneaEstudiante> resGuardar = ejb.guardarPermisoCapturaOrdinariaEstudianteDocente(rol.getCarga(), rol.getEstudiante().getEstudiante(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
+                if (resGuardar.getCorrecto()) {
+                    actualizarListaEstudiantes();
+                    rol.setFechaInicio(null);
+                    rol.setFechaFin(null);
+                    Ajax.update("frm");
+                } mostrarMensajeResultadoEJB(resGuardar);
+            }else{
+                ResultadoEJB<Integer> resEliminar = ejb.eliminarPermisoCapturaEstudiante(estudiante.getPermisosCapturaExtemporaneaEstudiante().getPermisoEstudiante());
+                if (resEliminar.getCorrecto()) {
+                    actualizarListaEstudiantes();
+                    rol.setFechaInicio(null);
+                    rol.setFechaFin(null);
+                    Ajax.update("frm");
+                } mostrarMensajeResultadoEJB(resEliminar);
+            }
          }else Messages.addGlobalWarn("No puede solicitar permisos de periodos anteriores");
     }
 //     
