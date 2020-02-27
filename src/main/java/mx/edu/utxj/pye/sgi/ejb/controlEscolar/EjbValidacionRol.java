@@ -2,6 +2,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
@@ -14,6 +15,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CordinadoresTutores;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.StringUtils;
 
@@ -188,6 +190,27 @@ public class EjbValidacionRol {
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal del área de psicopedagogía.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal del área no se pudo validar. (EjbValidacionRol.validarPsicopedagogia)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Filter<PersonalActivo>> validarTrabajador(Integer clave) {
+        try {
+            String pista = ",".concat(String.valueOf(clave).trim()).concat(",").trim();
+            ConfiguracionPropiedades claveConfiguracionPropiedad = Objects.requireNonNull(em.createQuery("SELECT c FROM ConfiguracionPropiedades c WHERE c.tipo = :tipo AND c.valorCadena LIKE CONCAT('%',:pista,'%')", ConfiguracionPropiedades.class)
+                    .setParameter("tipo", "Cadena")
+                    .setParameter("pista", pista)
+                    .getResultStream()
+                    .findFirst().orElse(new ConfiguracionPropiedades()));
+            if (claveConfiguracionPropiedad.getClave() == null || claveConfiguracionPropiedad.getClave().equals("") || claveConfiguracionPropiedad.getClave().isEmpty()) {
+                return ResultadoEJB.crearErroneo(2, null, "No se ha encontrado la clave del trabajador, no tiene asignado el módulo");
+            } else {
+                PersonalActivo p = ejbPersonalBean.pack(clave);
+                Filter<PersonalActivo> filtro = new Filter<>();
+                filtro.setEntity(p);
+                return ResultadoEJB.crearCorrecto(filtro, "Se ha encontrado la clave de trabajador asignada a este módulo");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido realizar correctamente la validación. (EjbValidacionRol.validarPsicopedagogia)", e, null);
         }
     }
     

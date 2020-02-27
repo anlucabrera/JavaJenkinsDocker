@@ -28,6 +28,9 @@ public class PrestamoDocumentoRolServiciosEscolares extends AbstractRol{
     @Getter             @Setter                 private                                     Date                                        fechaInicio;
     @Getter             @Setter                 private                                     Date                                        fechaFin;
     
+    @Getter             @Setter                 private                                     Date                                        fechaInicioRegistro;
+    @Getter             @Setter                 private                                     Date                                        fechaFinRegistro;
+    
     @Getter             private                 String                                      pistaEstudiante;
     @Getter             private                 DtoEstudianteComplete                       estudianteSeguimientoSeleccionado;
     @Getter             private                 Estudiante                                  estudianteSeleccionado;

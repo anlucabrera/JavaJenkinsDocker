@@ -325,6 +325,7 @@ public class RegistroAsesoriaDocente extends ViewScopedRol implements Desarrolla
 
     public void guardarAsistenciaAsesoria(ValueChangeEvent event){
         Estudiante estudiante = (Estudiante) event.getComponent().getAttributes().get("estudiante");
+        System.err.println("Estudiante: " + estudiante.getIdEstudiante());
         ResultadoEJB<Boolean> res = ejb.asignaParticipanteAsesoria(rol.getAsesoriaSeleccionada(), estudiante.getIdEstudiante());
         mostrarMensajeResultadoEJB(res);
     }

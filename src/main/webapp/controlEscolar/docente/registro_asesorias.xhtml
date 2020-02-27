@@ -524,6 +524,7 @@
                                                                          >
                                                                 <p:column filterBy="#{est.estudiante.estudiante.matricula}" headerText="Matricula" filterMatchMode="contains" width="100" style="text-align:  center">
                                                                     <h:outputText value="#{est.estudiante.estudiante.matricula}" />
+                                                                    <h:outputText value=" - #{est.estudiante.estudiante.idEstudiante}" />
                                                                 </p:column>
 
                                                                 <p:column filterBy="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" headerText="Nombre" filterMatchMode="contains" width="400" priority="3">

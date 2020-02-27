@@ -25,7 +25,9 @@ import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.exception.EvidenciaRegistroExtensionNoValidaException;
 import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCasoCritico;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.NotificacionesCe;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
@@ -363,4 +365,37 @@ public class ServicioArchivos implements Serializable{
         return rutaAbsoluta;
     }
 
+    public static String genRutaRelativaNotificacion(String ejercicio, String mes, String tipo, String personalRegistro){
+        return ejercicio.trim().concat(File.separator)
+                .concat(mes.toLowerCase().trim().concat(File.separator))
+                .concat(tipo.toLowerCase().trim().concat(File.separator))
+                .concat(personalRegistro.trim().concat(File.separator));
+    }
+    
+    public static String almacenarEvidenciaRegistroNotificacion(NotificacionesCe notificacionCe, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{
+        if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
+            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
+        }
+        String ruta = ServicioArchivos.genRutaRelativaNotificacion(
+                Caster.obtenerEjercicio(notificacionCe.getFechaRegistro()), 
+                Caster.obtenerNombreMes(notificacionCe.getFechaRegistro()), 
+                notificacionCe.getTipo(), 
+                String.valueOf(notificacionCe.getPersonaRegistro()));
+        
+        String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
+        String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
+        String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+        
+        Integer cont = 1;
+        while (Files.exists(Paths.get(rutaAbsoluta))){
+            nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
+            rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
+            rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+            cont++;
+        }
+        ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
+        archivo.write(rutaArchivo);
+        return rutaAbsoluta;
+    }
+    
 }

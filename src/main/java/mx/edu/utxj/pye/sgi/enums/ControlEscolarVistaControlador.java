@@ -90,6 +90,8 @@ public enum ControlEscolarVistaControlador {
 
     EVALUACION_DESEMPENIO_AMBIENTAL("/encuestas/evaluacionDesempenioAmbiental.xhtml", EvaluacionDesempenioAmbiental.class),
 
+    REGISTRO_NOTIFICACIONES("/controlEscolar/registro_notificaciones.xhtml", RegistroNotificacionesGeneral.class),
+    
     ADMINISTRACION_DESEMPENIO_AMBIENTAL("/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml", AdministracionEvaluacionAmbiental.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;

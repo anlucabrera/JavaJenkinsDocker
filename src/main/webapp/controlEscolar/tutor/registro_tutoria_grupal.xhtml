@@ -162,11 +162,12 @@
                                             <div class="col-lg-12 col-md-12 text-info">
 
                                                 <p:outputPanel id="contenedor">
-                                                    <div style="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'margin-bottom: 10px;display: none':'margin-bottom: 10px;'}">
+                                                    <div style="margin-bottom: 10px;">
+                                                    <!--<div style="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'margin-bottom: 10px;display: none':'margin-bottom: 10px;'}">-->
                                                         <p:outputLabel value="1.- Ingrese los datos de la tutoría grupal (asegúrese de llenar todos los campos)."/>
                                                     </div>
-                                                    <div class="row margin-bottom" style="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'display: none':''}">
-
+                                                    <div class="row margin-bottom" >
+<!--style="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'display: none':''}"-->
                                                         <div class="col-sm-12 col-md-6 col-lg-3">
                                                             <div class="ui-material">
                                                                 <p:autoComplete id="estudiante" 
@@ -184,8 +185,9 @@
                                                                                 requiredMessage="Favor de seleccionar un estudiante"
                                                                                 styleClass="campoAutocompleteEstudiante"
                                                                                 scrollHeight="300"
-                                                                                disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                
                                                                                 >
+                                                                    <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                     <p:column>#{estudiante.datosComplete}</p:column>
                                                                     <p:ajax event="itemSelect" update="@this" process="@this"/>
                                                                 </p:autoComplete>
@@ -206,11 +208,12 @@
                                                                             style="width: 18em;"
                                                                             locale="es"
                                                                             readonlyInput="true"
-                                                                            disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                            
                                                                             mask="true"
                                                                             mindate="#{caster.fechaMinina(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
                                                                             maxdate="#{caster.fechaMaxima(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
                                                                             >
+                                                                    <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                 </p:calendar>
                                                             </div>
                                                             <p:watermark for="rtgFecha" value="2019-10-01 (aa-MM-dd)*" />
@@ -239,9 +242,10 @@
                                                                                required="true" 
                                                                                requiredMessage="La hora de inicio de la tutoría grupal es requerida"
                                                                                mode="popup"
-                                                                               disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                               
                                                                                styleClass="campo3Partes"
                                                                                />
+                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                             </div>
                                                             <p:watermark for="rtgHoraInicio" value="08:30AM (hh:mm) *" />
                                                             <p:message for="rtgHoraInicio" />
@@ -269,9 +273,10 @@
                                                                                required="true" 
                                                                                requiredMessage="La hora de cierre de la tutoría grupal es requerida"
                                                                                mode="popup"
-                                                                               disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                               
                                                                                styleClass="campo3Partes"
                                                                                />
+                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                             </div>
                                                             <p:watermark for="rtgHoraCierre" value="09:30AM (hh:mm) *" />
                                                             <p:message for="rtgHoraCierre" />
@@ -293,8 +298,9 @@
                                                                                  class="form-control"
                                                                                  requiredMessage="Es requerido el campo de orden del día"
                                                                                  value="#{registroTutoriaGrupal.rol.tutoriaGrupal.ordenDia}"
-                                                                                 disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                 
                                                                                  />
+                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                 <h:outputText id="displayOrdenDia" />
                                                                 <p:watermark for="rtgOrdenDia" value="Ejemplo de orden del día *" />
                                                                 <p:message for="rtgOrdenDia" />
@@ -316,8 +322,9 @@
                                                                                  class="form-control"
                                                                                  requiredMessage="Es requerido el campo de acuerdos"
                                                                                  value="#{registroTutoriaGrupal.rol.tutoriaGrupal.acuerdos}"
-                                                                                 disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                 
                                                                                  />
+                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                 <h:outputText id="displayAcuerdos" />
                                                                 <p:watermark for="rtgAcuerdos" value="Ejemplo de acuerdos *" />
                                                                 <p:message for="rtgAcuerdos" />
@@ -339,8 +346,9 @@
                                                                                  class="form-control"
                                                                                  requiredMessage="Es requerido el campo de observaciones"
                                                                                  value="#{registroTutoriaGrupal.rol.tutoriaGrupal.observaciones}"
-                                                                                 disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                 
                                                                                  />
+                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                 <h:outputText id="displayObservaciones" />
                                                                 <p:watermark for="rtgObservaciones" value="Ejemplo de observaciones *" />
                                                                 <p:message for="rtgObservaciones" />
@@ -357,9 +365,10 @@
                                                                              icon="fa fa-pencil-square-o" 
                                                                              class="btn-primary" 
                                                                              style="width:15em;" 
-                                                                             disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                             
                                                                              title="Guardar tutoría grupal"
                                                                              />
+                                                            <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                         </div>
                                                         <div class="col-sm-12 col-md-12"><p:separator/></div>
                                                     </div>
@@ -413,8 +422,9 @@
                                                                                              process="dtTutoriasGrupales" 
                                                                                              oncomplete="actualizarRegistroTutoria();" 
                                                                                              global="false"
-                                                                                             disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                             
                                                                                              >
+                                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                                 <p:confirm header="Eliminar" message="¿Está seguro de eliminar la tutoría grupal seleccionada?" icon="ui-icon-alert" />
                                                                             </p:commandButton>
                                                                         </div>
@@ -438,9 +448,10 @@
                                                                                     requiredMessage="Favor de seleccionar un estudiante"
                                                                                     styleClass="campoAutocompleteEstudiante"
                                                                                     scrollHeight="300"
-                                                                                    disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                    
                                                                                     title="Si desea modificar este campo solo ingrese el nombre o matricula del esudiante, seleccione el resultado y quedará guardado de manera automática"
                                                                                     >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                         <p:column>#{estudiante.datosComplete}</p:column>
                                                                         <p:ajax event="itemSelect" 
                                                                                 process="@this" 
@@ -463,7 +474,7 @@
                                                                                 valueChangeListener="#{registroTutoriaGrupal.actualizarFecha}"
                                                                                 pattern="yyyy-MM-dd"
                                                                                 styleClass="campoTutoriaGrupalDT"
-                                                                                disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                
                                                                                 title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB ó ENTER, ó bien colocar el cursor en el siguiente campo"
                                                                                 placeholder="2019-10-01 (aa-MM-dd)*"
                                                                                 readonlyInput="true"
@@ -471,6 +482,7 @@
                                                                                 mindate="#{caster.fechaMinina(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
                                                                                 maxdate="#{caster.fechaMaxima(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
                                                                                 >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                         <p:ajax event="dateSelect"
                                                                                 process="@this"
                                                                                 update="dtTutoriasGrupales"
@@ -509,8 +521,9 @@
                                                                                    showPeriod="true"
                                                                                    mode="popup"
                                                                                    title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                   disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                   
                                                                                    >
+                                                                         <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                         <p:ajax process="@this"
                                                                                 update="dtTutoriasGrupales"
                                                                                 global="false"
@@ -542,8 +555,9 @@
                                                                                    showPeriod="true"
                                                                                    mode="popup"
                                                                                    title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                   disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                   
                                                                                    >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                         <p:ajax process="@this"
                                                                                 update="dtTutoriasGrupales"
                                                                                 global="false"
@@ -567,8 +581,9 @@
                                                                                      title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
                                                                                      value="#{tutoriaGrupal.tutoriaGrupal.ordenDia}"
                                                                                      valueChangeListener="#{registroTutoriaGrupal.actualizarOrdenDia}"
-                                                                                     disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                     
                                                                                      >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                         <p:ajax process="@this" 
                                                                                 update="dtTutoriasGrupales" 
                                                                                 global="false"
@@ -591,8 +606,9 @@
                                                                                      title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
                                                                                      value="#{tutoriaGrupal.tutoriaGrupal.acuerdos}"
                                                                                      valueChangeListener="#{registroTutoriaGrupal.actualizarAcuerdos}"
-                                                                                     disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                     
                                                                                      >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                         <p:ajax process="@this" 
                                                                                 update="dtTutoriasGrupales" 
                                                                                 global="false"
@@ -615,8 +631,9 @@
                                                                                      title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
                                                                                      value="#{tutoriaGrupal.tutoriaGrupal.observaciones}"
                                                                                      valueChangeListener="#{registroTutoriaGrupal.actualizarObservaciones}"
-                                                                                     disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
+                                                                                     
                                                                                      >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                         <p:ajax process="@this" 
                                                                                 update="dtTutoriasGrupales" 
                                                                                 global="false"
@@ -709,8 +726,9 @@
                                                                                        onIcon="ui-icon-check"
                                                                                        offIcon="ui-icon-close"
                                                                                        style="text-align: left"
-                                                                                       disabled="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal eq null or registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'true':'false'}"
+                                                                                       disabled="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal eq null?'true':'false'}"
                                                                                        >
+                                                                    <!--or registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo-->
                                                                     <p:ajax process="@this"
                                                                             oncomplete="actualizarEstudiantes();"
                                                                             />

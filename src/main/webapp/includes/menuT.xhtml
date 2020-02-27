@@ -147,6 +147,10 @@
 
                     <!-- Consulta multiples -->
                     <c:if test="#{consultaCalificaciones.mostrarEnDesarrollo(request) and consultaCalificaciones.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/consultarCalificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Consultar calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    
+                    <!-- Registro multiple -->
+                    <c:if test="#{registroNotificacionesGeneral.mostrarEnDesarrollo(request) and registroNotificacionesGeneral.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/registro_notificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Registrar Notificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    
                 </c:if>
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
                 <c:if test="#{controlEscolarMenu.tieneElementos()}">

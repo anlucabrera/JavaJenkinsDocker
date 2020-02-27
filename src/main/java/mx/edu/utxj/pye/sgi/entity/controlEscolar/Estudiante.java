@@ -78,7 +78,7 @@ public class Estudiante implements Serializable {
     private Integer trabajadorInscribe;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 22)
+    @Size(min = 1, max = 100)
     @Column(name = "tipo_registro")
     private String tipoRegistro;
     @ManyToMany(mappedBy = "estudianteList")

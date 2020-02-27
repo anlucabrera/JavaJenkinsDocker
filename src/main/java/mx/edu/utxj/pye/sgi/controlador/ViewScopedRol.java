@@ -59,6 +59,13 @@ public class ViewScopedRol implements Controlable {
         ultimoMensaje = construirMensaje(severity, mensaje);
         Messages.addGlobal(severity, mensaje);
     }
+    
+    public void mostrarMensajeError(String mensaje){
+        if(!verificarIdentificacion()) return;
+        FacesMessage.Severity severity = FacesMessage.SEVERITY_ERROR;
+        ultimoMensaje = construirMensaje(severity, mensaje);
+        Messages.addGlobal(severity, mensaje);
+    }
 
     public void mostrarErrorIdentificacion(){
 //        if(!validarIdentificacion()) return;
