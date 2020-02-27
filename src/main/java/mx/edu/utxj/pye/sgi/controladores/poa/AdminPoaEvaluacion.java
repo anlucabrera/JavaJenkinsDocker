@@ -354,10 +354,10 @@ public class AdminPoaEvaluacion implements Serializable {
     
     public String convertirRutaMP(String ruta) {
         File file = new File(ruta);
-                if (ruta.contains("EVALUACION_POA")) {
+        if (ruta.contains("EVALUACION_POA")) {
             return "EVALUACION_POA".concat(file.toURI().toString().split("EVALUACION_POA")[1]);
         } else {
-                        return "".concat(file.toURI().toString().split(String.valueOf(pOAUtilidades.obtenerAnioRegistro(ejercicioFiscal).getAnio()))[1]);
+            return "".concat(file.toURI().toString().split(String.valueOf(pOAUtilidades.obtenerAnioRegistro(ejercicioFiscal).getAnio()))[1]);
         }
     }
 

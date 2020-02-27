@@ -61,8 +61,8 @@
                             </ul>
                         </li>
                     </c:if>
-                    
-<!--                    <c:if test="# {validacionAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and validacionAperturaExtemporaneaAdministrador.tieneAcceso}"> <li><p:link href="# {request.contextPath}/controlEscolar/pye/validacionAperturaExtemporanea.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Aperturas</span></p:link></li></c:if>-->
+
+                    <!--                    <c:if test="# {validacionAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and validacionAperturaExtemporaneaAdministrador.tieneAcceso}"> <li><p:link href="# {request.contextPath}/controlEscolar/pye/validacionAperturaExtemporanea.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Aperturas</span></p:link></li></c:if>-->
 
                     <!-- Secretaría Académica -->
                     <c:if test="#{concentradoCalificacionesSecAca.mostrarEnDesarrollo(request) and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span></p:link></li></c:if>
@@ -114,21 +114,21 @@
                     <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de <br/>Lista Docente</span></p:link></li></c:if>
                     <c:if test="#{avanceProgramaticoDocente.mostrarEnDesarrollo(request) and avanceProgramaticoDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
                     <c:if test="#{registroAsesoriaDocente.mostrarEnDesarrollo(request) and registroAsesoriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/registro_asesorias.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Asesorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-<!--                    <c:if test="# {permisoAperturaExtemporaneaDocente.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaDocente.tieneAcceso}">
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-calendar"></i> <span>Solicitar Apertura</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu" style="display: none;">
-                            <li><p:link href="# {request.contextPath}/controlEscolar/docente/solicitarAperExtGrupal.xhtml"><i class="fa fa-users"></i><span>Grupal</span></p:link></li>
-                            <li><p:link href="# {request.contextPath}/controlEscolar/docente/solicitarAperExtPorEstudiante.xhtml"><i class="fa fa-user-plus"></i><span>Estudiante</span></p:link></li>
-                        </ul>
-                    </li>
-                    </c:if>-->
-                    
+                    <!--                    <c:if test="# {permisoAperturaExtemporaneaDocente.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaDocente.tieneAcceso}">
+                                        <li class="treeview">
+                                            <a href="#">
+                                                <i class="fa fa-calendar"></i> <span>Solicitar Apertura</span>
+                                                <span class="pull-right-container">
+                                                    <i class="fa fa-angle-left pull-right"></i>
+                                                </span>
+                                            </a>
+                                            <ul class="treeview-menu" style="display: none;">
+                                                <li><p:link href="# {request.contextPath}/controlEscolar/docente/solicitarAperExtGrupal.xhtml"><i class="fa fa-users"></i><span>Grupal</span></p:link></li>
+                                                <li><p:link href="# {request.contextPath}/controlEscolar/docente/solicitarAperExtPorEstudiante.xhtml"><i class="fa fa-user-plus"></i><span>Estudiante</span></p:link></li>
+                                            </ul>
+                                        </li>
+                                        </c:if>-->
+
                     <!-- Tutor -->
                     <c:if test="#{reporteAsistenciasTutor.mostrarEnDesarrollo(request) and reporteAsistenciasTutor.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Tutor</li>
@@ -452,26 +452,26 @@
                             </li>
                         </ul>
                     </li>
-<!--                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-id-badge"></i><span>Títulos</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu" style="display: none;">
-                            <li>
-                                <p:link href="# {request.contextPath}/expedienteTitulacion/titulacion/cargarTituloExpediente.xhtml" target="_blank"><i class="fa fa-upload"></i>
-                                    <span>Cargar Título Electrónico</span>
-                                </p:link>
-                            </li>
-                            <li>
-                                <p:link href="# {request.contextPath}/expedienteTitulacion/titulacion/listadoTitulados.xhtml" target="_blank"><i class="fa fa-list-ul"></i>
-                                    <span>Listado de Titulados</span>
-                                </p:link>
-                            </li>
-                        </ul>
-                    </li>-->
+                    <!--                    <li class="treeview">
+                                            <a href="#">
+                                                <i class="fa fa-id-badge"></i><span>Títulos</span>
+                                                <span class="pull-right-container">
+                                                    <i class="fa fa-angle-left pull-right"></i>
+                                                </span>
+                                            </a>
+                                            <ul class="treeview-menu" style="display: none;">
+                                                <li>
+                                                    <p:link href="# {request.contextPath}/expedienteTitulacion/titulacion/cargarTituloExpediente.xhtml" target="_blank"><i class="fa fa-upload"></i>
+                                                        <span>Cargar Título Electrónico</span>
+                                                    </p:link>
+                                                </li>
+                                                <li>
+                                                    <p:link href="# {request.contextPath}/expedienteTitulacion/titulacion/listadoTitulados.xhtml" target="_blank"><i class="fa fa-list-ul"></i>
+                                                        <span>Listado de Titulados</span>
+                                                    </p:link>
+                                                </li>
+                                            </ul>
+                                        </li>-->
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-folder"></i><span>Catálogos - Reportes</span>
@@ -925,43 +925,86 @@
                             </a>
                             <ul class="treeview-menu" style="display: none;">
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/4.1.Comprension_de_la_UTXJ_y_su_contexto.pdf" target="_blank">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/4.1_Comprension_de_la_UTXJ_y_su_contexto.pdf" target="_blank">
                                         <span>4.1.Comprensión de la UTXJ <br/>y su contexto</span>
                                     </p:link>
                                 </li>   
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/4.2.Comprension_de_las_nec_y_expec_de_Partes_Interesadas.pdf" target="_blank">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/4.2_Comprension_de_las_necesidades_y_expectativas_de_Partes_Interesadas.pdf" target="_blank">
                                         <span>4.2.Comprensión de las <br/>necesidades y expectativas de <br/>Partes Interesadas</span>
                                     </p:link>
                                 </li>   
-                                <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/MATRIZ_ASPECTOS_AMBIENTALES.pdf" target="_blank">
-                                        <span>MATRIZ ASPECTOS <br/>AMBIENTALES</span>
-                                    </p:link>
+                                <li class="treeview">
+                                    <a href="#">
+                                        <i class="fa fa-file"></i> <span>Matriz AspectosS <br/>Ambientales</span>
+                                        <span class="pull-right-container">
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/MATRIZ_ASPECTOS_AMBIENTALES_ADMINISTRATIVO" target="_blank">
+                                                <span>Administrativo</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/MATRIZ_ASPECTOS_AMBIENTALES_ENSENANZA_APRENDIZAJE.pdf" target="_blank">
+                                                <span>Enseñanza Aprendizaje</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/MATRIZ_ASPECTOS_AMBIENTALES_MODIFICACIONES.pdf" target="_blank">
+                                                <span>Modificaciones</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/MATRIZ_ASPECTOS_AMBIENTALES_SERVICIOS_MATERIALES.pdf" target="_blank">
+                                                <span>Servicios Materiales</span>
+                                            </p:link>
+                                        </li>
+                                    </ul>
                                 </li>     
+                                <li class="treeview">
+                                    <a href="#">
+                                        <i class="fa fa-file"></i> <span>Obligaciones Legales</span>
+                                        <span class="pull-right-container">
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/OBLIGACIONES_LEGALES_FEDERALES.pdf" target="_blank">
+                                                <span>Federales</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/OBLIGACIONES_LEGALES_ESTATALES.pdf" target="_blank">
+                                                <span>Estatales</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/OBLIGACIONES_LEGALES_MUNICIPALES.pdf" target="_blank">
+                                                <span>Municipales</span>
+                                            </p:link>
+                                        </li>
+                                    </ul>
+                                </li>     
+                                <li class="treeview">
+                                    <a href="#">
+                                        <i class="fa fa-file"></i> <span>Acciones para afrontar <br/>Riesgos y Oportunidades</span>
+                                        <span class="pull-right-container">
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/6.1_Acciones_para_afrontar_Riesgos_y_Oportunidades_AMBIENTAL_1.pdf" target="_blank">
+                                                <span>Ambiental 1</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/6.1_Acciones_para_afrontar_Riesgos_y_Oportunidades_AMBIENTAL_2.pdf" target="_blank">
+                                                <span>Ambiental 2</span>
+                                            </p:link>
+                                        </li>
+                                    </ul>
+                                </li>                                                                                                     
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/aspectos_Legales/14001/OBLIGACIONES LEGALES NORMAS FEDERAL.pdf" target="_blank">
-                                        <span>OBLIGACIONES LEGALES <br/>FEDERALES</span>
-                                    </p:link>
-                                </li>   
-                                <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/aspectos_Legales/14001/OBLIGACIONES LEGALES NORMAS ESTATAL.pdf" target="_blank">
-                                        <span>OBLIGACIONES LEGALES <br/>ESTATALES</span>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/PROCEDIMIENTO_PARA_EL_ALMACENAMIENTO_DE_RESIDUOS.pdf" target="_blank">
+                                        <span>Procedimiento para el <br/>almacenamiento de <br/>residuos</span>
                                     </p:link>
                                 </li> 
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/aspectos_Legales/14001/OBLIGACIONES LEGALES NORMAS MUNICIPAL.pdf" target="_blank">
-                                        <span>OBLIGACIONES LEGALES <br/>MUNICIPALES</span>
-                                    </p:link>
-                                </li>   
-                                <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/PROCEDIMIENTO PARA EL ALMACENAMIENTO DE RESIDUOS.pdf" target="_blank">
-                                        <span>PROCEDIMIENTO PARA EL <br/>ALMACENAMIENTO DE <br/>RESIDUOS</span>
-                                    </p:link>
-                                </li> 
-                                <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/PROCEDIMIENTO PARA MANEJO INTEGRAL DE RESIDUOS QUIMICOS PELIGROSOS REV2.pdf" target="_blank">
-                                        <span>PROCEDIMIENTO PARA MANEJO <br/>INTEGRAL DE RESIDUOS <br/>QUIMICOS PELIGROSOS <br/>REV2</span>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/PROCEDIMIENTO_PARA_MANEJO_INTEGRAL_DE_RESIDUOS_QUIMICOS_PELIGROSOS_REV2.pdf" target="_blank">
+                                        <span>procedimiento para manejo <br/>integral de residuos <br/>químicos peligrosos <br/>Rev 2</span>
                                     </p:link>
                                 </li> 
                             </ul>
@@ -975,15 +1018,39 @@
                             </a>
                             <ul class="treeview-menu" style="display: none;">
                                 <li>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/4.1_Comprension_de_la_UTXJ_y_de_su_contexto-FODA.pdf" target="_blank">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/4.1_Comprension_de_la_UTXJ_y_de_su_contexto_FODA.pdf" target="_blank">
                                         <span>4.1 Comprensión de la UTXJ <br/>y de su contexto-FODA</span>
                                     </p:link>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/4.2_Comprension_de_las_nec_y_expec_de_Partes_Interesadas.pdf" target="_blank">
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/4.2_Comprension_de_las_necesidades_y_expectativas_de_Partes_Interesadas.pdf" target="_blank">
                                         <span>4.2 Comprensión de las <br/>necesidades y expectativas de <br/>Partes Interesadas</span>
                                     </p:link>
-                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_Acciones_para_afrontar_Riesgos_y_Oportunidades_Act.pdf" target="_blank">
-                                        <span>6.1 Acciones para afrontar <br/>Riesgos y Oportunidades Act</span>
-                                    </p:link>
+                                    <li class="treeview">
+                                        <a href="#">
+                                            <i class="fa fa-file"></i> <span>6.1 Acciones para afrontar <br/>Riesgos y Oportunidades Act</span>
+                                            <span class="pull-right-container">
+                                                <i class="fa fa-angle-left pull-right"></i>
+                                            </span>
+                                        </a>
+                                        <ul class="treeview-menu" style="display: none;">
+                                            <li>
+                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_ACADEMIA.pdf" target="_blank">
+                                                    <span>Academia</span>
+                                                </p:link>
+                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_ADMON_REC.pdf" target="_blank">
+                                                    <span>Rectoría</span>
+                                                </p:link>
+                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_ESCOLARES.pdf" target="_blank">
+                                                    <span>Escolares</span>
+                                                </p:link>
+                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_PLANEACION.pdf" target="_blank">
+                                                    <span>Planeación</span>
+                                                </p:link>
+                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_VINCULACION.pdf" target="_blank">
+                                                    <span>Vinculación</span>
+                                                </p:link>
+                                            </li>
+                                        </ul>
+                                    </li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/7.1.6_Capital_del_Conocimiento.pdf" target="_blank">
                                         <span>7.1.6 Capital del Conocimiento</span>
                                     </p:link>
@@ -1009,12 +1076,12 @@
                                 <span>Formación Sociocultural</span>
                             </p:link>
                         </li>  
-                         <li>
+                        <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_PRACTICAS_UTXJ_EOyE_II.docx" target="_blank">
                                 <span>Manual de Prácticas UTXJ <br/> EOyE II</span>
                             </p:link>
                         </li>  
-                         <li>
+                        <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_PRACTICAS_UTXJ_FORMACION_SOCIOCULTURAL_II.docx" target="_blank">
                                 <span>Manual de Prácticas UTXJ <br/>Formación Sociocultural II</span>
                             </p:link>
