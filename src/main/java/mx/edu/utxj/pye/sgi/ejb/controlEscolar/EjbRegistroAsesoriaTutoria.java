@@ -348,7 +348,6 @@ public class EjbRegistroAsesoriaTutoria {
             }else{
                 a.getEstudianteList().add(e);
                 e.getAsesoriaList().add(a);
-                em.flush();
             }
             em.flush();
             return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Se ha asignado el estudiante a la asesoría");

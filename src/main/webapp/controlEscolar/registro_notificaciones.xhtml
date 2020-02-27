@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                >
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js"/>
+        <h:outputScript library="primefaces62" name="inputnumber.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Registro de Notificaciones
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{registroNotificacionesGeneral.cargado}">
+            <adm:breadcrumb title="Registro de notificaciones"/>
+            <div class="contenedor">
+                <c:if test="#{registroNotificacionesGeneral.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Antes de iniciar su registro favor de verificar que los filtros seleccionados seán los correctos" />
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                           onclick="PF('modalAyuda').show();"
+                                                           process="@this"
+                                                           title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </h:form>
+
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <h:form id="frmFiltros" prependId="false" class="form-inline">
+                                        <c:set var="panel" value="#{'col-sm-12 col-md-12 col-lg-12'}"/>
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-6 col-lg-2'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                        <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                        <c:set var="casilla4" value="#{'col-sm-3 col-md-3 col-lg-3'}"/>
+                                        <c:set var="casilla5" value="#{'col-sm-4 col-md-4 col-lg-4'}"/>
+                                        <c:set var="casilla6" value="#{'col-sm-8 col-md-8 col-lg-8'}"/>
+                                        <c:set var="casilla7" value="#{'col-sm-9 col-md-9 col-lg-9'}"/>
+                                        <div class="row margin-bottom" style="margin-top: 20px;">
+                                            <!--Verificar si aplican filtros en este apartado-->
+                                        </div>
+                                    </h:form>
+                                    <h:form id="frmRegistro" prependId="false" class="form-inline">
+                                        <p:remoteCommand id="actualizarRegistroNotificaciones" name="actualizarRegistroNotificaciones" actionListener="#{registroNotificacionesGeneral.actualizar}" process="@this" update="contenedor" /><!-- TODO: Falta incluir modales de enlace, áreas e imágenes -->
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 text-info">
+                                                <p:outputPanel id="contenedor">
+                                                    <div class="row margin-bottom">
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                                            <p:outputLabel value="1.- Ingrese la información de la notificación (asegúrese de llenar todos los campos)."></p:outputLabel>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-3" style="margin-top: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:calendar id="rnFechaInicio"
+                                                                            label="rnFechaInicio"
+                                                                            required="true"
+                                                                            requiredMessage="Ingrese fecha de inicio de la notificación"
+                                                                            value="#{registroNotificacionesGeneral.rol.fechaInicio}"
+                                                                            valueChangeListener="#{registroNotificacionesGeneral.valifaFechaInicio}"
+                                                                            pattern="yyyy-MM-dd"
+                                                                            style="width: 18em;"
+                                                                            locale="es"
+                                                                            showOn="both"
+                                                                            placeholder="2020-02-21 *"
+                                                                            readonlyInput="true"
+                                                                            mask="true"
+                                                                            >
+                                                                    <p:ajax event="dateSelect" global="false" process="@this" update="rnFechaFin"/>
+                                                                </p:calendar>
+                                                            </div>
+                                                            <p>Fecha de inicio (duración de la notificación</p>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-3" style="margin-top: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:calendar id="rnFechaFin"
+                                                                            label="rnFechaFin"
+                                                                            required="true"
+                                                                            requiredMessage="Ingrese fecha de inicio de la notificación"
+                                                                            value="#{registroNotificacionesGeneral.rol.fechaFin}"
+                                                                            valueChangeListener="#{registroNotificacionesGeneral.validaFechaFin}"
+                                                                            pattern="yyyy-MM-dd"
+                                                                            style="width: 18em;"
+                                                                            locale="es"
+                                                                            showOn="both"
+                                                                            placeholder="2020-02-21 *"
+                                                                            readonlyInput="true"
+                                                                            mask="true"
+                                                                            >
+                                                                    <p:ajax event="dateSelect" global="false" process="@this" update="rnFechaInicio"/>
+                                                                </p:calendar>
+                                                            </div>
+                                                            <p>Fecha de fin (duración de la notificación</p>
+                                                        </div>
+
+                                                        <!--style="margin-bottom: 20px;"-->
+                                                        <div class="col-sm-12 col-md-12 col-lg-12"></div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="rnTituloPrincipal"
+                                                                             label="rnTituloPrincipal"
+                                                                             maxlength="100"
+                                                                             value="#{registroNotificacionesGeneral.rol.notificacionCe.tituloPrincipal}"
+                                                                             style="width: 35em"
+                                                                             class="form-control"
+                                                                             required="true"
+                                                                             requiredMessage="Por favor ingrese el título principal de la notificación"
+                                                                             />
+                                                                <p:watermark for="rnTituloPrincipal" value="Ejemplo de título principal de la notificación *" />
+                                                                <p:outputLabel for="rnTituloPrincipal" value="Título principal de la notificación (este título identificará a la notificación): "/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="rnSubtitulo"
+                                                                             label="rnSubtitulo"
+                                                                             maxlength="200"
+                                                                             value="#{registroNotificacionesGeneral.rol.notificacionCe.subtitulo}"
+                                                                             style="width: 35em"
+                                                                             class="form-control"
+                                                                             required="true"
+                                                                             requiredMessage="Por favor ingrese el subtítulo de la notificación"
+                                                                             />
+                                                                <p:watermark for="rnSubtitulo" value="Ejemplo de subtítulo de la notificación *" />
+                                                                <p:outputLabel for="rnSubtitulo" value="Subtítulo de la notificación (en este campo puede agregar datos de interés): "/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 20px;"></div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-6">
+                                                            <div class="ui-material">
+                                                                <p:selectOneMenu id="rnTipoN" 
+                                                                                 value="#{registroNotificacionesGeneral.rol.notificacionCe.tipo}" 
+                                                                                 converter="entityConverter" 
+                                                                                 required="true" 
+                                                                                 styleClass="form-control"
+                                                                                 style="width: 35em"
+                                                                                 >
+                                                                    <f:selectItems value="#{registroNotificacionesGeneral.listaNotificacionesTipos}" 
+                                                                                   var="rnTipo" 
+                                                                                   itemValue="#{rnTipo.label}" 
+                                                                                   itemLabel="#{rnTipo.label}" />
+                                                                </p:selectOneMenu>
+                                                                <p:message for="rnTipoN" ><p:autoUpdate/></p:message>
+                                                            </div>
+                                                            <p>Tipo de notificación</p>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" >
+                                                            <div class="ui-material">
+                                                                <p:selectCheckboxMenu id="rnAlcance"
+                                                                                      value="#{registroNotificacionesGeneral.rol.alcance}" 
+                                                                                      label="Alcance de notificación" 
+                                                                                      multiple="true"
+                                                                                      filter="true" 
+                                                                                      filterMatchMode="startsWith" 
+                                                                                      panelStyle="width:400px"
+                                                                                      style="width: 35em"
+                                                                                      >
+                                                                    <f:selectItems value="#{registroNotificacionesGeneral.listaNotificacionRol}"
+                                                                                   var="notificacion"
+                                                                                   itemDescription="#{notificacion.label}"
+                                                                                   itemValue="#{notificacion.label}"
+                                                                                   itemLabel="#{notificacion.label}"/>
+                                                                </p:selectCheckboxMenu>
+                                                            </div>
+                                                            <p>Alcance de la notificación</p>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:inputTextarea id="rnContenido"
+                                                                                 rows="4" 
+                                                                                 cols="95"
+                                                                                 counter="displayContenido" 
+                                                                                 maxlength="4000" 
+                                                                                 counterTemplate="{0} caracteres en total." 
+                                                                                 autoResize="true"
+                                                                                 class="form-control"
+                                                                                 value="#{registroNotificacionesGeneral.rol.notificacionCe.contenido}"
+                                                                                 />
+                                                                <h:outputText id="displayContenido" />
+                                                                <p:watermark for="rnContenido" value="Ejemplo de contenido de la notificación *" />
+                                                                <p:message for="rnContenido" />
+                                                                <p:outputLabel for="rnContenido" value="Contenido de la notificación (en este campo puede agregar el contenido específico de la notificación): " />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;">
+                                                            <p:commandButton id="btnGuardarNotificacion" 
+                                                                             value="Guardar Notificación" 
+                                                                             action="#{registroNotificacionesGeneral.guardarNotificacion}" 
+                                                                             oncomplete="actualizarRegistroNotificaciones();" 
+                                                                             icon="fa fa-pencil-square-o" 
+                                                                             class="btn-primary" 
+                                                                             style="width:15em;" 
+                                                                             title="Guardar Notificación"
+                                                                             />
+                                                        </div>
+
+                                                    </div>
+                                                </p:outputPanel>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <c:if test="#{!empty registroNotificacionesGeneral.alertas || true}">
+                        <div class="box box-info">
+                            <div class="box-header">
+                                <ui:include src="/includes/alertas.xhtml">
+                                    <ui:param name="alertas" value="#{registroNotificacionesGeneral.alertas}"></ui:param>
+                                </ui:include>
+                            </div>
+                        </div>
+                    </c:if>
+                    <!-- Zona de cuadros de diálogo -->
+                    <p:dialog id="modalAyuda"
+                              widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                              modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                        <div class="box box-primary">
+                            <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el registro de notificaciones</h3></div>
+                            <div class="box-body">
+                                <ul class="todo-list">
+                                    <c:forEach items="#{registroNotificacionesGeneral.rol.instrucciones}" var="instruccion">
+                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                            <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                        </div>
+                    </p:dialog>
+                </c:if>
+                <c:if test="#{!registroNotificacionesGeneral.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="El acceso solo está autorizado para estudiantes."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+                <div style="display: none;">
+                    <!-- Es necesario este bloque para que se cargue en el navegador el soporte para el control inputnumber -->
+                    <h:form>
+                        <p:inputNumber />
+                    </h:form>
+                </div>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

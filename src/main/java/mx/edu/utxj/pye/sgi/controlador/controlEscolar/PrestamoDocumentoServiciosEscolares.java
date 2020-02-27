@@ -126,6 +126,19 @@ public class PrestamoDocumentoServiciosEscolares extends ViewScopedRol implement
         }
     }
     
+    public void valifaFechaInicioRegistro(ValueChangeEvent event) {
+        if ((Date) event.getNewValue() != null && rol.getFechaFinRegistro()!= null || rol.getFechaFinRegistro() != null) {
+            rol.setFechaInicioRegistro((Date) event.getNewValue());
+            if (rol.getFechaInicioRegistro().before(rol.getFechaFinRegistro())) {
+            } else {
+                if (rol.getFechaFinRegistro().before(rol.getFechaInicioRegistro())) {
+                    rol.setFechaFinRegistro(null);
+                    rol.setFechaFinRegistro(rol.getFechaInicioRegistro());
+                } else {}
+            }
+        }
+    }
+    
     public void validaFechaFin(ValueChangeEvent event){
         if ((Date) event.getNewValue() != null && rol.getFechaInicio() != null || rol.getFechaInicio() != null) {
             rol.setFechaFin((Date) event.getNewValue());
@@ -139,12 +152,31 @@ public class PrestamoDocumentoServiciosEscolares extends ViewScopedRol implement
         }
     }
     
+    public void validaFechaFinRegistro(ValueChangeEvent event){
+        if ((Date) event.getNewValue() != null && rol.getFechaInicioRegistro() != null || rol.getFechaInicioRegistro() != null) {
+            rol.setFechaFinRegistro((Date) event.getNewValue());
+            if (rol.getFechaFinRegistro().after(rol.getFechaInicioRegistro())) {
+            } else {
+                if (rol.getFechaInicioRegistro().after(rol.getFechaFinRegistro())) {
+                    rol.setFechaInicioRegistro(null);
+                    rol.setFechaInicioRegistro(rol.getFechaFinRegistro());
+                } else {}
+            }
+        }
+    }
+    
     public void guardarPrestamoDocumento(){
         if(rol.getPrestamoDocumento().getTipoPrestamo().equals("Préstamo")){
 //            Acciones a tomar si es un prestamo normal
+            if(rol.getFechaInicioRegistro() != null && rol.getFechaFinRegistro() != null){
+            rol.getPrestamoDocumento().setFechaPrestamo(rol.getFechaInicioRegistro());    
+            rol.getPrestamoDocumento().setFechaDevolucionEstudiante(rol.getFechaFinRegistro());
             ResultadoEJB<PrestamosDocumentos> res = ejb.guardarPrestamoDocumento(rol.getPrestamoDocumento());
             mostrarMensajeResultadoEJB(res);
             mostrarPrestamoDocumentos();
+            }else{
+                mostrarMensajeError("Ha seleccionado la opción préstamo, favor de completar su registro selecionando la fecha del préstamo y la fecha de devolución por parte del estudiante");
+            }
         }else{
 //            Acciones a tomar si es un alta de documento
             rol.getPrestamoDocumento().setFechaPrestamo(null);

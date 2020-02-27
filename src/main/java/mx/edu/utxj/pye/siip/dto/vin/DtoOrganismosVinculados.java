@@ -59,7 +59,7 @@ public final class DtoOrganismosVinculados {
     @Getter private AreasUniversidad areaUniversidadPOA;
     
     /****************** Programas Educativos Beneficiados con la vinculación *******************/
-    @Getter @Setter AreasUniversidad areaUniversidad;
+//    @Getter @Setter AreasUniversidad areaUniversidad;
     @Getter private List<DTOProgramasBeneficiadosVinculacion> listaProgramasEducativosBeneficiadosV = new ArrayList<>();
     
     /************************** Ubicación *************************************/

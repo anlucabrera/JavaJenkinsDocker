@@ -72,9 +72,12 @@ public class EjbPrestamoDocumentos {
                     .setParameter("pista", pista)
                     .getResultList();
             List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
-
+            List<String> leyenda = new ArrayList<>();
+            if(estudiantes.size()>1){
+                leyenda.add(" - Reincorporación");
+            }else{leyenda.add("");}
             estudiantes.forEach(estudiante -> {
-                String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno() + " " + estudiante.getAspirante().getIdPersona().getApellidoMaterno() + " " + estudiante.getAspirante().getIdPersona().getNombre() + " - " + estudiante.getMatricula();
+                String datosComplete = (estudiante.getAspirante().getIdPersona().getApellidoPaterno() + " " + estudiante.getAspirante().getIdPersona().getApellidoMaterno() + " " + estudiante.getAspirante().getIdPersona().getNombre() + " - " + estudiante.getMatricula()).concat(String.join(" ", leyenda));
                 DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete);
                 listaDtoEstudiantes.add(dtoEstudianteComplete);
             });
