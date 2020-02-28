@@ -466,7 +466,7 @@
                                                                                 <p:selectOneMenu id="estado" value="#{controladorEstReg.estadoIEMS}" required="true" requiredMessage="Es necesario que seleccione el estado" style="object-fit: contain; font-size: medium" valueChangeListener="#{controladorEstReg.cambiarEstado}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaEstadosIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectMunicipioIems()}" update="municipio, localidad, iems"/>
+                                                                                    <p:ajax update="municipio, localidad, iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="estado"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -475,7 +475,7 @@
                                                                                 <p:selectOneMenu id="municipio" value="#{controladorEstReg.municipioIEMS}" required="true" requiredMessage="Es necesario que seleccione el municipio" style="object-fit: contain; font-size: medium" valueChangeListener="#{controladorEstReg.cambiarMunicipio}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaMunicipiosIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectLocalidadIems()}" update="localidad, iems"/>
+                                                                                    <p:ajax update="localidad, iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="municipio"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -484,7 +484,7 @@
                                                                                 <p:selectOneMenu id="localidad" value="#{controladorEstReg.localidadIEMS}" required="true" requiredMessage="Es necesario que seleccione la localidad" style="object-fit: contain; font-size: medium" valueChangeListener="#{controladorEstReg.cambiarLocalidad}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaLocalidadesIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectIems()}" update="iems"/>
+                                                                                    <p:ajax update="iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="localidad"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -546,7 +546,7 @@
                                                                                 <p:selectOneMenu id="estado" value="#{controladorEstReg.estadoIEMS}" required="true" requiredMessage="Es necesario que seleccione el estado" style="height:100%; width: 100%; object-fit: contain;" valueChangeListener="#{controladorEstReg.cambiarEstado}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaEstadosIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectMunicipioIems()}" update="municipio, localidad, iems"/>
+                                                                                    <p:ajax update="municipio, localidad, iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="estado"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -555,7 +555,7 @@
                                                                                 <p:selectOneMenu id="municipio" value="#{controladorEstReg.municipioIEMS}" required="true" requiredMessage="Es necesario que seleccione el municipio" style="height:100%; width: 100%; object-fit: contain;" valueChangeListener="#{controladorEstReg.cambiarMunicipio}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaMunicipiosIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectLocalidadIems()}" update="localidad, iems"/>
+                                                                                    <p:ajax update="localidad, iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="municipio"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -564,7 +564,7 @@
                                                                                 <p:selectOneMenu id="localidad" value="#{controladorEstReg.localidadIEMS}" required="true" requiredMessage="Es necesario que seleccione la localidad" style="height:100%; width: 100%; object-fit: contain;" valueChangeListener="#{controladorEstReg.cambiarLocalidad}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaLocalidadesIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectIems()}" update="iems"/>
+                                                                                    <p:ajax update="iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="localidad"><p:autoUpdate/></p:message>
                                                                             </div>

@@ -255,28 +255,36 @@ public class ControladorEstudianteRegistro implements Serializable{
     /* Combos para IEMS */
     public void selectMunicipioIems(){
         listaMunicipiosIEMS = eJBSelectItems.itemMunicipiosByClave(this.estadoIEMS);
+        selectLocalidadIems();
     }
     
   
     public void cambiarEstado(ValueChangeEvent e){
        setEstadoIEMS((Integer)e.getNewValue());
+       municipioIEMS = 1;
+       localidadIEMS = 1;
+       nuevoOBJantAcad.setIems(0);
+       selectMunicipioIems();
     }
     
     public void cambiarMunicipio(ValueChangeEvent e){
        setMunicipioIEMS((Integer)e.getNewValue());
+       selectLocalidadIems();
     }
     
     public void cambiarLocalidad(ValueChangeEvent e){
        setLocalidadIEMS((Integer)e.getNewValue());
+       selectIems();
     }
     
 
     public void selectLocalidadIems(){
         listaLocalidadesIEMS = eJBSelectItems.itemLocalidadesByClave(this.estadoIEMS,this.municipioIEMS);
+        selectIems();
     }
     
     public void selectIems(){
-        listaIEMS = ejbItemCE.itemIems(this.estadoIEMS, this.municipioIEMS, this.localidadIEMS);
+            listaIEMS = ejbItemCE.itemIems(this.estadoIEMS, this.municipioIEMS, this.localidadIEMS);  
     }
    
     /* Métodos de la pestaña Datos Personales */
